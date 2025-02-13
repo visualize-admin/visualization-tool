@@ -15,8 +15,10 @@ import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multipl
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
+import { VerticalLimits } from "@/charts/shared/limits";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { LineConfig } from "@/config-types";
+import { getLimitMeasure, getRelatedLimitDimension } from "@/config-utils";
 import { hasChartConfigs, useConfiguratorState } from "@/configurator";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
@@ -28,9 +30,15 @@ export const ChartLinesVisualization = (
 };
 
 const ChartLines = memo((props: ChartProps<LineConfig>) => {
-  const { chartConfig } = props;
+  const { chartConfig, dimensions, measures } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const limitMeasure = getLimitMeasure({ chartConfig, measures });
+  const relatedLimitDimension = getRelatedLimitDimension({
+    chartConfig,
+    dimensions,
+  });
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
+
   return (
     <LineChart {...props}>
       <ChartContainer>
@@ -43,6 +51,13 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
             <Points dotSize={chartConfig.fields.y.showDotsSize} />
           ) : null}
           <ErrorWhiskers />
+          {limitMeasure && relatedLimitDimension ? (
+            <VerticalLimits
+              chartConfig={chartConfig}
+              measure={limitMeasure}
+              relatedDimension={relatedLimitDimension}
+            />
+          ) : null}
           <InteractionHorizontal />
           {shouldShowBrush(
             interactiveFiltersConfig,

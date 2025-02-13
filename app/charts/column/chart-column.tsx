@@ -24,8 +24,13 @@ import {
 } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
+import { VerticalLimits } from "@/charts/shared/limits";
 import { ColumnConfig } from "@/config-types";
-import { useChartConfigFilters } from "@/config-utils";
+import {
+  getLimitMeasure,
+  getRelatedLimitDimension,
+  useChartConfigFilters,
+} from "@/config-utils";
 import { hasChartConfigs } from "@/configurator";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { useConfiguratorState } from "@/src";
@@ -39,9 +44,14 @@ export const ChartColumnsVisualization = (
 };
 
 const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
-  const { chartConfig, dimensions } = props;
+  const { chartConfig, dimensions, measures } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
+  const limitMeasure = getLimitMeasure({ chartConfig, measures });
+  const relatedLimitDimension = getRelatedLimitDimension({
+    chartConfig,
+    dimensions,
+  });
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
   const showTimeBrush = shouldShowBrush(
     interactiveFiltersConfig,
@@ -117,6 +127,13 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               <AxisWidthBand />
               <Columns />
               <ErrorWhiskers />
+              {limitMeasure && relatedLimitDimension ? (
+                <VerticalLimits
+                  chartConfig={chartConfig}
+                  measure={limitMeasure}
+                  relatedDimension={relatedLimitDimension}
+                />
+              ) : null}
               <AxisWidthBandDomain />
               <InteractionColumns />
               {showTimeBrush && <BrushTime />}
