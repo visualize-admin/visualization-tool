@@ -87,7 +87,7 @@ const initFromSearchParams = (locationSearch: string) => {
   }
 };
 
-const isVercelPreviewHost = (host: string) => {
+export const isVercelPreviewHost = (host: string) => {
   return !!/visualization\-tool.*ixt1\.vercel\.app/.exec(host);
 };
 

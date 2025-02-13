@@ -99,6 +99,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
                 value="published"
               />
               <Tab
+                data-testId="color-palettes-tab"
                 className={classes.tab}
                 label={t({
                   id: "login.profile.my-color-palettes",

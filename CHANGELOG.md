@@ -52,6 +52,8 @@ You can also check the
   - Combo legend items now wrap below each other when there's not enough space
 - Maintenance
   - Increased the number of charts pre-loaded to Varnish cache from 25 to 250
+  - Added authentication method to e2e tests
+  - Added authentication to vercel previews for easier testing
 
 # [5.2.1] - 2025-01-29
 
