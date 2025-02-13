@@ -9,6 +9,7 @@ import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { renderContainer } from "@/charts/shared/rendering-utils";
 import { Observation } from "@/domain/data";
+import { useFormatFullDateAuto } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
 
 const Columns = () => {
@@ -26,6 +27,7 @@ const Columns = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
+  const formatDate = useFormatFullDateAuto();
   const bandwidth = xScale.bandwidth();
   const yColumn = y.left.chartType === "column" ? y.left : y.right;
   const yScale =
@@ -36,7 +38,7 @@ const Columns = () => {
   const renderData: RenderColumnDatum[] = useMemo(() => {
     return chartData.map((d) => {
       const key = getRenderingKey(d);
-      const xScaled = xScale(getX(d)) as number;
+      const xScaled = xScale(formatDate(getX(d))) as number;
       const y = yColumn.getY(d) ?? NaN;
       const yScaled = yScale(y);
       const yRender = yScale(Math.max(y, 0));
@@ -62,6 +64,7 @@ const Columns = () => {
     y0,
     colors,
     bandwidth,
+    formatDate,
   ]);
 
   useEffect(() => {
@@ -88,6 +91,7 @@ const Columns = () => {
 const Lines = () => {
   const { chartData, xScale, getX, yOrientationScales, y, colors, bounds } =
     useChartState() as ComboLineColumnState;
+  const formatDate = useFormatFullDateAuto();
   const yLine = y.left.chartType === "line" ? y.left : y.right;
   const yScale =
     y.left.chartType === "line"
@@ -100,7 +104,9 @@ const Lines = () => {
       const y = yLine.getY(d);
       return y !== null && !isNaN(y);
     })
-    .x((d) => (xScale(getX(d)) as number) + xScale.bandwidth() * 0.5)
+    .x(
+      (d) => (xScale(formatDate(getX(d))) as number) + xScale.bandwidth() * 0.5
+    )
     .y((d) => yScale(yLine.getY(d) as number));
 
   return (
