@@ -13,6 +13,9 @@ You can also check the
 
 - Features
   - Added option for hiding legend titles using a toggle switch
+- Fixes
+  - Added error displaying for title names that already exists on the custom
+    color palette form inside the user profile
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to vercel previews for easier testing
