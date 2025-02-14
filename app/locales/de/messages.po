@@ -604,7 +604,7 @@ msgstr "Anfangsfarbe"
 #: app/configurator/components/chart-controls/create-color-palette.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.title"
-msgstr "Palettentitel"
+msgstr "Palettentitel (erforderlich)"
 
 #: app/configurator/components/chart-controls/create-color-palette.tsx
 msgid "controls.custom-color-palettes.title-unavailable"
