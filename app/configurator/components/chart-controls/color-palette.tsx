@@ -251,30 +251,19 @@ export const ColorPalette = ({
                     </Grid>
                   ))
                 : withColorField &&
-                  (chartConfig.fields.color.type === "single" ? (
-                    <Grid item>
-                      <ColorSquare
-                        key={chartConfig.fields.color.color}
-                        color={chartConfig.fields.color.color as string}
-                        disabled={disabled}
-                      />
-                    </Grid>
-                  ) : (
-                    customColorPalettes
-                      ?.find(
-                        (palette) =>
-                          palette.paletteId ===
-                          chartConfig.fields.color.paletteId
-                      )
-                      ?.colors.map((color, i) => (
-                        <Grid item key={`color-palette-tile-${i}`}>
-                          <ColorSquare
-                            color={color as string}
-                            disabled={disabled}
-                          />
-                        </Grid>
-                      ))
-                  ))}
+                  customColorPalettes
+                    ?.find(
+                      (palette) =>
+                        palette.paletteId === chartConfig.fields.color.paletteId
+                    )
+                    ?.colors.map((color, i) => (
+                      <Grid item key={`color-palette-tile-${i}`}>
+                        <ColorSquare
+                          color={color as string}
+                          disabled={disabled}
+                        />
+                      </Grid>
+                    ))}
             </Grid>
           );
         }}
