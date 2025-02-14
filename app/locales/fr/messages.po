@@ -596,6 +596,10 @@ msgid "controls.custom-color-palettes.create-palette"
 msgstr "Créer une palette de couleurs"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.diverging-contrast-warning"
+msgstr "La couleur sélectionnée n'est pas suffisamment contrastée. Envisagez d'utiliser une couleur plus foncée pour obtenir une palette divergente."
+
+#: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.end"
 msgstr "Couleur finale"
 
@@ -608,8 +612,8 @@ msgid "controls.custom-color-palettes.mid"
 msgstr "Couleur moyenne"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.non-categorical-contrast-warning"
-msgstr "La couleur sélectionnée n'est pas suffisamment contrastée. Envisagez d'utiliser une couleur plus foncée pour une palette {type}."
+msgid "controls.custom-color-palettes.sequential-contrast-warning"
+msgstr "La couleur sélectionnée n'est pas suffisamment contrastée. Envisagez d'utiliser une couleur plus foncée pour une palette séquentielle."
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes.set-values-apply"

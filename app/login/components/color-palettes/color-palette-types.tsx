@@ -270,6 +270,26 @@ const ColorSelectionRow = (props: ColorSelectionRowProps) => {
 
   const warningContrast = hasEnoughContrast(color);
 
+  const getContrastWarning = () => {
+    switch (type) {
+      case "categorical":
+        return t({
+          id: "controls.custom-color-palettes.categorical-contrast-warning",
+        });
+      case "sequential":
+        return t({
+          id: "controls.custom-color-palettes.sequential-contrast-warning",
+        });
+      case "diverging":
+        return t({
+          id: "controls.custom-color-palettes.diverging-contrast-warning",
+        });
+      default:
+        const _exhaustiveCheck: never = type;
+        return _exhaustiveCheck;
+    }
+  };
+
   return (
     <Box className={classes.colorItem}>
       <Flex className={classes.colorItemContent}>
@@ -281,30 +301,7 @@ const ColorSelectionRow = (props: ColorSelectionRowProps) => {
         />
         <Flex gap={2} alignItems={"center"}>
           {warningContrast && (
-            <DisabledMessageIcon
-              message={
-                type === "categorical"
-                  ? t({
-                      id: "controls.custom-color-palettes.categorical-contrast-warning",
-                      message:
-                        "The selected color is difficult to read against a white background. Choose a color with higher contrast to improve accessibility.",
-                    })
-                  : t({
-                      id: "controls.custom-color-palettes.non-categorical-contrast-warning",
-                      values: {
-                        type: (
-                          <span
-                            style={{
-                              textTransform: "lowercase",
-                            }}
-                          >
-                            <Trans id={`controls.color.palette.${type}`} />
-                          </span>
-                        ),
-                      },
-                    })
-              }
-            />
+            <DisabledMessageIcon message={getContrastWarning()} />
           )}
           <ColorPickerMenu
             colorId={id}

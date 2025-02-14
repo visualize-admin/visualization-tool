@@ -596,6 +596,10 @@ msgid "controls.custom-color-palettes.create-palette"
 msgstr "Creare una tavolozza di colori"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.diverging-contrast-warning"
+msgstr "Il colore selezionato non ha un contrasto sufficiente. Considerare l'uso di un colore più scuro per una tavolozza divergente."
+
+#: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.end"
 msgstr "Colore finale"
 
@@ -608,8 +612,8 @@ msgid "controls.custom-color-palettes.mid"
 msgstr "Colore medio"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.non-categorical-contrast-warning"
-msgstr "Il colore selezionato non ha un contrasto sufficiente. Considerare l'utilizzo di un colore più scuro per una tavolozza {type}."
+msgid "controls.custom-color-palettes.sequential-contrast-warning"
+msgstr "Il colore selezionato non ha un contrasto sufficiente. Considerare l'utilizzo di un colore più scuro per una tavolozza sequenziale."
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes.set-values-apply"
