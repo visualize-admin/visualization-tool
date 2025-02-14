@@ -58,6 +58,7 @@ type ColorPaletteCreatorProps = {
   onRemove: (id: string) => void;
   onUpdate: (color: string, id: string) => void;
   colorValues: ColorItem[];
+  title: string;
   type: CustomPaletteType["type"];
 };
 
@@ -138,10 +139,11 @@ const SequentialColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
 };
 
 const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
-  const { onAdd, onRemove, onUpdate, colorValues } = props;
+  const { onAdd, onRemove, onUpdate, colorValues, title } = props;
   const classes = useStyles();
 
-  const addColorCondition = DIVERGING_MAX_ALLOWED_COLORS <= colorValues.length;
+  const addColorCondition =
+    DIVERGING_MAX_ALLOWED_COLORS <= colorValues.length || title.length === 0;
 
   const [startColorHex, endColorHex, midColorHex] = colorValues;
 
@@ -219,8 +221,11 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
 };
 
 const CategoricalColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
-  const { onAdd, onRemove, onUpdate, colorValues } = props;
+  const { onAdd, onRemove, onUpdate, colorValues, title } = props;
   const classes = useStyles();
+
+  const addColorCondition =
+    CATEGORICAL_MAX_ALLOWED_COLORS <= colorValues.length || title.length === 0;
 
   return (
     <>
@@ -242,7 +247,7 @@ const CategoricalColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
         variant="text"
         fullWidth
         className={classes.addColorButton}
-        disabled={CATEGORICAL_MAX_ALLOWED_COLORS <= colorValues.length}
+        disabled={addColorCondition}
         startIcon={<Icon name="add" />}
         onClick={() => onAdd()}
       >

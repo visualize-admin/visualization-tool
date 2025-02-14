@@ -204,6 +204,7 @@ const ProfileColorPaletteForm = ({
         </Box>
         <ColorPaletteCreator
           type={type}
+          title={titleInput}
           colorValues={colorValues}
           onRemove={removeColor}
           onUpdate={updateColor}
