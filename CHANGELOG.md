@@ -13,6 +13,11 @@ You can also check the
 
 - Features
   - Added option for hiding legend titles using a toggle switch
+- Fixes
+  - Color swatches inside the color picker dynamically adjust to the colors of
+    the selected palette
+  - All colors of a selected custom color palette are displayed when selected at
+    all times regardless of the color type
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to vercel previews for easier testing
