@@ -49,12 +49,14 @@ type ProfileColorPaletteProps = {
   onBack: () => void;
   palette?: CustomPaletteType;
   formMode: "add" | "edit";
+  customColorPalettes?: CustomPaletteType[];
 };
 
 const ProfileColorPaletteForm = ({
   onBack,
   palette,
   formMode,
+  customColorPalettes,
 }: ProfileColorPaletteProps) => {
   const [type, setType] = useState<CustomPaletteType["type"]>(
     palette?.type || "categorical"
@@ -69,6 +71,7 @@ const ProfileColorPaletteForm = ({
     diverging: getDefaultColorValues("diverging", palette?.colors || []),
   });
 
+  const [isNotAvailable, setIsNotAvailable] = useState(false);
   const [titleInput, setTitleInput] = useState<string>(palette?.name || "");
 
   const classes = useStyles();
@@ -122,19 +125,27 @@ const ProfileColorPaletteForm = ({
   }, []);
 
   const saveColorPalette = useEvent(async () => {
-    if (palette) {
-      await updateColorPalette.mutate({
-        paletteId: palette.paletteId,
-        name: titleInput,
-        colors: colorValues.map((c) => c.color),
-        type,
-      });
+    const titleExistsAlready = customColorPalettes?.find(
+      (palette) => palette.name === titleInput
+    );
+    if (titleExistsAlready) {
+      setIsNotAvailable(true);
     } else {
-      await createColorPalette.mutate({
-        name: titleInput,
-        colors: colorValues.map((c) => c.color),
-        type,
-      });
+      setIsNotAvailable(false);
+      if (palette) {
+        await updateColorPalette.mutate({
+          paletteId: palette.paletteId,
+          name: titleInput,
+          colors: colorValues.map((c) => c.color),
+          type,
+        });
+      } else {
+        await createColorPalette.mutate({
+          name: titleInput,
+          colors: colorValues.map((c) => c.color),
+          type,
+        });
+      }
     }
 
     onBack();
@@ -173,12 +184,23 @@ const ProfileColorPaletteForm = ({
         </Typography>
 
         <Box className={classes.inputContainer}>
-          <Input
-            label={t({ id: "controls.custom-color-palettes.title" })}
-            name="custom-color-palette-title"
-            value={titleInput}
-            onChange={(e) => setTitleInput(e.target.value)}
-          />
+          <Flex flexDirection={"column"}>
+            <Input
+              error={isNotAvailable}
+              label={t({ id: "controls.custom-color-palettes.title" })}
+              name="custom-color-palette-title"
+              value={titleInput}
+              onChange={(e) => setTitleInput(e.target.value)}
+            />
+            {isNotAvailable && (
+              <Typography color={"error.main"} variant="caption">
+                <Trans id="controls.custom-color-palettes.title-unavailable">
+                  This name is already in use. Please choose a unique name for
+                  your color palette.
+                </Trans>
+              </Typography>
+            )}
+          </Flex>
         </Box>
         <ColorPaletteCreator
           type={type}
