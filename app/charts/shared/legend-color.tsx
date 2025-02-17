@@ -15,10 +15,16 @@ import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import { useChartConfigFilters } from "@/config-utils";
 import {
+  AreaConfig,
+  BarConfig,
   ChartConfig,
+  ColumnConfig,
   GenericField,
   isSegmentInConfig,
+  LineConfig,
   MapConfig,
+  PieConfig,
+  ScatterPlotConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
 import {
@@ -161,16 +167,23 @@ export const LegendColor = memo(function LegendColor({
   interactive,
   showTitle,
   dimensionsById,
+  limits,
 }: {
-  chartConfig: ChartConfig;
+  chartConfig:
+    | AreaConfig
+    | BarConfig
+    | ColumnConfig
+    | LineConfig
+    | PieConfig
+    | ScatterPlotConfig;
   symbol: LegendSymbol;
-  dimensionsById?: DimensionsById;
   /** If the legend is based on measures, this function can be used to get the
    * corresponding measure to open the metadata panel.
    **/
   getLegendItemDimension?: (dimensionLabel: string) => Measure | undefined;
   interactive?: boolean;
   showTitle?: boolean;
+  dimensionsById?: DimensionsById;
 }) {
   const { colors, getColorLabel } = useChartState() as ColorsChartState;
   const values = colors.domain();
