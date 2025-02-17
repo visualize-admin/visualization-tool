@@ -48,6 +48,7 @@ import {
   isTableConfig,
   Limit,
   ReactGridLayoutType,
+  SingleColorField,
 } from "@/config-types";
 import { getChartConfig, makeMultiFilter } from "@/config-utils";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -69,6 +70,7 @@ import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive
 import { Dimension, isGeoDimension, isJoinByComponent } from "@/domain/data";
 import { getOriginalDimension, isJoinByCube } from "@/graphql/join";
 import { PossibleFilterValue } from "@/graphql/query-hooks";
+import { DEFAULT_CATEGORICAL_PALETTE_ID } from "@/palettes";
 import { findInHierarchy } from "@/rdf/tree-utils";
 import { theme } from "@/themes/federal";
 import { getCachedComponents } from "@/urql-cache";
@@ -450,17 +452,19 @@ export const handleChartFieldDeleted = (
     );
     draft.chartConfigs[index] = newConfig;
 
-    if (
-      action.value.field === "segment" &&
-      chartConfig.interactiveFiltersConfig
-    ) {
-      chartConfig.interactiveFiltersConfig.calculation.active = false;
-      chartConfig.interactiveFiltersConfig.calculation.type = "identity";
+    if (action.value.field === "segment") {
+      if (chartConfig.interactiveFiltersConfig) {
+        chartConfig.interactiveFiltersConfig.calculation.active = false;
+        chartConfig.interactiveFiltersConfig.calculation.type = "identity";
+      }
+
       if (isColorInConfig(chartConfig)) {
-        chartConfig.fields.color.type = "single";
-        if (chartConfig.fields.color.type === "single") {
-          chartConfig.fields.color.color = theme.palette.primary.main;
-        }
+        const newColorField: SingleColorField = {
+          type: "single",
+          paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
+          color: theme.palette.primary.main,
+        };
+        chartConfig.fields.color = newColorField;
       }
     }
   }
