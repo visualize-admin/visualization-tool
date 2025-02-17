@@ -15,6 +15,10 @@ import { Dimension, Measure, ObservationValue } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { mkJoinById } from "@/graphql/join";
 import { Limit } from "@/rdf/limits";
+import {
+  useChartInteractiveFilters,
+  useDashboardInteractiveFilters,
+} from "@/stores/interactive-filters";
 
 const isFilterValueSingle = (v: FilterValue): v is FilterValueSingle => {
   return v.type === "single";
@@ -244,7 +248,35 @@ export const useLimits = ({
     measureLimit: Limit;
   }[];
 } => {
-  const filters = useChartConfigFilters(chartConfig);
+  const configFilters = useChartConfigFilters(chartConfig);
+  const chartInteractiveFilters = useChartInteractiveFilters(
+    (d) => d.dataFilters
+  );
+  const dashboardInteractiveFilters = useDashboardInteractiveFilters();
+
+  const filters = useMemo(() => {
+    const filters: Filters = {};
+    for (const [k, v] of Object.entries(configFilters)) {
+      filters[k] = v;
+    }
+
+    for (const [k, v] of Object.entries(chartInteractiveFilters)) {
+      filters[k] = v;
+    }
+
+    for (const [getState] of Object.values(
+      dashboardInteractiveFilters.stores
+    )) {
+      const state = getState();
+
+      for (const [k, v] of Object.entries(state.dataFilters)) {
+        filters[k] = v;
+      }
+    }
+
+    return filters;
+  }, [configFilters, chartInteractiveFilters, dashboardInteractiveFilters]);
+
   const measure = getLimitMeasure({ chartConfig, measures });
   const relatedDimension = getRelatedLimitDimension({
     chartConfig,
