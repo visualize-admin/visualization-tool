@@ -142,7 +142,7 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
   const { onAdd, onRemove, onUpdate, colorValues, title } = props;
   const classes = useStyles();
 
-  const addColorCondition =
+  const disabled =
     DIVERGING_MAX_ALLOWED_COLORS <= colorValues.length || title.length === 0;
 
   const [startColorHex, endColorHex, midColorHex] = colorValues;
@@ -210,7 +210,7 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
         variant="text"
         fullWidth
         className={classes.addColorButton}
-        disabled={addColorCondition}
+        disabled={disabled}
         startIcon={<Icon name="add" />}
         onClick={() => onAdd()}
       >
@@ -224,7 +224,7 @@ const CategoricalColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
   const { onAdd, onRemove, onUpdate, colorValues, title } = props;
   const classes = useStyles();
 
-  const addColorCondition =
+  const disabled =
     CATEGORICAL_MAX_ALLOWED_COLORS <= colorValues.length || title.length === 0;
 
   return (
@@ -247,7 +247,7 @@ const CategoricalColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
         variant="text"
         fullWidth
         className={classes.addColorButton}
-        disabled={addColorCondition}
+        disabled={disabled}
         startIcon={<Icon name="add" />}
         onClick={() => onAdd()}
       >
