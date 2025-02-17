@@ -1091,7 +1091,6 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    // TODO: Make sure to keep limit in sync with currently selected measure and filters!
     case "LIMIT_SET":
       if (isConfiguring(draft)) {
         const {

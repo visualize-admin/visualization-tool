@@ -1,8 +1,15 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Stack, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  Stack,
+  Switch as MUISwitch,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { groups } from "d3-array";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentId } from "@/charts";
@@ -20,10 +27,11 @@ import {
 } from "@/charts/map/constants";
 import { getMap } from "@/charts/map/ref";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
-import { LegendSymbol } from "@/charts/shared/legend-color";
+import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
 import {
   FieldSetLegend,
+  Label,
   Radio,
   Select,
   SelectOption,
@@ -53,7 +61,12 @@ import {
   MapConfig,
   SortingType,
 } from "@/config-types";
-import { getChartConfig } from "@/config-utils";
+import {
+  getChartConfig,
+  getMaybeValidChartConfigLimit,
+  getRelatedLimitDimension,
+  useChartConfigFilters,
+} from "@/config-utils";
 import { ColorPalette } from "@/configurator/components/chart-controls/color-palette";
 import { ColorRampField } from "@/configurator/components/chart-controls/color-ramp";
 import {
@@ -102,6 +115,7 @@ import {
   NumericalMeasure,
   Observation,
 } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
@@ -110,6 +124,14 @@ import {
 import { isJoinByCube } from "@/graphql/join";
 import SvgIcInfoOutline from "@/icons/components/IcInfoOutline";
 import { useLocale } from "@/locales/use-locale";
+import { Limit } from "@/rdf/limits";
+import useEvent from "@/utils/use-event";
+
+const ColorPickerMenu = dynamic(
+  () =>
+    import("./chart-controls/color-picker").then((mod) => mod.ColorPickerMenu),
+  { ssr: false }
+);
 
 export const ChartOptionsSelector = ({
   state,
@@ -429,6 +451,11 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 
   const [, dispatch] = useConfiguratorState(isConfiguring);
 
+  const relatedLimitDimension = getRelatedLimitDimension({
+    chartConfig,
+    dimensions,
+  });
+
   return (
     <div
       key={`control-panel-${encoding.field}`}
@@ -608,6 +635,13 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           measures={measures}
         />
       )}
+      {isMeasure(component) && relatedLimitDimension ? (
+        <ChartLimits
+          chartConfig={chartConfig}
+          measure={component}
+          relatedDimension={relatedLimitDimension}
+        />
+      ) : null}
       {encoding.options?.imputation?.shouldShow(chartConfig, observations) && (
         <ChartImputation chartConfig={chartConfig} />
       )}
@@ -738,6 +772,206 @@ const ChartLayoutOptions = ({
             />
           )}
         </>
+      </ControlSectionContent>
+    </ControlSection>
+  ) : null;
+};
+
+const ChartLimits = ({
+  chartConfig,
+  measure,
+  relatedDimension,
+}: {
+  chartConfig: ChartConfig;
+  measure: Measure;
+  relatedDimension: Dimension;
+}) => {
+  const [_, dispatch] = useConfiguratorState(isConfiguring);
+  const filters = useChartConfigFilters(chartConfig);
+  const onToggle = useEvent((checked: boolean, limit: Limit) => {
+    const { validRelated, wouldBeValid } = getMaybeValidChartConfigLimit({
+      chartConfig,
+      measureId: measure.id,
+      limit,
+      relatedDimension,
+      filters,
+    });
+
+    if (!validRelated || !wouldBeValid) {
+      return;
+    }
+
+    const commonDispatchProps = {
+      measureId: measure.id,
+      relatedDimensionId: relatedDimension.id,
+      relatedDimensionValue: validRelated.dimensionValue,
+    };
+
+    if (checked) {
+      dispatch({
+        type: "LIMIT_SET",
+        value: {
+          ...commonDispatchProps,
+          color: "red",
+          lineType: "solid",
+        },
+      });
+    } else {
+      dispatch({
+        type: "LIMIT_REMOVE",
+        value: commonDispatchProps,
+      });
+    }
+  });
+
+  const availableLimitOptions = useMemo(() => {
+    return measure.limits
+      .map((limit) => {
+        const { limit: maybeLimit, wouldBeValid } =
+          getMaybeValidChartConfigLimit({
+            chartConfig,
+            measureId: measure.id,
+            limit,
+            relatedDimension: relatedDimension,
+            filters,
+          });
+
+        if (!wouldBeValid) {
+          return;
+        }
+
+        const { color = "white", lineType = "solid" } = maybeLimit ?? {};
+
+        return {
+          limit,
+          maybeLimit,
+          color,
+          lineType,
+        };
+      })
+      .filter(truthy);
+  }, [chartConfig, relatedDimension, filters, measure.id, measure.limits]);
+
+  return availableLimitOptions.length > 0 ? (
+    <ControlSection collapse>
+      <SubsectionTitle iconName="target">
+        <Trans id="controls.section.targets-and-limit-values">
+          Targets & limit values
+        </Trans>
+      </SubsectionTitle>
+      <ControlSectionContent component="fieldset">
+        {availableLimitOptions.map(
+          ({ maybeLimit, limit, color, lineType }, i) => {
+            return (
+              <Box key={i} sx={{ mb: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
+                    mb: limit.type === "range" ? 4 : 0,
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+                    <MUISwitch
+                      id={`limit-${i}`}
+                      checked={!!maybeLimit}
+                      onChange={(e) => {
+                        onToggle(e.target.checked, limit);
+                      }}
+                    />
+                    <Label htmlFor={`limit-${i}`}>
+                      <Trans id="controls.section.targets-and-limit-values.show-target">
+                        Show target
+                      </Trans>
+                    </Label>
+                  </Box>
+                  <Flex
+                    sx={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      width: "100%",
+                    }}
+                  >
+                    <LegendItem
+                      item={limit.name}
+                      color={color}
+                      symbol="square"
+                      usage="colorPicker"
+                    />
+                    <ColorPickerMenu
+                      colors={[]}
+                      selectedColor={color}
+                      onChange={(color) => {
+                        dispatch({
+                          type: "LIMIT_SET",
+                          value: {
+                            measureId: measure.id,
+                            relatedDimensionId: relatedDimension.id,
+                            relatedDimensionValue: maybeLimit!.dimensionValue,
+                            color,
+                            lineType,
+                          },
+                        });
+                      }}
+                      disabled={!maybeLimit}
+                    />
+                  </Flex>
+                </Box>
+                {limit.type === "range" ? (
+                  <div>
+                    <Typography variant="body2" sx={{ mb: 2 }}>
+                      <Trans id="controls.section.targets-and-limit-values.line-type">
+                        Select line type
+                      </Trans>
+                    </Typography>
+                    <Radio
+                      name={`limit-${i}-line-type-solid`}
+                      label={t({ id: "controls.line.solid", message: "Solid" })}
+                      value="solid"
+                      checked={lineType === "solid"}
+                      onChange={() => {
+                        dispatch({
+                          type: "LIMIT_SET",
+                          value: {
+                            measureId: measure.id,
+                            relatedDimensionId: relatedDimension.id,
+                            relatedDimensionValue: maybeLimit!.dimensionValue,
+                            color,
+                            lineType: "solid",
+                          },
+                        });
+                      }}
+                      disabled={!maybeLimit}
+                    />
+                    <Radio
+                      name={`limit-${i}-line-type-dashed`}
+                      label={t({
+                        id: "controls.line.dashed",
+                        message: "Dashed",
+                      })}
+                      value="dashed"
+                      checked={lineType === "dashed"}
+                      onChange={() => {
+                        dispatch({
+                          type: "LIMIT_SET",
+                          value: {
+                            measureId: measure.id,
+                            relatedDimensionId: relatedDimension.id,
+                            relatedDimensionValue: maybeLimit!.dimensionValue,
+                            color,
+                            lineType: "dashed",
+                          },
+                        });
+                      }}
+                      disabled={!maybeLimit}
+                    />
+                  </div>
+                ) : null}
+              </Box>
+            );
+          }
+        )}
       </ControlSectionContent>
     </ControlSection>
   ) : null;
