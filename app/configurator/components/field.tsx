@@ -99,14 +99,12 @@ import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
-import { useUser } from "@/login/utils";
 import { getPalette } from "@/palettes";
 import { assert } from "@/utils/assert";
-import { getCustomColorPalettes } from "@/utils/chart-config/api";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
-import { useFetchData } from "@/utils/use-fetch-data";
+import { useUserPalettes } from "@/utils/use-user-palettes";
 
 const ColorPickerMenu = dynamic(
   () =>
@@ -793,6 +791,7 @@ const useMultiFilterColorPicker = (
 
   const palette = useMemo(() => {
     const paletteId = get(chartConfig, `fields["${colorField}"].paletteId`);
+
     return getPalette({
       paletteId,
       fallbackPalette: customColorPalettes?.find(
@@ -825,15 +824,7 @@ export const MultiFilterFieldColorPicker = ({
   label: string;
   symbol: LegendSymbol;
 }) => {
-  const user = useUser();
-
-  const { data: customColorPalettes } = useFetchData({
-    queryKey: ["colorPalettes", user?.id],
-    queryFn: getCustomColorPalettes,
-    options: {
-      enable: !!user?.id,
-    },
-  });
+  const { data: customColorPalettes } = useUserPalettes();
 
   const { color, checked, palette, onChange } = useMultiFilterColorPicker(
     value,
@@ -909,9 +900,15 @@ export const ColorPickerField = ({
     [locale, dispatch, field, path]
   );
 
+  const { data: customColorPalettes } = useUserPalettes();
+  const paletteId = get(chartConfig, `fields["${field}"].paletteId`);
+
   const color = get(chartConfig, `fields["${field}"].${path}`);
   const palette = getPalette({
-    paletteId: get(chartConfig, `fields["${field}"].paletteId`),
+    paletteId,
+    fallbackPalette: customColorPalettes?.find(
+      (palette) => palette.paletteId === paletteId
+    )?.colors,
   });
 
   return (
