@@ -733,6 +733,14 @@ msgstr "Hoch"
 msgid "controls.layout.vertical"
 msgstr "Vertikal"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.line.dashed"
+msgstr "Gestrichelt"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.line.solid"
+msgstr "Solide"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.measure"
 msgstr "Messwert"
@@ -977,6 +985,18 @@ msgstr "Tabellensortierung"
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.section.tableoptions"
 msgstr "Tabellenoptionen"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values"
+msgstr "Zielvorgaben und Grenzwerte"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.line-type"
+msgstr "Leitungstyp auswählen"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.show-target"
+msgstr "Ziel anzeigen"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -1604,7 +1624,7 @@ msgstr "Logo der Schweizerischen Eidgenossenschaft"
 
 #: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.label-placeholder"
-msgstr "Etikett..."
+msgstr "Label..."
 
 #: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.url-placeholder"

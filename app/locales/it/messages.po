@@ -733,6 +733,14 @@ msgstr "Alto"
 msgid "controls.layout.vertical"
 msgstr "Verticale"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.line.dashed"
+msgstr "Tratteggiato"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.line.solid"
+msgstr "Solido"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.measure"
 msgstr "Misura"
@@ -977,6 +985,18 @@ msgstr "Ordinamento della tabella"
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.section.tableoptions"
 msgstr "Opzioni della tabella"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values"
+msgstr "Obiettivi e valori limite"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.line-type"
+msgstr "Selezionare il tipo di linea"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.show-target"
+msgstr "Mostra bersaglio"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
