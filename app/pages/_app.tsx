@@ -68,7 +68,7 @@ export default function App({
   const shouldShowGQLDebug =
     process.env.NODE_ENV === "development" || flag("debug");
 
-  useDebugShortcut({ enable: shouldShowGQLDebug });
+  useDebugShortcut({ enable: true });
 
   return (
     <>
