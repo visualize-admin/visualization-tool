@@ -59,10 +59,19 @@ const CustomColorPicker = ({
     const value = e.target.value;
 
     if (value.length <= 7) {
-      setColor((p) => ({ ...p, hex: value }));
+      setColor((p) => ({
+        ...p,
+        hex: value,
+      }));
 
       if (value.length >= 3) {
-        setColor((p) => ({ ...p, hsva: { ...p.hsva, hex: hexToHsva(value) } }));
+        setColor((p) => ({
+          ...p,
+          hsva: {
+            ...p.hsva,
+            ...hexToHsva(value),
+          },
+        }));
       }
     }
   }, []);
@@ -148,9 +157,9 @@ const CustomColorPicker = ({
             showColorPreview={false}
             showEditableInput={false}
             color={hsva}
-            onChange={(color) =>
-              setColor({ hsva: { ...hsva, ...color.hsva }, hex: color.hex })
-            }
+            onChange={(color) => {
+              setColor({ hsva: { ...hsva, ...color.hsva }, hex: color.hex });
+            }}
           />
         </Flex>
       </Flex>
