@@ -1,7 +1,6 @@
 import qs from "qs";
 import { useEffect, useState } from "react";
-
-import { useKeyboardShortcut } from "@/utils/use-keyboard-shortcuts";
+import useKonami, { UseKonamiArgs } from "use-konami";
 
 import { flag, FLAG_PREFIX } from "./flag";
 import { FlagName } from "./types";
@@ -44,17 +43,23 @@ export function useFlags() {
   return flags;
 }
 
-export const useDebugShortcut = (enable?: boolean) => {
-  useKeyboardShortcut(
-    {
-      keys: ["t", "d"],
-      ctrlKey: true,
+type UseDebugShortcutProps = {
+  enable?: boolean;
+};
+
+export const useDebugShortcut = ({
+  enable,
+}: UseDebugShortcutProps = {}): void => {
+  const konamiConfig: UseKonamiArgs = {
+    sequence: ["t", "o", "g", "g", "l", "e", "d", "e", "b", "u", "g"],
+    onUnlock: () => {
+      if (enable) {
+        addDebugFlag();
+      }
     },
-    (event) => {
-      event.preventDefault();
-      enable && addDebugFlag();
-    }
-  );
+  };
+
+  useKonami(konamiConfig);
 };
 
 const addDebugFlag = () => {
