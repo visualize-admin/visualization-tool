@@ -58,15 +58,6 @@ export const Swatch = ({
   );
 };
 
-type Props = {
-  selectedColor: string;
-  colors: ColorItem[] | readonly string[];
-  onChange?: (color: string) => void;
-  disabled?: boolean;
-  colorId?: string;
-  onRemove?: (colorId: string) => void;
-};
-
 const ColorPickerButton = styled(Button)({
   padding: 0,
   minWidth: "auto",
@@ -97,24 +88,37 @@ const ColorPickerBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-export const ColorPickerMenu = (props: Props) => {
-  const { disabled, onChange, selectedColor, onRemove, colorId } = props;
+export const ColorPickerMenu = ({
+  selectedHexColor,
+  colors,
+  onChange,
+  disabled,
+  colorId,
+  onRemove,
+}: {
+  selectedHexColor: string;
+  colors: ColorItem[] | readonly string[];
+  onChange?: (color: string) => void;
+  disabled?: boolean;
+  colorId?: string;
+  onRemove?: (colorId: string) => void;
+}) => {
   const { isOpen, open, close } = useDisclosure();
   const buttonRef = useRef(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
   const initialSelected = useMemo(() => {
-    return { ...hexToHsva(selectedColor), id: colorId ?? createColorId() };
-  }, [selectedColor, colorId]);
+    return { ...hexToHsva(selectedHexColor), id: colorId ?? createColorId() };
+  }, [selectedHexColor, colorId]);
 
   const handleColorChange = useCallback(
     (color) => {
       const newHex = hsvaToHex(color);
-      if (newHex !== selectedColor) {
+      if (newHex !== selectedHexColor) {
         onChange?.(newHex);
       }
     },
-    [onChange, selectedColor]
+    [onChange, selectedHexColor]
   );
 
   return (
@@ -172,12 +176,9 @@ export const ColorPickerMenu = (props: Props) => {
             defaultSelection={initialSelected}
             onChange={handleColorChange}
             colorSwatches={
-              (typeof props.colors[0] === "string"
-                ? props.colors.map((color) => ({
-                    color: color,
-                    id: createColorId(),
-                  }))
-                : props.colors) as ColorItem[]
+              (typeof colors[0] === "string"
+                ? colors.map((color) => ({ color: color, id: createColorId() }))
+                : colors) as ColorItem[]
             }
           />
         </Box>

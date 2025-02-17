@@ -286,7 +286,7 @@ const ColorSelectionRow = (props: ColorSelectionRowProps) => {
           <ColorPickerMenu
             colorId={id}
             colors={colorValues}
-            selectedColor={color}
+            selectedHexColor={color}
             onChange={(color) => onUpdate(color, id)}
             onRemove={onRemove}
           />

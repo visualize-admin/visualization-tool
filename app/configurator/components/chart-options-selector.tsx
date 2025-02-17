@@ -812,7 +812,7 @@ const ChartLimits = ({
         type: "LIMIT_SET",
         value: {
           ...commonDispatchProps,
-          color: "red",
+          color: "#ff0000",
           lineType: "solid",
         },
       });
@@ -840,7 +840,7 @@ const ChartLimits = ({
           return;
         }
 
-        const { color = "white", lineType = "solid" } = maybeLimit ?? {};
+        const { color = "#ffffff", lineType = "solid" } = maybeLimit ?? {};
 
         return {
           limit,
@@ -901,7 +901,7 @@ const ChartLimits = ({
                     />
                     <ColorPickerMenu
                       colors={[]}
-                      selectedColor={color}
+                      selectedHexColor={color}
                       onChange={(color) => {
                         dispatch({
                           type: "LIMIT_SET",
