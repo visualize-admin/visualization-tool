@@ -311,7 +311,7 @@ type NonNullableValues<T, K extends keyof T> = Omit<T, K> & {
   [P in K]-?: NonNullable<T[P]>;
 };
 
-export type CubeDimensionWithPath = NonNullableValues<CubeDimension, "path">;
+type CubeDimensionWithPath = NonNullableValues<CubeDimension, "path">;
 
 const isObservationDimension = (
   dim: CubeDimension
