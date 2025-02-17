@@ -151,6 +151,7 @@
     "urql": "^2.0.5",
     "use-debounce": "^7.0.0",
     "use-immer": "^0.5.1",
+    "use-konami": "^1.0.1",
     "use-sync-external-store": "^1.2.0",
     "wellknown": "^0.5.0",
     "wonka": "4.0.15",
