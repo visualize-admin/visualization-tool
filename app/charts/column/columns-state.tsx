@@ -61,6 +61,7 @@ export type ColumnsState = CommonChartState &
     xScaleInteraction: ScaleBand<string>;
     yScale: ScaleLinear<number, number>;
     colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
   };
 
@@ -82,6 +83,7 @@ const useColumnsState = (
     getMinY,
     getYErrorRange,
     getFormattedYUncertainty,
+    getSegmentLabel,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -281,6 +283,7 @@ const useColumnsState = (
 
   return {
     colors,
+    getColorLabel: getSegmentLabel,
     chartType: "column",
     bounds,
     chartData,
