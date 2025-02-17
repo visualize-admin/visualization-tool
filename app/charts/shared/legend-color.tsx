@@ -1,5 +1,5 @@
 import { t } from "@lingui/macro";
-import { Box, Theme, Typography } from "@mui/material";
+import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import orderBy from "lodash/orderBy";
@@ -23,7 +23,6 @@ import {
 } from "@/configurator";
 import {
   Component,
-  Dimension,
   isOrdinalDimension,
   isOrdinalMeasure,
   Measure,
@@ -124,21 +123,16 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => {
   };
 });
 
-const emptyObj = {};
-
 const useLegendGroups = ({
   chartConfig,
-  segmentDimension,
   title,
   values,
 }: {
   chartConfig: ChartConfig;
-  segmentDimension?: Dimension;
   title?: string;
   values: string[];
 }) => {
   const configState = useReadOnlyConfiguratorState();
-  const filters = useChartConfigFilters(chartConfig);
 
   if (
     configState.state === "INITIAL" ||
@@ -150,26 +144,25 @@ const useLegendGroups = ({
   const segmentField = (
     isSegmentInConfig(chartConfig) ? chartConfig.fields.segment : null
   ) as GenericField | null | undefined;
-  const segmentFilters = segmentField?.componentId
-    ? filters[segmentField.componentId]
-    : null;
-  const segmentValues =
-    segmentFilters?.type === "multi" ? segmentFilters.values : emptyObj;
 
   return useMemo(() => {
     return getLegendGroups({
       title,
       values,
-      hierarchy: segmentDimension?.hierarchy,
       sort: !!(segmentField && "sorting" in segmentField),
-      labelIris: segmentValues,
     });
-  }, [title, values, segmentDimension?.hierarchy, segmentField, segmentValues]);
+  }, [title, values, segmentField]);
 };
 
-type LegendColorProps = {
+export const LegendColor = memo(function LegendColor({
+  chartConfig,
+  symbol,
+  getLegendItemDimension,
+  interactive,
+  showTitle,
+  dimensionsById,
+}: {
   chartConfig: ChartConfig;
-  segmentDimension?: Dimension;
   symbol: LegendSymbol;
   dimensionsById?: DimensionsById;
   /** If the legend is based on measures, this function can be used to get the
@@ -178,51 +171,41 @@ type LegendColorProps = {
   getLegendItemDimension?: (dimensionLabel: string) => Measure | undefined;
   interactive?: boolean;
   showTitle?: boolean;
-};
-
-export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
-  const {
-    chartConfig,
-    segmentDimension,
-    symbol,
-    getLegendItemDimension,
-    interactive,
-    showTitle,
-    dimensionsById,
-  } = props;
+}) {
   const { colors, getColorLabel } = useChartState() as ColorsChartState;
   const values = colors.domain();
-  const groups = useLegendGroups({ chartConfig, segmentDimension, values });
+  const groups = useLegendGroups({ chartConfig, values });
+  const segmentComponent =
+    isSegmentInConfig(chartConfig) &&
+    chartConfig.fields.segment &&
+    dimensionsById
+      ? dimensionsById[chartConfig.fields.segment.componentId]
+      : null;
 
   return (
-    <Box>
-      {showTitle &&
-        isSegmentInConfig(chartConfig) &&
-        chartConfig.fields.segment &&
-        dimensionsById && (
-          <OpenMetadataPanelWrapper
-            component={dimensionsById[chartConfig.fields.segment.componentId]}
+    <div>
+      {showTitle && segmentComponent && (
+        <OpenMetadataPanelWrapper component={segmentComponent}>
+          <Typography
+            data-testId="legendTitle"
+            component="div"
+            variant="caption"
+            color="primary.main"
           >
-            <Typography
-              data-testId="legendTitle"
-              component="div"
-              variant="caption"
-              color="primary.main"
-            >
-              {dimensionsById[chartConfig.fields.segment.componentId]?.label}
-            </Typography>
-          </OpenMetadataPanelWrapper>
-        )}
+            {segmentComponent.label}
+          </Typography>
+        </OpenMetadataPanelWrapper>
+      )}
       <LegendColorContent
         groups={groups}
-        getColor={(v) => colors(v)}
+        getColor={colors}
         getLabel={getColorLabel}
         getItemDimension={getLegendItemDimension}
         symbol={symbol}
         interactive={interactive}
         numberOfOptions={values.length}
       />
-    </Box>
+    </div>
   );
 });
 
