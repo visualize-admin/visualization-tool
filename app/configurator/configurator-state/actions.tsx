@@ -76,7 +76,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "COLOR_MAPPING_UPDATED";
+      type: "COLOR_FIELD_UPDATED";
       value: {
         locale: Locale;
         path: string;
@@ -85,7 +85,7 @@ export type ConfiguratorStateAction =
           | string
           | number
           | boolean
-          | Record<string, string | number | boolean>
+          | Record<string, string | number | boolean | string[]>
           | (string | number | boolean)[]
           | (string | number | boolean)[][]
           | undefined;
@@ -138,6 +138,10 @@ export type ConfiguratorStateAction =
   | {
       type: "INTERACTIVE_FILTER_CHANGED";
       value: InteractiveFiltersConfig;
+    }
+  | {
+      type: "CHART_SHOW_LEGEND_TITLE_CHANGED";
+      value: boolean;
     }
   | {
       type: "CHART_CONFIG_REPLACED";

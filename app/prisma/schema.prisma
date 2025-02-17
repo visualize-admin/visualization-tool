@@ -35,6 +35,7 @@ model User {
   sub    String?  @unique @db.VarChar(64)
   name   String?  @db.VarChar(100)
   Config Config[] @relation()
+  Palette Palette[]  @relation()
 
   @@map("users")
 }
@@ -56,4 +57,24 @@ model OldMigrations {
   executed_at DateTime? @default(now()) @db.Timestamp(6)
 
   @@map("migrations")
+}
+
+enum PALETTE_TYPE {
+  SEQUENTIAL
+  DIVERGING
+  CATEGORICAL
+}
+
+model Palette {
+  paletteId   String    @id @default(uuid())
+  name        String    @unique @db.VarChar(100)
+  type        PALETTE_TYPE  
+  colors      String[] 
+  created_at  DateTime  @default(now()) @db.Timestamp(6)
+  updated_at  DateTime  @default(now()) @db.Timestamp(6)
+  
+  user     User?      @relation(fields: [user_id], references: [id])
+  user_id  Int?
+
+  @@map("palettes")
 }

@@ -11,7 +11,13 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Added option for hiding legend titles using a toggle switch
+- Fixes
+  - Fixed button translations for custom color palette update and create button.
+- Maintenance
+  - Added authentication method to e2e tests
+  - Added authentication to vercel previews for easier testing
 
 # [5.2.4] - 2025-02-06
 
@@ -89,6 +95,10 @@ Nothing yet.
   - Downloading images of bar charts now includes the whole chart, not just the
     visible part
   - Bar charts are now hidden behind a an enable-experimental-features flag
+  - Users can now create custom color palettes in the editor and save it to
+    their profile where they can update, add, delete and manage their colors
+    palettes (available for categorical, sequential and diverging types, fully
+    available for all chart except tables)
 - Fixes
   - Preview via API now works correctly for map charts
   - GraphQL debug panel now displays the queries correctly when in debug mode

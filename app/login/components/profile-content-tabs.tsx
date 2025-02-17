@@ -11,6 +11,8 @@ import { ProfileVisualizationsTable } from "@/login/components/profile-tables";
 import { useRootStyles } from "@/login/utils";
 import useEvent from "@/utils/use-event";
 
+import { ProfileColorPaletteContent } from "./color-palettes/profile-color-palette-content";
+
 const useStyles = makeStyles<Theme>((theme) => ({
   section: {
     borderBottom: 1,
@@ -83,18 +85,27 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
               <Tab
                 className={classes.tab}
                 label={t({
-                  id: "login.profile.my-published-visualizations",
-                  message: "My published visualizations",
+                  id: "login.profile.my-drafts",
+                  message: "My Drafts",
                 })}
-                value="published"
+                value="drafts"
               />
               <Tab
                 className={classes.tab}
                 label={t({
-                  id: "login.profile.my-drafts",
-                  message: "My draft visualizations",
+                  id: "login.profile.my-published-visualizations",
+                  message: "My Visualizations",
                 })}
-                value="drafts"
+                value="published"
+              />
+              <Tab
+                data-testId="color-palettes-tab"
+                className={classes.tab}
+                label={t({
+                  id: "login.profile.my-color-palettes",
+                  message: "My Color Palettes",
+                })}
+                value="palettes"
               />
             </TabList>
           </Box>
@@ -108,7 +119,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           <ProfileVisualizationsTable
             title={t({
               id: "login.profile.my-drafts",
-              message: "My draft visualizations",
+              message: "My Drafts",
             })}
             userId={userId}
             userConfigs={draftConfigs}
@@ -118,7 +129,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           <ProfileVisualizationsTable
             title={t({
               id: "login.profile.my-published-visualizations",
-              message: "My published visualizations",
+              message: "My Visualizations",
             })}
             userId={userId}
             userConfigs={publishedConfigs}
@@ -132,7 +143,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           <ProfileVisualizationsTable
             title={t({
               id: "login.profile.my-published-visualizations",
-              message: "My published visualizations",
+              message: "My Visualizations",
             })}
             userId={userId}
             userConfigs={publishedConfigs}
@@ -144,10 +155,21 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
           <ProfileVisualizationsTable
             title={t({
               id: "login.profile.my-drafts",
-              message: "My draft visualizations",
+              message: "My Drafts",
             })}
             userId={userId}
             userConfigs={draftConfigs}
+          />
+        </Box>
+      </TabPanel>
+      <TabPanel className={classes.tabPanel} value="palettes">
+        <Box className={classes.tabPanelContent}>
+          <ProfileColorPaletteContent
+            title={t({
+              id: "login.profile.my-color-palettes",
+              message: "My Color Palettes",
+            })}
+            userId={userId}
           />
         </Box>
       </TabPanel>

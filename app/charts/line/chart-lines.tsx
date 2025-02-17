@@ -30,7 +30,7 @@ export const ChartLinesVisualization = (
 };
 
 const ChartLines = memo((props: ChartProps<LineConfig>) => {
-  const { chartConfig, dimensions, measures } = props;
+  const { chartConfig, dimensions, measures, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const limitMeasure = getLimitMeasure({ chartConfig, measures });
   const relatedLimitDimension = getRelatedLimitDimension({
@@ -75,9 +75,11 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
       {fields.segment && (
         <ChartControlsContainer>
           <LegendColor
+            dimensionsById={dimensionsById}
             chartConfig={chartConfig}
             symbol="line"
             interactive={interactiveFiltersConfig?.legend.active}
+            showTitle={fields.segment && fields.segment.showTitle}
           />
         </ChartControlsContainer>
       )}

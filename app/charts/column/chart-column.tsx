@@ -44,7 +44,7 @@ export const ChartColumnsVisualization = (
 };
 
 const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
-  const { chartConfig, dimensions, measures } = props;
+  const { chartConfig, dimensions, measures, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
   const limitMeasure = getLimitMeasure({ chartConfig, measures });
@@ -80,11 +80,13 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               />
             )}
             <LegendColor
+              dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
               interactive={
                 fields.segment && interactiveFiltersConfig?.legend.active
               }
+              showTitle={fields.segment && fields.segment.showTitle}
             />
           </ChartControlsContainer>
         </StackedColumnsChart>
@@ -111,11 +113,13 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               />
             )}
             <LegendColor
+              dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
               interactive={
                 fields.segment && interactiveFiltersConfig?.legend.active
               }
+              showTitle={fields.segment && fields.segment.showTitle}
             />
           </ChartControlsContainer>
         </GroupedColumnChart>

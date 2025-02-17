@@ -1,4 +1,5 @@
 /* eslint-disable no-redeclare */
+import { PALETTE_TYPE } from "@prisma/client";
 import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
@@ -284,6 +285,7 @@ const ColumnSegmentField = t.intersection([
   GenericField,
   SortingField,
   t.type({ type: ChartSubType }),
+  t.partial({ showTitle: t.boolean }),
 ]);
 export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
 
@@ -320,12 +322,17 @@ const ColumnConfig = t.intersection([
 export type ColumnFields = t.TypeOf<typeof ColumnFields>;
 export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
 
-const LineSegmentField = t.intersection([GenericField, SortingField]);
+const LineSegmentField = t.intersection([
+  GenericField,
+  SortingField,
+  t.partial({ showTitle: t.boolean }),
+]);
 
 const BarSegmentField = t.intersection([
   GenericField,
   SortingField,
   t.type({ type: ChartSubType }),
+  t.partial({ showTitle: t.boolean }),
 ]);
 export type BarSegmentField = t.TypeOf<typeof BarSegmentField>;
 
@@ -391,7 +398,11 @@ const LineConfig = t.intersection([
 export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
 
-const AreaSegmentField = t.intersection([GenericField, SortingField]);
+const AreaSegmentField = t.intersection([
+  GenericField,
+  SortingField,
+  t.partial({ showTitle: t.boolean }),
+]);
 export type AreaSegmentField = t.TypeOf<typeof AreaSegmentField>;
 
 const ImputationType = t.union([
@@ -429,7 +440,10 @@ const AreaConfig = t.intersection([
 export type AreaFields = t.TypeOf<typeof AreaFields>;
 export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
-const ScatterPlotSegmentField = GenericField;
+const ScatterPlotSegmentField = t.intersection([
+  GenericField,
+  t.partial({ showTitle: t.boolean }),
+]);
 export type ScatterPlotSegmentField = t.TypeOf<typeof ScatterPlotSegmentField>;
 
 const ScatterPlotFields = t.intersection([
@@ -457,7 +471,11 @@ const ScatterPlotConfig = t.intersection([
 export type ScatterPlotFields = t.TypeOf<typeof ScatterPlotFields>;
 export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 
-const PieSegmentField = t.intersection([GenericField, SortingField]);
+const PieSegmentField = t.intersection([
+  GenericField,
+  SortingField,
+  t.partial({ showTitle: t.boolean }),
+]);
 export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
 
 const PieFields = t.intersection([
@@ -548,6 +566,39 @@ const CustomPalette = t.type({
   name: t.string,
   colors: t.array(t.string),
 });
+
+export type CustomPaletteType = t.TypeOf<typeof CustomPalette>;
+export const convertPaletteTypeToDBType = (
+  type: CustomPaletteType["type"]
+): PALETTE_TYPE => {
+  switch (type) {
+    case "diverging":
+      return "DIVERGING";
+    case "sequential":
+      return "SEQUENTIAL";
+    case "categorical":
+      return "CATEGORICAL";
+    default:
+      const _exhaustiveCheck: never = type;
+      return _exhaustiveCheck;
+  }
+};
+
+export const convertDBTypeToPaletteType = (
+  type: PALETTE_TYPE
+): CustomPaletteType["type"] => {
+  switch (type) {
+    case "DIVERGING":
+      return "diverging";
+    case "SEQUENTIAL":
+      return "sequential";
+    case "CATEGORICAL":
+      return "categorical";
+    default:
+      const _exhaustiveCheck: never = type;
+      return _exhaustiveCheck;
+  }
+};
 
 export const PaletteType = t.union([
   DivergingPalette,
@@ -698,6 +749,10 @@ const NumericalColorField = t.intersection([
     type: t.literal("numerical"),
     componentId: t.string,
     paletteId: t.string,
+  }),
+  t.partial({
+    paletteType: t.union([t.literal("sequential"), t.literal("diverging")]),
+    colors: t.array(t.string),
   }),
   t.union([
     t.type({

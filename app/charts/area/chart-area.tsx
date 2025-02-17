@@ -28,7 +28,7 @@ export const ChartAreasVisualization = (
 };
 
 const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
-  const { chartConfig, dimensions, measures } = props;
+  const { chartConfig, dimensions, measures, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const limitMeasure = getLimitMeasure({ chartConfig, measures });
   const relatedLimitDimension = getRelatedLimitDimension({
@@ -58,9 +58,11 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
       {fields.segment && (
         <ChartControlsContainer>
           <LegendColor
+            dimensionsById={dimensionsById}
             chartConfig={chartConfig}
             symbol="square"
             interactive={interactiveFiltersConfig?.legend.active}
+            showTitle={fields.segment && fields.segment.showTitle}
           />
         </ChartControlsContainer>
       )}

@@ -5,13 +5,15 @@ import {
   HsvaColor,
   hsvaToHex,
   Hue,
-  Saturation
+  Saturation,
 } from "@uiw/react-color";
 import dynamic from "next/dynamic";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import Flex from "@/components/flex";
 import { Input } from "@/components/form";
+import { ColorItem } from "@/palettes";
+import { createColorId } from "@/utils/color-palette-utils";
 
 import { Swatch } from "./chart-controls/color-picker";
 
@@ -31,14 +33,14 @@ const useColorPickerStyles = makeStyles(() => ({
 
 type CustomColorPickerProps = {
   onChange: (color: HsvaColor) => void;
-  colorSwatches?: readonly string[];
-  defaultSelection?: HsvaColor;
+  colorSwatches?: ColorItem[];
+  defaultSelection?: HsvaColor & Pick<ColorItem, "id">;
 };
 
 const CustomColorPicker = ({
   onChange,
   colorSwatches,
-  defaultSelection = { h: 0, s: 0, v: 68, a: 1 },
+  defaultSelection = { h: 0, s: 0, v: 68, a: 1, id: createColorId() },
 }: CustomColorPickerProps) => {
   const [{ hsva, hex }, setColor] = useState(() => {
     return {
@@ -46,22 +48,21 @@ const CustomColorPicker = ({
       hex: hsvaToHex(defaultSelection),
     };
   });
+
   const classes = useColorPickerStyles();
 
   useEffect(() => {
     onChange(hsva);
   }, [hsva, onChange]);
 
-  const updateColorInput = useCallback<
-    (e: ChangeEvent<HTMLInputElement>) => void
-  >((e) => {
+  const updateColorInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
     if (value.length <= 7) {
       setColor((p) => ({ ...p, hex: value }));
 
       if (value.length >= 3) {
-        setColor((p) => ({ ...p, hsva: hexToHsva(value) }));
+        setColor((p) => ({ ...p, hsva: { ...p.hsva, hex: hexToHsva(value) } }));
       }
     }
   }, []);
@@ -83,6 +84,7 @@ const CustomColorPicker = ({
         }}
       >
         <Saturation
+          data-testId="color-picker-saturation"
           hsva={hsva}
           onChange={(color) => {
             const newHsva = { ...hsva, ...color, a: hsva.a };
@@ -104,8 +106,10 @@ const CustomColorPicker = ({
               backgroundColor: hsvaToHex(hsva),
               borderRadius: "50%",
             }}
+            data-testId="color-square"
           />
           <Hue
+            data-testId="color-picker-hue"
             hue={hsva.h}
             onChange={(newHue) => {
               const newHsva = { ...hsva, ...newHue };
@@ -116,14 +120,17 @@ const CustomColorPicker = ({
         </Flex>
 
         <Box display="grid" className={classes.swatches}>
-          {colorSwatches?.map((newHex) => (
+          {colorSwatches?.map((item, i) => (
             <Swatch
-              key={newHex}
-              color={newHex}
-              selected={hex === newHex}
+              key={`color-picker-swatch-${item.color}-${i}`}
+              color={item.color}
+              selected={item.color === hex && item.id === hsva.id}
               onClick={() => {
-                const newHsva = hexToHsva(newHex);
-                setColor({ hsva: newHsva, hex: newHex });
+                const newHsva = hexToHsva(item.color);
+                setColor({
+                  hsva: { ...newHsva, id: item.id },
+                  hex: item.color,
+                });
               }}
             />
           ))}
@@ -135,12 +142,15 @@ const CustomColorPicker = ({
             onChange={updateColorInput}
           />
           <ChromePicker
+            data-testId="color-picker-chrome"
             showAlpha={false}
             showHue={false}
             showColorPreview={false}
             showEditableInput={false}
             color={hsva}
-            onChange={(color) => setColor({ hsva: color.hsva, hex: color.hex })}
+            onChange={(color) =>
+              setColor({ hsva: { ...hsva, ...color.hsva }, hex: color.hex })
+            }
           />
         </Flex>
       </Flex>
