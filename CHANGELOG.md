@@ -13,6 +13,7 @@ You can also check the
 
 - Features
   - Added option for hiding legend titles using a toggle switch
+  - Dashboard text block are now automatically resized also in published charts
 - Fixes
   - Fixed button translations for custom color palette update and create button.
 - Maintenance
