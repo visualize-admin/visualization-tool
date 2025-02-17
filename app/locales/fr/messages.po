@@ -569,8 +569,7 @@ msgstr "empilées"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx
-#: app/configurator/components/chart-controls/color-ramp.tsx
-#: app/configurator/components/chart-controls/create-color-palette.tsx
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes"
 msgstr "Palettes de couleurs personnalisées"
 
@@ -583,7 +582,7 @@ msgstr "Ajouter une couleur"
 msgid "controls.custom-color-palettes.base"
 msgstr "Couleur de base"
 
-#: app/configurator/components/chart-controls/create-color-palette.tsx
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption"
 msgstr "Utilisez des couleurs distinctes et contrastées. Évitez d'utiliser trop de couleurs, au maximum 5 à 7. Appliquez des palettes séquentielles pour les données ordonnées et des palettes divergentes pour les extrêmes."
@@ -608,7 +607,7 @@ msgstr "Exemple"
 msgid "controls.custom-color-palettes.mid"
 msgstr "Couleur moyenne"
 
-#: app/configurator/components/chart-controls/create-color-palette.tsx
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes.set-values-apply"
 msgstr "Enregistrer la palette de couleurs"
 
@@ -616,12 +615,12 @@ msgstr "Enregistrer la palette de couleurs"
 msgid "controls.custom-color-palettes.start"
 msgstr "Couleur de départ"
 
-#: app/configurator/components/chart-controls/create-color-palette.tsx
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.title"
 msgstr "Palette title"
 
-#: app/configurator/components/chart-controls/create-color-palette.tsx
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes.title-unavailable"
 msgstr "Ce nom est déjà utilisé. Veuillez choisir un nom unique pour votre palette de couleurs."
 
@@ -706,6 +705,14 @@ msgstr "Filtres sélectionnés"
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.filters.select.to"
 msgstr "Au"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.show-legend-toggle"
+msgstr "Permettre aux utilisateurs de modifier la visibilité des légendes"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.show-legend.toggle"
+msgstr "Afficher les titres des légendes"
 
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
@@ -1257,7 +1264,6 @@ msgstr "Sélectionner"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx
-#: app/configurator/components/chart-controls/color-ramp.tsx
 msgid "controls.visualize-color-palette"
 msgstr "Visualize les palettes de couleurs"
 
@@ -1630,7 +1636,6 @@ msgid "login.profile.my-color-palettes"
 msgstr "Mes Palettes de Couleurs"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
-#: app/configurator/components/chart-controls/color-ramp.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.add"

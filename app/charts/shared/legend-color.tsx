@@ -1,5 +1,5 @@
 import { t } from "@lingui/macro";
-import { Theme, Typography } from "@mui/material";
+import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import orderBy from "lodash/orderBy";
@@ -34,6 +34,8 @@ import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
+
+import { DimensionsById } from "./ChartProps";
 
 export type LegendSymbol = "square" | "line" | "circle";
 
@@ -171,8 +173,10 @@ type LegendColorProps = {
   symbol: LegendSymbol;
   // If the legend is based on measures, this function can be used to get the
   // corresponding measure to open the metadata panel.
+  dimensionsById?: DimensionsById;
   getLegendItemDimension?: (dimensionLabel: string) => Measure | undefined;
   interactive?: boolean;
+  showTitle?: boolean;
 };
 
 export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
@@ -182,21 +186,42 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
     symbol,
     getLegendItemDimension,
     interactive,
+    showTitle,
+    dimensionsById,
   } = props;
   const { colors, getColorLabel } = useChartState() as ColorsChartState;
   const values = colors.domain();
   const groups = useLegendGroups({ chartConfig, segmentDimension, values });
 
   return (
-    <LegendColorContent
-      groups={groups}
-      getColor={(v) => colors(v)}
-      getLabel={getColorLabel}
-      getItemDimension={getLegendItemDimension}
-      symbol={symbol}
-      interactive={interactive}
-      numberOfOptions={values.length}
-    />
+    <Box>
+      {showTitle &&
+        isSegmentInConfig(chartConfig) &&
+        chartConfig.fields.segment &&
+        dimensionsById && (
+          <OpenMetadataPanelWrapper
+            component={dimensionsById[chartConfig.fields.segment.componentId]}
+          >
+            <Typography
+              data-testId="legendTitle"
+              component="div"
+              variant="caption"
+              color="primary.main"
+            >
+              {dimensionsById[chartConfig.fields.segment.componentId]?.label}
+            </Typography>
+          </OpenMetadataPanelWrapper>
+        )}
+      <LegendColorContent
+        groups={groups}
+        getColor={(v) => colors(v)}
+        getLabel={getColorLabel}
+        getItemDimension={getLegendItemDimension}
+        symbol={symbol}
+        interactive={interactive}
+        numberOfOptions={values.length}
+      />
+    </Box>
   );
 });
 

@@ -26,7 +26,7 @@ export const ChartAreasVisualization = (
 };
 
 const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
-  const { chartConfig } = props;
+  const { chartConfig, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
   return (
@@ -44,9 +44,11 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
       {fields.segment && (
         <ChartControlsContainer>
           <LegendColor
+            dimensionsById={dimensionsById}
             chartConfig={chartConfig}
             symbol="square"
             interactive={interactiveFiltersConfig?.legend.active}
+            showTitle={fields.segment && fields.segment.showTitle}
           />
         </ChartControlsContainer>
       )}

@@ -1608,7 +1608,7 @@ export const configJoinedCubes: Partial<
     ],
     chartType: "pie",
     interactiveFiltersConfig: {
-      legend: { active: false, componentId: "" },
+      legend: {active: false, componentId: "" },
       timeRange: {
         active: false,
         componentId: "",

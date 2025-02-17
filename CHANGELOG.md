@@ -11,7 +11,14 @@ You can also check the
 
 # Unreleased
 
+
+- Features
+  - Added option for hiding legend titles using a toggle switch
+- Fixes
+  - Fixed button translations for custom color palette update and create button.
 - Maintenance
+  - Added authentication method to e2e tests
+  - Added authentication to vercel previews for easier testing
   - flags can now be toggle by clicking "ctrl + t + d" on the keyboard (t,d =>
     toggle debug)
 
