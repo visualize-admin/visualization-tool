@@ -12,6 +12,7 @@ import {
   SingleFilters,
 } from "@/config-types";
 import { Dimension, Measure, ObservationValue } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { mkJoinById } from "@/graphql/join";
 import { Limit } from "@/rdf/limits";
 
@@ -226,4 +227,58 @@ export const getLimitMeasure = ({
       const _exhaustiveCheck: never = chartConfig;
       return _exhaustiveCheck;
   }
+};
+
+export const useLimits = ({
+  chartConfig,
+  dimensions,
+  measures,
+}: {
+  chartConfig: ChartConfig;
+  dimensions: Dimension[];
+  measures: Measure[];
+}): {
+  relatedDimension: Dimension | undefined;
+  limits: {
+    configLimit: ConfigLimit;
+    measureLimit: Limit;
+  }[];
+} => {
+  const filters = useChartConfigFilters(chartConfig);
+  const measure = getLimitMeasure({ chartConfig, measures });
+  const relatedDimension = getRelatedLimitDimension({
+    chartConfig,
+    dimensions,
+  });
+
+  return useMemo(() => {
+    if (!measure || !relatedDimension) {
+      return {
+        relatedDimension,
+        limits: [],
+      };
+    }
+
+    return {
+      relatedDimension: relatedDimension,
+      limits: measure.limits
+        .map((limit) => {
+          const { limit: maybeLimit } = getMaybeValidChartConfigLimit({
+            chartConfig,
+            measureId: measure.id,
+            limit,
+            relatedDimension,
+            filters,
+          });
+
+          return maybeLimit
+            ? {
+                configLimit: maybeLimit,
+                measureLimit: limit,
+              }
+            : null;
+        })
+        .filter(truthy),
+    };
+  }, [chartConfig, filters, measure, relatedDimension]);
 };

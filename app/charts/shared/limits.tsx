@@ -9,31 +9,21 @@ import {
   RenderVerticalLimitDatum,
   renderVerticalLimits,
 } from "@/charts/shared/rendering-utils";
-import { AreaConfig, ColumnConfig, LineConfig } from "@/config-types";
-import {
-  getMaybeValidChartConfigLimit,
-  useChartConfigFilters,
-} from "@/config-utils";
-import { Dimension, Measure, Observation } from "@/domain/data";
+import { useLimits } from "@/config-utils";
+import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useTransitionStore } from "@/stores/transition";
 
 export const VerticalLimits = ({
-  chartConfig,
-  measure,
   relatedDimension,
-}: {
-  chartConfig: AreaConfig | ColumnConfig | LineConfig;
-  measure: Measure;
-  relatedDimension: Dimension;
-}) => {
+  limits,
+}: ReturnType<typeof useLimits>) => {
   const { xScale, getX, yScale, bounds } = useChartState() as
     | AreasState
     | ColumnsState
     | LinesState;
   const { margins, width, height } = bounds;
   const ref = useRef<SVGGElement>(null);
-  const filters = useChartConfigFilters(chartConfig);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const renderData: RenderVerticalLimitDatum[] = useMemo(() => {
@@ -48,22 +38,10 @@ export const VerticalLimits = ({
             limitWidth: 15,
           };
 
-    const preparedLimits = measure.limits
-      .map((limit) => {
-        const { limit: maybeLimit } = getMaybeValidChartConfigLimit({
-          chartConfig,
-          measureId: measure.id,
-          limit,
-          relatedDimension,
-          filters,
-        });
-
-        if (!maybeLimit) {
-          return;
-        }
-
-        const relatedDimensionValue = relatedDimension.values.find(
-          (v) => v.value === maybeLimit.dimensionValue
+    const preparedLimits = limits
+      .map(({ configLimit, measureLimit }) => {
+        const relatedDimensionValue = relatedDimension?.values.find(
+          (v) => v.value === configLimit.dimensionValue
         )?.label;
 
         if (!relatedDimensionValue) {
@@ -71,9 +49,15 @@ export const VerticalLimits = ({
         }
 
         return {
-          y1: limit.type === "single" ? limit.value : limit.from,
-          y2: limit.type === "single" ? limit.value : limit.to,
-          ...maybeLimit,
+          y1:
+            measureLimit.type === "single"
+              ? measureLimit.value
+              : measureLimit.from,
+          y2:
+            measureLimit.type === "single"
+              ? measureLimit.value
+              : measureLimit.to,
+          ...configLimit,
           relatedDimensionValue,
         };
       })
@@ -81,7 +65,7 @@ export const VerticalLimits = ({
 
     return preparedLimits.map((limit) => {
       const fakeObservation: Observation = {
-        [relatedDimension.id]: limit.relatedDimensionValue,
+        [relatedDimension?.id ?? ""]: limit.relatedDimensionValue,
       };
       const x = getX(fakeObservation) as (Date | number) & string;
 
@@ -95,14 +79,13 @@ export const VerticalLimits = ({
         lineType: limit.lineType,
       } as RenderVerticalLimitDatum;
     });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     xScale,
-    measure.limits,
-    measure.id,
-    chartConfig,
-    relatedDimension,
-    filters,
+    limits,
+    relatedDimension?.values,
+    relatedDimension?.id,
     getX,
     yScale,
     width,

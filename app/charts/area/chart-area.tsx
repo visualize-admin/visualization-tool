@@ -17,7 +17,7 @@ import { LegendColor } from "@/charts/shared/legend-color";
 import { VerticalLimits } from "@/charts/shared/limits";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { AreaConfig } from "@/config-types";
-import { getLimitMeasure, getRelatedLimitDimension } from "@/config-utils";
+import { useLimits } from "@/config-utils";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -30,10 +30,10 @@ export const ChartAreasVisualization = (
 const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
   const { chartConfig, dimensions, measures, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const limitMeasure = getLimitMeasure({ chartConfig, measures });
-  const relatedLimitDimension = getRelatedLimitDimension({
+  const limits = useLimits({
     chartConfig,
     dimensions,
+    measures,
   });
 
   return (
@@ -42,13 +42,7 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
         <ChartSvg>
           <AxisTime /> <AxisHeightLinear />
           <Areas /> <AxisTimeDomain />
-          {limitMeasure && relatedLimitDimension ? (
-            <VerticalLimits
-              chartConfig={chartConfig}
-              measure={limitMeasure}
-              relatedDimension={relatedLimitDimension}
-            />
-          ) : null}
+          <VerticalLimits {...limits} />
           <InteractionHorizontal />
           {interactiveFiltersConfig?.timeRange.active === true && <BrushTime />}
         </ChartSvg>
