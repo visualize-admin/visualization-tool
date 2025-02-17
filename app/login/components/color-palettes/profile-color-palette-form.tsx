@@ -128,7 +128,7 @@ const ProfileColorPaletteForm = ({
     const titleExistsAlready = customColorPalettes?.find(
       (palette) => palette.name === titleInput
     );
-    console.log(titleExistsAlready);
+
     if (titleExistsAlready) {
       setIsNotAvailable(true);
     } else {
