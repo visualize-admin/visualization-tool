@@ -15,6 +15,7 @@ You can also check the
   - Added option for hiding legend titles using a toggle switch
 - Fixes
   - Added dynamic translations for color contrast checking warnings
+  - Fixed button translations for custom color palette update and create button.
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to vercel previews for easier testing

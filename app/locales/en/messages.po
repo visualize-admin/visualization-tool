@@ -593,7 +593,7 @@ msgstr "The selected color is difficult to read against a white background. Choo
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.create-palette"
-msgstr "controls.custom-color-palettes.create-palette"
+msgstr "Create color palette"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.diverging-contrast-warning"
@@ -638,7 +638,7 @@ msgstr "Select a color palette type"
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.update-palette"
-msgstr "controls.custom-color-palettes.update-palette"
+msgstr "Update color palette"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.description"
