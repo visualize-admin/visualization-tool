@@ -428,6 +428,46 @@ export const handleChartFieldChanged = (
   return draft;
 };
 
+export const handleChartFieldDeleted = (
+  draft: ConfiguratorState,
+  action: Extract<ConfiguratorStateAction, { type: "CHART_FIELD_DELETED" }>
+) => {
+  if (isConfiguring(draft)) {
+    const chartConfig = getChartConfig(draft);
+    delete (chartConfig.fields as GenericFields)[action.value.field];
+    const dataCubesComponents = getCachedComponents({
+      locale: action.value.locale,
+      dataSource: draft.dataSource,
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        joinBy: cube.joinBy,
+      })),
+    });
+    const dimensions = dataCubesComponents?.dimensions ?? [];
+    const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
+    const index = draft.chartConfigs.findIndex(
+      (d) => d.key === chartConfig.key
+    );
+    draft.chartConfigs[index] = newConfig;
+
+    if (
+      action.value.field === "segment" &&
+      chartConfig.interactiveFiltersConfig
+    ) {
+      chartConfig.interactiveFiltersConfig.calculation.active = false;
+      chartConfig.interactiveFiltersConfig.calculation.type = "identity";
+      if (isColorInConfig(chartConfig)) {
+        chartConfig.fields.color.type = "single";
+        if (chartConfig.fields.color.type === "single") {
+          chartConfig.fields.color.color = theme.palette.primary.main;
+        }
+      }
+    }
+  }
+
+  return draft;
+};
+
 export const handleChartOptionChanged = (
   draft: ConfiguratorState,
   action: Extract<ConfiguratorStateAction, { type: "COLOR_FIELD_UPDATED" }>
@@ -672,40 +712,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "CHART_FIELD_DELETED":
-      if (isConfiguring(draft)) {
-        const chartConfig = getChartConfig(draft);
-        delete (chartConfig.fields as GenericFields)[action.value.field];
-        const dataCubesComponents = getCachedComponents({
-          locale: action.value.locale,
-          dataSource: draft.dataSource,
-          cubeFilters: chartConfig.cubes.map((cube) => ({
-            iri: cube.iri,
-            joinBy: cube.joinBy,
-          })),
-        });
-        const dimensions = dataCubesComponents?.dimensions ?? [];
-        const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
-        const index = draft.chartConfigs.findIndex(
-          (d) => d.key === chartConfig.key
-        );
-        draft.chartConfigs[index] = newConfig;
-
-        if (
-          action.value.field === "segment" &&
-          chartConfig.interactiveFiltersConfig
-        ) {
-          chartConfig.interactiveFiltersConfig.calculation.active = false;
-          chartConfig.interactiveFiltersConfig.calculation.type = "identity";
-          if (isColorInConfig(chartConfig)) {
-            chartConfig.fields.color.type = "single";
-            if (chartConfig.fields.color.type === "single") {
-              chartConfig.fields.color.color = theme.palette.primary.main;
-            }
-          }
-        }
-      }
-
-      return draft;
+      return handleChartFieldDeleted(draft, action);
 
     case "COLOR_FIELD_UPDATED":
       return handleChartOptionChanged(draft, action);
