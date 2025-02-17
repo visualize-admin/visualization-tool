@@ -13,6 +13,8 @@ You can also check the
 
 - Features
   - Added option for hiding legend titles using a toggle switch
+- Fixes
+  - Fixed button translations for custom color palette update and create button.
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to vercel previews for easier testing
