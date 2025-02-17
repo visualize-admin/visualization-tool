@@ -14,7 +14,7 @@ import { SnackbarProvider } from "@/components/snackbar";
 import "@/configurator/components/color-picker.css";
 import { PUBLIC_URL } from "@/domain/env";
 import { flag } from "@/flags/flag";
-import { useDebugShortcut } from "@/flags/useFlag";
+import { useDebugShortcut } from "@/flags/use-flags";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { i18n, parseLocaleString } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
@@ -68,7 +68,7 @@ export default function App({
   const shouldShowGQLDebug =
     process.env.NODE_ENV === "development" || flag("debug");
 
-  useDebugShortcut(shouldShowGQLDebug);
+  useDebugShortcut({ enable: shouldShowGQLDebug });
 
   return (
     <>
