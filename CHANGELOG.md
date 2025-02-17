@@ -12,12 +12,15 @@ You can also check the
 # Unreleased
 
 - Features
+  - Added a way to display limit values and targets coming from the data with
+    compatible chart types
   - Added option for hiding legend titles using a toggle switch
 - Fixes
-  - Fixed button translations for custom color palette update and create button.
+  - Added button translations for custom color palette update and create button
+  - Color picker's HEX code input now stays up-to-date with the selected color
 - Maintenance
   - Added authentication method to e2e tests
-  - Added authentication to vercel previews for easier testing
+  - Added authentication to Vercel previews for easier testing
 
 # [5.2.4] - 2025-02-06
 
