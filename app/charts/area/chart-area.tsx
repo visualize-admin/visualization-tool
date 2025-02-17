@@ -49,14 +49,15 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
         <Tooltip type={fields.segment ? "multiple" : "single"} />
         <Ruler />
       </ChartContainer>
-      {fields.segment && (
+      {(fields.segment || limits.limits.length > 0) && (
         <ChartControlsContainer>
           <LegendColor
-            dimensionsById={dimensionsById}
             chartConfig={chartConfig}
             symbol="square"
             interactive={interactiveFiltersConfig?.legend.active}
-            showTitle={fields.segment.showTitle}
+            showTitle={fields.segment?.showTitle}
+            dimensionsById={dimensionsById}
+            limits={limits.limits}
           />
         </ChartControlsContainer>
       )}

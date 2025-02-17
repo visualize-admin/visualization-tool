@@ -130,15 +130,23 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
             </ChartSvg>
             <Tooltip type="single" />
           </ChartContainer>
-          {fields.animation && (
+          {fields.animation || limits.limits.length > 0 ? (
             <ChartControlsContainer>
-              <TimeSlider
-                filters={filters}
-                dimensions={dimensions}
-                {...fields.animation}
+              <LegendColor
+                limits={limits.limits}
+                dimensionsById={dimensionsById}
+                chartConfig={chartConfig}
+                symbol="square"
               />
+              {fields.animation && (
+                <TimeSlider
+                  filters={filters}
+                  dimensions={dimensions}
+                  {...fields.animation}
+                />
+              )}
             </ChartControlsContainer>
-          )}
+          ) : null}
         </ColumnChart>
       )}
     </>

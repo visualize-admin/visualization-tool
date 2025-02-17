@@ -13,7 +13,7 @@ import { Checkbox, CheckboxProps } from "@/components/form";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { TooltipTitle } from "@/components/tooltip-utils";
-import { useChartConfigFilters } from "@/config-utils";
+import { useChartConfigFilters, useLimits } from "@/config-utils";
 import {
   AreaConfig,
   BarConfig,
@@ -184,9 +184,11 @@ export const LegendColor = memo(function LegendColor({
   interactive?: boolean;
   showTitle?: boolean;
   dimensionsById?: DimensionsById;
+  limits?: ReturnType<typeof useLimits>["limits"];
 }) {
   const { colors, getColorLabel } = useChartState() as ColorsChartState;
-  const values = colors.domain();
+  const values =
+    chartConfig.fields.color.type === "segment" ? colors.domain() : [];
   const groups = useLegendGroups({ chartConfig, values });
   const segmentComponent =
     isSegmentInConfig(chartConfig) &&
@@ -211,6 +213,10 @@ export const LegendColor = memo(function LegendColor({
       )}
       <LegendColorContent
         groups={groups}
+        limits={limits?.map(({ configLimit, measureLimit }) => ({
+          label: measureLimit.name,
+          color: configLimit.color,
+        }))}
         getColor={colors}
         getLabel={getColorLabel}
         getItemDimension={getLegendItemDimension}
@@ -224,19 +230,19 @@ export const LegendColor = memo(function LegendColor({
 
 const removeOpacity = (rgb: number[]) => rgb.slice(0, 3);
 
-type MapLegendColorProps = {
+export const MapLegendColor = memo(function LegendColor({
+  component,
+  getColor,
+  useAbbreviations,
+  chartConfig,
+  observations,
+}: {
   component: Component;
   getColor: (d: Observation) => number[];
   useAbbreviations: boolean;
   chartConfig: MapConfig;
   observations: Observation[];
-};
-
-export const MapLegendColor = memo(function LegendColor(
-  props: MapLegendColorProps
-) {
-  const { component, getColor, useAbbreviations, chartConfig, observations } =
-    props;
+}) {
   const filters = useChartConfigFilters(chartConfig);
   const dimensionFilter = filters[component.id];
   const sortedValues = useMemo(() => {
@@ -290,26 +296,25 @@ export const MapLegendColor = memo(function LegendColor(
   );
 });
 
-type LegendColorContentProps = {
+const LegendColorContent = ({
+  groups,
+  limits,
+  getColor,
+  getLabel,
+  getItemDimension,
+  symbol,
+  interactive,
+  numberOfOptions,
+}: {
   groups: ReturnType<typeof useLegendGroups>;
+  limits?: { label: string; color: string }[];
   getColor: (d: string) => string;
   getLabel: (d: string) => string;
   getItemDimension?: (dimensionLabel: string) => Measure | undefined;
   symbol: LegendSymbol;
   interactive?: boolean;
   numberOfOptions: number;
-};
-
-const LegendColorContent = (props: LegendColorContentProps) => {
-  const {
-    groups,
-    getColor,
-    getLabel,
-    getItemDimension,
-    symbol,
-    interactive,
-    numberOfOptions,
-  } = props;
+}) => {
   const classes = useStyles();
   const categories = useChartInteractiveFilters((d) => d.categories);
   const addCategory = useChartInteractiveFilters((d) => d.addCategory);
@@ -339,8 +344,10 @@ const LegendColorContent = (props: LegendColorContentProps) => {
       )}
     >
       {groups
-        ? groups.map(([g, colorValues]) => {
-            const headerLabelsArray = g.map((n) => n.label);
+        ? groups.map(([g, colorValues], i) => {
+            const isLastGroup = i === groups.length - 1;
+            const headerLabelsArray = g.map((d) => d.label);
+
             return (
               <div
                 className={classes.legendGroup}
@@ -380,6 +387,16 @@ const LegendColorContent = (props: LegendColorContentProps) => {
                     />
                   );
                 })}
+                {isLastGroup && limits
+                  ? limits.map((limit, i) => (
+                      <LegendItem
+                        key={i}
+                        item={limit.label}
+                        color={limit.color}
+                        symbol="line"
+                      />
+                    ))
+                  : null}
               </div>
             );
           })

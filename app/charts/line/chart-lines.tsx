@@ -58,22 +58,19 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
             dashboardFilters?.timeRange
           ) && <BrushTime />}
         </ChartSvg>
-
         <Ruler />
-
         <HoverDotMultiple />
-
         <Tooltip type={fields.segment ? "multiple" : "single"} />
       </ChartContainer>
-
-      {fields.segment && (
+      {(fields.segment || limits.limits.length > 0) && (
         <ChartControlsContainer>
           <LegendColor
             dimensionsById={dimensionsById}
             chartConfig={chartConfig}
             symbol="line"
             interactive={interactiveFiltersConfig?.legend.active}
-            showTitle={fields.segment.showTitle}
+            showTitle={fields.segment?.showTitle}
+            limits={limits.limits}
           />
         </ChartControlsContainer>
       )}
