@@ -112,10 +112,10 @@ const useColumnsState = (
   } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
 
-    if (fields.color?.type === "single") {
+    if (fields.color.type === "single") {
       colors.range(
         getPalette({
-          paletteId: fields.color?.paletteId,
+          paletteId: fields.color.paletteId,
           colorField: fields.color,
         })
       );

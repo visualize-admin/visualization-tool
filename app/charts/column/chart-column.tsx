@@ -83,10 +83,8 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
-              interactive={
-                fields.segment && interactiveFiltersConfig?.legend.active
-              }
-              showTitle={fields.segment && fields.segment.showTitle}
+              interactive={interactiveFiltersConfig?.legend.active}
+              showTitle={fields.segment.showTitle}
             />
           </ChartControlsContainer>
         </StackedColumnsChart>
@@ -116,10 +114,8 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
-              interactive={
-                fields.segment && interactiveFiltersConfig?.legend.active
-              }
-              showTitle={fields.segment && fields.segment.showTitle}
+              interactive={interactiveFiltersConfig?.legend.active}
+              showTitle={fields.segment.showTitle}
             />
           </ChartControlsContainer>
         </GroupedColumnChart>

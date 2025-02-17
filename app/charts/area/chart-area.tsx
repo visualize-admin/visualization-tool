@@ -62,7 +62,7 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
             chartConfig={chartConfig}
             symbol="square"
             interactive={interactiveFiltersConfig?.legend.active}
-            showTitle={fields.segment && fields.segment.showTitle}
+            showTitle={fields.segment.showTitle}
           />
         </ChartControlsContainer>
       )}
