@@ -201,7 +201,7 @@ export const getRelatedLimitDimension = ({
   }
 };
 
-export const getLimitMeasure = ({
+const getLimitMeasure = ({
   chartConfig,
   measures,
 }: {
