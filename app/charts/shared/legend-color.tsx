@@ -171,9 +171,10 @@ type LegendColorProps = {
   chartConfig: ChartConfig;
   segmentDimension?: Dimension;
   symbol: LegendSymbol;
-  // If the legend is based on measures, this function can be used to get the
-  // corresponding measure to open the metadata panel.
   dimensionsById?: DimensionsById;
+  /** If the legend is based on measures, this function can be used to get the
+   * corresponding measure to open the metadata panel.
+   **/
   getLegendItemDimension?: (dimensionLabel: string) => Measure | undefined;
   interactive?: boolean;
   showTitle?: boolean;
