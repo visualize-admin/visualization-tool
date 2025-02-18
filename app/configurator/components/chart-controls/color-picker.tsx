@@ -46,6 +46,7 @@ export const Swatch = ({
   return (
     <Box
       className={classes.swatch}
+      data-testId="color-picker-swatch"
       sx={{
         borderColor: selected ? borderColor : undefined,
         boxShadow: selected ? `0 0 0.5rem 0 ${color}` : undefined,

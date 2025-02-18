@@ -1195,7 +1195,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "LAYOUT_CHANGED":
-      if (draft.state === "LAYOUTING") {
+      if (draft.state === "LAYOUTING" || draft.state === "PUBLISHED") {
         if (!isEqual(draft.layout, action.value)) {
           draft.layout = action.value;
         }

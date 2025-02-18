@@ -58,6 +58,7 @@ type ColorPaletteCreatorProps = {
   onRemove: (id: string) => void;
   onUpdate: (color: string, id: string) => void;
   colorValues: ColorItem[];
+  title: string;
   type: CustomPaletteType["type"];
 };
 
@@ -126,6 +127,7 @@ const SequentialColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
         </Label>
         {baseColor && (
           <ColorSelectionRow
+            type={"sequential"}
             key={baseColor.id}
             colorValues={[baseColor]}
             {...baseColor}
@@ -138,10 +140,11 @@ const SequentialColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
 };
 
 const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
-  const { onAdd, onRemove, onUpdate, colorValues } = props;
+  const { onAdd, onRemove, onUpdate, colorValues, title } = props;
   const classes = useStyles();
 
-  const addColorCondition = DIVERGING_MAX_ALLOWED_COLORS <= colorValues.length;
+  const disabled =
+    DIVERGING_MAX_ALLOWED_COLORS <= colorValues.length || title.length === 0;
 
   const [startColorHex, endColorHex, midColorHex] = colorValues;
 
@@ -169,6 +172,7 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
           </Label>
           {startColorHex && (
             <ColorSelectionRow
+              type={"diverging"}
               key={startColorHex.id}
               colorValues={[startColorHex]}
               {...startColorHex}
@@ -182,6 +186,7 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
               <Trans id="controls.custom-color-palettes.mid" />
             </Label>
             <ColorSelectionRow
+              type={"diverging"}
               key={midColorHex.id}
               colorValues={[midColorHex]}
               {...midColorHex}
@@ -196,6 +201,7 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
           </Label>
           {endColorHex && (
             <ColorSelectionRow
+              type={"diverging"}
               key={endColorHex.id}
               colorValues={[endColorHex]}
               {...endColorHex}
@@ -208,7 +214,7 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
         variant="text"
         fullWidth
         className={classes.addColorButton}
-        disabled={addColorCondition}
+        disabled={disabled}
         startIcon={<Icon name="add" />}
         onClick={() => onAdd()}
       >
@@ -219,8 +225,11 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
 };
 
 const CategoricalColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
-  const { onAdd, onRemove, onUpdate, colorValues } = props;
+  const { onAdd, onRemove, onUpdate, colorValues, title } = props;
   const classes = useStyles();
+
+  const disabled =
+    CATEGORICAL_MAX_ALLOWED_COLORS <= colorValues.length || title.length === 0;
 
   return (
     <>
@@ -228,6 +237,7 @@ const CategoricalColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
         <Box className={classes.categoricalColorListContainer}>
           {colorValues.map((item) => (
             <ColorSelectionRow
+              type={"categorical"}
               colorValues={colorValues}
               key={item.id}
               {...item}
@@ -242,7 +252,7 @@ const CategoricalColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
         variant="text"
         fullWidth
         className={classes.addColorButton}
-        disabled={CATEGORICAL_MAX_ALLOWED_COLORS <= colorValues.length}
+        disabled={disabled}
         startIcon={<Icon name="add" />}
         onClick={() => onAdd()}
       >
@@ -254,15 +264,36 @@ const CategoricalColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
 
 type ColorSelectionRowProps = {
   colorValues: ColorItem[];
+  type: CustomPaletteType["type"];
   onUpdate: (color: string, id: string) => void;
   onRemove?: (id: string) => void;
 } & ColorItem;
 
 const ColorSelectionRow = (props: ColorSelectionRowProps) => {
-  const { id, color, colorValues, onRemove, onUpdate } = props;
+  const { id, color, colorValues, onRemove, onUpdate, type } = props;
   const classes = useStyles();
 
   const warningContrast = hasEnoughContrast(color);
+
+  const getContrastWarning = () => {
+    switch (type) {
+      case "categorical":
+        return t({
+          id: "controls.custom-color-palettes.categorical-contrast-warning",
+        });
+      case "sequential":
+        return t({
+          id: "controls.custom-color-palettes.sequential-contrast-warning",
+        });
+      case "diverging":
+        return t({
+          id: "controls.custom-color-palettes.diverging-contrast-warning",
+        });
+      default:
+        const _exhaustiveCheck: never = type;
+        return _exhaustiveCheck;
+    }
+  };
 
   return (
     <Box className={classes.colorItem}>
@@ -275,13 +306,7 @@ const ColorSelectionRow = (props: ColorSelectionRowProps) => {
         />
         <Flex gap={2} alignItems={"center"}>
           {warningContrast && (
-            <DisabledMessageIcon
-              message={t({
-                id: "controls.custom-color-palettes.contrast-warning",
-                message:
-                  "The selected color lacks sufficient contrast. Consider using a darker color for a sequential palette.",
-              })}
-            />
+            <DisabledMessageIcon message={getContrastWarning()} />
           )}
           <ColorPickerMenu
             colorId={id}

@@ -14,10 +14,28 @@ You can also check the
 - Features
   - Added a way to display limit values and targets coming from the data with
     compatible chart types
+- Fixes
+  - Color picker's HEX code input now stays up-to-date with the selected color
+
+# [5.2.5] - 2025-02-18
+
+- Features
   - Added option for hiding legend titles using a toggle switch
+  - Bar charts, dashboard text blocks and Markdown inputs are not hidden behind
+    flags anymore
 - Fixes
   - Added button translations for custom color palette update and create button
-  - Color picker's HEX code input now stays up-to-date with the selected color
+  - Color swatches inside the color picker dynamically adjust to the colors of
+    the selected palette
+  - All colors of a selected custom color palette are displayed when selected at
+    all times regardless of the color type
+  - Dashboard text block are now automatically resized also in published charts
+  - Added (required) hint for palette titles and disabled the "add color button"
+    if the color palette title is missing
+  - Added dynamic translations for color contrast checking warnings
+  - Added error displaying for title names that already exists on the custom
+    color palette form inside the user profile
+  - Fixed button translations for custom color palette update and create button.
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to Vercel previews for easier testing

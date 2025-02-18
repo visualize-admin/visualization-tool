@@ -588,12 +588,16 @@ msgid "controls.custom-color-palettes.caption"
 msgstr "Utilisez des couleurs distinctes et contrastées. Évitez d'utiliser trop de couleurs, au maximum 5 à 7. Appliquez des palettes séquentielles pour les données ordonnées et des palettes divergentes pour les extrêmes."
 
 #: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.contrast-warning"
-msgstr "La couleur sélectionnée n'est pas suffisamment contrastée. Envisagez d'utiliser une couleur plus foncée pour une palette séquentielle."
+msgid "controls.custom-color-palettes.categorical-contrast-warning"
+msgstr "La couleur sélectionnée est difficile à lire sur un fond blanc. Choisissez une couleur plus contrastée pour améliorer l'accessibilité."
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.create-palette"
 msgstr "Créer une palette de couleurs"
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.diverging-contrast-warning"
+msgstr "La couleur sélectionnée n'est pas suffisamment contrastée. Envisagez d'utiliser une couleur plus foncée pour obtenir une palette divergente."
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.end"
@@ -607,6 +611,10 @@ msgstr "Exemple"
 msgid "controls.custom-color-palettes.mid"
 msgstr "Couleur moyenne"
 
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.sequential-contrast-warning"
+msgstr "La couleur sélectionnée n'est pas suffisamment contrastée. Envisagez d'utiliser une couleur plus foncée pour une palette séquentielle."
+
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes.set-values-apply"
 msgstr "Enregistrer la palette de couleurs"
@@ -618,9 +626,10 @@ msgstr "Couleur de départ"
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.title"
-msgstr "Palette title"
+msgstr "titre de la palette (requis)"
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.title-unavailable"
 msgstr "Ce nom est déjà utilisé. Veuillez choisir un nom unique pour votre palette de couleurs."
 
@@ -1681,7 +1690,7 @@ msgstr "Modifier la palette de couleurs"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "Mes Brouillons"
+msgstr "Brouillons"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
