@@ -36,6 +36,8 @@ You can also check the
   - Added error displaying for title names that already exists on the custom
     color palette form inside the user profile only when adding palettes
   - Fixed button translations for custom color palette update and create button.
+  - Fixed errors regarding switching form existing categorical palette to a
+    diverging color palette
   - Improved filter section styling
 - Maintenance
   - Added authentication method to e2e tests
