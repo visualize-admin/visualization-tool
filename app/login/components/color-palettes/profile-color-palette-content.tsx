@@ -13,11 +13,9 @@ import {
   createDivergingInterpolator,
   createSequentialInterpolator,
 } from "@/palettes";
-import {
-  deleteCustomColorPalette,
-  getCustomColorPalettes,
-} from "@/utils/chart-config/api";
-import { useFetchData, useMutate } from "@/utils/use-fetch-data";
+import { deleteCustomColorPalette } from "@/utils/chart-config/api";
+import { useMutate } from "@/utils/use-fetch-data";
+import { useUserPalettes } from "@/utils/use-user-palettes";
 
 import { SectionContent } from "../profile-tables";
 
@@ -25,20 +23,10 @@ import { default as ProfileColorPaletteForm } from "./profile-color-palette-form
 
 type ProfileContentProps = {
   title: string;
-  userId: number;
 };
 
-export const ProfileColorPaletteContent = ({
-  title,
-  userId,
-}: ProfileContentProps) => {
-  const { data: customColorPalettes, invalidate } = useFetchData({
-    queryKey: ["colorPalettes", userId],
-    queryFn: getCustomColorPalettes,
-    options: {
-      enable: !!userId,
-    },
-  });
+export const ProfileColorPaletteContent = ({ title }: ProfileContentProps) => {
+  const { data: customColorPalettes, invalidate } = useUserPalettes();
 
   type FormMode = "add" | "edit" | "view";
   const [formMode, setFormMode] = useState<FormMode>("view");

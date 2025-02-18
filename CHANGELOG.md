@@ -13,10 +13,14 @@ You can also check the
 
 - Features
   - Added option for hiding legend titles using a toggle switch
+- Fixes
+  - Color swatches inside the color picker dynamically adjust to the colors of
+    the selected palette
+  - All colors of a selected custom color palette are displayed when selected at
+    all times regardless of the color type
   - Dashboard text block are now automatically resized also in published charts
   - Added (required) hint for palette titles and disabled the "add color button"
     if the color palette title is missing
-- Fixes
   - Added dynamic translations for color contrast checking warnings
   - Added error displaying for title names that already exists on the custom
     color palette form inside the user profile

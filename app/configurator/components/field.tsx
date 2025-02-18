@@ -40,7 +40,11 @@ import {
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
-import { ChartConfig, isColorInConfig } from "@/config-types";
+import {
+  ChartConfig,
+  CustomPaletteType,
+  isColorInConfig,
+} from "@/config-types";
 import { getChartConfig, useChartConfigFilters } from "@/config-utils";
 import {
   ControlTab,
@@ -100,6 +104,7 @@ import { assert } from "@/utils/assert";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
+import { useUserPalettes } from "@/utils/use-user-palettes";
 
 const ColorPickerMenu = dynamic(
   () =>
@@ -746,7 +751,10 @@ export const TextBlockInputField = ({ locale }: { locale: Locale }) => {
   );
 };
 
-const useMultiFilterColorPicker = (value: string) => {
+const useMultiFilterColorPicker = (
+  value: string,
+  customColorPalettes?: CustomPaletteType[]
+) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const filters = useChartConfigFilters(chartConfig);
@@ -782,17 +790,15 @@ const useMultiFilterColorPicker = (value: string) => {
   );
 
   const palette = useMemo(() => {
+    const paletteId = get(chartConfig, `fields["${colorField}"].paletteId`);
+
     return getPalette({
-      paletteId: get(
-        chartConfig,
-        `fields["${colorField}"].${
-          colorConfigPath
-            ? `${colorConfigPath}${!hasColorField ? ".colorMapping" : ""}`
-            : ""
-        }paletteId`
-      ),
+      paletteId,
+      fallbackPalette: customColorPalettes?.find(
+        (palette) => palette.paletteId === paletteId
+      )?.colors,
     });
-  }, [chartConfig, colorConfigPath, colorField, hasColorField]);
+  }, [chartConfig, colorField, customColorPalettes]);
 
   const checkedState = dimensionId
     ? isMultiFilterFieldChecked(filters, dimensionId, value)
@@ -818,8 +824,12 @@ export const MultiFilterFieldColorPicker = ({
   label: string;
   symbol: LegendSymbol;
 }) => {
-  const { color, checked, palette, onChange } =
-    useMultiFilterColorPicker(value);
+  const { data: customColorPalettes } = useUserPalettes();
+
+  const { color, checked, palette, onChange } = useMultiFilterColorPicker(
+    value,
+    customColorPalettes
+  );
 
   return color && checked ? (
     <Flex
@@ -890,9 +900,15 @@ export const ColorPickerField = ({
     [locale, dispatch, field, path]
   );
 
+  const { data: customColorPalettes } = useUserPalettes();
+  const paletteId = get(chartConfig, `fields["${field}"].paletteId`);
+
   const color = get(chartConfig, `fields["${field}"].${path}`);
   const palette = getPalette({
-    paletteId: get(chartConfig, `fields["${field}"].paletteId`),
+    paletteId,
+    fallbackPalette: customColorPalettes?.find(
+      (palette) => palette.paletteId === paletteId
+    )?.colors,
   });
 
   return (
