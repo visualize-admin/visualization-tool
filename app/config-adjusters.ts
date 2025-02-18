@@ -75,6 +75,7 @@ type _InteractiveFiltersAdjusters = {
 
 type BaseAdjusters<NewChartConfigType extends ChartConfig> = {
   cubes: FieldAdjuster<NewChartConfigType, GenericChartConfig["cubes"]>;
+  limits: FieldAdjuster<NewChartConfigType, GenericChartConfig["limits"]>;
   interactiveFiltersConfig: InteractiveFiltersAdjusters;
 };
 

@@ -52,6 +52,7 @@ const getCubeDimensionMock = (iri: string, order: string) => {
             list() {
               return [];
             },
+            map: () => [],
           };
         }
       }
@@ -71,6 +72,7 @@ describe("DataCubeComponents", () => {
       cube: fakeCube,
       locale: "en",
       sparqlClient: {} as any,
+      unversionedCubeIri: "cube",
       cache: undefined,
     });
     expect(dimensions.map((d) => d.data.order)).toEqual([0, 10]);

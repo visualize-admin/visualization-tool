@@ -11,7 +11,11 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Added a way to display limit values and targets coming from the data with
+    compatible chart types
+- Fixes
+  - Color picker's HEX code input now stays up-to-date with the selected color
 
 # [5.2.5] - 2025-02-18
 
@@ -20,6 +24,7 @@ Nothing yet.
   - Bar charts, dashboard text blocks and Markdown inputs are not hidden behind
     flags anymore
 - Fixes
+  - Added button translations for custom color palette update and create button
   - Color swatches inside the color picker dynamically adjust to the colors of
     the selected palette
   - All colors of a selected custom color palette are displayed when selected at
@@ -33,7 +38,7 @@ Nothing yet.
   - Fixed button translations for custom color palette update and create button.
 - Maintenance
   - Added authentication method to e2e tests
-  - Added authentication to vercel previews for easier testing
+  - Added authentication to Vercel previews for easier testing
 
 # [5.2.4] - 2025-02-06
 

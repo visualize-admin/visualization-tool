@@ -844,7 +844,7 @@ export const MultiFilterFieldColorPicker = ({
       />
       <ColorPickerMenu
         colors={palette}
-        selectedColor={color}
+        selectedHexColor={color}
         onChange={onChange}
       />
     </Flex>
@@ -924,7 +924,7 @@ export const ColorPickerField = ({
       />
       <ColorPickerMenu
         colors={palette}
-        selectedColor={color}
+        selectedHexColor={color}
         onChange={updateColor}
         disabled={disabled}
       />

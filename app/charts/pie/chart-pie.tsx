@@ -56,7 +56,7 @@ const ChartPie = memo((props: ChartProps<PieConfig>) => {
           interactive={
             fields.segment && interactiveFiltersConfig?.legend.active
           }
-          showTitle={fields.segment && fields.segment.showTitle}
+          showTitle={fields.segment.showTitle}
         />
       </ChartControlsContainer>
     </PieChart>

@@ -819,6 +819,14 @@ msgstr "Tall"
 msgid "controls.layout.vertical"
 msgstr "Vertical"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.line.dashed"
+msgstr "Dashed"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.line.solid"
+msgstr "Solid"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.measure"
 msgstr "Measure"
@@ -1063,6 +1071,18 @@ msgstr "Table Sorting"
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.section.tableoptions"
 msgstr "Table Options"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values"
+msgstr "Targets & limit values"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.line-type"
+msgstr "Select line type"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.show-target"
+msgstr "Show target"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
