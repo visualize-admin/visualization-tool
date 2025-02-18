@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Limits can now be displayed in bar charts
 
 # [5.2.6] - 2025-02-18
 

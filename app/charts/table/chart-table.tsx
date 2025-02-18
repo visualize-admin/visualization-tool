@@ -12,6 +12,7 @@ export const ChartTableVisualization = (
   props: Omit<VisualizationProps<TableConfig>, "observationQueryFilters">
 ) => {
   const { chartConfig, componentIds } = props;
+
   return (
     <ChartDataWrapper
       {...props}
