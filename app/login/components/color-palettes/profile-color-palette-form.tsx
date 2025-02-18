@@ -119,10 +119,19 @@ const ProfileColorPaletteForm = ({
     [type]
   );
 
-  const handleTypeChange = useCallback((newType: CustomPaletteType["type"]) => {
-    setType(newType);
-    setColorValues(colorsByTypeRef.current[newType]);
-  }, []);
+  const handleTypeChange = useCallback(
+    (newType: CustomPaletteType["type"]) => {
+      setType(newType);
+
+      const currentColors = colorValues.map((item) => item.color);
+
+      const newColorValues = getDefaultColorValues(newType, currentColors);
+
+      colorsByTypeRef.current[newType] = newColorValues;
+      setColorValues(newColorValues);
+    },
+    [colorValues]
+  );
 
   const saveColorPalette = useEvent(async () => {
     const titleExistsAlready = customColorPalettes?.find(
