@@ -124,8 +124,10 @@ import {
 import { isJoinByCube } from "@/graphql/join";
 import SvgIcInfoOutline from "@/icons/components/IcInfoOutline";
 import { useLocale } from "@/locales/use-locale";
+import { getPalette } from "@/palettes";
 import { Limit } from "@/rdf/limits";
 import useEvent from "@/utils/use-event";
+import { useUserPalettes } from "@/utils/use-user-palettes";
 
 const ColorPickerMenu = dynamic(
   () =>
@@ -852,6 +854,14 @@ const ChartLimits = ({
       .filter(truthy);
   }, [chartConfig, relatedDimension, filters, measure.id, measure.limits]);
 
+  const { data: userPalettes } = useUserPalettes();
+  const paletteId = get(chartConfig, `fields.color.paletteId`);
+  const colors = getPalette({
+    paletteId,
+    fallbackPalette: userPalettes?.find((d) => d.paletteId === paletteId)
+      ?.colors,
+  });
+
   return availableLimitOptions.length > 0 ? (
     <ControlSection collapse>
       <SubsectionTitle iconName="target">
@@ -900,7 +910,7 @@ const ChartLimits = ({
                       usage="colorPicker"
                     />
                     <ColorPickerMenu
-                      colors={[]}
+                      colors={colors}
                       selectedHexColor={color}
                       onChange={(color) => {
                         dispatch({
