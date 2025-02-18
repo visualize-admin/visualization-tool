@@ -39,6 +39,22 @@ msgstr "[ Text hinzufügen ]"
 msgid "annotation.add.title"
 msgstr "[ Ohne Titel ]"
 
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete"
+msgstr "Löschen"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.confirmation"
+msgstr "Sind Sie sicher, dass Sie diesen Block löschen wollen?"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.title"
+msgstr "Block löschen?"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.duplicate"
+msgstr "Duplizieren"
+
 #: app/browser/dataset-browse.tsx
 msgid "browse-panel.organizations"
 msgstr "Organisationen"
@@ -572,12 +588,16 @@ msgid "controls.custom-color-palettes.caption"
 msgstr "Verwenden Sie klare, kontrastreiche Farben. Vermeiden Sie die Verwendung von zu vielen Farben, maximal 5-7. Verwenden Sie sequenzielle Paletten für geordnete Daten und divergierende Paletten für Extreme."
 
 #: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.contrast-warning"
-msgstr "Die gewählte Farbe hat nicht genügend Kontrast. Erwägen Sie die Verwendung einer dunkleren Farbe für eine sequenzielle Palette."
+msgid "controls.custom-color-palettes.categorical-contrast-warning"
+msgstr "Die gewählte Farbe ist vor einem weißen Hintergrund schwer zu lesen. Wählen Sie eine Farbe mit höherem Kontrast, um die Zugänglichkeit zu verbessern."
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.create-palette"
 msgstr "Farbpalette erstellen"
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.diverging-contrast-warning"
+msgstr "Die gewählte Farbe hat nicht genügend Kontrast. Erwägen Sie die Verwendung einer dunkleren Farbe für eine abweichende Farbpalette."
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.end"
@@ -590,6 +610,10 @@ msgstr "Beispiel"
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.mid"
 msgstr "Mittlere Farbe"
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.sequential-contrast-warning"
+msgstr "Die gewählte Farbe hat nicht genügend Kontrast. Erwägen Sie die Verwendung einer dunkleren Farbe für eine sequenzielle Palette."
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes.set-values-apply"
