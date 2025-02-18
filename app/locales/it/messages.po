@@ -628,8 +628,8 @@ msgstr "Colore iniziale"
 msgid "controls.custom-color-palettes.title"
 msgstr "Titolo tavolozza (obbligatorio)"
 
-
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.title-unavailable"
 msgstr "Questo nome è già in uso. Scegliete un nome unico per la vostra tavolozza di colori."
 
@@ -1670,13 +1670,13 @@ msgstr "Modifica colore Paleete"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "Mie Bozze"
+msgstr "Bozze"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-published-visualizations"
-msgstr "Mie Visualizzazioni"
+msgstr "Le mie visualizzazioni"
 
 #: app/login/components/login-menu.tsx
 msgid "login.profile.my-visualizations"

@@ -629,6 +629,7 @@ msgid "controls.custom-color-palettes.title"
 msgstr "titre de la palette (requis)"
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.title-unavailable"
 msgstr "Ce nom est déjà utilisé. Veuillez choisir un nom unique pour votre palette de couleurs."
 
@@ -1669,7 +1670,7 @@ msgstr "Modifier la palette de couleurs"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "Mes Brouillons"
+msgstr "Brouillons"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx

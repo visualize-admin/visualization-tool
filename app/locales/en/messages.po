@@ -629,6 +629,7 @@ msgid "controls.custom-color-palettes.title"
 msgstr "Palette title (required)"
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.title-unavailable"
 msgstr "This name is already in use. Please choose a unique name for your color palette."
 

@@ -45,7 +45,7 @@ msgstr "Löschen"
 
 #: app/components/dashboard-shared.tsx
 msgid "block-controls.delete.confirmation"
-msgstr "Sind Sie sicher, dass Sie diesen Block löschen wollen?"
+msgstr "Möchten Sie diesen Block wirklich löschen?"
 
 #: app/components/dashboard-shared.tsx
 msgid "block-controls.delete.title"
@@ -629,6 +629,7 @@ msgid "controls.custom-color-palettes.title"
 msgstr "Palettentitel (erforderlich)"
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.title-unavailable"
 msgstr "Dieser Name ist bereits in Gebrauch. Bitte wählen Sie einen eindeutigen Namen für Ihre Farbpalette."
 
@@ -1669,13 +1670,13 @@ msgstr "Farbplatte editieren"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-drafts"
-msgstr "Meine Entwürfe"
+msgstr "Entwürfe"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-published-visualizations"
-msgstr "Meine Visualisierungen"
+msgstr "Veröffentlichte Visualisierungen"
 
 #: app/login/components/login-menu.tsx
 msgid "login.profile.my-visualizations"
@@ -1721,7 +1722,7 @@ msgstr "Logo der Schweizerischen Eidgenossenschaft"
 
 #: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.label-placeholder"
-msgstr "Etikett..."
+msgstr "Label..."
 
 #: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.url-placeholder"
