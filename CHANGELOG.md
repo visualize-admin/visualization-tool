@@ -18,6 +18,12 @@ You can also check the
     the selected palette
   - All colors of a selected custom color palette are displayed when selected at
     all times regardless of the color type
+  - Dashboard text block are now automatically resized also in published charts
+  - Added (required) hint for palette titles and disabled the "add color button"
+    if the color palette title is missing
+  - Added error displaying for title names that already exists on the custom
+    color palette form inside the user profile
+  - Fixed button translations for custom color palette update and create button.
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to vercel previews for easier testing

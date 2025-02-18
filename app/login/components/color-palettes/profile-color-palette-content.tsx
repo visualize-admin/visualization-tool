@@ -91,6 +91,7 @@ export const ProfileColorPaletteContent = ({ title }: ProfileContentProps) => {
           formMode={formMode}
           palette={formMode === "edit" ? selectedPalette : undefined}
           onBack={returnToView}
+          customColorPalettes={customColorPalettes}
         />
       )}
     </SectionContent>
