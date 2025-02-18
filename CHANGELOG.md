@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.2.6] - 2025-02-18
+
 - Features
   - Added a way to display limit values and targets coming from the data with
     compatible chart types
