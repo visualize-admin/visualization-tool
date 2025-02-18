@@ -41,7 +41,7 @@ const components: ComponentProps<typeof ReactMarkdown>["components"] = {
     </p>
   ),
   a: ({ children, style, ...props }) => (
-    <a style={{ ...style, marginTop: 0 }} {...props}>
+    <a target="_blank" style={{ ...style, marginTop: 0 }} {...props}>
       {children}
     </a>
   ),

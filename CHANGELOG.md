@@ -16,6 +16,7 @@ You can also check the
     compatible chart types
 - Fixes
   - Color picker's HEX code input now stays up-to-date with the selected color
+  - Markdown links now open in a new tab
 
 # [5.2.5] - 2025-02-18
 
