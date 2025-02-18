@@ -4,8 +4,6 @@ import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 
-import { useFlag } from "@/flags";
-
 const components: ComponentProps<typeof ReactMarkdown>["components"] = {
   h1: ({ children, style, ...props }) => (
     <h1 style={{ ...style, marginTop: 0 }} {...props}>
@@ -52,16 +50,12 @@ const components: ComponentProps<typeof ReactMarkdown>["components"] = {
 export const Markdown = (
   props: Omit<ComponentProps<typeof ReactMarkdown>, "components">
 ) => {
-  const enable = useFlag("enable-experimental-features");
-
-  return enable ? (
+  return (
     <ReactMarkdown
       components={components}
       remarkPlugins={[remarkGfm]}
       rehypePlugins={[rehypeRaw, rehypeSanitize]}
       {...props}
     />
-  ) : (
-    <>{props.children}</>
   );
 };

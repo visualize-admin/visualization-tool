@@ -13,6 +13,8 @@ You can also check the
 
 - Features
   - Added option for hiding legend titles using a toggle switch
+  - Bar charts, dashboard text blocks and Markdown inputs are not hidden behind
+    flags anymore
 - Fixes
   - Color swatches inside the color picker dynamically adjust to the colors of
     the selected palette
