@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.2.5] - 2025-02-18
+
 - Features
   - Added option for hiding legend titles using a toggle switch
   - Bar charts, dashboard text blocks and Markdown inputs are not hidden behind
