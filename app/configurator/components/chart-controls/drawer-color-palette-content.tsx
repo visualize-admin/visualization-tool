@@ -170,6 +170,7 @@ export const ColorPaletteDrawerContent = forwardRef<
           )}
         </Flex>
         <ColorPaletteCreator
+          title={titleInput}
           type={type}
           colorValues={colorValues}
           onRemove={removeColor}

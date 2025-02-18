@@ -618,7 +618,7 @@ msgstr "Starting Color"
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.title"
-msgstr "Palette title"
+msgstr "Palette title (required)"
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes.title-unavailable"

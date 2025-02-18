@@ -14,7 +14,11 @@ You can also check the
 - Features
   - Added option for hiding legend titles using a toggle switch
   - Dashboard text block are now automatically resized also in published charts
+  - Added (required) hint for palette titles and disabled the "add color button"
+    if the color palette title is missing
 - Fixes
+  - Added error displaying for title names that already exists on the custom
+    color palette form inside the user profile
   - Fixed button translations for custom color palette update and create button.
 - Maintenance
   - Added authentication method to e2e tests
