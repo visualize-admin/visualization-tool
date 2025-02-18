@@ -1198,10 +1198,9 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (draft.state === "LAYOUTING" || draft.state === "PUBLISHED") {
         if (!isEqual(draft.layout, action.value)) {
           draft.layout = action.value;
+          ensureDashboardLayoutIsCorrect(draft);
         }
       }
-
-      ensureDashboardLayoutIsCorrect(draft);
 
       return draft;
 

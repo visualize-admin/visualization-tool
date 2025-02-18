@@ -17,6 +17,8 @@ You can also check the
 - Fixes
   - Color picker's HEX code input now stays up-to-date with the selected color
   - Markdown links now open in a new tab
+  - Publishing of a dashboard with text blocks doesn't crash the application in
+    some rare cases anymore
 
 # [5.2.5] - 2025-02-18
 
