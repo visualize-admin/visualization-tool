@@ -118,6 +118,7 @@ const CustomColorPicker = ({
             <Swatch
               key={`color-picker-swatch-${item.color}-${i}`}
               color={item.color}
+             
               selected={hsvaToHex(hsva) === item.color && item.id === hsva.id}
               onClick={() => setHsva({ ...hexToHsva(item.color), id: item.id })}
             />
