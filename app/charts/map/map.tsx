@@ -1,4 +1,4 @@
-import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers/typed";
+import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import { supported } from "@mapbox/mapbox-gl-supported";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -228,6 +228,7 @@ export const MapComponent = () => {
     return new GeoJsonLayer({
       id: "areaLayer",
       beforeId: showBaseLayer ? "water_polygon" : undefined,
+      // @ts-ignore this is correct
       data: sortedShapes,
       pickable: true,
       parameters: {

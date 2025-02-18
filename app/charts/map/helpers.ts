@@ -1,5 +1,5 @@
-import { WebMercatorViewport } from "@deck.gl/core/typed";
-import { MapboxOverlay, MapboxOverlayProps } from "@deck.gl/mapbox/typed";
+import { WebMercatorViewport } from "@deck.gl/core";
+import { MapboxOverlay, MapboxOverlayProps } from "@deck.gl/mapbox";
 import { extent } from "d3-array";
 import { geoBounds } from "d3-geo";
 import { useEffect, useMemo, useState } from "react";
