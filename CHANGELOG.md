@@ -25,6 +25,7 @@ You can also check the
   - Added error displaying for title names that already exists on the custom
     color palette form inside the user profile
   - Fixed button translations for custom color palette update and create button.
+  - Improved filter section styling
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to vercel previews for easier testing
