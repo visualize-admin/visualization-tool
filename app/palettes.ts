@@ -67,10 +67,12 @@ export const getPalette = ({
   paletteId,
   colorField,
   colors,
+  fallbackPalette,
 }: {
   paletteId?: string;
   colorField?: ColorField;
   colors?: string[];
+  fallbackPalette?: string[];
 }): ReadonlyArray<string> => {
   if (colorField?.type === "single") {
     return [colorField.color];
@@ -100,7 +102,7 @@ export const getPalette = ({
         return schemeTableau10;
 
       default:
-        return schemeCategory10;
+        return fallbackPalette ?? schemeCategory10;
     }
   }
 };

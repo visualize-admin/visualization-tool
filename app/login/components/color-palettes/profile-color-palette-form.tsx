@@ -138,7 +138,7 @@ const ProfileColorPaletteForm = ({
       (palette) => palette.name === titleInput
     );
 
-    if (titleExistsAlready) {
+    if (titleExistsAlready && formMode === "add") {
       setIsNotAvailable(true);
     } else {
       setIsNotAvailable(false);

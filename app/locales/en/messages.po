@@ -588,12 +588,16 @@ msgid "controls.custom-color-palettes.caption"
 msgstr "Use distinct, high-contrast colors. Avoid using too many colors, maximum 5–7. Apply sequential palettes for ordered data and diverging palettes for extremes."
 
 #: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.contrast-warning"
-msgstr "The selected color lacks sufficient contrast. Consider using a darker color for a sequential palette."
+msgid "controls.custom-color-palettes.categorical-contrast-warning"
+msgstr "The selected color is difficult to read against a white background. Choose a color with higher contrast to improve accessibility."
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.create-palette"
 msgstr "Create color palette"
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.diverging-contrast-warning"
+msgstr "The selected color lacks sufficient contrast. Consider using a darker color for a diverging palette."
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.end"
@@ -606,6 +610,10 @@ msgstr "Example"
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.mid"
 msgstr "Middle Color"
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.sequential-contrast-warning"
+msgstr "The selected color lacks sufficient contrast. Consider using a darker color for a sequential palette."
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes.set-values-apply"
@@ -621,6 +629,7 @@ msgid "controls.custom-color-palettes.title"
 msgstr "Palette title (required)"
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.title-unavailable"
 msgstr "This name is already in use. Please choose a unique name for your color palette."
 
@@ -809,6 +818,14 @@ msgstr "Tall"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.vertical"
 msgstr "Vertical"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.line.dashed"
+msgstr "Dashed"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.line.solid"
+msgstr "Solid"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.measure"
@@ -1054,6 +1071,18 @@ msgstr "Table Sorting"
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.section.tableoptions"
 msgstr "Table Options"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values"
+msgstr "Targets & limit values"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.line-type"
+msgstr "Select line type"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.show-target"
+msgstr "Show target"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx

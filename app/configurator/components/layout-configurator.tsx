@@ -62,7 +62,6 @@ import {
   TemporalDimension,
   TemporalEntityDimension,
 } from "@/domain/data";
-import { useFlag } from "@/flags";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { useConfigsCubeComponents } from "@/graphql/hooks";
 import { Icon } from "@/icons";
@@ -577,16 +576,9 @@ const LayoutBlocksConfigurator = () => {
   const { layout } = state;
   const { blocks } = layout;
   const classes = useLayoutBlocksStyles();
-
   const onClick = useEvent((blockKey: string) => {
     dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value: blockKey });
   });
-
-  const enabled = useFlag("enable-experimental-features");
-
-  if (!enabled) {
-    return null;
-  }
 
   return layout.type === "dashboard" ? (
     <ControlSection role="tablist" aria-labelledby="controls-blocks" collapse>
