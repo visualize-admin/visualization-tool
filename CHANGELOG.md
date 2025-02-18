@@ -17,7 +17,7 @@ You can also check the
     if the color palette title is missing
 - Fixes
   - Added error displaying for title names that already exists on the custom
-    color palette form inside the user profile
+    color palette form inside the user profile only when adding palettes
   - Fixed button translations for custom color palette update and create button.
 - Maintenance
   - Added authentication method to e2e tests
