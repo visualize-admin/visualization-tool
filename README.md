@@ -39,7 +39,7 @@
 
 ## 1. <a name='Documentation'></a>Documentation
 
-A public documentation is available at https://visualize.admin.ch/docs/.
+Public documentation is available at https://visualize.admin.ch/docs/.
 
 ## 2. <a name='DevelopmentEnvironment'></a>Development Environment
 
