@@ -825,7 +825,7 @@ msgstr "Gestrichelt"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.line.solid"
-msgstr "Solide"
+msgstr "Voll"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.measure"
@@ -1078,7 +1078,7 @@ msgstr "Zielvorgaben und Grenzwerte"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.targets-and-limit-values.line-type"
-msgstr "Leitungstyp auswählen"
+msgstr "Linientyp auswählen"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.targets-and-limit-values.show-target"
