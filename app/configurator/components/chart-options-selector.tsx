@@ -2374,7 +2374,7 @@ const ChartMapBaseLayerSettings = ({
   }, [chartConfig.baseLayer.locked, dispatch, locale]);
 
   return (
-    <ControlSection>
+    <ControlSection hideTopBorder>
       <SectionTitle>
         <Trans id="chart.map.layers.base">Map Display</Trans>
       </SectionTitle>
