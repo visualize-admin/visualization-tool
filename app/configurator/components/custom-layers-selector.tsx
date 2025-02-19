@@ -1,9 +1,16 @@
 import { t, Trans } from "@lingui/macro";
-import { Typography, useEventCallback } from "@mui/material";
+import { Box, Typography, useEventCallback } from "@mui/material";
 import { XMLParser } from "fast-xml-parser";
 import { useMemo } from "react";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  OnDragEndResponder,
+} from "react-beautiful-dnd";
 
 import { Select, SelectOption } from "@/components/form";
+import { MoveDragButton } from "@/components/move-drag-button";
 import { BaseLayer, MapConfig } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import {
@@ -123,6 +130,21 @@ export const CustomLayersSelector = () => {
     );
   }, [dataLayers]);
 
+  const handleDragEnd: OnDragEndResponder = useEventCallback((e) => {
+    const sourceIndex = e.source.index;
+    const destinationIndex = e.destination?.index;
+
+    if (typeof destinationIndex !== "number" || e.source === e.destination) {
+      return;
+    }
+
+    const newLayers = [...chartConfigLayers];
+    const [removed] = newLayers.splice(sourceIndex, 1);
+    newLayers.splice(destinationIndex, 0, removed);
+
+    handleChange(newLayers);
+  });
+
   return error ? (
     <Typography>{error.message}</Typography>
   ) : !data ? (
@@ -133,30 +155,55 @@ export const CustomLayersSelector = () => {
         <Trans id="chart.map.layers.custom-layers">Custom Layers</Trans>
       </SectionTitle>
       <ControlSectionContent gap="large">
-        {chartConfigLayers.map((layer) => {
-          const layerOptions = options.filter(
-            (option) => option.value === layer.url || option.isNoneValue
-          );
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="layers">
+            {(provided) => (
+              <div {...provided.droppableProps} ref={provided.innerRef}>
+                {chartConfigLayers.map((layer, i) => (
+                  <Draggable key={layer.url} draggableId={layer.url} index={i}>
+                    {(provided) => (
+                      <Box
+                        ref={provided.innerRef}
+                        {...provided.dragHandleProps}
+                        {...provided.draggableProps}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          mb: 3,
+                        }}
+                      >
+                        <Select
+                          key={layer.url}
+                          id={`layer-${layer.url}`}
+                          options={options.filter(
+                            (option) =>
+                              option.value === layer.url || option.isNoneValue
+                          )}
+                          sortOptions={false}
+                          onChange={(e) => {
+                            const url = e.target.value as string;
 
-          return (
-            <Select
-              key={layer.url}
-              id={`layer-${layer.url}`}
-              options={layerOptions}
-              sortOptions
-              onChange={(e) => {
-                const url = e.target.value as string;
-
-                if (url === FIELD_VALUE_NONE) {
-                  handleChange(
-                    chartConfigLayers.filter((l) => l.url !== layer.url)
-                  );
-                }
-              }}
-              value={layer.url}
-            />
-          );
-        })}
+                            if (url === FIELD_VALUE_NONE) {
+                              handleChange(
+                                chartConfigLayers.filter(
+                                  (l) => l.url !== layer.url
+                                )
+                              );
+                            }
+                          }}
+                          value={layer.url}
+                        />
+                        <MoveDragButton />
+                      </Box>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
         <Select
           id="layer-add"
           label="Add layer"
