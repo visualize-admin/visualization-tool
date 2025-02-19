@@ -50,7 +50,7 @@ const WMTS_URL =
 export const useWMTSLayers = () => {
   const locale = useLocale();
 
-  return useFetchData<WMTSData>({
+  return useFetchData<WMTSData["Capabilities"]["Contents"]["Layer"]>({
     queryKey: ["custom-layers", locale],
     queryFn: async () => {
       return fetch(`${WMTS_URL}?lang=${locale}`).then(async (res) => {
@@ -61,7 +61,7 @@ export const useWMTSLayers = () => {
         });
 
         return res.text().then((text) => {
-          return parser.parse(text);
+          return parser.parse(text).Capabilities.Contents.Layer;
         });
       });
     },

@@ -30,7 +30,6 @@ export const CustomLayersSelector = () => {
   const chartConfig = getChartConfig(state) as MapConfig;
   const chartConfigLayers = chartConfig.baseLayer.customWMTSLayers;
   const { data, error } = useWMTSLayers();
-  const dataLayers = data?.Capabilities.Contents.Layer;
   const handleChange = useEventCallback(
     (value: BaseLayer["customWMTSLayers"]) => {
       if (!data) {
@@ -44,7 +43,7 @@ export const CustomLayersSelector = () => {
     }
   );
   const options: SelectOption[] = useMemo(() => {
-    if (!dataLayers) {
+    if (!data) {
       return [];
     }
 
@@ -58,7 +57,7 @@ export const CustomLayersSelector = () => {
         isNoneValue: true,
       },
     ].concat(
-      dataLayers
+      data
         .map((layer) => ({
           value: layer.ResourceURL.template,
           label: layer["ows:Title"],
@@ -66,7 +65,7 @@ export const CustomLayersSelector = () => {
         }))
         .sort((a, b) => a.label.localeCompare(b.label))
     );
-  }, [dataLayers]);
+  }, [data]);
 
   const handleDragEnd: OnDragEndResponder = useEventCallback((e) => {
     const sourceIndex = e.source.index;
