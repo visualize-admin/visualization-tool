@@ -2,6 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import {
   Autocomplete,
   Box,
+  MenuItem,
   TextField,
   Typography,
   useEventCallback,
@@ -163,6 +164,11 @@ export const CustomLayersSelector = () => {
               />
             );
           }}
+          renderOption={(props, option) => (
+            <MenuItem {...props} key={option.value}>
+              <Typography>{option.label}</Typography>
+            </MenuItem>
+          )}
           onChange={(_, value) => {
             if (value) {
               handleChange([...chartConfigLayers, { url: value.value }]);
