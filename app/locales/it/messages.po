@@ -262,6 +262,10 @@ msgstr "Mostra mappa del mondo"
 msgid "chart.map.layers.base.view.locked"
 msgstr "Vista bloccata"
 
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.custom-layers"
+msgstr "Livelli personalizzati"
+
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.symbol"
 msgstr "Simboli"

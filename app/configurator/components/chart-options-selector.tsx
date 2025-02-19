@@ -76,6 +76,7 @@ import {
   SectionTitle,
   SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { CustomLayersSelector } from "@/configurator/components/custom-layers-selector";
 import {
   ChartFieldField,
   ChartOptionCheckboxField,
@@ -654,7 +655,10 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       )}
       {/* FIXME: should be generic or shouldn't be a field at all */}
       {field === "baseLayer" && (
-        <ChartMapBaseLayerSettings chartConfig={chartConfig as MapConfig} />
+        <>
+          <ChartMapBaseLayerSettings chartConfig={chartConfig as MapConfig} />
+          <CustomLayersSelector />
+        </>
       )}
       {encoding.sorting &&
         component &&

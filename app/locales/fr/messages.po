@@ -262,6 +262,10 @@ msgstr "Afficher la carte du monde"
 msgid "chart.map.layers.base.view.locked"
 msgstr "Carte verrouillée"
 
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.custom-layers"
+msgstr "Couches personnalisées"
+
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.symbol"
 msgstr "Symboles"

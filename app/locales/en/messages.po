@@ -262,6 +262,10 @@ msgstr "Show Worldmap"
 msgid "chart.map.layers.base.view.locked"
 msgstr "Locked view"
 
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.custom-layers"
+msgstr "Custom layers"
+
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.symbol"
 msgstr "Symbols"
