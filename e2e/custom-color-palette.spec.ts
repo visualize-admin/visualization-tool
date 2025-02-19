@@ -5,12 +5,12 @@ import { setup, sleep } from "./common";
 const { test, expect, describe } = setup();
 
 const addNewColor = async (page: Page, i: number) => {
-  await page.locator('[data-testId="profile-add-new-color"]').click();
+  await page.locator('[data-testid="profile-add-new-color"]').click();
 
   await page.getByRole("button", { name: "Open Color Picker" }).last().click();
   await sleep(1_000);
 
-  const saturation = page.locator('[data-testId="color-picker-saturation"]');
+  const saturation = page.locator('[data-testid="color-picker-saturation"]');
   await saturation.waitFor({ state: "visible", timeout: 5000 });
 
   const box = await saturation.boundingBox();
@@ -38,10 +38,10 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await page.goto("/en/profile");
   const url = page.url();
   expect(url.endsWith("/en/profile")).toBe(true);
-  await page.locator('[data-testId="color-palettes-tab"]').click();
+  await page.locator('[data-testid="color-palettes-tab"]').click();
 
   //Create Categorical Palette
-  await page.locator('[data-testId="add-profile-color-palette"]').click();
+  await page.locator('[data-testid="add-profile-color-palette"]').click();
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await sleep(1_000);
 
@@ -57,7 +57,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   for (let i = 0; i < 3; i++) {
     await addNewColor(page, i);
   }
-  await page.locator('[data-testId="profile-save-color-palette"]').click();
+  await page.locator('[data-testid="profile-save-color-palette"]').click();
   await sleep(1_000);
 
   const categoricalTitleExists = await page
@@ -66,9 +66,9 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   expect(categoricalTitleExists).toBe(true);
 
   //Create Sequential Palette
-  await page.locator('[data-testId="add-profile-color-palette"]').click();
+  await page.locator('[data-testid="add-profile-color-palette"]').click();
   await page
-    .locator('[data-testId="profile-color-palette-sequential"]')
+    .locator('[data-testid="profile-color-palette-sequential"]')
     .click();
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await sleep(1_000);
@@ -82,7 +82,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await page.keyboard.press("Enter");
   await page.waitForTimeout(500);
 
-  await page.locator('[data-testId="profile-save-color-palette"]').click();
+  await page.locator('[data-testid="profile-save-color-palette"]').click();
   await sleep(1_000);
 
   const sequentialTitleExists = await page
@@ -91,8 +91,8 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   expect(sequentialTitleExists).toBe(true);
 
   //Create Diverging Palette (2 colors)
-  await page.locator('[data-testId="add-profile-color-palette"]').click();
-  await page.locator('[data-testId="profile-color-palette-diverging"]').click();
+  await page.locator('[data-testid="add-profile-color-palette"]').click();
+  await page.locator('[data-testid="profile-color-palette-diverging"]').click();
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await sleep(1_000);
 
@@ -108,7 +108,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await page.getByRole("button", { name: "Remove Color" }).first().click();
   await sleep(1_000);
 
-  await page.locator('[data-testId="profile-save-color-palette"]').click();
+  await page.locator('[data-testid="profile-save-color-palette"]').click();
   await sleep(1_000);
 
   const divergingTwoTitleExists = await page
@@ -117,8 +117,8 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   expect(divergingTwoTitleExists).toBe(true);
 
   //Create Diverging Palette (3 colors)
-  await page.locator('[data-testId="add-profile-color-palette"]').click();
-  await page.locator('[data-testId="profile-color-palette-diverging"]').click();
+  await page.locator('[data-testid="add-profile-color-palette"]').click();
+  await page.locator('[data-testid="profile-color-palette-diverging"]').click();
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await sleep(1_000);
 
@@ -131,7 +131,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await page.keyboard.press("Enter");
   await page.waitForTimeout(500);
 
-  await page.locator('[data-testId="profile-save-color-palette"]').click();
+  await page.locator('[data-testid="profile-save-color-palette"]').click();
   await sleep(1_000);
 
   const divergingThreeTitleExists = await page
@@ -152,7 +152,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   for (let i = 0; i < 3; i++) {
     await addNewColor(page, i);
   }
-  await page.locator('[data-testId="profile-save-color-palette"]').click();
+  await page.locator('[data-testid="profile-save-color-palette"]').click();
   await sleep(1_000);
 
   //Edit Sequential Palette change type
@@ -161,7 +161,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
     .first()
     .click();
   await page
-    .locator('[data-testId="profile-color-palette-categorical"]')
+    .locator('[data-testid="profile-color-palette-categorical"]')
     .click();
 
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
@@ -170,7 +170,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   for (let i = 0; i < 3; i++) {
     await addNewColor(page, i);
   }
-  await page.locator('[data-testId="profile-save-color-palette"]').click();
+  await page.locator('[data-testid="profile-save-color-palette"]').click();
   await sleep(1_000);
 
   //Delete Color palettes

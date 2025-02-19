@@ -94,7 +94,7 @@ export const ProfileColorPaletteContent = ({
             startIcon={<Icon name="add" />}
             sx={{ width: "fit-content" }}
             onClick={showAddForm}
-            data-testId="add-profile-color-palette"
+            data-testid="add-profile-color-palette"
           >
             <Trans id="login.profile.my-color-palettes.add" />
           </Button>
@@ -165,7 +165,7 @@ const ColorPaletteRow = ({
 
   return (
     <ColorRowFlex
-      data-testId="profile-color-palette-row"
+      data-testid="profile-color-palette-row"
       sx={{
         paddingY: 3,
         paddingRight: 4,

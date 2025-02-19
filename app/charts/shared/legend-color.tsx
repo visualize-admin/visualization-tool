@@ -203,7 +203,7 @@ export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
             component={dimensionsById[chartConfig.fields.segment.componentId]}
           >
             <Typography
-              data-testId="legendTitle"
+              data-testid="legendTitle"
               component="div"
               variant="caption"
               color="primary.main"
