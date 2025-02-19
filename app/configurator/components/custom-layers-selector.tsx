@@ -39,10 +39,6 @@ export const CustomLayersSelector = () => {
   const { data, error } = useWMTSLayers();
   const handleChange = useEventCallback(
     (value: BaseLayer["customWMTSLayers"]) => {
-      if (!data) {
-        return;
-      }
-
       dispatch({
         type: "CUSTOM_WMTS_LAYERS_CHANGED",
         value,
