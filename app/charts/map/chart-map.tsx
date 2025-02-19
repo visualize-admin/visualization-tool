@@ -185,7 +185,11 @@ const ChartMap = memo((props: ChartMapProps) => {
   return (
     <MapChart {...props}>
       <ChartContainer>
-        <MapComponent />
+        <MapComponent
+          customWMTSLayerUrls={chartConfig.baseLayer.customWMTSLayers.map(
+            (layer) => layer.url
+          )}
+        />
         <MapTooltip />
       </ChartContainer>
       <ChartControlsContainer sx={{ mt: 6 }}>

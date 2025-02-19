@@ -1,11 +1,12 @@
-import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
+import { TileLayer } from "@deck.gl/geo-layers";
+import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import { supported } from "@mapbox/mapbox-gl-supported";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { geoArea } from "d3-geo";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
-import maplibreglraw from "maplibre-gl";
+import maplibreglRaw from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Map, { LngLatLike, MapboxEvent } from "react-map-gl";
 
@@ -29,13 +30,14 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { BBox } from "@/configurator";
 import { GeoFeature, GeoPoint } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 // supported was removed as of maplibre-gl v3.0.0, so we need to add it back
-const maplibregl = { ...maplibreglraw, supported };
+const maplibregl = { ...maplibreglRaw, supported };
 
 const useStyles = makeStyles<Theme>((theme) => ({
   controlButtons: {
@@ -84,7 +86,11 @@ const resizeAndFit = debounce((map: mapboxgl.Map, bbox: BBox) => {
   map.fitBounds(bbox, { duration: 0 });
 }, 0);
 
-export const MapComponent = () => {
+export const MapComponent = ({
+  customWMTSLayerUrls,
+}: {
+  customWMTSLayerUrls: string[];
+}) => {
   const classes = useStyles();
   const locale = useLocale();
 
@@ -390,6 +396,34 @@ export const MapComponent = () => {
 
   const [loaded, setLoaded] = useState(false);
 
+  const tileLayers = useMemo(() => {
+    return customWMTSLayerUrls
+      .map((url) => {
+        if (!isValidWMTSLayerUrl(url)) {
+          return;
+        }
+
+        return new TileLayer({
+          id: `tile-layer-${url}`,
+          data: getWMTSLayerData(url),
+          renderSubLayers: (props) => {
+            const { boundingBox } = props.tile;
+            return new BitmapLayer(props, {
+              data: undefined,
+              image: props.data,
+              bounds: [
+                boundingBox[0][0],
+                boundingBox[0][1],
+                boundingBox[1][0],
+                boundingBox[1][1],
+              ],
+            });
+          },
+        });
+      })
+      .filter(truthy);
+  }, [customWMTSLayerUrls]);
+
   return (
     <>
       {locked ? null : (
@@ -445,10 +479,10 @@ export const MapComponent = () => {
           onResize={handleResize}
           {...viewState}
         >
-          <div data-map-loaded={loaded ? "true" : "false"} />
+          <div data-map-loaded={loaded} />
           <DeckGLOverlay
             interleaved
-            layers={[geoJsonLayer, hoverLayer, scatterplotLayer]}
+            layers={[geoJsonLayer, hoverLayer, ...tileLayers, scatterplotLayer]}
           />
         </Map>
       ) : null}
@@ -474,4 +508,16 @@ const ControlButton = ({
       <Icon name={iconName} size={24} />
     </Button>
   );
+};
+
+const isValidWMTSLayerUrl = (url: string) => {
+  return url.includes("wmts.geo.admin.ch");
+};
+
+const getWMTSLayerData = (url: string) => {
+  return url
+    .replace("{Time}", "current")
+    .replace("{TileMatrix}", "{z}")
+    .replace("{TileCol}", "{x}")
+    .replace("{TileRow}", "{y}");
 };
