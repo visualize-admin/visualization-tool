@@ -19,7 +19,7 @@ type WMTSData = {
           template: string;
         };
         Style: {
-          LegendURL: {
+          LegendURL?: {
             format: string;
             "xlink:href": string;
           };

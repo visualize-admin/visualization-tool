@@ -63,14 +63,13 @@ const useWMTSLegends = ({
             const wmtsLayer = wmtsLayers?.find(
               (l) => l.ResourceURL.template === chartLayer.url
             );
+            const url = wmtsLayer?.Style.LegendURL?.["xlink:href"];
 
-            if (!wmtsLayer) {
+            if (!url) {
               return null;
             }
 
-            const blob = await fetch(
-              wmtsLayer.Style.LegendURL["xlink:href"]
-            ).then((res) => res.blob());
+            const blob = await fetch(url).then((res) => res.blob());
             const bmp = await createImageBitmap(blob);
             const { width, height } = bmp;
             bmp.close();
