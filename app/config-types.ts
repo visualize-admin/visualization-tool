@@ -799,6 +799,12 @@ const BaseLayer = t.type({
   show: t.boolean,
   locked: t.boolean,
   bbox: t.union([BBox, t.undefined]),
+  customWMTSLayers: t.array(
+    t.type({
+      url: t.string,
+      legendUrl: t.string,
+    })
+  ),
 });
 export type BaseLayer = t.TypeOf<typeof BaseLayer>;
 

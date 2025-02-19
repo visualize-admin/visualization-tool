@@ -1478,6 +1478,33 @@ export const chartConfigMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    from: "4.2.0",
+    to: "4.3.0",
+    description: `maps {
+      baseLayer {
+        + customWMTSLayerUrls
+      }
+    }`,
+    up: (config) => {
+      const newConfig = { ...config, version: "4.3.0" };
+
+      if (newConfig.chartType === "map") {
+        newConfig.baseLayer.customWMTSLayers = [];
+      }
+
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "4.2.0" };
+
+      if (newConfig.chartType === "map") {
+        delete newConfig.baseLayer.customWMTSLayers;
+      }
+
+      return newConfig;
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -2179,6 +2206,45 @@ export const configuratorStateMigrations: Migration[] = [
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
           migrationProps: newConfig,
           toVersion: "4.1.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
+
+      newConfig.chartConfigs = chartConfigs;
+
+      return newConfig;
+    },
+  },
+  {
+    description: "ALL (bump ChartConfig version)",
+    from: "4.3.0",
+    to: "4.4.0",
+    up: async (config) => {
+      const newConfig = { ...config, version: "4.4.0" };
+
+      const chartConfigs: any[] = [];
+
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "4.3.0",
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
+
+      newConfig.chartConfigs = chartConfigs;
+
+      return newConfig;
+    },
+    down: async (config) => {
+      const newConfig = { ...config, version: "4.3.0" };
+
+      const chartConfigs: any[] = [];
+
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: "4.2.0",
         });
         chartConfigs.push(migratedChartConfig);
       }
