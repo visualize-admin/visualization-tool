@@ -1651,7 +1651,7 @@ msgstr "My palette"
 
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.delete"
-msgstr "login.profile.my-color-palettes.delete"
+msgstr "Delete Color Palette"
 
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.description"
@@ -1659,7 +1659,7 @@ msgstr "Save your first custom color palette to easily choose your colors while 
 
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.edit"
-msgstr "login.profile.my-color-palettes.edit"
+msgstr "Edit Color Palette"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
