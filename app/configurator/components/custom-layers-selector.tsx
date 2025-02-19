@@ -1,6 +1,5 @@
 import { t, Trans } from "@lingui/macro";
 import { Box, Typography, useEventCallback } from "@mui/material";
-import { XMLParser } from "fast-xml-parser";
 import { useMemo } from "react";
 import {
   DragDropContext,
@@ -9,6 +8,7 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 
+import { useWMTSLayers } from "@/charts/map/wmts-utils";
 import { Select, SelectOption } from "@/components/form";
 import { MoveDragButton } from "@/components/move-drag-button";
 import { BaseLayer, MapConfig } from "@/config-types";
@@ -24,74 +24,12 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { useLocale } from "@/locales/use-locale";
-import { useFetchData } from "@/utils/use-fetch-data";
-
-type WMTSData = {
-  Capabilities: {
-    Contents: {
-      Layer: {
-        Dimension: {
-          Default: string;
-          Value: string;
-          "ows:Identifier": string;
-        };
-        Format: string;
-        ResourceURL: {
-          format: string;
-          resourceType: string;
-          template: string;
-        };
-        Style: {
-          LegendURL: {
-            format: string;
-            "xlink:href": string;
-          };
-          "ows:Identifier": string;
-          "ows:Title": string;
-        };
-        TileMatrixSetLink: {
-          TileMatrixSet: string;
-        };
-        "ows:Abstract": string;
-        "ows:Identifier": string;
-        "ows:Metadata": {
-          "xlink:href": string;
-        };
-        "ows:Title": string;
-        "ows:WGS84BoundingBox": {
-          "ows:LowerCorner": string;
-          "ows:UpperCorner": string;
-        };
-      }[];
-    };
-  };
-};
-
-const WMTS_URL =
-  "https://wmts.geo.admin.ch/EPSG/3857/1.0.0/WMTSCapabilities.xml";
 
 export const CustomLayersSelector = () => {
-  const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state) as MapConfig;
   const chartConfigLayers = chartConfig.baseLayer.customWMTSLayers;
-  const { data, error } = useFetchData<WMTSData>({
-    queryKey: ["custom-layers", locale],
-    queryFn: async () => {
-      return fetch(`${WMTS_URL}?lang=${locale}`).then(async (res) => {
-        const parser = new XMLParser({
-          ignoreAttributes: false,
-          attributeNamePrefix: "",
-          parseAttributeValue: true,
-        });
-
-        return res.text().then((text) => {
-          return parser.parse(text);
-        });
-      });
-    },
-  });
+  const { data, error } = useWMTSLayers();
   const dataLayers = data?.Capabilities.Contents.Layer;
   const handleChange = useEventCallback(
     (value: BaseLayer["customWMTSLayers"]) => {

@@ -26,6 +26,7 @@ import {
 import { MapState } from "@/charts/map/map-state";
 import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
 import { getMap, setMap } from "@/charts/map/ref";
+import { getWMTSLayerData, isValidWMTSLayerUrl } from "@/charts/map/wmts-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { BBox } from "@/configurator";
@@ -508,16 +509,4 @@ const ControlButton = ({
       <Icon name={iconName} size={24} />
     </Button>
   );
-};
-
-const isValidWMTSLayerUrl = (url: string) => {
-  return url.includes("wmts.geo.admin.ch");
-};
-
-const getWMTSLayerData = (url: string) => {
-  return url
-    .replace("{Time}", "current")
-    .replace("{TileMatrix}", "{z}")
-    .replace("{TileCol}", "{x}")
-    .replace("{TileRow}", "{y}");
 };
