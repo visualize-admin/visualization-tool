@@ -67,10 +67,12 @@ export const getPalette = ({
   paletteId,
   colorField,
   colors,
+  fallbackPalette,
 }: {
   paletteId?: string;
   colorField?: ColorField;
   colors?: string[];
+  fallbackPalette?: string[];
 }): ReadonlyArray<string> => {
   if (colorField?.type === "single") {
     return [colorField.color];
@@ -100,7 +102,7 @@ export const getPalette = ({
         return schemeTableau10;
 
       default:
-        return schemeCategory10;
+        return fallbackPalette ?? schemeCategory10;
     }
   }
 };
@@ -314,23 +316,43 @@ export const getDefaultColorValues = (
   type: CustomPaletteType["type"],
   colors: string[]
 ): ColorItem[] => {
-  const colorExist = colors.length > 0;
+  const defaults = {
+    sequential: ["#000000"],
+    diverging: ["#000000", "#cccccc", "#777777"],
+    categorical: [],
+  };
+
+  const createColorItems = (colorStrings: string[]): ColorItem[] =>
+    colorStrings.map((color) => ({ color, id: createColorId() }));
+
+  if (colors.length === 0) {
+    return createColorItems(defaults[type]);
+  }
 
   switch (type) {
     case "sequential":
-      return [
-        { color: colorExist ? colors[0] : "#000000", id: createColorId() },
-      ];
+      return createColorItems([colors[0]]);
+
     case "diverging":
-      return [
-        { color: colorExist ? colors[0] : "#000000", id: createColorId() },
-        { color: colorExist ? colors[1] : "#cccccc", id: createColorId() },
-        { color: colorExist ? colors[2] : "#777777", id: createColorId() },
-      ];
+      if (colors.length === 2) {
+        return createColorItems(colors);
+      } else if (colors.length >= 3) {
+        return createColorItems([
+          colors[0],
+          colors[Math.floor(colors.length / 2)],
+          colors[colors.length - 1],
+        ]);
+      } else {
+        return createColorItems([
+          colors[0],
+          defaults.diverging[1],
+          defaults.diverging[2],
+        ]);
+      }
+
     case "categorical":
-      return colorExist
-        ? colors.map((color) => ({ color, id: createColorId() }))
-        : [];
+      return createColorItems(colors);
+
     default:
       const _exhaustiveCheck: never = type;
       return _exhaustiveCheck;

@@ -169,7 +169,6 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
               id: "login.profile.my-color-palettes",
               message: "My Color Palettes",
             })}
-            userId={userId}
           />
         </Box>
       </TabPanel>

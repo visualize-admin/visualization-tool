@@ -13,6 +13,7 @@ import {
 // @ts-ignore
 import { resolveDimensionType } from "@/graphql/resolvers";
 import { ResolvedDimension } from "@/graphql/shared-types";
+import { Limit } from "@/rdf/limits";
 
 type RawObservationValue = Term;
 
@@ -345,6 +346,7 @@ type BaseMeasure = BaseComponent & {
   isDecimal?: boolean;
   currencyExponent?: number;
   resolution?: number;
+  limits: Limit[];
 };
 
 export type NumericalMeasure = BaseMeasure & {
