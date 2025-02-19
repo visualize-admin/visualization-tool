@@ -1,5 +1,11 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Typography, useEventCallback } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  TextField,
+  Typography,
+  useEventCallback,
+} from "@mui/material";
 import { useMemo } from "react";
 import {
   DragDropContext,
@@ -130,6 +136,7 @@ export const CustomLayersSelector = () => {
                             }
                           }}
                           value={layer.url}
+                          sx={{ maxWidth: 280 }}
                         />
                         <MoveDragButton />
                       </Box>
@@ -141,17 +148,24 @@ export const CustomLayersSelector = () => {
             )}
           </Droppable>
         </DragDropContext>
-        <Select
-          id="layer-add"
-          label="Add layer"
-          value={FIELD_VALUE_NONE}
-          options={options}
-          sortOptions
-          onChange={(e) => {
-            const url = e.target.value as string;
-
-            if (url !== FIELD_VALUE_NONE) {
-              handleChange([...chartConfigLayers, { url }]);
+        <Autocomplete
+          key={chartConfigLayers.length}
+          options={options.filter((option) => !option.isNoneValue)}
+          getOptionLabel={(option) => option.label}
+          renderInput={(params) => {
+            return (
+              <TextField
+                {...params}
+                label={t({
+                  id: "chart.map.layers.base.add-layer",
+                  message: "Add layer",
+                })}
+              />
+            );
+          }}
+          onChange={(_, value) => {
+            if (value) {
+              handleChange([...chartConfigLayers, { url: value.value }]);
             }
           }}
         />

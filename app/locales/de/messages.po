@@ -254,6 +254,10 @@ msgstr "Flächen"
 msgid "chart.map.layers.base"
 msgstr "Basisschichten"
 
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.base.add-layer"
+msgstr "Ebene hinzufügen"
+
 #: app/configurator/components/chart-options-selector.tsx
 msgid "chart.map.layers.base.show"
 msgstr "Weltkarte anzeigen"
