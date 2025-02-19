@@ -66,12 +66,12 @@ const cache = new QueryCache();
 
 const useCacheKey = (cache: QueryCache, queryKey: QueryKey) => {
   const [version, setVersion] = useState(cache.version);
+
   useEffect(() => {
     return cache.listen(queryKey, () => {
       setVersion(() => cache.version);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [cache, queryKey]);
 
   return version;
 };
@@ -126,8 +126,7 @@ export const useFetchData = <TData>({
     if (cached.status === "idle") {
       fetchData();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enable, fetchData, cached.data]);
+  }, [enable, fetchData, queryKey, cached.status]);
 
   const invalidate = useCallback(() => {
     fetchData();
