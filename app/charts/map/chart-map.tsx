@@ -6,6 +6,7 @@ import { MapComponent } from "@/charts/map/map";
 import { MapLegend } from "@/charts/map/map-legend";
 import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
+import { MapWMTSLegend } from "@/charts/map/map-wmts-legend";
 import {
   ChartContainer,
   ChartControlsContainer,
@@ -192,7 +193,9 @@ const ChartMap = memo((props: ChartMapProps) => {
         />
         <MapTooltip />
       </ChartContainer>
-      <ChartControlsContainer sx={{ mt: 6 }}>
+      <ChartControlsContainer
+        sx={{ mt: 6, flexDirection: "row", flexWrap: "wrap" }}
+      >
         {fields.animation && (
           <TimeSlider
             filters={filters}
@@ -201,6 +204,7 @@ const ChartMap = memo((props: ChartMapProps) => {
           />
         )}
         <MapLegend chartConfig={chartConfig} observations={observations} />
+        <MapWMTSLegend chartConfig={chartConfig} />
       </ChartControlsContainer>
     </MapChart>
   );
