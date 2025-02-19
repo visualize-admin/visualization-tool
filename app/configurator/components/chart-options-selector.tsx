@@ -2380,7 +2380,7 @@ const ChartMapBaseLayerSettings = ({
   return (
     <ControlSection hideTopBorder>
       <SectionTitle>
-        <Trans id="chart.map.layers.base">Map Display</Trans>
+        <Trans id="chart.map.layers.base">Base Layers</Trans>
       </SectionTitle>
       <ControlSectionContent gap="large">
         <ChartOptionCheckboxField
