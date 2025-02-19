@@ -293,6 +293,9 @@ export const MapComponent = ({
 
       return new GeoJsonLayer({
         id: "hoverLayer",
+        beforeId: customWMTSLayerUrls.length
+          ? `tile-layer-${customWMTSLayerUrls[0]}`
+          : undefined,
         // @ts-ignore
         data: shape,
         filled: true,
@@ -302,7 +305,13 @@ export const MapComponent = ({
         getFillColor,
       });
     }
-  }, [areaLayer, interaction.d, interaction.visible, sortedShapes]);
+  }, [
+    areaLayer,
+    customWMTSLayerUrls,
+    interaction.d,
+    interaction.visible,
+    sortedShapes,
+  ]);
 
   const scatterplotLayer = useMemo(() => {
     if (!symbolLayer) {
