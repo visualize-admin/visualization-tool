@@ -1,5 +1,10 @@
-import React, { createContext, useContext, useMemo } from "react";
-import { useSyncExternalStore } from "use-sync-external-store/shim";
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  // @ts-expect-error useSyncExternalStore is available in React 18 that we use
+  useSyncExternalStore,
+} from "react";
 
 import { Observable } from "@/utils/observables";
 
