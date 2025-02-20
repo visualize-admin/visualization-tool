@@ -515,6 +515,10 @@ msgstr "Diverging"
 msgid "controls.color.palette.reset"
 msgstr "Reset color palette"
 
+#: app/configurator/components/chart-controls/color-palette.tsx
+msgid "controls.color.palette.select"
+msgstr "Select a color palette"
+
 #: app/configurator/components/chart-controls/color-ramp.tsx
 msgid "controls.color.palette.sequential"
 msgstr "Sequential"

@@ -13,6 +13,7 @@ You can also check the
 
 - Features
   - Limits can now be displayed in bar charts
+  - Added a fallback to color selector
 
 # [5.2.6] - 2025-02-18
 
