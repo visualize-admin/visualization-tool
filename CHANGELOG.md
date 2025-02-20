@@ -13,6 +13,8 @@ You can also check the
 
 - Features
   - Limits can now be displayed in bar charts
+- Fixes
+  - Line chart dots are now based on data, eliminating misaligned dots
 
 # [5.2.6] - 2025-02-18
 
