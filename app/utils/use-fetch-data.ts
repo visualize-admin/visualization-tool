@@ -156,8 +156,9 @@ export const useFetchData = <TData>({
  */
 export const useHydrate = <T>(queryKey: QueryKey, data: T) => {
   const hasHydrated = useRef(false);
+
   if (!hasHydrated.current) {
-    cache.set(queryKey, { data, error: null, status: "idle" });
+    cache.set(queryKey, { data, error: null, status: "success" });
     hasHydrated.current = true;
   }
 };
