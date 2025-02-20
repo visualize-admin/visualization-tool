@@ -174,10 +174,27 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await sleep(1_000);
 
   //Delete Color palettes
-  for (let i = 0; i < 4; i++) {
-    await page
-      .getByRole("button", { name: "Delete Color Palette" })
-      .first()
-      .click();
+  const paletteNames = [
+    "Categorical Palette",
+    "Sequential Palette",
+    "Diverging Palette (2)",
+    "Diverging Palette (3)",
+  ];
+
+  for (const paletteName of paletteNames) {
+    const allRows = page.locator('[data-testid="profile-color-palette-row"]');
+    const count = await allRows.count();
+
+    for (let i = 0; i < count; i++) {
+      const row = allRows.nth(i);
+      const rowText = await row.textContent();
+
+      if (rowText && rowText.includes(paletteName)) {
+        await row.getByRole("button", { name: "Delete Color Palette" }).click();
+
+        await page.waitForTimeout(300);
+        break;
+      }
+    }
   }
 });
