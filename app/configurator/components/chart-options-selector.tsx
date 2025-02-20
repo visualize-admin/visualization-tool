@@ -754,30 +754,28 @@ const ChartLayoutOptions = ({
             disabled={!component}
           />
         )}
-        <>
-          <ColorPalette
-            field="y"
-            // Faking a component here, because we don't have a real one.
-            // We use measure iris as dimension values, because that's how
-            // the color mapping is done.
-            component={
-              {
-                __typename: "",
-                values: values.map(({ id }) => ({
-                  value: id,
-                  label: id,
-                })),
-              } as any as Component
-            }
+        <ColorPalette
+          field="y"
+          // Faking a component here, because we don't have a real one.
+          // We use measure iris as dimension values, because that's how
+          // the color mapping is done.
+          component={
+            {
+              __typename: "",
+              values: values.map(({ id }) => ({
+                value: id,
+                label: id,
+              })),
+            } as any as Component
+          }
+        />
+        {hasColorField && chartConfig.fields.color.type === "single" && (
+          <ColorPickerField
+            field="color"
+            path="color"
+            label={measures.find((d) => d.id === values[0].id)!.label}
           />
-          {hasColorField && chartConfig.fields.color.type === "single" && (
-            <ColorPickerField
-              field="color"
-              path="color"
-              label={measures.find((d) => d.id === values[0].id)!.label}
-            />
-          )}
-        </>
+        )}
       </ControlSectionContent>
     </ControlSection>
   ) : null;
