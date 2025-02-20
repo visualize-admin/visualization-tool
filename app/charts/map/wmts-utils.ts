@@ -47,7 +47,9 @@ type WMTSData = {
 const WMTS_URL =
   "https://wmts.geo.admin.ch/EPSG/3857/1.0.0/WMTSCapabilities.xml";
 
-export const useWMTSLayers = () => {
+export const useWMTSLayers = (
+  { pause }: { pause?: boolean } = { pause: false }
+) => {
   const locale = useLocale();
 
   return useFetchData<WMTSData["Capabilities"]["Contents"]["Layer"]>({
@@ -64,6 +66,9 @@ export const useWMTSLayers = () => {
           return parser.parse(text).Capabilities.Contents.Layer;
         });
       });
+    },
+    options: {
+      enable: !pause,
     },
   });
 };
