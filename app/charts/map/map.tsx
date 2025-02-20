@@ -26,7 +26,11 @@ import {
 import { MapState } from "@/charts/map/map-state";
 import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
 import { getMap, setMap } from "@/charts/map/ref";
-import { getWMTSLayerData, isValidWMTSLayerUrl } from "@/charts/map/wmts-utils";
+import {
+  getWMTSLayerData,
+  isValidWMTSLayerUrl,
+  useWMTSLayers,
+} from "@/charts/map/wmts-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { BBox } from "@/configurator";
@@ -94,6 +98,10 @@ export const MapComponent = ({
 }) => {
   const classes = useStyles();
   const locale = useLocale();
+
+  const { data: wmtsLayers } = useWMTSLayers({
+    pause: !customWMTSLayerUrls.length,
+  });
 
   const [{ interaction }, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
@@ -413,9 +421,19 @@ export const MapComponent = ({
           return;
         }
 
+        const wmtsLayer = wmtsLayers?.find(
+          (layer) => layer.ResourceURL.template === url
+        );
+
+        if (!wmtsLayer) {
+          return;
+        }
+
         return new TileLayer({
           id: `tile-layer-${url}`,
-          data: getWMTSLayerData(url),
+          data: getWMTSLayerData(url, {
+            defaultValue: wmtsLayer.Dimension.Default,
+          }),
           renderSubLayers: (props) => {
             const { boundingBox } = props.tile;
             return new BitmapLayer(props, {
@@ -432,7 +450,7 @@ export const MapComponent = ({
         });
       })
       .filter(truthy);
-  }, [customWMTSLayerUrls]);
+  }, [customWMTSLayerUrls, wmtsLayers]);
 
   return (
     <>

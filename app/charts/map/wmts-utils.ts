@@ -8,8 +8,8 @@ type WMTSData = {
     Contents: {
       Layer: {
         Dimension: {
-          Default: string;
-          Value: string;
+          Default: string | number;
+          Value: string | number | string[] | number[];
           "ows:Identifier": string;
         };
         Format: string;
@@ -77,9 +77,12 @@ export const isValidWMTSLayerUrl = (url: string) => {
   return url.includes("wmts.geo.admin.ch");
 };
 
-export const getWMTSLayerData = (url: string) => {
+export const getWMTSLayerData = (
+  url: string,
+  { defaultValue }: { defaultValue: string | number }
+) => {
   return url
-    .replace("{Time}", "current")
+    .replace("{Time}", `${defaultValue}`)
     .replace("{TileMatrix}", "{z}")
     .replace("{TileCol}", "{x}")
     .replace("{TileRow}", "{y}");
