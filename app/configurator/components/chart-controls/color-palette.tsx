@@ -216,6 +216,14 @@ export const ColorPalette = ({
     }
   );
 
+  const isValidValue = (value: string) => {
+    const isPaletteValue = palettes.some((p) => p.value === value);
+    const isCustomPaletteValue = customColorPalettes?.some(
+      (p) => p.paletteId === value
+    );
+    return isPaletteValue || isCustomPaletteValue;
+  };
+
   return (
     <Box mt={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
       <Label smaller htmlFor="color-palette-toggle" sx={{ mb: 1 }}>
@@ -224,7 +232,16 @@ export const ColorPalette = ({
       <Select
         className={classes.root}
         classes={classes}
-        renderValue={() => {
+        renderValue={(selected) => {
+          if (!selected || !isValidValue(selected)) {
+            return (
+              <Typography color={"secondary.active"} variant="body2">
+                <Trans id="controls.color.palette.select">
+                  Select a color palette
+                </Trans>
+              </Typography>
+            );
+          }
           return (
             <Grid
               container
@@ -260,11 +277,18 @@ export const ColorPalette = ({
             </Grid>
           );
         }}
-        value={
-          currentPalette
+        value={(() => {
+          let valueToUse = currentPalette
             ? currentPalette.value
-            : withColorField && chartConfig.fields.color.paletteId
-        }
+            : (withColorField && chartConfig.fields.color.paletteId) || "";
+
+          if (!isValidValue(valueToUse)) {
+            return "";
+          }
+
+          return valueToUse;
+        })()}
+        displayEmpty
         onChange={handleChangePalette}
       >
         {user && (
