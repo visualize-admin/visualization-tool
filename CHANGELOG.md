@@ -49,6 +49,7 @@ You can also check the
   - Improved filter section styling
 - Maintenance
   - Added authentication method to e2e tests
+  - Added e2e tests for custom color palettes
   - Added authentication to Vercel previews for easier testing
 
 # [5.2.4] - 2025-02-06
