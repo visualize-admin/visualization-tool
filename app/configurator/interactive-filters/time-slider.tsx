@@ -8,8 +8,9 @@ import {
   useContext,
   useEffect,
   useMemo,
+  // @ts-expect-error useSyncExternalStore is available in React 18 that we use
+  useSyncExternalStore,
 } from "react";
-import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { ChartState, useChartState } from "@/charts/shared/chart-state";
 import { TableChartState } from "@/charts/table/table-state";
