@@ -11,7 +11,7 @@ type WMTSData = {
       Layer: {
         Dimension: {
           Default: string | number;
-          Value: string | number | string[] | number[];
+          Value: string | number | (string | number)[];
           "ows:Identifier": string;
         };
         Format: string;
@@ -79,10 +79,12 @@ export const getWMTSTile = ({
   wmtsLayers,
   url,
   beforeId,
+  value,
 }: {
   wmtsLayers?: WMTSData["Capabilities"]["Contents"]["Layer"];
   url: string;
   beforeId?: string;
+  value?: number | string;
 }) => {
   if (!isValidWMTSLayerUrl(url)) {
     return;
@@ -96,11 +98,16 @@ export const getWMTSTile = ({
     return;
   }
 
+  const values = wmtsLayer.Dimension.Value;
+
   return new TileLayer({
     id: `tile-layer-${url}`,
     beforeId,
     data: getWMTSLayerData(url, {
-      defaultValue: wmtsLayer.Dimension.Default,
+      value:
+        Array.isArray(values) && value && values.includes(value)
+          ? value
+          : wmtsLayer.Dimension.Default,
     }),
     renderSubLayers: (props) => {
       const { boundingBox } = props.tile;
@@ -124,10 +131,10 @@ const isValidWMTSLayerUrl = (url: string) => {
 
 const getWMTSLayerData = (
   url: string,
-  { defaultValue }: { defaultValue: string | number }
+  { value }: { value: string | number }
 ) => {
   return url
-    .replace("{Time}", `${defaultValue}`)
+    .replace("{Time}", `${value}`)
     .replace("{TileMatrix}", "{z}")
     .replace("{TileCol}", "{x}")
     .replace("{TileRow}", "{y}");
