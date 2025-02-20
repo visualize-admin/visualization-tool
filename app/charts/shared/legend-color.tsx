@@ -201,16 +201,16 @@ export const LegendColor = memo(function LegendColor({
     <div>
       {showTitle && segmentComponent && (
         <OpenMetadataPanelWrapper component={segmentComponent}>
-            <Typography
-              data-testid="legendTitle"
-              component="div"
-              variant="caption"
-              color="primary.main"
-            >
-              {dimensionsById[chartConfig.fields.segment.componentId]?.label}
-            </Typography>
-          </OpenMetadataPanelWrapper>
-        )}
+          <Typography
+            data-testid="legendTitle"
+            component="div"
+            variant="caption"
+            color="primary.main"
+          >
+            {segmentComponent?.label}
+          </Typography>
+        </OpenMetadataPanelWrapper>
+      )}
       <LegendColorContent
         groups={groups}
         limits={limits?.map(({ configLimit, measureLimit }) => ({
