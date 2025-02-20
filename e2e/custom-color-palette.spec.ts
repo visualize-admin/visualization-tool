@@ -187,9 +187,13 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
 
     for (let i = 0; i < count; i++) {
       const row = allRows.nth(i);
-      const rowText = await row.textContent();
 
-      if (rowText && rowText.includes(paletteName)) {
+      const titleElement = row.locator(
+        '[data-testid="custom-color-palette-title"]'
+      );
+      const titleText = await titleElement.textContent();
+
+      if (titleText && titleText.trim() === paletteName.trim()) {
         await row.getByRole("button", { name: "Delete Color Palette" }).click();
 
         await page.waitForTimeout(300);

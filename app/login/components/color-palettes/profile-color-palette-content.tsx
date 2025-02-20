@@ -163,7 +163,7 @@ const ColorPaletteRow = ({
       }}
     >
       <Box>
-        <Typography variant="caption">{name}</Typography>
+        <Typography data-testid="custom-color-palette-title" variant="caption">{name}</Typography>
         <Grid
           container
           spacing={0.5}
