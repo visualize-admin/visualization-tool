@@ -12,6 +12,8 @@ You can also check the
 # Unreleased
 
 - Features
+  - It's now possible to add custom WMTS layers coming from wmts.geo.admin.ch to
+    map charts
   - Limits can now be displayed in bar charts
 
 # [5.2.6] - 2025-02-18

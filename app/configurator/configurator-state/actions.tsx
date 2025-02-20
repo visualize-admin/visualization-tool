@@ -1,5 +1,6 @@
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import {
+  BaseLayer,
   ChartConfig,
   ChartType,
   ColorField,
@@ -134,6 +135,10 @@ export type ConfiguratorStateAction =
         path: string | string[];
         value: string;
       };
+    }
+  | {
+      type: "CUSTOM_WMTS_LAYERS_CHANGED";
+      value: BaseLayer["customWMTSLayers"];
     }
   | {
       type: "INTERACTIVE_FILTER_CHANGED";

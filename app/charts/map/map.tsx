@@ -1,11 +1,11 @@
-import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers/typed";
+import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import { supported } from "@mapbox/mapbox-gl-supported";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { geoArea } from "d3-geo";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
-import maplibreglraw from "maplibre-gl";
+import maplibreglRaw from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Map, { LngLatLike, MapboxEvent } from "react-map-gl";
 
@@ -25,17 +25,19 @@ import {
 import { MapState } from "@/charts/map/map-state";
 import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
 import { getMap, setMap } from "@/charts/map/ref";
+import { getWMTSTile, useWMTSLayers } from "@/charts/map/wmts-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { BBox } from "@/configurator";
+import { BaseLayer, BBox } from "@/configurator";
 import { GeoFeature, GeoPoint } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 // supported was removed as of maplibre-gl v3.0.0, so we need to add it back
-const maplibregl = { ...maplibreglraw, supported };
+const maplibregl = { ...maplibreglRaw, supported };
 
 const useStyles = makeStyles<Theme>((theme) => ({
   controlButtons: {
@@ -84,9 +86,55 @@ const resizeAndFit = debounce((map: mapboxgl.Map, bbox: BBox) => {
   map.fitBounds(bbox, { duration: 0 });
 }, 0);
 
-export const MapComponent = () => {
+export const MapComponent = ({
+  customWMTSLayers,
+  temporalFilterValue,
+}: {
+  customWMTSLayers: BaseLayer["customWMTSLayers"];
+  temporalFilterValue: string | number | undefined;
+}) => {
   const classes = useStyles();
   const locale = useLocale();
+
+  const { data: wmtsLayers } = useWMTSLayers({
+    pause: !customWMTSLayers.length,
+  });
+  const { behindAreaLayerUrls, afterAreaLayerUrls } = useMemo(() => {
+    return customWMTSLayers.reduce(
+      (acc, { isBehindAreaLayer, url }) => {
+        if (isBehindAreaLayer) {
+          acc.behindAreaLayerUrls.push(url);
+        } else {
+          acc.afterAreaLayerUrls.push(url);
+        }
+
+        return acc;
+      },
+      {
+        behindAreaLayerUrls: [] as string[],
+        afterAreaLayerUrls: [] as string[],
+      }
+    );
+  }, [customWMTSLayers]);
+  const behindAreaTileLayers = useMemo(() => {
+    return behindAreaLayerUrls
+      .map((url) => {
+        return getWMTSTile({
+          wmtsLayers,
+          url,
+          beforeId: "areaLayer",
+          value: temporalFilterValue,
+        });
+      })
+      .filter(truthy);
+  }, [behindAreaLayerUrls, temporalFilterValue, wmtsLayers]);
+  const afterAreaTileLayers = useMemo(() => {
+    return afterAreaLayerUrls
+      .map((url) => {
+        return getWMTSTile({ wmtsLayers, url, value: temporalFilterValue });
+      })
+      .filter(truthy);
+  }, [afterAreaLayerUrls, temporalFilterValue, wmtsLayers]);
 
   const [{ interaction }, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
@@ -228,6 +276,7 @@ export const MapComponent = () => {
     return new GeoJsonLayer({
       id: "areaLayer",
       beforeId: showBaseLayer ? "water_polygon" : undefined,
+      // @ts-ignore this is correct
       data: sortedShapes,
       pickable: true,
       parameters: {
@@ -285,6 +334,9 @@ export const MapComponent = () => {
 
       return new GeoJsonLayer({
         id: "hoverLayer",
+        beforeId: afterAreaLayerUrls.length
+          ? `tile-layer-${afterAreaLayerUrls[0]}`
+          : undefined,
         // @ts-ignore
         data: shape,
         filled: true,
@@ -294,7 +346,13 @@ export const MapComponent = () => {
         getFillColor,
       });
     }
-  }, [areaLayer, interaction.d, interaction.visible, sortedShapes]);
+  }, [
+    afterAreaLayerUrls,
+    areaLayer,
+    interaction.d,
+    interaction.visible,
+    sortedShapes,
+  ]);
 
   const scatterplotLayer = useMemo(() => {
     if (!symbolLayer) {
@@ -444,10 +502,16 @@ export const MapComponent = () => {
           onResize={handleResize}
           {...viewState}
         >
-          <div data-map-loaded={loaded ? "true" : "false"} />
+          <div data-map-loaded={loaded} />
           <DeckGLOverlay
             interleaved
-            layers={[geoJsonLayer, hoverLayer, scatterplotLayer]}
+            layers={[
+              ...behindAreaTileLayers,
+              geoJsonLayer,
+              hoverLayer,
+              ...afterAreaTileLayers,
+              scatterplotLayer,
+            ]}
           />
         </Map>
       ) : null}

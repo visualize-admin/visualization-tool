@@ -312,8 +312,9 @@ const ProfileVisualizationsRow = (props: {
               id: "login.profile.chart.delete-draft.warning",
               message: "This action cannot be undone.",
             }),
-        onClick: () => {
-          return removeConfigMut.mutate({ key: config.key });
+        onClick: async () => {
+          await removeConfigMut.mutate({ key: config.key });
+          invalidateUserConfigs();
         },
         onSuccess: () => {
           invalidateUserConfigs();
