@@ -175,7 +175,6 @@ const Root = ({ showPlayButton }: { showPlayButton: boolean }) => {
         sx={{
           position: "relative",
           width: "100%",
-          ml: `${showPlayButton ? 0 : 32}px`,
         }}
       >
         <Slider />
