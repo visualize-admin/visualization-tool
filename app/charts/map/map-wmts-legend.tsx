@@ -86,7 +86,7 @@ const useWMTSLegends = ({
       ).filter(truthy);
     },
     options: {
-      enable: !!wmtsLayers,
+      pause: !wmtsLayers,
     },
   });
 

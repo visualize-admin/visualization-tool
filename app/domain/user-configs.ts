@@ -18,12 +18,15 @@ export const useUserConfig = (
   chartId: string | undefined,
   options?: UseFetchDataOptions
 ) => {
-  let queryFn = useCallback(() => fetchChartConfig(chartId ?? ""), [chartId]);
+  const queryFn = useCallback(() => {
+    return fetchChartConfig(chartId ?? "");
+  }, [chartId]);
+
   return useFetchData({
     queryKey: userConfigKey(chartId!),
     queryFn,
     options: {
-      enable: !!chartId,
+      pause: !chartId,
       ...options,
     },
   });

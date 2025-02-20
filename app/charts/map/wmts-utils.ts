@@ -68,7 +68,7 @@ export const useWMTSLayers = (
       });
     },
     options: {
-      enable: !pause,
+      pause,
     },
   });
 };

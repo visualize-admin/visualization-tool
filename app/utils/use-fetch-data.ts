@@ -4,7 +4,7 @@ import { stringifyVariables } from "urql";
 type Status = "idle" | "fetching" | "success" | "error";
 
 export type UseFetchDataOptions<TDefault = undefined> = {
-  enable?: boolean;
+  pause?: boolean;
   initialStatus?: Status;
   defaultData: TDefault;
 };
@@ -91,7 +91,7 @@ export const useFetchData = <TData>({
   queryFn: () => Promise<TData>;
   options?: Partial<UseFetchDataOptions<TData>>;
 }) => {
-  const { enable = true, defaultData } = options;
+  const { pause, defaultData } = options;
 
   const cached = cache.get(queryKey) as QueryCacheValue<TData>;
   const { data, error, status } = cached ?? {};
@@ -118,7 +118,7 @@ export const useFetchData = <TData>({
   useCacheKey(cache, queryKey);
 
   useEffect(() => {
-    if (!enable) {
+    if (pause) {
       cache.set(queryKey, { ...cache.get(queryKey), status: "idle" });
       return;
     }
@@ -126,7 +126,7 @@ export const useFetchData = <TData>({
     if (cached.status === "idle") {
       fetchData();
     }
-  }, [enable, fetchData, queryKey, cached.status]);
+  }, [pause, fetchData, queryKey, cached.status]);
 
   const invalidate = useCallback(() => {
     fetchData();
