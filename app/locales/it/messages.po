@@ -258,6 +258,10 @@ msgstr "Strati di base"
 msgid "chart.map.layers.base.add-layer"
 msgstr "Aggiungi livello"
 
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.base.behind-area-layer"
+msgstr "Dietro lo strato dell'area"
+
 #: app/configurator/components/chart-options-selector.tsx
 msgid "chart.map.layers.base.show"
 msgstr "Mostra mappa del mondo"

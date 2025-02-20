@@ -802,6 +802,7 @@ const BaseLayer = t.type({
   customWMTSLayers: t.array(
     t.type({
       url: t.string,
+      isBehindAreaLayer: t.boolean,
     })
   ),
 });

@@ -1,5 +1,4 @@
-import { TileLayer } from "@deck.gl/geo-layers";
-import { BitmapLayer, GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
+import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import { supported } from "@mapbox/mapbox-gl-supported";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -26,14 +25,10 @@ import {
 import { MapState } from "@/charts/map/map-state";
 import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
 import { getMap, setMap } from "@/charts/map/ref";
-import {
-  getWMTSLayerData,
-  isValidWMTSLayerUrl,
-  useWMTSLayers,
-} from "@/charts/map/wmts-utils";
+import { getWMTSTile, useWMTSLayers } from "@/charts/map/wmts-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { BBox } from "@/configurator";
+import { BaseLayer, BBox } from "@/configurator";
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { Icon, IconName } from "@/icons";
@@ -92,16 +87,47 @@ const resizeAndFit = debounce((map: mapboxgl.Map, bbox: BBox) => {
 }, 0);
 
 export const MapComponent = ({
-  customWMTSLayerUrls,
+  customWMTSLayers,
 }: {
-  customWMTSLayerUrls: string[];
+  customWMTSLayers: BaseLayer["customWMTSLayers"];
 }) => {
   const classes = useStyles();
   const locale = useLocale();
 
   const { data: wmtsLayers } = useWMTSLayers({
-    pause: !customWMTSLayerUrls.length,
+    pause: !customWMTSLayers.length,
   });
+  const { behindAreaLayerUrls, afterAreaLayerUrls } = useMemo(() => {
+    return customWMTSLayers.reduce(
+      (acc, { isBehindAreaLayer, url }) => {
+        if (isBehindAreaLayer) {
+          acc.behindAreaLayerUrls.push(url);
+        } else {
+          acc.afterAreaLayerUrls.push(url);
+        }
+
+        return acc;
+      },
+      {
+        behindAreaLayerUrls: [] as string[],
+        afterAreaLayerUrls: [] as string[],
+      }
+    );
+  }, [customWMTSLayers]);
+  const behindAreaTileLayers = useMemo(() => {
+    return behindAreaLayerUrls
+      .map((url) => {
+        return getWMTSTile({ wmtsLayers, url, beforeId: "areaLayer" });
+      })
+      .filter(truthy);
+  }, [behindAreaLayerUrls, wmtsLayers]);
+  const afterAreaTileLayers = useMemo(() => {
+    return afterAreaLayerUrls
+      .map((url) => {
+        return getWMTSTile({ wmtsLayers, url });
+      })
+      .filter(truthy);
+  }, [afterAreaLayerUrls, wmtsLayers]);
 
   const [{ interaction }, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
@@ -301,8 +327,8 @@ export const MapComponent = ({
 
       return new GeoJsonLayer({
         id: "hoverLayer",
-        beforeId: customWMTSLayerUrls.length
-          ? `tile-layer-${customWMTSLayerUrls[0]}`
+        beforeId: afterAreaLayerUrls.length
+          ? `tile-layer-${afterAreaLayerUrls[0]}`
           : undefined,
         // @ts-ignore
         data: shape,
@@ -314,8 +340,8 @@ export const MapComponent = ({
       });
     }
   }, [
+    afterAreaLayerUrls,
     areaLayer,
-    customWMTSLayerUrls,
     interaction.d,
     interaction.visible,
     sortedShapes,
@@ -414,44 +440,6 @@ export const MapComponent = ({
 
   const [loaded, setLoaded] = useState(false);
 
-  const tileLayers = useMemo(() => {
-    return customWMTSLayerUrls
-      .map((url) => {
-        if (!isValidWMTSLayerUrl(url)) {
-          return;
-        }
-
-        const wmtsLayer = wmtsLayers?.find(
-          (layer) => layer.ResourceURL.template === url
-        );
-
-        if (!wmtsLayer) {
-          return;
-        }
-
-        return new TileLayer({
-          id: `tile-layer-${url}`,
-          data: getWMTSLayerData(url, {
-            defaultValue: wmtsLayer.Dimension.Default,
-          }),
-          renderSubLayers: (props) => {
-            const { boundingBox } = props.tile;
-            return new BitmapLayer(props, {
-              data: undefined,
-              image: props.data,
-              bounds: [
-                boundingBox[0][0],
-                boundingBox[0][1],
-                boundingBox[1][0],
-                boundingBox[1][1],
-              ],
-            });
-          },
-        });
-      })
-      .filter(truthy);
-  }, [customWMTSLayerUrls, wmtsLayers]);
-
   return (
     <>
       {locked ? null : (
@@ -510,7 +498,13 @@ export const MapComponent = ({
           <div data-map-loaded={loaded} />
           <DeckGLOverlay
             interleaved
-            layers={[geoJsonLayer, hoverLayer, ...tileLayers, scatterplotLayer]}
+            layers={[
+              ...behindAreaTileLayers,
+              geoJsonLayer,
+              hoverLayer,
+              ...afterAreaTileLayers,
+              scatterplotLayer,
+            ]}
           />
         </Map>
       ) : null}

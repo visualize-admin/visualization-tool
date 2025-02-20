@@ -1,3 +1,5 @@
+import { TileLayer } from "@deck.gl/geo-layers";
+import { BitmapLayer } from "@deck.gl/layers";
 import { XMLParser } from "fast-xml-parser";
 
 import { useLocale } from "@/locales/use-locale";
@@ -73,11 +75,54 @@ export const useWMTSLayers = (
   });
 };
 
-export const isValidWMTSLayerUrl = (url: string) => {
+export const getWMTSTile = ({
+  wmtsLayers,
+  url,
+  beforeId,
+}: {
+  wmtsLayers?: WMTSData["Capabilities"]["Contents"]["Layer"];
+  url: string;
+  beforeId?: string;
+}) => {
+  if (!isValidWMTSLayerUrl(url)) {
+    return;
+  }
+
+  const wmtsLayer = wmtsLayers?.find(
+    (layer) => layer.ResourceURL.template === url
+  );
+
+  if (!wmtsLayer) {
+    return;
+  }
+
+  return new TileLayer({
+    id: `tile-layer-${url}`,
+    beforeId,
+    data: getWMTSLayerData(url, {
+      defaultValue: wmtsLayer.Dimension.Default,
+    }),
+    renderSubLayers: (props) => {
+      const { boundingBox } = props.tile;
+      return new BitmapLayer(props, {
+        data: undefined,
+        image: props.data,
+        bounds: [
+          boundingBox[0][0],
+          boundingBox[0][1],
+          boundingBox[1][0],
+          boundingBox[1][1],
+        ],
+      });
+    },
+  });
+};
+
+const isValidWMTSLayerUrl = (url: string) => {
   return url.includes("wmts.geo.admin.ch");
 };
 
-export const getWMTSLayerData = (
+const getWMTSLayerData = (
   url: string,
   { defaultValue }: { defaultValue: string | number }
 ) => {

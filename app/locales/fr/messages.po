@@ -258,6 +258,10 @@ msgstr "Couches de base"
 msgid "chart.map.layers.base.add-layer"
 msgstr "Ajouter une couche"
 
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.base.behind-area-layer"
+msgstr "Derrière la couche de surface"
+
 #: app/configurator/components/chart-options-selector.tsx
 msgid "chart.map.layers.base.show"
 msgstr "Afficher la carte du monde"

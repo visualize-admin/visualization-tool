@@ -16,7 +16,7 @@ import {
 } from "react-beautiful-dnd";
 
 import { useWMTSLayers } from "@/charts/map/wmts-utils";
-import { Select, SelectOption } from "@/components/form";
+import { Select, SelectOption, Switch } from "@/components/form";
 import { MoveDragButton } from "@/components/move-drag-button";
 import { BaseLayer, MapConfig } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
@@ -106,36 +106,59 @@ export const CustomLayersSelector = () => {
                         ref={provided.innerRef}
                         {...provided.dragHandleProps}
                         {...provided.draggableProps}
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          mb: 3,
-                        }}
+                        sx={{ mb: 3 }}
                       >
-                        <Select
-                          key={layer.url}
-                          id={`layer-${layer.url}`}
-                          options={options.filter(
-                            (option) =>
-                              option.value === layer.url || option.isNoneValue
-                          )}
-                          sortOptions={false}
-                          onChange={(e) => {
-                            const url = e.target.value as string;
-
-                            if (url === FIELD_VALUE_NONE) {
-                              handleChange(
-                                chartConfigLayers.filter(
-                                  (l) => l.url !== layer.url
-                                )
-                              );
-                            }
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            mb: 2,
                           }}
-                          value={layer.url}
-                          sx={{ maxWidth: 280 }}
+                        >
+                          <Select
+                            key={layer.url}
+                            id={`layer-${layer.url}`}
+                            options={options.filter(
+                              (option) =>
+                                option.value === layer.url || option.isNoneValue
+                            )}
+                            sortOptions={false}
+                            onChange={(e) => {
+                              const url = e.target.value as string;
+
+                              if (url === FIELD_VALUE_NONE) {
+                                handleChange(
+                                  chartConfigLayers.filter(
+                                    (l) => l.url !== layer.url
+                                  )
+                                );
+                              }
+                            }}
+                            value={layer.url}
+                            sx={{ maxWidth: 280 }}
+                          />
+                          <MoveDragButton />
+                        </Box>
+                        <Switch
+                          label={t({
+                            id: "chart.map.layers.base.behind-area-layer",
+                            message: "Behind area layer",
+                          })}
+                          checked={layer.isBehindAreaLayer}
+                          onChange={(e) => {
+                            handleChange(
+                              chartConfigLayers.map((l) => {
+                                return l.url === layer.url
+                                  ? {
+                                      ...l,
+                                      isBehindAreaLayer: e.target.checked,
+                                    }
+                                  : l;
+                              })
+                            );
+                          }}
                         />
-                        <MoveDragButton />
                       </Box>
                     )}
                   </Draggable>
@@ -167,7 +190,10 @@ export const CustomLayersSelector = () => {
           )}
           onChange={(_, value) => {
             if (value) {
-              handleChange([...chartConfigLayers, { url: value.value }]);
+              handleChange([
+                ...chartConfigLayers,
+                { url: value.value, isBehindAreaLayer: false },
+              ]);
             }
           }}
         />
