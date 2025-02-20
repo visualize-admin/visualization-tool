@@ -71,7 +71,8 @@ const useCacheKey = (cache: QueryCache, queryKey: QueryKey) => {
     return cache.listen(queryKey, () => {
       setVersion(() => cache.version);
     });
-  }, [cache, queryKey]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cache, stringifyVariables(queryKey)]);
 
   return version;
 };
@@ -98,35 +99,50 @@ export const useFetchData = <TData>({
 
   const fetchData = useCallback(async () => {
     const cached = cache.get(queryKey);
+
     if (cached?.status === "fetching") {
       return;
     }
+
     cache.set(queryKey, { ...cache.get(queryKey), status: "fetching" });
+
     try {
       const result = await queryFn();
-      cache.set(queryKey, { data: result, error: null, status: "success" });
+      const cacheEntry = {
+        data: result,
+        error: null,
+        status: "success" as const,
+      };
+      cache.set(queryKey, cacheEntry);
+
+      return cacheEntry;
     } catch (error) {
-      cache.set(queryKey, {
+      const cacheEntry = {
         data: null,
         error: error as Error,
-        status: "error",
-      });
+        status: "error" as const,
+      };
+      cache.set(queryKey, cacheEntry);
+
+      return cacheEntry;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryKey]);
+  }, [stringifyVariables(queryKey)]);
 
   useCacheKey(cache, queryKey);
 
   useEffect(() => {
     if (pause) {
       cache.set(queryKey, { ...cache.get(queryKey), status: "idle" });
+
       return;
     }
 
     if (cached.status === "idle") {
       fetchData();
     }
-  }, [pause, fetchData, queryKey, cached.status]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pause, fetchData, stringifyVariables(queryKey), cached.data]);
 
   const invalidate = useCallback(() => {
     fetchData();

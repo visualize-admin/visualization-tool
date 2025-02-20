@@ -55,7 +55,12 @@ const useWMTSLegends = ({
   const locale = useLocale();
   const { data: wmtsLayers, error: wmtsError } = useWMTSLayers();
   const { data: legendsData, error: legendsError } = useFetchData({
-    queryKey: ["wmts-legends", customWMTSLayers.map((l) => l.url), locale],
+    queryKey: [
+      "wmts-legends",
+      customWMTSLayers.map((l) => l.url),
+      wmtsLayers?.map((d) => d.ResourceURL.template),
+      locale,
+    ],
     queryFn: async () => {
       return (
         await Promise.all(
