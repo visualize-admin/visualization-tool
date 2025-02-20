@@ -1,3 +1,5 @@
+import { Box } from "@mui/material";
+import { bisectCenter } from "d3-array";
 import { memo, useCallback, useMemo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
@@ -19,11 +21,15 @@ import {
   dimensionValuesToGeoCoordinates,
   GeoCoordinates,
   GeoShapes,
+  isTemporalDimensionWithTimeUnit,
 } from "@/domain/data";
+import { truthy } from "@/domain/types";
+import { useTimeFormatUnit } from "@/formatters";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { getResolvedJoinById, isJoinById } from "@/graphql/join";
 import { useDataCubeDimensionGeoShapesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
+import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -181,19 +187,72 @@ export type ChartMapProps = ChartProps<MapConfig> & {
 const ChartMap = memo((props: ChartMapProps) => {
   const { chartConfig, dimensions, observations } = props;
   const { fields } = chartConfig;
+
   const filters = useChartConfigFilters(chartConfig);
+  const temporalDimensions = dimensions.filter(isTemporalDimensionWithTimeUnit);
+  const temporalFilterValues = Object.entries(filters)
+    .map(([key, value]) => {
+      return temporalDimensions.some((dimension) => dimension.id === key) &&
+        value.type === "single"
+        ? value
+        : undefined;
+    })
+    .filter(truthy);
+  const temporalDimension = temporalDimensions.find(
+    (d) => d.id === fields.animation?.componentId
+  );
+  const timeFormatUnit = useTimeFormatUnit();
+  const timeUnit =
+    temporalDimension && "timeUnit" in temporalDimension
+      ? temporalDimension.timeUnit
+      : undefined;
+  const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
+  const timeSliderValue = timeSlider.value;
+  const formattedTimeSliderValue =
+    timeUnit && timeSliderValue
+      ? timeFormatUnit(new Date(timeSliderValue), timeUnit)
+      : undefined;
+  const closestTemporalFilterValue = useMemo(() => {
+    const temporalDimension = temporalDimensions.find(
+      (d) => d.id === fields.animation?.componentId
+    );
+
+    if (!temporalDimension || !formattedTimeSliderValue) {
+      return undefined;
+    }
+
+    const values = temporalDimension.values;
+    const closestValue = bisectCenter(
+      values.map((d) => d.value) as string[],
+      formattedTimeSliderValue
+    );
+    return values[closestValue]?.value;
+  }, [
+    fields.animation?.componentId,
+    formattedTimeSliderValue,
+    temporalDimensions,
+  ]);
+
+  console.log("closestTemporalFilterValue", closestTemporalFilterValue);
+
+  const temporalFilterValue =
+    closestTemporalFilterValue ??
+    (temporalFilterValues.length === 1
+      ? temporalFilterValues[0].value
+      : undefined);
 
   return (
     <MapChart {...props}>
       <ChartContainer>
         <MapComponent
           customWMTSLayers={chartConfig.baseLayer.customWMTSLayers}
+          temporalFilterValue={
+            temporalFilterValue ? +temporalFilterValue : undefined
+          }
         />
         <MapTooltip />
       </ChartContainer>
-      <ChartControlsContainer
-        sx={{ mt: 6, flexDirection: "row", flexWrap: "wrap" }}
-      >
+      <ChartControlsContainer sx={{ mt: 6 }}>
         {fields.animation && (
           <TimeSlider
             filters={filters}
@@ -201,8 +260,17 @@ const ChartMap = memo((props: ChartMapProps) => {
             {...fields.animation}
           />
         )}
-        <MapLegend chartConfig={chartConfig} observations={observations} />
-        <MapWMTSLegend chartConfig={chartConfig} />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 4,
+            flexWrap: "wrap",
+          }}
+        >
+          <MapLegend chartConfig={chartConfig} observations={observations} />
+          <MapWMTSLegend chartConfig={chartConfig} />
+        </Box>
       </ChartControlsContainer>
     </MapChart>
   );

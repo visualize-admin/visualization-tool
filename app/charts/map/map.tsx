@@ -88,8 +88,10 @@ const resizeAndFit = debounce((map: mapboxgl.Map, bbox: BBox) => {
 
 export const MapComponent = ({
   customWMTSLayers,
+  temporalFilterValue,
 }: {
   customWMTSLayers: BaseLayer["customWMTSLayers"];
+  temporalFilterValue: string | number | undefined;
 }) => {
   const classes = useStyles();
   const locale = useLocale();
@@ -117,17 +119,22 @@ export const MapComponent = ({
   const behindAreaTileLayers = useMemo(() => {
     return behindAreaLayerUrls
       .map((url) => {
-        return getWMTSTile({ wmtsLayers, url, beforeId: "areaLayer" });
+        return getWMTSTile({
+          wmtsLayers,
+          url,
+          beforeId: "areaLayer",
+          value: temporalFilterValue,
+        });
       })
       .filter(truthy);
-  }, [behindAreaLayerUrls, wmtsLayers]);
+  }, [behindAreaLayerUrls, temporalFilterValue, wmtsLayers]);
   const afterAreaTileLayers = useMemo(() => {
     return afterAreaLayerUrls
       .map((url) => {
-        return getWMTSTile({ wmtsLayers, url });
+        return getWMTSTile({ wmtsLayers, url, value: temporalFilterValue });
       })
       .filter(truthy);
-  }, [afterAreaLayerUrls, wmtsLayers]);
+  }, [afterAreaLayerUrls, temporalFilterValue, wmtsLayers]);
 
   const [{ interaction }, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
