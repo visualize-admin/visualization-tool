@@ -531,6 +531,10 @@ msgstr "Divergierend"
 msgid "controls.color.palette.reset"
 msgstr "Farbpalette zurücksetzen"
 
+#: app/configurator/components/chart-controls/color-palette.tsx
+msgid "controls.color.palette.select"
+msgstr "Wähle eine Farbpalette"
+
 #: app/configurator/components/chart-controls/color-ramp.tsx
 msgid "controls.color.palette.sequential"
 msgstr "Sequentiell"
@@ -600,8 +604,18 @@ msgstr "Basis Farbe"
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.caption"
+msgid "controls.custom-color-palettes.caption-categorical"
 msgstr "Verwenden Sie klare, kontrastreiche Farben. Vermeiden Sie die Verwendung von zu vielen Farben, maximal 5-7. Verwenden Sie sequenzielle Paletten für geordnete Daten und divergierende Paletten für Extreme."
+
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.caption-sequential"
+msgstr "Wählen Sie eine dunkle Endpunktfarbe für einen starken Kontrast zwischen niedrigen und hohen Werten; die helle Farbe wird automatisch berechnet. Sequentielle Farbpaletten eignen sich für geordnete Daten wie Temperaturen oder Bevölkerungsdichten."
+
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.caption-diverging"
+msgstr "Wählen Sie kontrastierende Farben für Start- und Endpunkt. Diese Farben unterstützen die visuelle Trennung von Extremwerten. Divergierende Paletten eignen sich besonders für Daten mit einem bedeutsamen Mittelpunkt wie Null oder einem Durchschnittswert."
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.categorical-contrast-warning"
@@ -841,7 +855,7 @@ msgstr "Gestrichelt"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.line.solid"
-msgstr "Solide"
+msgstr "Voll"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.measure"
@@ -1095,7 +1109,7 @@ msgstr "Zielvorgaben und Grenzwerte"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.targets-and-limit-values.line-type"
-msgstr "Leitungstyp auswählen"
+msgstr "Linientyp auswählen"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.targets-and-limit-values.show-target"

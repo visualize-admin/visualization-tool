@@ -15,6 +15,11 @@ You can also check the
   - It's now possible to add custom WMTS layers coming from wmts.geo.admin.ch to
     map charts
   - Limits can now be displayed in bar charts
+  - Exact limit values are now displayed in legend
+- Fixes
+  - Line chart dots are now based on data, eliminating misaligned dots
+  - Added a fallback to color selector
+  - Dynamic descriptions for custom color palette types
 
 # [5.2.6] - 2025-02-18
 
