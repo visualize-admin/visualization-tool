@@ -7,6 +7,7 @@ import {
   BarFields,
   BarSegmentField,
   ChartConfig,
+  ColorField,
   ColumnConfig,
   ColumnFields,
   ColumnSegmentField,
@@ -91,6 +92,7 @@ type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
       | PieSegmentField
       | TableFields
     >;
+    color: FieldAdjuster<ColumnConfig, ColorField>;
     animation: FieldAdjuster<ColumnConfig, AnimationField | undefined>;
   };
 };
@@ -108,6 +110,7 @@ type BarAdjusters = BaseAdjusters<BarConfig> & {
       | PieSegmentField
       | TableFields
     >;
+    color: FieldAdjuster<ColumnConfig, ColorField>;
     animation: FieldAdjuster<BarConfig, AnimationField | undefined>;
   };
 };
@@ -116,6 +119,7 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<LineConfig, string> };
     y: { componentId: FieldAdjuster<LineConfig, string> };
+    color: FieldAdjuster<ColumnConfig, ColorField>;
     segment: FieldAdjuster<
       LineConfig,
       | ColumnSegmentField
@@ -132,6 +136,7 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<AreaConfig, string> };
     y: { componentId: FieldAdjuster<AreaConfig, string> };
+    color: FieldAdjuster<ColumnConfig, ColorField>;
     segment: FieldAdjuster<
       AreaConfig,
       | ColumnSegmentField
@@ -156,6 +161,7 @@ type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
       | PieSegmentField
       | TableFields
     >;
+    color: FieldAdjuster<ScatterPlotConfig, ColorField>;
     animation: FieldAdjuster<ScatterPlotConfig, AnimationField | undefined>;
   };
 };
@@ -172,6 +178,7 @@ type PieAdjusters = BaseAdjusters<PieConfig> & {
       | ScatterPlotSegmentField
       | TableFields
     >;
+    color: FieldAdjuster<PieConfig, ColorField>;
     animation: FieldAdjuster<PieConfig, AnimationField | undefined>;
   };
 };
@@ -205,6 +212,7 @@ type ComboLineSingleAdjusters = BaseAdjusters<ComboLineSingleConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<ComboLineSingleConfig, string> };
     y: { componentIds: FieldAdjuster<ComboLineSingleConfig, string> };
+    color: FieldAdjuster<ComboLineSingleConfig, ColorField>;
   };
 };
 
@@ -224,6 +232,7 @@ type ComboLineDualAdjusters = BaseAdjusters<ComboLineDualConfig> & {
       | ComboLineSingleFields
       | ComboLineColumnFields
     >;
+    color: FieldAdjuster<ComboLineDualConfig, ColorField>;
   };
 };
 
@@ -243,6 +252,7 @@ type ComboLineColumnAdjusters = BaseAdjusters<ComboLineColumnConfig> & {
       | ComboLineSingleFields
       | ComboLineDualFields
     >;
+    color: FieldAdjuster<ComboLineColumnConfig, ColorField>;
   };
 };
 
