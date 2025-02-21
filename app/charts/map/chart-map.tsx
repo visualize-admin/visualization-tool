@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import { memo, useCallback, useMemo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
@@ -191,9 +192,7 @@ const ChartMap = memo((props: ChartMapProps) => {
         />
         <MapTooltip />
       </ChartContainer>
-      <ChartControlsContainer
-        sx={{ mt: 6, flexDirection: "row", flexWrap: "wrap" }}
-      >
+      <ChartControlsContainer sx={{ mt: 6 }}>
         {fields.animation && (
           <TimeSlider
             filters={filters}
@@ -201,8 +200,17 @@ const ChartMap = memo((props: ChartMapProps) => {
             {...fields.animation}
           />
         )}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 4,
+            flexWrap: "wrap",
+          }}
+        >
         <MapLegend chartConfig={chartConfig} observations={observations} />
         <MapWMTSLegend chartConfig={chartConfig} />
+        </Box>
       </ChartControlsContainer>
     </MapChart>
   );
