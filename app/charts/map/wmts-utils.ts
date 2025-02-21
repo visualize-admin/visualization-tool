@@ -2,47 +2,50 @@ import { TileLayer } from "@deck.gl/geo-layers";
 import { BitmapLayer } from "@deck.gl/layers";
 import { XMLParser } from "fast-xml-parser";
 
+import { BaseLayer } from "@/config-types";
 import { useLocale } from "@/locales/use-locale";
 import { useFetchData } from "@/utils/use-fetch-data";
 
 type WMTSData = {
   Capabilities: {
     Contents: {
-      Layer: {
-        Dimension: {
-          Default: string | number;
-          Value: string | number | (string | number)[];
-          "ows:Identifier": string;
-        };
-        Format: string;
-        ResourceURL: {
-          format: string;
-          resourceType: string;
-          template: string;
-        };
-        Style: {
-          LegendURL?: {
-            format: string;
-            "xlink:href": string;
-          };
-          "ows:Identifier": string;
-          "ows:Title": string;
-        };
-        TileMatrixSetLink: {
-          TileMatrixSet: string;
-        };
-        "ows:Abstract": string;
-        "ows:Identifier": string;
-        "ows:Metadata": {
-          "xlink:href": string;
-        };
-        "ows:Title": string;
-        "ows:WGS84BoundingBox": {
-          "ows:LowerCorner": string;
-          "ows:UpperCorner": string;
-        };
-      }[];
+      Layer: WMTSLayer[];
     };
+  };
+};
+
+type WMTSLayer = {
+  Dimension: {
+    Default: string | number;
+    Value: string | number | (string | number)[];
+    "ows:Identifier": string;
+  };
+  Format: string;
+  ResourceURL: {
+    format: string;
+    resourceType: string;
+    template: string;
+  };
+  Style: {
+    LegendURL?: {
+      format: string;
+      "xlink:href": string;
+    };
+    "ows:Identifier": string;
+    "ows:Title": string;
+  };
+  TileMatrixSetLink: {
+    TileMatrixSet: string;
+  };
+  "ows:Abstract": string;
+  "ows:Identifier": string;
+  "ows:Metadata": {
+    "xlink:href": string;
+  };
+  "ows:Title": string;
+  "ows:WGS84BoundingBox": {
+    "ows:LowerCorner": string;
+    "ows:UpperCorner": string;
   };
 };
 
@@ -77,37 +80,36 @@ export const useWMTSLayers = (
 
 export const getWMTSTile = ({
   wmtsLayers,
-  url,
+  customLayer,
   beforeId,
   value,
 }: {
   wmtsLayers?: WMTSData["Capabilities"]["Contents"]["Layer"];
-  url: string;
+  customLayer?: BaseLayer["customWMTSLayers"][number];
   beforeId?: string;
   value?: number | string;
 }) => {
-  if (!isValidWMTSLayerUrl(url)) {
+  if (!customLayer || !isValidWMTSLayerUrl(customLayer.url)) {
     return;
   }
 
   const wmtsLayer = wmtsLayers?.find(
-    (layer) => layer.ResourceURL.template === url
+    (layer) => layer.ResourceURL.template === customLayer.url
   );
 
   if (!wmtsLayer) {
     return;
   }
 
-  const values = wmtsLayer.Dimension.Value;
-
   return new TileLayer({
-    id: `tile-layer-${url}`,
+    id: `tile-layer-${customLayer.url}`,
     beforeId,
-    data: getWMTSLayerData(url, {
-      value:
-        Array.isArray(values) && value && values.includes(value)
-          ? value
-          : wmtsLayer.Dimension.Default,
+    data: getWMTSLayerData(customLayer.url, {
+      value: getWMTSLayerValue({
+        wmtsLayer,
+        customLayer,
+        value,
+      }),
     }),
     renderSubLayers: (props) => {
       const { boundingBox } = props.tile;
@@ -138,4 +140,25 @@ const getWMTSLayerData = (
     .replace("{TileMatrix}", "{z}")
     .replace("{TileCol}", "{x}")
     .replace("{TileRow}", "{y}");
+};
+
+export const getWMTSLayerValue = ({
+  wmtsLayer,
+  customLayer,
+  value,
+}: {
+  wmtsLayer: WMTSLayer;
+  customLayer?: BaseLayer["customWMTSLayers"][number];
+  value?: string | number;
+}) => {
+  const { Dimension } = wmtsLayer;
+  const { Value: values, Default: defaultValue } = Dimension;
+
+  if (!customLayer?.syncTemporalFilters) {
+    return defaultValue;
+  }
+
+  return value && Array.isArray(values) && values.includes(value)
+    ? value
+    : defaultValue;
 };

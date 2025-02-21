@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import NextImage from "next/image";
 
-import { useWMTSLayers } from "@/charts/map/wmts-utils";
+import { getWMTSLayerValue, useWMTSLayers } from "@/charts/map/wmts-utils";
 import { Error, Loading } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { MapConfig } from "@/config-types";
@@ -9,7 +9,14 @@ import { truthy } from "@/domain/types";
 import { useLocale } from "@/locales/use-locale";
 import { useFetchData } from "@/utils/use-fetch-data";
 
-export const MapWMTSLegend = ({ chartConfig }: { chartConfig: MapConfig }) => {
+export const MapWMTSLegend = ({
+  chartConfig,
+  value,
+}: {
+  chartConfig: MapConfig;
+  value?: string | number;
+}) => {
+  const customLayers = chartConfig.baseLayer.customWMTSLayers;
   const { data: legendsData, error } = useWMTSLegends({
     customWMTSLayers: chartConfig.baseLayer.customWMTSLayers,
   });
@@ -20,10 +27,19 @@ export const MapWMTSLegend = ({ chartConfig }: { chartConfig: MapConfig }) => {
     <Loading />
   ) : (
     <>
-      {legendsData.map(({ src, title, description, width, height }) => {
+      {legendsData.map(({ wmtsLayer, dataUrl, width, height }) => {
+        const customLayer = customLayers.find(
+          (l) => l.url === wmtsLayer.ResourceURL.template
+        );
+        const layerValue = getWMTSLayerValue({
+          wmtsLayer,
+          customLayer,
+          value,
+        });
+
         return (
           <Box
-            key={src}
+            key={dataUrl}
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -32,14 +48,19 @@ export const MapWMTSLegend = ({ chartConfig }: { chartConfig: MapConfig }) => {
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Typography component="p" variant="caption">
-                {title}
+                {wmtsLayer["ows:Title"]} ({layerValue})
               </Typography>
               <InfoIconTooltip
-                title={description}
+                title={wmtsLayer["ows:Abstract"]}
                 sx={{ width: "fit-content" }}
               />
             </Box>
-            <NextImage src={src} alt={title} width={width} height={height} />
+            <NextImage
+              src={dataUrl}
+              alt={wmtsLayer["ows:Title"]}
+              width={width}
+              height={height}
+            />
           </Box>
         );
       })}
@@ -80,9 +101,8 @@ const useWMTSLegends = ({
             bmp.close();
 
             return {
-              src: URL.createObjectURL(blob),
-              title: wmtsLayer.Style["ows:Title"],
-              description: wmtsLayer["ows:Abstract"],
+              wmtsLayer,
+              dataUrl: URL.createObjectURL(blob),
               width,
               height,
             };
