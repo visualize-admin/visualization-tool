@@ -155,7 +155,7 @@
     "urql": "^2.0.5",
     "use-debounce": "^7.0.0",
     "use-immer": "^0.5.1",
-    "use-sync-external-store": "^1.2.0",
+    "use-sync-external-store": "^1.4.0",
     "wellknown": "^0.5.0",
     "wonka": "4.0.15",
     "zustand": "^4.1.1"
@@ -224,7 +224,7 @@
     "@types/sparql-http-client": "^2.2.5",
     "@types/topojson-client": "^3.1.0",
     "@types/topojson-server": "^3.0.1",
-    "@types/use-sync-external-store": "^0.0.3",
+    "@types/use-sync-external-store": "^0.0.6",
     "@types/wellknown": "^0.5.1",
     "babel-core": "^7.0.0-bridge.0",
     "babel-plugin-module-resolver": "^4.1.0",
