@@ -8,6 +8,12 @@ import { createClient, defaultExchanges } from "urql";
 import { GRAPHQL_ENDPOINT } from "@/domain/env";
 import * as ns from "@/rdf/namespace";
 
+jest.mock("@mapbox/tiny-sdf", () => {
+  return {
+    default: () => {},
+  };
+});
+
 jest.mock("nanoid", () => {
   return {
     nanoid: () => "nanoid",
