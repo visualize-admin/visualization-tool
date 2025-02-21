@@ -14,6 +14,10 @@ You can also check the
 - Features
   - Limits can now be displayed in bar charts
   - Exact limit values are now displayed in legend
+- Fixes
+  - Line chart dots are now based on data, eliminating misaligned dots
+  - Added a fallback to color selector
+  - Dynamic descriptions for custom color palette types
 
 # [5.2.6] - 2025-02-18
 
