@@ -13,6 +13,7 @@ You can also check the
 
 - Features
   - Added option for hiding legend titles using a toggle switch
+  - Chart colors stay persistent over chart type changes
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to vercel previews for easier testing
