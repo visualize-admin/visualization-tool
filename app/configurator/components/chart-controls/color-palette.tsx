@@ -417,7 +417,7 @@ export const ColorSquare = ({
   return (
     <Box
       className={classes.root}
-      data-testId="select-color-square"
+      data-testid="select-color-square"
       sx={{
         backgroundColor: disabled ? "grey.300" : color,
       }}
