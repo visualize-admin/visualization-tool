@@ -278,7 +278,7 @@ export const ColorPalette = ({
           );
         }}
         value={(() => {
-          let valueToUse = currentPalette
+          const valueToUse = currentPalette
             ? currentPalette.value
             : (withColorField && chartConfig.fields.color.paletteId) || "";
 
