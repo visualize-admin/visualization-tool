@@ -36,9 +36,8 @@ import {
   getDefaultCategoricalPalette,
   getPalette,
 } from "@/palettes";
-import { getCustomColorPalettes } from "@/utils/chart-config/api";
 import useEvent from "@/utils/use-event";
-import { useFetchData } from "@/utils/use-fetch-data";
+import { useUserPalettes } from "@/utils/use-user-palettes";
 
 import { ConfiguratorDrawer } from "../drawer";
 
@@ -78,13 +77,7 @@ export const ColorPalette = ({
   const classes = useStyles();
   const user = useUser();
 
-  const { data: customColorPalettes, invalidate } = useFetchData({
-    queryKey: ["colorPalettes", user?.id],
-    queryFn: getCustomColorPalettes,
-    options: {
-      enable: !!user?.id,
-    },
-  });
+  const { data: customColorPalettes, invalidate } = useUserPalettes();
 
   const hasColors = hasDimensionColors(component);
   const defaultPalette =
@@ -223,6 +216,14 @@ export const ColorPalette = ({
     }
   );
 
+  const isValidValue = (value: string) => {
+    const isPaletteValue = palettes.some((p) => p.value === value);
+    const isCustomPaletteValue = customColorPalettes?.some(
+      (p) => p.paletteId === value
+    );
+    return isPaletteValue || isCustomPaletteValue;
+  };
+
   return (
     <Box mt={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
       <Label smaller htmlFor="color-palette-toggle" sx={{ mb: 1 }}>
@@ -231,7 +232,16 @@ export const ColorPalette = ({
       <Select
         className={classes.root}
         classes={classes}
-        renderValue={() => {
+        renderValue={(selected) => {
+          if (!selected || !isValidValue(selected)) {
+            return (
+              <Typography color={"secondary.active"} variant="body2">
+                <Trans id="controls.color.palette.select">
+                  Select a color palette
+                </Trans>
+              </Typography>
+            );
+          }
           return (
             <Grid
               container
@@ -251,38 +261,34 @@ export const ColorPalette = ({
                     </Grid>
                   ))
                 : withColorField &&
-                  (chartConfig.fields.color.type === "single" ? (
-                    <Grid item>
-                      <ColorSquare
-                        key={chartConfig.fields.color.color}
-                        color={chartConfig.fields.color.color as string}
-                        disabled={disabled}
-                      />
-                    </Grid>
-                  ) : (
-                    customColorPalettes
-                      ?.find(
-                        (palette) =>
-                          palette.paletteId ===
-                          chartConfig.fields.color.paletteId
-                      )
-                      ?.colors.map((color, i) => (
-                        <Grid item key={`color-palette-tile-${i}`}>
-                          <ColorSquare
-                            color={color as string}
-                            disabled={disabled}
-                          />
-                        </Grid>
-                      ))
-                  ))}
+                  customColorPalettes
+                    ?.find(
+                      (palette) =>
+                        palette.paletteId === chartConfig.fields.color.paletteId
+                    )
+                    ?.colors.map((color, i) => (
+                      <Grid item key={`color-palette-tile-${i}`}>
+                        <ColorSquare
+                          color={color as string}
+                          disabled={disabled}
+                        />
+                      </Grid>
+                    ))}
             </Grid>
           );
         }}
-        value={
-          currentPalette
+        value={(() => {
+          const valueToUse = currentPalette
             ? currentPalette.value
-            : withColorField && chartConfig.fields.color.paletteId
-        }
+            : (withColorField && chartConfig.fields.color.paletteId) || "";
+
+          if (!isValidValue(valueToUse)) {
+            return "";
+          }
+
+          return valueToUse;
+        })()}
+        displayEmpty
         onChange={handleChangePalette}
       >
         {user && (
@@ -435,6 +441,7 @@ export const ColorSquare = ({
   return (
     <Box
       className={classes.root}
+      data-testId="select-color-square"
       sx={{
         backgroundColor: disabled ? "grey.300" : color,
       }}

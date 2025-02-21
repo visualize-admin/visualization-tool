@@ -137,7 +137,7 @@ export const ColorPaletteDrawerContent = forwardRef<
           </IconButton>
         </Flex>
         <Typography variant="body2" color="textSecondary">
-          <Trans id="controls.custom-color-palettes.caption">
+          <Trans id={`controls.custom-color-palettes.caption-${type}`}>
             Use distinct, high-contrast colors. Avoid using too many colors,
             maximum 5–7. Apply sequential palettes for ordered data and
             diverging palettes for extremes.
@@ -170,6 +170,7 @@ export const ColorPaletteDrawerContent = forwardRef<
           )}
         </Flex>
         <ColorPaletteCreator
+          title={titleInput}
           type={type}
           colorValues={colorValues}
           onRemove={removeColor}

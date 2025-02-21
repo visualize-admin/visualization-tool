@@ -259,11 +259,20 @@ const Cube = t.intersection([
 ]);
 export type Cube = t.TypeOf<typeof Cube>;
 
+const Limit = t.type({
+  dimensionId: t.string,
+  dimensionValue: t.string,
+  color: t.string,
+  lineType: t.union([t.literal("dashed"), t.literal("solid")]),
+});
+export type Limit = t.TypeOf<typeof Limit>;
+
 const GenericChartConfig = t.type({
   key: t.string,
   version: t.string,
   meta: Meta,
   cubes: t.array(Cube),
+  limits: t.record(t.string, t.array(Limit)),
   activeField: t.union([t.string, t.undefined]),
 });
 

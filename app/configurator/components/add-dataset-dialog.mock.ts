@@ -69,6 +69,7 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
           },
         },
       ],
+      limits: {},
       chartType: "column",
       interactiveFiltersConfig: {
         legend: {

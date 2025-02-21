@@ -36,6 +36,7 @@ import {
   ComboLineSingleFields,
   Cube,
   Filters,
+  GenericChartConfig,
   GenericField,
   GenericFields,
   InteractiveFiltersConfig,
@@ -370,15 +371,7 @@ export const getInitialConfig = (
   options: GetInitialConfigOptions
 ): ChartConfig => {
   const { key, iris, chartType, dimensions, measures, meta } = options;
-  const getGenericConfigProps = (
-    filters?: Filters
-  ): {
-    key: string;
-    version: string;
-    meta: Meta;
-    cubes: Cube[];
-    activeField: string | undefined;
-  } => {
+  const getGenericConfig = (filters?: Filters): GenericChartConfig => {
     const newConfig = {
       key: key ?? createId(),
       version: CHART_CONFIG_VERSION,
@@ -403,6 +396,7 @@ export const getInitialConfig = (
           };
         }
       }),
+      limits: {},
       activeField: undefined,
     };
 
@@ -418,7 +412,7 @@ export const getInitialConfig = (
       const areaXComponentId = temporalDimensions[0].id;
 
       return {
-        ...getGenericConfigProps(),
+        ...getGenericConfig(),
         chartType,
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
           timeRangeComponentId: areaXComponentId,
@@ -433,6 +427,7 @@ export const getInitialConfig = (
           },
         },
       };
+
     case "column":
       const columnXComponentId = findPreferredDimension(
         sortBy(dimensions, (d) => (isGeoDimension(d) ? 1 : -1)),
@@ -444,7 +439,7 @@ export const getInitialConfig = (
       ).id;
 
       return {
-        ...getGenericConfigProps(),
+        ...getGenericConfig(),
         chartType,
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
           timeRangeComponentId: columnXComponentId,
@@ -474,7 +469,7 @@ export const getInitialConfig = (
       ).id;
 
       return {
-        ...getGenericConfigProps(),
+        ...getGenericConfig(),
         chartType,
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
           timeRangeComponentId: barXComponentId,
@@ -496,7 +491,7 @@ export const getInitialConfig = (
       const lineXComponentId = temporalDimensions[0].id;
 
       return {
-        ...getGenericConfigProps(),
+        ...getGenericConfig(),
         chartType,
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
           timeRangeComponentId: lineXComponentId,
@@ -519,7 +514,7 @@ export const getInitialConfig = (
       const showSymbolLayer = !showAreaLayer;
 
       return {
-        ...getGenericConfigProps(makeInitialFiltersForArea(areaDimension)),
+        ...getGenericConfig(makeInitialFiltersForArea(areaDimension)),
         chartType,
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         baseLayer: {
@@ -553,7 +548,7 @@ export const getInitialConfig = (
       const piePalette = getDefaultCategoricalPaletteId(pieSegmentComponent);
 
       return {
-        ...getGenericConfigProps(),
+        ...getGenericConfig(),
         chartType,
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         fields: {
@@ -581,7 +576,7 @@ export const getInitialConfig = (
       );
 
       return {
-        ...getGenericConfigProps(),
+        ...getGenericConfig(),
         chartType: "scatterplot",
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         fields: {
@@ -621,7 +616,7 @@ export const getInitialConfig = (
       );
 
       return {
-        ...getGenericConfigProps(),
+        ...getGenericConfig(),
         chartType,
         interactiveFiltersConfig: undefined,
         settings: {
@@ -660,7 +655,7 @@ export const getInitialConfig = (
         .map((d) => d.id);
 
       return {
-        ...getGenericConfigProps(),
+        ...getGenericConfig(),
         chartType: "comboLineSingle",
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
           timeRangeComponentId: temporalDimensions[0].id,
@@ -698,7 +693,7 @@ export const getInitialConfig = (
       )!.id;
 
       return {
-        ...getGenericConfigProps(),
+        ...getGenericConfig(),
         chartType: "comboLineDual",
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
           timeRangeComponentId: temporalDimensions[0].id,
@@ -738,7 +733,7 @@ export const getInitialConfig = (
       )!.id;
 
       return {
-        ...getGenericConfigProps(),
+        ...getGenericConfig(),
         chartType: "comboLineColumn",
         interactiveFiltersConfig: getInitialInteractiveFiltersConfig({
           timeRangeComponentId: temporalDimensions[0].id,
@@ -858,6 +853,7 @@ const getAdjustedChartConfig = ({
       case "interactiveFiltersConfig.calculation":
       case "interactiveFiltersConfig.dataFilters":
       case "interactiveFiltersConfig.legend":
+      case "limits":
         return true;
       default:
         return false;
@@ -1000,6 +996,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         draft.cubes = oldValue;
       });
     },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
+      });
+    },
     fields: {
       x: {
         componentId: ({ oldValue, newChartConfig, dimensions }) => {
@@ -1087,6 +1088,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
       });
     },
     fields: {
@@ -1189,6 +1195,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         draft.cubes = oldValue;
       });
     },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
+      });
+    },
     fields: {
       x: {
         componentId: ({ oldValue, newChartConfig, dimensions }) => {
@@ -1260,6 +1271,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
       });
     },
     fields: {
@@ -1353,6 +1369,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         draft.cubes = oldValue;
       });
     },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
+      });
+    },
     fields: {
       // x is not needed, as this is the only chart type with x-axis measures.
       y: {
@@ -1412,6 +1433,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
       });
     },
     fields: {
@@ -1507,6 +1533,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         }
       });
     },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
+      });
+    },
     fields: {
       areaLayer: {
         componentId: ({ oldValue, newChartConfig, dimensions }) => {
@@ -1550,6 +1581,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
       });
     },
     fields: {
@@ -1621,6 +1657,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
       });
     },
     fields: {
@@ -1742,6 +1783,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    limits: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.limits = oldValue;
       });
     },
     fields: {

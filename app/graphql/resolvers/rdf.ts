@@ -13,10 +13,10 @@ import {
   DimensionValue,
   GeoProperties,
   GeoShapes,
+  isMeasure,
   Measure,
   TemporalDimension,
   TemporalEntityDimension,
-  isMeasure,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { Loaders } from "@/graphql/context";
@@ -43,7 +43,7 @@ import { GeoShape } from "@/rdf/query-geo-shapes";
 import { parseHierarchy, queryHierarchies } from "@/rdf/query-hierarchies";
 import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 import { getPossibleFilters } from "@/rdf/query-possible-filters";
-import { SearchResult, searchCubes as _searchCubes } from "@/rdf/query-search";
+import { searchCubes as _searchCubes, SearchResult } from "@/rdf/query-search";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
 
 export const dataCubeLatestIri: NonNullable<
@@ -196,11 +196,15 @@ const getResolvedDimension = async (
     throw Error(`Cube ${cubeIri} not found!`);
   }
 
-  await cube.fetchShape();
+  const [unversionedCubeIri = cubeIri] = await Promise.all([
+    queryCubeUnversionedIri(sparqlClient, cubeIri),
+    cube.fetchShape(),
+  ]);
   const dimensions = await getCubeDimensions({
     cube,
     locale,
     sparqlClient,
+    unversionedCubeIri,
     componentIris: [iri],
     cache,
   });
@@ -250,16 +254,16 @@ export const dataCubeComponents: NonNullable<
     (id) => parseComponentId(id as ComponentId).unversionedComponentIri ?? id
   );
 
-  const [unversionedCubeIri = iri, rawComponents] = await Promise.all([
-    queryCubeUnversionedIri(sparqlClient, iri),
-    getCubeDimensions({
-      cube,
-      locale,
-      sparqlClient,
-      componentIris,
-      cache,
-    }),
-  ]);
+  const unversionedCubeIri =
+    (await queryCubeUnversionedIri(sparqlClient, iri)) ?? iri;
+  const rawComponents = await getCubeDimensions({
+    cube,
+    locale,
+    sparqlClient,
+    unversionedCubeIri,
+    componentIris,
+    cache,
+  });
   const components = await Promise.all(
     rawComponents.map(async (component) => {
       const { data } = component;
@@ -318,6 +322,7 @@ export const dataCubeComponents: NonNullable<
           isDecimal: data.isDecimal,
           currencyExponent: data.currencyExponent,
           resolution: data.resolution,
+          limits: data.limits ?? [],
           ...baseComponent,
         };
         return measure;

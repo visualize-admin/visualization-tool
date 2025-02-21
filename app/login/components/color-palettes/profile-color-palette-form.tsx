@@ -49,12 +49,14 @@ type ProfileColorPaletteProps = {
   onBack: () => void;
   palette?: CustomPaletteType;
   formMode: "add" | "edit";
+  customColorPalettes?: CustomPaletteType[];
 };
 
 const ProfileColorPaletteForm = ({
   onBack,
   palette,
   formMode,
+  customColorPalettes,
 }: ProfileColorPaletteProps) => {
   const [type, setType] = useState<CustomPaletteType["type"]>(
     palette?.type || "categorical"
@@ -69,6 +71,7 @@ const ProfileColorPaletteForm = ({
     diverging: getDefaultColorValues("diverging", palette?.colors || []),
   });
 
+  const [isNotAvailable, setIsNotAvailable] = useState(false);
   const [titleInput, setTitleInput] = useState<string>(palette?.name || "");
 
   const classes = useStyles();
@@ -116,28 +119,45 @@ const ProfileColorPaletteForm = ({
     [type]
   );
 
-  const handleTypeChange = useCallback((newType: CustomPaletteType["type"]) => {
-    setType(newType);
-    setColorValues(colorsByTypeRef.current[newType]);
-  }, []);
+  const handleTypeChange = useCallback(
+    (newType: CustomPaletteType["type"]) => {
+      setType(newType);
+
+      const currentColors = colorValues.map((item) => item.color);
+
+      const newColorValues = getDefaultColorValues(newType, currentColors);
+
+      colorsByTypeRef.current[newType] = newColorValues;
+      setColorValues(newColorValues);
+    },
+    [colorValues]
+  );
 
   const saveColorPalette = useEvent(async () => {
-    if (palette) {
-      await updateColorPalette.mutate({
-        paletteId: palette.paletteId,
-        name: titleInput,
-        colors: colorValues.map((c) => c.color),
-        type,
-      });
-    } else {
-      await createColorPalette.mutate({
-        name: titleInput,
-        colors: colorValues.map((c) => c.color),
-        type,
-      });
-    }
+    const titleExistsAlready = customColorPalettes?.find(
+      (palette) => palette.name === titleInput
+    );
 
-    onBack();
+    if (titleExistsAlready && formMode === "add") {
+      setIsNotAvailable(true);
+    } else {
+      setIsNotAvailable(false);
+      if (palette) {
+        await updateColorPalette.mutate({
+          paletteId: palette.paletteId,
+          name: titleInput,
+          colors: colorValues.map((c) => c.color),
+          type,
+        });
+      } else {
+        await createColorPalette.mutate({
+          name: titleInput,
+          colors: colorValues.map((c) => c.color),
+          type,
+        });
+      }
+      onBack();
+    }
   });
 
   const noChanges =
@@ -165,7 +185,7 @@ const ProfileColorPaletteForm = ({
           selectedType={type}
         />
         <Typography variant="body2" color="textSecondary">
-          <Trans id="controls.custom-color-palettes.caption">
+          <Trans id={`controls.custom-color-palettes.caption-${type}`}>
             Use distinct, high-contrast colors. Avoid using too many colors,
             maximum 5–7. Apply sequential palettes for ordered data and
             diverging palettes for extremes.
@@ -173,15 +193,27 @@ const ProfileColorPaletteForm = ({
         </Typography>
 
         <Box className={classes.inputContainer}>
-          <Input
-            label={t({ id: "controls.custom-color-palettes.title" })}
-            name="custom-color-palette-title"
-            value={titleInput}
-            onChange={(e) => setTitleInput(e.target.value)}
-          />
+          <Flex flexDirection={"column"}>
+            <Input
+              error={isNotAvailable}
+              label={t({ id: "controls.custom-color-palettes.title" })}
+              name="custom-color-palette-title"
+              value={titleInput}
+              onChange={(e) => setTitleInput(e.target.value)}
+            />
+            {isNotAvailable && (
+              <Typography color={"error.main"} variant="caption">
+                <Trans id="controls.custom-color-palettes.title-unavailable">
+                  This name is already in use. Please choose a unique name for
+                  your color palette.
+                </Trans>
+              </Typography>
+            )}
+          </Flex>
         </Box>
         <ColorPaletteCreator
           type={type}
+          title={titleInput}
           colorValues={colorValues}
           onRemove={removeColor}
           onUpdate={updateColor}

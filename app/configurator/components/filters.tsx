@@ -366,7 +366,6 @@ const MultiFilterContent = ({
             justifyContent: "space-between",
             display: "flex",
             flexDirection: "column",
-            alignItems: "flex-end",
           }}
         >
           {chartConfig.activeField === "segment" ? (
@@ -430,7 +429,12 @@ const MultiFilterContent = ({
             size="small"
             color="primary"
             onClick={handleOpenAutocomplete}
-            sx={{ justifyContent: "center", mb: 2, width: "fit-content" }}
+            sx={{
+              justifyContent: "center",
+              mt: 4,
+              mb: 2,
+              width: "fit-content",
+            }}
           >
             <Trans id="controls.set-filters">Edit filters</Trans>
           </Button>

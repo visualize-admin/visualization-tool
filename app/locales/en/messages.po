@@ -39,7 +39,6 @@ msgstr "[ Add text ]"
 msgid "annotation.add.title"
 msgstr "[ No Title ]"
 
-
 #: app/components/dashboard-shared.tsx
 msgid "block-controls.delete"
 msgstr "Delete"
@@ -516,6 +515,10 @@ msgstr "Diverging"
 msgid "controls.color.palette.reset"
 msgstr "Reset color palette"
 
+#: app/configurator/components/chart-controls/color-palette.tsx
+msgid "controls.color.palette.select"
+msgstr "Select a color palette"
+
 #: app/configurator/components/chart-controls/color-ramp.tsx
 msgid "controls.color.palette.sequential"
 msgstr "Sequential"
@@ -570,8 +573,7 @@ msgstr "Stacked"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx
-#: app/configurator/components/chart-controls/color-ramp.tsx
-#: app/configurator/components/chart-controls/create-color-palette.tsx
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes"
 msgstr "Custom color palettes"
 
@@ -584,18 +586,33 @@ msgstr "Add Color"
 msgid "controls.custom-color-palettes.base"
 msgstr "Base Color"
 
-#: app/configurator/components/chart-controls/create-color-palette.tsx
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.caption"
+msgid "controls.custom-color-palettes.caption-categorical"
 msgstr "Use distinct, high-contrast colors. Avoid using too many colors, maximum 5–7. Apply sequential palettes for ordered data and diverging palettes for extremes."
 
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.caption-sequential"
+msgstr "Select a dark endpoint color for a strong contrast between low and high values; the light color is calculated automatically. Sequential color palettes are suitable for ordered data such as temperatures or population densities."
+
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.caption-diverging"
+msgstr "Choose contrasting colors for the start and end points. These colors will help visually separate extreme values. Diverging palettes are ideal for data with a meaningful midpoint, such as zero or an average."
+
+
 #: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.contrast-warning"
-msgstr "The selected color lacks sufficient contrast. Consider using a darker color for a sequential palette."
+msgid "controls.custom-color-palettes.categorical-contrast-warning"
+msgstr "The selected color is difficult to read against a white background. Choose a color with higher contrast to improve accessibility."
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.create-palette"
-msgstr "controls.custom-color-palettes.create-palette"
+msgstr "Create color palette"
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.diverging-contrast-warning"
+msgstr "The selected color lacks sufficient contrast. Consider using a darker color for a diverging palette."
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.end"
@@ -609,7 +626,11 @@ msgstr "Example"
 msgid "controls.custom-color-palettes.mid"
 msgstr "Middle Color"
 
-#: app/configurator/components/chart-controls/create-color-palette.tsx
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.sequential-contrast-warning"
+msgstr "The selected color lacks sufficient contrast. Consider using a darker color for a sequential palette."
+
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes.set-values-apply"
 msgstr "Save color palette"
 
@@ -617,12 +638,13 @@ msgstr "Save color palette"
 msgid "controls.custom-color-palettes.start"
 msgstr "Starting Color"
 
-#: app/configurator/components/chart-controls/create-color-palette.tsx
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.title"
-msgstr "Palette title"
+msgstr "Palette title (required)"
 
-#: app/configurator/components/chart-controls/create-color-palette.tsx
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.title-unavailable"
 msgstr "This name is already in use. Please choose a unique name for your color palette."
 
@@ -632,7 +654,7 @@ msgstr "Select a color palette type"
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.update-palette"
-msgstr "controls.custom-color-palettes.update-palette"
+msgstr "Update color palette"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.description"
@@ -709,12 +731,12 @@ msgid "controls.filters.select.to"
 msgstr "To"
 
 #: app/configurator/components/filters.tsx
-msgid "controls.filters.show-legend.toggle"
-msgstr "Show legend titles"
-
-#: app/configurator/components/filters.tsx
 msgid "controls.filters.show-legend-toggle"
 msgstr "Allow users to change legend titles visibility"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.show-legend.toggle"
+msgstr "Show legend titles"
 
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
@@ -811,6 +833,14 @@ msgstr "Tall"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.vertical"
 msgstr "Vertical"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.line.dashed"
+msgstr "Dashed"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.line.solid"
+msgstr "Solid"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.measure"
@@ -1057,6 +1087,18 @@ msgstr "Table Sorting"
 msgid "controls.section.tableoptions"
 msgstr "Table Options"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values"
+msgstr "Targets & limit values"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.line-type"
+msgstr "Select line type"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.show-target"
+msgstr "Show target"
+
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
 msgid "controls.section.title.warning"
@@ -1265,7 +1307,6 @@ msgid "controls.tree.select-value"
 msgstr "Select"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
-#: app/configurator/components/chart-controls/color-ramp.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx
 msgid "controls.visualize-color-palette"
 msgstr "Visualize color palettes"
@@ -1639,7 +1680,6 @@ msgid "login.profile.my-color-palettes"
 msgstr "My Color Palettes"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
-#: app/configurator/components/chart-controls/color-ramp.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.add"
