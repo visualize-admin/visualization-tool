@@ -251,6 +251,7 @@ const CategoricalColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
       <Button
         variant="text"
         fullWidth
+        data-testid="profile-add-new-color"
         className={classes.addColorButton}
         disabled={disabled}
         startIcon={<Icon name="add" />}

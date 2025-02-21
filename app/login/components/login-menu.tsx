@@ -96,13 +96,14 @@ export const LoginMenu = () => {
         </>
       ) : (
         <Button
-          data-testId="test-sign-in"
+          data-testid="test-sign-in"
           variant="text"
           color="primary"
           size="small"
           onClick={() =>
             isVercelPreviewHost(window.location.host) ||
-            process.env.E2E_ENV === "true"
+            process.env.E2E_ENV === "true" ||
+            process.env.NODE_ENV === "development"
               ? signIn("credentials")
               : signIn("adfs")
           }

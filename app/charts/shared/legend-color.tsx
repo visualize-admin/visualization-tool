@@ -203,12 +203,12 @@ export const LegendColor = memo(function LegendColor({
       {showTitle && segmentComponent && (
         <OpenMetadataPanelWrapper component={segmentComponent}>
           <Typography
-            data-testId="legendTitle"
+            data-testid="legendTitle"
             component="div"
             variant="caption"
             color="primary.main"
           >
-            {segmentComponent.label}
+            {segmentComponent?.label}
           </Typography>
         </OpenMetadataPanelWrapper>
       )}
