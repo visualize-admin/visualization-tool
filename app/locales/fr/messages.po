@@ -509,7 +509,7 @@ msgstr "Couleurs"
 
 #: app/configurator/components/chart-controls/color-ramp.tsx
 msgid "controls.color.palette.diverging"
-msgstr "Divergent"
+msgstr "Divergente"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 msgid "controls.color.palette.reset"
@@ -517,7 +517,7 @@ msgstr "Réinitialiser la palette de couleurs"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 msgid "controls.color.palette.select"
-msgstr "choisir une palette de couleurs"
+msgstr "Choisir une palette de couleurs"
 
 #: app/configurator/components/chart-controls/color-ramp.tsx
 msgid "controls.color.palette.sequential"
@@ -593,18 +593,17 @@ msgstr "Utilisez des couleurs distinctes et contrastées. Évitez d'utiliser tro
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.caption-sequential"
-msgstr "Sélectionnez une couleur d'extrémité foncée pour obtenir un fort contraste entre les valeurs faibles et élevées ; la couleur claire est calculée automatiquement. Les palettes de couleurs séquentielles conviennent aux données ordonnées telles que les températures ou les densités de population."
-
-#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption-diverging"
 msgstr "Choisissez des couleurs contrastées pour les points de départ et d'arrivée. Ces couleurs permettent de distinguer visuellement les valeurs extrêmes. Les palettes divergentes sont idéales pour les données comportant un point médian significatif, tel que zéro ou une moyenne. IT Scegliere colori contrastanti per i punti iniziali e finali. Questi colori facilitano la distinzione visiva dei valori estremi. Le palette divergenti sono ideali per dati con un punto medio significativo, come zero o un valore medio."
 
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.caption-sequential"
+msgstr "Sélectionnez une couleur d'extrémité foncée pour obtenir un fort contraste entre les valeurs faibles et élevées ; la couleur claire est calculée automatiquement. Les palettes de couleurs séquentielles conviennent aux données ordonnées telles que les températures ou les densités de population."
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.categorical-contrast-warning"
-msgstr "La couleur sélectionnée est difficile à lire sur un fond blanc. Choisissez une couleur plus contrastée pour améliorer l'accessibilité."
+msgstr "La couleur choisie est difficile à lire sur fond blanc. Choisissez une couleur avec plus de contraste pour améliorer l'accessibilité."
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.create-palette"
@@ -612,7 +611,7 @@ msgstr "Créer une palette de couleurs"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.diverging-contrast-warning"
-msgstr "La couleur sélectionnée n'est pas suffisamment contrastée. Envisagez d'utiliser une couleur plus foncée pour obtenir une palette divergente."
+msgstr "La couleur choisie n'a pas un contraste suffisant. Utilisez une couleur plus foncée pour créer une palette divergente."
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.end"
@@ -628,7 +627,7 @@ msgstr "Couleur moyenne"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.sequential-contrast-warning"
-msgstr "La couleur sélectionnée n'est pas suffisamment contrastée. Envisagez d'utiliser une couleur plus foncée pour une palette séquentielle."
+msgstr "La couleur sélectionnée n'offre pas assez de contraste. Veuillez choisir une couleur plus sombre pour la palette séquentielle."
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes.set-values-apply"
@@ -1009,6 +1008,18 @@ msgstr "Titre & description"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.dots-size"
 msgstr "Sélectionner une taille"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size.large"
+msgstr "Grand"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size.medium"
+msgstr "Moyen"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size.small"
+msgstr "Petit"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -1695,7 +1706,7 @@ msgstr "Supprimer la palette de couleurs"
 
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.description"
-msgstr "Enregistrez votre première palette de couleurs personnalisée pour choisir facilement vos couleurs lors de la création d'une visualisation."
+msgstr "Enregistrez une palette de couleurs personnalisée pour sélectionner facilement les couleurs de vos visualisations."
 
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.edit"

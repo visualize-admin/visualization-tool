@@ -18,6 +18,7 @@ You can also check the
   - Line chart dots are now based on data, eliminating misaligned dots
   - Added a fallback to color selector
   - Dynamic descriptions for custom color palette types
+  - Show line dot sizes are now translated
 
 # [5.2.6] - 2025-02-18
 
