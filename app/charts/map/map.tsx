@@ -30,7 +30,6 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { BaseLayer, BBox } from "@/configurator";
 import { GeoFeature, GeoPoint } from "@/domain/data";
-import { truthy } from "@/domain/types";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
@@ -88,8 +87,10 @@ const resizeAndFit = debounce((map: mapboxgl.Map, bbox: BBox) => {
 
 export const MapComponent = ({
   customWMTSLayers,
+  temporalFilterValue,
 }: {
   customWMTSLayers: BaseLayer["customWMTSLayers"];
+  temporalFilterValue: string | number | undefined;
 }) => {
   const classes = useStyles();
   const locale = useLocale();
@@ -97,37 +98,29 @@ export const MapComponent = ({
   const { data: wmtsLayers } = useWMTSLayers({
     pause: !customWMTSLayers.length,
   });
-  const { behindAreaLayerUrls, afterAreaLayerUrls } = useMemo(() => {
-    return customWMTSLayers.reduce(
-      (acc, { isBehindAreaLayer, url }) => {
-        if (isBehindAreaLayer) {
-          acc.behindAreaLayerUrls.push(url);
-        } else {
-          acc.afterAreaLayerUrls.push(url);
-        }
-
-        return acc;
-      },
-      {
-        behindAreaLayerUrls: [] as string[],
-        afterAreaLayerUrls: [] as string[],
-      }
-    );
-  }, [customWMTSLayers]);
-  const behindAreaTileLayers = useMemo(() => {
-    return behindAreaLayerUrls
-      .map((url) => {
-        return getWMTSTile({ wmtsLayers, url, beforeId: "areaLayer" });
-      })
-      .filter(truthy);
-  }, [behindAreaLayerUrls, wmtsLayers]);
-  const afterAreaTileLayers = useMemo(() => {
-    return afterAreaLayerUrls
-      .map((url) => {
-        return getWMTSTile({ wmtsLayers, url });
-      })
-      .filter(truthy);
-  }, [afterAreaLayerUrls, wmtsLayers]);
+  const { behindAreaTileLayers, afterAreaTileLayers } = useMemo(() => {
+    return {
+      behindAreaTileLayers: customWMTSLayers
+        .filter((layer) => layer.isBehindAreaLayer)
+        .map(({ url, syncTemporalFilters }) => {
+          return getWMTSTile({
+            wmtsLayers,
+            url,
+            beforeId: "areaLayer",
+            value: syncTemporalFilters ? temporalFilterValue : undefined,
+          });
+        }),
+      afterAreaTileLayers: customWMTSLayers
+        .filter((layer) => !layer.isBehindAreaLayer)
+        .map(({ url, syncTemporalFilters }) => {
+          return getWMTSTile({
+            wmtsLayers,
+            url,
+            value: syncTemporalFilters ? temporalFilterValue : undefined,
+          });
+        }),
+    };
+  }, [customWMTSLayers, temporalFilterValue, wmtsLayers]);
 
   const [{ interaction }, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
@@ -327,8 +320,8 @@ export const MapComponent = ({
 
       return new GeoJsonLayer({
         id: "hoverLayer",
-        beforeId: afterAreaLayerUrls.length
-          ? `tile-layer-${afterAreaLayerUrls[0]}`
+        beforeId: afterAreaTileLayers.length
+          ? afterAreaTileLayers[0]?.props.id
           : undefined,
         // @ts-ignore
         data: shape,
@@ -340,7 +333,7 @@ export const MapComponent = ({
       });
     }
   }, [
-    afterAreaLayerUrls,
+    afterAreaTileLayers,
     areaLayer,
     interaction.d,
     interaction.visible,

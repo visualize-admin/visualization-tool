@@ -803,6 +803,7 @@ const BaseLayer = t.type({
     t.type({
       url: t.string,
       isBehindAreaLayer: t.boolean,
+      syncTemporalFilters: t.boolean,
     })
   ),
 });

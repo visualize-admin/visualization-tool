@@ -99,70 +99,104 @@ export const CustomLayersSelector = () => {
           <Droppable droppableId="layers">
             {(provided) => (
               <div {...provided.droppableProps} ref={provided.innerRef}>
-                {chartConfigLayers.map((layer, i) => (
-                  <Draggable key={layer.url} draggableId={layer.url} index={i}>
-                    {(provided) => (
-                      <Box
-                        ref={provided.innerRef}
-                        {...provided.dragHandleProps}
-                        {...provided.draggableProps}
-                        sx={{ mb: 3 }}
-                      >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                            mb: 2,
-                          }}
-                        >
-                          <Select
-                            key={layer.url}
-                            id={`layer-${layer.url}`}
-                            options={options.filter(
-                              (option) =>
-                                option.value === layer.url || option.isNoneValue
-                            )}
-                            sortOptions={false}
-                            onChange={(e) => {
-                              const url = e.target.value as string;
+                {chartConfigLayers.map((layer, i) => {
+                  const wmtsLayer = data.find(
+                    (l) => l.ResourceURL.template === layer.url
+                  );
+                  const wmtsLayerValue = wmtsLayer?.Dimension.Value;
+                  const enableTemporalFiltering =
+                    Array.isArray(wmtsLayerValue) && wmtsLayerValue.length > 1;
 
-                              if (url === FIELD_VALUE_NONE) {
-                                handleChange(
-                                  chartConfigLayers.filter(
-                                    (l) => l.url !== layer.url
-                                  )
-                                );
-                              }
+                  return (
+                    <Draggable
+                      key={layer.url}
+                      draggableId={layer.url}
+                      index={i}
+                    >
+                      {(provided) => (
+                        <Box
+                          ref={provided.innerRef}
+                          {...provided.dragHandleProps}
+                          {...provided.draggableProps}
+                          sx={{ mb: 3 }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                              mb: 2,
                             }}
-                            value={layer.url}
-                            sx={{ maxWidth: 280 }}
+                          >
+                            <Select
+                              key={layer.url}
+                              id={`layer-${layer.url}`}
+                              options={options.filter(
+                                (option) =>
+                                  option.value === layer.url ||
+                                  option.isNoneValue
+                              )}
+                              sortOptions={false}
+                              onChange={(e) => {
+                                const url = e.target.value as string;
+
+                                if (url === FIELD_VALUE_NONE) {
+                                  handleChange(
+                                    chartConfigLayers.filter(
+                                      (l) => l.url !== layer.url
+                                    )
+                                  );
+                                }
+                              }}
+                              value={layer.url}
+                              sx={{ maxWidth: 280 }}
+                            />
+                            <MoveDragButton />
+                          </Box>
+                          <Switch
+                            label={t({
+                              id: "chart.map.layers.base.behind-area-layer",
+                              message: "Behind area layer",
+                            })}
+                            checked={layer.isBehindAreaLayer}
+                            onChange={(e) => {
+                              handleChange(
+                                chartConfigLayers.map((l) => {
+                                  return l.url === layer.url
+                                    ? {
+                                        ...l,
+                                        isBehindAreaLayer: e.target.checked,
+                                      }
+                                    : l;
+                                })
+                              );
+                            }}
                           />
-                          <MoveDragButton />
+                          <Switch
+                            label={t({
+                              id: "chart.map.layers.base.enable-temporal-filtering",
+                              message: "Sync with temporal filters",
+                            })}
+                            checked={layer.syncTemporalFilters}
+                            disabled={!enableTemporalFiltering}
+                            onChange={(e) => {
+                              handleChange(
+                                chartConfigLayers.map((l) => {
+                                  return l.url === layer.url
+                                    ? {
+                                        ...l,
+                                        syncTemporalFilters: e.target.checked,
+                                      }
+                                    : l;
+                                })
+                              );
+                            }}
+                          />
                         </Box>
-                        <Switch
-                          label={t({
-                            id: "chart.map.layers.base.behind-area-layer",
-                            message: "Behind area layer",
-                          })}
-                          checked={layer.isBehindAreaLayer}
-                          onChange={(e) => {
-                            handleChange(
-                              chartConfigLayers.map((l) => {
-                                return l.url === layer.url
-                                  ? {
-                                      ...l,
-                                      isBehindAreaLayer: e.target.checked,
-                                    }
-                                  : l;
-                              })
-                            );
-                          }}
-                        />
-                      </Box>
-                    )}
-                  </Draggable>
-                ))}
+                      )}
+                    </Draggable>
+                  );
+                })}
                 {provided.placeholder}
               </div>
             )}
@@ -192,7 +226,11 @@ export const CustomLayersSelector = () => {
             if (value) {
               handleChange([
                 ...chartConfigLayers,
-                { url: value.value, isBehindAreaLayer: false },
+                {
+                  url: value.value,
+                  isBehindAreaLayer: false,
+                  syncTemporalFilters: false,
+                },
               ]);
             }
           }}

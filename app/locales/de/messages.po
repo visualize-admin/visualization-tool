@@ -262,6 +262,10 @@ msgstr "Ebene hinzufügen"
 msgid "chart.map.layers.base.behind-area-layer"
 msgstr "Hinter der Flächenebene"
 
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.base.enable-temporal-filtering"
+msgstr "Mit zeitlichen Filtern synchronisieren"
+
 #: app/configurator/components/chart-options-selector.tsx
 msgid "chart.map.layers.base.show"
 msgstr "Weltkarte anzeigen"

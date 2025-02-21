@@ -262,6 +262,10 @@ msgstr "Ajouter une couche"
 msgid "chart.map.layers.base.behind-area-layer"
 msgstr "Derrière la couche de surface"
 
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.base.enable-temporal-filtering"
+msgstr "Synchronisation avec les filtres temporels"
+
 #: app/configurator/components/chart-options-selector.tsx
 msgid "chart.map.layers.base.show"
 msgstr "Afficher la carte du monde"
