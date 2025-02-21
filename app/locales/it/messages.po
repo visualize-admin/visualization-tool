@@ -588,8 +588,19 @@ msgstr "Colore base"
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.caption"
+msgid "controls.custom-color-palettes.caption-categorical"
 msgstr "Utilizzare colori distinti e ad alto contrasto. Evitare di usare troppi colori, massimo 5-7. Applicare tavolozze sequenziali per i dati ordinati e tavolozze divergenti per gli estremi."
+
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.caption-sequential"
+msgstr "Per ottenere un forte contrasto tra valori bassi e alti, è possibile selezionare un colore scuro per l'endpoint; il colore chiaro viene calcolato automaticamente. Le tavolozze di colori sequenziali sono adatte per dati ordinati come le temperature o le densità di popolazione."
+
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.caption-diverging"
+msgstr "Scegliere colori contrastanti per i punti iniziali e finali. Questi colori facilitano la distinzione visiva dei valori estremi. Le palette divergenti sono ideali per dati con un punto medio significativo, come zero o un valore medio."
+
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.categorical-contrast-warning"
