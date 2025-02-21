@@ -132,6 +132,20 @@ export const useChartFieldField = ({
         },
       });
 
+      dispatch({
+        type: "CHART_FIELD_CHANGED",
+        value: {
+          locale,
+          field,
+          componentId: dimensionId,
+          selectedValues: leaves,
+        },
+      });
+
+      if (!get(chartConfig, `fields["${field}"].paletteId`)) {
+        return;
+      }
+
       if (isColorInConfig(chartConfig)) {
         const palette =
           categoricalPalettes.find(
@@ -174,17 +188,9 @@ export const useChartFieldField = ({
         });
       }
 
-      dispatch({
-        type: "CHART_FIELD_CHANGED",
-        value: {
-          locale,
-          field,
-          componentId: dimensionId,
-          selectedValues: leaves,
-        },
-      });
       return;
     }
+
     dispatch({
       type: "CHART_FIELD_DELETED",
       value: {
