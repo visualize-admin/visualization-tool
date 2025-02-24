@@ -1,8 +1,8 @@
 import { t, Trans } from "@lingui/macro";
 import {
   Box,
-  Stack,
   Switch as MUISwitch,
+  Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -55,6 +55,7 @@ import {
   ImputationType,
   imputationTypes,
   isAnimationInConfig,
+  isBarConfig,
   isColorInConfig,
   isComboChartConfig,
   isTableConfig,
@@ -726,10 +727,23 @@ const ChartLayoutOptions = ({
   hasSubOptions: boolean;
   measures: Measure[];
 }) => {
+  const activeField = chartConfig.activeField as EncodingFieldType | undefined;
+
+  if (!activeField) {
+    return null;
+  }
+
   const hasColorField = isColorInConfig(chartConfig);
   const values: { id: string; symbol: LegendSymbol }[] = hasColorField
     ? chartConfig.fields.color.type === "single"
-      ? [{ id: chartConfig.fields.y.componentId, symbol: "line" }]
+      ? [
+          {
+            id: isBarConfig(chartConfig)
+              ? chartConfig.fields.x.componentId
+              : chartConfig.fields.y.componentId,
+            symbol: "line",
+          },
+        ]
       : Object.keys(chartConfig.fields.color.colorMapping).map((key) => ({
           id: key,
           symbol: "line",
@@ -752,7 +766,7 @@ const ChartLayoutOptions = ({
         )}
         <>
           <ColorPalette
-            field="y"
+            field={activeField}
             // Faking a component here, because we don't have a real one.
             // We use measure iris as dimension values, because that's how
             // the color mapping is done.
