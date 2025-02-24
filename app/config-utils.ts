@@ -11,6 +11,7 @@ import {
   Limit as ConfigLimit,
   SingleFilters,
 } from "@/config-types";
+import { useConfiguratorState } from "@/configurator/configurator-state";
 import { Dimension, Measure, ObservationValue } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { mkJoinById } from "@/graphql/join";
@@ -115,6 +116,38 @@ export const useChartConfigFilters = (
       joined: options?.joined,
     });
   }, [chartConfig.cubes, options?.cubeIri, options?.joined]);
+};
+
+const useDefinitiveFilters = () => {
+  const [state] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
+  const filters = useChartConfigFilters(chartConfig);
+  const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
+  const dashboardFilters = useDashboardInteractiveFilters();
+
+  const definitiveFilters = useMemo(() => {
+    const definitiveFilters: Filters = {};
+
+    for (const [k, v] of Object.entries(filters)) {
+      definitiveFilters[k] = v;
+    }
+
+    for (const [k, v] of Object.entries(dataFilters)) {
+      definitiveFilters[k] = v;
+    }
+
+    for (const [getState] of Object.values(dashboardFilters.stores)) {
+      const state = getState();
+
+      for (const [k, v] of Object.entries(state.dataFilters)) {
+        definitiveFilters[k] = v;
+      }
+    }
+
+    return definitiveFilters;
+  }, [filters, dataFilters, dashboardFilters]);
+
+  return definitiveFilters;
 };
 
 /** Get the limit from the chart config that is related to the given measure
@@ -248,35 +281,7 @@ export const useLimits = ({
     measureLimit: Limit;
   }[];
 } => {
-  const configFilters = useChartConfigFilters(chartConfig);
-  const chartInteractiveFilters = useChartInteractiveFilters(
-    (d) => d.dataFilters
-  );
-  const dashboardInteractiveFilters = useDashboardInteractiveFilters();
-
-  const filters = useMemo(() => {
-    const filters: Filters = {};
-    for (const [k, v] of Object.entries(configFilters)) {
-      filters[k] = v;
-    }
-
-    for (const [k, v] of Object.entries(chartInteractiveFilters)) {
-      filters[k] = v;
-    }
-
-    for (const [getState] of Object.values(
-      dashboardInteractiveFilters.stores
-    )) {
-      const state = getState();
-
-      for (const [k, v] of Object.entries(state.dataFilters)) {
-        filters[k] = v;
-      }
-    }
-
-    return filters;
-  }, [configFilters, chartInteractiveFilters, dashboardInteractiveFilters]);
-
+  const filters = useDefinitiveChartConfigFilters();
   const measure = getLimitMeasure({ chartConfig, measures });
   const relatedDimension = getRelatedLimitDimension({
     chartConfig,
