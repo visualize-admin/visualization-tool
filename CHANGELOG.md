@@ -13,10 +13,12 @@ You can also check the
 
 - Features
   - Limits can now be displayed in bar charts
+  - Exact limit values are now displayed in legend
 - Fixes
   - Line chart dots are now based on data, eliminating misaligned dots
   - Added a fallback to color selector
   - Dynamic descriptions for custom color palette types
+  - Show line dot sizes are now translated
 
 # [5.2.6] - 2025-02-18
 
@@ -35,6 +37,7 @@ You can also check the
   - Added option for hiding legend titles using a toggle switch
   - Bar charts, dashboard text blocks and Markdown inputs are not hidden behind
     flags anymore
+  - Added improved Iframe view for the use of ODS
 - Fixes
   - Added button translations for custom color palette update and create button
   - Color swatches inside the color picker dynamically adjust to the colors of
@@ -51,6 +54,7 @@ You can also check the
   - Fixed errors regarding switching form existing categorical palette to a
     diverging color palette
   - Improved filter section styling
+  - Removed legend titles tooltip on the toggle switch
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to Vercel previews for easier testing

@@ -80,6 +80,11 @@ msgstr "Browse all datasets"
 msgid "browse.dataset.create-visualization"
 msgstr "Start a visualization"
 
+#: app/browser/dataset-preview.tsx
+#: app/browser/dataset-preview.tsx
+msgid "browse.dataset.create-visualization-visualize"
+msgstr "Create a visualization"
+
 #: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.description"
 msgstr "Explore datasets provided by the LINDAS Linked Data Service by either filtering by categories or organizations or search directly for specific keywords. Click on a dataset to see more detailed information and start creating your own visualizations."
@@ -561,7 +566,7 @@ msgstr "Open Color Picker"
 
 #: app/configurator/components/chart-controls/color-picker.tsx
 msgid "controls.colorpicker.remove"
-msgstr "Remove Color"
+msgstr "Remove color"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.column.grouped"
@@ -580,11 +585,11 @@ msgstr "Custom color palettes"
 #: app/login/components/color-palettes/color-palette-types.tsx
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.add-color"
-msgstr "Add Color"
+msgstr "Add color"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.base"
-msgstr "Base Color"
+msgstr "Base color"
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
@@ -593,16 +598,18 @@ msgstr "Use distinct, high-contrast colors. Avoid using too many colors, maximum
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.caption-sequential"
-msgstr "Select a dark endpoint color for a strong contrast between low and high values; the light color is calculated automatically. Sequential color palettes are suitable for ordered data such as temperatures or population densities."
-
-#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption-diverging"
 msgstr "Choose contrasting colors for the start and end points. These colors will help visually separate extreme values. Diverging palettes are ideal for data with a meaningful midpoint, such as zero or an average."
 
+
 msgid "controls.custom-color-palettes.categorical"
 msgstr "Categorical"
+
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.caption-sequential"
+msgstr "Select a dark endpoint color for a strong contrast between low and high values; the light color is calculated automatically. Sequential color palettes are suitable for ordered data such as temperatures or population densities."
+
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.categorical-contrast-warning"
@@ -622,7 +629,7 @@ msgstr "The selected color lacks sufficient contrast. Consider using a darker co
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.end"
-msgstr "Ending Color"
+msgstr "Ending color"
 
 #: app/login/components/color-palettes/color-palette-examples.tsx
 msgid "controls.custom-color-palettes.example"
@@ -646,7 +653,7 @@ msgstr "Save color palette"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.start"
-msgstr "Starting Color"
+msgstr "Starting color"
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
@@ -1019,6 +1026,18 @@ msgstr "Title & Description"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.dots-size"
 msgstr "Select a Size"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size.large"
+msgstr "Large"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size.medium"
+msgstr "Medium"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size.small"
+msgstr "Small"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -1687,7 +1706,7 @@ msgstr "Home"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-color-palettes"
-msgstr "My Color Palettes"
+msgstr "My color palettes"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx
@@ -1701,15 +1720,15 @@ msgstr "My palette"
 
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.delete"
-msgstr "login.profile.my-color-palettes.delete"
+msgstr "Delete color palette"
 
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.description"
-msgstr "Save your first custom color palette to easily choose your colors while creating a visualization."
+msgstr "Save a custom color palette to easily choose your colors while creating a visualization."
 
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.edit"
-msgstr "login.profile.my-color-palettes.edit"
+msgstr "Edit color palette"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
