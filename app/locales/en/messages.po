@@ -80,6 +80,11 @@ msgstr "Browse all datasets"
 msgid "browse.dataset.create-visualization"
 msgstr "Start a visualization"
 
+#: app/browser/dataset-preview.tsx
+#: app/browser/dataset-preview.tsx
+msgid "browse.dataset.create-visualization-visualize"
+msgstr "Create visualization on visualize from this dataset"
+
 #: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.description"
 msgstr "Explore datasets provided by the LINDAS Linked Data Service by either filtering by categories or organizations or search directly for specific keywords. Click on a dataset to see more detailed information and start creating your own visualizations."
