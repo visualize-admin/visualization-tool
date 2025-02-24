@@ -1075,6 +1075,12 @@ export const isColorInConfig = (
   return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
 };
 
+export const isCustomColorPalette = (
+  palette: CustomPaletteType | string
+): palette is CustomPaletteType => {
+  return typeof palette !== "string";
+};
+
 export const isNotTableOrMap = (chartConfig: ChartConfig) => {
   return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
 };

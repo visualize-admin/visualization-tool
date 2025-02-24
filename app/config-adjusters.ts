@@ -17,6 +17,7 @@ import {
   ComboLineDualFields,
   ComboLineSingleConfig,
   ComboLineSingleFields,
+  CustomPaletteType,
   GenericChartConfig,
   InteractiveFiltersCalculation,
   InteractiveFiltersConfig,
@@ -48,6 +49,7 @@ export type FieldAdjuster<
   dimensions: Dimension[];
   measures: Measure[];
   isAddingNewCube?: boolean;
+  palette: CustomPaletteType | string;
 }) => NewChartConfigType;
 
 type AssureKeys<T, U extends { [K in keyof T]: unknown }> = {
@@ -111,7 +113,7 @@ type BarAdjusters = BaseAdjusters<BarConfig> & {
       | PieSegmentField
       | TableFields
     >;
-    color: FieldAdjuster<ColumnConfig, ColorField>;
+    color: FieldAdjuster<BarConfig, ColorField>;
     animation: FieldAdjuster<BarConfig, AnimationField | undefined>;
   };
 };
@@ -120,7 +122,7 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<LineConfig, string> };
     y: { componentId: FieldAdjuster<LineConfig, string> };
-    color: FieldAdjuster<ColumnConfig, ColorField>;
+    color: FieldAdjuster<LineConfig, ColorField>;
     segment: FieldAdjuster<
       LineConfig,
       | ColumnSegmentField
@@ -137,7 +139,7 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<AreaConfig, string> };
     y: { componentId: FieldAdjuster<AreaConfig, string> };
-    color: FieldAdjuster<ColumnConfig, ColorField>;
+    color: FieldAdjuster<AreaConfig, ColorField>;
     segment: FieldAdjuster<
       AreaConfig,
       | ColumnSegmentField
