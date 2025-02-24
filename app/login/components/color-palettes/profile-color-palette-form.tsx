@@ -1,7 +1,7 @@
 import { useEvent } from "@dnd-kit/utilities";
 import { t } from "@lingui/macro";
 import { Trans } from "@lingui/react";
-import { Box, Button, capitalize, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useCallback, useRef, useState } from "react";
 
@@ -278,7 +278,7 @@ const ColorPaletteTypeSelector = ({
               gap={2}
             >
               <Radio
-                label={capitalize(type)}
+                label={t({ id: `controls.color.palette.${type}` })}
                 value={type}
                 checked={type === selectedType}
                 onChange={handleChange}
