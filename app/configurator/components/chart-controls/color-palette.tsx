@@ -99,7 +99,7 @@ export const ColorPalette = ({
         chartConfig,
         `fields["${chartConfig.activeField}"].${
           colorConfigPath ? `${colorConfigPath}.` : ""
-        }palette`
+        }paletteId`
       );
 
   const currentPalette = palettes.find((p) => p.value === currentPaletteName);
@@ -197,8 +197,6 @@ export const ColorPalette = ({
     }
   };
 
-  const withColorField = isColorInConfig(chartConfig);
-
   const [anchorEl, setAnchorEl] = useState<HTMLElement>();
   const handleOpenCreateColorPalette: MouseEventHandler<HTMLButtonElement> =
     useEvent((ev) => {
@@ -260,11 +258,9 @@ export const ColorPalette = ({
                       <ColorSquare color={color} disabled={disabled} />
                     </Grid>
                   ))
-                : withColorField &&
-                  customColorPalettes
+                : customColorPalettes
                     ?.find(
-                      (palette) =>
-                        palette.paletteId === chartConfig.fields.color.paletteId
+                      (palette) => palette.paletteId === currentPaletteName
                     )
                     ?.colors.map((color, i) => (
                       <Grid item key={`color-palette-tile-${i}`}>
@@ -280,7 +276,7 @@ export const ColorPalette = ({
         value={(() => {
           const valueToUse = currentPalette
             ? currentPalette.value
-            : (withColorField && chartConfig.fields.color.paletteId) || "";
+            : currentPaletteName;
 
           if (!isValidValue(valueToUse)) {
             return "";

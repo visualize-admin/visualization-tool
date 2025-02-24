@@ -55,6 +55,7 @@ You can also check the
     diverging color palette
   - Improved filter section styling
   - Removed legend titles tooltip on the toggle switch
+  - Fixed Map Symbol Layer custom color palette support for all palette types
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to Vercel previews for easier testing

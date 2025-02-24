@@ -1,8 +1,8 @@
 import { t, Trans } from "@lingui/macro";
 import {
   Box,
-  Stack,
   Switch as MUISwitch,
+  Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -1553,9 +1553,6 @@ const ColorSelection = ({
       <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
         <ColorPalette
           field="y"
-          // Faking a component here, because we don't have a real one.
-          // We use measure iris as dimension values, because that's how
-          // the color mapping is done.
           component={
             {
               __typename: "",
@@ -2218,7 +2215,13 @@ const ChartFieldColorComponent = ({
               colorConfigPath="color"
               colorComponent={colorComponent}
             />
-          ) : null
+          ) : (
+            <ColorPalette
+              field="symbolLayer"
+              colorConfigPath="color"
+              component={colorComponent}
+            />
+          )
         ) : colorType === "numerical" ? (
           <div>
             <ColorRampField field={field} path="color" nSteps={nbClass} />
