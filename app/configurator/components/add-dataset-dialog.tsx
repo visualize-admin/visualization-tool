@@ -62,7 +62,11 @@ import { getEnabledChartTypes } from "@/charts";
 import Flex from "@/components/flex";
 import { Error as ErrorHint, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
-import { ConfiguratorStateConfiguringChart, DataSource } from "@/config-types";
+import {
+  ConfiguratorStateConfiguringChart,
+  DataSource,
+  isColorInConfig,
+} from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import {
   addDatasetInConfig,
@@ -100,9 +104,11 @@ import SvgIcInfo from "@/icons/components/IcInfo";
 import SvgIcRemove from "@/icons/components/IcRemove";
 import SvgIcSearch from "@/icons/components/IcSearch";
 import { useLocale } from "@/locales/use-locale";
+import { DEFAULT_CATEGORICAL_PALETTE_ID } from "@/palettes";
 import { useEventEmitter } from "@/utils/eventEmitter";
 import useEvent from "@/utils/use-event";
 import useLocalState from "@/utils/use-local-state";
+import { useUserPalettes } from "@/utils/use-user-palettes";
 
 const DialogCloseButton = (props: IconButtonProps) => {
   return (
@@ -1086,6 +1092,7 @@ const useAddDataset = () => {
   const { type: sourceType, url: sourceUrl } = state.dataSource;
   const locale = useLocale();
   const client = useClient();
+  const { data: palettes } = useUserPalettes();
   const addDataset = useEventCallback(
     async ({
       otherCube,
@@ -1106,6 +1113,13 @@ const useAddDataset = () => {
         ) as ConfiguratorStateConfiguringChart;
         addDatasetInConfig(nextState, addDatasetOptions);
         const chartConfig = getChartConfig(nextState, state.activeChartKey);
+
+        const palette = isColorInConfig(chartConfig)
+          ? (palettes?.find(
+              (palette) =>
+                palette.paletteId === chartConfig.fields.color.paletteId
+            ) ?? chartConfig.fields.color.paletteId)
+          : DEFAULT_CATEGORICAL_PALETTE_ID;
 
         const res = await executeDataCubesComponentsQuery(client, {
           locale,
@@ -1140,6 +1154,7 @@ const useAddDataset = () => {
             chartKey: state.activeChartKey,
             chartType: enabledChartTypes[0],
             isAddingNewCube: true,
+            palette,
           },
         });
       } finally {

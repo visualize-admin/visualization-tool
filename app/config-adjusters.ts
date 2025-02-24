@@ -7,6 +7,7 @@ import {
   BarFields,
   BarSegmentField,
   ChartConfig,
+  ColorField,
   ColumnConfig,
   ColumnFields,
   ColumnSegmentField,
@@ -16,6 +17,7 @@ import {
   ComboLineDualFields,
   ComboLineSingleConfig,
   ComboLineSingleFields,
+  CustomPaletteType,
   GenericChartConfig,
   InteractiveFiltersCalculation,
   InteractiveFiltersConfig,
@@ -47,6 +49,7 @@ export type FieldAdjuster<
   dimensions: Dimension[];
   measures: Measure[];
   isAddingNewCube?: boolean;
+  palette: CustomPaletteType | string;
 }) => NewChartConfigType;
 
 type AssureKeys<T, U extends { [K in keyof T]: unknown }> = {
@@ -92,6 +95,7 @@ type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
       | PieSegmentField
       | TableFields
     >;
+    color: FieldAdjuster<ColumnConfig, ColorField>;
     animation: FieldAdjuster<ColumnConfig, AnimationField | undefined>;
   };
 };
@@ -109,6 +113,7 @@ type BarAdjusters = BaseAdjusters<BarConfig> & {
       | PieSegmentField
       | TableFields
     >;
+    color: FieldAdjuster<BarConfig, ColorField>;
     animation: FieldAdjuster<BarConfig, AnimationField | undefined>;
   };
 };
@@ -117,6 +122,7 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<LineConfig, string> };
     y: { componentId: FieldAdjuster<LineConfig, string> };
+    color: FieldAdjuster<LineConfig, ColorField>;
     segment: FieldAdjuster<
       LineConfig,
       | ColumnSegmentField
@@ -133,6 +139,7 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<AreaConfig, string> };
     y: { componentId: FieldAdjuster<AreaConfig, string> };
+    color: FieldAdjuster<AreaConfig, ColorField>;
     segment: FieldAdjuster<
       AreaConfig,
       | ColumnSegmentField
@@ -157,6 +164,7 @@ type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
       | PieSegmentField
       | TableFields
     >;
+    color: FieldAdjuster<ScatterPlotConfig, ColorField>;
     animation: FieldAdjuster<ScatterPlotConfig, AnimationField | undefined>;
   };
 };
@@ -173,6 +181,7 @@ type PieAdjusters = BaseAdjusters<PieConfig> & {
       | ScatterPlotSegmentField
       | TableFields
     >;
+    color: FieldAdjuster<PieConfig, ColorField>;
     animation: FieldAdjuster<PieConfig, AnimationField | undefined>;
   };
 };
@@ -206,6 +215,7 @@ type ComboLineSingleAdjusters = BaseAdjusters<ComboLineSingleConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<ComboLineSingleConfig, string> };
     y: { componentIds: FieldAdjuster<ComboLineSingleConfig, string> };
+    color: FieldAdjuster<ComboLineSingleConfig, ColorField>;
   };
 };
 
@@ -225,6 +235,7 @@ type ComboLineDualAdjusters = BaseAdjusters<ComboLineDualConfig> & {
       | ComboLineSingleFields
       | ComboLineColumnFields
     >;
+    color: FieldAdjuster<ComboLineDualConfig, ColorField>;
   };
 };
 
@@ -244,6 +255,7 @@ type ComboLineColumnAdjusters = BaseAdjusters<ComboLineColumnConfig> & {
       | ComboLineSingleFields
       | ComboLineDualFields
     >;
+    color: FieldAdjuster<ComboLineColumnConfig, ColorField>;
   };
 };
 

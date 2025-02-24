@@ -39,10 +39,14 @@ import {
   Measure,
 } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
-import { categoricalPalettes } from "@/palettes";
+import {
+  categoricalPalettes,
+  DEFAULT_CATEGORICAL_PALETTE_ID,
+} from "@/palettes";
 import { bfs } from "@/utils/bfs";
 import { isMultiHierarchyNode } from "@/utils/hierarchy";
 import useEvent from "@/utils/use-event";
+import { useUserPalettes } from "@/utils/use-user-palettes";
 
 import { mapValueIrisToColor } from "./components/ui-helpers";
 
@@ -102,6 +106,7 @@ export const useChartFieldField = ({
 }): SelectProps => {
   const [state, dispatch] = useConfiguratorState();
   const locale = useLocale();
+  const { data: palettes } = useUserPalettes();
   const chartConfig = getChartConfig(state);
   const handleChange = useEvent(async (e: SelectChangeEvent<unknown>) => {
     if (e.target.value !== FIELD_VALUE_NONE) {
@@ -133,26 +138,33 @@ export const useChartFieldField = ({
       });
 
       if (isColorInConfig(chartConfig)) {
-        const palette =
-          categoricalPalettes.find(
-            (p) => p.value === chartConfig.fields.color.paletteId
-          ) ?? categoricalPalettes[0];
+        const paletteId = chartConfig.fields.color.paletteId;
+        const customColorPalette = palettes?.find(
+          (palette) => palette.paletteId === paletteId
+        );
+        const defaultColorPalette = categoricalPalettes.find(
+          (palette) => palette.value === paletteId
+        );
         dispatch({
           type: "COLOR_FIELD_SET",
           value:
-            chartConfig.fields.color.type === "single"
+            field === "segment"
               ? {
-                  type: chartConfig.fields.color.type,
-                  paletteId: palette.value,
-                  color: palette.colors[0],
+                  type: "segment",
+                  paletteId,
+                  colorMapping: mapValueIrisToColor({
+                    paletteId,
+                    dimensionValues: dimension.values,
+                    customPalette: customColorPalette,
+                  }),
                 }
               : {
-                  type: chartConfig.fields.color.type,
-                  paletteId: palette.value,
-                  colorMapping: mapValueIrisToColor({
-                    paletteId: palette.value,
-                    dimensionValues: dimension.values,
-                  }),
+                  type: "single",
+                  paletteId,
+                  color:
+                    customColorPalette?.colors[0] ??
+                    defaultColorPalette?.colors[0] ??
+                    categoricalPalettes[0].colors[0],
                 },
         });
       } else {
@@ -458,6 +470,15 @@ export const useAddOrEditChartType = (
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state, chartKey);
+
+  const { data: palettes } = useUserPalettes();
+
+  const palette = isColorInConfig(chartConfig)
+    ? (palettes?.find(
+        (palette) => palette.paletteId === chartConfig.fields.color.paletteId
+      ) ?? chartConfig.fields.color.paletteId)
+    : DEFAULT_CATEGORICAL_PALETTE_ID;
+
   const addOrEditChartType = useEvent((chartType: ChartType) => {
     if (type === "edit") {
       dispatch({
@@ -466,6 +487,7 @@ export const useAddOrEditChartType = (
           locale,
           chartKey,
           chartType,
+          palette,
         },
       });
     } else {
