@@ -71,7 +71,7 @@ const useStyles = makeStyles<
   }
 >((theme) => ({
   panelLayout: {
-    maxWidth: 1400,
+    maxWidth: ({ isOdsIframe }) => (isOdsIframe ? "auto" : 1400),
     margin: "auto",
     position: "static",
     marginTop: ({ datasetPresent, variant, isOdsIframe }) =>
@@ -509,7 +509,7 @@ const SelectDatasetStepContent = ({
           </AnimatePresence>
         </PanelBodyWrapper>
       </PanelLayout>
-      {variant == "page" ? (
+      {variant == "page" && !isOdsIframe ? (
         <Box
           sx={{
             borderTop: "2px solid rgba(0,0,0,0.05)",
