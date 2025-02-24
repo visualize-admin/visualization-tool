@@ -173,7 +173,7 @@ export const DataSetPreview = ({
               onClick={(ev) => onCreateChartFromDataset?.(ev, dataSetIri)}
               className={classes.createChartButton}
               component="a"
-              target={isOdsIframe(router.query) ? "_top" : undefined}
+              target={isOdsIframe(router.query) ? "_blank" : undefined}
             >
               {!isOdsIframe(router.query) ? (
                 <Trans id="browse.dataset.create-visualization">
@@ -191,8 +191,8 @@ export const DataSetPreview = ({
                 dataCubeMetadata.iri
               }&dataSource=${sourceToLabel(dataSource)}`}
               passHref
-              legacyBehavior
-              target={isOdsIframe(router.query) ? "_top" : undefined}
+              legacyBehavior={!isOdsIframe(router.query)}
+              target={isOdsIframe(router.query) ? "_blank" : undefined}
             >
               <Button className={classes.createChartButton} component="a">
                 {!isOdsIframe(router.query) ? (
