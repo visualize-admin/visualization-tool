@@ -10,6 +10,7 @@ import {
 } from "@/charts/shared/imputation";
 import { useObservationLabels } from "@/charts/shared/observation-labels";
 import {
+  AnimationField,
   ChartConfig,
   ChartType,
   Filters,
@@ -18,6 +19,7 @@ import {
   InteractiveFiltersDataConfig,
   InteractiveFiltersLegend,
   InteractiveFiltersTimeRange,
+  isAnimationInConfig,
   MapConfig,
 } from "@/config-types";
 import { getChartConfigFilters } from "@/config-utils";
@@ -54,6 +56,7 @@ import {
 export const prepareCubeQueryFilters = (
   chartType: ChartType,
   cubeFilters: Filters,
+  animationField: AnimationField | undefined,
   interactiveFiltersConfig: InteractiveFiltersConfig,
   dashboardFiltersConfig: DashboardFiltersConfig | undefined,
   interactiveDataFilters: InteractiveFiltersState["dataFilters"],
@@ -67,15 +70,18 @@ export const prepareCubeQueryFilters = (
     )) {
       if (
         k in cubeFilters &&
-        dashboardFiltersConfig?.dataFilters.componentIds?.includes(k)
+        dashboardFiltersConfig?.dataFilters.componentIds?.includes(k) &&
+        animationField?.componentId !== k
       ) {
         queryFilters[k] = v;
       }
     }
+
     for (const [k, v] of Object.entries(interactiveDataFilters)) {
       if (
-        interactiveFiltersConfig?.dataFilters.active ||
-        dashboardFiltersConfig?.dataFilters.componentIds?.includes(k)
+        (interactiveFiltersConfig?.dataFilters.active ||
+          dashboardFiltersConfig?.dataFilters.componentIds?.includes(k)) &&
+        animationField?.componentId !== k
       ) {
         queryFilters[k] = v;
       }
@@ -104,6 +110,9 @@ export const useQueryFilters = ({
   const chartInteractiveFilters = useChartInteractiveFilters(
     (d) => d.dataFilters
   );
+  const animationField = isAnimationInConfig(chartConfig)
+    ? chartConfig.fields.animation
+    : undefined;
 
   return useMemo(() => {
     return chartConfig.cubes.map((cube) => {
@@ -111,10 +120,6 @@ export const useQueryFilters = ({
         cubeIri: cube.iri,
       });
       const cubeFiltersKeys = Object.keys(cubeFilters);
-      // TODO: Currently, in case of two dimensions with the same IRI, the last one wins.
-      // This is a bigger issue we should address in the future, probably by keeping
-      // track of interactive data filters per cube.
-      // Only include data filters that are part of the chart config.
       const cubeInteractiveDataFilters = Object.fromEntries(
         Object.entries(chartInteractiveFilters).filter(([key]) =>
           cubeFiltersKeys.includes(key)
@@ -124,6 +129,7 @@ export const useQueryFilters = ({
       const preparedFilters = prepareCubeQueryFilters(
         chartConfig.chartType,
         cubeFilters,
+        animationField,
         chartConfig.interactiveFiltersConfig,
         dashboardFilters,
         cubeInteractiveDataFilters,
@@ -144,9 +150,10 @@ export const useQueryFilters = ({
     chartConfig.chartType,
     chartConfig.interactiveFiltersConfig,
     chartInteractiveFilters,
-    componentIds,
+    animationField,
     dashboardFilters,
     allowNoneValues,
+    componentIds,
   ]);
 };
 

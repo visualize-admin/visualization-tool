@@ -95,6 +95,7 @@ describe("useQueryFilters", () => {
     const queryFilters = prepareCubeQueryFilters(
       line1Fixture.data.chartConfig.chartType as ChartType,
       line1Fixture.data.chartConfig.filters as Filters,
+      undefined,
       commonInteractiveFiltersConfig,
       undefined,
       commonInteractiveFiltersState.dataFilters
@@ -109,6 +110,7 @@ describe("useQueryFilters", () => {
     const queryFilters = prepareCubeQueryFilters(
       line1Fixture.data.chartConfig.chartType as ChartType,
       line1Fixture.data.chartConfig.filters as Filters,
+      undefined,
       merge({}, commonInteractiveFiltersConfig, {
         dataFilters: {
           active: true,
@@ -128,6 +130,7 @@ describe("useQueryFilters", () => {
     const queryFilters = prepareCubeQueryFilters(
       line1Fixture.data.chartConfig.chartType as ChartType,
       line1Fixture.data.chartConfig.filters as Filters,
+      undefined,
       merge({}, commonInteractiveFiltersConfig, {
         dataFilters: {
           active: true,
