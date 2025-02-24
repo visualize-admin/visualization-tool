@@ -1,8 +1,8 @@
 import { t, Trans } from "@lingui/macro";
 import {
   Box,
-  Stack,
   Switch as MUISwitch,
+  Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -57,6 +57,7 @@ import {
   isAnimationInConfig,
   isColorInConfig,
   isComboChartConfig,
+  isMapConfig,
   isTableConfig,
   MapConfig,
   SortingType,
@@ -2148,6 +2149,18 @@ const ChartFieldColorComponent = ({
     | number
     | undefined;
 
+  const hasColorField = isMapConfig(chartConfig);
+  const values: { id: string; symbol: LegendSymbol }[] =
+    hasColorField &&
+    chartConfig.fields.symbolLayer?.color.type === "categorical"
+      ? Object.keys(chartConfig.fields.symbolLayer?.color.colorMapping).map(
+          (key) => ({
+            id: key,
+            symbol: "line",
+          })
+        )
+      : [];
+
   return (
     <ControlSection collapse>
       <SubsectionTitle iconName="color">
@@ -2218,7 +2231,21 @@ const ChartFieldColorComponent = ({
               colorConfigPath="color"
               colorComponent={colorComponent}
             />
-          ) : null
+          ) : (
+            <ColorPalette
+              field="symbolLayer"
+              colorConfigPath="color"
+              component={
+                {
+                  __typename: "",
+                  values: values.map(({ id }) => ({
+                    value: id,
+                    label: id,
+                  })),
+                } as any as Component
+              }
+            />
+          )
         ) : colorType === "numerical" ? (
           <div>
             <ColorRampField field={field} path="color" nSteps={nbClass} />
