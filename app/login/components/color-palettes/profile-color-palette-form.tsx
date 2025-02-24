@@ -1,7 +1,7 @@
 import { useEvent } from "@dnd-kit/utilities";
 import { t } from "@lingui/macro";
 import { Trans } from "@lingui/react";
-import { Box, Button, capitalize, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useCallback, useRef, useState } from "react";
 
@@ -264,6 +264,21 @@ type ColorPaletteTypeSelectorProps = {
   selectedType: CustomPaletteType["type"];
 };
 
+const colorTypes: Record<CustomPaletteType["type"], string> = {
+  sequential: t({
+    id: "controls.custom-color-palettes.sequential",
+    message: "Sequential",
+  }),
+  diverging: t({
+    id: "controls.custom-color-palettes.diverging",
+    message: "Diverging",
+  }),
+  categorical: t({
+    id: "controls.custom-color-palettes.categorical",
+    message: "Categorical",
+  }),
+};
+
 const ColorPaletteTypeSelector = ({
   onChange,
   selectedType,
@@ -292,7 +307,7 @@ const ColorPaletteTypeSelector = ({
               gap={2}
             >
               <Radio
-                label={capitalize(type)}
+                label={colorTypes[type]}
                 value={type}
                 checked={type === selectedType}
                 onChange={handleChange}
