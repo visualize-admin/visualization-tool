@@ -3,7 +3,8 @@ import { Box, Button, Paper, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import React, { useCallback, useEffect } from "react";
 
 import { DataSetPreviewTable } from "@/browse/datatable";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
@@ -18,6 +19,8 @@ import {
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
+import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
+import { useResizeObserver } from "@/utils/use-resize-observer";
 
 const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
   (theme) => ({
@@ -108,6 +111,7 @@ export const DataSetPreview = ({
 }) => {
   const footnotesClasses = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
+  const router = useRouter();
   const variables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -127,6 +131,14 @@ export const DataSetPreview = ({
     window.scrollTo({ top: 0 });
   }, []);
 
+  const handleHeightChange = useCallback(
+    ({ height }: { width: number; height: number }) => {
+      window.parent.postMessage({ type: CHART_RESIZE_EVENT_TYPE, height }, "*");
+    },
+    []
+  );
+  const [ref] = useResizeObserver(handleHeightChange);
+
   if (fetchingMetadata || fetchingPreview) {
     return (
       <Flex className={classes.loadingWrapper}>
@@ -137,8 +149,10 @@ export const DataSetPreview = ({
     const { dataCubeMetadata } = metadata;
     const { dataCubePreview } = previewData;
 
+    const isOdsIframe = router.query["odsiframe"] === "true";
+
     return (
-      <Flex className={classes.root}>
+      <Flex ref={ref} className={classes.root}>
         {dataCubeMetadata.publicationStatus ===
           DataCubePublicationStatus.Draft && (
           <Box sx={{ mb: 4 }}>
@@ -166,9 +180,15 @@ export const DataSetPreview = ({
               className={classes.createChartButton}
               component="a"
             >
-              <Trans id="browse.dataset.create-visualization">
-                Create visualization from dataset
-              </Trans>
+              {!isOdsIframe ? (
+                <Trans id="browse.dataset.create-visualization">
+                  Create visualization from dataset
+                </Trans>
+              ) : (
+                <Trans id="browse.dataset.create-visualization-visualize">
+                  Create visualization on visualize from this dataset
+                </Trans>
+              )}
             </Button>
           ) : (
             <Link
@@ -179,9 +199,15 @@ export const DataSetPreview = ({
               legacyBehavior
             >
               <Button className={classes.createChartButton} component="a">
-                <Trans id="browse.dataset.create-visualization">
-                  Create visualization from dataset
-                </Trans>
+                {!isOdsIframe ? (
+                  <Trans id="browse.dataset.create-visualization">
+                    Create visualization from dataset
+                  </Trans>
+                ) : (
+                  <Trans id="browse.dataset.create-visualization-visualize">
+                    Create visualization on visualize from this dataset
+                  </Trans>
+                )}
               </Button>
             </Link>
           )}
@@ -206,11 +232,13 @@ export const DataSetPreview = ({
           </Flex>
           <Flex className={classes.footnotesWrapper}>
             <Flex className={footnotesClasses.actions}>
-              <DataDownloadMenu
-                dataSource={dataSource}
-                title={dataCubeMetadata.title}
-                filters={variables.cubeFilter}
-              />
+              {!isOdsIframe && (
+                <DataDownloadMenu
+                  dataSource={dataSource}
+                  title={dataCubeMetadata.title}
+                  filters={variables.cubeFilter}
+                />
+              )}
             </Flex>
             <FirstTenRowsCaption />
           </Flex>
