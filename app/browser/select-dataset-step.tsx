@@ -7,7 +7,7 @@ import uniqBy from "lodash/uniqBy";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
 import {
@@ -28,6 +28,7 @@ import {
   isOdsIframe,
 } from "@/browser/dataset-preview";
 import { BrowseFilter, DataCubeAbout } from "@/browser/filters";
+import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
@@ -57,6 +58,7 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useConfiguratorState, useLocale } from "@/src";
+import { useResizeObserver } from "@/utils/use-resize-observer";
 
 const softJSONParse = (v: string) => {
   try {
@@ -202,6 +204,13 @@ const SelectDatasetStepContent = ({
     leading: true,
   });
   const router = useRouter();
+  const handleHeightChange = useCallback(
+    ({ height }: { width: number; height: number }) => {
+      window.parent.postMessage({ type: CHART_RESIZE_EVENT_TYPE, height }, "*");
+    },
+    []
+  );
+  const [ref] = useResizeObserver(handleHeightChange);
 
   const classes = useStyles({
     datasetPresent: !!dataset,
@@ -336,7 +345,7 @@ const SelectDatasetStepContent = ({
   }
 
   return (
-    <Box>
+    <Box ref={ref}>
       <AnimatePresence>
         {!dataset && variant === "page" && (
           <MotionBox key="banner" {...bannerPresenceProps}>

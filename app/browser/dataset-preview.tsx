@@ -6,10 +6,9 @@ import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect } from "react";
 
 import { DataSetPreviewTable } from "@/browse/datatable";
-import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import { DataDownloadMenu } from "@/components/data-download";
 import Flex from "@/components/flex";
@@ -22,7 +21,6 @@ import {
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import { useResizeObserver } from "@/utils/use-resize-observer";
 
 export const isOdsIframe = (query: ParsedUrlQuery) => {
   return query["odsiframe"] === "true";
@@ -137,14 +135,6 @@ export const DataSetPreview = ({
     window.scrollTo({ top: 0 });
   }, []);
 
-  const handleHeightChange = useCallback(
-    ({ height }: { width: number; height: number }) => {
-      window.parent.postMessage({ type: CHART_RESIZE_EVENT_TYPE, height }, "*");
-    },
-    []
-  );
-  const [ref] = useResizeObserver(handleHeightChange);
-
   if (fetchingMetadata || fetchingPreview) {
     return (
       <Flex className={classes.loadingWrapper}>
@@ -156,7 +146,7 @@ export const DataSetPreview = ({
     const { dataCubePreview } = previewData;
 
     return (
-      <Flex ref={ref} className={classes.root}>
+      <Flex className={classes.root}>
         {dataCubeMetadata.publicationStatus ===
           DataCubePublicationStatus.Draft && (
           <Box sx={{ mb: 4 }}>
