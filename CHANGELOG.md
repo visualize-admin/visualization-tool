@@ -36,6 +36,7 @@ You can also check the
   - Bar charts, dashboard text blocks and Markdown inputs are not hidden behind
     flags anymore
 - Fixes
+
   - Added button translations for custom color palette update and create button
   - Color swatches inside the color picker dynamically adjust to the colors of
     the selected palette
@@ -51,6 +52,8 @@ You can also check the
   - Fixed errors regarding switching form existing categorical palette to a
     diverging color palette
   - Improved filter section styling
+  - Chart colors stay persistent over chart type changes
+
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to Vercel previews for easier testing
