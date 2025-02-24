@@ -53,24 +53,32 @@ import {
 // - merges publisher data filters, interactive data filters, and dashboard filters
 //   if applicable
 // - removes none values since they should not be sent as part of the GraphQL query
-export const prepareCubeQueryFilters = (
-  chartType: ChartType,
-  cubeFilters: Filters,
-  animationField: AnimationField | undefined,
-  interactiveFiltersConfig: InteractiveFiltersConfig,
-  dashboardFiltersConfig: DashboardFiltersConfig | undefined,
-  interactiveDataFilters: InteractiveFiltersState["dataFilters"],
-  allowNoneValues = false
-): Filters => {
+export const prepareCubeQueryFilters = ({
+  chartType,
+  cubeFilters,
+  animationField,
+  interactiveFiltersConfig,
+  dashboardFilters,
+  interactiveDataFilters,
+  allowNoneValues = false,
+}: {
+  chartType: ChartType;
+  cubeFilters: Filters;
+  animationField: AnimationField | undefined;
+  interactiveFiltersConfig: InteractiveFiltersConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
+  interactiveDataFilters: InteractiveFiltersState["dataFilters"];
+  allowNoneValues?: boolean;
+}): Filters => {
   const queryFilters = { ...cubeFilters };
 
   if (chartType !== "table") {
     for (const [k, v] of Object.entries(
-      dashboardFiltersConfig?.dataFilters.filters ?? {}
+      dashboardFilters?.dataFilters.filters ?? {}
     )) {
       if (
         k in cubeFilters &&
-        dashboardFiltersConfig?.dataFilters.componentIds?.includes(k) &&
+        dashboardFilters?.dataFilters.componentIds?.includes(k) &&
         animationField?.componentId !== k
       ) {
         queryFilters[k] = v;
@@ -80,7 +88,7 @@ export const prepareCubeQueryFilters = (
     for (const [k, v] of Object.entries(interactiveDataFilters)) {
       if (
         (interactiveFiltersConfig?.dataFilters.active ||
-          dashboardFiltersConfig?.dataFilters.componentIds?.includes(k)) &&
+          dashboardFilters?.dataFilters.componentIds?.includes(k)) &&
         animationField?.componentId !== k
       ) {
         queryFilters[k] = v;
@@ -126,15 +134,15 @@ export const useQueryFilters = ({
         )
       );
 
-      const preparedFilters = prepareCubeQueryFilters(
-        chartConfig.chartType,
+      const preparedFilters = prepareCubeQueryFilters({
+        chartType: chartConfig.chartType,
         cubeFilters,
         animationField,
-        chartConfig.interactiveFiltersConfig,
+        interactiveFiltersConfig: chartConfig.interactiveFiltersConfig,
         dashboardFilters,
-        cubeInteractiveDataFilters,
-        allowNoneValues
-      );
+        interactiveDataFilters: cubeInteractiveDataFilters,
+        allowNoneValues,
+      });
 
       const filters: DataCubeObservationFilter = {
         iri: cube.iri,
