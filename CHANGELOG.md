@@ -53,6 +53,7 @@ You can also check the
   - Fixed errors regarding switching form existing categorical palette to a
     diverging color palette
   - Improved filter section styling
+  - Removed legend titles tooltip on the toggle switch
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to Vercel previews for easier testing
