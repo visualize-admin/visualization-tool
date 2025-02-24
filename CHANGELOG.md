@@ -37,6 +37,7 @@ You can also check the
   - Added option for hiding legend titles using a toggle switch
   - Bar charts, dashboard text blocks and Markdown inputs are not hidden behind
     flags anymore
+  - Added improved Iframe view for the use of ODS
 - Fixes
   - Added button translations for custom color palette update and create button
   - Color swatches inside the color picker dynamically adjust to the colors of

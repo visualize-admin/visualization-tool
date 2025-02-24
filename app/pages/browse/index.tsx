@@ -1,3 +1,5 @@
+import { GetServerSideProps } from "next";
+
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
 import { AppLayout } from "@/components/layout";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
@@ -15,11 +17,20 @@ export type BrowseParams = {
   order?: SearchCubeResultOrder;
   includeDrafts?: boolean;
   dataset?: string;
+  odsiframe?: string;
 };
 
-export function DatasetBrowser() {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  return {
+    props: {
+      odsiframe: query.odsiframe === "true" ? true : false,
+    },
+  };
+};
+
+export function DatasetBrowser({ odsiframe }: { odsiframe: boolean }) {
   return (
-    <AppLayout>
+    <AppLayout isOdsIframe={odsiframe}>
       <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
         <SelectDatasetStep variant="page" />
       </ConfiguratorStateProvider>
