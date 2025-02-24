@@ -99,7 +99,7 @@ export const ColorPalette = ({
         chartConfig,
         `fields["${chartConfig.activeField}"].${
           colorConfigPath ? `${colorConfigPath}.` : ""
-        }palette`
+        }paletteId`
       );
 
   const currentPalette = palettes.find((p) => p.value === currentPaletteName);
