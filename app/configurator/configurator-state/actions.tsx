@@ -5,6 +5,7 @@ import {
   ColorField,
   ColorMapping,
   ConfiguratorState,
+  CustomPaletteType,
   DashboardFiltersConfig,
   DataSource,
   Filters,
@@ -59,6 +60,7 @@ export type ConfiguratorStateAction =
         locale: Locale;
         chartKey: string;
         chartType: ChartType;
+        palette: CustomPaletteType | string;
         isAddingNewCube?: boolean;
       };
     }

@@ -289,7 +289,10 @@ export const mapValueIrisToColor = ({
     return {};
   }
 
-  const paletteValues = customPalette?.colors || getPalette({ paletteId });
+  const paletteValues = getPalette({
+    paletteId,
+    fallbackPalette: customPalette?.colors,
+  });
 
   const colors = dimensionValues.map(
     (d, i) =>

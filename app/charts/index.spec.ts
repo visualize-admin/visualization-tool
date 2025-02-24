@@ -9,6 +9,7 @@ import {
 import { Dimension, Measure } from "@/domain/data";
 import { stringifyComponentId } from "@/graphql/make-component-id";
 import { TimeUnit } from "@/graphql/resolver-types";
+import { DEFAULT_CATEGORICAL_PALETTE_ID } from "@/palettes";
 
 import bathingWaterData from "../test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
 import forestAreaData from "../test/__fixtures/data/forest-area-by-production-region.json";
@@ -330,6 +331,7 @@ describe("chart type switch", () => {
       dimensions: bathingWaterData.data.dataCubeByIri
         .dimensions as any as Dimension[],
       measures: bathingWaterData.data.dataCubeByIri.measures as Measure[],
+      palette: DEFAULT_CATEGORICAL_PALETTE_ID,
     });
 
     expect(newConfig.interactiveFiltersConfig?.dataFilters.active).toEqual(
@@ -470,6 +472,7 @@ describe("chart type switch", () => {
           id: "https://environment.ld.admin.ch/foen/ubd000502/werteNichtGerundet",
         },
       ] as any as Measure[],
+      palette: DEFAULT_CATEGORICAL_PALETTE_ID,
     }) as ColumnConfig;
 
     expect(newChartConfig.fields.segment).toBeUndefined();
@@ -512,6 +515,7 @@ describe("chart type switch", () => {
       dimensions,
       measures,
       isAddingNewCube: true,
+      palette: DEFAULT_CATEGORICAL_PALETTE_ID,
     }) as ComboLineDualConfig;
 
     expect(
@@ -527,6 +531,7 @@ describe("chart type switch", () => {
       dimensions,
       measures,
       isAddingNewCube: false,
+      palette: DEFAULT_CATEGORICAL_PALETTE_ID,
     }) as ComboLineDualConfig;
 
     expect(

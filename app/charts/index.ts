@@ -22,19 +22,20 @@ import {
   InteractiveFiltersAdjusters,
 } from "@/config-adjusters";
 import {
-  AreaFields,
   AreaSegmentField,
-  BarFields,
   canBeNormalized,
   ChartConfig,
   ChartSegmentField,
   ChartType,
-  ColumnFields,
   ColumnSegmentField,
   ComboChartType,
+  ComboLineColumnConfig,
   ComboLineColumnFields,
+  ComboLineDualConfig,
+  ComboLineSingleConfig,
   ComboLineSingleFields,
   Cube,
+  CustomPaletteType,
   Filters,
   GenericChartConfig,
   GenericField,
@@ -47,22 +48,19 @@ import {
   isComboLineColumnConfig,
   isComboLineDualConfig,
   isComboLineSingleConfig,
+  isCustomColorPalette,
   isLineConfig,
   isMapConfig,
   isPieConfig,
   isScatterPlotConfig,
   isSegmentInConfig,
-  LineFields,
   LineSegmentField,
   MapAreaLayer,
   MapConfig,
   MapSymbolLayer,
-  MeasuresColorField,
   Meta,
-  PieFields,
   PieSegmentField,
   RegularChartType,
-  ScatterPlotFields,
   ScatterPlotSegmentField,
   SortingOrder,
   SortingType,
@@ -775,12 +773,14 @@ export const getChartConfigAdjustedToChartType = ({
   dimensions,
   measures,
   isAddingNewCube,
+  palette,
 }: {
   chartConfig: ChartConfig;
   newChartType: ChartType;
   dimensions: Dimension[];
   measures: Measure[];
   isAddingNewCube?: boolean;
+  palette: CustomPaletteType | string;
 }): ChartConfig => {
   const oldChartType = chartConfig.chartType;
   const initialConfig = getInitialConfig({
@@ -808,6 +808,7 @@ export const getChartConfigAdjustedToChartType = ({
     dimensions,
     measures,
     isAddingNewCube,
+    palette,
   });
 };
 
@@ -821,6 +822,7 @@ const getAdjustedChartConfig = ({
   dimensions,
   measures,
   isAddingNewCube,
+  palette,
 }: {
   path: string;
   field: Object;
@@ -831,6 +833,7 @@ const getAdjustedChartConfig = ({
   dimensions: Dimension[];
   measures: Measure[];
   isAddingNewCube?: boolean;
+  palette: CustomPaletteType | string;
 }) => {
   // For filters & segments we can't reach a primitive level as we need to
   // pass the whole object. Table fields have an [id: TableColumn] structure,
@@ -883,6 +886,7 @@ const getAdjustedChartConfig = ({
               dimensions,
               measures,
               isAddingNewCube,
+              palette,
             });
           }
         } else {
@@ -1069,7 +1073,17 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       },
       color: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
-          draft.fields.color = oldValue as ColumnFields["color"];
+          if (isColorInConfig(newChartConfig)) {
+            if (oldValue.type !== "measures") {
+              draft.fields.color = oldValue;
+            } else {
+              draft.fields.color = {
+                type: "single",
+                paletteId: oldValue.paletteId,
+                color: Object.values(oldValue.colorMapping)[0],
+              };
+            }
+          }
         });
       },
       animation: ({ oldValue, newChartConfig }) => {
@@ -1167,7 +1181,17 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       },
       color: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
-          draft.fields.color = oldValue as BarFields["color"];
+          if (isColorInConfig(newChartConfig)) {
+            if (oldValue.type !== "measures") {
+              draft.fields.color = oldValue;
+            } else {
+              draft.fields.color = {
+                type: "single",
+                paletteId: oldValue.paletteId,
+                color: Object.values(oldValue.colorMapping)[0],
+              };
+            }
+          }
         });
       },
       animation: ({ oldValue, newChartConfig }) => {
@@ -1261,7 +1285,17 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       },
       color: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
-          draft.fields.color = oldValue as LineFields["color"];
+          if (isColorInConfig(newChartConfig)) {
+            if (oldValue.type !== "measures") {
+              draft.fields.color = oldValue;
+            } else {
+              draft.fields.color = {
+                type: "single",
+                paletteId: oldValue.paletteId,
+                color: Object.values(oldValue.colorMapping)[0],
+              };
+            }
+          }
         });
       },
     },
@@ -1357,7 +1391,17 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       },
       color: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
-          draft.fields.color = oldValue as AreaFields["color"];
+          if (isColorInConfig(newChartConfig)) {
+            if (oldValue.type !== "measures") {
+              draft.fields.color = oldValue;
+            } else {
+              draft.fields.color = {
+                type: "single",
+                paletteId: oldValue.paletteId,
+                color: Object.values(oldValue.colorMapping)[0],
+              };
+            }
+          }
         });
       },
     },
@@ -1418,7 +1462,17 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       },
       color: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
-          draft.fields.color = oldValue as ScatterPlotFields["color"];
+          if (isColorInConfig(newChartConfig)) {
+            if (oldValue.type !== "measures") {
+              draft.fields.color = oldValue;
+            } else {
+              draft.fields.color = {
+                type: "single",
+                paletteId: oldValue.paletteId,
+                color: Object.values(oldValue.colorMapping)[0],
+              };
+            }
+          }
         });
       },
       animation: ({ oldValue, newChartConfig }) => {
@@ -1480,9 +1534,45 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
         });
       },
-      color: ({ oldValue, newChartConfig }) => {
+      color: ({ oldValue, newChartConfig, palette, dimensions }) => {
         return produce(newChartConfig, (draft) => {
-          draft.fields.color = oldValue as PieFields["color"];
+          if (
+            isColorInConfig(newChartConfig) &&
+            isSegmentInConfig(newChartConfig)
+          ) {
+            switch (oldValue.type) {
+              case "measures":
+                draft.fields.color = {
+                  ...oldValue,
+                  type: "segment",
+                };
+                break;
+              case "segment":
+                draft.fields.color = oldValue;
+
+                break;
+              case "single":
+                console.log();
+                draft.fields.color = {
+                  type: "segment",
+                  paletteId: oldValue.paletteId,
+                  colorMapping: mapValueIrisToColor({
+                    paletteId: isCustomColorPalette(palette)
+                      ? palette.paletteId
+                      : palette,
+                    dimensionValues:
+                      dimensions.find(
+                        (d) =>
+                          d.id === newChartConfig.fields.segment?.componentId
+                      )?.values || [],
+                    customPalette: isCustomColorPalette(palette)
+                      ? palette
+                      : undefined,
+                  }),
+                };
+                break;
+            }
+          }
         });
       },
       animation: ({ oldValue, newChartConfig }) => {
@@ -1645,9 +1735,44 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
-      color: ({ oldValue, newChartConfig }) => {
+      color: ({ oldValue, newChartConfig, palette }) => {
         return produce(newChartConfig, (draft) => {
-          draft.fields.color = oldValue as MeasuresColorField;
+          if (
+            isColorInConfig(newChartConfig) &&
+            isComboChartConfig(newChartConfig)
+          ) {
+            switch (oldValue.type) {
+              case "measures":
+                draft.fields.color = oldValue;
+                break;
+              case "single":
+                draft.fields.color = {
+                  type: "measures",
+                  paletteId: oldValue.paletteId,
+                  colorMapping: mapValueIrisToColor({
+                    paletteId: isCustomColorPalette(palette)
+                      ? palette.paletteId
+                      : palette,
+                    dimensionValues: (
+                      newChartConfig as ComboLineSingleConfig
+                    ).fields.y.componentIds.map((id) => ({
+                      value: id,
+                      label: id,
+                    })),
+                    customPalette: isCustomColorPalette(palette)
+                      ? palette
+                      : undefined,
+                  }),
+                };
+                break;
+              case "segment":
+                draft.fields.color = {
+                  ...oldValue,
+                  type: "measures",
+                };
+                break;
+            }
+          }
         });
       },
     },
@@ -1771,9 +1896,63 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           };
         });
       },
-      color: ({ oldValue, newChartConfig }) => {
+      color: ({ oldValue, newChartConfig, palette }) => {
         return produce(newChartConfig, (draft) => {
-          draft.fields.color = oldValue as MeasuresColorField;
+          if (
+            isColorInConfig(newChartConfig) &&
+            isComboChartConfig(newChartConfig)
+          ) {
+            const y = (newChartConfig as ComboLineDualConfig).fields.y;
+
+            switch (oldValue.type) {
+              case "measures":
+                draft.fields.color = oldValue;
+                break;
+              case "single":
+                draft.fields.color = {
+                  type: "measures",
+                  paletteId: oldValue.paletteId,
+                  colorMapping: mapValueIrisToColor({
+                    paletteId: isCustomColorPalette(palette)
+                      ? palette.paletteId
+                      : palette,
+                    dimensionValues: [
+                      y.leftAxisComponentId,
+                      y.rightAxisComponentId,
+                    ].map((id) => ({
+                      value: id,
+                      label: id,
+                    })),
+                    customPalette: isCustomColorPalette(palette)
+                      ? palette
+                      : undefined,
+                  }),
+                };
+                break;
+              case "segment":
+                draft.fields.color = {
+                  paletteId: oldValue.paletteId,
+                  colorMapping: mapValueIrisToColor({
+                    paletteId: isCustomColorPalette(palette)
+                      ? palette.paletteId
+                      : palette,
+                    dimensionValues: [
+                      y.leftAxisComponentId,
+                      y.rightAxisComponentId,
+                    ].map((id) => ({
+                      value: id,
+                      label: id,
+                    })),
+
+                    customPalette: isCustomColorPalette(palette)
+                      ? palette
+                      : undefined,
+                  }),
+                  type: "measures",
+                };
+                break;
+            }
+          }
         });
       },
     },
@@ -1875,9 +2054,46 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           };
         });
       },
-      color: ({ oldValue, newChartConfig }) => {
+      color: ({ oldValue, newChartConfig, palette }) => {
         return produce(newChartConfig, (draft) => {
-          draft.fields.color = oldValue as MeasuresColorField;
+          if (
+            isColorInConfig(newChartConfig) &&
+            isComboChartConfig(newChartConfig)
+          ) {
+            switch (oldValue.type) {
+              case "measures":
+                draft.fields.color = oldValue;
+                break;
+              case "single":
+                const y = (newChartConfig as ComboLineColumnConfig).fields.y;
+                draft.fields.color = {
+                  type: "measures",
+                  paletteId: oldValue.paletteId,
+                  colorMapping: mapValueIrisToColor({
+                    paletteId: isCustomColorPalette(palette)
+                      ? palette.paletteId
+                      : palette,
+                    dimensionValues: [
+                      y.lineComponentId,
+                      y.columnComponentId,
+                    ].map((id) => ({
+                      value: id,
+                      label: id,
+                    })),
+                    customPalette: isCustomColorPalette(palette)
+                      ? palette
+                      : undefined,
+                  }),
+                };
+                break;
+              case "segment":
+                draft.fields.color = {
+                  ...oldValue,
+                  type: "measures",
+                };
+                break;
+            }
+          }
         });
       },
     },

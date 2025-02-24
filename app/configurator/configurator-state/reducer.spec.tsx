@@ -43,6 +43,7 @@ import { getCachedComponents as getCachedComponentsOriginal } from "@/urql-cache
 import { getCachedComponentsMock } from "@/urql-cache.mock";
 import { assert } from "@/utils/assert";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
+import { DEFAULT_CATEGORICAL_PALETTE_ID } from "@/palettes";
 
 const pristineConfigStateMock = JSON.parse(JSON.stringify(configStateMock));
 
@@ -1251,6 +1252,7 @@ describe("retainChartConfigWhenSwitchingChartType", () => {
         newChartType,
         dimensions,
         measures,
+        palette: DEFAULT_CATEGORICAL_PALETTE_ID,
       })
     );
     deriveFiltersFromFields(newConfig, {
