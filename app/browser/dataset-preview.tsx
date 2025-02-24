@@ -1,3 +1,5 @@
+import { ParsedUrlQuery } from "querystring";
+
 import { Trans } from "@lingui/macro";
 import { Box, Button, Paper, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -7,6 +9,7 @@ import { useRouter } from "next/router";
 import React, { useCallback, useEffect } from "react";
 
 import { DataSetPreviewTable } from "@/browse/datatable";
+import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import { DataDownloadMenu } from "@/components/data-download";
 import Flex from "@/components/flex";
@@ -19,8 +22,11 @@ import {
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
-import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { useResizeObserver } from "@/utils/use-resize-observer";
+
+export const isOdsIframe = (query: ParsedUrlQuery) => {
+  return query["odsiframe"] === "true";
+};
 
 const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
   (theme) => ({
@@ -149,8 +155,6 @@ export const DataSetPreview = ({
     const { dataCubeMetadata } = metadata;
     const { dataCubePreview } = previewData;
 
-    const isOdsIframe = router.query["odsiframe"] === "true";
-
     return (
       <Flex ref={ref} className={classes.root}>
         {dataCubeMetadata.publicationStatus ===
@@ -179,8 +183,9 @@ export const DataSetPreview = ({
               onClick={(ev) => onCreateChartFromDataset?.(ev, dataSetIri)}
               className={classes.createChartButton}
               component="a"
+              target={isOdsIframe(router.query) ? "_top" : undefined}
             >
-              {!isOdsIframe ? (
+              {!isOdsIframe(router.query) ? (
                 <Trans id="browse.dataset.create-visualization">
                   Create visualization from dataset
                 </Trans>
@@ -197,9 +202,10 @@ export const DataSetPreview = ({
               }&dataSource=${sourceToLabel(dataSource)}`}
               passHref
               legacyBehavior
+              target={isOdsIframe(router.query) ? "_top" : undefined}
             >
               <Button className={classes.createChartButton} component="a">
-                {!isOdsIframe ? (
+                {!isOdsIframe(router.query) ? (
                   <Trans id="browse.dataset.create-visualization">
                     Create visualization from dataset
                   </Trans>
@@ -232,7 +238,7 @@ export const DataSetPreview = ({
           </Flex>
           <Flex className={classes.footnotesWrapper}>
             <Flex className={footnotesClasses.actions}>
-              {!isOdsIframe && (
+              {!isOdsIframe(router.query) && (
                 <DataDownloadMenu
                   dataSource={dataSource}
                   title={dataCubeMetadata.title}

@@ -22,7 +22,11 @@ import {
   SearchDatasetInput,
   SearchFilters,
 } from "@/browser/dataset-browse";
-import { DataSetPreview, DataSetPreviewProps } from "@/browser/dataset-preview";
+import {
+  DataSetPreview,
+  DataSetPreviewProps,
+  isOdsIframe,
+} from "@/browser/dataset-preview";
 import { BrowseFilter, DataCubeAbout } from "@/browser/filters";
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
@@ -198,12 +202,11 @@ const SelectDatasetStepContent = ({
     leading: true,
   });
   const router = useRouter();
-  const isOdsIframe = router.query["odsiframe"] === "true";
 
   const classes = useStyles({
     datasetPresent: !!dataset,
     variant,
-    isOdsIframe,
+    isOdsIframe: isOdsIframe(router.query),
   });
   const backLink = useMemo(() => {
     return formatBackLink(router.query);
@@ -367,11 +370,11 @@ const SelectDatasetStepContent = ({
         )}
       </AnimatePresence>
       <PanelLayout
-        type={isOdsIframe ? "M" : "LM"}
+        type={isOdsIframe(router.query) ? "M" : "LM"}
         className={classes.panelLayout}
         key="panel"
       >
-        {!isOdsIframe && (
+        {!isOdsIframe(router.query) && (
           <PanelBodyWrapper type="L" className={classes.panelLeft}>
             <AnimatePresence mode="wait">
               {dataset ? (
@@ -416,7 +419,7 @@ const SelectDatasetStepContent = ({
         <PanelBodyWrapper
           type={"M"}
           className={classes.panelMiddle}
-          sx={isOdsIframe ? { p: 6 } : { maxWidth: 1040, p: 6 }}
+          sx={isOdsIframe(router.query) ? { p: 6 } : { maxWidth: 1040, p: 6 }}
         >
           <AnimatePresence mode="wait">
             {dataset ? (
@@ -509,7 +512,7 @@ const SelectDatasetStepContent = ({
           </AnimatePresence>
         </PanelBodyWrapper>
       </PanelLayout>
-      {variant == "page" && !isOdsIframe ? (
+      {variant == "page" && !isOdsIframe(router.query) ? (
         <Box
           sx={{
             borderTop: "2px solid rgba(0,0,0,0.05)",
