@@ -197,8 +197,6 @@ export const ColorPalette = ({
     }
   };
 
-  const withColorField = isColorInConfig(chartConfig);
-
   const [anchorEl, setAnchorEl] = useState<HTMLElement>();
   const handleOpenCreateColorPalette: MouseEventHandler<HTMLButtonElement> =
     useEvent((ev) => {
