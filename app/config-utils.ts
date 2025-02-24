@@ -1,3 +1,4 @@
+import { bisectCenter } from "d3-array";
 import { useMemo } from "react";
 
 import {
@@ -8,12 +9,19 @@ import {
   FilterValue,
   FilterValueMulti,
   FilterValueSingle,
+  getAnimationField,
   Limit as ConfigLimit,
   SingleFilters,
 } from "@/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
-import { Dimension, Measure, ObservationValue } from "@/domain/data";
+import {
+  Dimension,
+  isTemporalDimensionWithTimeUnit,
+  Measure,
+  ObservationValue,
+} from "@/domain/data";
 import { truthy } from "@/domain/types";
+import { useTimeFormatUnit } from "@/formatters";
 import { mkJoinById } from "@/graphql/join";
 import { Limit } from "@/rdf/limits";
 import {
@@ -118,13 +126,64 @@ export const useChartConfigFilters = (
   }, [chartConfig.cubes, options?.cubeIri, options?.joined]);
 };
 
+export const useDefinitiveTemporalFilterValue = ({
+  dimensions,
+}: {
+  dimensions: Dimension[];
+}) => {
+  const [state] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
+  const definitiveFilters = useDefinitiveFilters();
+  const temporalDims = dimensions.filter(isTemporalDimensionWithTimeUnit);
+  const temporalFilters = Object.entries(definitiveFilters)
+    .map(([id, f]) => {
+      return temporalDims.some((d) => d.id === id) && f.type === "single"
+        ? f
+        : undefined;
+    })
+    .filter(truthy) as FilterValueSingle[];
+  const animationDim = temporalDims.find(
+    (d) => d.id === getAnimationField(chartConfig)?.componentId
+  );
+  const timeFormatUnit = useTimeFormatUnit();
+  const timeUnit = animationDim?.timeUnit;
+  const { value: timeSliderValue } = useChartInteractiveFilters(
+    (d) => d.timeSlider
+  );
+  const formattedTimeSliderValue =
+    timeUnit && timeSliderValue
+      ? timeFormatUnit(new Date(timeSliderValue), timeUnit)
+      : undefined;
+  const closestTemporalTimeSliderValue = useMemo(() => {
+    if (!animationDim || !formattedTimeSliderValue) {
+      return undefined;
+    }
+
+    const closesValueIndex = bisectCenter(
+      animationDim.values.map((d) => d.value) as string[],
+      formattedTimeSliderValue
+    );
+
+    return animationDim.values[closesValueIndex]?.value;
+  }, [animationDim, formattedTimeSliderValue]);
+
+  if (closestTemporalTimeSliderValue) {
+    return closestTemporalTimeSliderValue;
+  }
+
+  if (temporalFilters.length > 1) {
+    console.warn("More than one temporal filter found. Using the first one.");
+  }
+
+  return temporalFilters.length === 1 ? temporalFilters[0].value : undefined;
+};
+
 const useDefinitiveFilters = () => {
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const filters = useChartConfigFilters(chartConfig);
   const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
   const dashboardFilters = useDashboardInteractiveFilters();
-
   const definitiveFilters = useMemo(() => {
     const definitiveFilters: Filters = {};
 
@@ -281,7 +340,7 @@ export const useLimits = ({
     measureLimit: Limit;
   }[];
 } => {
-  const filters = useDefinitiveChartConfigFilters();
+  const filters = useDefinitiveFilters();
   const measure = getLimitMeasure({ chartConfig, measures });
   const relatedDimension = getRelatedLimitDimension({
     chartConfig,

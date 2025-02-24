@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import { bisectCenter } from "d3-array";
 import { memo, useCallback, useMemo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
@@ -15,21 +14,20 @@ import {
 } from "@/charts/shared/containers";
 import { NoGeometriesHint } from "@/components/hint";
 import { Cube, MapConfig } from "@/config-types";
-import { useChartConfigFilters } from "@/config-utils";
+import {
+  useChartConfigFilters,
+  useDefinitiveTemporalFilterValue,
+} from "@/config-utils";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import {
   dimensionValuesToGeoCoordinates,
   GeoCoordinates,
   GeoShapes,
-  isTemporalDimensionWithTimeUnit,
 } from "@/domain/data";
-import { truthy } from "@/domain/types";
-import { useTimeFormatUnit } from "@/formatters";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { getResolvedJoinById, isJoinById } from "@/graphql/join";
 import { useDataCubeDimensionGeoShapesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
-import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -187,57 +185,8 @@ export type ChartMapProps = ChartProps<MapConfig> & {
 const ChartMap = memo((props: ChartMapProps) => {
   const { chartConfig, dimensions, observations } = props;
   const { fields } = chartConfig;
-
   const filters = useChartConfigFilters(chartConfig);
-  const temporalDimensions = dimensions.filter(isTemporalDimensionWithTimeUnit);
-  const temporalFilterValues = Object.entries(filters)
-    .map(([key, value]) => {
-      return temporalDimensions.some((dimension) => dimension.id === key) &&
-        value.type === "single"
-        ? value
-        : undefined;
-    })
-    .filter(truthy);
-  const temporalDimension = temporalDimensions.find(
-    (d) => d.id === fields.animation?.componentId
-  );
-  const timeFormatUnit = useTimeFormatUnit();
-  const timeUnit =
-    temporalDimension && "timeUnit" in temporalDimension
-      ? temporalDimension.timeUnit
-      : undefined;
-  const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
-  const timeSliderValue = timeSlider.value;
-  const formattedTimeSliderValue =
-    timeUnit && timeSliderValue
-      ? timeFormatUnit(new Date(timeSliderValue), timeUnit)
-      : undefined;
-  const closestTemporalFilterValue = useMemo(() => {
-    const temporalDimension = temporalDimensions.find(
-      (d) => d.id === fields.animation?.componentId
-    );
-
-    if (!temporalDimension || !formattedTimeSliderValue) {
-      return undefined;
-    }
-
-    const values = temporalDimension.values;
-    const closestValue = bisectCenter(
-      values.map((d) => d.value) as string[],
-      formattedTimeSliderValue
-    );
-    return values[closestValue]?.value;
-  }, [
-    fields.animation?.componentId,
-    formattedTimeSliderValue,
-    temporalDimensions,
-  ]);
-
-  const temporalFilterValue =
-    closestTemporalFilterValue ??
-    (temporalFilterValues.length === 1
-      ? temporalFilterValues[0].value
-      : undefined);
+  const temporalFilterValue = useDefinitiveTemporalFilterValue({ dimensions });
 
   return (
     <MapChart {...props}>
