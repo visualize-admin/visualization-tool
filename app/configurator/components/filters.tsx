@@ -401,24 +401,9 @@ const MultiFilterContent = ({
                   componentsProps={{ typography: { variant: "body2" } }}
                   control={<Switch {...visibleLegendProps} />}
                   label={
-                    <MaybeTooltip
-                      tooltipProps={{ enterDelay: 600 }}
-                      title={
-                        <TooltipTitle
-                          text={
-                            <Trans id="controls.filters.show-legend-toggle">
-                              Allow users to change Legend visibility
-                            </Trans>
-                          }
-                        />
-                      }
-                    >
-                      <div>
-                        <Trans id="controls.filters.show-legend.toggle">
-                          Show legend titles
-                        </Trans>
-                      </div>
-                    </MaybeTooltip>
+                    <Trans id="controls.filters.show-legend.toggle">
+                      Show legend titles
+                    </Trans>
                   }
                 />
               </Flex>

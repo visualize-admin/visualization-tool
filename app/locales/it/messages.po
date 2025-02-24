@@ -533,7 +533,7 @@ msgstr "Ripristina la tavolozza dei colori"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 msgid "controls.color.palette.select"
-msgstr "selezionare una tavolozza di colori"
+msgstr "Selezionare una tavolozza di colori"
 
 #: app/configurator/components/chart-controls/color-ramp.tsx
 msgid "controls.color.palette.sequential"
@@ -609,14 +609,13 @@ msgstr "Utilizzare colori distinti e ad alto contrasto. Evitare di usare troppi 
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.caption-sequential"
-msgstr "Per ottenere un forte contrasto tra valori bassi e alti, è possibile selezionare un colore scuro per l'endpoint; il colore chiaro viene calcolato automaticamente. Le tavolozze di colori sequenziali sono adatte per dati ordinati come le temperature o le densità di popolazione."
-
-#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption-diverging"
 msgstr "Scegliere colori contrastanti per i punti iniziali e finali. Questi colori facilitano la distinzione visiva dei valori estremi. Le palette divergenti sono ideali per dati con un punto medio significativo, come zero o un valore medio."
 
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.caption-sequential"
+msgstr "Per ottenere un forte contrasto tra valori bassi e alti, è possibile selezionare un colore scuro per l'endpoint; il colore chiaro viene calcolato automaticamente. Le tavolozze di colori sequenziali sono adatte per dati ordinati come le temperature o le densità di popolazione."
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.categorical-contrast-warning"
@@ -628,7 +627,7 @@ msgstr "Creare una tavolozza di colori"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.diverging-contrast-warning"
-msgstr "Il colore selezionato non ha un contrasto sufficiente. Considerare l'uso di un colore più scuro per una tavolozza divergente."
+msgstr "Il colore selezionato ha un contrasto insufficiente. Utilizzare un colore più scuro per creare una tavolozza divergente."
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.end"
@@ -644,7 +643,7 @@ msgstr "Colore medio"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.sequential-contrast-warning"
-msgstr "Il colore selezionato non ha un contrasto sufficiente. Considerare l'utilizzo di un colore più scuro per una tavolozza sequenziale."
+msgstr "Il colore selezionato non ha un contrasto sufficiente. Si consiglia di scegliere un colore più scuro per la tavolozza sequenziale."
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes.set-values-apply"
@@ -1026,6 +1025,18 @@ msgstr "Titolo e descrizione"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.dots-size"
 msgstr "Selezionare una taglia"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size.large"
+msgstr "Grande"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size.medium"
+msgstr "Medio"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.dots-size.small"
+msgstr "Piccolo"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -1712,7 +1723,7 @@ msgstr "Cancellare il colore Paleete"
 
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.description"
-msgstr "Salvare la prima tavolozza di colori personalizzata per scegliere facilmente i colori durante la creazione di una visualizzazione."
+msgstr "Salvate una tavolozza di colori personalizzata per selezionare facilmente i colori delle vostre visualizzazioni."
 
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.edit"

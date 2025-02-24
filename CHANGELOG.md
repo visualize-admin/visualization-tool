@@ -20,6 +20,7 @@ You can also check the
   - Line chart dots are now based on data, eliminating misaligned dots
   - Added a fallback to color selector
   - Dynamic descriptions for custom color palette types
+  - Show line dot sizes are now translated
 
 # [5.2.6] - 2025-02-18
 
@@ -54,6 +55,7 @@ You can also check the
   - Fixed errors regarding switching form existing categorical palette to a
     diverging color palette
   - Improved filter section styling
+  - Removed legend titles tooltip on the toggle switch
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to Vercel previews for easier testing
