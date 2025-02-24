@@ -57,7 +57,6 @@ import {
   isAnimationInConfig,
   isColorInConfig,
   isComboChartConfig,
-  isMapConfig,
   isTableConfig,
   MapConfig,
   SortingType,
@@ -1554,9 +1553,6 @@ const ColorSelection = ({
       <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
         <ColorPalette
           field="y"
-          // Faking a component here, because we don't have a real one.
-          // We use measure iris as dimension values, because that's how
-          // the color mapping is done.
           component={
             {
               __typename: "",
@@ -2149,18 +2145,6 @@ const ChartFieldColorComponent = ({
     | number
     | undefined;
 
-  const hasColorField = isMapConfig(chartConfig);
-  const values: { id: string; symbol: LegendSymbol }[] =
-    hasColorField &&
-    chartConfig.fields.symbolLayer?.color.type === "categorical"
-      ? Object.keys(chartConfig.fields.symbolLayer?.color.colorMapping).map(
-          (key) => ({
-            id: key,
-            symbol: "line",
-          })
-        )
-      : [];
-
   return (
     <ControlSection collapse>
       <SubsectionTitle iconName="color">
@@ -2235,15 +2219,7 @@ const ChartFieldColorComponent = ({
             <ColorPalette
               field="symbolLayer"
               colorConfigPath="color"
-              component={
-                {
-                  __typename: "",
-                  values: values.map(({ id }) => ({
-                    value: id,
-                    label: id,
-                  })),
-                } as any as Component
-              }
+              component={colorComponent}
             />
           )
         ) : colorType === "numerical" ? (
