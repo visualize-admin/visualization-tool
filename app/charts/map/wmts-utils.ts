@@ -105,6 +105,7 @@ export const getWMTSTile = ({
     id: `tile-layer-${customLayer.url}`,
     beforeId,
     data: getWMTSLayerData(customLayer.url, {
+      identifier: wmtsLayer.Dimension["ows:Identifier"],
       value: getWMTSLayerValue({
         wmtsLayer,
         customLayer,
@@ -133,10 +134,10 @@ const isValidWMTSLayerUrl = (url: string) => {
 
 const getWMTSLayerData = (
   url: string,
-  { value }: { value: string | number }
+  { identifier, value }: { identifier: string; value: string | number }
 ) => {
   return url
-    .replace("{Time}", `${value}`)
+    .replace(`{${identifier}}`, `${value}`)
     .replace("{TileMatrix}", "{z}")
     .replace("{TileCol}", "{x}")
     .replace("{TileRow}", "{y}");
