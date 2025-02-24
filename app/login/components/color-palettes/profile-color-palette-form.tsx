@@ -250,6 +250,21 @@ type ColorPaletteTypeSelectorProps = {
   selectedType: CustomPaletteType["type"];
 };
 
+const colorTypes: Record<CustomPaletteType["type"], string> = {
+  sequential: t({
+    id: "controls.custom-color-palettes.sequential",
+    message: "Sequential",
+  }),
+  diverging: t({
+    id: "controls.custom-color-palettes.diverging",
+    message: "Diverging",
+  }),
+  categorical: t({
+    id: "controls.custom-color-palettes.categorical",
+    message: "Categorical",
+  }),
+};
+
 const ColorPaletteTypeSelector = ({
   onChange,
   selectedType,
@@ -278,7 +293,7 @@ const ColorPaletteTypeSelector = ({
               gap={2}
             >
               <Radio
-                label={t({ id: `controls.color.palette.${type}` })}
+                label={colorTypes[type]}
                 value={type}
                 checked={type === selectedType}
                 onChange={handleChange}

@@ -601,6 +601,8 @@ msgstr "Select a dark endpoint color for a strong contrast between low and high 
 msgid "controls.custom-color-palettes.caption-diverging"
 msgstr "Choose contrasting colors for the start and end points. These colors will help visually separate extreme values. Diverging palettes are ideal for data with a meaningful midpoint, such as zero or an average."
 
+msgid "controls.custom-color-palettes.categorical"
+msgstr "Categorical"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.categorical-contrast-warning"
@@ -609,6 +611,10 @@ msgstr "The selected color is difficult to read against a white background. Choo
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.create-palette"
 msgstr "Create color palette"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.diverging"
+msgstr "Diverging"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.diverging-contrast-warning"
@@ -625,6 +631,10 @@ msgstr "Example"
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.mid"
 msgstr "Middle Color"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.sequential"
+msgstr "Sequential"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.sequential-contrast-warning"
