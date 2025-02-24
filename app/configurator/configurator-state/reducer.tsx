@@ -656,7 +656,8 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_TYPE_CHANGED":
       if (isConfiguring(draft)) {
-        const { locale, chartKey, chartType, isAddingNewCube } = action.value;
+        const { locale, chartKey, chartType, isAddingNewCube, palette } =
+          action.value;
         const chartConfig = getChartConfig(draft, chartKey);
         const dataCubesComponents = getCachedComponents({
           locale,
@@ -677,6 +678,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
               dimensions,
               measures,
               isAddingNewCube,
+              palette,
             }),
             { dimensions }
           );
