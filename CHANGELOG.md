@@ -11,7 +11,9 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Limits that are connected to values that are filtered out do not render in
+    the chart anymore
 
 # [5.3.0] - 2025-02-25
 
