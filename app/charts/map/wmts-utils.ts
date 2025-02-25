@@ -2,7 +2,7 @@ import { TileLayer } from "@deck.gl/geo-layers";
 import { BitmapLayer } from "@deck.gl/layers";
 import { XMLParser } from "fast-xml-parser";
 
-import { BaseLayer } from "@/config-types";
+import { WMTSCustomLayer } from "@/config-types";
 import { useLocale } from "@/locales/use-locale";
 import { useFetchData } from "@/utils/use-fetch-data";
 
@@ -57,7 +57,7 @@ export const useWMTSLayers = (
 ) => {
   const locale = useLocale();
 
-  return useFetchData<WMTSData["Capabilities"]["Contents"]["Layer"]>({
+  return useFetchData<WMTSLayer[]>({
     queryKey: ["custom-wmts-layers", locale],
     queryFn: async () => {
       return fetch(`${WMTS_URL}?lang=${locale}`).then(async (res) => {
@@ -68,7 +68,7 @@ export const useWMTSLayers = (
         });
 
         return res.text().then((text) => {
-          return parser.parse(text).Capabilities.Contents.Layer;
+          return (parser.parse(text) as WMTSData).Capabilities.Contents.Layer;
         });
       });
     },
@@ -84,8 +84,8 @@ export const getWMTSTile = ({
   beforeId,
   value,
 }: {
-  wmtsLayers?: WMTSData["Capabilities"]["Contents"]["Layer"];
-  customLayer?: BaseLayer["customLayers"][number];
+  wmtsLayers?: WMTSLayer[];
+  customLayer?: WMTSCustomLayer;
   beforeId?: string;
   value?: number | string;
 }) => {
@@ -149,7 +149,7 @@ export const getWMTSLayerValue = ({
   value,
 }: {
   wmtsLayer: WMTSLayer;
-  customLayer?: BaseLayer["customLayers"][number];
+  customLayer?: WMTSCustomLayer;
   value?: string | number;
 }) => {
   const { Dimension } = wmtsLayer;

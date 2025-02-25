@@ -795,18 +795,45 @@ const MapSymbolLayer = t.type({
 });
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 
+const BaseCustomLayer = t.type({
+  isBehindAreaLayer: t.boolean,
+  syncTemporalFilters: t.boolean,
+});
+export type BaseCustomLayer = t.TypeOf<typeof BaseCustomLayer>;
+
+const WMSCustomLayer = t.intersection([
+  t.type({
+    type: t.literal("wms"),
+    id: t.string,
+  }),
+  BaseCustomLayer,
+]);
+export type WMSCustomLayer = t.TypeOf<typeof WMSCustomLayer>;
+export const getWMSCustomLayers = (
+  customLayers: BaseLayer["customLayers"]
+): WMSCustomLayer[] => {
+  return customLayers.filter((l) => l.type === "wms") as WMSCustomLayer[];
+};
+
+const WMTSCustomLayer = t.intersection([
+  t.type({
+    type: t.literal("wmts"),
+    url: t.string,
+  }),
+  BaseCustomLayer,
+]);
+export type WMTSCustomLayer = t.TypeOf<typeof WMTSCustomLayer>;
+export const getWMTSCustomLayers = (
+  customLayers: BaseLayer["customLayers"]
+): WMTSCustomLayer[] => {
+  return customLayers.filter((l) => l.type === "wmts") as WMTSCustomLayer[];
+};
+
 const BaseLayer = t.type({
   show: t.boolean,
   locked: t.boolean,
   bbox: t.union([BBox, t.undefined]),
-  customLayers: t.array(
-    t.type({
-      type: t.union([t.literal("wmts"), t.literal("wms")]),
-      url: t.string,
-      isBehindAreaLayer: t.boolean,
-      syncTemporalFilters: t.boolean,
-    })
-  ),
+  customLayers: t.array(t.union([WMSCustomLayer, WMTSCustomLayer])),
 });
 export type BaseLayer = t.TypeOf<typeof BaseLayer>;
 
