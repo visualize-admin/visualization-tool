@@ -66,6 +66,7 @@ export type BarsState = CommonChartState &
     minY: string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
     colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
   };
 
 const useBarsState = (
@@ -86,6 +87,7 @@ const useBarsState = (
     getMinX,
     getXErrorRange,
     getFormattedXUncertainty,
+    getSegmentLabel,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -303,6 +305,7 @@ const useBarsState = (
     yScaleInteraction,
     yScale,
     getAnnotationInfo,
+    getColorLabel: getSegmentLabel,
     colors,
     ...variables,
   };
