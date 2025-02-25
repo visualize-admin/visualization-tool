@@ -1571,7 +1571,7 @@ export const configuratorStateMigrations: Migration[] = [
     to: "3.0.0",
     up: async (config) => {
       const newConfig = { ...config, version: "3.0.0" };
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -1589,7 +1589,7 @@ export const configuratorStateMigrations: Migration[] = [
     down: async (config) => {
       const newConfig = { ...config, version: "2.0.0" };
       let dataSet: string | undefined;
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         if (!dataSet) {
@@ -1621,7 +1621,7 @@ export const configuratorStateMigrations: Migration[] = [
     to: "3.0.1",
     up: async (config) => {
       const newConfig = { ...config, version: "3.0.1" };
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -1637,7 +1637,7 @@ export const configuratorStateMigrations: Migration[] = [
     },
     down: async (config) => {
       const newConfig = { ...config, version: "3.0.0" };
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -1694,7 +1694,7 @@ export const configuratorStateMigrations: Migration[] = [
     to: "3.2.0",
     up: async (config) => {
       const newConfig = { ...config, version: "3.2.0" };
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -1710,7 +1710,7 @@ export const configuratorStateMigrations: Migration[] = [
     },
     down: async (config) => {
       const newConfig = { ...config, version: "3.1.0" };
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -1777,7 +1777,7 @@ export const configuratorStateMigrations: Migration[] = [
     to: "3.4.0",
     up: async (config) => {
       const newConfig = { ...config, version: "3.4.0" };
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -1793,7 +1793,7 @@ export const configuratorStateMigrations: Migration[] = [
     },
     down: async (config) => {
       const newConfig = { ...config, version: "3.3.0" };
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -1923,7 +1923,7 @@ export const configuratorStateMigrations: Migration[] = [
         },
       };
 
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -1950,7 +1950,7 @@ export const configuratorStateMigrations: Migration[] = [
         },
       };
 
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -2014,7 +2014,7 @@ export const configuratorStateMigrations: Migration[] = [
     to: "4.0.0",
     up: async (config) => {
       const newConfig = { ...config, version: "4.0.0" };
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -2054,7 +2054,7 @@ export const configuratorStateMigrations: Migration[] = [
     },
     down: async (config) => {
       const newConfig = { ...config, version: "3.8.0" };
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -2095,8 +2095,7 @@ export const configuratorStateMigrations: Migration[] = [
     to: "4.1.0",
     up: async (config) => {
       const newConfig = { ...config, version: "4.1.0" };
-
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -2112,8 +2111,7 @@ export const configuratorStateMigrations: Migration[] = [
     },
     down: async (config) => {
       const newConfig = { ...config, version: "4.0.0" };
-
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -2182,8 +2180,7 @@ export const configuratorStateMigrations: Migration[] = [
     to: "4.3.0",
     up: async (config) => {
       const newConfig = { ...config, version: "4.3.0" };
-
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -2199,8 +2196,7 @@ export const configuratorStateMigrations: Migration[] = [
     },
     down: async (config) => {
       const newConfig = { ...config, version: "4.2.0" };
-
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -2221,8 +2217,7 @@ export const configuratorStateMigrations: Migration[] = [
     to: "4.4.0",
     up: async (config) => {
       const newConfig = { ...config, version: "4.4.0" };
-
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
@@ -2238,8 +2233,7 @@ export const configuratorStateMigrations: Migration[] = [
     },
     down: async (config) => {
       const newConfig = { ...config, version: "4.3.0" };
-
-      const chartConfigs: any[] = [];
+      const chartConfigs = [];
 
       for (const chartConfig of newConfig.chartConfigs) {
         const migratedChartConfig = await migrateChartConfig(chartConfig, {
