@@ -621,13 +621,14 @@ msgstr "Per ottenere un forte contrasto tra valori bassi e alti, è possibile se
 msgid "controls.custom-color-palettes.caption-diverging"
 msgstr "Scegliere colori contrastanti per i punti iniziali e finali. Questi colori facilitano la distinzione visiva dei valori estremi. Le palette divergenti sono ideali per dati con un punto medio significativo, come zero o un valore medio."
 
-msgid "controls.custom-color-palettes.categorical"
-msgstr "Categorico"
-
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption-sequential"
 msgstr "Per ottenere un forte contrasto tra valori bassi e alti, è possibile selezionare un colore scuro per l'endpoint; il colore chiaro viene calcolato automaticamente. Le tavolozze di colori sequenziali sono adatte per dati ordinati come le temperature o le densità di popolazione."
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.categorical"
+msgstr "Categorico"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.categorical-contrast-warning"

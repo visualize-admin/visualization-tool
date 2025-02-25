@@ -617,15 +617,14 @@ msgstr "Use distinct, high-contrast colors. Avoid using too many colors, maximum
 msgid "controls.custom-color-palettes.caption-diverging"
 msgstr "Choose contrasting colors for the start and end points. These colors will help visually separate extreme values. Diverging palettes are ideal for data with a meaningful midpoint, such as zero or an average."
 
-
-msgid "controls.custom-color-palettes.categorical"
-msgstr "Categorical"
-
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption-sequential"
 msgstr "Select a dark endpoint color for a strong contrast between low and high values; the light color is calculated automatically. Sequential color palettes are suitable for ordered data such as temperatures or population densities."
 
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.categorical"
+msgstr "Categorical"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.categorical-contrast-warning"
@@ -766,7 +765,6 @@ msgstr "To"
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.show-legend-toggle"
 msgstr "Allow users to change legend titles visibility"
-
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.show-legend.toggle"
 msgstr "Show legend titles"

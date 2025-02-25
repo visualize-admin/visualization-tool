@@ -616,13 +616,15 @@ msgstr "Verwenden Sie klare, kontrastreiche Farben. Vermeiden Sie die Verwendung
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption-diverging"
 msgstr "Wählen Sie kontrastierende Farben für Start- und Endpunkt. Diese Farben unterstützen die visuelle Trennung von Extremwerten. Divergierende Paletten eignen sich besonders für Daten mit einem bedeutsamen Mittelpunkt wie Null oder einem Durchschnittswert."
-msgid "controls.custom-color-palettes.categorical"
-msgstr "Kategorisch"
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption-sequential"
 msgstr "Wählen Sie eine dunkle Endpunktfarbe für einen starken Kontrast zwischen niedrigen und hohen Werten; die helle Farbe wird automatisch berechnet. Sequentielle Farbpaletten eignen sich für geordnete Daten wie Temperaturen oder Bevölkerungsdichten."
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.categorical"
+msgstr "Kategorisch"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.categorical-contrast-warning"
@@ -634,7 +636,7 @@ msgstr "Farbpalette erstellen"
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.diverging"
-msgstr Sequentiell
+msgstr "Divergierend"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.diverging-contrast-warning"
@@ -654,7 +656,7 @@ msgstr "Mittlere Farbe"
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.sequential"
-msgstr "Divergierend"
+msgstr "Sequentiell"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.sequential-contrast-warning"
