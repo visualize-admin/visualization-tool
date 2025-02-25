@@ -837,6 +837,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           showStandardError: {},
           showConfidenceInterval: {},
+          colorPalette: {
+            type: "single",
+            paletteId: "dimension",
+            color: theme.palette.primary.main,
+          },
         },
       },
       {

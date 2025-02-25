@@ -799,13 +799,6 @@ const BaseLayer = t.type({
   show: t.boolean,
   locked: t.boolean,
   bbox: t.union([BBox, t.undefined]),
-  customWMTSLayers: t.array(
-    t.type({
-      url: t.string,
-      isBehindAreaLayer: t.boolean,
-      syncTemporalFilters: t.boolean,
-    })
-  ),
 });
 export type BaseLayer = t.TypeOf<typeof BaseLayer>;
 
@@ -1078,8 +1071,15 @@ export const isColorInConfig = (
   | ColumnConfig
   | LineConfig
   | PieConfig
-  | ScatterPlotConfig => {
+  | ScatterPlotConfig
+  | BarConfig => {
   return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
+};
+
+export const isCustomColorPalette = (
+  palette: CustomPaletteType | string
+): palette is CustomPaletteType => {
+  return typeof palette !== "string";
 };
 
 export const isNotTableOrMap = (chartConfig: ChartConfig) => {
