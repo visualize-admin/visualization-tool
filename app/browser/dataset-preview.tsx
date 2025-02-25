@@ -20,6 +20,7 @@ import {
   useDataCubePreviewQuery,
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import SvgIcLinkExternal from "@/icons/components/IcLinkExternal";
 import { useLocale } from "@/locales/use-locale";
 
 export const isOdsIframe = (query: ParsedUrlQuery) => {
@@ -173,6 +174,7 @@ export const DataSetPreview = ({
               onClick={(ev) => onCreateChartFromDataset?.(ev, dataSetIri)}
               className={classes.createChartButton}
               component="a"
+              endIcon={isOdsIframe(router.query) ? <SvgIcLinkExternal /> : null}
               target={isOdsIframe(router.query) ? "_blank" : undefined}
             >
               {!isOdsIframe(router.query) ? (
@@ -181,7 +183,7 @@ export const DataSetPreview = ({
                 </Trans>
               ) : (
                 <Trans id="browse.dataset.create-visualization-visualize">
-                  Create visualization on visualize from this dataset
+                  Create with visualize.admin
                 </Trans>
               )}
             </Button>
@@ -194,14 +196,20 @@ export const DataSetPreview = ({
               legacyBehavior={!isOdsIframe(router.query)}
               target={isOdsIframe(router.query) ? "_blank" : undefined}
             >
-              <Button className={classes.createChartButton} component="a">
+              <Button
+                endIcon={
+                  isOdsIframe(router.query) ? <SvgIcLinkExternal /> : null
+                }
+                className={classes.createChartButton}
+                component="a"
+              >
                 {!isOdsIframe(router.query) ? (
                   <Trans id="browse.dataset.create-visualization">
                     Create visualization from dataset
                   </Trans>
                 ) : (
                   <Trans id="browse.dataset.create-visualization-visualize">
-                    Create visualization on visualize from this dataset
+                    Create with visualize.admin
                   </Trans>
                 )}
               </Button>
