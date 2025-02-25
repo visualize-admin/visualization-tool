@@ -23,16 +23,21 @@ import {
 import { MapState } from "@/charts/map/map-state";
 import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
 import { getMap, setMap } from "@/charts/map/ref";
+import { getWMSTile, useWMSLayers } from "@/charts/map/wms-utils";
 import { getWMTSTile, useWMTSLayers } from "@/charts/map/wmts-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { BaseLayer, BBox } from "@/configurator";
+import {
+  BaseLayer,
+  BBox,
+  getWMSCustomLayers,
+  getWMTSCustomLayers,
+} from "@/configurator";
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
-
 import "maplibre-gl/dist/maplibre-gl.css";
 
 // supported was removed as of maplibre-gl v3.0.0, so we need to add it back
@@ -95,32 +100,65 @@ export const MapComponent = ({
   const classes = useStyles();
   const locale = useLocale();
 
-  const { data: wmtsLayers } = useWMTSLayers({
-    pause: !customLayers.length,
-  });
-  const { behindAreaTileLayers, afterAreaTileLayers } = useMemo(() => {
+  const { wmsCustomLayers, wmtsCustomLayers } = useMemo(() => {
     return {
-      behindAreaTileLayers: customLayers
-        .filter((layer) => layer.isBehindAreaLayer)
-        .map((layer) => {
-          return getWMTSTile({
-            wmtsLayers,
-            customLayer: layer,
-            beforeId: "areaLayer",
-            value,
-          });
+      wmsCustomLayers: getWMSCustomLayers(customLayers),
+      wmtsCustomLayers: getWMTSCustomLayers(customLayers),
+    };
+  }, [customLayers]);
+
+  const { data: wmsLayers } = useWMSLayers({
+    pause: wmsCustomLayers.length === 0,
+  });
+  const { data: wmtsLayers } = useWMTSLayers({
+    pause: wmtsCustomLayers.length === 0,
+  });
+  const { behindAreaCustomLayers, afterAreaCustomLayers } = useMemo(() => {
+    return {
+      behindAreaCustomLayers: customLayers
+        .filter((customLayer) => customLayer.isBehindAreaLayer)
+        .map((customLayer) => {
+          switch (customLayer.type) {
+            case "wms":
+              return getWMSTile({
+                wmsLayers,
+                customLayer,
+                beforeId: "areaLayer",
+              });
+            case "wmts":
+              return getWMTSTile({
+                wmtsLayers,
+                customLayer,
+                beforeId: "areaLayer",
+                value,
+              });
+            default:
+              const _exhaustiveCheck: never = customLayer;
+              return _exhaustiveCheck;
+          }
         }),
-      afterAreaTileLayers: customLayers
-        .filter((layer) => !layer.isBehindAreaLayer)
-        .map((layer) => {
-          return getWMTSTile({
-            wmtsLayers,
-            customLayer: layer,
-            value,
-          });
+      afterAreaCustomLayers: customLayers
+        .filter((customLayer) => !customLayer.isBehindAreaLayer)
+        .map((customLayer) => {
+          switch (customLayer.type) {
+            case "wms":
+              return getWMSTile({
+                wmsLayers,
+                customLayer,
+              });
+            case "wmts":
+              return getWMTSTile({
+                wmtsLayers,
+                customLayer,
+                value,
+              });
+            default:
+              const _exhaustiveCheck: never = customLayer;
+              return _exhaustiveCheck;
+          }
         }),
     };
-  }, [customLayers, value, wmtsLayers]);
+  }, [customLayers, value, wmsLayers, wmtsLayers]);
 
   const [{ interaction }, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
@@ -320,8 +358,8 @@ export const MapComponent = ({
 
       return new GeoJsonLayer({
         id: "hoverLayer",
-        beforeId: afterAreaTileLayers.length
-          ? afterAreaTileLayers[0]?.props.id
+        beforeId: afterAreaCustomLayers.length
+          ? afterAreaCustomLayers[0]?.props.id
           : undefined,
         // @ts-ignore
         data: shape,
@@ -333,7 +371,7 @@ export const MapComponent = ({
       });
     }
   }, [
-    afterAreaTileLayers,
+    afterAreaCustomLayers,
     areaLayer,
     interaction.d,
     interaction.visible,
@@ -492,10 +530,10 @@ export const MapComponent = ({
           <DeckGLOverlay
             interleaved
             layers={[
-              ...behindAreaTileLayers,
+              ...behindAreaCustomLayers,
               geoJsonLayer,
               hoverLayer,
-              ...afterAreaTileLayers,
+              ...afterAreaCustomLayers,
               scatterplotLayer,
             ]}
           />
