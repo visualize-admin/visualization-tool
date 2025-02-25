@@ -37,10 +37,9 @@ import {
   getColorInterpolator,
   sequentialPalettes,
 } from "@/palettes";
-import { getCustomColorPalettes } from "@/utils/chart-config/api";
 import { getFittingColorInterpolator } from "@/utils/color-palette-utils";
 import useEvent from "@/utils/use-event";
-import { useFetchData } from "@/utils/use-fetch-data";
+import { useUserPalettes } from "@/utils/use-user-palettes";
 
 import { ConfiguratorDrawer } from "../drawer";
 
@@ -109,15 +108,7 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
 
-  const user = useUser();
-
-  const { data: customColorPalettes, invalidate } = useFetchData({
-    queryKey: ["colorPalettes", user?.id],
-    queryFn: getCustomColorPalettes,
-    options: {
-      enable: !!user?.id,
-    },
-  });
+  const { data: customColorPalettes, invalidate } = useUserPalettes();
 
   const palettes = useMemo(() => {
     const palettes = [...sequentialPalettes, ...divergingPalettes];
@@ -207,8 +198,18 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
           width: "100%",
           "& .MuiSelect-select": { height: "44px", width: "100%" },
         }}
+        displayEmpty
         onChange={onSelectedItemChange}
-        renderValue={() => {
+        renderValue={(selected) => {
+          if (!selected) {
+            return (
+              <Typography color={"secondary.active"} variant="body2">
+                <Trans id="controls.color.palette.select">
+                  Select a color palette
+                </Trans>
+              </Typography>
+            );
+          }
           return (
             <ColorRamp
               colorInterpolator={selectedColorInterpolator}

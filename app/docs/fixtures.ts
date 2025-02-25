@@ -56,6 +56,7 @@ export const states: ConfiguratorState[] = [
           },
         },
         cubes: [{ iri: "", filters: {} }],
+        limits: {},
         chartType: "column",
         fields: {
           x: {
@@ -247,6 +248,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -261,6 +263,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -275,6 +278,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -289,6 +293,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -303,6 +308,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -317,6 +323,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -331,6 +338,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -345,6 +353,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -359,6 +368,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -373,6 +383,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
 ];
 
@@ -607,6 +618,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -620,6 +632,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -633,6 +646,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -646,6 +660,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -659,6 +674,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -672,6 +688,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -685,6 +702,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -698,6 +716,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -711,6 +730,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    limits: [],
   },
 ];
 
@@ -1061,6 +1081,7 @@ export const tableConfig: TableConfig = {
     },
   },
   cubes: [{ iri: "", filters: {} }],
+  limits: {},
   chartType: "table",
   interactiveFiltersConfig: undefined,
   settings: { showSearch: true, showAllRows: true },

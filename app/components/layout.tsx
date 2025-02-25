@@ -4,9 +4,15 @@ import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 
-export const AppLayout = ({ children }: { children?: ReactNode }) => (
+export const AppLayout = ({
+  children,
+  isOdsIframe,
+}: {
+  children?: ReactNode;
+  isOdsIframe?: boolean;
+}) => (
   <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
-    <Header pageType="app" contentId={undefined} />
+    {!isOdsIframe && <Header pageType="app" contentId={undefined} />}
     <Flex
       component="main"
       role="main"

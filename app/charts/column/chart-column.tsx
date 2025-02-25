@@ -24,8 +24,9 @@ import {
 } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
+import { VerticalLimits } from "@/charts/shared/limits";
 import { ColumnConfig } from "@/config-types";
-import { useChartConfigFilters } from "@/config-utils";
+import { useChartConfigFilters, useLimits } from "@/config-utils";
 import { hasChartConfigs } from "@/configurator";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { useConfiguratorState } from "@/src";
@@ -39,7 +40,7 @@ export const ChartColumnsVisualization = (
 };
 
 const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
-  const { chartConfig, dimensions, dimensionsById } = props;
+  const { chartConfig, dimensions, measures, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
@@ -47,6 +48,11 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
     interactiveFiltersConfig,
     dashboardFilters?.timeRange
   );
+  const limits = useLimits({
+    chartConfig,
+    dimensions,
+    measures,
+  });
 
   return (
     <>
@@ -73,10 +79,8 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
-              interactive={
-                fields.segment && interactiveFiltersConfig?.legend.active
-              }
-              showTitle={fields.segment && fields.segment.showTitle}
+              interactive={interactiveFiltersConfig?.legend.active}
+              showTitle={fields.segment.showTitle}
             />
           </ChartControlsContainer>
         </StackedColumnsChart>
@@ -106,10 +110,8 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
-              interactive={
-                fields.segment && interactiveFiltersConfig?.legend.active
-              }
-              showTitle={fields.segment && fields.segment.showTitle}
+              interactive={interactiveFiltersConfig?.legend.active}
+              showTitle={fields.segment.showTitle}
             />
           </ChartControlsContainer>
         </GroupedColumnChart>
@@ -121,21 +123,30 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               <AxisWidthBand />
               <Columns />
               <ErrorWhiskers />
+              <VerticalLimits {...limits} />
               <AxisWidthBandDomain />
               <InteractionColumns />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
             <Tooltip type="single" />
           </ChartContainer>
-          {fields.animation && (
+          {fields.animation || limits.limits.length > 0 ? (
             <ChartControlsContainer>
-              <TimeSlider
-                filters={filters}
-                dimensions={dimensions}
-                {...fields.animation}
+              <LegendColor
+                limits={limits.limits}
+                dimensionsById={dimensionsById}
+                chartConfig={chartConfig}
+                symbol="square"
               />
+              {fields.animation && (
+                <TimeSlider
+                  filters={filters}
+                  dimensions={dimensions}
+                  {...fields.animation}
+                />
+              )}
             </ChartControlsContainer>
-          )}
+          ) : null}
         </ColumnChart>
       )}
     </>
