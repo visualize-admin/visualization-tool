@@ -58,6 +58,7 @@ You can also check the
   - Improved filter section styling
   - Removed legend titles tooltip on the toggle switch
   - Fixed Map Symbol Layer custom color palette support for all palette types
+  - Added color palettes for single bar chart type
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to Vercel previews for easier testing
