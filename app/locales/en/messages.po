@@ -80,6 +80,11 @@ msgstr "Browse all datasets"
 msgid "browse.dataset.create-visualization"
 msgstr "Start a visualization"
 
+#: app/browser/dataset-preview.tsx
+#: app/browser/dataset-preview.tsx
+msgid "browse.dataset.create-visualization-visualize"
+msgstr "Create a visualization"
+
 #: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.description"
 msgstr "Explore datasets provided by the LINDAS Linked Data Service by either filtering by categories or organizations or search directly for specific keywords. Click on a dataset to see more detailed information and start creating your own visualizations."
@@ -532,6 +537,7 @@ msgid "controls.color.palette.reset"
 msgstr "Reset color palette"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
+#: app/configurator/components/chart-controls/color-ramp.tsx
 msgid "controls.color.palette.select"
 msgstr "Select a color palette"
 
@@ -617,6 +623,10 @@ msgstr "Choose contrasting colors for the start and end points. These colors wil
 msgid "controls.custom-color-palettes.caption-sequential"
 msgstr "Select a dark endpoint color for a strong contrast between low and high values; the light color is calculated automatically. Sequential color palettes are suitable for ordered data such as temperatures or population densities."
 
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.categorical"
+msgstr "Categorical"
+
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.categorical-contrast-warning"
 msgstr "The selected color is difficult to read against a white background. Choose a color with higher contrast to improve accessibility."
@@ -624,6 +634,10 @@ msgstr "The selected color is difficult to read against a white background. Choo
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.create-palette"
 msgstr "Create color palette"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.diverging"
+msgstr "Diverging"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.diverging-contrast-warning"
@@ -640,6 +654,10 @@ msgstr "Example"
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.mid"
 msgstr "Middle Color"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.sequential"
+msgstr "Sequential"
 
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.sequential-contrast-warning"
@@ -744,10 +762,6 @@ msgstr "Selected filters"
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.filters.select.to"
 msgstr "To"
-
-#: app/configurator/components/filters.tsx
-msgid "controls.filters.show-legend-toggle"
-msgstr "Allow users to change legend titles visibility"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.show-legend.toggle"
