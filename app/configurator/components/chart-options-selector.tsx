@@ -76,6 +76,7 @@ import {
   SectionTitle,
   SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { CustomLayersSelector } from "@/configurator/components/custom-layers-selector";
 import {
   ChartFieldField,
   ChartOptionCheckboxField,
@@ -594,7 +595,10 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       )}
       {/* FIXME: should be generic or shouldn't be a field at all */}
       {field === "baseLayer" && (
-        <ChartMapBaseLayerSettings chartConfig={chartConfig as MapConfig} />
+        <>
+          <ChartMapBaseLayerSettings chartConfig={chartConfig as MapConfig} />
+          <CustomLayersSelector />
+        </>
       )}
       {encoding.sorting &&
         component &&
@@ -690,30 +694,28 @@ const ChartLayoutOptions = ({
             disabled={!component}
           />
         )}
-        <>
-          <ColorPalette
-            field="y"
-            // Faking a component here, because we don't have a real one.
-            // We use measure iris as dimension values, because that's how
-            // the color mapping is done.
-            component={
-              {
-                __typename: "",
-                values: values.map(({ id }) => ({
-                  value: id,
-                  label: id,
-                })),
-              } as any as Component
-            }
+        <ColorPalette
+          field="y"
+          // Faking a component here, because we don't have a real one.
+          // We use measure iris as dimension values, because that's how
+          // the color mapping is done.
+          component={
+            {
+              __typename: "",
+              values: values.map(({ id }) => ({
+                value: id,
+                label: id,
+              })),
+            } as any as Component
+          }
+        />
+        {hasColorField && chartConfig.fields.color.type === "single" && (
+          <ColorPickerField
+            field="color"
+            path="color"
+            label={measures.find((d) => d.id === values[0].id)!.label}
           />
-          {hasColorField && chartConfig.fields.color.type === "single" && (
-            <ColorPickerField
-              field="color"
-              path="color"
-              label={measures.find((d) => d.id === values[0].id)!.label}
-            />
-          )}
-        </>
+        )}
       </ControlSectionContent>
     </ControlSection>
   ) : null;
@@ -2423,9 +2425,9 @@ const ChartMapBaseLayerSettings = ({
   }, [chartConfig.baseLayer.locked, dispatch, locale]);
 
   return (
-    <ControlSection>
+    <ControlSection hideTopBorder>
       <SectionTitle>
-        <Trans id="chart.map.layers.base">Map Display</Trans>
+        <Trans id="chart.map.layers.base">Base Layers</Trans>
       </SectionTitle>
       <ControlSectionContent gap="large">
         <ChartOptionCheckboxField

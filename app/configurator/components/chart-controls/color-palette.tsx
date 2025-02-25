@@ -243,7 +243,7 @@ export const ColorPalette = ({
           return (
             <Grid
               container
-              spacing={0.5}
+              spacing="0.5"
               sx={{
                 alignItems: "center",
                 "& .MuiGrid-item": {
@@ -437,7 +437,7 @@ export const ColorSquare = ({
   return (
     <Box
       className={classes.root}
-      data-testId="select-color-square"
+      data-testid="select-color-square"
       sx={{
         backgroundColor: disabled ? "grey.300" : color,
       }}

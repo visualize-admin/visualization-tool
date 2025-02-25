@@ -92,13 +92,14 @@ const commonInteractiveFiltersState: InteractiveFiltersState = {
 
 describe("useQueryFilters", () => {
   it("should not merge interactive filters state if interactive filters are disabled at publish time", () => {
-    const queryFilters = prepareCubeQueryFilters(
-      line1Fixture.data.chartConfig.chartType as ChartType,
-      line1Fixture.data.chartConfig.filters as Filters,
-      commonInteractiveFiltersConfig,
-      undefined,
-      commonInteractiveFiltersState.dataFilters
-    );
+    const queryFilters = prepareCubeQueryFilters({
+      chartType: line1Fixture.data.chartConfig.chartType as ChartType,
+      cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
+      animationField: undefined,
+      interactiveFiltersConfig: commonInteractiveFiltersConfig,
+      dashboardFilters: undefined,
+      interactiveDataFilters: commonInteractiveFiltersState.dataFilters,
+    });
     expect(queryFilters[col("3")]).toEqual({
       type: "single",
       value: val("3", "0"),
@@ -106,17 +107,18 @@ describe("useQueryFilters", () => {
   });
 
   it("should merge interactive filters state if interactive filters are active at publish time", () => {
-    const queryFilters = prepareCubeQueryFilters(
-      line1Fixture.data.chartConfig.chartType as ChartType,
-      line1Fixture.data.chartConfig.filters as Filters,
-      merge({}, commonInteractiveFiltersConfig, {
+    const queryFilters = prepareCubeQueryFilters({
+      chartType: line1Fixture.data.chartConfig.chartType as ChartType,
+      cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
+      animationField: undefined,
+      interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
         dataFilters: {
           active: true,
         },
       }),
-      undefined,
-      commonInteractiveFiltersState.dataFilters
-    );
+      dashboardFilters: undefined,
+      interactiveDataFilters: commonInteractiveFiltersState.dataFilters,
+    });
 
     expect(queryFilters[col("3")]).toEqual({
       type: "single",
@@ -125,24 +127,25 @@ describe("useQueryFilters", () => {
   });
 
   it("should omit none values since they should not be passed to graphql layer", () => {
-    const queryFilters = prepareCubeQueryFilters(
-      line1Fixture.data.chartConfig.chartType as ChartType,
-      line1Fixture.data.chartConfig.filters as Filters,
-      merge({}, commonInteractiveFiltersConfig, {
+    const queryFilters = prepareCubeQueryFilters({
+      chartType: line1Fixture.data.chartConfig.chartType as ChartType,
+      cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
+      animationField: undefined,
+      interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
         dataFilters: {
           active: true,
         },
       }),
-      undefined,
-      merge({}, commonInteractiveFiltersState, {
+      dashboardFilters: undefined,
+      interactiveDataFilters: merge({}, commonInteractiveFiltersState, {
         dataFilters: {
           [col("3")]: {
             type: "single",
             value: FIELD_VALUE_NONE,
           },
         },
-      }).dataFilters
-    );
+      }).dataFilters,
+    });
 
     expect(queryFilters[col("3")]).toBeUndefined();
   });

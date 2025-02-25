@@ -514,8 +514,8 @@ const MultiFilterContent = ({
  * and contains new values in the color dimension.
  * */
 const useEnsureUpToDateColorMapping = ({
-  colorComponentValues = [],
-  colorMapping = {},
+  colorComponentValues,
+  colorMapping,
 }: {
   colorComponentValues?: DimensionValue[];
   colorMapping?: ColorMapping;
@@ -526,11 +526,18 @@ const useEnsureUpToDateColorMapping = ({
   const { activeField } = chartConfig;
 
   const hasOutdatedMapping = useMemo(() => {
-    return colorComponentValues.some((value) => !colorMapping[value.value]);
+    return colorMapping && colorComponentValues
+      ? colorComponentValues.some((value) => !colorMapping[value.value])
+      : false;
   }, [colorComponentValues, colorMapping]);
 
   useEffect(() => {
-    if (activeField && hasOutdatedMapping) {
+    if (
+      activeField &&
+      hasOutdatedMapping &&
+      colorMapping &&
+      colorComponentValues
+    ) {
       dispatch({
         type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
         value: {

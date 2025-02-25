@@ -84,7 +84,7 @@ const CustomColorPicker = ({
         flexDirection: "column",
         alignItems: "center",
       }}
-    > 
+    >
       <Flex
         sx={{
           width: "162px",
@@ -93,7 +93,7 @@ const CustomColorPicker = ({
         }}
       >
         <Saturation
-          data-testId="color-picker-saturation"
+          data-testid="color-picker-saturation"
           hsva={hsva}
           onChange={(color) => {
             const newHsva = { ...hsva, ...color, a: hsva.a };
@@ -115,10 +115,10 @@ const CustomColorPicker = ({
               backgroundColor: hsvaToHex(hsva),
               borderRadius: "50%",
             }}
-            data-testId="color-square"
+            data-testid="color-square"
           />
           <Hue
-            data-testId="color-picker-hue"
+            data-testid="color-picker-hue"
             hue={hsva.h}
             onChange={(newHue) => {
               const newHsva = { ...hsva, ...newHue };
@@ -151,7 +151,7 @@ const CustomColorPicker = ({
             onChange={updateColorInput}
           />
           <ChromePicker
-            data-testId="color-picker-chrome"
+            data-testid="color-picker-chrome"
             showAlpha={false}
             showHue={false}
             showColorPreview={false}
