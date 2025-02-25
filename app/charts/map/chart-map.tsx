@@ -192,7 +192,7 @@ const ChartMap = memo((props: ChartMapProps) => {
     <MapChart {...props}>
       <ChartContainer>
         <MapComponent
-          customWMTSLayers={chartConfig.baseLayer.customWMTSLayers}
+          customLayers={chartConfig.baseLayer.customLayers}
           value={temporalFilterValue ? +temporalFilterValue : undefined}
         />
         <MapTooltip />

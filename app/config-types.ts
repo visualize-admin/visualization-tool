@@ -799,8 +799,9 @@ const BaseLayer = t.type({
   show: t.boolean,
   locked: t.boolean,
   bbox: t.union([BBox, t.undefined]),
-  customWMTSLayers: t.array(
+  customLayers: t.array(
     t.type({
+      type: t.union([t.literal("wmts"), t.literal("wms")]),
       url: t.string,
       isBehindAreaLayer: t.boolean,
       syncTemporalFilters: t.boolean,

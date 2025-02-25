@@ -137,8 +137,8 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CUSTOM_WMTS_LAYERS_CHANGED";
-      value: BaseLayer["customWMTSLayers"];
+      type: "CUSTOM_LAYERS_CHANGED";
+      value: BaseLayer["customLayers"];
     }
   | {
       type: "INTERACTIVE_FILTER_CHANGED";

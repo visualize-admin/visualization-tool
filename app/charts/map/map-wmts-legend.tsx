@@ -4,7 +4,7 @@ import NextImage from "next/image";
 import { getWMTSLayerValue, useWMTSLayers } from "@/charts/map/wmts-utils";
 import { Error, Loading } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
-import { MapConfig } from "@/config-types";
+import { BaseLayer, MapConfig } from "@/config-types";
 import { truthy } from "@/domain/types";
 import { useLocale } from "@/locales/use-locale";
 import { useFetchData } from "@/utils/use-fetch-data";
@@ -16,9 +16,9 @@ export const MapWMTSLegend = ({
   chartConfig: MapConfig;
   value?: string | number;
 }) => {
-  const customLayers = chartConfig.baseLayer.customWMTSLayers;
+  const customLayers = chartConfig.baseLayer.customLayers;
   const { data: legendsData, error } = useWMTSLegends({
-    customWMTSLayers: chartConfig.baseLayer.customWMTSLayers,
+    customWMTSLayers: chartConfig.baseLayer.customLayers,
   });
 
   return error ? (
@@ -71,7 +71,7 @@ export const MapWMTSLegend = ({
 const useWMTSLegends = ({
   customWMTSLayers,
 }: {
-  customWMTSLayers: MapConfig["baseLayer"]["customWMTSLayers"];
+  customWMTSLayers: BaseLayer["customLayers"];
 }) => {
   const locale = useLocale();
   const { data: wmtsLayers, error: wmtsError } = useWMTSLayers();

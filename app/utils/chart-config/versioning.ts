@@ -1483,14 +1483,14 @@ export const chartConfigMigrations: Migration[] = [
     to: "4.3.0",
     description: `maps {
       baseLayer {
-        + customWMTSLayerUrls
+        + customLayers
       }
     }`,
     up: (config) => {
       const newConfig = { ...config, version: "4.3.0" };
 
       if (newConfig.chartType === "map") {
-        newConfig.baseLayer.customWMTSLayers = [];
+        newConfig.baseLayer.customLayers = [];
       }
 
       return newConfig;
@@ -1499,7 +1499,7 @@ export const chartConfigMigrations: Migration[] = [
       const newConfig = { ...config, version: "4.2.0" };
 
       if (newConfig.chartType === "map") {
-        delete newConfig.baseLayer.customWMTSLayers;
+        delete newConfig.baseLayer.customLayers;
       }
 
       return newConfig;
