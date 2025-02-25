@@ -14,7 +14,7 @@ type WMTSData = {
   };
 };
 
-export type WMTSLayer = {
+type WMTSLayer = {
   Dimension: {
     Default: string | number;
     Value: string | number | (string | number)[];

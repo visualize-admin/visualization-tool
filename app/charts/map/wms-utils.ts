@@ -15,7 +15,7 @@ type WMSData = {
   };
 };
 
-export type WMSLayer = {
+type WMSLayer = {
   Abstract?: string;
   Name: string;
   Title: string;
