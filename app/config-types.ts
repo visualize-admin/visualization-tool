@@ -796,6 +796,7 @@ const MapSymbolLayer = t.type({
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 
 const BaseCustomLayer = t.type({
+  id: t.string,
   isBehindAreaLayer: t.boolean,
   syncTemporalFilters: t.boolean,
 });
@@ -804,7 +805,6 @@ export type BaseCustomLayer = t.TypeOf<typeof BaseCustomLayer>;
 const WMSCustomLayer = t.intersection([
   t.type({
     type: t.literal("wms"),
-    id: t.string,
   }),
   BaseCustomLayer,
 ]);

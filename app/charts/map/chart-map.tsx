@@ -4,10 +4,10 @@ import { memo, useCallback, useMemo } from "react";
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { shouldRenderMap } from "@/charts/map/helpers";
 import { MapComponent } from "@/charts/map/map";
+import { MapCustomLayersLegend } from "@/charts/map/map-custom-layers-legend";
 import { MapLegend } from "@/charts/map/map-legend";
 import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
-import { MapWMTSLegend } from "@/charts/map/map-wmts-legend";
 import {
   ChartContainer,
   ChartControlsContainer,
@@ -214,7 +214,7 @@ const ChartMap = memo((props: ChartMapProps) => {
           }}
         >
           <MapLegend chartConfig={chartConfig} observations={observations} />
-          <MapWMTSLegend
+          <MapCustomLayersLegend
             chartConfig={chartConfig}
             value={temporalFilterValue ? +temporalFilterValue : undefined}
           />

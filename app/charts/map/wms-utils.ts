@@ -19,8 +19,8 @@ export type WMSLayer = {
   Abstract?: string;
   Name: string;
   Title: string;
-  Style: {
-    LegendURL?: {
+  Style?: {
+    LegendURL: {
       OnlineResource: {
         "xlink:href": string;
         width: number;
@@ -32,6 +32,24 @@ export type WMSLayer = {
   };
 };
 
+export type ParsedWMSLayer = {
+  id: string;
+  title: string;
+  description?: string;
+  legendUrl?: string;
+  availableDimensionValues?: (string | number)[];
+  defaultDimensionValue?: string | number;
+};
+
+const parseWMSLayer = (layer: WMSLayer): ParsedWMSLayer => {
+  return {
+    id: layer.Name,
+    title: layer.Title,
+    description: layer.Abstract ?? "",
+    legendUrl: layer.Style?.LegendURL.OnlineResource["xlink:href"],
+  };
+};
+
 const WMS_URL =
   "https://wms.geo.admin.ch/?REQUEST=GetCapabilities&SERVICE=WMS&VERSION=1.3.0&lang=en";
 
@@ -40,7 +58,7 @@ export const useWMSLayers = (
 ) => {
   const locale = useLocale();
 
-  return useFetchData<WMSLayer[]>({
+  return useFetchData<ParsedWMSLayer[]>({
     queryKey: ["custom-wms-layers", locale],
     queryFn: async () => {
       return fetch(`${WMS_URL}?lang=${locale}`).then(async (res) => {
@@ -51,8 +69,9 @@ export const useWMSLayers = (
         });
 
         return res.text().then((text) => {
-          return (parser.parse(text) as WMSData).WMS_Capabilities.Capability
-            .Layer.Layer;
+          return (
+            parser.parse(text) as WMSData
+          ).WMS_Capabilities.Capability.Layer.Layer.map(parseWMSLayer);
         });
       });
     },
@@ -67,7 +86,7 @@ export const getWMSTile = ({
   customLayer,
   beforeId,
 }: {
-  wmsLayers?: WMSLayer[];
+  wmsLayers?: ParsedWMSLayer[];
   customLayer?: WMSCustomLayer;
   beforeId?: string;
 }) => {
@@ -75,7 +94,7 @@ export const getWMSTile = ({
     return;
   }
 
-  const wmsLayer = wmsLayers?.find((layer) => layer.Name === customLayer.id);
+  const wmsLayer = wmsLayers?.find((layer) => layer.id === customLayer.id);
 
   if (!wmsLayer) {
     return;
@@ -86,6 +105,6 @@ export const getWMSTile = ({
     beforeId,
     data: "https://wms.geo.admin.ch/?",
     serviceType: "wms",
-    layers: [wmsLayer.Name],
+    layers: [wmsLayer.id],
   });
 };

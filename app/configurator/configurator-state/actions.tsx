@@ -137,8 +137,30 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CUSTOM_LAYERS_CHANGED";
-      value: BaseLayer["customLayers"];
+      type: "CUSTOM_LAYER_ADD";
+      value: {
+        layer: BaseLayer["customLayers"][number];
+      };
+    }
+  | {
+      type: "CUSTOM_LAYER_UPDATE";
+      value: {
+        layer: BaseLayer["customLayers"][number];
+      };
+    }
+  | {
+      type: "CUSTOM_LAYER_REMOVE";
+      value: {
+        type: BaseLayer["customLayers"][number]["type"];
+        id: string;
+      };
+    }
+  | {
+      type: "CUSTOM_LAYER_SWAP";
+      value: {
+        oldIndex: number;
+        newIndex: number;
+      };
     }
   | {
       type: "INTERACTIVE_FILTER_CHANGED";

@@ -44,6 +44,7 @@ import {
   GenericFields,
   isAreaConfig,
   isColorInConfig,
+  isMapConfig,
   isSegmentInConfig,
   isTableConfig,
   Limit,
@@ -810,10 +811,62 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "CUSTOM_LAYERS_CHANGED":
+    case "CUSTOM_LAYER_ADD":
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
-        setWith(chartConfig, "baseLayer.customLayers", action.value, Object);
+
+        if (isMapConfig(chartConfig)) {
+          chartConfig.baseLayer.customLayers.push(action.value.layer);
+        }
+      }
+
+      return draft;
+
+    case "CUSTOM_LAYER_UPDATE":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+
+        if (isMapConfig(chartConfig)) {
+          const { layer } = action.value;
+          const i = chartConfig.baseLayer.customLayers.findIndex(
+            (l) => l.type === layer.type && l.id === layer.id
+          );
+
+          if (i !== -1) {
+            chartConfig.baseLayer.customLayers[i] = layer;
+          }
+        }
+      }
+
+      return draft;
+
+    case "CUSTOM_LAYER_REMOVE":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+
+        if (isMapConfig(chartConfig)) {
+          const { type, id } = action.value;
+          chartConfig.baseLayer.customLayers =
+            chartConfig.baseLayer.customLayers.filter(
+              (layer) => !(layer.type === type && layer.id === id)
+            );
+        }
+      }
+
+      return draft;
+
+    case "CUSTOM_LAYER_SWAP":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+
+        if (isMapConfig(chartConfig)) {
+          const { oldIndex, newIndex } = action.value;
+          const customLayers = chartConfig.baseLayer.customLayers;
+          const newCustomLayers = [...customLayers];
+          const [removed] = newCustomLayers.splice(oldIndex, 1);
+          newCustomLayers.splice(newIndex, 0, removed);
+          chartConfig.baseLayer.customLayers = newCustomLayers;
+        }
       }
 
       return draft;

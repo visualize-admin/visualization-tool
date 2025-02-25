@@ -14,7 +14,7 @@ type WMTSData = {
   };
 };
 
-type WMTSLayer = {
+export type WMTSLayer = {
   Dimension: {
     Default: string | number;
     Value: string | number | (string | number)[];
@@ -49,6 +49,32 @@ type WMTSLayer = {
   };
 };
 
+export type ParsedWMTSLayer = {
+  id: string;
+  url: string;
+  title: string;
+  description?: string;
+  legendUrl?: string;
+  dimensionIdentifier: string;
+  availableDimensionValues: (string | number)[];
+  defaultDimensionValue: string | number;
+};
+
+const parseWMTSLayer = (layer: WMTSLayer): ParsedWMTSLayer => {
+  return {
+    id: layer["ows:Identifier"],
+    url: layer.ResourceURL.template,
+    title: layer["ows:Title"],
+    description: layer["ows:Abstract"],
+    legendUrl: layer.Style.LegendURL?.["xlink:href"],
+    dimensionIdentifier: layer.Dimension["ows:Identifier"],
+    availableDimensionValues: Array.isArray(layer.Dimension.Value)
+      ? layer.Dimension.Value
+      : [layer.Dimension.Value],
+    defaultDimensionValue: layer.Dimension.Default,
+  };
+};
+
 const WMTS_URL =
   "https://wmts.geo.admin.ch/EPSG/3857/1.0.0/WMTSCapabilities.xml";
 
@@ -57,7 +83,7 @@ export const useWMTSLayers = (
 ) => {
   const locale = useLocale();
 
-  return useFetchData<WMTSLayer[]>({
+  return useFetchData<ParsedWMTSLayer[]>({
     queryKey: ["custom-wmts-layers", locale],
     queryFn: async () => {
       return fetch(`${WMTS_URL}?lang=${locale}`).then(async (res) => {
@@ -68,7 +94,9 @@ export const useWMTSLayers = (
         });
 
         return res.text().then((text) => {
-          return (parser.parse(text) as WMTSData).Capabilities.Contents.Layer;
+          return (
+            parser.parse(text) as WMTSData
+          ).Capabilities.Contents.Layer.map(parseWMTSLayer);
         });
       });
     },
@@ -84,7 +112,7 @@ export const getWMTSTile = ({
   beforeId,
   value,
 }: {
-  wmtsLayers?: WMTSLayer[];
+  wmtsLayers?: ParsedWMTSLayer[];
   customLayer?: WMTSCustomLayer;
   beforeId?: string;
   value?: number | string;
@@ -93,9 +121,7 @@ export const getWMTSTile = ({
     return;
   }
 
-  const wmtsLayer = wmtsLayers?.find(
-    (layer) => layer.ResourceURL.template === customLayer.url
-  );
+  const wmtsLayer = wmtsLayers?.find((layer) => layer.id === customLayer.id);
 
   if (!wmtsLayer) {
     return;
@@ -105,9 +131,10 @@ export const getWMTSTile = ({
     id: `tile-layer-${customLayer.url}`,
     beforeId,
     data: getWMTSLayerData(customLayer.url, {
-      identifier: wmtsLayer.Dimension["ows:Identifier"],
+      identifier: wmtsLayer.dimensionIdentifier,
       value: getWMTSLayerValue({
-        wmtsLayer,
+        availableDimensionValues: wmtsLayer.availableDimensionValues,
+        defaultDimensionValue: wmtsLayer.defaultDimensionValue,
         customLayer,
         value,
       }),
@@ -144,22 +171,21 @@ const getWMTSLayerData = (
 };
 
 export const getWMTSLayerValue = ({
-  wmtsLayer,
+  availableDimensionValues,
+  defaultDimensionValue,
   customLayer,
   value,
 }: {
-  wmtsLayer: WMTSLayer;
+  availableDimensionValues: (string | number)[];
+  defaultDimensionValue: string | number;
   customLayer?: WMTSCustomLayer;
   value?: string | number;
 }) => {
-  const { Dimension } = wmtsLayer;
-  const { Value: values, Default: defaultValue } = Dimension;
-
   if (!customLayer?.syncTemporalFilters) {
-    return defaultValue;
+    return defaultDimensionValue;
   }
 
-  return value && Array.isArray(values) && values.includes(value)
+  return value && availableDimensionValues.includes(value)
     ? value
-    : defaultValue;
+    : defaultDimensionValue;
 };
