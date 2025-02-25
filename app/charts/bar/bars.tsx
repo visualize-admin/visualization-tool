@@ -79,8 +79,16 @@ export const ErrorWhiskers = () => {
 };
 
 export const Bars = () => {
-  const { chartData, bounds, getX, xScale, getY, yScale, getRenderingKey } =
-    useChartState() as BarsState;
+  const {
+    chartData,
+    bounds,
+    getX,
+    xScale,
+    getY,
+    yScale,
+    getRenderingKey,
+    colors,
+  } = useChartState() as BarsState;
   const theme = useTheme();
   const { margins } = bounds;
   const ref = useRef<SVGGElement>(null);
@@ -89,10 +97,6 @@ export const Bars = () => {
   const bandwidth = yScale.bandwidth();
   const x0 = xScale(0);
   const renderData: RenderBarDatum[] = useMemo(() => {
-    const getColor = (d: number) => {
-      return d <= 0 ? theme.palette.secondary.main : schemeCategory10[0];
-    };
-
     return chartData.map((d) => {
       const key = getRenderingKey(d);
       const yScaled = yScale(getY(d)) as number;
@@ -101,7 +105,6 @@ export const Bars = () => {
       const xScaled = xScale(x);
       const xRender = xScale(Math.min(x, 0));
       const width = Math.max(0, Math.abs(xScaled - x0));
-      const color = getColor(x);
 
       return {
         key,
@@ -109,7 +112,7 @@ export const Bars = () => {
         y: yScaled,
         width,
         height: bandwidth,
-        color,
+        color: colors(d.key as string) ?? schemeCategory10[0],
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
