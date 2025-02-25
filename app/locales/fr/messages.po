@@ -537,6 +537,7 @@ msgid "controls.color.palette.reset"
 msgstr "Réinitialiser la palette de couleurs"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
+#: app/configurator/components/chart-controls/color-ramp.tsx
 msgid "controls.color.palette.select"
 msgstr "Choisir une palette de couleurs"
 
@@ -611,10 +612,6 @@ msgstr "Couleur de base"
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption-categorical"
 msgstr "Utilisez des couleurs distinctes et contrastées. Évitez d'utiliser trop de couleurs, au maximum 5 à 7. Appliquez des palettes séquentielles pour les données ordonnées et des palettes divergentes pour les extrêmes."
-
-#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
-msgid "controls.custom-color-palettes.caption-sequential"
-msgstr "Sélectionnez une couleur d'extrémité foncée pour obtenir un fort contraste entre les valeurs faibles et élevées ; la couleur claire est calculée automatiquement. Les palettes de couleurs séquentielles conviennent aux données ordonnées telles que les températures ou les densités de population."
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
@@ -765,10 +762,6 @@ msgstr "Filtres sélectionnés"
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.filters.select.to"
 msgstr "Au"
-
-#: app/configurator/components/filters.tsx
-msgid "controls.filters.show-legend-toggle"
-msgstr "Permettre aux utilisateurs de modifier la visibilité des légendes"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.show-legend.toggle"
