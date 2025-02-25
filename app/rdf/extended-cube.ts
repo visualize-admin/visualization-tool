@@ -31,7 +31,8 @@ export class ExtendedCube extends Cube {
 
   async fetchShape() {
     const shapeData = await this.source.client.query.construct(
-      this.shapeQuery()
+      this.shapeQuery(),
+      { operation: "postUrlencoded" }
     );
     this.dataset.addAll(shapeData);
     this.shapeDataset.addAll(shapeData);
