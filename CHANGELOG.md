@@ -11,6 +11,7 @@ You can also check the
 
 # Unreleased
 
+
 - Features
   - Limits can now be displayed in bar charts
   - Exact limit values are now displayed in legend
@@ -58,7 +59,9 @@ You can also check the
   - Fixed Map Symbol Layer custom color palette support for all palette types
 - Maintenance
   - Added authentication method to e2e tests
-  - Added authentication to Vercel previews for easier testing
+  - Added authentication to vercel previews for easier testing
+  - flags can now be toggle by clicking "ctrl + t + d" on the keyboard (t,d =>
+    toggle debug)
 
 # [5.2.4] - 2025-02-06
 
