@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.3.0] - 2025-02-25
+
 - Features
   - It's now possible to add custom WMTS layers coming from wmts.geo.admin.ch to
     map charts
@@ -19,7 +23,7 @@ You can also check the
 - Fixes
   - Line chart dots are now based on data, eliminating misaligned dots
   - Added a fallback to color selector
-  - Dynamic descriptions for custom color palette types
+  - Added dynamic descriptions for custom color palette types
   - Show line dot sizes are now translated
 
 # [5.2.6] - 2025-02-18
