@@ -35,16 +35,14 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 export const CustomLayersSelector = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state) as MapConfig;
-  const chartConfigLayers = chartConfig.baseLayer.customWMTSLayers;
+  const chartConfigLayers = chartConfig.baseLayer.customLayers;
   const { data, error } = useWMTSLayers();
-  const handleChange = useEventCallback(
-    (value: BaseLayer["customWMTSLayers"]) => {
-      dispatch({
-        type: "CUSTOM_WMTS_LAYERS_CHANGED",
-        value,
-      });
-    }
-  );
+  const handleChange = useEventCallback((value: BaseLayer["customLayers"]) => {
+    dispatch({
+      type: "CUSTOM_LAYERS_CHANGED",
+      value,
+    });
+  });
   const options: SelectOption[] = useMemo(() => {
     if (!data) {
       return [];
@@ -227,6 +225,7 @@ export const CustomLayersSelector = () => {
               handleChange([
                 ...chartConfigLayers,
                 {
+                  type: "wmts",
                   url: value.value,
                   isBehindAreaLayer: false,
                   syncTemporalFilters: false,

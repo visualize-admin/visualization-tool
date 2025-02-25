@@ -73,7 +73,7 @@ const CONFIGURATOR_STATE = {
         dataFilters: { active: false, componentIds: [] },
         calculation: { active: false, type: "identity" },
       },
-      baseLayer: { show: true, locked: false, customWMTSLayers: [] },
+      baseLayer: { show: true, locked: false, customLayers: [] },
       fields: {
         areaLayer: {
           componentId:

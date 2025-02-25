@@ -9,8 +9,6 @@ import maplibreglRaw from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Map, { LngLatLike, MapboxEvent } from "react-map-gl";
 
-import "maplibre-gl/dist/maplibre-gl.css";
-
 import {
   DEFAULT_COLOR,
   FLY_TO_DURATION,
@@ -34,6 +32,8 @@ import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
+
+import "maplibre-gl/dist/maplibre-gl.css";
 
 // supported was removed as of maplibre-gl v3.0.0, so we need to add it back
 const maplibregl = { ...maplibreglRaw, supported };
@@ -86,21 +86,21 @@ const resizeAndFit = debounce((map: mapboxgl.Map, bbox: BBox) => {
 }, 0);
 
 export const MapComponent = ({
-  customWMTSLayers,
+  customLayers,
   value,
 }: {
-  customWMTSLayers: BaseLayer["customWMTSLayers"];
+  customLayers: BaseLayer["customLayers"];
   value?: string | number;
 }) => {
   const classes = useStyles();
   const locale = useLocale();
 
   const { data: wmtsLayers } = useWMTSLayers({
-    pause: !customWMTSLayers.length,
+    pause: !customLayers.length,
   });
   const { behindAreaTileLayers, afterAreaTileLayers } = useMemo(() => {
     return {
-      behindAreaTileLayers: customWMTSLayers
+      behindAreaTileLayers: customLayers
         .filter((layer) => layer.isBehindAreaLayer)
         .map((layer) => {
           return getWMTSTile({
@@ -110,7 +110,7 @@ export const MapComponent = ({
             value,
           });
         }),
-      afterAreaTileLayers: customWMTSLayers
+      afterAreaTileLayers: customLayers
         .filter((layer) => !layer.isBehindAreaLayer)
         .map((layer) => {
           return getWMTSTile({
@@ -120,7 +120,7 @@ export const MapComponent = ({
           });
         }),
     };
-  }, [customWMTSLayers, value, wmtsLayers]);
+  }, [customLayers, value, wmtsLayers]);
 
   const [{ interaction }, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();

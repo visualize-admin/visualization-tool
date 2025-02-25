@@ -58,7 +58,7 @@ export const useWMTSLayers = (
   const locale = useLocale();
 
   return useFetchData<WMTSData["Capabilities"]["Contents"]["Layer"]>({
-    queryKey: ["custom-layers", locale],
+    queryKey: ["custom-wmts-layers", locale],
     queryFn: async () => {
       return fetch(`${WMTS_URL}?lang=${locale}`).then(async (res) => {
         const parser = new XMLParser({
@@ -85,7 +85,7 @@ export const getWMTSTile = ({
   value,
 }: {
   wmtsLayers?: WMTSData["Capabilities"]["Contents"]["Layer"];
-  customLayer?: BaseLayer["customWMTSLayers"][number];
+  customLayer?: BaseLayer["customLayers"][number];
   beforeId?: string;
   value?: number | string;
 }) => {
@@ -149,7 +149,7 @@ export const getWMTSLayerValue = ({
   value,
 }: {
   wmtsLayer: WMTSLayer;
-  customLayer?: BaseLayer["customWMTSLayers"][number];
+  customLayer?: BaseLayer["customLayers"][number];
   value?: string | number;
 }) => {
   const { Dimension } = wmtsLayer;

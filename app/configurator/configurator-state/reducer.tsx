@@ -810,15 +810,10 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "CUSTOM_WMTS_LAYERS_CHANGED":
+    case "CUSTOM_LAYERS_CHANGED":
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
-        setWith(
-          chartConfig,
-          "baseLayer.customWMTSLayers",
-          action.value,
-          Object
-        );
+        setWith(chartConfig, "baseLayer.customLayers", action.value, Object);
       }
 
       return draft;

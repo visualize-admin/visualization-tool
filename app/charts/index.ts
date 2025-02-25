@@ -515,7 +515,7 @@ export const getInitialConfig = (
           show: true,
           locked: false,
           bbox: undefined,
-          customWMTSLayers: [],
+          customLayers: [],
         },
         fields: {
           ...(showAreaLayer
