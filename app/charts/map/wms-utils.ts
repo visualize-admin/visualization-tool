@@ -15,13 +15,14 @@ type WMSData = {
   };
 };
 
-type WMSLayer = {
+export type WMSLayer = {
+  Abstract?: string;
   Name: string;
   Title: string;
   Style: {
     LegendURL?: {
       OnlineResource: {
-        "xmlns:xlink": string;
+        "xlink:href": string;
         width: number;
         height: number;
       };
