@@ -9,6 +9,7 @@ import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { Icon } from "@/icons";
 import { useLocale } from "@/src";
 import { BaseStatsCard } from "@/statistics/base-stats-card";
+import { CardGrid } from "@/statistics/card-grid";
 import { ChartLink } from "@/statistics/chart-link";
 import { formatInteger } from "@/statistics/formatters";
 import {
@@ -95,14 +96,7 @@ const Statistics = (props: Serialized<PageProps>) => {
         }}
       >
         <h1 style={{ margin: 0 }}>Statistics</h1>
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: ["1fr", "1fr", "1fr 1fr"],
-            gap: 4,
-            my: [4, 6],
-          }}
-        >
+        <CardGrid>
           {charts.countByDay.length > 0 && (
             <StatsCard
               countByDay={charts.countByDay}
@@ -155,6 +149,7 @@ const Statistics = (props: Serialized<PageProps>) => {
               columnName="Chart link"
             />
           )}
+        </CardGrid>
         </Box>
       </Box>
     </AppLayout>
