@@ -142,7 +142,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   //Update Color palettes
   //Edit Categorical Palette add more colors
   await page
-    .getByRole("button", { name: "Edit Color Palette" })
+    .getByRole("button", { name: "login.profile.my-color-palettes.edit" })
     .first()
     .click();
 
@@ -157,7 +157,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
 
   //Edit Sequential Palette change type
   await page
-    .getByRole("button", { name: "Edit Color Palette" })
+    .getByRole("button", { name: "login.profile.my-color-palettes.edit" })
     .first()
     .click();
   await page
@@ -194,7 +194,11 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
       const titleText = await titleElement.textContent();
 
       if (titleText && titleText.trim() === paletteName.trim()) {
-        await row.getByRole("button", { name: "Delete Color Palette" }).click();
+        await row
+          .getByRole("button", {
+            name: "login.profile.my-color-palettes.delete",
+          })
+          .click();
 
         await page.waitForTimeout(300);
         break;
