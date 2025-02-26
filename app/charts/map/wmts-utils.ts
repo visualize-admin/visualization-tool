@@ -139,6 +139,7 @@ export const getWMTSTile = ({
         value,
       }),
     }),
+    tileSize: 256,
     renderSubLayers: (props) => {
       const { boundingBox } = props.tile;
       return new BitmapLayer(props, {
