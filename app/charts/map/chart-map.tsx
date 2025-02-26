@@ -1,8 +1,10 @@
+import { Box } from "@mui/material";
 import { memo, useCallback, useMemo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { shouldRenderMap } from "@/charts/map/helpers";
 import { MapComponent } from "@/charts/map/map";
+import { MapCustomLayersLegend } from "@/charts/map/map-custom-layers-legend";
 import { MapLegend } from "@/charts/map/map-legend";
 import { MapChart } from "@/charts/map/map-state";
 import { MapTooltip } from "@/charts/map/map-tooltip";
@@ -12,7 +14,10 @@ import {
 } from "@/charts/shared/containers";
 import { NoGeometriesHint } from "@/components/hint";
 import { Cube, MapConfig } from "@/config-types";
-import { useChartConfigFilters } from "@/config-utils";
+import {
+  useChartConfigFilters,
+  useDefinitiveTemporalFilterValue,
+} from "@/config-utils";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import {
   dimensionValuesToGeoCoordinates,
@@ -181,11 +186,15 @@ const ChartMap = memo((props: ChartMapProps) => {
   const { chartConfig, dimensions, observations } = props;
   const { fields } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
+  const temporalFilterValue = useDefinitiveTemporalFilterValue({ dimensions });
 
   return (
     <MapChart {...props}>
       <ChartContainer>
-        <MapComponent />
+        <MapComponent
+          customLayers={chartConfig.baseLayer.customLayers}
+          value={temporalFilterValue ? +temporalFilterValue : undefined}
+        />
         <MapTooltip />
       </ChartContainer>
       <ChartControlsContainer sx={{ mt: 6 }}>
@@ -196,7 +205,20 @@ const ChartMap = memo((props: ChartMapProps) => {
             {...fields.animation}
           />
         )}
-        <MapLegend chartConfig={chartConfig} observations={observations} />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 4,
+            flexWrap: "wrap",
+          }}
+        >
+          <MapLegend chartConfig={chartConfig} observations={observations} />
+          <MapCustomLayersLegend
+            chartConfig={chartConfig}
+            value={temporalFilterValue ? +temporalFilterValue : undefined}
+          />
+        </Box>
       </ChartControlsContainer>
     </MapChart>
   );

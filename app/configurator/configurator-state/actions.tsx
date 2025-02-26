@@ -1,5 +1,6 @@
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import {
+  BaseLayer,
   ChartConfig,
   ChartType,
   ColorField,
@@ -133,6 +134,32 @@ export type ConfiguratorStateAction =
       value: {
         path: string | string[];
         value: string;
+      };
+    }
+  | {
+      type: "CUSTOM_LAYER_ADD";
+      value: {
+        layer: BaseLayer["customLayers"][number];
+      };
+    }
+  | {
+      type: "CUSTOM_LAYER_UPDATE";
+      value: {
+        layer: BaseLayer["customLayers"][number];
+      };
+    }
+  | {
+      type: "CUSTOM_LAYER_REMOVE";
+      value: {
+        type: BaseLayer["customLayers"][number]["type"];
+        id: string;
+      };
+    }
+  | {
+      type: "CUSTOM_LAYER_SWAP";
+      value: {
+        oldIndex: number;
+        newIndex: number;
       };
     }
   | {

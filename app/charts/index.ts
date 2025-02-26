@@ -515,6 +515,7 @@ export const getInitialConfig = (
           show: true,
           locked: false,
           bbox: undefined,
+          customLayers: [],
         },
         fields: {
           ...(showAreaLayer

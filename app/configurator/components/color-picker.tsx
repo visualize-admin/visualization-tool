@@ -84,7 +84,7 @@ const CustomColorPicker = ({
         flexDirection: "column",
         alignItems: "center",
       }}
-    > 
+    >
       <Flex
         sx={{
           width: "162px",

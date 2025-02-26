@@ -1,15 +1,13 @@
-import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers/typed";
+import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
 import { supported } from "@mapbox/mapbox-gl-supported";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { geoArea } from "d3-geo";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
-import maplibreglraw from "maplibre-gl";
+import maplibreglRaw from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Map, { LngLatLike, MapboxEvent } from "react-map-gl";
-
-import "maplibre-gl/dist/maplibre-gl.css";
 
 import {
   DEFAULT_COLOR,
@@ -25,17 +23,25 @@ import {
 import { MapState } from "@/charts/map/map-state";
 import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
 import { getMap, setMap } from "@/charts/map/ref";
+import { getWMSTile, useWMSLayers } from "@/charts/map/wms-utils";
+import { getWMTSTile, useWMTSLayers } from "@/charts/map/wmts-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { BBox } from "@/configurator";
+import {
+  BaseLayer,
+  BBox,
+  getWMSCustomLayers,
+  getWMTSCustomLayers,
+} from "@/configurator";
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 // supported was removed as of maplibre-gl v3.0.0, so we need to add it back
-const maplibregl = { ...maplibreglraw, supported };
+const maplibregl = { ...maplibreglRaw, supported };
 
 const useStyles = makeStyles<Theme>((theme) => ({
   controlButtons: {
@@ -84,9 +90,75 @@ const resizeAndFit = debounce((map: mapboxgl.Map, bbox: BBox) => {
   map.fitBounds(bbox, { duration: 0 });
 }, 0);
 
-export const MapComponent = () => {
+export const MapComponent = ({
+  customLayers,
+  value,
+}: {
+  customLayers: BaseLayer["customLayers"];
+  value?: string | number;
+}) => {
   const classes = useStyles();
   const locale = useLocale();
+
+  const { wmsCustomLayers, wmtsCustomLayers } = useMemo(() => {
+    return {
+      wmsCustomLayers: getWMSCustomLayers(customLayers),
+      wmtsCustomLayers: getWMTSCustomLayers(customLayers),
+    };
+  }, [customLayers]);
+
+  const { data: wmsLayers } = useWMSLayers({
+    pause: wmsCustomLayers.length === 0,
+  });
+  const { data: wmtsLayers } = useWMTSLayers({
+    pause: wmtsCustomLayers.length === 0,
+  });
+  const { behindAreaCustomLayers, afterAreaCustomLayers } = useMemo(() => {
+    return {
+      behindAreaCustomLayers: customLayers
+        .filter((customLayer) => customLayer.isBehindAreaLayer)
+        .map((customLayer) => {
+          switch (customLayer.type) {
+            case "wms":
+              return getWMSTile({
+                wmsLayers,
+                customLayer,
+                beforeId: "areaLayer",
+              });
+            case "wmts":
+              return getWMTSTile({
+                wmtsLayers,
+                customLayer,
+                beforeId: "areaLayer",
+                value,
+              });
+            default:
+              const _exhaustiveCheck: never = customLayer;
+              return _exhaustiveCheck;
+          }
+        }),
+      afterAreaCustomLayers: customLayers
+        .filter((customLayer) => !customLayer.isBehindAreaLayer)
+        .map((customLayer) => {
+          switch (customLayer.type) {
+            case "wms":
+              return getWMSTile({
+                wmsLayers,
+                customLayer,
+              });
+            case "wmts":
+              return getWMTSTile({
+                wmtsLayers,
+                customLayer,
+                value,
+              });
+            default:
+              const _exhaustiveCheck: never = customLayer;
+              return _exhaustiveCheck;
+          }
+        }),
+    };
+  }, [customLayers, value, wmsLayers, wmtsLayers]);
 
   const [{ interaction }, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
@@ -228,6 +300,7 @@ export const MapComponent = () => {
     return new GeoJsonLayer({
       id: "areaLayer",
       beforeId: showBaseLayer ? "water_polygon" : undefined,
+      // @ts-ignore this is correct
       data: sortedShapes,
       pickable: true,
       parameters: {
@@ -285,6 +358,9 @@ export const MapComponent = () => {
 
       return new GeoJsonLayer({
         id: "hoverLayer",
+        beforeId: afterAreaCustomLayers.length
+          ? afterAreaCustomLayers[0]?.props.id
+          : undefined,
         // @ts-ignore
         data: shape,
         filled: true,
@@ -294,7 +370,13 @@ export const MapComponent = () => {
         getFillColor,
       });
     }
-  }, [areaLayer, interaction.d, interaction.visible, sortedShapes]);
+  }, [
+    afterAreaCustomLayers,
+    areaLayer,
+    interaction.d,
+    interaction.visible,
+    sortedShapes,
+  ]);
 
   const scatterplotLayer = useMemo(() => {
     if (!symbolLayer) {
@@ -444,10 +526,16 @@ export const MapComponent = () => {
           onResize={handleResize}
           {...viewState}
         >
-          <div data-map-loaded={loaded ? "true" : "false"} />
+          <div data-map-loaded={loaded} />
           <DeckGLOverlay
             interleaved
-            layers={[geoJsonLayer, hoverLayer, scatterplotLayer]}
+            layers={[
+              ...behindAreaCustomLayers,
+              geoJsonLayer,
+              hoverLayer,
+              ...afterAreaCustomLayers,
+              scatterplotLayer,
+            ]}
           />
         </Map>
       ) : null}
