@@ -1,10 +1,10 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { rollups, sum } from "d3-array";
 import { GetServerSideProps } from "next";
 
 import { AppLayout } from "@/components/layout";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
-import prisma from "@/db/client";
+import { ChartType, LayoutDashboard, LayoutType } from "@/config-types";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { Icon } from "@/icons";
 import { useLocale } from "@/src";
@@ -21,6 +21,7 @@ import {
   fetchViewCountByDay,
   fetchViewTrendAverages,
 } from "@/statistics/prisma";
+import { SectionTitle, SectionTitleWrapper } from "@/statistics/sections";
 import { StatProps, StatsCard } from "@/statistics/stats-card";
 
 type PageProps = {
@@ -95,14 +96,23 @@ const Statistics = (props: Serialized<PageProps>) => {
           px: 4,
         }}
       >
-        <h1 style={{ margin: 0 }}>Statistics</h1>
+        <SectionTitleWrapper>
+          <SectionTitle title="Basic statistics" />
+          <Typography>
+            Gain insights into number of charts and view trends in Visualize.
+          </Typography>
+          <Typography>
+            The data on chart views <b>is not complete</b> as it was started to
+            be collected in 2024.
+          </Typography>
+        </SectionTitleWrapper>
         <CardGrid>
           {charts.countByDay.length > 0 && (
             <StatsCard
               countByDay={charts.countByDay}
               trendAverages={charts.trendAverages}
               title={(total) =>
-                `Visualize users created ${formatInteger(total)} charts in total`
+                `Visualize users created ${formatInteger(total)} charts`
               }
               subtitle={(total, avgMonthlyCount) =>
                 `${total ? ` It's around ${formatInteger(avgMonthlyCount)} chart${avgMonthlyCount > 1 ? "s" : ""} per month on average.` : ""}`
@@ -114,7 +124,7 @@ const Statistics = (props: Serialized<PageProps>) => {
               countByDay={views.countByDay}
               trendAverages={views.trendAverages}
               title={(total) =>
-                `Charts were viewed ${formatInteger(total)} times in total`
+                `Charts were viewed ${formatInteger(total)} times`
               }
               subtitle={(total, avgMonthlyCount) =>
                 `${total ? ` It's around ${formatInteger(avgMonthlyCount)} view${avgMonthlyCount > 1 ? "s" : ""} per month on average.` : ""}`
