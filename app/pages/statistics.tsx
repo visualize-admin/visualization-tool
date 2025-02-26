@@ -371,6 +371,7 @@ const BaseStatsCard = ({
   data,
   columnName = "Date",
   trend,
+  showPercentage = false,
 }: {
   title: string;
   subtitle: string;
@@ -381,8 +382,11 @@ const BaseStatsCard = ({
     lastMonthDailyAverage: number;
     previousThreeMonthsDailyAverage: number;
   };
+  showPercentage?: boolean;
 }) => {
+  const totalCount = sum(data, ([, { count }]) => count) ?? 1;
   const maxCount = max(data, ([, { count }]) => count) ?? 1;
+
   return (
     <Card
       sx={{
@@ -442,7 +446,9 @@ const BaseStatsCard = ({
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: "auto auto 1fr",
+          gridTemplateColumns: showPercentage
+            ? "auto auto auto 1fr"
+            : "auto auto 1fr",
           gridTemplateRows: "auto",
           gap: "2px",
           width: "100%",
@@ -490,6 +496,24 @@ const BaseStatsCard = ({
             Count
           </Typography>
         </Box>
+        {showPercentage ? (
+          <Box
+            sx={{
+              position: "sticky",
+              top: 0,
+              width: "100%",
+              py: "0.3rem",
+              px: "0.6rem",
+              borderBottom: (t) => `2px solid ${t.palette.divider}`,
+              backgroundColor: "background.paper",
+              textAlign: "end",
+            }}
+          >
+            <Typography variant="caption" sx={{ fontWeight: "bold" }}>
+              Share
+            </Typography>
+          </Box>
+        ) : null}
         <Box
           sx={{
             zIndex: 1,
@@ -503,7 +527,13 @@ const BaseStatsCard = ({
           }}
         />
         {data.map(([key, datum]) => (
-          <Bar key={key} {...datum} maxCount={maxCount} />
+          <Bar
+            key={key}
+            {...datum}
+            maxCount={maxCount}
+            totalCount={totalCount}
+            showPercentage={showPercentage}
+          />
         ))}
       </Box>
     </Card>
@@ -514,11 +544,16 @@ const Bar = ({
   label,
   count,
   maxCount,
+  totalCount,
+  showPercentage,
 }: ComponentProps<typeof BaseStatsCard>["data"][number][1] & {
   label: ReactNode;
   maxCount: number;
+  totalCount: number;
+  showPercentage?: boolean;
 }) => {
   const easterEgg = useFlag("easter-eggs");
+
   return (
     <>
       <Box
@@ -544,6 +579,21 @@ const Bar = ({
       >
         <Typography variant="caption">{formatInteger(count)}</Typography>
       </Box>
+      {showPercentage ? (
+        <Box
+          sx={{
+            width: "100%",
+            py: "0.3rem",
+            px: "0.6rem",
+            backgroundColor: "background.paper",
+            textAlign: "end",
+          }}
+        >
+          <Typography variant="caption">
+            {formatInteger((count / totalCount) * 100)}%
+          </Typography>
+        </Box>
+      ) : null}
       <Box
         sx={{
           width: "100%",
