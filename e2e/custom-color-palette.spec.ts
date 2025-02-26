@@ -2,7 +2,30 @@ import { Page } from "@playwright/test";
 
 import { setup, sleep } from "./common";
 
-const { test, expect, describe } = setup();
+const { test, expect } = setup();
+
+const clearColorPalettes = async (page: Page) => {
+  while (true) {
+    const deleteButtonCount = await page
+      .getByRole("button", {
+        name: "login.profile.my-color-palettes.delete",
+      })
+      .count();
+
+    if (deleteButtonCount === 0) {
+      break;
+    }
+
+    await page
+      .getByRole("button", {
+        name: "login.profile.my-color-palettes.delete",
+      })
+      .first()
+      .click();
+
+    await page.waitForTimeout(500);
+  }
+};
 
 const addNewColor = async (page: Page, i: number) => {
   await page.locator('[data-testid="profile-add-new-color"]').click();
@@ -39,6 +62,8 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   const url = page.url();
   expect(url.endsWith("/en/profile")).toBe(true);
   await page.locator('[data-testid="color-palettes-tab"]').click();
+
+  await clearColorPalettes(page);
 
   //Create Categorical Palette
   await page.locator('[data-testid="add-profile-color-palette"]').click();
