@@ -61,7 +61,9 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await page.goto("/en/profile");
   const url = page.url();
   expect(url.endsWith("/en/profile")).toBe(true);
-  await page.locator('[data-testid="color-palettes-tab"]').click();
+  const tab = page.locator('[data-testid="color-palettes-tab"]');
+  await tab.waitFor({ state: "visible", timeout: 5000 });
+  await tab.click();
 
   await clearColorPalettes(page);
 
