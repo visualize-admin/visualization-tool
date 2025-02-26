@@ -631,7 +631,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           calculation: {},
           colorPalette: {
             type: "single",
-            paletteId: "schemeCategory10",
+            paletteId: "category10",
             color: schemeCategory10[0],
           },
           imputation: {
@@ -675,7 +675,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "schemeCategory10",
+            paletteId: "category10",
             color: schemeCategory10[0],
           },
           showStandardError: {},
@@ -796,7 +796,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           },
           colorPalette: {
             type: "single",
-            paletteId: "schemeCategory10",
+            paletteId: "category10",
             color: schemeCategory10[0],
           },
           useAbbreviations: {},
@@ -838,7 +838,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           showConfidenceInterval: {},
           colorPalette: {
             type: "single",
-            paletteId: "schemeCategory10",
+            paletteId: "category10",
             color: schemeCategory10[0],
           },
         },
@@ -976,7 +976,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "schemeCategory10",
+            paletteId: "category10",
             color: schemeCategory10[0],
           },
           showStandardError: {},
@@ -1003,7 +1003,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "schemeCategory10",
+            paletteId: "category10",
             color: schemeCategory10[0],
           },
           useAbbreviations: {},
@@ -1100,7 +1100,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "schemeCategory10",
+            paletteId: "category10",
             color: schemeCategory10[0],
           },
           useAbbreviations: {},
@@ -1137,7 +1137,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "schemeCategory10",
+            paletteId: "category10",
             color: schemeCategory10[0],
           },
           useAbbreviations: {},
