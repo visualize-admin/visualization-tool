@@ -10,7 +10,7 @@ import { ComponentProps, ReactNode, useMemo } from "react";
 import { AppLayout } from "@/components/layout";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
 import prisma from "@/db/client";
-import { Serialized, deserializeProps, serializeProps } from "@/db/serialize";
+import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { useFlag } from "@/flags";
 import { Icon } from "@/icons";
 import { Locale } from "@/locales/locales";
@@ -265,7 +265,7 @@ const Statistics = (props: Serialized<PageProps>) => {
           {charts.mostPopularAllTime.length > 0 && (
             <BaseStatsCard
               title="Most popular charts (all time)"
-              subtitle="Top 25 charts by view count"
+              subtitle="Top 25 charts by view count."
               data={charts.mostPopularAllTime.map((chart) => [
                 chart.key,
                 {
@@ -273,13 +273,13 @@ const Statistics = (props: Serialized<PageProps>) => {
                   label: <ChartLink locale={locale} chartKey={chart.key} />,
                 },
               ])}
-              columnName="Chart"
+              columnName="Chart link"
             />
           )}
           {charts.mostPopularThisMonth.length > 0 && (
             <BaseStatsCard
               title="Most popular charts (last 30 days)"
-              subtitle="Top 25 charts by view count"
+              subtitle="Top 25 charts by view count."
               data={charts.mostPopularThisMonth.map((chart) => [
                 chart.key,
                 {
@@ -287,7 +287,7 @@ const Statistics = (props: Serialized<PageProps>) => {
                   label: <ChartLink locale={locale} chartKey={chart.key} />,
                 },
               ])}
-              columnName="Chart"
+              columnName="Chart link"
             />
           )}
         </Box>
