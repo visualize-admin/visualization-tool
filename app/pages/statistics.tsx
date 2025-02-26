@@ -227,7 +227,7 @@ const Statistics = (props: Serialized<PageProps>) => {
                 label: (
                   <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
                     <Icon size={18} name={getIconName(type)} />{" "}
-                    {getFieldLabel(type)}
+                    {getFieldLabel(type) || type}
                   </Box>
                 ),
               },
@@ -288,7 +288,7 @@ const getChartTypeSubtypeLabel = ({
     return "Vertical dashboard";
   }
 
-  return "";
+  return type ?? subtype ?? "Unknown";
 };
 
 export default Statistics;
