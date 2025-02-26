@@ -19,6 +19,7 @@ You can also check the
 - Features
   - Added a way to display limit values and targets coming from the data with
     compatible chart types
+  - Added X Axis Titles to Column, Lines, Area and all combo charts 
 - Fixes
   - Color picker's HEX code input now stays up-to-date with the selected color
   - Markdown links now open in a new tab
