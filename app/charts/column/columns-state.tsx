@@ -84,6 +84,7 @@ const useColumnsState = (
     getYErrorRange,
     getFormattedYUncertainty,
     getSegmentLabel,
+    xAxisLabel,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -208,6 +209,7 @@ const useColumnsState = (
   ]);
 
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
     height,

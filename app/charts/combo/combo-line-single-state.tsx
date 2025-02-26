@@ -57,7 +57,7 @@ const useComboLineSingleState = (
   data: ChartStateData
 ): ComboLineSingleState => {
   const { chartConfig, measuresById } = chartProps;
-  const { xDimension, getX, getXAsString } = variables;
+  const { xDimension, getX, getXAsString, xAxisLabel } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
@@ -105,6 +105,7 @@ const useComboLineSingleState = (
 
   // Dimensions
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
     height,

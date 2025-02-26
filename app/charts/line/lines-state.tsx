@@ -84,6 +84,7 @@ const useLinesState = (
     getYErrorRange,
     getFormattedYUncertainty,
     getMinY,
+    xAxisLabel,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
@@ -226,6 +227,7 @@ const useLinesState = (
 
   // Dimensions
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
     height,
