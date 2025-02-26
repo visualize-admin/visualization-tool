@@ -14,6 +14,9 @@ You can also check the
 - Features
   - It's now possible to add custom WMS layers coming from wms.geo.admin.ch to
     map charts
+- Fixes
+  - Limits that are connected to values that are filtered out do not render in
+    the chart anymore
 
 # [5.3.0] - 2025-02-25
 
@@ -64,6 +67,7 @@ You can also check the
   - Improved filter section styling
   - Removed legend titles tooltip on the toggle switch
   - Fixed Map Symbol Layer custom color palette support for all palette types
+  - Added color palettes to bar chart type
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to Vercel previews for easier testing
