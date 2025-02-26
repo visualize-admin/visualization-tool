@@ -1078,7 +1078,8 @@ export const isColorInConfig = (
   | ColumnConfig
   | LineConfig
   | PieConfig
-  | ScatterPlotConfig => {
+  | ScatterPlotConfig
+  | BarConfig => {
   return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
 };
 
