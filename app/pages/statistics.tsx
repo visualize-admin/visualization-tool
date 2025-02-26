@@ -17,7 +17,10 @@ import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
 
 type StatProps = {
-  countByDay: { day: Date; count: number }[];
+  countByDay: {
+    day: Date;
+    count: number;
+  }[];
   trendAverages: {
     lastMonthDailyAverage: number;
     previousThreeMonthsDailyAverage: number;
@@ -37,6 +40,12 @@ type PageProps = {
     }[];
   };
   views: StatProps;
+  chartsMetadata: {
+    day: Date;
+    chartTypes: string[];
+    layoutType?: string;
+    layoutSubtype?: string;
+  }[];
 };
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
@@ -47,6 +56,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
     chartTrendAverages,
     viewCountByDay,
     viewTrendAverages,
+    chartsMetadata,
   ] = await Promise.all([
     prisma.config
       .findMany({
@@ -196,6 +206,32 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
         ),
       };
     }),
+    prisma.$queryRaw`
+SELECT
+DATE_TRUNC('day', created_at) AS day,
+  COALESCE(jsonb_agg(chart_config_array ->> 'chartType'), jsonb_build_array(chart_config_obj ->> 'chartType')) AS chart_types,
+  layout -> 'type' AS layout_type,
+  layout -> 'layout' AS layout_subtype
+FROM config
+LEFT JOIN LATERAL jsonb_array_elements(data -> 'chartConfigs') AS chart_config_array ON true
+LEFT JOIN LATERAL (SELECT data -> 'chartConfig' AS chart_config_obj) AS single_config ON true
+LEFT JOIN LATERAL (SELECT data -> 'layout' AS layout) AS layout ON true
+GROUP BY  day, data, chart_config_obj, layout, layout_subtype
+    `.then((rows) =>
+      (
+        rows as {
+          day: Date;
+          chart_types: string[];
+          layout_type?: string;
+          layout_subtype?: string;
+        }[]
+      ).map((row) => ({
+        day: new Date(row.day),
+        chartTypes: row.chart_types,
+        layoutType: row.layout_type,
+        layoutSubtype: row.layout_subtype,
+      }))
+    ),
   ]);
 
   return {
@@ -210,6 +246,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
         countByDay: viewCountByDay,
         trendAverages: viewTrendAverages,
       },
+      chartsMetadata,
     }),
   };
 };
@@ -329,7 +366,7 @@ const formatYearMonth = (date: Date, { locale }: { locale: Locale }) => {
 };
 
 const groupByYearMonth = (
-  countByDay: PageProps[keyof PageProps]["countByDay"],
+  countByDay: { day: Date; count: number }[],
   { locale }: { locale: Locale }
 ) => {
   const countByDate = rollups(
