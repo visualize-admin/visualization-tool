@@ -11,6 +11,15 @@ import { useLocale } from "@/src";
 import { BaseStatsCard } from "@/statistics/base-stats-card";
 import { ChartLink } from "@/statistics/chart-link";
 import { formatInteger } from "@/statistics/formatters";
+import {
+  fetchChartCountByDay,
+  fetchChartsMetadata,
+  fetchChartTrendAverages,
+  fetchMostPopularAllTimeCharts,
+  fetchMostPopularThisMonthCharts,
+  fetchViewCountByDay,
+  fetchViewTrendAverages,
+} from "@/statistics/prisma";
 import { StatProps, StatsCard } from "@/statistics/stats-card";
 
 type PageProps = {
@@ -44,180 +53,13 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
     viewTrendAverages,
     chartsMetadata,
   ] = await Promise.all([
-    prisma.config
-      .findMany({
-        select: {
-          key: true,
-          created_at: true,
-          _count: {
-            select: {
-              views: true,
-            },
-          },
-        },
-        orderBy: {
-          views: {
-            _count: "desc",
-          },
-        },
-        take: 25,
-      })
-      .then((rows) =>
-        rows.map((row) => {
-          return {
-            key: row.key,
-            createdDate: row.created_at,
-            viewCount: row._count.views,
-          };
-        })
-      ),
-    prisma.$queryRaw`
-      SELECT config_key AS key, COUNT(*) AS view_count
-      FROM config_view
-      WHERE viewed_at > CURRENT_DATE - INTERVAL '30 days'
-      GROUP BY config_key
-      ORDER BY view_count DESC
-      LIMIT 25;
-    `.then((rows) => {
-      return (
-        rows as {
-          key: string;
-          view_count: BigInt;
-        }[]
-      ).map((row) => ({
-        key: row.key,
-        // superjson conversion breaks when we use default BigInt
-        viewCount: Number(row.view_count),
-      }));
-    }),
-    prisma.$queryRaw`
-      SELECT
-        DATE_TRUNC('day', created_at) AS day,
-        COUNT(*) AS count
-      FROM
-        config
-      GROUP BY
-        DATE_TRUNC('day', created_at)
-      ORDER BY
-        day DESC;`.then((rows) =>
-      (rows as { day: Date; count: BigInt }[]).map((row) => ({
-        ...row,
-        // superjson conversion breaks when we use default BigInt
-        count: Number(row.count),
-      }))
-    ),
-    prisma.$queryRaw`
-    WITH
-    last_month_daily_average AS (
-        SELECT COUNT(*) / 30.0 AS daily_average
-        FROM config
-        WHERE
-          created_at > CURRENT_DATE - INTERVAL '30 days'
-          AND created_at <= CURRENT_DATE
-    ),
-    last_three_months_daily_average AS (
-        SELECT COUNT(*) / 90.0 AS daily_average
-        FROM config
-        WHERE
-          created_at > CURRENT_DATE - INTERVAL '90 days'
-          AND created_at <= CURRENT_DATE
-    )
-    SELECT
-      (SELECT daily_average FROM last_month_daily_average) AS last_month_daily_average,
-      (SELECT daily_average FROM last_three_months_daily_average) AS previous_three_months_daily_average;
-    `.then((rows) => {
-      const row = (
-        rows as {
-          last_month_daily_average: number;
-          previous_three_months_daily_average: number;
-        }[]
-      )[0];
-      return {
-        // superjson conversion breaks when we use default BigInt
-        lastMonthDailyAverage: Number(row.last_month_daily_average),
-        previousThreeMonthsDailyAverage: Number(
-          row.previous_three_months_daily_average
-        ),
-      };
-    }),
-    // Unfortunately we can't abstract this out to a function because of the way Prisma works
-    // see https://www.prisma.io/docs/orm/prisma-client/queries/raw-database-access/raw-queries#considerations
-    prisma.$queryRaw`
-      SELECT
-        DATE_TRUNC('day', viewed_at) AS day,
-        COUNT(*) AS count
-      FROM
-        config_view
-      GROUP BY
-        DATE_TRUNC('day', viewed_at)
-      ORDER BY
-        day DESC;`.then((rows) =>
-      (rows as { day: Date; count: BigInt }[]).map((row) => ({
-        ...row,
-        // superjson conversion breaks when we use default BigInt
-        count: Number(row.count),
-      }))
-    ),
-    prisma.$queryRaw`
-    WITH
-    last_month_daily_average AS (
-        SELECT COUNT(*) / 30.0 AS daily_average
-        FROM config_view
-        WHERE
-          viewed_at > CURRENT_DATE - INTERVAL '30 days'
-          AND viewed_at <= CURRENT_DATE
-    ),
-    last_three_months_daily_average AS (
-        SELECT COUNT(*) / 90.0 AS daily_average
-        FROM config_view
-        WHERE
-          viewed_at > CURRENT_DATE - INTERVAL '90 days'
-          AND viewed_at <= CURRENT_DATE
-    )
-    SELECT
-      (SELECT daily_average FROM last_month_daily_average) AS last_month_daily_average,
-      (SELECT daily_average FROM last_three_months_daily_average) AS previous_three_months_daily_average;
-    `.then((rows) => {
-      const row = (
-        rows as {
-          last_month_daily_average: number;
-          previous_three_months_daily_average: number;
-        }[]
-      )[0];
-      return {
-        // superjson conversion breaks when we use default BigInt
-        lastMonthDailyAverage: Number(row.last_month_daily_average),
-        previousThreeMonthsDailyAverage: Number(
-          row.previous_three_months_daily_average
-        ),
-      };
-    }),
-    prisma.$queryRaw`
-SELECT
-DATE_TRUNC('day', created_at) AS day,
-  COALESCE(jsonb_agg(chart_config_array ->> 'chartType'), jsonb_build_array(chart_config_obj ->> 'chartType')) AS chart_types,
-  layout -> 'type' AS layout_type,
-  layout -> 'layout' AS layout_subtype
-FROM config
-LEFT JOIN LATERAL jsonb_array_elements(data -> 'chartConfigs') AS chart_config_array ON true
-LEFT JOIN LATERAL (SELECT data -> 'chartConfig' AS chart_config_obj) AS single_config ON true
-LEFT JOIN LATERAL (SELECT data -> 'layout' AS layout) AS layout ON true
-GROUP BY  day, data, chart_config_obj, layout, layout_subtype
-    `.then((rows) =>
-      (
-        rows as {
-          day: Date;
-          chart_types: string[];
-          layout_type?: string;
-          layout_subtype?: string;
-        }[]
-      ).map((row) => ({
-        day: new Date(row.day),
-        chartTypes: row.chart_types,
-        layoutType: row.layout_type,
-        layoutSubtype: row.layout_subtype,
-      }))
-    ),
+    fetchMostPopularAllTimeCharts(),
+    fetchMostPopularThisMonthCharts(),
+    fetchChartCountByDay(),
+    fetchChartTrendAverages(),
+    fetchViewCountByDay(),
+    fetchViewTrendAverages(),
+    fetchChartsMetadata(),
   ]);
 
   return {
