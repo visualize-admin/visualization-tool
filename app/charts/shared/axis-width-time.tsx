@@ -11,8 +11,11 @@ import {
   renderContainer,
 } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatShortDateAuto } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
+
+import { useAxisLabelHeightOffset } from "./chart-dimensions";
 
 // Approximate the longest date format we're using for.
 // Roughly equivalent to the text width of "99.99.9999" with 12px font size.
@@ -23,14 +26,20 @@ export const AxisTime = () => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDateAuto = useFormatShortDateAuto();
-  const { xScale, yScale, bounds } = useChartState() as
+  const { xScale, yScale, bounds, xDimension, xAxisLabel } = useChartState() as
     | LinesState
     | AreasState
     | ComboLineSingleState
     | ComboLineDualState;
-  const { chartHeight, margins } = bounds;
-  const { labelColor, gridColor, domainColor, labelFontSize, fontFamily } =
-    useChartTheme();
+  const { chartHeight, chartWidth, margins } = bounds;
+  const {
+    labelColor,
+    gridColor,
+    domainColor,
+    labelFontSize,
+    fontFamily,
+    axisLabelFontSize,
+  } = useChartTheme();
 
   const hasNegativeValues = yScale.domain()[0] < 0;
 
@@ -86,7 +95,29 @@ export const AxisTime = () => {
     xScale,
   ]);
 
-  return <g ref={ref} />;
+  const { height, labelWidth } = useAxisLabelHeightOffset({
+    label: xAxisLabel,
+    width: chartWidth,
+    marginLeft: margins.left,
+    marginRight: margins.right,
+  });
+
+  return (
+    <>
+      <foreignObject
+        x={margins.left + chartWidth / 2 - labelWidth / 2}
+        y={margins.top + chartHeight + 40}
+        width={chartWidth}
+        height={height}
+        style={{ display: "flex", textAlign: "right" }}
+      >
+        <OpenMetadataPanelWrapper component={xDimension}>
+          <span style={{ fontSize: axisLabelFontSize }}>{xAxisLabel}</span>
+        </OpenMetadataPanelWrapper>
+      </foreignObject>
+      <g ref={ref} />
+    </>
+  );
 };
 
 export const AxisTimeDomain = () => {

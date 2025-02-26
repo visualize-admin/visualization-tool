@@ -163,6 +163,7 @@ export type BandXVariables = {
   getXAbbreviationOrLabel: (d: Observation) => string;
   xTimeUnit: TimeUnit | undefined;
   getXAsDate: TemporalValueGetter;
+  xAxisLabel: string;
 };
 
 export const useBandYVariables = (
@@ -243,7 +244,10 @@ export const useBandXVariables = (
     dimensionsById[x.componentId].values
   )(x.componentId);
 
+  const xAxisLabel = getLabelWithUnit(xDimension);
+
   return {
+    xAxisLabel,
     xDimension,
     getX,
     getXLabel,
@@ -259,6 +263,7 @@ export type TemporalXVariables = {
   xDimension: TemporalDimension | TemporalEntityDimension;
   getX: TemporalValueGetter;
   getXAsString: StringValueGetter;
+  xAxisLabel: string;
 };
 
 export const useTemporalXVariables = (
@@ -285,7 +290,10 @@ export const useTemporalXVariables = (
   )(x.componentId);
   const getXAsString = useStringVariable(x.componentId);
 
+  const xAxisLabel = getLabelWithUnit(xDimension);
+
   return {
+    xAxisLabel,
     xDimension,
     getX: isTemporalDimension(xDimension) ? getXTemporal : getXTemporalEntity,
     getXAsString,
