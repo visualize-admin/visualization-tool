@@ -11,7 +11,9 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - It's now possible to add custom WMS layers coming from wms.geo.admin.ch to
+    map charts
 
 # [5.3.0] - 2025-02-25
 
