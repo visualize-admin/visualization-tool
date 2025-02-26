@@ -4,7 +4,9 @@ import { GetServerSideProps } from "next";
 
 import { AppLayout } from "@/components/layout";
 import { BANNER_MARGIN_TOP } from "@/components/presence";
-import { ChartType, LayoutDashboard, LayoutType } from "@/config-types";
+import { ChartType, LayoutDashboard } from "@/config-types";
+import { getFieldLabel } from "@/configurator/components/field-i18n";
+import { getIconName } from "@/configurator/components/ui-helpers";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { Icon } from "@/icons";
 import { useLocale } from "@/src";
@@ -35,14 +37,19 @@ type PageProps = {
       key: string;
       viewCount: number;
     }[];
+    countByChartType: {
+      type: ChartType;
+      count: number;
+    }[];
+    countByLayoutTypeAndSubtype: {
+      type: "single" | "dashboard";
+      subtype?: LayoutDashboard["layout"] | "tab" | null;
+      count: number;
+    }[];
+    count: number;
+    dashboardCount: number;
   };
   views: StatProps;
-  chartsMetadata: {
-    day: Date;
-    chartTypes: string[];
-    layoutType?: string;
-    layoutSubtype?: string;
-  }[];
 };
 
 export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
@@ -64,19 +71,61 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
     fetchChartsMetadata(),
   ]);
 
+  const chartCountByLayoutTypeAndSubtype = rollups(
+    chartsMetadata,
+    (v) => v.length,
+    ({ chartTypes, layoutType = "single" }) => {
+      if (chartTypes.length === 1 || layoutType === "singleURLs") {
+        return "single" as const;
+      }
+
+      return "dashboard" as const;
+    },
+    ({ chartTypes, layoutType, layoutSubtype }) => {
+      return chartTypes.length === 1
+        ? null
+        : layoutType === "tab"
+          ? ("tab" as const)
+          : layoutSubtype;
+    }
+  )
+    .flatMap(([type, subtypeCounts]) => {
+      return subtypeCounts.map(([subtype, count]) => ({
+        type,
+        subtype,
+        count,
+      }));
+    })
+    .sort((a, b) => b.count - a.count);
+  const chartCountByChartType = rollups(
+    chartsMetadata.flatMap((d) => d.chartTypes),
+    (v) => v.length,
+    (d) => d
+  )
+    .map(([type, count]) => ({ type, count }))
+    .sort((a, b) => b.count - a.count);
+  const count = sum(chartCountByLayoutTypeAndSubtype, (d) => d.count);
+  const dashboardCount = sum(
+    chartCountByLayoutTypeAndSubtype.filter((d) => d.type !== "single"),
+    (d) => d.count
+  );
+
   return {
     props: serializeProps({
       charts: {
         mostPopularAllTime: mostPopularAllTimeCharts,
         mostPopularThisMonth: mostPopularThisMonthCharts,
         countByDay: chartCountByDay,
+        countByChartType: chartCountByChartType,
+        countByLayoutTypeAndSubtype: chartCountByLayoutTypeAndSubtype,
+        count: count,
+        dashboardCount: dashboardCount,
         trendAverages: chartTrendAverages,
       },
       views: {
         countByDay: viewCountByDay,
         trendAverages: viewTrendAverages,
       },
-      chartsMetadata,
     }),
   };
 };
@@ -160,10 +209,86 @@ const Statistics = (props: Serialized<PageProps>) => {
             />
           )}
         </CardGrid>
-        </Box>
+        <SectionTitleWrapper>
+          <SectionTitle title="Chart details" />
+          <Typography>
+            Gain insights into the characteristics of the charts created in
+            Visualize.
+          </Typography>
+        </SectionTitleWrapper>
+        <CardGrid>
+          <BaseStatsCard
+            title={`Visualize users created ${formatInteger(sum(charts.countByChartType, (d) => d.count))} individual* charts`}
+            subtitle="*Dashboards contain multiple charts; here we count them individually."
+            data={charts.countByChartType.map(({ type, count }) => [
+              type,
+              {
+                count,
+                label: (
+                  <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                    <Icon size={18} name={getIconName(type)} />{" "}
+                    {getFieldLabel(type)}
+                  </Box>
+                ),
+              },
+            ])}
+            columnName="Chart type"
+            showPercentage
+          />
+          <BaseStatsCard
+            title={`There are ${formatInteger(
+              charts.dashboardCount
+            )} Visualize dashboards`}
+            subtitle={`It accounts for around ${(
+              (charts.dashboardCount / charts.count) *
+              100
+            ).toFixed(0)}% of all charts created.`}
+            data={charts.countByLayoutTypeAndSubtype.map(
+              ({ type, subtype, count }) => [
+                type,
+                {
+                  count,
+                  label: getChartTypeSubtypeLabel({ type, subtype }),
+                },
+              ]
+            )}
+            columnName="Layout type"
+            showPercentage
+          />
+        </CardGrid>
       </Box>
     </AppLayout>
   );
+};
+
+const getChartTypeSubtypeLabel = ({
+  type,
+  subtype,
+}: {
+  type: "single" | "dashboard";
+  subtype?: LayoutDashboard["layout"] | "tab" | null;
+}) => {
+  if (type === "single") {
+    return "Single chart";
+  }
+
+  if (subtype === "tab") {
+    return "Tab dashboard";
+  }
+
+  if (subtype === "canvas") {
+    return "Free canvas dashboard";
+  }
+
+  if (subtype === "tall") {
+    return "Tall dashboard";
+  }
+
+  if (subtype === "vertical") {
+    return "Vertical dashboard";
+  }
+
+  return "";
 };
 
 export default Statistics;

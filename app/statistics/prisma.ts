@@ -1,3 +1,4 @@
+import { ChartType, LayoutDashboard, LayoutType } from "@/config-types";
 import prisma from "@/db/client";
 
 export const fetchMostPopularAllTimeCharts = async () => {
@@ -168,9 +169,9 @@ export const fetchChartsMetadata = async () => {
   return await prisma.$queryRaw<
     {
       day: Date;
-      chart_types: string[];
-      layout_type?: string;
-      layout_subtype?: string;
+      chart_types: ChartType[];
+      layout_type?: LayoutType;
+      layout_subtype?: LayoutDashboard["layout"];
     }[]
   >`
     SELECT

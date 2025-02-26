@@ -148,7 +148,7 @@ const Bar = ({
       </div>
       {showPercentage ? (
         <div className={classes.tableCell} style={{ textAlign: "end" }}>
-          <Typography variant="caption">
+          <Typography variant="caption" sx={{ lineHeight: "normal" }}>
             {formatInteger((count / totalCount) * 100)}%
           </Typography>
         </div>
