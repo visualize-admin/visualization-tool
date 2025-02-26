@@ -12,6 +12,8 @@ You can also check the
 # Unreleased
 
 - Features
+  - It's now possible to preview charts by passing configurator state as a query
+    parameter
   - It's now possible to add custom WMS layers coming from wms.geo.admin.ch to
     map charts
 - Fixes

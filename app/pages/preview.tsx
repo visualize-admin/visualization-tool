@@ -1,5 +1,7 @@
 import { I18nProvider } from "@lingui/react";
 import { ThemeProvider } from "@mui/material";
+import { GetServerSideProps } from "next";
+import { useEffect } from "react";
 import create, { useStore } from "zustand";
 
 import { ChartPublished } from "@/components/chart-published";
@@ -50,10 +52,49 @@ if (typeof window !== "undefined") {
   });
 }
 
-export default function Preview() {
+type PageProps = {
+  configuratorState: string | null;
+};
+
+export const getServerSideProps: GetServerSideProps<PageProps> = async ({
+  query,
+}) => {
+  const configuratorState = query.state;
+
+  if (typeof configuratorState !== "string") {
+    return {
+      props: {
+        configuratorState: null,
+      },
+    };
+  }
+
+  const migratedState = await migrateConfiguratorState(
+    JSON.parse(configuratorState)
+  );
+
+  return {
+    props: {
+      configuratorState: JSON.stringify(migratedState),
+    },
+  };
+};
+
+export default function Preview({ configuratorState }: PageProps) {
   const locale = useLocale();
   i18n.activate(locale);
   const state = useStore(chartStateStore, (d) => d.state);
+
+  useEffect(() => {
+    if (configuratorState) {
+      const parsedState = JSON.parse(configuratorState);
+      const decodedState = decodeConfiguratorState({
+        ...parsedState,
+        state: "PUBLISHED",
+      }) as ConfiguratorStatePublished;
+      chartStateStore.setState({ state: decodedState });
+    }
+  }, [configuratorState]);
 
   return (
     <LocaleProvider value={locale}>

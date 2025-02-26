@@ -83,7 +83,7 @@ const pages: ConfigPageOrGroup[] = [
       },
       {
         path: "/charts/preview-via-api",
-        title: "Preview via API",
+        title: "Previewing charts",
         content: require("@/docs/catalog/chart-preview-via-api.mdx"),
       },
     ],

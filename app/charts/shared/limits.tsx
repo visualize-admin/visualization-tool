@@ -59,7 +59,7 @@ export const HorizontalLimits = ({
         const fakeObservation: Observation = {
           [relatedDimension?.id ?? ""]: limit.relatedDimensionValue,
         };
-        const y = getY(fakeObservation) as (Date | number) & string;
+        const y = getY(fakeObservation);
         const yScaled = yScale(y);
 
         return yScaled !== undefined
@@ -161,7 +161,7 @@ export const VerticalLimits = ({
         const fakeObservation: Observation = {
           [relatedDimension?.id ?? ""]: limit.relatedDimensionValue,
         };
-        const x = getX(fakeObservation) as (Date | number) & string;
+        const x = getX(fakeObservation) as $IntentionalAny;
         const xScaled = xScale(x);
 
         return xScaled !== undefined
