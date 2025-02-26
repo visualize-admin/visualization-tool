@@ -19,7 +19,6 @@ const Page = () => {
   const locale = useLocale();
 
   useEffect(() => {
-    loadIframe("chart-column", CONFIGURATOR_STATE_COLUMN);
     loadIframe("chart-map", CONFIGURATOR_STATE_MAP);
   }, []);
 
@@ -36,7 +35,10 @@ const Page = () => {
         },
       }}
     >
-      <iframe id="chart-column" src={`/${locale}/preview`} />
+      <iframe
+        id="chart-column"
+        src={`/${locale}/preview?state=${JSON.stringify(CONFIGURATOR_STATE_COLUMN)}`}
+      />
       <iframe id="chart-map" src={`/${locale}/preview`} />
     </Box>
   );
