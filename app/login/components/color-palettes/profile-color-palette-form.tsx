@@ -309,7 +309,7 @@ const ColorPaletteTypeSelector = ({
             >
               <Box data-testid={`profile-color-palette-${type}`}>
                 <Radio
-                  label={capitalize(type)}
+                  label={colorTypes[type]}
                   value={type}
                   checked={type === selectedType}
                   onChange={handleChange}
