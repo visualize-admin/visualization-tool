@@ -11,6 +11,9 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - It's now possible to add custom WMS layers coming from wms.geo.admin.ch to
+    map charts
 - Fixes
   - Limits that are connected to values that are filtered out do not render in
     the chart anymore

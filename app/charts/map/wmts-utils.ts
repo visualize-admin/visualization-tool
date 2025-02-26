@@ -2,7 +2,7 @@ import { TileLayer } from "@deck.gl/geo-layers";
 import { BitmapLayer } from "@deck.gl/layers";
 import { XMLParser } from "fast-xml-parser";
 
-import { BaseLayer } from "@/config-types";
+import { WMTSCustomLayer } from "@/config-types";
 import { useLocale } from "@/locales/use-locale";
 import { useFetchData } from "@/utils/use-fetch-data";
 
@@ -49,6 +49,32 @@ type WMTSLayer = {
   };
 };
 
+export type ParsedWMTSLayer = {
+  id: string;
+  url: string;
+  title: string;
+  description?: string;
+  legendUrl?: string;
+  dimensionIdentifier: string;
+  availableDimensionValues: (string | number)[];
+  defaultDimensionValue: string | number;
+};
+
+const parseWMTSLayer = (layer: WMTSLayer): ParsedWMTSLayer => {
+  return {
+    id: layer["ows:Identifier"],
+    url: layer.ResourceURL.template,
+    title: layer["ows:Title"],
+    description: layer["ows:Abstract"],
+    legendUrl: layer.Style.LegendURL?.["xlink:href"],
+    dimensionIdentifier: layer.Dimension["ows:Identifier"],
+    availableDimensionValues: Array.isArray(layer.Dimension.Value)
+      ? layer.Dimension.Value
+      : [layer.Dimension.Value],
+    defaultDimensionValue: layer.Dimension.Default,
+  };
+};
+
 const WMTS_URL =
   "https://wmts.geo.admin.ch/EPSG/3857/1.0.0/WMTSCapabilities.xml";
 
@@ -57,8 +83,8 @@ export const useWMTSLayers = (
 ) => {
   const locale = useLocale();
 
-  return useFetchData<WMTSData["Capabilities"]["Contents"]["Layer"]>({
-    queryKey: ["custom-layers", locale],
+  return useFetchData<ParsedWMTSLayer[]>({
+    queryKey: ["custom-wmts-layers", locale],
     queryFn: async () => {
       return fetch(`${WMTS_URL}?lang=${locale}`).then(async (res) => {
         const parser = new XMLParser({
@@ -68,7 +94,9 @@ export const useWMTSLayers = (
         });
 
         return res.text().then((text) => {
-          return parser.parse(text).Capabilities.Contents.Layer;
+          return (
+            parser.parse(text) as WMTSData
+          ).Capabilities.Contents.Layer.map(parseWMTSLayer);
         });
       });
     },
@@ -84,8 +112,8 @@ export const getWMTSTile = ({
   beforeId,
   value,
 }: {
-  wmtsLayers?: WMTSData["Capabilities"]["Contents"]["Layer"];
-  customLayer?: BaseLayer["customWMTSLayers"][number];
+  wmtsLayers?: ParsedWMTSLayer[];
+  customLayer?: WMTSCustomLayer;
   beforeId?: string;
   value?: number | string;
 }) => {
@@ -93,9 +121,7 @@ export const getWMTSTile = ({
     return;
   }
 
-  const wmtsLayer = wmtsLayers?.find(
-    (layer) => layer.ResourceURL.template === customLayer.url
-  );
+  const wmtsLayer = wmtsLayers?.find((layer) => layer.id === customLayer.id);
 
   if (!wmtsLayer) {
     return;
@@ -105,12 +131,15 @@ export const getWMTSTile = ({
     id: `tile-layer-${customLayer.url}`,
     beforeId,
     data: getWMTSLayerData(customLayer.url, {
+      identifier: wmtsLayer.dimensionIdentifier,
       value: getWMTSLayerValue({
-        wmtsLayer,
+        availableDimensionValues: wmtsLayer.availableDimensionValues,
+        defaultDimensionValue: wmtsLayer.defaultDimensionValue,
         customLayer,
         value,
       }),
     }),
+    tileSize: 256,
     renderSubLayers: (props) => {
       const { boundingBox } = props.tile;
       return new BitmapLayer(props, {
@@ -133,32 +162,31 @@ const isValidWMTSLayerUrl = (url: string) => {
 
 const getWMTSLayerData = (
   url: string,
-  { value }: { value: string | number }
+  { identifier, value }: { identifier: string; value: string | number }
 ) => {
   return url
-    .replace("{Time}", `${value}`)
+    .replace(`{${identifier}}`, `${value}`)
     .replace("{TileMatrix}", "{z}")
     .replace("{TileCol}", "{x}")
     .replace("{TileRow}", "{y}");
 };
 
 export const getWMTSLayerValue = ({
-  wmtsLayer,
+  availableDimensionValues,
+  defaultDimensionValue,
   customLayer,
   value,
 }: {
-  wmtsLayer: WMTSLayer;
-  customLayer?: BaseLayer["customWMTSLayers"][number];
+  availableDimensionValues: (string | number)[];
+  defaultDimensionValue: string | number;
+  customLayer?: WMTSCustomLayer;
   value?: string | number;
 }) => {
-  const { Dimension } = wmtsLayer;
-  const { Value: values, Default: defaultValue } = Dimension;
-
   if (!customLayer?.syncTemporalFilters) {
-    return defaultValue;
+    return defaultDimensionValue;
   }
 
-  return value && Array.isArray(values) && values.includes(value)
+  return value && availableDimensionValues.includes(value)
     ? value
-    : defaultValue;
+    : defaultDimensionValue;
 };
