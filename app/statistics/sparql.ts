@@ -18,7 +18,9 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 
 SELECT ?iri ?unversionedIri ?title ?creator WHERE {
   VALUES ?iri { ${cubeIris.map(iriToNode).join(" ")} }
-  ?maybeUnversionedIri schema:hasPart ?iri .
+  OPTIONAL {
+    ?maybeUnversionedIri schema:hasPart ?iri .
+  }
   BIND(COALESCE(?maybeUnversionedIri, ?iri) AS ?unversionedIri)
   ${buildLocalizedSubQuery("iri", "schema:name", "title", {
     locale,
@@ -56,7 +58,7 @@ export const queryCubesMetadata = async ({
     return {
       iri,
       unversionedIri: result.unversionedIri.value ?? iri,
-      title: result.title.value,
+      title: result.title?.value ?? iri,
       creator: result.creator?.value,
     };
   });
