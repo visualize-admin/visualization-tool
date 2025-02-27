@@ -139,7 +139,17 @@ const Bar = ({
   return (
     <>
       <div className={classes.tableCell}>
-        <Typography variant="caption" sx={{ cursor: "default" }}>
+        <Typography
+          variant="caption"
+          component="p"
+          sx={{
+            overflow: "hidden",
+            maxWidth: 200,
+            cursor: "default",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+          }}
+        >
           {label}
         </Typography>
       </div>
