@@ -1,5 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { rollups, sum } from "d3-array";
+import groupBy from "lodash/groupBy";
+import uniq from "lodash/uniq";
 import { GetServerSideProps } from "next";
 
 import { AppLayout } from "@/components/layout";
@@ -9,6 +11,7 @@ import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { Icon } from "@/icons";
+import { defaultLocale } from "@/locales/locales";
 import { useLocale } from "@/src";
 import { BaseStatsCard } from "@/statistics/base-stats-card";
 import { CardGrid } from "@/statistics/card-grid";
@@ -24,6 +27,7 @@ import {
   fetchViewTrendAverages,
 } from "@/statistics/prisma";
 import { SectionTitle, SectionTitleWrapper } from "@/statistics/sections";
+import { queryCubesMetadata } from "@/statistics/sparql";
 import { StatProps, StatsCard } from "@/statistics/stats-card";
 
 type PageProps = {
@@ -48,12 +52,19 @@ type PageProps = {
     }[];
     count: number;
     dashboardCount: number;
-    iris: string[];
+    countByCubeIri: {
+      iri: string;
+      title: string;
+      creator?: string;
+      count: number;
+    }[];
   };
   views: StatProps;
 };
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
+export const getServerSideProps: GetServerSideProps<PageProps> = async ({
+  locale,
+}) => {
   const [
     mostPopularAllTimeCharts,
     mostPopularThisMonthCharts,
@@ -110,6 +121,34 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
     chartCountByLayoutTypeAndSubtype.filter((d) => d.type !== "single"),
     (d) => d.count
   );
+  const cubeIris = chartsMetadata.flatMap((d) => d.iris);
+  const cubesMetadata = await queryCubesMetadata({
+    cubeIris: uniq(cubeIris),
+    locale: locale ?? defaultLocale,
+  });
+  const cubesMetadataByIri = groupBy(cubesMetadata, (d) => d.iri);
+  const unversionedCubeIris = cubeIris.map((iri) => {
+    const unversionedIri = cubesMetadataByIri[iri]?.[0]?.unversionedIri;
+    return unversionedIri ?? iri;
+  });
+  const cubesMetadataByUnversionedIri = groupBy(
+    cubesMetadata,
+    (d) => d.unversionedIri
+  );
+  const countByCubeIri = rollups(
+    unversionedCubeIris,
+    (v) => v.length,
+    (d) => d
+  )
+    .map(([iri, count]) => {
+      const { title, creator } = cubesMetadataByUnversionedIri[iri]?.[0] ?? {
+        title: iri,
+        creator: undefined,
+      };
+
+      return { iri, title, creator, count };
+    })
+    .sort((a, b) => b.count - a.count);
 
   return {
     props: serializeProps({
@@ -122,7 +161,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
         count: count,
         dashboardCount: dashboardCount,
         trendAverages: chartTrendAverages,
-        iris: chartsMetadata.flatMap((d) => d.iris),
+        countByCubeIri: countByCubeIri,
       },
       views: {
         countByDay: viewCountByDay,
@@ -136,8 +175,6 @@ const Statistics = (props: Serialized<PageProps>) => {
   const { charts, views } = deserializeProps(props);
   const locale = useLocale();
 
-  console.log("charts", charts);
-
   return (
     <AppLayout>
       <Box
@@ -150,7 +187,7 @@ const Statistics = (props: Serialized<PageProps>) => {
         }}
       >
         <SectionTitleWrapper>
-          <SectionTitle title="Basic statistics" />
+          <SectionTitle title="Popularity statistics" />
           <Typography>
             Gain insights into number of charts and view trends in Visualize.
           </Typography>
@@ -214,7 +251,7 @@ const Statistics = (props: Serialized<PageProps>) => {
           )}
         </CardGrid>
         <SectionTitleWrapper>
-          <SectionTitle title="Chart details" />
+          <SectionTitle title="Charts" />
           <Typography>
             Gain insights into the characteristics of the charts created in
             Visualize.
@@ -269,28 +306,44 @@ const Statistics = (props: Serialized<PageProps>) => {
         </SectionTitleWrapper>
         <CardGrid>
           <BaseStatsCard
-            title={`Visualize users created charts using ${formatInteger(
-              rollups(
-                charts.iris,
-                (v) => v.length,
-                (d) => d
+            title={`Individual charts were made using ${formatInteger(
+              uniq(charts.countByCubeIri.map((d) => d.iri)).length
+            )} cubes`}
+            subtitle="Cubes are the data sources used in individual charts."
+            data={charts.countByCubeIri.map(({ title, count }) => [
+              title,
+              {
+                count,
+                label: title,
+              },
+            ])}
+            columnName="Cube name (IRI if name is missing)"
+            showPercentage
+          />
+          <BaseStatsCard
+            title={`Cubes come from ${formatInteger(
+              uniq(
+                charts.countByCubeIri
+                  .filter((d) => d.creator)
+                  .map((d) => d.creator)
               ).length
-            )} unique cubes`}
-            subtitle="Cubes are the data sources used in the charts."
+            )} known creators`}
+            subtitle="Creators are the organizations that create the cubes."
             data={rollups(
-              charts.iris,
-              (v) => v.length,
-              (d) => d
+              charts.countByCubeIri,
+              (v) => sum(v, (d) => d.count),
+              (d) => d.creator
             )
-              .sort((a, b) => b[1] - a[1])
-              .map(([iri, count]) => [
-                iri,
+              .sort((a, b) => (b[0] === undefined ? -1 : b[1] - a[1]))
+              .map(([creator, count]) => [
+                creator ?? "Unknown",
                 {
                   count,
-                  label: iri,
+                  label: creator ?? <i>Unknown</i>,
                 },
               ])}
-            columnName="Cube"
+            columnName="Cube creator"
+            showPercentage
           />
         </CardGrid>
       </Box>
