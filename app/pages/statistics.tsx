@@ -223,7 +223,7 @@ const Statistics = (props: Serialized<PageProps>) => {
               countByDay={views.countByDay}
               trendAverages={views.trendAverages}
               title={(total) =>
-                `...viewed ${formatInteger(total)} times (${formatInteger(
+                `...viewed ${formatInteger(total)}x (including ${formatInteger(
                   sum(
                     views.countByDay.filter((d) => d.type === "preview"),
                     (d) => d.count
