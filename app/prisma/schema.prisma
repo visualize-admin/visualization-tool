@@ -44,8 +44,8 @@ model ConfigView {
   id         Int      @id @default(autoincrement())
   viewed_at  DateTime @default(now()) @db.Timestamp(6)
 
-  config     Config   @relation(fields: [config_key], references: [key])
-  config_key String
+  config     Config?   @relation(fields: [config_key], references: [key])
+  config_key String?
 
   @@map("config_view")
 }

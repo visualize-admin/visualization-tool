@@ -226,9 +226,9 @@ export const getConfigViewCount = async (configKey: string) => {
 };
 
 /**
- * Increase the view count of a config.
+ * Increase the view count of a config. Previewing of charts adds views without config key.
  */
-export const increaseConfigViewCount = async (configKey: string) => {
+export const increaseConfigViewCount = async (configKey?: string) => {
   await prisma.configView.create({
     data: {
       config_key: configKey,
