@@ -94,7 +94,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
       return "dashboard" as const;
     },
     ({ chartTypes, layoutType, layoutSubtype }) => {
-      return chartTypes.length === 1
+      return chartTypes.length === 1 || layoutType === "singleURLs"
         ? null
         : layoutType === "tab" || !layoutSubtype
           ? ("tab" as const)
