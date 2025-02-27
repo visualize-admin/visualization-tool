@@ -1,6 +1,7 @@
 import {
   ConfiguratorStateConfiguringChart,
   decodeChartConfig,
+  decodeConfiguratorState,
   LineConfig,
   TableConfig,
 } from "@/config-types";
@@ -17,6 +18,7 @@ import {
   chartConfigMigrations,
   configuratorStateMigrations,
   migrateChartConfig,
+  migrateConfiguratorState,
   upOrDown,
 } from "@/utils/chart-config/versioning";
 
@@ -119,6 +121,144 @@ describe("config migrations", () => {
       },
     },
   };
+  const dashboardConfigV4_0_0 = {
+    key: "ZeKjPw1_9Dqt",
+    state: "PUBLISHED",
+    layout: {
+      meta: {
+        label: { de: "", en: "", fr: "", it: "" },
+        title: { de: "", en: "", fr: "", it: "" },
+        description: { de: "", en: "", fr: "", it: "" },
+      },
+      type: "dashboard",
+      layout: "canvas",
+      layouts: {
+        lg: [
+          {
+            h: 5,
+            i: "tupdJZmSpduE",
+            w: 1,
+            x: 2,
+            y: 7,
+            maxW: 4,
+            minH: 5,
+            resizeHandles: ["s", "w", "e", "n", "sw", "nw", "se", "ne"],
+          },
+        ],
+        md: [
+          {
+            h: 5,
+            i: "tupdJZmSpduE",
+            w: 1,
+            x: 2,
+            y: 7,
+            maxW: 4,
+            minH: 5,
+            resizeHandles: ["s", "w", "e", "n", "sw", "nw", "se", "ne"],
+          },
+        ],
+        sm: [
+          {
+            h: 5,
+            i: "tupdJZmSpduE",
+            w: 1,
+            x: 2,
+            y: 7,
+            maxW: 4,
+            minH: 5,
+            resizeHandles: ["s", "w", "e", "n", "sw", "nw", "se", "ne"],
+          },
+        ],
+        xl: [
+          {
+            h: 5,
+            i: "tupdJZmSpduE",
+            w: 1,
+            x: 2,
+            y: 0,
+            maxW: 4,
+            minH: 5,
+            moved: false,
+            static: false,
+            resizeHandles: ["s", "w", "e", "n", "sw", "nw", "se", "ne"],
+          },
+        ],
+      },
+      layoutsMetadata: {
+        A7_orWKNE1Bl: { initialized: true },
+        dPe76IX5KnFZ: { initialized: true },
+        eA7R4wz7Kvq3: { initialized: true },
+        tupdJZmSpduE: { initialized: true },
+      },
+    },
+    version: "4.0.0",
+    dataSource: {
+      url: "https://lindas-cached.cluster.ldbar.ch/query",
+      type: "sparql",
+    },
+    chartConfigs: [
+      {
+        key: "tupdJZmSpduE",
+        meta: {
+          label: { de: "", en: "", fr: "", it: "" },
+          title: { de: "", en: "", fr: "", it: "" },
+          description: { de: "", en: "", fr: "", it: "" },
+        },
+        cubes: [
+          {
+            iri: "https://environment.ld.admin.ch/foen/ubd01041prod/4",
+            filters: {
+              "https://environment.ld.admin.ch/foen/ubd01041prod(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/ubd01041prod/location":
+                {
+                  type: "single",
+                  value:
+                    "https://ld.admin.ch/dimension/bgdi/inlandwaters/bathingwater/CH22051",
+                },
+              "https://environment.ld.admin.ch/foen/ubd01041prod(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/ubd01041prod/parametertype":
+                {
+                  type: "single",
+                  value: "E.coli",
+                },
+            },
+            joinBy: null,
+          },
+        ],
+        fields: {
+          x: {
+            sorting: { sortingType: "byAuto", sortingOrder: "asc" },
+            componentId:
+              "https://environment.ld.admin.ch/foen/ubd01041prod(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/ubd01041prod/dateofprobing",
+          },
+          y: {
+            componentId:
+              "https://environment.ld.admin.ch/foen/ubd01041prod(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/ubd01041prod/value",
+          },
+        },
+        version: "4.0.0",
+        chartType: "column",
+        interactiveFiltersConfig: {
+          legend: { active: false, componentId: "" },
+          timeRange: {
+            active: false,
+            presets: { to: "", from: "", type: "range" },
+            componentId:
+              "https://environment.ld.admin.ch/foen/ubd01041prod(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/ubd01041prod/dateofprobing",
+          },
+          calculation: { type: "identity", active: false },
+          dataFilters: { active: false, componentIds: [] },
+        },
+      },
+    ],
+    activeChartKey: "tupdJZmSpduE",
+    dashboardFilters: {
+      timeRange: {
+        active: false,
+        presets: { to: "", from: "" },
+        timeUnit: "",
+      },
+      dataFilters: { filters: {}, componentIds: [] },
+    },
+  };
 
   it("should migrate to newest config and back (but might lost some info for major version changes)", async () => {
     const migratedConfig = await migrateChartConfig(mapConfigV1_0_0, {
@@ -204,16 +344,26 @@ describe("config migrations", () => {
     expect(decodedConfig).toBeDefined();
   });
 
-  it("should correctly migrate map charts", async () => {
-    const migratedConfig = await migrateChartConfig(
+  it("should correctly migrate configs to newest versions", async () => {
+    const migratedDashboardConfig = await migrateConfiguratorState(
+      dashboardConfigV4_0_0,
+      {
+        toVersion: CONFIGURATOR_STATE_VERSION,
+      }
+    );
+    const decodedDashboardConfig = decodeConfiguratorState(
+      migratedDashboardConfig
+    );
+    expect(decodedDashboardConfig).toBeDefined();
+    const migratedMapConfig = await migrateChartConfig(
       mapConfigV3_3_0.chartConfigs[0],
       {
         toVersion: CHART_CONFIG_VERSION,
         migrationProps: CONFIGURATOR_STATE,
       }
     );
-    const decodedConfig = decodeChartConfig(migratedConfig);
-    expect(decodedConfig).toBeDefined();
+    const decodedMapConfig = decodeChartConfig(migratedMapConfig);
+    expect(decodedMapConfig).toBeDefined();
   });
 
   it("should not migrate joinBy iris", async () => {

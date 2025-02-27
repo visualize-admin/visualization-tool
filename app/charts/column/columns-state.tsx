@@ -33,6 +33,7 @@ import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
+import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -60,6 +61,7 @@ export type ColumnsState = CommonChartState &
     xScaleInteraction: ScaleBand<string>;
     yScale: ScaleLinear<number, number>;
     colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
   };
 
@@ -81,6 +83,7 @@ const useColumnsState = (
     getMinY,
     getYErrorRange,
     getFormattedYUncertainty,
+    getSegmentLabel,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -111,10 +114,10 @@ const useColumnsState = (
   } = useMemo(() => {
     const colors = scaleOrdinal<string, string>();
 
-    if (fields.color?.type === "single") {
+    if (fields.color.type === "single") {
       colors.range(
         getPalette({
-          paletteId: fields.color?.paletteId,
+          paletteId: fields.color.paletteId,
           colorField: fields.color,
         })
       );
@@ -223,7 +226,7 @@ const useColumnsState = (
     marginRight: right,
   });
   const margins = {
-    top: 70 + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
     right,
     bottom,
     left,
@@ -280,6 +283,7 @@ const useColumnsState = (
 
   return {
     colors,
+    getColorLabel: getSegmentLabel,
     chartType: "column",
     bounds,
     chartData,

@@ -1,0 +1,297 @@
+{
+  "key": "JByj4f0SODiv",
+  "data": {
+    "version": "4.2.0",
+    "dataSource": {
+      "type": "sparql",
+      "url": "https://lindas-cached.cluster.ldbar.ch/query"
+    },
+    "layout": {
+      "type": "dashboard",
+      "meta": {
+        "title": {
+          "de": "",
+          "en": "",
+          "fr": "",
+          "it": ""
+        },
+        "description": {
+          "de": "",
+          "en": "",
+          "fr": "",
+          "it": ""
+        },
+        "label": {
+          "de": "",
+          "en": "",
+          "fr": "",
+          "it": ""
+        }
+      },
+      "blocks": [
+        {
+          "type": "chart",
+          "key": "JByj4f0SODiv",
+          "initialized": false
+        },
+        {
+          "key": "lIcGcN1135mp",
+          "type": "chart",
+          "initialized": false
+        },
+        {
+          "key": "iDGrJJF7knWK",
+          "type": "chart",
+          "initialized": false
+        }
+      ],
+      "layout": "tall"
+    },
+    "chartConfigs": [
+      {
+        "key": "JByj4f0SODiv",
+        "version": "4.1.0",
+        "meta": {
+          "title": {
+            "en": "",
+            "de": "",
+            "fr": "",
+            "it": ""
+          },
+          "description": {
+            "en": "",
+            "de": "",
+            "fr": "",
+            "it": ""
+          },
+          "label": {
+            "en": "",
+            "de": "",
+            "fr": "",
+            "it": ""
+          }
+        },
+        "cubes": [
+          {
+            "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+            "filters": {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": {
+                "type": "single",
+                "value": "https://ld.admin.ch/canton/1"
+              }
+            }
+          }
+        ],
+        "chartType": "column",
+        "interactiveFiltersConfig": {
+          "legend": {
+            "active": false,
+            "componentId": ""
+          },
+          "timeRange": {
+            "active": false,
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+            "presets": {
+              "type": "range",
+              "from": "",
+              "to": ""
+            }
+          },
+          "dataFilters": {
+            "active": false,
+            "componentIds": []
+          },
+          "calculation": {
+            "active": false,
+            "type": "identity"
+          }
+        },
+        "fields": {
+          "x": {
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+            "sorting": {
+              "sortingType": "byAuto",
+              "sortingOrder": "asc"
+            }
+          },
+          "y": {
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen"
+          },
+          "color": {
+            "type": "single",
+            "paletteId": "category10",
+            "color": "#006699"
+          }
+        }
+      },
+      {
+        "key": "lIcGcN1135mp",
+        "version": "4.1.0",
+        "meta": {
+          "title": {
+            "en": "Einmalvergütung für Photovoltaikanlagen is the best cube ever! None ever comes close. Einmalvergütung für Photovoltaikanlagen is the best cube ever! None ever comes close.",
+            "de": "",
+            "fr": "",
+            "it": ""
+          },
+          "description": {
+            "en": "It was last updated on 29.07.2024, 09:15.",
+            "de": "",
+            "fr": "",
+            "it": ""
+          },
+          "label": {
+            "en": "",
+            "de": "",
+            "fr": "",
+            "it": ""
+          }
+        },
+        "cubes": [
+          {
+            "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+            "filters": {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": {
+                "type": "single",
+                "value": "https://ld.admin.ch/canton/1"
+              }
+            }
+          }
+        ],
+        "activeField": "title",
+        "chartType": "column",
+        "interactiveFiltersConfig": {
+          "legend": {
+            "active": false,
+            "componentId": ""
+          },
+          "timeRange": {
+            "active": false,
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+            "presets": {
+              "type": "range",
+              "from": "",
+              "to": ""
+            }
+          },
+          "dataFilters": {
+            "active": false,
+            "componentIds": []
+          },
+          "calculation": {
+            "active": false,
+            "type": "identity"
+          }
+        },
+        "fields": {
+          "x": {
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+            "sorting": {
+              "sortingType": "byAuto",
+              "sortingOrder": "asc"
+            }
+          },
+          "y": {
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen"
+          },
+          "color": {
+            "type": "single",
+            "paletteId": "category10",
+            "color": "#006699"
+          }
+        }
+      },
+      {
+        "key": "iDGrJJF7knWK",
+        "version": "4.1.0",
+        "meta": {
+          "title": {
+            "en": "",
+            "de": "",
+            "fr": "",
+            "it": ""
+          },
+          "description": {
+            "en": "",
+            "de": "",
+            "fr": "",
+            "it": ""
+          },
+          "label": {
+            "en": "",
+            "de": "",
+            "fr": "",
+            "it": ""
+          }
+        },
+        "cubes": [
+          {
+            "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+            "filters": {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": {
+                "type": "single",
+                "value": "https://ld.admin.ch/canton/1"
+              }
+            }
+          }
+        ],
+        "chartType": "column",
+        "interactiveFiltersConfig": {
+          "legend": {
+            "active": false,
+            "componentId": ""
+          },
+          "timeRange": {
+            "active": false,
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+            "presets": {
+              "type": "range",
+              "from": "",
+              "to": ""
+            }
+          },
+          "dataFilters": {
+            "active": false,
+            "componentIds": []
+          },
+          "calculation": {
+            "active": false,
+            "type": "identity"
+          }
+        },
+        "fields": {
+          "x": {
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+            "sorting": {
+              "sortingType": "byAuto",
+              "sortingOrder": "asc"
+            }
+          },
+          "y": {
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen"
+          },
+          "color": {
+            "type": "single",
+            "paletteId": "category10",
+            "color": "#006699"
+          }
+        }
+      }
+    ],
+    "activeChartKey": "JByj4f0SODiv",
+    "dashboardFilters": {
+      "timeRange": {
+        "active": false,
+        "timeUnit": "",
+        "presets": {
+          "from": "",
+          "to": ""
+        }
+      },
+      "dataFilters": {
+        "componentIds": [],
+        "filters": {}
+      }
+    }
+  }
+}

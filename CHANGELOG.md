@@ -11,7 +11,133 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - It's now possible to preview charts by passing configurator state as a query
+    parameter
+  - It's now possible to add custom WMS layers coming from wms.geo.admin.ch to
+    map charts
+  - Statistics page was enhanced with `Charts` and `Cubes` sections, including
+    some general improvements
+  - Application now collect data on chart previews, not only views
+- Fixes
+  - Limits that are connected to values that are filtered out do not render in
+    the chart anymore
+
+# [5.3.0] - 2025-02-25
+
+- Features
+  - It's now possible to add custom WMTS layers coming from wmts.geo.admin.ch to
+    map charts
+  - Limits can now be displayed in bar charts
+  - Exact limit values are now displayed in legend
+- Fixes
+  - Line chart dots are now based on data, eliminating misaligned dots
+  - Added a fallback to color selector
+  - Added dynamic descriptions for custom color palette types
+  - Show line dot sizes are now translated
+
+# [5.2.6] - 2025-02-18
+
+- Features
+  - Added a way to display limit values and targets coming from the data with
+    compatible chart types
+- Fixes
+  - Color picker's HEX code input now stays up-to-date with the selected color
+  - Markdown links now open in a new tab
+  - Publishing of a dashboard with text blocks doesn't crash the application in
+    some rare cases anymore
+
+# [5.2.5] - 2025-02-18
+
+- Features
+  - Added option for hiding legend titles using a toggle switch
+  - Bar charts, dashboard text blocks and Markdown inputs are not hidden behind
+    flags anymore
+  - Added improved Iframe view for the use of ODS
+- Fixes
+  - Added button translations for custom color palette update and create button
+  - Color swatches inside the color picker dynamically adjust to the colors of
+    the selected palette
+  - All colors of a selected custom color palette are displayed when selected at
+    all times regardless of the color type
+  - Dashboard text block are now automatically resized also in published charts
+  - Added (required) hint for palette titles and disabled the "add color button"
+    if the color palette title is missing
+  - Added dynamic translations for color contrast checking warnings
+  - Added error displaying for title names that already exists on the custom
+    color palette form inside the user profile only when adding palettes
+  - Fixed button translations for custom color palette update and create button.
+  - Fixed errors regarding switching form existing categorical palette to a
+    diverging color palette
+  - Improved filter section styling
+  - Removed legend titles tooltip on the toggle switch
+  - Fixed Map Symbol Layer custom color palette support for all palette types
+  - Added color palettes to bar chart type
+- Maintenance
+  - Added authentication method to e2e tests
+  - Added authentication to Vercel previews for easier testing
+
+# [5.2.4] - 2025-02-06
+
+- Fixes
+  - Duplicating chart in layout mode works correctly again
+
+# [5.2.3] - 2025-02-05
+
+- Fixes
+  - Charts that use most recent date filter and interactive time range filter
+    are initialized correctly now
+
+# [5.2.2] - 2025-02-05
+
+- Fixes
+  - Weekly-based temporal dimensions now work correctly when used in dashboard
+    filters
+  - Fixed color changes when changing segment dimension
+  - Fixed Filter selection made it so that color are showing again correctly for
+    selected filters
+  - Chart area doesn't overflow anymore when changing chart types in editing
+    mode in Chrome
+  - Tall dashboard layouts now correctly align chart elements between columns in
+    published mode
+  - Map legend items do not overlap anymore in PNG image downloads
+  - PNG image download now correctly retains Y axis label colors in combo charts
+  - NaN values are not displayed in map tooltip anymore
+  - Fixed color shuffling & resetting to work again with custom color palettes
+  - Dual-axis chart y axis titles do not overlap with other chart elements in
+    specific cases anymore
+  - Changing locale when editing a chart with temporal entity-based X axis now
+    correctly updates the chart
+- Style
+  - Improved vertical spacing between map legend items
+  - Fixed the spacing between navigation and header in the /profile view
+  - Regular charts now have consistent margin between the Y axis label and ticks
+  - Combo legend items now wrap below each other when there's not enough space
+- Maintenance
+  - Increased the number of charts pre-loaded to Varnish cache from 25 to 250
+
+# [5.2.1] - 2025-01-29
+
+- Features
+
+  - Created by visualize.admin.ch Link now navigates users to the corresponding
+    Chart
+
+- Fixes
+  - Bar chart tooltip doesn't go off the screen anymore during scroll
+  - Bar chart interactive switch on y axis
+  - Preview via API using iframe (`/preview`) now ignores invalid messages sent
+    from the parent window
+  - Selected values are now correctly displayed in the filter panel
+  - Chart tooltip now wraps in case of long text, instead of going off the
+    screen
+  - Pie chart tooltip is now positioned closer to the chart to prevent it from
+    going off the screen in case of iframe embed
+  - PNG image download now correctly retains interactive legend's colors
+  - Charts based on a new cube are not hidden anymore in the layouting step
+  - Scroll bars are not shown in the chart area when not needed
+  - Scatterplot overlap with the y axis label
+  - Input fields do not extend anymore when hitting Enter
 
 # [5.2.0] - 2025-01-22
 
@@ -27,6 +153,10 @@ Nothing yet.
   - Downloading images of bar charts now includes the whole chart, not just the
     visible part
   - Bar charts are now hidden behind a an enable-experimental-features flag
+  - Users can now create custom color palettes in the editor and save it to
+    their profile where they can update, add, delete and manage their colors
+    palettes (available for categorical, sequential and diverging types, fully
+    available for all chart except tables)
 - Fixes
   - Preview via API now works correctly for map charts
   - GraphQL debug panel now displays the queries correctly when in debug mode

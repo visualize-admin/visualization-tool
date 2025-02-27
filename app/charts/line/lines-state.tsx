@@ -33,6 +33,7 @@ import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
+import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -206,7 +207,7 @@ const useLinesState = (
         label: segment,
         color:
           fields.color.type === "segment"
-            ? fields.color.colorMapping![dvIri] ?? schemeCategory10[0]
+            ? (fields.color.colorMapping![dvIri] ?? schemeCategory10[0])
             : schemeCategory10[0],
       };
     });
@@ -239,7 +240,7 @@ const useLinesState = (
     marginRight: right,
   });
   const margins = {
-    top: 50 + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
     right,
     bottom,
     left,

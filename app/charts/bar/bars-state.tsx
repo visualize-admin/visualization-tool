@@ -4,6 +4,8 @@ import {
   scaleBand,
   ScaleLinear,
   scaleLinear,
+  ScaleOrdinal,
+  scaleOrdinal,
   scaleTime,
 } from "d3-scale";
 import orderBy from "lodash/orderBy";
@@ -34,6 +36,7 @@ import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
+import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -44,6 +47,7 @@ import {
   useFormatNumber,
   useTimeFormatUnit,
 } from "@/formatters";
+import { getPalette } from "@/palettes";
 import {
   getSortingOrders,
   makeDimensionValueSorters,
@@ -61,6 +65,8 @@ export type BarsState = CommonChartState &
     yScale: ScaleBand<string>;
     minY: string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
   };
 
 const useBarsState = (
@@ -81,6 +87,7 @@ const useBarsState = (
     getMinX,
     getXErrorRange,
     getFormattedXUncertainty,
+    getSegmentLabel,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -193,6 +200,7 @@ const useBarsState = (
   ]);
 
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xMeasure.label,
     yScale: paddingYScale,
     width,
     height,
@@ -206,27 +214,27 @@ const useBarsState = (
   });
   const right = 40;
   const margins = {
-    top: 55,
+    top: DEFAULT_MARGIN_TOP,
     right,
-    bottom: bottom + 30,
+    bottom: bottom + 45,
     left,
   };
 
   const barCount = yScale.domain().length;
 
-  // Here we adjust the height to make sure the bars have a minimum height and are legible
-  const adjustedHeight =
-    barCount * MIN_BAR_HEIGHT > height
-      ? barCount * MIN_BAR_HEIGHT
-      : height - margins.bottom;
-
-  const bounds = useChartBounds(width, margins, adjustedHeight);
+  const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
 
+  // Here we adjust the height to make sure the bars have a minimum height and are legible
+  const adjustedChartHeight =
+    barCount * MIN_BAR_HEIGHT > chartHeight
+      ? barCount * MIN_BAR_HEIGHT
+      : chartHeight;
+
   xScale.range([0, chartWidth]);
-  yScaleInteraction.range([0, adjustedHeight]);
-  yScaleTimeRange.range([0, adjustedHeight]);
-  yScale.range([0, adjustedHeight]);
+  yScaleInteraction.range([0, adjustedChartHeight]);
+  yScaleTimeRange.range([0, adjustedChartHeight]);
+  yScale.range([0, adjustedChartHeight]);
 
   const isMobile = useIsMobile();
 
@@ -270,11 +278,24 @@ const useBarsState = (
     };
   };
 
+  const { colors } = useMemo(() => {
+    const colors = scaleOrdinal<string, string>();
+
+    colors.range(
+      getPalette({
+        paletteId: fields.color.paletteId,
+        colorField: fields.color,
+      })
+    );
+
+    return { colors };
+  }, [fields.color]);
+
   return {
     chartType: "bar",
     bounds: {
       ...bounds,
-      chartHeight: adjustedHeight,
+      chartHeight: adjustedChartHeight,
     },
     chartData,
     allData,
@@ -284,6 +305,8 @@ const useBarsState = (
     yScaleInteraction,
     yScale,
     getAnnotationInfo,
+    getColorLabel: getSegmentLabel,
+    colors,
     ...variables,
   };
 };

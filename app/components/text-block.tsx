@@ -5,7 +5,12 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import { selectAll } from "d3-selection";
 import isEqual from "lodash/isEqual";
-import { ComponentProps, forwardRef, useCallback, useEffect } from "react";
+import {
+  ComponentProps,
+  forwardRef,
+  useCallback,
+  useLayoutEffect,
+} from "react";
 
 import { ActionElementsContainer } from "@/components/action-elements-container";
 import { CHART_GRID_ROW_COUNT } from "@/components/chart-shared";
@@ -173,12 +178,11 @@ const TextBlockActionElements = ({
 export const useSyncTextBlockHeight = () => {
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const layout = state.layout;
-  const layouting = isLayouting(state);
-  const layoutingFreeCanvas =
-    layouting && layout.type === "dashboard" && layout.layout === "canvas";
+  const isFreeCanvas =
+    layout.type === "dashboard" && layout.layout === "canvas";
 
-  useEffect(() => {
-    if (!layoutingFreeCanvas) {
+  useLayoutEffect(() => {
+    if (!isFreeCanvas) {
       return;
     }
 
@@ -216,5 +220,5 @@ export const useSyncTextBlockHeight = () => {
         }
       }
     );
-  }, [dispatch, layout, layoutingFreeCanvas]);
+  }, [dispatch, layout, isFreeCanvas]);
 };

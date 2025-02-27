@@ -13,7 +13,6 @@ describe("getLegendGroups", () => {
     const groups = getLegendGroups({
       title: "",
       values: hierarchy.map((d) => d.value),
-      hierarchy,
       sort: true,
     });
 
@@ -25,7 +24,6 @@ describe("getLegendGroups", () => {
     const groups = getLegendGroups({
       title: "",
       values: ["1", "2"],
-      hierarchy,
       sort: true,
     });
 

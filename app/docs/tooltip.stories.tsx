@@ -91,10 +91,11 @@ const TooltipBoxStory = () => (
             },
           },
           cubes: [{ iri: "", filters: {} }],
+          limits: {},
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
-            legend: { active: false, componentId: "" },
+            legend: { active: false, componentId: "", },
             timeRange: {
               active: false,
               componentId: "",
@@ -256,10 +257,11 @@ const TooltipContentStory = {
             },
           },
           cubes: [{ iri: "", filters: {} }],
+          limits: {},
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
-            legend: { active: false, componentId: "" },
+            legend: { active: false, componentId: "",  },
             timeRange: {
               active: false,
               componentId: "",
@@ -324,10 +326,11 @@ export const TooltipContentStory2 = {
             },
           },
           cubes: [{ iri: "", filters: {} }],
+          limits: {},
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
-            legend: { active: false, componentId: "" },
+            legend: { active: false, componentId: "",},
             timeRange: {
               active: false,
               componentId: "",

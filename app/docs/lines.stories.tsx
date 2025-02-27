@@ -83,7 +83,12 @@ const LineChartStory = () => (
           </ChartContainer>
 
           {fields.segment && (
-            <LegendColor chartConfig={chartConfig} symbol="line" interactive />
+            <LegendColor
+              chartConfig={chartConfig}
+              symbol="line"
+              interactive
+              showTitle
+            />
           )}
         </LineChart>
       </InteractiveFiltersChartProvider>

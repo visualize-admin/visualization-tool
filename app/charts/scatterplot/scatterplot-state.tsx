@@ -1,5 +1,5 @@
 import { max } from "d3-array";
-import { ScaleLinear, ScaleOrdinal, scaleLinear, scaleOrdinal } from "d3-scale";
+import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
@@ -21,6 +21,7 @@ import {
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
+import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { ScatterPlotConfig, SortingField } from "@/configurator";
@@ -138,7 +139,7 @@ const useScatterplotState = (
         label: segment,
         color:
           fields.color.type === "segment"
-            ? fields.color.colorMapping![dvIri] ?? schemeCategory10[0]
+            ? (fields.color.colorMapping![dvIri] ?? schemeCategory10[0])
             : schemeCategory10[0],
       };
     });
@@ -156,6 +157,7 @@ const useScatterplotState = (
   }
   // Dimensions
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
     height,
@@ -177,7 +179,7 @@ const useScatterplotState = (
     marginRight: right,
   });
   const margins = {
-    top: 50 + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
     right,
     bottom: bottom + xAxisLabelMargin,
     left,

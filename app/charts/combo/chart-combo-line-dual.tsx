@@ -17,8 +17,6 @@ import { useConfiguratorState } from "@/src";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
-import { ComboLineContainer } from "./combo-line-container";
-
 export const ChartComboLineDualVisualization = (
   props: VisualizationProps<ComboLineDualConfig>
 ) => {
@@ -34,18 +32,16 @@ const ChartComboLineDual = memo((props: ChartProps<ComboLineDualConfig>) => {
     <ComboLineDualChart {...props}>
       <ChartContainer>
         <ChartSvg>
-          <ComboLineContainer>
-            <AxisHeightLinearDual orientation="left" />
-            <AxisHeightLinearDual orientation="right" />
-            <AxisTime />
-            <AxisTimeDomain />
-            <ComboLineDual />
-            <InteractionHorizontal />
-            {shouldShowBrush(
-              interactiveFiltersConfig,
-              dashboardFilters?.timeRange
-            ) && <BrushTime />}
-          </ComboLineContainer>
+          <AxisHeightLinearDual orientation="left" />
+          <AxisHeightLinearDual orientation="right" />
+          <AxisTime />
+          <AxisTimeDomain />
+          <ComboLineDual />
+          <InteractionHorizontal />
+          {shouldShowBrush(
+            interactiveFiltersConfig,
+            dashboardFilters?.timeRange
+          ) && <BrushTime />}
         </ChartSvg>
         <HoverDotMultiple />
         <Ruler />

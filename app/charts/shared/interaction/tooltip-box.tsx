@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import throttle from "lodash/throttle";
-import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 
 import { Margins, useSize } from "@/charts/shared/use-size";
@@ -53,26 +53,30 @@ const useScroll = () => {
   return state;
 };
 
-const usePosition = () => {
-  const [bcr, setBcr] = useState<[number, number]>();
-  const [bcrX, bcrY] = bcr || [0, 0];
-  const handleRef = useCallback(
-    (node: HTMLDivElement) => {
-      if (bcr || !node) {
+const usePosition = (yKey?: number) => {
+  const yKeyRef = useRef<number>();
+  const [rect, rectRect] = useState<[number, number]>();
+  const [x, y] = rect ?? [0, 0];
+  const setRef = useMemo(() => {
+    return (node: HTMLDivElement) => {
+      if (yKey === yKeyRef.current || !node) {
         return;
       }
 
-      const nbcr = node.getBoundingClientRect();
-      setBcr([nbcr.left, nbcr.top]);
-    },
-    [bcr]
-  );
+      const { left, top } = node.getBoundingClientRect();
+      rectRect([left, top]);
+      yKeyRef.current = yKey;
+    };
+  }, [yKey]);
   const [scrollX, scrollY] = useScroll();
-  const box = useMemo(() => {
-    return { left: bcrX + scrollX, top: bcrY + scrollY };
-  }, [bcrX, bcrY, scrollX, scrollY]);
+  const bbox = useMemo(() => {
+    return {
+      left: x + scrollX,
+      top: y + scrollY,
+    };
+  }, [x, y, scrollX, scrollY]);
 
-  return [box, handleRef] as const;
+  return [bbox, setRef] as const;
 };
 
 /**
@@ -131,32 +135,26 @@ export const TooltipBox = ({
   withTriangle = true,
 }: TooltipBoxProps) => {
   const triangle = withTriangle ? mkTriangle(placement) : null;
-  const [pos, posRef] = usePosition();
-
+  const [position, positionRef] = usePosition(y);
   const [tooltipRef, tooltipWidth] = useResizeObserver<HTMLDivElement>();
-
   const isMobile = useIsMobile();
   const { width, height } = useSize();
   const { chartWidth } = useChartBounds(width, margins, height);
-
   const tooltipXBoundary = isMobile
     ? getTooltipXBoundary(x!, tooltipWidth, chartWidth)
     : x!;
-
   const mobileTriangleXPosition = getTriangleXPos(x!, tooltipWidth, chartWidth);
-
   const desktopTriangleXPosition = {
     left: triangle?.left,
     right: triangle?.right,
   };
-
   const triangleXPosition = isMobile
     ? { left: mobileTriangleXPosition }
     : desktopTriangleXPosition;
 
   return (
     <>
-      <div ref={posRef} />
+      <div ref={positionRef} />
       <Portal>
         <Box
           ref={tooltipRef}
@@ -164,9 +162,10 @@ export const TooltipBox = ({
           style={{
             zIndex: 1301,
             position: "absolute",
-            left: tooltipXBoundary! + margins.left + pos.left,
-            top: mxYOffset(y!, placement) + margins.top + pos.top,
+            left: tooltipXBoundary! + margins.left + position.left,
+            top: mxYOffset(y!, placement) + margins.top + position.top,
             transform: mkTranslation(placement),
+            maxWidth: "100%",
             pointerEvents: "none",
           }}
         >

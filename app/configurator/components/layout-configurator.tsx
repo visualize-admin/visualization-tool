@@ -51,10 +51,7 @@ import {
   DatePickerFieldProps,
 } from "@/configurator/components/field-date-picker";
 import { IconButton } from "@/configurator/components/icon-button";
-import {
-  extractDataPickerOptionsFromDimension,
-  timeUnitToFormatter,
-} from "@/configurator/components/ui-helpers";
+import { timeUnitToFormatter } from "@/configurator/components/ui-helpers";
 import {
   isLayouting,
   useConfiguratorState,
@@ -65,7 +62,6 @@ import {
   TemporalDimension,
   TemporalEntityDimension,
 } from "@/domain/data";
-import { useFlag } from "@/flags";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { useConfigsCubeComponents } from "@/graphql/hooks";
 import { Icon } from "@/icons";
@@ -271,6 +267,7 @@ const LayoutSharedFiltersConfigurator = () => {
                       {combinedTemporalDimension.label}
                     </Typography>
                     <Switch
+                      data-testid="dashboard-time-range-filter-toggle"
                       checked={timeRange.active}
                       onChange={handleTimeRangeFilterToggle}
                     />
@@ -373,18 +370,27 @@ const DashboardTimeRangeFilterOptions = ({
   dimension: TemporalDimension | TemporalEntityDimension;
 }) => {
   const { timeUnit, timeFormat } = dimension;
+  const timeFormatUnit = useTimeFormatUnit();
   const formatLocale = useTimeFormatLocale();
   const formatDate = formatLocale.format(timeFormat);
   const parseDate = formatLocale.parse(timeFormat);
   const [state, dispatch] = useConfiguratorState();
   const dashboardInteractiveFilters = useDashboardInteractiveFilters();
 
-  const { minDate, maxDate, optionValues, options } = useMemo(() => {
-    return extractDataPickerOptionsFromDimension({
+  const { sortedOptions, sortedValues } = useMemo(() => {
+    return getTimeFilterOptions({
       dimension,
-      parseDate,
+      formatLocale,
+      timeFormatUnit,
     });
-  }, [dimension, parseDate]);
+  }, [dimension, formatLocale, timeFormatUnit]);
+
+  const minDate = sortedOptions[0].date;
+  const maxDate = sortedOptions[sortedOptions.length - 1].date;
+  const timeRange = [
+    parseDate(filter.presets.from) as Date,
+    parseDate(filter.presets.to) as Date,
+  ];
 
   const updateChartStoresFrom = useCallback(
     (newDate: Date) => {
@@ -497,6 +503,7 @@ const DashboardTimeRangeFilterOptions = ({
   return (
     <div>
       <Stack
+        data-testid="dashboard-time-range-filters"
         direction="row"
         gap="0.5rem"
         alignItems="center"
@@ -509,9 +516,13 @@ const DashboardTimeRangeFilterOptions = ({
         {canRenderDatePickerField(timeUnit) ? (
           <DatePickerField
             name="dashboard-time-range-filter-from"
-            value={parseDate(filter.presets.from) as Date}
+            value={timeRange[0]}
             onChange={handleChangeFromDate}
-            isDateDisabled={(date) => !optionValues.includes(formatDate(date))}
+            isDateDisabled={(date) => {
+              return (
+                date > timeRange[1] || !sortedValues.includes(formatDate(date))
+              );
+            }}
             timeUnit={timeUnit}
             dateFormat={formatDate}
             minDate={minDate}
@@ -523,7 +534,7 @@ const DashboardTimeRangeFilterOptions = ({
           <Select
             id="dashboard-time-range-filter-from"
             label={t({ id: "controls.filters.select.from", message: "From" })}
-            options={options}
+            options={sortedOptions}
             value={filter.presets.from}
             onChange={handleChangeFromGeneric}
           />
@@ -531,9 +542,13 @@ const DashboardTimeRangeFilterOptions = ({
         {canRenderDatePickerField(timeUnit) ? (
           <DatePickerField
             name="dashboard-time-range-filter-to"
-            value={parseDate(filter.presets.to) as Date}
+            value={timeRange[1]}
             onChange={handleChangeToDate}
-            isDateDisabled={(date) => !optionValues.includes(formatDate(date))}
+            isDateDisabled={(date) => {
+              return (
+                date < timeRange[0] || !sortedValues.includes(formatDate(date))
+              );
+            }}
             timeUnit={timeUnit}
             dateFormat={formatDate}
             minDate={minDate}
@@ -545,7 +560,7 @@ const DashboardTimeRangeFilterOptions = ({
           <Select
             id="dashboard-time-range-filter-to"
             label={t({ id: "controls.filters.select.to", message: "To" })}
-            options={options}
+            options={sortedOptions}
             value={filter.presets.to}
             onChange={handleChangeToGeneric}
           />
@@ -561,16 +576,9 @@ const LayoutBlocksConfigurator = () => {
   const { layout } = state;
   const { blocks } = layout;
   const classes = useLayoutBlocksStyles();
-
   const onClick = useEvent((blockKey: string) => {
     dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value: blockKey });
   });
-
-  const enabled = useFlag("enable-experimental-features");
-
-  if (!enabled) {
-    return null;
-  }
 
   return layout.type === "dashboard" ? (
     <ControlSection role="tablist" aria-labelledby="controls-blocks" collapse>

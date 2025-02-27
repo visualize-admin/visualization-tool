@@ -7,8 +7,8 @@ import {
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
-  RenderVerticalWhiskerDatum,
   renderContainer,
+  RenderVerticalWhiskerDatum,
   renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
@@ -105,7 +105,9 @@ export const Columns = () => {
       const yScaled = yScale(y);
       const yRender = yScale(Math.max(y, 0));
       const height = Math.max(0, Math.abs(yScaled - y0));
-      const color = colors(key);
+      // Calling colors(key) directly results in every key being added to the domain,
+      // which is not what we want.
+      const color = colors.copy()(key);
 
       return {
         key,

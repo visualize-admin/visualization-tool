@@ -5,11 +5,11 @@ import { Transition } from "d3-transition";
 
 import {
   maybeTransition,
-  RenderOptions,
+  RenderOptions
 } from "@/charts/shared/rendering-utils";
 import { Observation } from "@/domain/data";
 
-import type { BaseType, Selection } from "d3-selection";
+import type { Selection } from "d3-selection";
 
 export type RenderDatum = {
   key: string;
@@ -43,25 +43,11 @@ export const renderPies = (
           .attr("stroke-width", 0)
           .on("mouseenter", function (_, d) {
             handleMouseEnter(d.arcDatum);
-            select<SVGPathElement, RenderDatum>(this).call(
-              (s: Selection<SVGPathElement, RenderDatum, BaseType, unknown>) =>
-                maybeTransition(s, {
-                  transition,
-                  s: (g) => g.attr("stroke-width", 1),
-                  t: (g) => g.attr("stroke-width", 1),
-                })
-            );
+            select<SVGPathElement, RenderDatum>(this).attr("stroke-width", 1)
           })
           .on("mouseleave", function () {
             handleMouseLeave();
-            select<SVGPathElement, RenderDatum>(this).call(
-              (s: Selection<SVGPathElement, RenderDatum, BaseType, unknown>) =>
-                maybeTransition(s, {
-                  transition,
-                  s: (g) => g.attr("stroke-width", 0),
-                  t: (g) => g.attr("stroke-width", 0),
-                })
-            );
+            select<SVGPathElement, RenderDatum>(this).attr("stroke-width", 0)
           })
           .call((enter) =>
             maybeTransition(enter, {

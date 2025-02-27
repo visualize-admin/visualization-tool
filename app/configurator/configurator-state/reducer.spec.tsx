@@ -28,6 +28,7 @@ import {
   deriveFiltersFromFields,
   ensureDashboardLayoutIsCorrect,
   handleChartFieldChanged,
+  handleChartFieldDeleted,
   handleChartOptionChanged,
   reducer,
   setRangeFilter,
@@ -151,10 +152,23 @@ describe("add dataset", () => {
   });
 });
 
-describe("add chart", () => {
+describe("add chart based on the same cube", () => {
   const state = configStateMock.groupedColumnChart;
-  const action: ConfiguratorStateAction = {
+  const actionSameCube: ConfiguratorStateAction = {
     type: "CHART_CONFIG_ADD",
+    value: {
+      chartConfig: getNewChartConfig({
+        chartType: "line",
+        chartConfig: state.chartConfigs[0],
+        state,
+        dimensions: groupedColumnChartDimensions,
+        measures: groupedColumnChartMeasures,
+      }),
+      locale: "en",
+    },
+  };
+  const actionNewCube: ConfiguratorStateAction = {
+    type: "CHART_CONFIG_ADD_NEW_DATASET",
     value: {
       chartConfig: getNewChartConfig({
         chartType: "line",
@@ -179,12 +193,12 @@ describe("add chart", () => {
         measures: groupedColumnChartMeasures,
       };
     });
-    const newState = runReducer(
+    const newStateAfterSameCube = runReducer(
       state,
-      action
+      actionSameCube
     ) as ConfiguratorStateConfiguringChart;
-    const config = newState.chartConfigs[1];
-    expect(Object.keys(config.cubes[0].filters)).toEqual([
+    const newConfigSameCube = newStateAfterSameCube.chartConfigs[1];
+    expect(Object.keys(newConfigSameCube.cubes[0].filters)).toEqual([
       stringifyComponentId({
         unversionedCubeIri:
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen",
@@ -192,6 +206,16 @@ describe("add chart", () => {
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
       }),
     ]);
+  });
+
+  it("should keep blocks in sync when adding a new chart based on new cube", () => {
+    const newStateAfterSameCube = runReducer(
+      state,
+      actionNewCube
+    ) as ConfiguratorStateConfiguringChart;
+    expect(newStateAfterSameCube.chartConfigs.map((c) => c.key)).toEqual(
+      newStateAfterSameCube.layout.blocks.map((b) => b.key)
+    );
   });
 });
 
@@ -565,6 +589,7 @@ describe("deriveFiltersFromFields", () => {
           },
         },
         "key": "ydBHrv26xvUg",
+        "limits": Object {},
         "meta": Object {
           "description": Object {
             "de": "",
@@ -585,7 +610,7 @@ describe("deriveFiltersFromFields", () => {
             "it": "",
           },
         },
-        "version": "4.1.0",
+        "version": "4.3.0",
       }
     `);
   });
@@ -629,12 +654,52 @@ describe("handleChartFieldChanged", () => {
   });
 });
 
+describe("CHART_FIELD_DELETED", () => {
+  it("should correctly reset color field when segment field is deleted", () => {
+    const state = {
+      state: "CONFIGURING_CHART",
+      chartConfigs: [
+        {
+          chartType: "column",
+          cubes: [],
+          fields: {
+            segment: {
+              componentId: "segmentComponentId",
+            },
+            color: {
+              type: "segment",
+              paletteId: "category10",
+              colorMapping: {},
+            },
+          },
+        },
+      ],
+    };
+
+    const newState = produce(state, (state: ConfiguratorState) => {
+      return handleChartFieldDeleted(state, {
+        type: "CHART_FIELD_DELETED",
+        value: {
+          locale: "en",
+          field: "segment",
+        },
+      });
+    });
+
+    expect(newState.chartConfigs[0].fields.color).toStrictEqual({
+      type: "single",
+      paletteId: "category10",
+      color: "#006699",
+    });
+  });
+});
+
 describe("colorMapping", () => {
-  it("should correctly reset color mapping", () => {
+  it("should correctly reset color mapping for maps", () => {
     const state: ConfiguratorStateConfiguringChart = configStateMock.map;
 
-    const newState = produce(state, (state: ConfiguratorState) =>
-      updateColorMapping(state, {
+    const newState = produce(state, (state: ConfiguratorState) => {
+      return updateColorMapping(state, {
         type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
         value: {
           field: "areaLayer",
@@ -647,8 +712,8 @@ describe("colorMapping", () => {
           ],
           random: false,
         },
-      })
-    );
+      });
+    });
 
     expect(
       (getChartConfig(newState).fields as any).areaLayer.color.colorMapping
@@ -656,6 +721,368 @@ describe("colorMapping", () => {
       red: "red",
       green: "green",
       blue: "blue",
+    });
+  });
+
+  it("should correctly reset color mapping for grouped column chart", () => {
+    const state: ConfiguratorStateConfiguringChart =
+      configStateMock.groupedColumnChart;
+
+    const newState = produce(state, (state: ConfiguratorState) => {
+      return updateColorMapping(state, {
+        type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+        value: {
+          field: "color",
+          colorConfigPath: undefined,
+          dimensionId:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+          values: [
+            {
+              value: "https://ld.admin.ch/canton/1",
+              label: "https://ld.admin.ch/canton/1",
+              color: "#1f77b4",
+            },
+            {
+              value: "https://ld.admin.ch/canton/10",
+              label: "https://ld.admin.ch/canton/10",
+              color: "#ff7f0e",
+            },
+            {
+              value: "https://ld.admin.ch/canton/11",
+              label: "https://ld.admin.ch/canton/11",
+              color: "#2ca02c",
+            },
+            {
+              value: "https://ld.admin.ch/canton/12",
+              label: "https://ld.admin.ch/canton/12",
+              color: "#d62728",
+            },
+            {
+              value: "https://ld.admin.ch/canton/13",
+              label: "https://ld.admin.ch/canton/13",
+              color: "#9467bd",
+            },
+            {
+              value: "https://ld.admin.ch/canton/14",
+              label: "https://ld.admin.ch/canton/14",
+              color: "#8c564b",
+            },
+            {
+              value: "https://ld.admin.ch/canton/15",
+              label: "https://ld.admin.ch/canton/15",
+              color: "#e377c2",
+            },
+            {
+              value: "https://ld.admin.ch/canton/16",
+              label: "https://ld.admin.ch/canton/16",
+              color: "#7f7f7f",
+            },
+            {
+              value: "https://ld.admin.ch/canton/17",
+              label: "https://ld.admin.ch/canton/17",
+              color: "#bcbd22",
+            },
+            {
+              value: "https://ld.admin.ch/canton/18",
+              label: "https://ld.admin.ch/canton/18",
+              color: "#17becf",
+            },
+            {
+              value: "https://ld.admin.ch/canton/19",
+              label: "https://ld.admin.ch/canton/19",
+              color: "#1f77b4",
+            },
+            {
+              value: "https://ld.admin.ch/canton/2",
+              label: "https://ld.admin.ch/canton/2",
+              color: "#ff7f0e",
+            },
+            {
+              value: "https://ld.admin.ch/canton/20",
+              label: "https://ld.admin.ch/canton/20",
+              color: "#2ca02c",
+            },
+            {
+              value: "https://ld.admin.ch/canton/21",
+              label: "https://ld.admin.ch/canton/21",
+              color: "#d62728",
+            },
+            {
+              value: "https://ld.admin.ch/canton/22",
+              label: "https://ld.admin.ch/canton/22",
+              color: "#9467bd",
+            },
+            {
+              value: "https://ld.admin.ch/canton/23",
+              label: "https://ld.admin.ch/canton/23",
+              color: "#8c564b",
+            },
+            {
+              value: "https://ld.admin.ch/canton/24",
+              label: "https://ld.admin.ch/canton/24",
+              color: "#e377c2",
+            },
+            {
+              value: "https://ld.admin.ch/canton/25",
+              label: "https://ld.admin.ch/canton/25",
+              color: "#7f7f7f",
+            },
+            {
+              value: "https://ld.admin.ch/canton/26",
+              label: "https://ld.admin.ch/canton/26",
+              color: "#bcbd22",
+            },
+            {
+              value: "https://ld.admin.ch/canton/3",
+              label: "https://ld.admin.ch/canton/3",
+              color: "#17becf",
+            },
+            {
+              value: "https://ld.admin.ch/canton/4",
+              label: "https://ld.admin.ch/canton/4",
+              color: "#1f77b4",
+            },
+            {
+              value: "https://ld.admin.ch/canton/5",
+              label: "https://ld.admin.ch/canton/5",
+              color: "#ff7f0e",
+            },
+            {
+              value: "https://ld.admin.ch/canton/6",
+              label: "https://ld.admin.ch/canton/6",
+              color: "#2ca02c",
+            },
+            {
+              value: "https://ld.admin.ch/canton/7",
+              label: "https://ld.admin.ch/canton/7",
+              color: "#d62728",
+            },
+            {
+              value: "https://ld.admin.ch/canton/8",
+              label: "https://ld.admin.ch/canton/8",
+              color: "#9467bd",
+            },
+            {
+              value: "https://ld.admin.ch/canton/9",
+              label: "https://ld.admin.ch/canton/9",
+              color: "#8c564b",
+            },
+          ],
+          random: false,
+        },
+      });
+    });
+
+    expect((getChartConfig(newState).fields as any).color.colorMapping).toEqual(
+      {
+        "https://ld.admin.ch/canton/1": "#1f77b4",
+        "https://ld.admin.ch/canton/2": "#ff7f0e",
+        "https://ld.admin.ch/canton/3": "#17becf",
+        "https://ld.admin.ch/canton/4": "#1f77b4",
+        "https://ld.admin.ch/canton/5": "#ff7f0e",
+        "https://ld.admin.ch/canton/6": "#2ca02c",
+        "https://ld.admin.ch/canton/7": "#d62728",
+        "https://ld.admin.ch/canton/8": "#9467bd",
+        "https://ld.admin.ch/canton/9": "#8c564b",
+        "https://ld.admin.ch/canton/10": "#ff7f0e",
+        "https://ld.admin.ch/canton/11": "#2ca02c",
+        "https://ld.admin.ch/canton/12": "#d62728",
+        "https://ld.admin.ch/canton/13": "#9467bd",
+        "https://ld.admin.ch/canton/14": "#8c564b",
+        "https://ld.admin.ch/canton/15": "#e377c2",
+        "https://ld.admin.ch/canton/16": "#7f7f7f",
+        "https://ld.admin.ch/canton/17": "#bcbd22",
+        "https://ld.admin.ch/canton/18": "#17becf",
+        "https://ld.admin.ch/canton/19": "#1f77b4",
+        "https://ld.admin.ch/canton/20": "#2ca02c",
+        "https://ld.admin.ch/canton/21": "#d62728",
+        "https://ld.admin.ch/canton/22": "#9467bd",
+        "https://ld.admin.ch/canton/23": "#8c564b",
+        "https://ld.admin.ch/canton/24": "#e377c2",
+        "https://ld.admin.ch/canton/25": "#7f7f7f",
+        "https://ld.admin.ch/canton/26": "#bcbd22",
+      }
+    );
+  });
+
+  it("should correctly shuffle color mapping for grouped column chart", () => {
+    const state: ConfiguratorStateConfiguringChart =
+      configStateMock.groupedColumnChart;
+
+    const newState = produce(state, (state: ConfiguratorState) => {
+      return updateColorMapping(state, {
+        type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+        value: {
+          field: "color",
+          colorConfigPath: undefined,
+          dimensionId:
+            "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+          values: [
+            {
+              value: "https://ld.admin.ch/canton/1",
+              label: "https://ld.admin.ch/canton/1",
+              color: "#1f77b4",
+            },
+            {
+              value: "https://ld.admin.ch/canton/2",
+              label: "https://ld.admin.ch/canton/2",
+              color: "#ff7f0e",
+            },
+            {
+              value: "https://ld.admin.ch/canton/3",
+              label: "https://ld.admin.ch/canton/3",
+              color: "#17becf",
+            },
+            {
+              value: "https://ld.admin.ch/canton/4",
+              label: "https://ld.admin.ch/canton/4",
+              color: "#1f77b4",
+            },
+            {
+              value: "https://ld.admin.ch/canton/5",
+              label: "https://ld.admin.ch/canton/5",
+              color: "#ff7f0e",
+            },
+            {
+              value: "https://ld.admin.ch/canton/6",
+              label: "https://ld.admin.ch/canton/6",
+              color: "#2ca02c",
+            },
+            {
+              value: "https://ld.admin.ch/canton/7",
+              label: "https://ld.admin.ch/canton/7",
+              color: "#d62728",
+            },
+            {
+              value: "https://ld.admin.ch/canton/8",
+              label: "https://ld.admin.ch/canton/8",
+              color: "#9467bd",
+            },
+            {
+              value: "https://ld.admin.ch/canton/9",
+              label: "https://ld.admin.ch/canton/9",
+              color: "#8c564b",
+            },
+            {
+              value: "https://ld.admin.ch/canton/10",
+              label: "https://ld.admin.ch/canton/10",
+              color: "#ff7f0e",
+            },
+            {
+              value: "https://ld.admin.ch/canton/11",
+              label: "https://ld.admin.ch/canton/11",
+              color: "#2ca02c",
+            },
+            {
+              value: "https://ld.admin.ch/canton/12",
+              label: "https://ld.admin.ch/canton/12",
+              color: "#d62728",
+            },
+            {
+              value: "https://ld.admin.ch/canton/13",
+              label: "https://ld.admin.ch/canton/13",
+              color: "#9467bd",
+            },
+            {
+              value: "https://ld.admin.ch/canton/14",
+              label: "https://ld.admin.ch/canton/14",
+              color: "#8c564b",
+            },
+            {
+              value: "https://ld.admin.ch/canton/15",
+              label: "https://ld.admin.ch/canton/15",
+              color: "#e377c2",
+            },
+            {
+              value: "https://ld.admin.ch/canton/16",
+              label: "https://ld.admin.ch/canton/16",
+              color: "#7f7f7f",
+            },
+            {
+              value: "https://ld.admin.ch/canton/17",
+              label: "https://ld.admin.ch/canton/17",
+              color: "#bcbd22",
+            },
+            {
+              value: "https://ld.admin.ch/canton/18",
+              label: "https://ld.admin.ch/canton/18",
+              color: "#17becf",
+            },
+            {
+              value: "https://ld.admin.ch/canton/19",
+              label: "https://ld.admin.ch/canton/19",
+              color: "#1f77b4",
+            },
+            {
+              value: "https://ld.admin.ch/canton/20",
+              label: "https://ld.admin.ch/canton/20",
+              color: "#2ca02c",
+            },
+            {
+              value: "https://ld.admin.ch/canton/21",
+              label: "https://ld.admin.ch/canton/21",
+              color: "#d62728",
+            },
+            {
+              value: "https://ld.admin.ch/canton/22",
+              label: "https://ld.admin.ch/canton/22",
+              color: "#9467bd",
+            },
+            {
+              value: "https://ld.admin.ch/canton/23",
+              label: "https://ld.admin.ch/canton/23",
+              color: "#8c564b",
+            },
+            {
+              value: "https://ld.admin.ch/canton/24",
+              label: "https://ld.admin.ch/canton/24",
+              color: "#e377c2",
+            },
+            {
+              value: "https://ld.admin.ch/canton/25",
+              label: "https://ld.admin.ch/canton/25",
+              color: "#7f7f7f",
+            },
+            {
+              value: "https://ld.admin.ch/canton/26",
+              label: "https://ld.admin.ch/canton/26",
+              color: "#bcbd22",
+            },
+          ],
+          random: true,
+        },
+      });
+    });
+
+    expect(
+      (getChartConfig(newState).fields as any).color.colorMapping
+    ).not.toEqual({
+      "https://ld.admin.ch/canton/1": "#1f77b4",
+      "https://ld.admin.ch/canton/2": "#ff7f0e",
+      "https://ld.admin.ch/canton/3": "#17becf",
+      "https://ld.admin.ch/canton/4": "#1f77b4",
+      "https://ld.admin.ch/canton/5": "#ff7f0e",
+      "https://ld.admin.ch/canton/6": "#2ca02c",
+      "https://ld.admin.ch/canton/7": "#d62728",
+      "https://ld.admin.ch/canton/8": "#9467bd",
+      "https://ld.admin.ch/canton/9": "#8c564b",
+      "https://ld.admin.ch/canton/10": "#ff7f0e",
+      "https://ld.admin.ch/canton/11": "#2ca02c",
+      "https://ld.admin.ch/canton/12": "#d62728",
+      "https://ld.admin.ch/canton/13": "#9467bd",
+      "https://ld.admin.ch/canton/14": "#8c564b",
+      "https://ld.admin.ch/canton/15": "#e377c2",
+      "https://ld.admin.ch/canton/16": "#7f7f7f",
+      "https://ld.admin.ch/canton/17": "#bcbd22",
+      "https://ld.admin.ch/canton/18": "#17becf",
+      "https://ld.admin.ch/canton/19": "#1f77b4",
+      "https://ld.admin.ch/canton/20": "#2ca02c",
+      "https://ld.admin.ch/canton/21": "#d62728",
+      "https://ld.admin.ch/canton/22": "#9467bd",
+      "https://ld.admin.ch/canton/23": "#8c564b",
+      "https://ld.admin.ch/canton/24": "#e377c2",
+      "https://ld.admin.ch/canton/25": "#7f7f7f",
+      "https://ld.admin.ch/canton/26": "#bcbd22",
     });
   });
 
@@ -1107,7 +1534,7 @@ describe("handleChartOptionChanged", () => {
     } as unknown as ConfiguratorStateConfiguringChart;
 
     handleChartOptionChanged(state, {
-      type: "COLOR_MAPPING_UPDATED",
+      type: "COLOR_FIELD_UPDATED",
       value: {
         locale: "en",
         field: "areaLayer",
@@ -1167,7 +1594,7 @@ describe("handleChartOptionChanged", () => {
     } as unknown as ConfiguratorStateConfiguringChart;
 
     handleChartOptionChanged(state, {
-      type: "COLOR_MAPPING_UPDATED",
+      type: "COLOR_FIELD_UPDATED",
       value: {
         locale: "en",
         field: "areaLayer",

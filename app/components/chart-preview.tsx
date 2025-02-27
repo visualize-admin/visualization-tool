@@ -109,7 +109,7 @@ export const ChartPreview = ({ dataSource }: { dataSource: DataSource }) => {
           <ChartTablePreviewProvider key={state.activeChartKey}>
             <ChartWrapper
               editing={editing}
-              layoutType={layout.type}
+              layout={layout}
               chartKey={state.activeChartKey}
             >
               <ChartPreviewInner dataSource={dataSource} />
@@ -157,7 +157,7 @@ const DashboardPreview = ({
           key={chartConfig.key}
           chartKey={chartConfig.key}
           dataSource={dataSource}
-          layoutType={state.layout.type}
+          layout={state.layout}
           editing={editing}
         />
       ) : (
@@ -165,12 +165,12 @@ const DashboardPreview = ({
           key={chartConfig.key}
           chartKey={chartConfig.key}
           dataSource={dataSource}
-          layoutType={state.layout.type}
+          layout={state.layout}
           editing={editing}
         />
       );
     },
-    [dataSource, editing, layoutType, state.layout.type]
+    [dataSource, editing, layoutType, state.layout]
   );
   const renderTextBlock = useCallback(
     (block: LayoutTextBlock) => {
@@ -348,6 +348,7 @@ const DndChartPreview = (props: CommonChartPreviewProps) => {
         className={clsx(className, dragOverClasses.root)}
         style={{
           display: active ? "flex" : "contents",
+          flexDirection: "column",
         }}
       >
         <ChartPreviewInner
@@ -473,7 +474,13 @@ const ChartPreviewInner = ({
   }, [dimensions, measures]);
 
   return (
-    <Box ref={ref} className={chartClasses.root}>
+    <Box
+      ref={ref}
+      className={clsx(
+        chartClasses.root,
+        configuring ? chartClasses.editing : chartClasses.pastEditing
+      )}
+    >
       {children}
       <ChartErrorBoundary resetKeys={[state]}>
         {hasChartConfigs(state) && (

@@ -44,13 +44,15 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
       className={classes.chartContainer}
       style={{
         height: isFreeCanvas ? "initial" : bounds.height,
-        overflow: "scroll",
+        overflow: "auto",
       }}
     >
       {children}
     </div>
   );
 };
+
+export const CHART_SVG_ID = "chart-svg";
 
 export const ChartSvg = ({ children }: { children: ReactNode }) => {
   const ref = useRef<SVGSVGElement>(null);
@@ -88,6 +90,7 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
   return (
     <svg
       ref={ref}
+      id={CHART_SVG_ID}
       width={width}
       style={{ position: "absolute", left: 0, top: 0 }}
     >

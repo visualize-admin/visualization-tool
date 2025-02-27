@@ -1,7 +1,16 @@
+import { PieArcDatum } from "d3-shape";
 import { ReactNode } from "react";
 
+import { AreasState } from "@/charts/area/areas-state";
+import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
+import { StackedBarsState } from "@/charts/bar/bars-stacked-state";
+import { BarsState } from "@/charts/bar/bars-state";
+import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
+import { ComboLineDualState } from "@/charts/combo/combo-line-dual-state";
+import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { PieState } from "@/charts/pie/pie-state";
+import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   TooltipBox,
@@ -19,7 +28,7 @@ export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
   const [state] = useInteraction();
   const { visible, d } = state.interaction;
 
-  return <>{visible && d && <TooltipInner d={d} type={type} />}</>;
+  return visible && d ? <TooltipInner d={d} type={type} /> : null;
 };
 export type { TooltipPlacement };
 
@@ -48,8 +57,16 @@ export type TooltipInfo = {
 
 const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
   const { bounds, getAnnotationInfo } = useChartState() as
+    | AreasState
+    | BarsState
+    | GroupedBarsState
+    | StackedBarsState
+    | ComboLineDualState
+    | ComboLineSingleState
+    | ComboLineColumnState
     | LinesState
-    | PieState;
+    | PieState
+    | ScatterplotState;
   const { margins } = bounds;
   const {
     xAnchor,
@@ -60,7 +77,7 @@ const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
     datum,
     values,
     withTriangle,
-  } = getAnnotationInfo(d as any);
+  } = getAnnotationInfo(d as Observation & PieArcDatum<Observation>, []);
 
   if (Number.isNaN(yAnchor)) {
     return null;

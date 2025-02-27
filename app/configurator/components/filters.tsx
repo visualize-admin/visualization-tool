@@ -106,6 +106,7 @@ import useEvent from "@/utils/use-event";
 
 import { interlace } from "../../utils/interlace";
 import { getTimeFilterOptions } from "../../utils/time-filter-options";
+import { useLegendTitleVisibility } from "../configurator-state/segment-config-state";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -220,6 +221,23 @@ const FilterControls = ({
   );
 };
 
+export const getHasColorMapping = ({
+  colorConfig,
+  colorComponent,
+  filterDimensionId,
+}: {
+  colorConfig: ColorField | undefined;
+  colorComponent?: Component;
+  filterDimensionId: string;
+}) => {
+  return !!(
+    (colorConfig?.type === "single" ? false : colorConfig?.colorMapping) &&
+    (colorComponent !== undefined
+      ? filterDimensionId === colorComponent.id
+      : true)
+  );
+};
+
 const MultiFilterContent = ({
   field,
   colorComponent,
@@ -323,12 +341,11 @@ const MultiFilterContent = ({
   }, [chartConfig]);
 
   const hasColorMapping = useMemo(() => {
-    return !!(
-      (colorConfig?.type === "single"
-        ? colorConfig.color
-        : colorConfig?.colorMapping) &&
-      (colorComponent !== undefined ? dimensionId === colorComponent.id : true)
-    );
+    return getHasColorMapping({
+      colorConfig,
+      colorComponent,
+      filterDimensionId: dimensionId,
+    });
   }, [colorConfig, dimensionId, colorComponent]);
 
   useEnsureUpToDateColorMapping({
@@ -338,44 +355,71 @@ const MultiFilterContent = ({
   });
 
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
+  const visibleLegendProps = useLegendTitleVisibility();
   const chartSymbol = getChartSymbol(chartConfig.chartType);
 
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
-        <Box sx={{ justifyContent: "space-between", display: "flex" }}>
+        <Box
+          sx={{
+            justifyContent: "space-between",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           {chartConfig.activeField === "segment" ? (
-            <FormControlLabel
-              componentsProps={{ typography: { variant: "body2" } }}
-              control={<Switch {...interactiveFilterProps} />}
-              label={
-                <MaybeTooltip
-                  tooltipProps={{ enterDelay: 600 }}
-                  title={
-                    <TooltipTitle
-                      text={
-                        <Trans id="controls.filters.interactive.tooltip">
-                          Allow users to change filters
-                        </Trans>
+            <>
+              <Flex sx={{ py: 1, alignItems: "center", width: "100%" }}>
+                <FormControlLabel
+                  componentsProps={{ typography: { variant: "body2" } }}
+                  control={<Switch {...interactiveFilterProps} />}
+                  label={
+                    <MaybeTooltip
+                      tooltipProps={{ enterDelay: 600 }}
+                      title={
+                        <TooltipTitle
+                          text={
+                            <Trans id="controls.filters.interactive.tooltip">
+                              Allow users to change filters
+                            </Trans>
+                          }
+                        />
                       }
-                    />
+                    >
+                      <div>
+                        <Trans id="controls.filters.interactive.toggle">
+                          Interactive
+                        </Trans>
+                      </div>
+                    </MaybeTooltip>
                   }
-                >
-                  <div>
-                    <Trans id="controls.filters.interactive.toggle">
-                      Interactive
+                />
+              </Flex>
+              <Flex sx={{ py: 1, alignItems: "center", width: "100%" }}>
+                <FormControlLabel
+                  componentsProps={{ typography: { variant: "body2" } }}
+                  control={<Switch {...visibleLegendProps} />}
+                  label={
+                    <Trans id="controls.filters.show-legend.toggle">
+                      Show legend titles
                     </Trans>
-                  </div>
-                </MaybeTooltip>
-              }
-            />
+                  }
+                />
+              </Flex>
+            </>
           ) : null}
           <Button
             variant="contained"
             size="small"
             color="primary"
             onClick={handleOpenAutocomplete}
-            sx={{ justifyContent: "center", mb: 2 }}
+            sx={{
+              justifyContent: "center",
+              mt: 4,
+              mb: 2,
+              width: "fit-content",
+            }}
           >
             <Trans id="controls.set-filters">Edit filters</Trans>
           </Button>
@@ -470,8 +514,8 @@ const MultiFilterContent = ({
  * and contains new values in the color dimension.
  * */
 const useEnsureUpToDateColorMapping = ({
-  colorComponentValues = [],
-  colorMapping = {},
+  colorComponentValues,
+  colorMapping,
 }: {
   colorComponentValues?: DimensionValue[];
   colorMapping?: ColorMapping;
@@ -482,11 +526,18 @@ const useEnsureUpToDateColorMapping = ({
   const { activeField } = chartConfig;
 
   const hasOutdatedMapping = useMemo(() => {
-    return colorComponentValues.some((value) => !colorMapping[value.value]);
+    return colorMapping && colorComponentValues
+      ? colorComponentValues.some((value) => !colorMapping[value.value])
+      : false;
   }, [colorComponentValues, colorMapping]);
 
   useEffect(() => {
-    if (activeField && hasOutdatedMapping) {
+    if (
+      activeField &&
+      hasOutdatedMapping &&
+      colorMapping &&
+      colorComponentValues
+    ) {
       dispatch({
         type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
         value: {
@@ -924,9 +975,9 @@ export const DimensionValuesMultiFilter = ({
   const chartConfig = getChartConfig(state);
   const getValueColor = useEvent((value: string) => {
     const colorPath = getPathToColorConfigProperty({
-      field,
+      field: isColorInConfig(chartConfig) ? "color" : field,
       colorConfigPath,
-      propertyPath: `colorMapping["${value}"]`,
+      propertyPath: `["${value}"]`,
     });
     return get(chartConfig, colorPath);
   });

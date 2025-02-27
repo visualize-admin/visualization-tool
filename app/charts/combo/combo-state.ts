@@ -9,6 +9,11 @@ import {
 } from "d3-scale";
 import { useMemo } from "react";
 
+import {
+  SINGLE_LINE_AXIS_LABEL_HEIGHT,
+  useAxisTitleSize,
+} from "@/charts/combo/shared";
+import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import { useSize } from "@/charts/shared/use-size";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
@@ -143,7 +148,48 @@ type GetMarginsOptions = {
 
 export const getMargins = (options: GetMarginsOptions) => {
   const { left, top = 50, right = 40, bottom } = options;
-  return { top, right, bottom, left };
+
+  return {
+    top,
+    right,
+    bottom,
+    left,
+  };
+};
+
+export const useDualAxisMargins = ({
+  width,
+  left,
+  bottom,
+  maxRightTickWidth,
+  leftAxisTitle,
+  rightAxisTitle,
+}: {
+  width: number;
+  left: number;
+  bottom: number;
+  maxRightTickWidth: number;
+  leftAxisTitle: string;
+  rightAxisTitle: string;
+}) => {
+  const axisTitleWidth = width * 0.5 - TICK_PADDING;
+  const leftAxisTitleSize = useAxisTitleSize(leftAxisTitle, {
+    width: axisTitleWidth,
+  });
+  const rightAxisTitleSize = useAxisTitleSize(rightAxisTitle, {
+    width: width * 0.5 - TICK_PADDING,
+  });
+  const top =
+    Math.max(leftAxisTitleSize.height, rightAxisTitleSize.height) +
+    SINGLE_LINE_AXIS_LABEL_HEIGHT;
+  const right = Math.max(maxRightTickWidth, 40);
+
+  return getMargins({
+    left,
+    right,
+    bottom: bottom - SINGLE_LINE_AXIS_LABEL_HEIGHT / 2,
+    top,
+  });
 };
 
 type Scale =

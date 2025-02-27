@@ -37,10 +37,13 @@ import {
   Slider,
   Switch,
 } from "@/components/form";
-import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
-import { ChartConfig, isColorInConfig } from "@/config-types";
+import {
+  ChartConfig,
+  CustomPaletteType,
+  isColorInConfig,
+} from "@/config-types";
 import { getChartConfig, useChartConfigFilters } from "@/config-utils";
 import {
   ControlTab,
@@ -90,7 +93,6 @@ import {
   isMostRecentValue,
   VISUALIZE_MOST_RECENT_VALUE,
 } from "@/domain/most-recent-value";
-import { useFlag } from "@/flags";
 import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { Locale } from "@/locales/locales";
@@ -100,6 +102,7 @@ import { assert } from "@/utils/assert";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
+import { useUserPalettes } from "@/utils/use-user-palettes";
 
 const ColorPickerMenu = dynamic(
   () =>
@@ -416,15 +419,7 @@ export const DataFilterTemporal = ({
     <>
       <DatePickerField
         name={`date-picker-${dimension.id}`}
-        label={
-          <FieldLabel
-            label={
-              <OpenMetadataPanelWrapper component={dimension}>
-                {label}
-              </OpenMetadataPanelWrapper>
-            }
-          />
-        }
+        label={<FieldLabel label={label} />}
         value={
           usesMostRecentDate ? maxDate : (parseDate(fieldProps.value) as Date)
         }
@@ -681,17 +676,15 @@ export const MetaInputField = ({
   value?: string;
 }) => {
   const field = useMetaField({ type, metaKey, locale, value });
-  const enableMarkdown = useFlag("enable-experimental-features");
 
   switch (inputType) {
     case "text":
       return <Input label={label} {...field} />;
     case "markdown":
-      if (enableMarkdown) {
-        return <MarkdownInput label={label} {...field} />;
-      } else {
-        return <Input label={label} {...field} />;
-      }
+      return <MarkdownInput label={label} {...field} />;
+    default:
+      const _exhaustiveCheck: never = inputType;
+      return _exhaustiveCheck;
   }
 };
 
@@ -746,7 +739,10 @@ export const TextBlockInputField = ({ locale }: { locale: Locale }) => {
   );
 };
 
-const useMultiFilterColorPicker = (value: string) => {
+const useMultiFilterColorPicker = (
+  value: string,
+  customColorPalettes?: CustomPaletteType[]
+) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const filters = useChartConfigFilters(chartConfig);
@@ -782,17 +778,15 @@ const useMultiFilterColorPicker = (value: string) => {
   );
 
   const palette = useMemo(() => {
+    const paletteId = get(chartConfig, `fields["${colorField}"].paletteId`);
+
     return getPalette({
-      paletteId: get(
-        chartConfig,
-        `fields["${colorField}"].${
-          colorConfigPath
-            ? `${colorConfigPath}${!hasColorField ? ".colorMapping" : ""}`
-            : ""
-        }paletteId`
-      ),
+      paletteId,
+      fallbackPalette: customColorPalettes?.find(
+        (palette) => palette.paletteId === paletteId
+      )?.colors,
     });
-  }, [chartConfig, colorConfigPath, colorField, hasColorField]);
+  }, [chartConfig, colorField, customColorPalettes]);
 
   const checkedState = dimensionId
     ? isMultiFilterFieldChecked(filters, dimensionId, value)
@@ -818,8 +812,12 @@ export const MultiFilterFieldColorPicker = ({
   label: string;
   symbol: LegendSymbol;
 }) => {
-  const { color, checked, palette, onChange } =
-    useMultiFilterColorPicker(value);
+  const { data: customColorPalettes } = useUserPalettes();
+
+  const { color, checked, palette, onChange } = useMultiFilterColorPicker(
+    value,
+    customColorPalettes
+  );
 
   return color && checked ? (
     <Flex
@@ -837,7 +835,7 @@ export const MultiFilterFieldColorPicker = ({
       />
       <ColorPickerMenu
         colors={palette}
-        selectedColor={color}
+        selectedHexColor={color}
         onChange={onChange}
       />
     </Flex>
@@ -879,7 +877,7 @@ export const ColorPickerField = ({
   const updateColor = useCallback(
     (value: string) =>
       dispatch({
-        type: "COLOR_MAPPING_UPDATED",
+        type: "COLOR_FIELD_UPDATED",
         value: {
           locale,
           field,
@@ -890,9 +888,15 @@ export const ColorPickerField = ({
     [locale, dispatch, field, path]
   );
 
+  const { data: customColorPalettes } = useUserPalettes();
+  const paletteId = get(chartConfig, `fields["${field}"].paletteId`);
+
   const color = get(chartConfig, `fields["${field}"].${path}`);
   const palette = getPalette({
-    paletteId: get(chartConfig, `fields["${field}"].paletteId`),
+    paletteId,
+    fallbackPalette: customColorPalettes?.find(
+      (palette) => palette.paletteId === paletteId
+    )?.colors,
   });
 
   return (
@@ -911,7 +915,7 @@ export const ColorPickerField = ({
       />
       <ColorPickerMenu
         colors={palette}
-        selectedColor={color}
+        selectedHexColor={color}
         onChange={updateColor}
         disabled={disabled}
       />

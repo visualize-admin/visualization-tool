@@ -52,12 +52,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "description": {
                           "type": "object",
@@ -80,12 +75,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "label": {
                           "type": "object",
@@ -108,19 +98,10 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         }
                       },
-                      "required": [
-                        "title",
-                        "description",
-                        "label"
-                      ]
+                      "required": ["title", "description", "label"]
                     },
                     "cubes": {
                       "type": "array",
@@ -164,10 +145,7 @@
                                               "description": "(string | number)"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "value"
-                                          ]
+                                          "required": ["type", "value"]
                                         },
                                         {
                                           "type": "object",
@@ -201,10 +179,7 @@
                                               }
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "values"
-                                          ]
+                                          "required": ["type", "values"]
                                         },
                                         {
                                           "type": "object",
@@ -238,11 +213,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "from",
-                                            "to"
-                                          ]
+                                          "required": ["type", "from", "to"]
                                         },
                                         {
                                           "type": "object",
@@ -262,10 +233,7 @@
                                 }
                               }
                             },
-                            "required": [
-                              "iri",
-                              "filters"
-                            ]
+                            "required": ["iri", "filters"]
                           },
                           {
                             "type": "object",
@@ -296,13 +264,7 @@
                       "description": "(string | undefined)"
                     }
                   },
-                  "required": [
-                    "key",
-                    "version",
-                    "meta",
-                    "cubes",
-                    "activeField"
-                  ]
+                  "required": ["key", "version", "meta", "cubes", "activeField"]
                 },
                 {
                   "type": "object",
@@ -331,10 +293,7 @@
                                   "description": "string"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId"
-                              ]
+                              "required": ["active", "componentId"]
                             },
                             "timeRange": {
                               "type": "object",
@@ -365,18 +324,10 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "type",
-                                    "from",
-                                    "to"
-                                  ]
+                                  "required": ["type", "from", "to"]
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId",
-                                "presets"
-                              ]
+                              "required": ["active", "componentId", "presets"]
                             },
                             "dataFilters": {
                               "type": "object",
@@ -395,10 +346,7 @@
                                   }
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentIds"
-                              ]
+                              "required": ["active", "componentIds"]
                             },
                             "calculation": {
                               "type": "object",
@@ -422,10 +370,7 @@
                                   "description": "(\"identity\" | \"percent\")"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "type"
-                              ]
+                              "required": ["active", "type"]
                             }
                           },
                           "required": [
@@ -456,9 +401,7 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "componentId"
-                                  ]
+                                  "required": ["componentId"]
                                 },
                                 {
                                   "type": "object",
@@ -486,9 +429,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "componentId"
-                                      ]
+                                      "required": ["componentId"]
                                     },
                                     {
                                       "type": "object",
@@ -530,10 +471,7 @@
                               "description": "(({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ imputationType: (\"none\" | \"zeros\" | \"linear\") }>)"
                             }
                           },
-                          "required": [
-                            "x",
-                            "y"
-                          ]
+                          "required": ["x", "y"]
                         },
                         {
                           "type": "object",
@@ -554,9 +492,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "componentId"
-                                          ]
+                                          "required": ["componentId"]
                                         },
                                         {
                                           "type": "object",
@@ -580,9 +516,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "palette"
-                                      ]
+                                      "required": ["palette"]
                                     },
                                     {
                                       "type": "object",
@@ -708,12 +642,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "description": {
                           "type": "object",
@@ -736,12 +665,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "label": {
                           "type": "object",
@@ -764,19 +688,10 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         }
                       },
-                      "required": [
-                        "title",
-                        "description",
-                        "label"
-                      ]
+                      "required": ["title", "description", "label"]
                     },
                     "cubes": {
                       "type": "array",
@@ -820,10 +735,7 @@
                                               "description": "(string | number)"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "value"
-                                          ]
+                                          "required": ["type", "value"]
                                         },
                                         {
                                           "type": "object",
@@ -857,10 +769,7 @@
                                               }
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "values"
-                                          ]
+                                          "required": ["type", "values"]
                                         },
                                         {
                                           "type": "object",
@@ -894,11 +803,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "from",
-                                            "to"
-                                          ]
+                                          "required": ["type", "from", "to"]
                                         },
                                         {
                                           "type": "object",
@@ -918,10 +823,7 @@
                                 }
                               }
                             },
-                            "required": [
-                              "iri",
-                              "filters"
-                            ]
+                            "required": ["iri", "filters"]
                           },
                           {
                             "type": "object",
@@ -952,13 +854,7 @@
                       "description": "(string | undefined)"
                     }
                   },
-                  "required": [
-                    "key",
-                    "version",
-                    "meta",
-                    "cubes",
-                    "activeField"
-                  ]
+                  "required": ["key", "version", "meta", "cubes", "activeField"]
                 },
                 {
                   "type": "object",
@@ -987,10 +883,7 @@
                                   "description": "string"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId"
-                              ]
+                              "required": ["active", "componentId"]
                             },
                             "timeRange": {
                               "type": "object",
@@ -1021,18 +914,10 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "type",
-                                    "from",
-                                    "to"
-                                  ]
+                                  "required": ["type", "from", "to"]
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId",
-                                "presets"
-                              ]
+                              "required": ["active", "componentId", "presets"]
                             },
                             "dataFilters": {
                               "type": "object",
@@ -1051,10 +936,7 @@
                                   }
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentIds"
-                              ]
+                              "required": ["active", "componentIds"]
                             },
                             "calculation": {
                               "type": "object",
@@ -1078,10 +960,7 @@
                                   "description": "(\"identity\" | \"percent\")"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "type"
-                              ]
+                              "required": ["active", "type"]
                             }
                           },
                           "required": [
@@ -1114,9 +993,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "componentId"
-                                      ]
+                                      "required": ["componentId"]
                                     },
                                     {
                                       "type": "object",
@@ -1197,9 +1074,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "componentId"
-                                      ]
+                                      "required": ["componentId"]
                                     },
                                     {
                                       "type": "object",
@@ -1232,10 +1107,7 @@
                               "description": "(({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showStandardError: boolean, showConfidenceInterval: boolean }>)"
                             }
                           },
-                          "required": [
-                            "x",
-                            "y"
-                          ]
+                          "required": ["x", "y"]
                         },
                         {
                           "type": "object",
@@ -1256,9 +1128,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "componentId"
-                                          ]
+                                          "required": ["componentId"]
                                         },
                                         {
                                           "type": "object",
@@ -1282,9 +1152,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "palette"
-                                      ]
+                                      "required": ["palette"]
                                     },
                                     {
                                       "type": "object",
@@ -1371,9 +1239,7 @@
                                       "description": "(\"stacked\" | \"grouped\")"
                                     }
                                   },
-                                  "required": [
-                                    "type"
-                                  ]
+                                  "required": ["type"]
                                 }
                               ],
                               "description": "((({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & { palette: string } & Partial<{ colorMapping: { [K in string]: string } }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }> & { type: (\"stacked\" | \"grouped\") })"
@@ -1391,9 +1257,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "componentId"
-                                      ]
+                                      "required": ["componentId"]
                                     },
                                     {
                                       "type": "object",
@@ -1502,12 +1366,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "description": {
                           "type": "object",
@@ -1530,12 +1389,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "label": {
                           "type": "object",
@@ -1558,19 +1412,10 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         }
                       },
-                      "required": [
-                        "title",
-                        "description",
-                        "label"
-                      ]
+                      "required": ["title", "description", "label"]
                     },
                     "cubes": {
                       "type": "array",
@@ -1614,10 +1459,7 @@
                                               "description": "(string | number)"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "value"
-                                          ]
+                                          "required": ["type", "value"]
                                         },
                                         {
                                           "type": "object",
@@ -1651,10 +1493,7 @@
                                               }
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "values"
-                                          ]
+                                          "required": ["type", "values"]
                                         },
                                         {
                                           "type": "object",
@@ -1688,11 +1527,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "from",
-                                            "to"
-                                          ]
+                                          "required": ["type", "from", "to"]
                                         },
                                         {
                                           "type": "object",
@@ -1712,10 +1547,7 @@
                                 }
                               }
                             },
-                            "required": [
-                              "iri",
-                              "filters"
-                            ]
+                            "required": ["iri", "filters"]
                           },
                           {
                             "type": "object",
@@ -1746,13 +1578,7 @@
                       "description": "(string | undefined)"
                     }
                   },
-                  "required": [
-                    "key",
-                    "version",
-                    "meta",
-                    "cubes",
-                    "activeField"
-                  ]
+                  "required": ["key", "version", "meta", "cubes", "activeField"]
                 },
                 {
                   "type": "object",
@@ -1781,10 +1607,7 @@
                                   "description": "string"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId"
-                              ]
+                              "required": ["active", "componentId"]
                             },
                             "timeRange": {
                               "type": "object",
@@ -1815,18 +1638,10 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "type",
-                                    "from",
-                                    "to"
-                                  ]
+                                  "required": ["type", "from", "to"]
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId",
-                                "presets"
-                              ]
+                              "required": ["active", "componentId", "presets"]
                             },
                             "dataFilters": {
                               "type": "object",
@@ -1845,10 +1660,7 @@
                                   }
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentIds"
-                              ]
+                              "required": ["active", "componentIds"]
                             },
                             "calculation": {
                               "type": "object",
@@ -1872,10 +1684,7 @@
                                   "description": "(\"identity\" | \"percent\")"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "type"
-                              ]
+                              "required": ["active", "type"]
                             }
                           },
                           "required": [
@@ -1906,9 +1715,7 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "componentId"
-                                  ]
+                                  "required": ["componentId"]
                                 },
                                 {
                                   "type": "object",
@@ -1936,9 +1743,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "componentId"
-                                      ]
+                                      "required": ["componentId"]
                                     },
                                     {
                                       "type": "object",
@@ -2007,10 +1812,7 @@
                               "description": "(({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }>)"
                             }
                           },
-                          "required": [
-                            "x",
-                            "y"
-                          ]
+                          "required": ["x", "y"]
                         },
                         {
                           "type": "object",
@@ -2031,9 +1833,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "componentId"
-                                          ]
+                                          "required": ["componentId"]
                                         },
                                         {
                                           "type": "object",
@@ -2057,9 +1857,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "palette"
-                                      ]
+                                      "required": ["palette"]
                                     },
                                     {
                                       "type": "object",
@@ -2146,9 +1944,7 @@
                                       "description": "(\"stacked\" | \"grouped\")"
                                     }
                                   },
-                                  "required": [
-                                    "type"
-                                  ]
+                                  "required": ["type"]
                                 }
                               ],
                               "description": "((({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & { palette: string } & Partial<{ colorMapping: { [K in string]: string } }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }> & { type: (\"stacked\" | \"grouped\") })"
@@ -2166,9 +1962,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "componentId"
-                                      ]
+                                      "required": ["componentId"]
                                     },
                                     {
                                       "type": "object",
@@ -2277,12 +2071,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "description": {
                           "type": "object",
@@ -2305,12 +2094,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "label": {
                           "type": "object",
@@ -2333,19 +2117,10 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         }
                       },
-                      "required": [
-                        "title",
-                        "description",
-                        "label"
-                      ]
+                      "required": ["title", "description", "label"]
                     },
                     "cubes": {
                       "type": "array",
@@ -2389,10 +2164,7 @@
                                               "description": "(string | number)"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "value"
-                                          ]
+                                          "required": ["type", "value"]
                                         },
                                         {
                                           "type": "object",
@@ -2426,10 +2198,7 @@
                                               }
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "values"
-                                          ]
+                                          "required": ["type", "values"]
                                         },
                                         {
                                           "type": "object",
@@ -2463,11 +2232,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "from",
-                                            "to"
-                                          ]
+                                          "required": ["type", "from", "to"]
                                         },
                                         {
                                           "type": "object",
@@ -2487,10 +2252,7 @@
                                 }
                               }
                             },
-                            "required": [
-                              "iri",
-                              "filters"
-                            ]
+                            "required": ["iri", "filters"]
                           },
                           {
                             "type": "object",
@@ -2521,13 +2283,7 @@
                       "description": "(string | undefined)"
                     }
                   },
-                  "required": [
-                    "key",
-                    "version",
-                    "meta",
-                    "cubes",
-                    "activeField"
-                  ]
+                  "required": ["key", "version", "meta", "cubes", "activeField"]
                 },
                 {
                   "type": "object",
@@ -2556,10 +2312,7 @@
                                   "description": "string"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId"
-                              ]
+                              "required": ["active", "componentId"]
                             },
                             "timeRange": {
                               "type": "object",
@@ -2590,18 +2343,10 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "type",
-                                    "from",
-                                    "to"
-                                  ]
+                                  "required": ["type", "from", "to"]
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId",
-                                "presets"
-                              ]
+                              "required": ["active", "componentId", "presets"]
                             },
                             "dataFilters": {
                               "type": "object",
@@ -2620,10 +2365,7 @@
                                   }
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentIds"
-                              ]
+                              "required": ["active", "componentIds"]
                             },
                             "calculation": {
                               "type": "object",
@@ -2647,10 +2389,7 @@
                                   "description": "(\"identity\" | \"percent\")"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "type"
-                              ]
+                              "required": ["active", "type"]
                             }
                           },
                           "required": [
@@ -2681,9 +2420,7 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "componentId"
-                                  ]
+                                  "required": ["componentId"]
                                 },
                                 {
                                   "type": "object",
@@ -2711,9 +2448,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "componentId"
-                                      ]
+                                      "required": ["componentId"]
                                     },
                                     {
                                       "type": "object",
@@ -2746,10 +2481,7 @@
                               "description": "(({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showStandardError: boolean, showConfidenceInterval: boolean }>)"
                             }
                           },
-                          "required": [
-                            "x",
-                            "y"
-                          ]
+                          "required": ["x", "y"]
                         },
                         {
                           "type": "object",
@@ -2770,9 +2502,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "componentId"
-                                          ]
+                                          "required": ["componentId"]
                                         },
                                         {
                                           "type": "object",
@@ -2796,9 +2526,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "palette"
-                                      ]
+                                      "required": ["palette"]
                                     },
                                     {
                                       "type": "object",
@@ -2924,12 +2652,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "description": {
                           "type": "object",
@@ -2952,12 +2675,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "label": {
                           "type": "object",
@@ -2980,19 +2698,10 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         }
                       },
-                      "required": [
-                        "title",
-                        "description",
-                        "label"
-                      ]
+                      "required": ["title", "description", "label"]
                     },
                     "cubes": {
                       "type": "array",
@@ -3036,10 +2745,7 @@
                                               "description": "(string | number)"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "value"
-                                          ]
+                                          "required": ["type", "value"]
                                         },
                                         {
                                           "type": "object",
@@ -3073,10 +2779,7 @@
                                               }
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "values"
-                                          ]
+                                          "required": ["type", "values"]
                                         },
                                         {
                                           "type": "object",
@@ -3110,11 +2813,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "from",
-                                            "to"
-                                          ]
+                                          "required": ["type", "from", "to"]
                                         },
                                         {
                                           "type": "object",
@@ -3134,10 +2833,7 @@
                                 }
                               }
                             },
-                            "required": [
-                              "iri",
-                              "filters"
-                            ]
+                            "required": ["iri", "filters"]
                           },
                           {
                             "type": "object",
@@ -3168,13 +2864,7 @@
                       "description": "(string | undefined)"
                     }
                   },
-                  "required": [
-                    "key",
-                    "version",
-                    "meta",
-                    "cubes",
-                    "activeField"
-                  ]
+                  "required": ["key", "version", "meta", "cubes", "activeField"]
                 },
                 {
                   "type": "object",
@@ -3203,10 +2893,7 @@
                                   "description": "string"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId"
-                              ]
+                              "required": ["active", "componentId"]
                             },
                             "timeRange": {
                               "type": "object",
@@ -3237,18 +2924,10 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "type",
-                                    "from",
-                                    "to"
-                                  ]
+                                  "required": ["type", "from", "to"]
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId",
-                                "presets"
-                              ]
+                              "required": ["active", "componentId", "presets"]
                             },
                             "dataFilters": {
                               "type": "object",
@@ -3267,10 +2946,7 @@
                                   }
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentIds"
-                              ]
+                              "required": ["active", "componentIds"]
                             },
                             "calculation": {
                               "type": "object",
@@ -3294,10 +2970,7 @@
                                   "description": "(\"identity\" | \"percent\")"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "type"
-                              ]
+                              "required": ["active", "type"]
                             }
                           },
                           "required": [
@@ -3378,9 +3051,7 @@
                                           "description": "number"
                                         }
                                       },
-                                      "required": [
-                                        "opacity"
-                                      ]
+                                      "required": ["opacity"]
                                     }
                                   ],
                                   "description": "({ type: \"categorical\", componentId: string, palette: string, colorMapping: { [K in string]: string } } & Partial<{ useAbbreviations: boolean }> & { opacity: number })"
@@ -3541,9 +3212,7 @@
                                           "description": "number"
                                         }
                                       },
-                                      "required": [
-                                        "opacity"
-                                      ]
+                                      "required": ["opacity"]
                                     }
                                   ],
                                   "description": "({ type: \"numerical\", componentId: string, palette: ((\"BrBG\" | \"PiYG\" | \"PRGn\" | \"PuOr\" | \"RdBu\" | \"RdYlBu\" | \"RdYlGn\") | (\"blues\" | \"greens\" | \"greys\" | \"oranges\" | \"purples\" | \"reds\")) } & ({ scaleType: \"continuous\", interpolationType: \"linear\" } | { scaleType: \"discrete\", interpolationType: (\"quantize\" | \"quantile\" | \"jenks\"), nbClass: number }) & { opacity: number })"
@@ -3552,10 +3221,7 @@
                               "description": "(({ type: \"categorical\", componentId: string, palette: string, colorMapping: { [K in string]: string } } & Partial<{ useAbbreviations: boolean }> & { opacity: number }) | ({ type: \"numerical\", componentId: string, palette: ((\"BrBG\" | \"PiYG\" | \"PRGn\" | \"PuOr\" | \"RdBu\" | \"RdYlBu\" | \"RdYlGn\") | (\"blues\" | \"greens\" | \"greys\" | \"oranges\" | \"purples\" | \"reds\")) } & ({ scaleType: \"continuous\", interpolationType: \"linear\" } | { scaleType: \"discrete\", interpolationType: (\"quantize\" | \"quantile\" | \"jenks\"), nbClass: number }) & { opacity: number }))"
                             }
                           },
-                          "required": [
-                            "componentId",
-                            "color"
-                          ]
+                          "required": ["componentId", "color"]
                         },
                         "symbolLayer": {
                           "type": "object",
@@ -3586,10 +3252,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "type",
-                                        "value"
-                                      ]
+                                      "required": ["type", "value"]
                                     },
                                     {
                                       "type": "object",
@@ -3600,9 +3263,7 @@
                                           "description": "number"
                                         }
                                       },
-                                      "required": [
-                                        "opacity"
-                                      ]
+                                      "required": ["opacity"]
                                     }
                                   ],
                                   "description": "({ type: \"fixed\", value: string } & { opacity: number })"
@@ -3660,9 +3321,7 @@
                                           "description": "number"
                                         }
                                       },
-                                      "required": [
-                                        "opacity"
-                                      ]
+                                      "required": ["opacity"]
                                     }
                                   ],
                                   "description": "({ type: \"categorical\", componentId: string, palette: string, colorMapping: { [K in string]: string } } & Partial<{ useAbbreviations: boolean }> & { opacity: number })"
@@ -3823,9 +3482,7 @@
                                           "description": "number"
                                         }
                                       },
-                                      "required": [
-                                        "opacity"
-                                      ]
+                                      "required": ["opacity"]
                                     }
                                   ],
                                   "description": "({ type: \"numerical\", componentId: string, palette: ((\"BrBG\" | \"PiYG\" | \"PRGn\" | \"PuOr\" | \"RdBu\" | \"RdYlBu\" | \"RdYlGn\") | (\"blues\" | \"greens\" | \"greys\" | \"oranges\" | \"purples\" | \"reds\")) } & ({ scaleType: \"continuous\", interpolationType: \"linear\" } | { scaleType: \"discrete\", interpolationType: (\"quantize\" | \"quantile\" | \"jenks\"), nbClass: number }) & { opacity: number })"
@@ -3834,11 +3491,7 @@
                               "description": "(({ type: \"fixed\", value: string } & { opacity: number }) | ({ type: \"categorical\", componentId: string, palette: string, colorMapping: { [K in string]: string } } & Partial<{ useAbbreviations: boolean }> & { opacity: number }) | ({ type: \"numerical\", componentId: string, palette: ((\"BrBG\" | \"PiYG\" | \"PRGn\" | \"PuOr\" | \"RdBu\" | \"RdYlBu\" | \"RdYlGn\") | (\"blues\" | \"greens\" | \"greys\" | \"oranges\" | \"purples\" | \"reds\")) } & ({ scaleType: \"continuous\", interpolationType: \"linear\" } | { scaleType: \"discrete\", interpolationType: (\"quantize\" | \"quantile\" | \"jenks\"), nbClass: number }) & { opacity: number }))"
                             }
                           },
-                          "required": [
-                            "componentId",
-                            "measureId",
-                            "color"
-                          ]
+                          "required": ["componentId", "measureId", "color"]
                         },
                         "animation": {
                           "allOf": [
@@ -3853,9 +3506,7 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "componentId"
-                                  ]
+                                  "required": ["componentId"]
                                 },
                                 {
                                   "type": "object",
@@ -3971,11 +3622,7 @@
                           "description": "([[number, number], [number, number]] | undefined)"
                         }
                       },
-                      "required": [
-                        "show",
-                        "locked",
-                        "bbox"
-                      ]
+                      "required": ["show", "locked", "bbox"]
                     }
                   },
                   "required": [
@@ -4027,12 +3674,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "description": {
                           "type": "object",
@@ -4055,12 +3697,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "label": {
                           "type": "object",
@@ -4083,19 +3720,10 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         }
                       },
-                      "required": [
-                        "title",
-                        "description",
-                        "label"
-                      ]
+                      "required": ["title", "description", "label"]
                     },
                     "cubes": {
                       "type": "array",
@@ -4139,10 +3767,7 @@
                                               "description": "(string | number)"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "value"
-                                          ]
+                                          "required": ["type", "value"]
                                         },
                                         {
                                           "type": "object",
@@ -4176,10 +3801,7 @@
                                               }
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "values"
-                                          ]
+                                          "required": ["type", "values"]
                                         },
                                         {
                                           "type": "object",
@@ -4213,11 +3835,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "from",
-                                            "to"
-                                          ]
+                                          "required": ["type", "from", "to"]
                                         },
                                         {
                                           "type": "object",
@@ -4237,10 +3855,7 @@
                                 }
                               }
                             },
-                            "required": [
-                              "iri",
-                              "filters"
-                            ]
+                            "required": ["iri", "filters"]
                           },
                           {
                             "type": "object",
@@ -4271,13 +3886,7 @@
                       "description": "(string | undefined)"
                     }
                   },
-                  "required": [
-                    "key",
-                    "version",
-                    "meta",
-                    "cubes",
-                    "activeField"
-                  ]
+                  "required": ["key", "version", "meta", "cubes", "activeField"]
                 },
                 {
                   "type": "object",
@@ -4306,10 +3915,7 @@
                                   "description": "string"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId"
-                              ]
+                              "required": ["active", "componentId"]
                             },
                             "timeRange": {
                               "type": "object",
@@ -4340,18 +3946,10 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "type",
-                                    "from",
-                                    "to"
-                                  ]
+                                  "required": ["type", "from", "to"]
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId",
-                                "presets"
-                              ]
+                              "required": ["active", "componentId", "presets"]
                             },
                             "dataFilters": {
                               "type": "object",
@@ -4370,10 +3968,7 @@
                                   }
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentIds"
-                              ]
+                              "required": ["active", "componentIds"]
                             },
                             "calculation": {
                               "type": "object",
@@ -4397,10 +3992,7 @@
                                   "description": "(\"identity\" | \"percent\")"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "type"
-                              ]
+                              "required": ["active", "type"]
                             }
                           },
                           "required": [
@@ -4431,9 +4023,7 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "componentId"
-                                  ]
+                                  "required": ["componentId"]
                                 },
                                 {
                                   "type": "object",
@@ -4463,9 +4053,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "componentId"
-                                          ]
+                                          "required": ["componentId"]
                                         },
                                         {
                                           "type": "object",
@@ -4489,9 +4077,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "palette"
-                                      ]
+                                      "required": ["palette"]
                                     },
                                     {
                                       "type": "object",
@@ -4564,10 +4150,7 @@
                               "description": "((({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & { palette: string } & Partial<{ colorMapping: { [K in string]: string } }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }>)"
                             }
                           },
-                          "required": [
-                            "y",
-                            "segment"
-                          ]
+                          "required": ["y", "segment"]
                         },
                         {
                           "type": "object",
@@ -4586,9 +4169,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "componentId"
-                                      ]
+                                      "required": ["componentId"]
                                     },
                                     {
                                       "type": "object",
@@ -4697,12 +4278,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "description": {
                           "type": "object",
@@ -4725,12 +4301,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "label": {
                           "type": "object",
@@ -4753,19 +4324,10 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         }
                       },
-                      "required": [
-                        "title",
-                        "description",
-                        "label"
-                      ]
+                      "required": ["title", "description", "label"]
                     },
                     "cubes": {
                       "type": "array",
@@ -4809,10 +4371,7 @@
                                               "description": "(string | number)"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "value"
-                                          ]
+                                          "required": ["type", "value"]
                                         },
                                         {
                                           "type": "object",
@@ -4846,10 +4405,7 @@
                                               }
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "values"
-                                          ]
+                                          "required": ["type", "values"]
                                         },
                                         {
                                           "type": "object",
@@ -4883,11 +4439,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "from",
-                                            "to"
-                                          ]
+                                          "required": ["type", "from", "to"]
                                         },
                                         {
                                           "type": "object",
@@ -4907,10 +4459,7 @@
                                 }
                               }
                             },
-                            "required": [
-                              "iri",
-                              "filters"
-                            ]
+                            "required": ["iri", "filters"]
                           },
                           {
                             "type": "object",
@@ -4941,13 +4490,7 @@
                       "description": "(string | undefined)"
                     }
                   },
-                  "required": [
-                    "key",
-                    "version",
-                    "meta",
-                    "cubes",
-                    "activeField"
-                  ]
+                  "required": ["key", "version", "meta", "cubes", "activeField"]
                 },
                 {
                   "type": "object",
@@ -4976,10 +4519,7 @@
                                   "description": "string"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId"
-                              ]
+                              "required": ["active", "componentId"]
                             },
                             "timeRange": {
                               "type": "object",
@@ -5010,18 +4550,10 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "type",
-                                    "from",
-                                    "to"
-                                  ]
+                                  "required": ["type", "from", "to"]
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId",
-                                "presets"
-                              ]
+                              "required": ["active", "componentId", "presets"]
                             },
                             "dataFilters": {
                               "type": "object",
@@ -5040,10 +4572,7 @@
                                   }
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentIds"
-                              ]
+                              "required": ["active", "componentIds"]
                             },
                             "calculation": {
                               "type": "object",
@@ -5067,10 +4596,7 @@
                                   "description": "(\"identity\" | \"percent\")"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "type"
-                              ]
+                              "required": ["active", "type"]
                             }
                           },
                           "required": [
@@ -5101,9 +4627,7 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "componentId"
-                                  ]
+                                  "required": ["componentId"]
                                 },
                                 {
                                   "type": "object",
@@ -5129,9 +4653,7 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "componentId"
-                                  ]
+                                  "required": ["componentId"]
                                 },
                                 {
                                   "type": "object",
@@ -5147,10 +4669,7 @@
                               "description": "({ componentId: string } & Partial<{ useAbbreviations: boolean }>)"
                             }
                           },
-                          "required": [
-                            "x",
-                            "y"
-                          ]
+                          "required": ["x", "y"]
                         },
                         {
                           "type": "object",
@@ -5169,9 +4688,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "componentId"
-                                      ]
+                                      "required": ["componentId"]
                                     },
                                     {
                                       "type": "object",
@@ -5195,9 +4712,7 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "palette"
-                                  ]
+                                  "required": ["palette"]
                                 },
                                 {
                                   "type": "object",
@@ -5229,9 +4744,7 @@
                                           "description": "string"
                                         }
                                       },
-                                      "required": [
-                                        "componentId"
-                                      ]
+                                      "required": ["componentId"]
                                     },
                                     {
                                       "type": "object",
@@ -5340,12 +4853,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "description": {
                           "type": "object",
@@ -5368,12 +4876,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "label": {
                           "type": "object",
@@ -5396,19 +4899,10 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         }
                       },
-                      "required": [
-                        "title",
-                        "description",
-                        "label"
-                      ]
+                      "required": ["title", "description", "label"]
                     },
                     "cubes": {
                       "type": "array",
@@ -5452,10 +4946,7 @@
                                               "description": "(string | number)"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "value"
-                                          ]
+                                          "required": ["type", "value"]
                                         },
                                         {
                                           "type": "object",
@@ -5489,10 +4980,7 @@
                                               }
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "values"
-                                          ]
+                                          "required": ["type", "values"]
                                         },
                                         {
                                           "type": "object",
@@ -5526,11 +5014,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "from",
-                                            "to"
-                                          ]
+                                          "required": ["type", "from", "to"]
                                         },
                                         {
                                           "type": "object",
@@ -5550,10 +5034,7 @@
                                 }
                               }
                             },
-                            "required": [
-                              "iri",
-                              "filters"
-                            ]
+                            "required": ["iri", "filters"]
                           },
                           {
                             "type": "object",
@@ -5584,13 +5065,7 @@
                       "description": "(string | undefined)"
                     }
                   },
-                  "required": [
-                    "key",
-                    "version",
-                    "meta",
-                    "cubes",
-                    "activeField"
-                  ]
+                  "required": ["key", "version", "meta", "cubes", "activeField"]
                 },
                 {
                   "type": "object",
@@ -5821,11 +5296,7 @@
                                     "description": "(\"BrBG\" | \"PiYG\" | \"PRGn\" | \"PuOr\" | \"RdBu\" | \"RdYlBu\" | \"RdYlGn\")"
                                   }
                                 },
-                                "required": [
-                                  "type",
-                                  "textStyle",
-                                  "palette"
-                                ]
+                                "required": ["type", "textStyle", "palette"]
                               },
                               {
                                 "type": "object",
@@ -5901,10 +5372,7 @@
                           "description": "boolean"
                         }
                       },
-                      "required": [
-                        "showSearch",
-                        "showAllRows"
-                      ]
+                      "required": ["showSearch", "showAllRows"]
                     },
                     "sorting": {
                       "type": "array",
@@ -6058,12 +5526,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "description": {
                           "type": "object",
@@ -6086,12 +5549,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "label": {
                           "type": "object",
@@ -6114,19 +5572,10 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         }
                       },
-                      "required": [
-                        "title",
-                        "description",
-                        "label"
-                      ]
+                      "required": ["title", "description", "label"]
                     },
                     "cubes": {
                       "type": "array",
@@ -6170,10 +5619,7 @@
                                               "description": "(string | number)"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "value"
-                                          ]
+                                          "required": ["type", "value"]
                                         },
                                         {
                                           "type": "object",
@@ -6207,10 +5653,7 @@
                                               }
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "values"
-                                          ]
+                                          "required": ["type", "values"]
                                         },
                                         {
                                           "type": "object",
@@ -6244,11 +5687,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "from",
-                                            "to"
-                                          ]
+                                          "required": ["type", "from", "to"]
                                         },
                                         {
                                           "type": "object",
@@ -6268,10 +5707,7 @@
                                 }
                               }
                             },
-                            "required": [
-                              "iri",
-                              "filters"
-                            ]
+                            "required": ["iri", "filters"]
                           },
                           {
                             "type": "object",
@@ -6302,13 +5738,7 @@
                       "description": "(string | undefined)"
                     }
                   },
-                  "required": [
-                    "key",
-                    "version",
-                    "meta",
-                    "cubes",
-                    "activeField"
-                  ]
+                  "required": ["key", "version", "meta", "cubes", "activeField"]
                 },
                 {
                   "type": "object",
@@ -6333,9 +5763,7 @@
                                   "description": "string"
                                 }
                               },
-                              "required": [
-                                "componentId"
-                              ]
+                              "required": ["componentId"]
                             },
                             {
                               "type": "object",
@@ -6382,10 +5810,7 @@
                           ]
                         }
                       },
-                      "required": [
-                        "x",
-                        "y"
-                      ]
+                      "required": ["x", "y"]
                     },
                     "interactiveFiltersConfig": {
                       "anyOf": [
@@ -6406,10 +5831,7 @@
                                   "description": "string"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId"
-                              ]
+                              "required": ["active", "componentId"]
                             },
                             "timeRange": {
                               "type": "object",
@@ -6440,18 +5862,10 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "type",
-                                    "from",
-                                    "to"
-                                  ]
+                                  "required": ["type", "from", "to"]
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId",
-                                "presets"
-                              ]
+                              "required": ["active", "componentId", "presets"]
                             },
                             "dataFilters": {
                               "type": "object",
@@ -6470,10 +5884,7 @@
                                   }
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentIds"
-                              ]
+                              "required": ["active", "componentIds"]
                             },
                             "calculation": {
                               "type": "object",
@@ -6497,10 +5908,7 @@
                                   "description": "(\"identity\" | \"percent\")"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "type"
-                              ]
+                              "required": ["active", "type"]
                             }
                           },
                           "required": [
@@ -6563,12 +5971,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "description": {
                           "type": "object",
@@ -6591,12 +5994,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "label": {
                           "type": "object",
@@ -6619,19 +6017,10 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         }
                       },
-                      "required": [
-                        "title",
-                        "description",
-                        "label"
-                      ]
+                      "required": ["title", "description", "label"]
                     },
                     "cubes": {
                       "type": "array",
@@ -6675,10 +6064,7 @@
                                               "description": "(string | number)"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "value"
-                                          ]
+                                          "required": ["type", "value"]
                                         },
                                         {
                                           "type": "object",
@@ -6712,10 +6098,7 @@
                                               }
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "values"
-                                          ]
+                                          "required": ["type", "values"]
                                         },
                                         {
                                           "type": "object",
@@ -6749,11 +6132,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "from",
-                                            "to"
-                                          ]
+                                          "required": ["type", "from", "to"]
                                         },
                                         {
                                           "type": "object",
@@ -6773,10 +6152,7 @@
                                 }
                               }
                             },
-                            "required": [
-                              "iri",
-                              "filters"
-                            ]
+                            "required": ["iri", "filters"]
                           },
                           {
                             "type": "object",
@@ -6807,13 +6183,7 @@
                       "description": "(string | undefined)"
                     }
                   },
-                  "required": [
-                    "key",
-                    "version",
-                    "meta",
-                    "cubes",
-                    "activeField"
-                  ]
+                  "required": ["key", "version", "meta", "cubes", "activeField"]
                 },
                 {
                   "type": "object",
@@ -6838,9 +6208,7 @@
                                   "description": "string"
                                 }
                               },
-                              "required": [
-                                "componentId"
-                              ]
+                              "required": ["componentId"]
                             },
                             {
                               "type": "object",
@@ -6888,10 +6256,7 @@
                           ]
                         }
                       },
-                      "required": [
-                        "x",
-                        "y"
-                      ]
+                      "required": ["x", "y"]
                     },
                     "interactiveFiltersConfig": {
                       "anyOf": [
@@ -6912,10 +6277,7 @@
                                   "description": "string"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId"
-                              ]
+                              "required": ["active", "componentId"]
                             },
                             "timeRange": {
                               "type": "object",
@@ -6946,18 +6308,10 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "type",
-                                    "from",
-                                    "to"
-                                  ]
+                                  "required": ["type", "from", "to"]
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId",
-                                "presets"
-                              ]
+                              "required": ["active", "componentId", "presets"]
                             },
                             "dataFilters": {
                               "type": "object",
@@ -6976,10 +6330,7 @@
                                   }
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentIds"
-                              ]
+                              "required": ["active", "componentIds"]
                             },
                             "calculation": {
                               "type": "object",
@@ -7003,10 +6354,7 @@
                                   "description": "(\"identity\" | \"percent\")"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "type"
-                              ]
+                              "required": ["active", "type"]
                             }
                           },
                           "required": [
@@ -7069,12 +6417,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "description": {
                           "type": "object",
@@ -7097,12 +6440,7 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         },
                         "label": {
                           "type": "object",
@@ -7125,19 +6463,10 @@
                               "description": "string"
                             }
                           },
-                          "required": [
-                            "de",
-                            "fr",
-                            "it",
-                            "en"
-                          ]
+                          "required": ["de", "fr", "it", "en"]
                         }
                       },
-                      "required": [
-                        "title",
-                        "description",
-                        "label"
-                      ]
+                      "required": ["title", "description", "label"]
                     },
                     "cubes": {
                       "type": "array",
@@ -7181,10 +6510,7 @@
                                               "description": "(string | number)"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "value"
-                                          ]
+                                          "required": ["type", "value"]
                                         },
                                         {
                                           "type": "object",
@@ -7218,10 +6544,7 @@
                                               }
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "values"
-                                          ]
+                                          "required": ["type", "values"]
                                         },
                                         {
                                           "type": "object",
@@ -7255,11 +6578,7 @@
                                               "description": "string"
                                             }
                                           },
-                                          "required": [
-                                            "type",
-                                            "from",
-                                            "to"
-                                          ]
+                                          "required": ["type", "from", "to"]
                                         },
                                         {
                                           "type": "object",
@@ -7279,10 +6598,7 @@
                                 }
                               }
                             },
-                            "required": [
-                              "iri",
-                              "filters"
-                            ]
+                            "required": ["iri", "filters"]
                           },
                           {
                             "type": "object",
@@ -7313,13 +6629,7 @@
                       "description": "(string | undefined)"
                     }
                   },
-                  "required": [
-                    "key",
-                    "version",
-                    "meta",
-                    "cubes",
-                    "activeField"
-                  ]
+                  "required": ["key", "version", "meta", "cubes", "activeField"]
                 },
                 {
                   "type": "object",
@@ -7344,9 +6654,7 @@
                                   "description": "string"
                                 }
                               },
-                              "required": [
-                                "componentId"
-                              ]
+                              "required": ["componentId"]
                             },
                             {
                               "type": "object",
@@ -7408,10 +6716,7 @@
                           ]
                         }
                       },
-                      "required": [
-                        "x",
-                        "y"
-                      ]
+                      "required": ["x", "y"]
                     },
                     "interactiveFiltersConfig": {
                       "anyOf": [
@@ -7432,10 +6737,7 @@
                                   "description": "string"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId"
-                              ]
+                              "required": ["active", "componentId"]
                             },
                             "timeRange": {
                               "type": "object",
@@ -7466,18 +6768,10 @@
                                       "description": "string"
                                     }
                                   },
-                                  "required": [
-                                    "type",
-                                    "from",
-                                    "to"
-                                  ]
+                                  "required": ["type", "from", "to"]
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentId",
-                                "presets"
-                              ]
+                              "required": ["active", "componentId", "presets"]
                             },
                             "dataFilters": {
                               "type": "object",
@@ -7496,10 +6790,7 @@
                                   }
                                 }
                               },
-                              "required": [
-                                "active",
-                                "componentIds"
-                              ]
+                              "required": ["active", "componentIds"]
                             },
                             "calculation": {
                               "type": "object",
@@ -7523,10 +6814,7 @@
                                   "description": "(\"identity\" | \"percent\")"
                                 }
                               },
-                              "required": [
-                                "active",
-                                "type"
-                              ]
+                              "required": ["active", "type"]
                             }
                           },
                           "required": [

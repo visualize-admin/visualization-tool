@@ -37,6 +37,7 @@ import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
+import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -199,7 +200,7 @@ const useBarsGroupedState = (
           label: segment,
           color:
             fields.color.type === "segment"
-              ? fields.color.colorMapping![dvIri] ?? schemeCategory10[0]
+              ? (fields.color.colorMapping![dvIri] ?? schemeCategory10[0])
               : schemeCategory10[0],
         };
       });
@@ -336,6 +337,7 @@ const useBarsGroupedState = (
   }, [getSegment, getY, chartData, segmentSortingOrder, segments, yScale]);
 
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xMeasure.label,
     yScale: paddingYScale,
     width,
     height,
@@ -349,9 +351,9 @@ const useBarsGroupedState = (
   });
   const right = 40;
   const margins = {
-    top: 55,
+    top: DEFAULT_MARGIN_TOP,
     right,
-    bottom: bottom + 30,
+    bottom: bottom + 10,
     left,
   };
   const bounds = useChartBounds(width, margins, height);

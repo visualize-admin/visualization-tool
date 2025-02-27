@@ -49,6 +49,7 @@ import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
+import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
 import {
   getStackedTooltipValueFormatter,
   getStackedXScale,
@@ -245,7 +246,7 @@ const useBarsStackedState = (
           label: segment,
           color:
             fields.color.type === "segment"
-              ? fields.color.colorMapping![dvIri] ?? schemeCategory10[0]
+              ? (fields.color.colorMapping![dvIri] ?? schemeCategory10[0])
               : schemeCategory10[0],
         };
       });
@@ -396,6 +397,7 @@ const useBarsStackedState = (
 
   /** Chart dimensions */
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xMeasure.label,
     yScale: paddingXScale,
     width,
     height,
@@ -410,25 +412,26 @@ const useBarsStackedState = (
   });
   const right = 40;
   const margins = {
-    top: 65,
+    top: DEFAULT_MARGIN_TOP,
     right,
-    bottom: bottom + 30,
+    bottom: bottom + 10,
     left,
   };
 
   const barCount = yScale.domain().length;
-  // Here we adjust the height to make sure the bars have a minimum height and are legible
-  const adjustedHeight =
-    barCount * MIN_BAR_HEIGHT > height
-      ? barCount * MIN_BAR_HEIGHT
-      : height - margins.bottom;
 
-  const bounds = useChartBounds(width, margins, adjustedHeight);
+  const bounds = useChartBounds(width, margins, height);
   const { chartWidth, chartHeight } = bounds;
 
-  yScale.range([0, adjustedHeight]);
-  yScaleInteraction.range([0, adjustedHeight]);
-  yScaleTimeRange.range([0, adjustedHeight]);
+  // Here we adjust the height to make sure the bars have a minimum height and are legible
+  const adjustedChartHeight =
+    barCount * MIN_BAR_HEIGHT > chartHeight
+      ? barCount * MIN_BAR_HEIGHT
+      : chartHeight;
+
+  yScale.range([0, adjustedChartHeight]);
+  yScaleInteraction.range([0, adjustedChartHeight]);
+  yScaleTimeRange.range([0, adjustedChartHeight]);
   xScale.range([0, chartWidth]);
 
   const isMobile = useIsMobile();
@@ -513,7 +516,7 @@ const useBarsStackedState = (
     chartType: "bar",
     bounds: {
       ...bounds,
-      chartHeight: adjustedHeight,
+      chartHeight: adjustedChartHeight,
     },
     chartData,
     allData,

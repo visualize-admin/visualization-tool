@@ -15,7 +15,16 @@ const setup = (contextOptions?: PlaywrightTestOptions["contextOptions"]) => {
     selectors: Selectors;
     actions: Actions;
     replayFromHAR: (routeFromHAROptions?: RouteFromHAROptions) => Promise<void>;
+    auth: () => Promise<void>;
   }>({
+    auth: async ({ page }, use) => {
+      const auth = async () => {
+        const signInBtn = page.locator('[data-testid="test-sign-in"]');
+        await signInBtn.waitFor({ state: "visible", timeout: 5000 });
+        await signInBtn.click();
+      };
+      await use(auth);
+    },
     selectors: async ({ page, screen, within }, use) => {
       const ctx = { page, screen, within };
       const selectors = createSelectors(ctx);

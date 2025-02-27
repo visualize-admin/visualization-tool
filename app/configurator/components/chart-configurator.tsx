@@ -881,7 +881,7 @@ const ChartFields = (props: ChartFieldsProps) => {
               key={field}
               value={field}
               icon="baseLayer"
-              label={<Trans id="chart.map.layers.base">Map Display</Trans>}
+              label={<Trans id="chart.map.layers.base">Base Layers</Trans>}
               active={chartConfig.baseLayer.show}
             />
           ) : (

@@ -16,12 +16,12 @@ export const TooltipSingle = ({
   yError?: string;
 }) => {
   return (
-    <Box>
+    <div>
       {xValue && (
         <Typography
           component="div"
           variant="caption"
-          sx={{ fontWeight: "bold" }}
+          sx={{ fontWeight: "bold", whiteSpace: "wrap" }}
         >
           {xValue}
         </Typography>
@@ -37,7 +37,7 @@ export const TooltipSingle = ({
           {yError ?? null}
         </Typography>
       )}
-    </Box>
+    </div>
   );
 };
 

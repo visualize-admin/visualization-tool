@@ -46,6 +46,7 @@ import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
+import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
 import {
   getStackedTooltipValueFormatter,
   getStackedYScale,
@@ -414,7 +415,7 @@ const useColumnsStackedState = (
     marginRight: right,
   });
   const margins = {
-    top: 70 + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
     right,
     bottom,
     left,

@@ -2,6 +2,8 @@ import { Trans } from "@lingui/macro";
 import {
   Box,
   Button,
+  Divider,
+  Grid,
   MenuItem,
   Select,
   SelectProps,
@@ -10,20 +12,23 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import get from "lodash/get";
-import { useCallback } from "react";
+import { MouseEventHandler, useCallback, useState } from "react";
 
+import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { hasDimensionColors } from "@/charts/shared/colors";
 import Flex from "@/components/flex";
 import { Label } from "@/components/form";
 import { getChartConfig } from "@/config-utils";
 import {
   ConfiguratorStateConfiguringChart,
+  CustomPaletteType,
   isColorInConfig,
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { Component, isNumericalMeasure } from "@/domain/data";
+import { useUser } from "@/login/utils";
 import {
   categoricalPalettes,
   DEFAULT_CATEGORICAL_PALETTE_ID,
@@ -32,14 +37,21 @@ import {
   getPalette,
 } from "@/palettes";
 import useEvent from "@/utils/use-event";
+import { useUserPalettes } from "@/utils/use-user-palettes";
+
+import { ConfiguratorDrawer } from "../drawer";
+
+import { ColorPaletteDrawerContent } from "./drawer-color-palette-content";
 
 const useStyles = makeStyles({
   root: {
     width: "100%",
+    padding: "8px 0px",
   },
   select: {
     "&.MuiSelect-select": {
       padding: "0 0.75rem",
+      height: "auto",
       display: "flex",
       alignItems: "center",
       justifyContent: "flex-start",
@@ -48,7 +60,7 @@ const useStyles = makeStyles({
 });
 
 type Props = {
-  field: string;
+  field: EncodingFieldType;
   disabled?: boolean;
   colorConfigPath?: string;
   component?: Component;
@@ -63,6 +75,10 @@ export const ColorPalette = ({
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const classes = useStyles();
+  const user = useUser();
+
+  const { data: customColorPalettes, invalidate } = useUserPalettes();
+
   const hasColors = hasDimensionColors(component);
   const defaultPalette =
     hasColors && component
@@ -83,17 +99,69 @@ export const ColorPalette = ({
         chartConfig,
         `fields["${chartConfig.activeField}"].${
           colorConfigPath ? `${colorConfigPath}.` : ""
-        }palette`
+        }paletteId`
       );
 
-  const currentPalette =
-    palettes.find((p) => p.value === currentPaletteName) ?? palettes[0];
+  const currentPalette = palettes.find((p) => p.value === currentPaletteName);
 
-  const handleChangePalette: SelectProps["onChange"] = useEvent((ev) => {
-    const palette = palettes.find((p) => p.value === ev.target.value);
-    if (!component || !palette) {
+  const handleChangePalette: SelectProps["onChange"] = useEvent((ev) =>
+    handleChartConfigUpdate(ev.target.value as string)
+  );
+
+  const handleChartConfigUpdate = (
+    value?: string,
+    selectedPalette?: CustomPaletteType
+  ) => {
+    if (!component) {
       return;
     }
+
+    const regularPalette = palettes.find((p) => p.value === value);
+    const customPalette =
+      customColorPalettes?.find((p) => p.paletteId === value) ||
+      selectedPalette;
+
+    if (customPalette) {
+      const colorMapping = mapValueIrisToColor({
+        paletteId: customPalette.paletteId,
+        dimensionValues: component.values,
+        customPalette,
+      });
+
+      if (isColorInConfig(chartConfig)) {
+        dispatch({
+          type: "COLOR_FIELD_SET",
+          value:
+            chartConfig.fields.color.type === "single"
+              ? {
+                  type: chartConfig.fields.color.type,
+                  paletteId: customPalette.paletteId,
+                  color: customPalette.colors[0],
+                }
+              : {
+                  type: chartConfig.fields.color.type,
+                  paletteId: customPalette.paletteId,
+                  colorMapping,
+                },
+        });
+      } else {
+        dispatch({
+          type: "CHART_PALETTE_CHANGED",
+          value: {
+            field,
+            colorConfigPath,
+            paletteId: customPalette.paletteId,
+            colorMapping,
+          },
+        });
+      }
+      return;
+    }
+
+    if (!regularPalette) {
+      return;
+    }
+
     if (isColorInConfig(chartConfig)) {
       dispatch({
         type: "COLOR_FIELD_SET",
@@ -101,14 +169,14 @@ export const ColorPalette = ({
           chartConfig.fields.color.type === "single"
             ? {
                 type: chartConfig.fields.color.type,
-                paletteId: palette.value,
-                color: palette.colors[0],
+                paletteId: regularPalette.value,
+                color: regularPalette.colors[0],
               }
             : {
                 type: chartConfig.fields.color.type,
-                paletteId: palette.value,
+                paletteId: regularPalette.value,
                 colorMapping: mapValueIrisToColor({
-                  paletteId: palette.value,
+                  paletteId: regularPalette.value,
                   dimensionValues: component.values,
                 }),
               },
@@ -119,15 +187,40 @@ export const ColorPalette = ({
         value: {
           field,
           colorConfigPath,
-          paletteId: palette.value,
+          paletteId: regularPalette.value,
           colorMapping: mapValueIrisToColor({
-            paletteId: palette.value,
+            paletteId: regularPalette.value,
             dimensionValues: component.values,
           }),
         },
       });
     }
-  });
+  };
+
+  const [anchorEl, setAnchorEl] = useState<HTMLElement>();
+  const handleOpenCreateColorPalette: MouseEventHandler<HTMLButtonElement> =
+    useEvent((ev) => {
+      setAnchorEl(ev.currentTarget);
+    });
+
+  const handleCloseCreateColorPalette = useEvent(
+    (palette?: CustomPaletteType) => {
+      invalidate();
+      setAnchorEl(undefined);
+
+      handleChartConfigUpdate(palette?.paletteId, palette);
+
+      anchorEl?.focus();
+    }
+  );
+
+  const isValidValue = (value: string) => {
+    const isPaletteValue = palettes.some((p) => p.value === value);
+    const isCustomPaletteValue = customColorPalettes?.some(
+      (p) => p.paletteId === value
+    );
+    return isPaletteValue || isCustomPaletteValue;
+  };
 
   return (
     <Box mt={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
@@ -137,21 +230,142 @@ export const ColorPalette = ({
       <Select
         className={classes.root}
         classes={classes}
-        renderValue={() => {
+        renderValue={(selected) => {
+          if (!selected || !isValidValue(selected)) {
+            return (
+              <Typography color={"secondary.active"} variant="body2">
+                <Trans id="controls.color.palette.select">
+                  Select a color palette
+                </Trans>
+              </Typography>
+            );
+          }
           return (
-            <Flex>
-              {currentPalette.colors.map((color: string) => (
-                <ColorSquare key={color} color={color} disabled={disabled} />
-              ))}
-            </Flex>
+            <Grid
+              container
+              spacing="0.5"
+              sx={{
+                alignItems: "center",
+                "& .MuiGrid-item": {
+                  display: "flex",
+                  alignItems: "center",
+                },
+              }}
+            >
+              {currentPalette
+                ? currentPalette.colors.map((color: string) => (
+                    <Grid item key={color}>
+                      <ColorSquare color={color} disabled={disabled} />
+                    </Grid>
+                  ))
+                : customColorPalettes
+                    ?.find(
+                      (palette) => palette.paletteId === currentPaletteName
+                    )
+                    ?.colors.map((color, i) => (
+                      <Grid item key={`color-palette-tile-${i}`}>
+                        <ColorSquare
+                          color={color as string}
+                          disabled={disabled}
+                        />
+                      </Grid>
+                    ))}
+            </Grid>
           );
         }}
-        value={currentPalette.value}
+        value={(() => {
+          const valueToUse = currentPalette
+            ? currentPalette.value
+            : currentPaletteName;
+
+          if (!isValidValue(valueToUse)) {
+            return "";
+          }
+
+          return valueToUse;
+        })()}
+        displayEmpty
         onChange={handleChangePalette}
       >
+        {user && (
+          <Button
+            onClick={handleOpenCreateColorPalette}
+            variant="text"
+            sx={{
+              width: "100%",
+              paddingY: 3,
+              paddingX: 4,
+            }}
+          >
+            <Trans id="login.profile.my-color-palettes.add">
+              Add color palette
+            </Trans>
+          </Button>
+        )}
+        {customColorPalettes && customColorPalettes.length > 0 && (
+          <Box
+            sx={{
+              paddingTop: 3,
+              paddingX: 4,
+              display: "flex",
+              gap: 2,
+              flexDirection: "column",
+            }}
+          >
+            <Typography variant="caption" fontWeight={700} align="left">
+              <Trans id="controls.custom-color-palettes">
+                Custom color palettes
+              </Trans>
+            </Typography>
+            <Divider sx={{ width: "100%", paddingY: 1 }} />
+          </Box>
+        )}
+        {customColorPalettes &&
+          customColorPalettes?.length > 0 &&
+          customColorPalettes
+            .filter((palette) => palette.type === "categorical")
+            .map((palette, index) => (
+              <MenuItem
+                sx={{ paddingY: 2 }}
+                key={`${palette.paletteId}${index}`}
+                value={palette.paletteId}
+              >
+                <Flex sx={{ flexDirection: "column", gap: "4px" }}>
+                  <Typography component="div" variant="caption">
+                    {palette.name}
+                  </Typography>
+                  <Flex>
+                    {palette.colors.map((color) => (
+                      <ColorSquare
+                        key={`option-${color}`}
+                        color={color}
+                        disabled={false}
+                      />
+                    ))}
+                  </Flex>
+                </Flex>
+              </MenuItem>
+            ))}
+
+        <Box
+          sx={{
+            paddingTop: 3,
+            paddingX: 4,
+            display: "flex",
+            gap: 2,
+            flexDirection: "column",
+          }}
+        >
+          <Typography variant="caption" fontWeight={700} align="left">
+            <Trans id="controls.visualize-color-palette">
+              Visualize color palettes
+            </Trans>
+          </Typography>
+          <Divider sx={{ width: "100%", paddingY: 1 }} />
+        </Box>
         {palettes.map((palette, index) => (
           <MenuItem
-            sx={{ paddingY: "8px" }}
+            sx={{ paddingY: 2 }}
             key={`${palette.value}${index}`}
             value={palette.value}
           >
@@ -180,6 +394,13 @@ export const ColorPalette = ({
           colorConfigPath={colorConfigPath}
         />
       )}
+      <ConfiguratorDrawer open={!!anchorEl} hideBackdrop>
+        <ColorPaletteDrawerContent
+          onClose={(palette) => handleCloseCreateColorPalette(palette)}
+          type="categorical"
+          customColorPalettes={customColorPalettes}
+        />
+      </ConfiguratorDrawer>
     </Box>
   );
 };
@@ -205,7 +426,7 @@ const useColorSquareStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const ColorSquare = ({
+export const ColorSquare = ({
   disabled,
   color,
 }: {
@@ -216,6 +437,7 @@ const ColorSquare = ({
   return (
     <Box
       className={classes.root}
+      data-testid="select-color-square"
       sx={{
         backgroundColor: disabled ? "grey.300" : color,
       }}
@@ -259,7 +481,7 @@ const ColorPaletteControls = ({
       dispatch({
         type: "CHART_PALETTE_RESET",
         value: {
-          field,
+          field: isColorInConfig(chartConfig) ? "color" : field,
           colorConfigPath,
           colorMapping: mapValueIrisToColor({
             paletteId,
@@ -267,7 +489,7 @@ const ColorPaletteControls = ({
           }),
         },
       }),
-    [colorConfigPath, component, dispatch, field, paletteId]
+    [colorConfigPath, component, dispatch, field, paletteId, chartConfig]
   );
 
   if (colorMapping) {
@@ -296,7 +518,7 @@ const ColorPaletteControls = ({
             return dispatch({
               type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
               value: {
-                field,
+                field: isColorInConfig(chartConfig) ? "color" : field,
                 colorConfigPath,
                 dimensionId: component.id,
                 values: component.values,

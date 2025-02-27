@@ -38,6 +38,7 @@ export const configStateMock = {
         >["baseLayer"],
         activeField: "",
         cubes: [{ iri: "https://first-dataset", filters: {} }],
+        limits: {},
         fields: {
           areaLayer: {
             componentId: "year-period-1",
@@ -134,6 +135,7 @@ export const configStateMock = {
             filters: {},
           },
         ],
+        limits: {},
         chartType: "column",
         interactiveFiltersConfig: {
           legend: {
@@ -693,6 +695,7 @@ export const groupedColumnChartMeasures: Measure[] = [
       { value: "992", label: "992" },
     ],
     related: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -915,6 +918,7 @@ export const groupedColumnChartMeasures: Measure[] = [
       { value: "98.28", label: "98.28" },
     ],
     related: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -1136,6 +1140,7 @@ export const groupedColumnChartMeasures: Measure[] = [
       { value: "991739.2", label: "991739.2" },
     ],
     related: [],
+    limits: [],
   },
 ];
 
@@ -1230,6 +1235,7 @@ export const configJoinedCubes: Partial<
         ],
       },
     ],
+    limits: {},
     chartType: "table",
     settings: { showSearch: true, showAllRows: false },
     sorting: [],
@@ -1606,9 +1612,10 @@ export const configJoinedCubes: Partial<
         ],
       },
     ],
+    limits: {},
     chartType: "pie",
     interactiveFiltersConfig: {
-      legend: { active: false, componentId: "" },
+      legend: {active: false, componentId: "" },
       timeRange: {
         active: false,
         componentId: "",
