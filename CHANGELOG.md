@@ -19,6 +19,7 @@ You can also check the
 - Fixes
   - Limits that are connected to values that are filtered out do not render in
     the chart anymore
+  - Persisting and showing colors on dimension changes
 
 # [5.3.0] - 2025-02-25
 
