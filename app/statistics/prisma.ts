@@ -13,6 +13,11 @@ export const fetchMostPopularAllTimeCharts = async () => {
           },
         },
       },
+      where: {
+        key: {
+          not: undefined,
+        },
+      },
       orderBy: {
         views: {
           _count: "desc",
@@ -38,7 +43,7 @@ export const fetchMostPopularThisMonthCharts = async () => {
     FROM
       config_view
     WHERE
-      viewed_at > CURRENT_DATE - INTERVAL '30 days'
+      viewed_at > CURRENT_DATE - INTERVAL '30 days' AND config_key IS NOT NULL
     GROUP BY
       config_key
     ORDER BY
