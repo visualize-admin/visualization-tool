@@ -196,6 +196,15 @@ const Statistics = (props: Serialized<PageProps>) => {
             be collected in 2024.
           </Typography>
         </SectionTitleWrapper>
+        <Typography variant="caption" component="p" sx={{ mt: 2 }}>
+          <b>Views</b> are counted when a user opens a published chart in{" "}
+          <code>/v</code> page or through iframe.
+        </Typography>
+        <Typography variant="caption" component="p">
+          <b>Previews</b> are counted when accessing a chart preview through{" "}
+          <code>/preview</code> or <code>/preview_post</code> pages and are not
+          connected to a chart config.
+        </Typography>
         <CardGrid>
           {charts.countByDay.length > 0 && (
             <StatsCard
