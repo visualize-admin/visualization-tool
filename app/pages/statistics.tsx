@@ -348,7 +348,9 @@ const Statistics = (props: Serialized<PageProps>) => {
               (v) => sum(v, (d) => d.count),
               (d) => d.creator
             )
-              .sort((a, b) => (b[0] === undefined ? -1 : b[1] - a[1]))
+              .sort((a, b) =>
+                a[0] === undefined ? 1 : b[0] === undefined ? -1 : b[1] - a[1]
+              )
               .map(([creator, count]) => [
                 creator ?? "Unknown",
                 {
