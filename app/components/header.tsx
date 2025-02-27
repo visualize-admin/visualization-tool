@@ -55,9 +55,10 @@ export const Header = ({
 }) => {
   const router = useRouter();
   const isConfiguring = router.pathname === "/create/[chartId]";
+  const isOdsIframe = router.query["odsiframe"] === "true";
   const classes = useHeaderStyles({ isConfiguring });
 
-  return (
+  return !isOdsIframe ? (
     <Box
       className={pageType === "app" ? classes.wrapper : undefined}
       sx={{ backgroundColor: "background.paper" }}
@@ -76,7 +77,7 @@ export const Header = ({
       </Flex>
       <HeaderBorder />
     </Box>
-  );
+  ) : null;
 };
 
 const MetadataMenu = ({ contentId }: { contentId?: string }) => {

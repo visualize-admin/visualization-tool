@@ -1,5 +1,6 @@
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import {
+  BaseLayer,
   ChartConfig,
   ChartType,
   ColorField,
@@ -11,6 +12,7 @@ import {
   ImputationType,
   InteractiveFiltersConfig,
   Layout,
+  Limit,
 } from "@/config-types";
 import { DataCubeComponents, Dimension, DimensionValue } from "@/domain/data";
 import { Locale } from "@/locales/locales";
@@ -135,6 +137,32 @@ export type ConfiguratorStateAction =
       };
     }
   | {
+      type: "CUSTOM_LAYER_ADD";
+      value: {
+        layer: BaseLayer["customLayers"][number];
+      };
+    }
+  | {
+      type: "CUSTOM_LAYER_UPDATE";
+      value: {
+        layer: BaseLayer["customLayers"][number];
+      };
+    }
+  | {
+      type: "CUSTOM_LAYER_REMOVE";
+      value: {
+        type: BaseLayer["customLayers"][number]["type"];
+        id: string;
+      };
+    }
+  | {
+      type: "CUSTOM_LAYER_SWAP";
+      value: {
+        oldIndex: number;
+        newIndex: number;
+      };
+    }
+  | {
       type: "INTERACTIVE_FILTER_CHANGED";
       value: InteractiveFiltersConfig;
     }
@@ -247,6 +275,24 @@ export type ConfiguratorStateAction =
       value: {
         oldIndex: number;
         newIndex: number;
+      };
+    }
+  | {
+      type: "LIMIT_SET";
+      value: {
+        measureId: string;
+        relatedDimensionId: string;
+        relatedDimensionValue: string;
+        color: string;
+        lineType: Limit["lineType"];
+      };
+    }
+  | {
+      type: "LIMIT_REMOVE";
+      value: {
+        measureId: string;
+        relatedDimensionId: string;
+        relatedDimensionValue: string;
       };
     }
   | {

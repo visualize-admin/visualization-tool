@@ -1,7 +1,7 @@
 import { useEvent } from "@dnd-kit/utilities";
 import { t } from "@lingui/macro";
 import { Trans } from "@lingui/react";
-import { Box, Button, capitalize, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useCallback, useRef, useState } from "react";
 
@@ -119,17 +119,26 @@ const ProfileColorPaletteForm = ({
     [type]
   );
 
-  const handleTypeChange = useCallback((newType: CustomPaletteType["type"]) => {
-    setType(newType);
-    setColorValues(colorsByTypeRef.current[newType]);
-  }, []);
+  const handleTypeChange = useCallback(
+    (newType: CustomPaletteType["type"]) => {
+      setType(newType);
+
+      const currentColors = colorValues.map((item) => item.color);
+
+      const newColorValues = getDefaultColorValues(newType, currentColors);
+
+      colorsByTypeRef.current[newType] = newColorValues;
+      setColorValues(newColorValues);
+    },
+    [colorValues]
+  );
 
   const saveColorPalette = useEvent(async () => {
     const titleExistsAlready = customColorPalettes?.find(
       (palette) => palette.name === titleInput
     );
 
-    if (titleExistsAlready) {
+    if (titleExistsAlready && formMode === "add") {
       setIsNotAvailable(true);
     } else {
       setIsNotAvailable(false);
@@ -158,6 +167,24 @@ const ProfileColorPaletteForm = ({
       (color, index) => color === colorValues[index].color
     );
 
+  const captions: Record<CustomPaletteType["type"], string> = {
+    sequential: t({
+      id: "controls.custom-color-palettes.caption-sequential",
+      message:
+        "Select a dark endpoint color for a strong contrast between low and high values; the light color is calculated automatically. Sequential color palettes are suitable for ordered data such as temperatures or population densities.",
+    }),
+    diverging: t({
+      id: "controls.custom-color-palettes.caption-diverging",
+      message:
+        "Choose contrasting colors for the start and end points. These colors will help visually separate extreme values. Diverging palettes are ideal for data with a meaningful midpoint, such as zero or an average.",
+    }),
+    categorical: t({
+      id: "controls.custom-color-palettes.caption-categorical",
+      message:
+        "Use distinct, high-contrast colors. Avoid using too many colors, maximum 5–7. Apply sequential palettes for ordered data and diverging palettes for extremes.",
+    }),
+  };
+
   return (
     <Flex flexDirection="column" gap="30px">
       <BackButton className={classes.backButton} onClick={onBack}>
@@ -176,11 +203,7 @@ const ProfileColorPaletteForm = ({
           selectedType={type}
         />
         <Typography variant="body2" color="textSecondary">
-          <Trans id="controls.custom-color-palettes.caption">
-            Use distinct, high-contrast colors. Avoid using too many colors,
-            maximum 5–7. Apply sequential palettes for ordered data and
-            diverging palettes for extremes.
-          </Trans>
+          {captions[type]}
         </Typography>
 
         <Box className={classes.inputContainer}>
@@ -241,6 +264,21 @@ type ColorPaletteTypeSelectorProps = {
   selectedType: CustomPaletteType["type"];
 };
 
+const colorTypes: Record<CustomPaletteType["type"], string> = {
+  sequential: t({
+    id: "controls.custom-color-palettes.sequential",
+    message: "Sequential",
+  }),
+  diverging: t({
+    id: "controls.custom-color-palettes.diverging",
+    message: "Diverging",
+  }),
+  categorical: t({
+    id: "controls.custom-color-palettes.categorical",
+    message: "Categorical",
+  }),
+};
+
 const ColorPaletteTypeSelector = ({
   onChange,
   selectedType,
@@ -269,7 +307,7 @@ const ColorPaletteTypeSelector = ({
               gap={2}
             >
               <Radio
-                label={capitalize(type)}
+                label={colorTypes[type]}
                 value={type}
                 checked={type === selectedType}
                 onChange={handleChange}

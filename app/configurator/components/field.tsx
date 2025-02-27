@@ -37,7 +37,6 @@ import {
   Slider,
   Switch,
 } from "@/components/form";
-import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
 import {
@@ -94,7 +93,6 @@ import {
   isMostRecentValue,
   VISUALIZE_MOST_RECENT_VALUE,
 } from "@/domain/most-recent-value";
-import { useFlag } from "@/flags";
 import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { Locale } from "@/locales/locales";
@@ -421,15 +419,7 @@ export const DataFilterTemporal = ({
     <>
       <DatePickerField
         name={`date-picker-${dimension.id}`}
-        label={
-          <FieldLabel
-            label={
-              <OpenMetadataPanelWrapper component={dimension}>
-                {label}
-              </OpenMetadataPanelWrapper>
-            }
-          />
-        }
+        label={<FieldLabel label={label} />}
         value={
           usesMostRecentDate ? maxDate : (parseDate(fieldProps.value) as Date)
         }
@@ -686,17 +676,15 @@ export const MetaInputField = ({
   value?: string;
 }) => {
   const field = useMetaField({ type, metaKey, locale, value });
-  const enableMarkdown = useFlag("enable-experimental-features");
 
   switch (inputType) {
     case "text":
       return <Input label={label} {...field} />;
     case "markdown":
-      if (enableMarkdown) {
-        return <MarkdownInput label={label} {...field} />;
-      } else {
-        return <Input label={label} {...field} />;
-      }
+      return <MarkdownInput label={label} {...field} />;
+    default:
+      const _exhaustiveCheck: never = inputType;
+      return _exhaustiveCheck;
   }
 };
 
@@ -847,7 +835,7 @@ export const MultiFilterFieldColorPicker = ({
       />
       <ColorPickerMenu
         colors={palette}
-        selectedColor={color}
+        selectedHexColor={color}
         onChange={onChange}
       />
     </Flex>
@@ -927,7 +915,7 @@ export const ColorPickerField = ({
       />
       <ColorPickerMenu
         colors={palette}
-        selectedColor={color}
+        selectedHexColor={color}
         onChange={updateColor}
         disabled={disabled}
       />

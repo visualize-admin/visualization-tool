@@ -18,7 +18,6 @@ import { LinesState } from "@/charts/line/lines-state";
 import { MapState } from "@/charts/map/map-state";
 import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { DimensionsById, MeasuresById } from "@/charts/shared/ChartProps";
 import {
   getLabelWithUnit,
   useDimensionWithAbbreviations,
@@ -27,15 +26,16 @@ import {
   useTemporalEntityVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
+import { DimensionsById, MeasuresById } from "@/charts/shared/ChartProps";
 import { Bounds } from "@/charts/shared/use-size";
 import { TableChartState } from "@/charts/table/table-state";
 import {
   ChartConfig,
   ChartType,
   GenericField,
-  InteractiveFiltersConfig,
   getAnimationField,
   hasChartConfigs,
+  InteractiveFiltersConfig,
   useConfiguratorState,
 } from "@/configurator";
 import {
@@ -49,14 +49,14 @@ import {
   DimensionValue,
   GeoCoordinatesDimension,
   GeoShapesDimension,
+  isNumericalMeasure,
+  isTemporalDimension,
+  isTemporalEntityDimension,
   Measure,
   NumericalMeasure,
   Observation,
   TemporalDimension,
   TemporalEntityDimension,
-  isNumericalMeasure,
-  isTemporalDimension,
-  isTemporalEntityDimension,
 } from "@/domain/data";
 import { Has } from "@/domain/types";
 import { RelatedDimensionType } from "@/graphql/query-hooks";
@@ -92,7 +92,7 @@ export type CommonChartState = {
   interactiveFiltersConfig: InteractiveFiltersConfig;
 };
 
-export type ColorsChartState = Has<ChartState, "colors" | "getColorLabel">;
+export type ColorsChartState = Has<ChartState, "colors">;
 export const ChartContext = createContext<ChartState>(undefined);
 
 export const useChartState = () => {
@@ -204,9 +204,9 @@ export const useBandYVariables = (
     getYLabel,
     getYAbbreviationOrLabel,
     yTimeUnit,
-    getYAsDate: isTemporalDimension(yDimension)
-      ? getYAsDate
-      : getYTemporalEntity,
+    getYAsDate: isTemporalEntityDimension(yDimension)
+      ? getYTemporalEntity
+      : getYAsDate,
   };
 };
 
@@ -249,9 +249,9 @@ export const useBandXVariables = (
     getXLabel,
     getXAbbreviationOrLabel,
     xTimeUnit,
-    getXAsDate: isTemporalDimension(xDimension)
-      ? getXAsDate
-      : getXTemporalEntity,
+    getXAsDate: isTemporalEntityDimension(xDimension)
+      ? getXTemporalEntity
+      : getXAsDate,
   };
 };
 
@@ -330,7 +330,7 @@ export const useNumericalXVariables = (
           return Math.min(0, min(data, _getX) ?? 0);
         case "scatterplot":
           return shouldUseDynamicMinScaleValue(xMeasure.scaleType)
-            ? min(data, _getX) ?? 0
+            ? (min(data, _getX) ?? 0)
             : Math.min(0, min(data, _getX) ?? 0);
         default:
           const _exhaustiveCheck: never = chartType;
@@ -386,7 +386,7 @@ export const useNumericalYVariables = (
         case "line":
         case "scatterplot":
           return shouldUseDynamicMinScaleValue(yMeasure.scaleType)
-            ? min(data, _getY) ?? 0
+            ? (min(data, _getY) ?? 0)
             : Math.min(0, min(data, _getY) ?? 0);
         default:
           const _exhaustiveCheck: never = chartType;

@@ -16,7 +16,7 @@ import { useTransitionStore } from "@/stores/transition";
 
 // Approximate the longest date format we're using for.
 // Roughly equivalent to the text width of "99.99.9999" with 12px font size.
-const MAX_DATE_LABEL_LENGHT = 70;
+const MAX_DATE_LABEL_LENGTH = 70;
 
 export const AxisTime = () => {
   const ref = useRef<SVGGElement>(null);
@@ -37,10 +37,10 @@ export const AxisTime = () => {
   // This could be useful: use data points as tick values,
   // but it does not solve the problem of overlapping.
   // const tickValues =
-  //   bounds.chartWidth / (MAX_DATE_LABEL_LENGHT + 20) > xUniqueValues.length
+  //   bounds.chartWidth / (MAX_DATE_LABEL_LENGTH + 20) > xUniqueValues.length
   //     ? xUniqueValues
   //     : null;
-  const ticks = bounds.chartWidth / (MAX_DATE_LABEL_LENGHT + 20);
+  const ticks = bounds.chartWidth / (MAX_DATE_LABEL_LENGTH + 20);
 
   useEffect(() => {
     if (ref.current) {

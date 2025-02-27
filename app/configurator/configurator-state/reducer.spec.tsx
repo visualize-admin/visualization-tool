@@ -28,6 +28,7 @@ import {
   deriveFiltersFromFields,
   ensureDashboardLayoutIsCorrect,
   handleChartFieldChanged,
+  handleChartFieldDeleted,
   handleChartOptionChanged,
   reducer,
   setRangeFilter,
@@ -588,6 +589,7 @@ describe("deriveFiltersFromFields", () => {
           },
         },
         "key": "ydBHrv26xvUg",
+        "limits": Object {},
         "meta": Object {
           "description": Object {
             "de": "",
@@ -608,7 +610,7 @@ describe("deriveFiltersFromFields", () => {
             "it": "",
           },
         },
-        "version": "4.1.0",
+        "version": "4.3.0",
       }
     `);
   });
@@ -649,6 +651,46 @@ describe("handleChartFieldChanged", () => {
     expect(
       (newState.chartConfigs[0] as any).fields.symbolLayer.color
     ).toBeDefined();
+  });
+});
+
+describe("CHART_FIELD_DELETED", () => {
+  it("should correctly reset color field when segment field is deleted", () => {
+    const state = {
+      state: "CONFIGURING_CHART",
+      chartConfigs: [
+        {
+          chartType: "column",
+          cubes: [],
+          fields: {
+            segment: {
+              componentId: "segmentComponentId",
+            },
+            color: {
+              type: "segment",
+              paletteId: "category10",
+              colorMapping: {},
+            },
+          },
+        },
+      ],
+    };
+
+    const newState = produce(state, (state: ConfiguratorState) => {
+      return handleChartFieldDeleted(state, {
+        type: "CHART_FIELD_DELETED",
+        value: {
+          locale: "en",
+          field: "segment",
+        },
+      });
+    });
+
+    expect(newState.chartConfigs[0].fields.color).toStrictEqual({
+      type: "single",
+      paletteId: "category10",
+      color: "#006699",
+    });
   });
 });
 

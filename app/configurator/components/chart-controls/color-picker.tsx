@@ -46,7 +46,7 @@ export const Swatch = ({
   return (
     <Box
       className={classes.swatch}
-      data-testId="color-picker-swatch"
+      data-testid="color-picker-swatch"
       sx={{
         borderColor: selected ? borderColor : undefined,
         boxShadow: selected ? `0 0 0.5rem 0 ${color}` : undefined,
@@ -59,15 +59,6 @@ export const Swatch = ({
   );
 };
 
-type Props = {
-  selectedColor: string;
-  colors: ColorItem[] | readonly string[];
-  onChange?: (color: string) => void;
-  disabled?: boolean;
-  colorId?: string;
-  onRemove?: (colorId: string) => void;
-};
-
 const ColorPickerButton = styled(Button)({
   padding: 0,
   minWidth: "auto",
@@ -76,10 +67,10 @@ const ColorPickerButton = styled(Button)({
   backgroundColor: "transparent",
 });
 
-const ColorPickerBox = styled(Box)({
+const ColorPickerBox = styled(Box)(({ theme }) => ({
   lineHeight: "16px",
   "& > button": {
-    backgroundColor: "grey.100",
+    backgroundColor: theme.palette.grey[100],
     borderRadius: 4,
     overflow: "hidden",
     borderWidth: 1,
@@ -91,28 +82,44 @@ const ColorPickerBox = styled(Box)({
     opacity: 0.8,
   },
   "& > button[aria-expanded]": {
-    borderColor: "primary.active",
+    borderColor: theme.palette.primary.active,
   },
-});
+  "& > button[disabled]": {
+    backgroundColor: "transparent",
+  },
+}));
 
-export const ColorPickerMenu = (props: Props) => {
-  const { disabled, onChange, selectedColor, onRemove, colorId } = props;
+export const ColorPickerMenu = ({
+  selectedHexColor,
+  colors,
+  onChange,
+  disabled,
+  colorId,
+  onRemove,
+}: {
+  selectedHexColor: string;
+  colors: ColorItem[] | readonly string[];
+  onChange?: (color: string) => void;
+  disabled?: boolean;
+  colorId?: string;
+  onRemove?: (colorId: string) => void;
+}) => {
   const { isOpen, open, close } = useDisclosure();
   const buttonRef = useRef(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
   const initialSelected = useMemo(() => {
-    return { ...hexToHsva(selectedColor), id: colorId ?? createColorId() };
-  }, [selectedColor, colorId]);
+    return { ...hexToHsva(selectedHexColor), id: colorId ?? createColorId() };
+  }, [selectedHexColor, colorId]);
 
   const handleColorChange = useCallback(
     (color) => {
       const newHex = hsvaToHex(color);
-      if (newHex !== selectedColor) {
+      if (newHex !== selectedHexColor) {
         onChange?.(newHex);
       }
     },
-    [onChange, selectedColor]
+    [onChange, selectedHexColor]
   );
 
   return (
@@ -170,12 +177,9 @@ export const ColorPickerMenu = (props: Props) => {
             defaultSelection={initialSelected}
             onChange={handleColorChange}
             colorSwatches={
-              (typeof props.colors[0] === "string"
-                ? props.colors.map((color) => ({
-                    color: color,
-                    id: createColorId(),
-                  }))
-                : props.colors) as ColorItem[]
+              (typeof colors[0] === "string"
+                ? colors.map((color) => ({ color: color, id: createColorId() }))
+                : colors) as ColorItem[]
             }
           />
         </Box>

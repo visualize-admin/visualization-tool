@@ -575,13 +575,17 @@ export const DataFilterTemporalDimension = ({
  *
  * This behavior is disabled when the dashboard filters are active.
  */
-const useEnsurePossibleInteractiveFilters = (props: {
+const useEnsurePossibleInteractiveFilters = ({
+  dataSource,
+  chartConfig,
+  dashboardFilters,
+  preparedFilters,
+}: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
   preparedFilters?: PreparedFilter[];
 }) => {
-  const { dataSource, chartConfig, dashboardFilters, preparedFilters } = props;
   const [, dispatch] = useConfiguratorState();
   const loadingState = useLoadingState();
   const [error, setError] = useState<Error>();

@@ -1,5 +1,5 @@
 import { t } from "@lingui/macro";
-import { Box, Theme, Typography } from "@mui/material";
+import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import orderBy from "lodash/orderBy";
@@ -13,22 +13,28 @@ import { Checkbox, CheckboxProps } from "@/components/form";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { TooltipTitle } from "@/components/tooltip-utils";
-import { useChartConfigFilters } from "@/config-utils";
+import { useChartConfigFilters, useLimits } from "@/config-utils";
 import {
+  AreaConfig,
+  BarConfig,
   ChartConfig,
+  ColumnConfig,
   GenericField,
   isSegmentInConfig,
+  LineConfig,
   MapConfig,
+  PieConfig,
+  ScatterPlotConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
 import {
   Component,
-  Dimension,
   isOrdinalDimension,
   isOrdinalMeasure,
   Measure,
   Observation,
 } from "@/domain/data";
+import { useFormatNumber } from "@/formatters";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
@@ -124,21 +130,16 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => {
   };
 });
 
-const emptyObj = {};
-
 const useLegendGroups = ({
   chartConfig,
-  segmentDimension,
   title,
   values,
 }: {
   chartConfig: ChartConfig;
-  segmentDimension?: Dimension;
   title?: string;
   values: string[];
 }) => {
   const configState = useReadOnlyConfiguratorState();
-  const filters = useChartConfigFilters(chartConfig);
 
   if (
     configState.state === "INITIAL" ||
@@ -150,96 +151,103 @@ const useLegendGroups = ({
   const segmentField = (
     isSegmentInConfig(chartConfig) ? chartConfig.fields.segment : null
   ) as GenericField | null | undefined;
-  const segmentFilters = segmentField?.componentId
-    ? filters[segmentField.componentId]
-    : null;
-  const segmentValues =
-    segmentFilters?.type === "multi" ? segmentFilters.values : emptyObj;
 
   return useMemo(() => {
     return getLegendGroups({
       title,
       values,
-      hierarchy: segmentDimension?.hierarchy,
       sort: !!(segmentField && "sorting" in segmentField),
-      labelIris: segmentValues,
     });
-  }, [title, values, segmentDimension?.hierarchy, segmentField, segmentValues]);
+  }, [title, values, segmentField]);
 };
 
-type LegendColorProps = {
-  chartConfig: ChartConfig;
-  segmentDimension?: Dimension;
+export const LegendColor = memo(function LegendColor({
+  chartConfig,
+  symbol,
+  getLegendItemDimension,
+  interactive,
+  showTitle,
+  dimensionsById,
+  limits,
+}: {
+  chartConfig:
+    | AreaConfig
+    | BarConfig
+    | ColumnConfig
+    | LineConfig
+    | PieConfig
+    | ScatterPlotConfig;
   symbol: LegendSymbol;
-  // If the legend is based on measures, this function can be used to get the
-  // corresponding measure to open the metadata panel.
-  dimensionsById?: DimensionsById;
+  /** If the legend is based on measures, this function can be used to get the
+   * corresponding measure to open the metadata panel.
+   **/
   getLegendItemDimension?: (dimensionLabel: string) => Measure | undefined;
   interactive?: boolean;
   showTitle?: boolean;
-};
-
-export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
-  const {
-    chartConfig,
-    segmentDimension,
-    symbol,
-    getLegendItemDimension,
-    interactive,
-    showTitle,
-    dimensionsById,
-  } = props;
+  dimensionsById?: DimensionsById;
+  limits?: ReturnType<typeof useLimits>["limits"];
+}) {
   const { colors, getColorLabel } = useChartState() as ColorsChartState;
-  const values = colors.domain();
-  const groups = useLegendGroups({ chartConfig, segmentDimension, values });
+  const values =
+    chartConfig.fields.color.type === "segment" ? colors.domain() : [];
+  const groups = useLegendGroups({ chartConfig, values });
+  const segmentComponent =
+    isSegmentInConfig(chartConfig) &&
+    chartConfig.fields.segment &&
+    dimensionsById
+      ? dimensionsById[chartConfig.fields.segment.componentId]
+      : null;
 
   return (
-    <Box>
-      {showTitle &&
-        isSegmentInConfig(chartConfig) &&
-        chartConfig.fields.segment &&
-        dimensionsById && (
-          <OpenMetadataPanelWrapper
-            component={dimensionsById[chartConfig.fields.segment.componentId]}
+    <div>
+      {showTitle && segmentComponent && (
+        <OpenMetadataPanelWrapper component={segmentComponent}>
+          <Typography
+            data-testid="legendTitle"
+            component="div"
+            variant="caption"
+            color="primary.main"
           >
-            <Typography
-              data-testId="legendTitle"
-              component="div"
-              variant="caption"
-              color="primary.main"
-            >
-              {dimensionsById[chartConfig.fields.segment.componentId]?.label}
-            </Typography>
-          </OpenMetadataPanelWrapper>
-        )}
+            {segmentComponent.label}
+          </Typography>
+        </OpenMetadataPanelWrapper>
+      )}
       <LegendColorContent
         groups={groups}
-        getColor={(v) => colors(v)}
+        limits={limits?.map(({ configLimit, measureLimit }) => ({
+          label: measureLimit.name,
+          values:
+            measureLimit.type === "single"
+              ? [measureLimit.value]
+              : [measureLimit.from, measureLimit.to],
+          color: configLimit.color,
+        }))}
+        getColor={colors}
         getLabel={getColorLabel}
         getItemDimension={getLegendItemDimension}
         symbol={symbol}
         interactive={interactive}
         numberOfOptions={values.length}
       />
-    </Box>
+    </div>
   );
 });
 
 const removeOpacity = (rgb: number[]) => rgb.slice(0, 3);
 
-type MapLegendColorProps = {
+export const MapLegendColor = memo(function LegendColor({
+  component,
+  getColor,
+  useAbbreviations,
+  chartConfig,
+  observations,
+}: {
   component: Component;
   getColor: (d: Observation) => number[];
   useAbbreviations: boolean;
   chartConfig: MapConfig;
   observations: Observation[];
-};
-
-export const MapLegendColor = memo(function LegendColor(
-  props: MapLegendColorProps
-) {
-  const { component, getColor, useAbbreviations, chartConfig, observations } =
-    props;
+}) {
   const filters = useChartConfigFilters(chartConfig);
   const dimensionFilter = filters[component.id];
   const sortedValues = useMemo(() => {
@@ -293,26 +301,25 @@ export const MapLegendColor = memo(function LegendColor(
   );
 });
 
-type LegendColorContentProps = {
+const LegendColorContent = ({
+  groups,
+  limits,
+  getColor,
+  getLabel,
+  getItemDimension,
+  symbol,
+  interactive,
+  numberOfOptions,
+}: {
   groups: ReturnType<typeof useLegendGroups>;
+  limits?: { label: string; values: number[]; color: string }[];
   getColor: (d: string) => string;
   getLabel: (d: string) => string;
   getItemDimension?: (dimensionLabel: string) => Measure | undefined;
   symbol: LegendSymbol;
   interactive?: boolean;
   numberOfOptions: number;
-};
-
-const LegendColorContent = (props: LegendColorContentProps) => {
-  const {
-    groups,
-    getColor,
-    getLabel,
-    getItemDimension,
-    symbol,
-    interactive,
-    numberOfOptions,
-  } = props;
+}) => {
   const classes = useStyles();
   const categories = useChartInteractiveFilters((d) => d.categories);
   const addCategory = useChartInteractiveFilters((d) => d.addCategory);
@@ -334,6 +341,8 @@ const LegendColorContent = (props: LegendColorContentProps) => {
     }
   });
 
+  const formatNumber = useFormatNumber({ decimals: "auto" });
+
   return (
     <Flex
       className={clsx(
@@ -342,8 +351,10 @@ const LegendColorContent = (props: LegendColorContentProps) => {
       )}
     >
       {groups
-        ? groups.map(([g, colorValues]) => {
-            const headerLabelsArray = g.map((n) => n.label);
+        ? groups.map(([g, colorValues], i) => {
+            const isLastGroup = i === groups.length - 1;
+            const headerLabelsArray = g.map((d) => d.label);
+
             return (
               <div
                 className={classes.legendGroup}
@@ -383,6 +394,16 @@ const LegendColorContent = (props: LegendColorContentProps) => {
                     />
                   );
                 })}
+                {isLastGroup && limits
+                  ? limits.map(({ label, values, color }, i) => (
+                      <LegendItem
+                        key={i}
+                        item={`${label}: ${values.map(formatNumber).join("-")}`}
+                        color={color}
+                        symbol="line"
+                      />
+                    ))
+                  : null}
               </div>
             );
           })

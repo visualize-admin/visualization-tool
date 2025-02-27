@@ -8,7 +8,7 @@ import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
-import { FilterValueMulti, Filters } from "@/config-types";
+import { Filters, FilterValueMulti } from "@/config-types";
 import {
   Observation,
   ObservationValue,
@@ -58,12 +58,14 @@ export const getCubeDimensions = async ({
   cube,
   locale,
   sparqlClient,
+  unversionedCubeIri,
   componentIris,
   cache,
 }: {
   cube: ExtendedCube;
   locale: string;
   sparqlClient: ParsingClient;
+  unversionedCubeIri: string;
   componentIris?: Maybe<string[]>;
   cache: LRUCache | undefined;
 }): Promise<ResolvedDimension[]> => {
@@ -99,6 +101,7 @@ export const getCubeDimensions = async ({
         return parseCubeDimension({
           dim,
           cube,
+          unversionedCubeIri,
           locale,
           units: dimensionUnitIndex,
         });
@@ -352,16 +355,15 @@ export const getCubeObservations = async ({
 }): Promise<ResolvedObservationsQuery["data"]> => {
   const cubeIri = cube.term?.value!;
   const cubeView = View.fromCube(cube, false);
-  const [unversionedCubeIri = cubeIri, allResolvedDimensions] =
-    await Promise.all([
-      queryCubeUnversionedIri(sparqlClient, cubeIri),
-      getCubeDimensions({
-        cube,
-        locale,
-        sparqlClient,
-        cache,
-      }),
-    ]);
+  const unversionedCubeIri =
+    (await queryCubeUnversionedIri(sparqlClient, cubeIri)) ?? cubeIri;
+  const allResolvedDimensions = await getCubeDimensions({
+    cube,
+    locale,
+    sparqlClient,
+    unversionedCubeIri,
+    cache,
+  });
   const resolvedDimensions = allResolvedDimensions.filter((d) => {
     if (componentIris) {
       return (
@@ -397,6 +399,7 @@ export const getCubeObservations = async ({
   const observationFilters = filters
     ? await buildFilters({
         cube,
+        unversionedCubeIri,
         view: cubeView,
         filters: dbFilters,
         locale,
@@ -603,6 +606,7 @@ export const hasHierarchy = (dim: CubeDimension) => {
 
 const buildFilters = async ({
   cube,
+  unversionedCubeIri,
   view,
   filters,
   locale,
@@ -610,6 +614,7 @@ const buildFilters = async ({
   cache,
 }: {
   cube: ExtendedCube;
+  unversionedCubeIri: string;
   view: View;
   filters: Filters;
   locale: string;
@@ -657,6 +662,7 @@ const buildFilters = async ({
       const resolvedDimension = parseCubeDimension({
         dim: cubeDimension,
         cube,
+        unversionedCubeIri,
         locale,
       });
 
@@ -832,7 +838,7 @@ function parseObservation(
       if (d.data.hasHierarchy) {
         res[iriDimensionIri(d.data.iri)] = obs[d.data.iri]?.value;
       }
-      res[d.data.iri] = raw ? rawValue : label ?? value ?? null;
+      res[d.data.iri] = raw ? rawValue : (label ?? value ?? null);
     }
     return res;
   };

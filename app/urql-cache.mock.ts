@@ -352,6 +352,7 @@ export const getCachedComponentsMock = {
           { value: 41.933666, label: "41.933666" },
         ],
         related: [],
+        limits: [],
       },
       {
         __typename: "NumericalMeasure",
@@ -373,6 +374,7 @@ export const getCachedComponentsMock = {
           { value: 21.119532, label: "21.119532" },
         ],
         related: [],
+        limits: [],
       },
       {
         __typename: "NumericalMeasure",
@@ -394,6 +396,7 @@ export const getCachedComponentsMock = {
           { value: 23.652, label: "23.652" },
         ],
         related: [],
+        limits: [],
       },
       {
         __typename: "NumericalMeasure",
@@ -415,6 +418,7 @@ export const getCachedComponentsMock = {
           { value: 7.584526, label: "7.584526" },
         ],
         related: [],
+        limits: [],
       },
       {
         __typename: "NumericalMeasure",
@@ -436,6 +440,7 @@ export const getCachedComponentsMock = {
           { value: 2.3, label: "2.3" },
         ],
         related: [],
+        limits: [],
       },
     ],
   },
@@ -487,6 +492,7 @@ export const getCachedComponentsMock = {
         isNumerical: true,
         isKeyDimension: false,
         values: [],
+        limits: [],
       },
     ],
   },

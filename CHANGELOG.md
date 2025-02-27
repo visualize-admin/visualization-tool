@@ -12,8 +12,52 @@ You can also check the
 # Unreleased
 
 - Features
-  - Added option for hiding legend titles using a toggle switch
+  - It's now possible to preview charts by passing configurator state as a query
+    parameter
+  - It's now possible to add custom WMS layers coming from wms.geo.admin.ch to
+    map charts
+  - Statistics page was enhanced with `Charts` and `Cubes` sections, including
+    some general improvements
+  - Application now collect data on chart previews, not only views
 - Fixes
+  - Limits that are connected to values that are filtered out do not render in
+    the chart anymore
+- Maintenance
+  - Updated documentation
+
+# [5.3.0] - 2025-02-25
+
+- Features
+  - It's now possible to add custom WMTS layers coming from wmts.geo.admin.ch to
+    map charts
+  - Limits can now be displayed in bar charts
+  - Exact limit values are now displayed in legend
+- Fixes
+  - Line chart dots are now based on data, eliminating misaligned dots
+  - Added a fallback to color selector
+  - Added dynamic descriptions for custom color palette types
+  - Show line dot sizes are now translated
+
+# [5.2.6] - 2025-02-18
+
+- Features
+  - Added a way to display limit values and targets coming from the data with
+    compatible chart types
+- Fixes
+  - Color picker's HEX code input now stays up-to-date with the selected color
+  - Markdown links now open in a new tab
+  - Publishing of a dashboard with text blocks doesn't crash the application in
+    some rare cases anymore
+
+# [5.2.5] - 2025-02-18
+
+- Features
+  - Added option for hiding legend titles using a toggle switch
+  - Bar charts, dashboard text blocks and Markdown inputs are not hidden behind
+    flags anymore
+  - Added improved Iframe view for the use of ODS
+- Fixes
+  - Added button translations for custom color palette update and create button
   - Color swatches inside the color picker dynamically adjust to the colors of
     the selected palette
   - All colors of a selected custom color palette are displayed when selected at
@@ -21,13 +65,19 @@ You can also check the
   - Dashboard text block are now automatically resized also in published charts
   - Added (required) hint for palette titles and disabled the "add color button"
     if the color palette title is missing
+  - Added dynamic translations for color contrast checking warnings
   - Added error displaying for title names that already exists on the custom
-    color palette form inside the user profile
+    color palette form inside the user profile only when adding palettes
   - Fixed button translations for custom color palette update and create button.
+  - Fixed errors regarding switching form existing categorical palette to a
+    diverging color palette
+  - Improved filter section styling
+  - Removed legend titles tooltip on the toggle switch
+  - Fixed Map Symbol Layer custom color palette support for all palette types
+  - Added color palettes to bar chart type
 - Maintenance
   - Added authentication method to e2e tests
-  - Added authentication to vercel previews for easier testing
-  - Updated documentation
+  - Added authentication to Vercel previews for easier testing
 
 # [5.2.4] - 2025-02-06
 

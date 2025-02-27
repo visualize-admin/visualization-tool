@@ -43,6 +43,7 @@ export const chartConfig: ColumnConfig = {
     },
   },
   cubes: [{ iri: "", filters: {} }],
+  limits: {},
   fields: columnFields,
   interactiveFiltersConfig: {
     legend: {

@@ -366,7 +366,6 @@ const MultiFilterContent = ({
             justifyContent: "space-between",
             display: "flex",
             flexDirection: "column",
-            alignItems: "flex-end",
           }}
         >
           {chartConfig.activeField === "segment" ? (
@@ -402,24 +401,9 @@ const MultiFilterContent = ({
                   componentsProps={{ typography: { variant: "body2" } }}
                   control={<Switch {...visibleLegendProps} />}
                   label={
-                    <MaybeTooltip
-                      tooltipProps={{ enterDelay: 600 }}
-                      title={
-                        <TooltipTitle
-                          text={
-                            <Trans id="controls.filters.show-legend-toggle">
-                              Allow users to change Legend visibility
-                            </Trans>
-                          }
-                        />
-                      }
-                    >
-                      <div>
-                        <Trans id="controls.filters.show-legend.toggle">
-                          Show legend titles
-                        </Trans>
-                      </div>
-                    </MaybeTooltip>
+                    <Trans id="controls.filters.show-legend.toggle">
+                      Show legend titles
+                    </Trans>
                   }
                 />
               </Flex>
@@ -430,7 +414,12 @@ const MultiFilterContent = ({
             size="small"
             color="primary"
             onClick={handleOpenAutocomplete}
-            sx={{ justifyContent: "center", mb: 2, width: "fit-content" }}
+            sx={{
+              justifyContent: "center",
+              mt: 4,
+              mb: 2,
+              width: "fit-content",
+            }}
           >
             <Trans id="controls.set-filters">Edit filters</Trans>
           </Button>
@@ -525,8 +514,8 @@ const MultiFilterContent = ({
  * and contains new values in the color dimension.
  * */
 const useEnsureUpToDateColorMapping = ({
-  colorComponentValues = [],
-  colorMapping = {},
+  colorComponentValues,
+  colorMapping,
 }: {
   colorComponentValues?: DimensionValue[];
   colorMapping?: ColorMapping;
@@ -537,11 +526,18 @@ const useEnsureUpToDateColorMapping = ({
   const { activeField } = chartConfig;
 
   const hasOutdatedMapping = useMemo(() => {
-    return colorComponentValues.some((value) => !colorMapping[value.value]);
+    return colorMapping && colorComponentValues
+      ? colorComponentValues.some((value) => !colorMapping[value.value])
+      : false;
   }, [colorComponentValues, colorMapping]);
 
   useEffect(() => {
-    if (activeField && hasOutdatedMapping) {
+    if (
+      activeField &&
+      hasOutdatedMapping &&
+      colorMapping &&
+      colorComponentValues
+    ) {
       dispatch({
         type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
         value: {

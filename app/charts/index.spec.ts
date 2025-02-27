@@ -262,6 +262,7 @@ describe("chart type switch", () => {
       cubes: [
         { iri: "https://environment.ld.admin.ch/foen/ubd0104", filters: {} },
       ],
+      limits: {},
       meta: {
         title: {
           en: "",
