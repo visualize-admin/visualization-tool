@@ -9,6 +9,7 @@ import {
   ConfiguratorStatePublished,
   decodeConfiguratorState,
 } from "@/config-types";
+import { increaseConfigViewCount } from "@/db/config";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { i18n } from "@/locales/locales";
 import { LocaleProvider, useLocale } from "@/locales/use-locale";
@@ -44,6 +45,10 @@ if (typeof window !== "undefined") {
       }) as ConfiguratorStatePublished;
 
       if (state) {
+        await fetch("/api/config/view", {
+          method: "POST",
+          body: JSON.stringify({ type: "preview" }),
+        });
         chartStateStore.setState({ state });
       }
     } catch (e) {
@@ -76,6 +81,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     ...migratedState,
     state: "PUBLISHED",
   }) as ConfiguratorStatePublished;
+
+  await increaseConfigViewCount();
 
   return {
     props: {

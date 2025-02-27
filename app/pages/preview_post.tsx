@@ -8,6 +8,7 @@ import {
   ConfiguratorStatePublished,
   decodeConfiguratorState,
 } from "@/configurator";
+import { increaseConfigViewCount } from "@/db/config";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { defaultLocale, i18n, Locale } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
@@ -56,6 +57,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     ...migratedState,
     state: "PUBLISHED",
   } as ConfiguratorStatePublished);
+
+  await increaseConfigViewCount();
 
   return {
     props: {
