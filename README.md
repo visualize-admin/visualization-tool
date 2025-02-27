@@ -260,9 +260,10 @@ parameters for the test.
 
 ##  9. <a name='Authentication'></a>Authentication
 
-By default, Authentication is provided by the Swiss federal government's eIAM through ADFS.
-We use Next-auth to integrate our application with it, through a
-[custom Provider](app/auth-providers/adfs.ts).
+By default, authentication is provided by the Swiss federal government's eIAM through ADFS.
+We use Next-auth to integrate our application with it through a
+[custom Provider](app/auth-providers/adfs.ts). For testing locally and on
+Vercel previews we use a custom test user account using nextauth credentials provider.
 
 ###  9.1. <a name='Locally'></a>Locally
 
