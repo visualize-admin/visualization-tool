@@ -27,6 +27,7 @@ You can also check the
 - Maintenance
   - Added authentication method to e2e tests
   - Added authentication to vercel previews for easier testing
+  - Updated documentation
 
 # [5.2.4] - 2025-02-06
 
