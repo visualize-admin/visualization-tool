@@ -8,6 +8,7 @@ import { groupByYearMonth } from "@/statistics/utils";
 export type StatProps = {
   countByDay: {
     day: Date;
+    type?: "view" | "preview";
     count: number;
   }[];
   trendAverages: {

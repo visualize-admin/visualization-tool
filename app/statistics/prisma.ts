@@ -115,14 +115,20 @@ export const fetchChartTrendAverages = async () => {
 };
 
 export const fetchViewCountByDay = async () => {
-  return await prisma.$queryRaw<{ day: Date; count: BigInt }[]>`
+  return await prisma.$queryRaw<
+    { day: Date; type: "view" | "preview"; count: BigInt }[]
+  >`
     SELECT
       DATE_TRUNC('day', viewed_at) AS day,
+      CASE
+        WHEN config_key IS NULL THEN 'preview'
+        ELSE 'view'
+      END AS type,
       COUNT(*) AS count
     FROM
       config_view
     GROUP BY
-      DATE_TRUNC('day', viewed_at)
+      DATE_TRUNC('day', viewed_at), type
     ORDER BY
       day DESC;
   `.then((rows) => {

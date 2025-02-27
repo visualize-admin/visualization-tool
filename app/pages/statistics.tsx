@@ -202,7 +202,7 @@ const Statistics = (props: Serialized<PageProps>) => {
               countByDay={charts.countByDay}
               trendAverages={charts.trendAverages}
               title={(total) =>
-                `Visualize users created ${formatInteger(total)} charts`
+                `Visualize users created ${formatInteger(total)} charts...`
               }
               subtitle={(total, avgMonthlyCount) =>
                 `${total ? ` It's around ${formatInteger(avgMonthlyCount)} chart${avgMonthlyCount > 1 ? "s" : ""} per month on average.` : ""}`
@@ -214,7 +214,12 @@ const Statistics = (props: Serialized<PageProps>) => {
               countByDay={views.countByDay}
               trendAverages={views.trendAverages}
               title={(total) =>
-                `Charts were viewed ${formatInteger(total)} times`
+                `...viewed ${formatInteger(total)} times (${formatInteger(
+                  sum(
+                    views.countByDay.filter((d) => d.type === "preview"),
+                    (d) => d.count
+                  )
+                )} previews)`
               }
               subtitle={(total, avgMonthlyCount) =>
                 `${total ? ` It's around ${formatInteger(avgMonthlyCount)} view${avgMonthlyCount > 1 ? "s" : ""} per month on average.` : ""}`
