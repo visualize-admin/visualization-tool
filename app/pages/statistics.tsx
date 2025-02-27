@@ -174,6 +174,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 const Statistics = (props: Serialized<PageProps>) => {
   const { charts, views } = deserializeProps(props);
   const locale = useLocale();
+  console.log(charts.countByLayoutTypeAndSubtype);
 
   return (
     <AppLayout>
@@ -374,27 +375,26 @@ const getChartTypeSubtypeLabel = ({
   type: "single" | "dashboard";
   subtype?: LayoutDashboard["layout"] | "tab" | null;
 }) => {
-  if (type === "single") {
-    return "Single chart";
+  switch (type) {
+    case "single":
+      return "Single chart";
+    case "dashboard":
+      switch (subtype) {
+        case "tab":
+          return "Tab dashboard";
+        case "canvas":
+          return "Free canvas dashboard";
+        case "tall":
+          return "Tall dashboard";
+        case "vertical":
+          return "Vertical dashboard";
+        default:
+          return type ?? subtype ?? "Unknown";
+      }
+    default:
+      const _exhaustiveCheck: never = type;
+      return _exhaustiveCheck;
   }
-
-  if (subtype === "tab") {
-    return "Tab dashboard";
-  }
-
-  if (subtype === "canvas") {
-    return "Free canvas dashboard";
-  }
-
-  if (subtype === "tall") {
-    return "Tall dashboard";
-  }
-
-  if (subtype === "vertical") {
-    return "Vertical dashboard";
-  }
-
-  return type ?? subtype ?? "Unknown";
 };
 
 export default Statistics;
