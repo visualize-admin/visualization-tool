@@ -28,6 +28,8 @@ model Config {
   published_state PUBLISHED_STATE @default(PUBLISHED)
 
   @@map("config")
+
+  @@index(fields: [data], type: Gin)
 }
 
 model User {
