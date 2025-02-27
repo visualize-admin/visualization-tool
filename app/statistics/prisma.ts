@@ -185,7 +185,7 @@ export const fetchChartsMetadata = async () => {
         )
       ) AS iris,
       COALESCE(
-        jsonb_agg(chart_config_array ->> 'chartType'),
+        jsonb_agg(chart_config_array ->> 'chartType') FILTER (WHERE chart_config_array ->> 'chartType' IS NOT NULL),
         jsonb_build_array(chart_config_obj ->> 'chartType')
       ) AS chart_types,
       layout -> 'type' AS layout_type,
@@ -195,7 +195,7 @@ export const fetchChartsMetadata = async () => {
     LEFT JOIN LATERAL jsonb_array_elements(chart_config_array -> 'cubes') AS cubes_obj ON true
     LEFT JOIN LATERAL (SELECT data -> 'chartConfig' AS chart_config_obj) AS single_config ON true
     LEFT JOIN LATERAL (SELECT data -> 'layout' AS layout) AS layout ON true
-    GROUP BY  day, data, chart_config_obj, layout, layout_subtype
+    GROUP BY day, data, chart_config_obj, layout, layout_subtype
   `.then((rows) => {
     return rows.map((row) => ({
       day: row.day,
