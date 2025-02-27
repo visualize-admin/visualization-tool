@@ -1,6 +1,7 @@
+import ParsingClient from "sparql-http-client/ParsingClient";
+
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { buildLocalizedSubQuery, iriToNode } from "@/rdf/query-utils";
-import ParsingClient from "sparql-http-client/ParsingClient";
 
 const sparqlClient = new ParsingClient({
   endpointUrl: DEFAULT_DATA_SOURCE.url,
