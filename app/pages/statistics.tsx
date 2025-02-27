@@ -48,6 +48,7 @@ type PageProps = {
     }[];
     count: number;
     dashboardCount: number;
+    iris: string[];
   };
   views: StatProps;
 };
@@ -84,7 +85,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
     ({ chartTypes, layoutType, layoutSubtype }) => {
       return chartTypes.length === 1
         ? null
-        : layoutType === "tab"
+        : layoutType === "tab" || !layoutSubtype
           ? ("tab" as const)
           : layoutSubtype;
     }
@@ -121,6 +122,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
         count: count,
         dashboardCount: dashboardCount,
         trendAverages: chartTrendAverages,
+        iris: chartsMetadata.flatMap((d) => d.iris),
       },
       views: {
         countByDay: viewCountByDay,
@@ -133,6 +135,8 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
 const Statistics = (props: Serialized<PageProps>) => {
   const { charts, views } = deserializeProps(props);
   const locale = useLocale();
+
+  console.log("charts", charts);
 
   return (
     <AppLayout>
@@ -254,6 +258,39 @@ const Statistics = (props: Serialized<PageProps>) => {
             )}
             columnName="Layout type"
             showPercentage
+          />
+        </CardGrid>
+        <SectionTitleWrapper>
+          <SectionTitle title="Cubes" />
+          <Typography>
+            Gain insights into the cubes used in the charts created in
+            Visualize.
+          </Typography>
+        </SectionTitleWrapper>
+        <CardGrid>
+          <BaseStatsCard
+            title={`Visualize users created charts using ${formatInteger(
+              rollups(
+                charts.iris,
+                (v) => v.length,
+                (d) => d
+              ).length
+            )} unique cubes`}
+            subtitle="Cubes are the data sources used in the charts."
+            data={rollups(
+              charts.iris,
+              (v) => v.length,
+              (d) => d
+            )
+              .sort((a, b) => b[1] - a[1])
+              .map(([iri, count]) => [
+                iri,
+                {
+                  count,
+                  label: iri,
+                },
+              ])}
+            columnName="Cube"
           />
         </CardGrid>
       </Box>
