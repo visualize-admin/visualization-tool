@@ -111,7 +111,7 @@ export const AxisWidthBand = () => {
     <>
       <foreignObject
         x={margins.left + chartWidth / 2 - labelWidth / 2}
-        y={margins.top + chartHeight + 40}
+        y={margins.top + chartHeight + margins.bottom / 2 + 20}
         width={chartWidth}
         height={height}
         style={{ display: "flex", textAlign: "right" }}
