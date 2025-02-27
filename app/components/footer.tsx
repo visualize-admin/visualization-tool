@@ -1,11 +1,11 @@
 import {
+  Footer as SwissFederalCiFooter,
   FooterSection,
   FooterSectionButton,
   FooterSectionSocialMediaButton,
   FooterSectionSocialMediaButtonGroup,
   FooterSectionText,
   FooterSectionTitle,
-  Footer as SwissFederalCiFooter,
 } from "@interactivethings/swiss-federal-ci/dist/components";
 import { t } from "@lingui/macro";
 import { Link, SxProps } from "@mui/material";
@@ -17,14 +17,20 @@ import { useLocale } from "@/locales/use-locale";
 const mkVersionLink = () => {
   let commitLink = "";
   let href = "";
-  if (BUILD_GITHUB_REPO && BUILD_COMMIT) {
-    commitLink = BUILD_COMMIT.substr(0, 7);
-    href = `${BUILD_GITHUB_REPO}/commit/${BUILD_COMMIT}`;
-  }
+
   if (BUILD_COMMIT) {
     commitLink = `(${BUILD_COMMIT.substr(0, 7)})`;
   }
-  return { title: `${BUILD_VERSION} ${commitLink}`, href, external: true };
+
+  if (BUILD_GITHUB_REPO) {
+    href = `${BUILD_GITHUB_REPO}/commit/${BUILD_COMMIT}`;
+  }
+
+  return {
+    title: `${BUILD_VERSION} ${commitLink}`,
+    href,
+    external: true,
+  };
 };
 
 export const Footer = ({ sx }: { sx?: SxProps }) => {
