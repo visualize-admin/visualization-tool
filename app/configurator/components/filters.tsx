@@ -531,33 +531,31 @@ const useEnsureUpToDateColorMapping = ({
       : false;
   }, [colorComponentValues, colorMapping]);
 
+  const field = isColorInConfig(chartConfig) ? "color" : activeField;
+
   useEffect(() => {
-    if (
-      activeField &&
-      hasOutdatedMapping &&
-      colorMapping &&
-      colorComponentValues
-    ) {
+    if (hasOutdatedMapping && colorMapping && colorComponentValues && field) {
       dispatch({
         type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
         value: {
           dimensionId,
           colorConfigPath,
           colorMapping,
-          field: activeField,
+          field,
           values: colorComponentValues,
           random: false,
         },
       });
     }
   }, [
+    field,
+    chartConfig,
     hasOutdatedMapping,
     dispatch,
     dimensionId,
     colorConfigPath,
     colorMapping,
     colorComponentValues,
-    activeField,
   ]);
 };
 

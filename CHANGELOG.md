@@ -23,6 +23,7 @@ You can also check the
   - Limits that are connected to values that are filtered out do not render in
     the chart anymore
   - Removed title & description on open data swiss iframes.
+  - Persisting and showing colors on dimension changes
 - Maintenance
   - Updated documentation
 

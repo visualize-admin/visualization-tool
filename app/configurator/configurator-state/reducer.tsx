@@ -548,8 +548,9 @@ export const updateColorMapping = (
         });
       }
     } else {
+      const { paletteId } = get(chartConfig, path);
       colorMapping = mapValueIrisToColor({
-        paletteId: "dimension",
+        paletteId,
         dimensionValues: values,
         colorMapping: oldColorMapping,
         random,
