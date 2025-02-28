@@ -163,7 +163,9 @@ const ColorPaletteRow = ({
       }}
     >
       <Box>
-        <Typography data-testid="custom-color-palette-title" variant="caption">{name}</Typography>
+        <Typography data-testid="custom-color-palette-title" variant="caption">
+          {name}
+        </Typography>
         <Grid
           container
           spacing={0.5}
@@ -200,6 +202,7 @@ const ColorPaletteRow = ({
           </Typography>
         </EditButton>
         <DeleteButton
+          data-testid="profile-delete-color-palette"
           disabled={deleteColorPalette.status === "fetching"}
           onClick={handleDelete}
         >

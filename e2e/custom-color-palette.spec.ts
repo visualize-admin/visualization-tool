@@ -7,9 +7,7 @@ const { test, expect } = setup();
 const clearColorPalettes = async (page: Page) => {
   while (true) {
     const deleteButtonCount = await page
-      .getByRole("button", {
-        name: "login.profile.my-color-palettes.delete",
-      })
+      .locator('[data-testid="profile-delete-color-palette"]')
       .count();
 
     if (deleteButtonCount === 0) {
@@ -17,9 +15,7 @@ const clearColorPalettes = async (page: Page) => {
     }
 
     await page
-      .getByRole("button", {
-        name: "login.profile.my-color-palettes.delete",
-      })
+      .locator('[data-testid="profile-delete-color-palette"]')
       .first()
       .click();
 
@@ -65,6 +61,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await tab.waitFor({ state: "visible", timeout: 5000 });
   await tab.click();
 
+  await page.waitForLoadState("networkidle");
   await clearColorPalettes(page);
 
   //Create Categorical Palette
@@ -87,7 +84,6 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await page.locator('[data-testid="profile-save-color-palette"]').click();
   await sleep(1_000);
 
-  await categoricalTitleInput.waitFor({ state: "visible", timeout: 10000 });
   const categoricalTitleExists = await page
     .getByText("Categorical Palette")
     .isVisible();
@@ -113,7 +109,6 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await page.locator('[data-testid="profile-save-color-palette"]').click();
   await sleep(1_000);
 
-  await sequentialTitleInput.waitFor({ state: "visible", timeout: 10000 });
   const sequentialTitleExists = await page
     .getByText("Sequential Palette")
     .isVisible();
@@ -140,7 +135,6 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await page.locator('[data-testid="profile-save-color-palette"]').click();
   await sleep(1_000);
 
-  await divergingTwoTitleInput.waitFor({ state: "visible", timeout: 10000 });
   const divergingTwoTitleExists = await page
     .getByText("Diverging Palette (2)")
     .isVisible();
@@ -164,7 +158,6 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await page.locator('[data-testid="profile-save-color-palette"]').click();
   await sleep(1_000);
 
-  await divergingThreeTitleInput.waitFor({ state: "visible", timeout: 10000 });
   const divergingThreeTitleExists = await page
     .getByText("Diverging Palette (3)")
     .isVisible();
@@ -226,9 +219,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
 
       if (titleText && titleText.trim() === paletteName.trim()) {
         await row
-          .getByRole("button", {
-            name: "login.profile.my-color-palettes.delete",
-          })
+          .locator('[data-testid="profile-delete-color-palette"]')
           .click();
 
         await page.waitForTimeout(300);
