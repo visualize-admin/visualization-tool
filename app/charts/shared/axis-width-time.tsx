@@ -15,7 +15,10 @@ import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatShortDateAuto } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
 
-import { useAxisLabelHeightOffset } from "./chart-dimensions";
+import {
+  useAxisLabelHeightOffset,
+  useXAxisTitleOffset,
+} from "./chart-dimensions";
 
 // Approximate the longest date format we're using for.
 // Roughly equivalent to the text width of "99.99.9999" with 12px font size.
@@ -40,6 +43,7 @@ export const AxisTime = () => {
     fontFamily,
     axisLabelFontSize,
   } = useChartTheme();
+  const xAxisTitleOffset = useXAxisTitleOffset();
 
   const hasNegativeValues = yScale.domain()[0] < 0;
 
@@ -106,7 +110,7 @@ export const AxisTime = () => {
     <>
       <foreignObject
         x={margins.left + chartWidth / 2 - labelWidth / 2}
-        y={margins.top + chartHeight + 40}
+        y={margins.top + chartHeight + xAxisTitleOffset}
         width={chartWidth}
         height={height}
         style={{ display: "flex", textAlign: "right" }}

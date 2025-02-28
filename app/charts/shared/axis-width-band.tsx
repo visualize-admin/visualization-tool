@@ -13,7 +13,10 @@ import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useTimeFormatUnit } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
 
-import { useAxisLabelHeightOffset } from "./chart-dimensions";
+import {
+  useAxisLabelHeightOffset,
+  useXAxisTitleOffset,
+} from "./chart-dimensions";
 
 export const AxisWidthBand = () => {
   const ref = useRef<SVGGElement>(null);
@@ -31,6 +34,8 @@ export const AxisWidthBand = () => {
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDate = useTimeFormatUnit();
   const { chartHeight, chartWidth, margins } = bounds;
+  const xAxisTitleOffset = useXAxisTitleOffset();
+
   const {
     labelColor,
     gridColor,
@@ -111,7 +116,7 @@ export const AxisWidthBand = () => {
     <>
       <foreignObject
         x={margins.left + chartWidth / 2 - labelWidth / 2}
-        y={margins.top + chartHeight + margins.bottom / 2 + 20}
+        y={margins.top + chartHeight + xAxisTitleOffset}
         width={chartWidth}
         height={height}
         style={{ display: "flex", textAlign: "right" }}
