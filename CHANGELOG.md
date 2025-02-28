@@ -16,10 +16,15 @@ You can also check the
     parameter
   - It's now possible to add custom WMS layers coming from wms.geo.admin.ch to
     map charts
+  - Statistics page was enhanced with `Charts` and `Cubes` sections, including
+    some general improvements
+  - Application now collect data on chart previews, not only views
 - Fixes
   - Limits that are connected to values that are filtered out do not render in
     the chart anymore
   - Persisting and showing colors on dimension changes
+- Maintenance
+  - Updated documentation
 
 # [5.3.0] - 2025-02-25
 

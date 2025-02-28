@@ -9,6 +9,7 @@ import {
   ConfiguratorStatePublished,
   decodeConfiguratorState,
 } from "@/config-types";
+import { increaseConfigViewCount } from "@/db/config";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { i18n } from "@/locales/locales";
 import { LocaleProvider, useLocale } from "@/locales/use-locale";
@@ -44,6 +45,10 @@ if (typeof window !== "undefined") {
       }) as ConfiguratorStatePublished;
 
       if (state) {
+        await fetch("/api/config/view", {
+          method: "POST",
+          body: JSON.stringify({ type: "preview" }),
+        });
         chartStateStore.setState({ state });
       }
     } catch (e) {
@@ -72,10 +77,16 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
   const migratedState = await migrateConfiguratorState(
     JSON.parse(configuratorState)
   );
+  const decodedState = decodeConfiguratorState({
+    ...migratedState,
+    state: "PUBLISHED",
+  }) as ConfiguratorStatePublished;
+
+  await increaseConfigViewCount();
 
   return {
     props: {
-      configuratorState: JSON.stringify(migratedState),
+      configuratorState: JSON.stringify(decodedState),
     },
   };
 };
@@ -87,12 +98,7 @@ export default function Preview({ configuratorState }: PageProps) {
 
   useEffect(() => {
     if (configuratorState) {
-      const parsedState = JSON.parse(configuratorState);
-      const decodedState = decodeConfiguratorState({
-        ...parsedState,
-        state: "PUBLISHED",
-      }) as ConfiguratorStatePublished;
-      chartStateStore.setState({ state: decodedState });
+      chartStateStore.setState({ state: JSON.parse(configuratorState) });
     }
   }, [configuratorState]);
 
