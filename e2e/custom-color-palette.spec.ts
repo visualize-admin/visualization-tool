@@ -87,6 +87,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await page.locator('[data-testid="profile-save-color-palette"]').click();
   await sleep(1_000);
 
+  await categoricalTitleInput.waitFor({ state: "visible", timeout: 10000 });
   const categoricalTitleExists = await page
     .getByText("Categorical Palette")
     .isVisible();
@@ -112,6 +113,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await page.locator('[data-testid="profile-save-color-palette"]').click();
   await sleep(1_000);
 
+  await sequentialTitleInput.waitFor({ state: "visible", timeout: 10000 });
   const sequentialTitleExists = await page
     .getByText("Sequential Palette")
     .isVisible();
@@ -138,6 +140,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await page.locator('[data-testid="profile-save-color-palette"]').click();
   await sleep(1_000);
 
+  await divergingTwoTitleInput.waitFor({ state: "visible", timeout: 10000 });
   const divergingTwoTitleExists = await page
     .getByText("Diverging Palette (2)")
     .isVisible();
@@ -161,6 +164,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await page.locator('[data-testid="profile-save-color-palette"]').click();
   await sleep(1_000);
 
+  await divergingThreeTitleInput.waitFor({ state: "visible", timeout: 10000 });
   const divergingThreeTitleExists = await page
     .getByText("Diverging Palette (3)")
     .isVisible();
