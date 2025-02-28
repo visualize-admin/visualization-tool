@@ -358,6 +358,8 @@ const MultiFilterContent = ({
   const visibleLegendProps = useLegendTitleVisibility();
   const chartSymbol = getChartSymbol(chartConfig.chartType);
 
+  console.log(valueGroups);
+
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
