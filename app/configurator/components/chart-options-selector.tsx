@@ -1732,10 +1732,6 @@ const ChartFieldMultiFilter = ({
   const colorComponent = [...dimensions, ...measures].find(
     (d) => d.id === colorComponentId
   );
-  const colorType = get(chartConfig, `fields["${field}"].color.type`) as
-    | ColorFieldType
-    | undefined;
-
   return encoding.filters && component ? (
     <ControlSection data-testid="chart-edition-multi-filters" collapse>
       <SubsectionTitle
@@ -1766,7 +1762,9 @@ const ChartFieldMultiFilter = ({
               colorComponent={colorComponent ?? component}
               // If colorType is defined, we are dealing with color field and
               // not segment.
-              colorConfigPath={colorType ? "color" : "colorMapping"}
+              colorConfigPath={
+                isColorInConfig(chartConfig) ? undefined : "colorMapping"
+              }
             />
           )
         )}

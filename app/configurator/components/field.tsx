@@ -770,11 +770,11 @@ const useMultiFilterColorPicker = (
     [dispatch, colorField, value, hasColorField]
   );
 
-  const path = colorConfigPath ? colorConfigPath : "";
+  const path = colorConfigPath ? `color.${colorConfigPath}` : "";
 
   const color = get(
     chartConfig,
-    `fields["${colorField}"].${path}${!hasColorField ? ".colorMapping" : ""}["${value}"]`
+    `fields["${colorField}"].${path}${hasColorField ? "colorMapping" : ""}["${value}"]`
   );
 
   const palette = useMemo(() => {
