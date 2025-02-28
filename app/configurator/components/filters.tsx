@@ -358,8 +358,6 @@ const MultiFilterContent = ({
   const visibleLegendProps = useLegendTitleVisibility();
   const chartSymbol = getChartSymbol(chartConfig.chartType);
 
-  console.log(valueGroups);
-
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
@@ -533,27 +531,24 @@ const useEnsureUpToDateColorMapping = ({
       : false;
   }, [colorComponentValues, colorMapping]);
 
+  const field = isColorInConfig(chartConfig) ? "color" : activeField;
+
   useEffect(() => {
-    if (
-      hasOutdatedMapping &&
-      colorMapping &&
-      colorComponentValues &&
-      activeField
-    ) {
+    if (hasOutdatedMapping && colorMapping && colorComponentValues && field) {
       dispatch({
         type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
         value: {
           dimensionId,
           colorConfigPath,
           colorMapping,
-          field: isColorInConfig(chartConfig) ? "color" : activeField,
+          field,
           values: colorComponentValues,
           random: false,
         },
       });
     }
   }, [
-    activeField,
+    field,
     chartConfig,
     hasOutdatedMapping,
     dispatch,
