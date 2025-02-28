@@ -74,7 +74,9 @@ const computeChartPadding = (
     (!dashboardFilters?.timeRange.active &&
       !!interactiveFiltersConfig?.timeRange.active) ||
     animationPresent
-      ? BRUSH_BOTTOM_SPACE
+      ? isFlipped
+        ? 70
+        : BRUSH_BOTTOM_SPACE
       : isFlipped
         ? 15 // Eyeballed value
         : 48 + (xLabelPresent ? 20 : 0);
@@ -85,7 +87,7 @@ const computeChartPadding = (
       70;
   }
 
-  return isFlipped ? { bottom: left, left: bottom } : { left, bottom };
+  return { left, bottom };
 };
 
 export const useChartPadding = (props: ComputeChartPaddingProps) => {

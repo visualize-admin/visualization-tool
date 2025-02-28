@@ -187,7 +187,7 @@ export const useDualAxisMargins = ({
   return getMargins({
     left,
     right,
-    bottom: bottom - SINGLE_LINE_AXIS_LABEL_HEIGHT / 2,
+    bottom,
     top,
   });
 };

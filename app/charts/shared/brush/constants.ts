@@ -1,2 +1,2 @@
 // Space used in chart states as bottom margin
-export const BRUSH_BOTTOM_SPACE = 75;
+export const BRUSH_BOTTOM_SPACE = 100;

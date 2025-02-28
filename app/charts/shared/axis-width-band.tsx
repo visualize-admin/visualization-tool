@@ -26,6 +26,7 @@ export const AxisWidthBand = () => {
     yScale,
     bounds,
     xAxisLabel,
+    interactiveFiltersConfig,
   } = state;
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
@@ -111,7 +112,11 @@ export const AxisWidthBand = () => {
     <>
       <foreignObject
         x={margins.left + chartWidth / 2 - labelWidth / 2}
-        y={margins.top + chartHeight + margins.bottom / 2 + 20}
+        y={
+          margins.bottom +
+          chartHeight +
+          (interactiveFiltersConfig?.timeRange.active ? 0 : 40)
+        }
         width={chartWidth}
         height={height}
         style={{ display: "flex", textAlign: "right" }}
