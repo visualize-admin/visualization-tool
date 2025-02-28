@@ -22,6 +22,7 @@ You can also check the
 - Fixes
   - Limits that are connected to values that are filtered out do not render in
     the chart anymore
+  - Removed title & description on open data swiss iframes.
 - Maintenance
   - Updated documentation
 
