@@ -26,14 +26,7 @@ export const AxisTime = () => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDateAuto = useFormatShortDateAuto();
-  const {
-    xScale,
-    yScale,
-    bounds,
-    xDimension,
-    xAxisLabel,
-    interactiveFiltersConfig,
-  } = useChartState() as
+  const { xScale, yScale, bounds, xDimension, xAxisLabel } = useChartState() as
     | LinesState
     | AreasState
     | ComboLineSingleState
@@ -113,11 +106,7 @@ export const AxisTime = () => {
     <>
       <foreignObject
         x={margins.left + chartWidth / 2 - labelWidth / 2}
-        y={
-          margins.bottom +
-          chartHeight +
-          (interactiveFiltersConfig?.timeRange.active ? 0 : 40)
-        }
+        y={margins.top + chartHeight + 40}
         width={chartWidth}
         height={height}
         style={{ display: "flex", textAlign: "right" }}

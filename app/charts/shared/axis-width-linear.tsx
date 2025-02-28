@@ -17,14 +17,8 @@ import { getTextWidth } from "@/utils/get-text-width";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();
-  const {
-    xScale,
-    bounds,
-    xAxisLabel,
-    xMeasure,
-    chartType,
-    interactiveFiltersConfig,
-  } = useChartState() as ScatterplotState | BarsState;
+  const { xScale, bounds, xAxisLabel, xMeasure, chartType } =
+    useChartState() as ScatterplotState | BarsState;
   const { chartWidth, chartHeight, margins } = bounds;
   const {
     labelColor,
@@ -103,11 +97,7 @@ export const AxisWidthLinear = () => {
     <>
       <foreignObject
         x={margins.left + chartWidth / 2 - labelWidth / 2}
-        y={
-          margins.bottom +
-          chartHeight +
-          (interactiveFiltersConfig?.timeRange.active ? 0 : 40)
-        }
+        y={margins.top + chartHeight + 40}
         width={chartWidth}
         height={height}
         style={{ display: "flex", textAlign: "right" }}
