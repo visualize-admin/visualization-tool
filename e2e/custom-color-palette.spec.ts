@@ -82,6 +82,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
     await addNewColor(page, i);
   }
   await page.locator('[data-testid="profile-save-color-palette"]').click();
+  await page.waitForLoadState("networkidle");
   await sleep(1_000);
 
   const categoricalTitleExists = await page
@@ -95,6 +96,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
     .locator('[data-testid="profile-color-palette-sequential"]')
     .click();
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.waitForLoadState("networkidle");
   await sleep(1_000);
 
   const sequentialTitleInput = page.locator(
@@ -133,6 +135,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await sleep(1_000);
 
   await page.locator('[data-testid="profile-save-color-palette"]').click();
+  await page.waitForLoadState("networkidle");
   await sleep(1_000);
 
   const divergingTwoTitleExists = await page
@@ -156,6 +159,7 @@ test("Custom color palettes on profile page should allow CREATE, UPDATE and DELE
   await page.waitForTimeout(500);
 
   await page.locator('[data-testid="profile-save-color-palette"]').click();
+  await page.waitForLoadState("networkidle");
   await sleep(1_000);
 
   const divergingThreeTitleExists = await page
