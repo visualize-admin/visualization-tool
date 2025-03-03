@@ -18,7 +18,8 @@ You can also check the
     map charts
   - Statistics page was enhanced with `Charts` and `Cubes` sections, including
     some general improvements
-  - Application now collect data on chart previews, not only views
+  - Application now collects data on chart previews, not only views
+  - Added an option to show all values in column charts
 - Fixes
   - Limits that are connected to values that are filtered out do not render in
     the chart anymore
