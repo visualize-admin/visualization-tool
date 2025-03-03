@@ -289,6 +289,13 @@ const ColumnSegmentField = t.intersection([
 ]);
 export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
 
+const ShowValuesFieldExtension = t.partial({
+  showValues: t.boolean,
+});
+export type ShowValuesFieldExtension = t.TypeOf<
+  typeof ShowValuesFieldExtension
+>;
+
 const UncertaintyFieldExtension = t.partial({
   showStandardError: t.boolean,
   showConfidenceInterval: t.boolean,
@@ -300,7 +307,11 @@ export type UncertaintyFieldExtension = t.TypeOf<
 const ColumnFields = t.intersection([
   t.type({
     x: t.intersection([GenericField, SortingField]),
-    y: t.intersection([GenericField, UncertaintyFieldExtension]),
+    y: t.intersection([
+      GenericField,
+      ShowValuesFieldExtension,
+      UncertaintyFieldExtension,
+    ]),
     color: t.union([SegmentColorField, SingleColorField]),
   }),
   t.partial({

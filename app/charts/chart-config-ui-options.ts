@@ -112,6 +112,9 @@ type EncodingOption<T extends ChartConfig = ChartConfig> =
   | EncodingOptionColorComponent
   | EncodingOptionImputation<T>
   | {
+      field: "showValues";
+    }
+  | {
       field: "showStandardError";
     }
   | {
@@ -678,6 +681,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             paletteId: "category10",
             color: schemeCategory10[0],
           },
+          showValues: {},
           showStandardError: {},
           showConfidenceInterval: {},
         },
