@@ -30,12 +30,17 @@ import { DimensionsById, MeasuresById } from "@/charts/shared/ChartProps";
 import { Bounds } from "@/charts/shared/use-size";
 import { TableChartState } from "@/charts/table/table-state";
 import {
+  AreaFields,
   ChartConfig,
   ChartType,
+  ColumnFields,
   GenericField,
   getAnimationField,
   hasChartConfigs,
   InteractiveFiltersConfig,
+  LineFields,
+  PieFields,
+  ScatterPlotFields,
   useConfiguratorState,
 } from "@/configurator";
 import {
@@ -360,10 +365,16 @@ export type NumericalYVariables = {
 export const useNumericalYVariables = (
   // Combo charts have their own logic for y scales.
   chartType: "area" | "column" | "line" | "pie" | "scatterplot",
-  y: GenericField,
+  y:
+    | AreaFields["y"]
+    | ColumnFields["y"]
+    | LineFields["y"]
+    | PieFields["y"]
+    | ScatterPlotFields["y"],
   { measuresById }: { measuresById: MeasuresById }
 ): NumericalYVariables => {
   const yMeasure = measuresById[y.componentId];
+
   if (!yMeasure) {
     throw Error(
       `No dimension <${y.componentId}> in cube! (useNumericalYVariables)`
