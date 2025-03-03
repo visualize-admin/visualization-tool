@@ -7,8 +7,8 @@ import {
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
-  RenderVerticalWhiskerDatum,
   renderContainer,
+  RenderVerticalWhiskerDatum,
   renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
@@ -112,6 +112,7 @@ export const ColumnsGrouped = () => {
 
         return {
           key,
+          value: y,
           x: (xScale(segment) as number) + (xScaleIn(x) as number),
           y: yScale(Math.max(y, 0)),
           width: bandwidth,

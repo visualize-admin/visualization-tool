@@ -21,6 +21,7 @@ import {
   useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
+  useShowValuesLabelsHeightOffset,
 } from "@/charts/shared/chart-dimensions";
 import {
   ChartContext,
@@ -63,6 +64,8 @@ export type ColumnsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    showValues: boolean;
+    rotateValues: boolean;
   };
 
 const useColumnsState = (
@@ -87,6 +90,8 @@ const useColumnsState = (
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { y } = fields;
+  const { showValues = false } = y;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -225,8 +230,16 @@ const useColumnsState = (
     marginLeft: left,
     marginRight: right,
   });
+  const { yOffset: yValueLabelsOffset, rotate: rotateValues } =
+    useShowValuesLabelsHeightOffset({
+      enabled: showValues,
+      chartData,
+      getValue: getY,
+      rotateThresholdWidth: xScale.bandwidth(),
+    });
+
   const margins = {
-    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin + yValueLabelsOffset,
     right,
     bottom,
     left,
@@ -293,6 +306,8 @@ const useColumnsState = (
     xScaleInteraction,
     yScale,
     getAnnotationInfo,
+    showValues,
+    rotateValues,
     ...variables,
   };
 };
