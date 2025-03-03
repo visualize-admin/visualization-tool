@@ -15,6 +15,7 @@ import {
   renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { truthy } from "@/domain/types";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ErrorWhiskers = () => {
@@ -97,6 +98,7 @@ export const Columns = () => {
     colors,
     showValues,
     rotateValues,
+    renderEveryNthValue,
   } = useChartState() as ColumnsState;
   const { margins } = bounds;
   const { labelFontSize, fontFamily } = useChartTheme();
@@ -145,15 +147,21 @@ export const Columns = () => {
       return [];
     }
 
-    return columnsData.map((d) => {
-      return {
-        key: d.key,
-        x: d.x + d.width / 2,
-        y: d.y,
-        value: d.value,
-      };
-    });
-  }, [columnsData, showValues]);
+    return columnsData
+      .map((d, i) => {
+        if (i % renderEveryNthValue !== 0) {
+          return null;
+        }
+
+        return {
+          key: d.key,
+          x: d.x + d.width / 2,
+          y: d.y,
+          value: d.value,
+        };
+      })
+      .filter(truthy);
+  }, [columnsData, renderEveryNthValue, showValues]);
 
   useEffect(() => {
     const g = ref.current;

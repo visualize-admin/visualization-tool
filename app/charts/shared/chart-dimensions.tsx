@@ -268,3 +268,13 @@ export const useShowValuesLabelsHeightOffset = ({
     };
   }, [enabled, chartData, getValue, fontSize, rotateThresholdWidth]);
 };
+
+export const useRenderEveryNthValue = ({
+  bandwidth,
+}: {
+  bandwidth: number;
+}) => {
+  const { labelFontSize: fontSize } = useChartTheme();
+
+  return bandwidth > fontSize ? 1 : Math.ceil(fontSize / bandwidth);
+};

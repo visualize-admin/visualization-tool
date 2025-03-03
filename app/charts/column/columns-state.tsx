@@ -21,6 +21,7 @@ import {
   useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
+  useRenderEveryNthValue,
   useShowValuesLabelsHeightOffset,
 } from "@/charts/shared/chart-dimensions";
 import {
@@ -66,6 +67,7 @@ export type ColumnsState = CommonChartState &
     getAnnotationInfo: (d: Observation) => TooltipInfo;
     showValues: boolean;
     rotateValues: boolean;
+    renderEveryNthValue: number;
   };
 
 const useColumnsState = (
@@ -253,6 +255,10 @@ const useColumnsState = (
   xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
+  const renderEveryNthValue = useRenderEveryNthValue({
+    bandwidth: xScale.bandwidth(),
+  });
+
   const isMobile = useIsMobile();
 
   // Tooltip
@@ -308,6 +314,7 @@ const useColumnsState = (
     getAnnotationInfo,
     showValues,
     rotateValues,
+    renderEveryNthValue,
     ...variables,
   };
 };
