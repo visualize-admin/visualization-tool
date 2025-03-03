@@ -100,17 +100,7 @@ export const renderColumnValues = (
           .call((enter) =>
             maybeTransition(enter, {
               transition,
-              s: (g) =>
-                g
-                  .attr("text-anchor", textAnchor)
-                  .style("transform", (d) =>
-                    getColumnValueTransform(d, {
-                      rotate,
-                      labelHeight: fontSize,
-                    })
-                  )
-                  .style("opacity", 1)
-                  .text((d) => d.valueLabel),
+              s: (g) => g.style("opacity", 1),
             })
           ),
       (update) =>
