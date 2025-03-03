@@ -118,13 +118,7 @@ export const renderColumnValues = (
       (exit) =>
         maybeTransition(exit, {
           transition,
-          s: (g) =>
-            g
-              .style("transform", (d) =>
-                getColumnValueTransform(d, { rotate, labelHeight: fontSize })
-              )
-              .style("opacity", 0)
-              .remove(),
+          s: (g) => g.style("opacity", 0).remove(),
         })
     );
 };
