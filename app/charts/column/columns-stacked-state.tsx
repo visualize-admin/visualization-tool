@@ -27,6 +27,7 @@ import {
 } from "@/charts/column/columns-stacked-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
+  getChartWidth,
   useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
@@ -420,8 +421,9 @@ const useColumnsStackedState = (
     bottom,
     left,
   };
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const chartWidth = getChartWidth({ width, left, right });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);

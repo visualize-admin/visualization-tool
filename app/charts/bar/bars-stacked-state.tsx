@@ -31,6 +31,7 @@ import {
   PADDING_OUTER,
 } from "@/charts/bar/constants";
 import {
+  getChartWidth,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -420,8 +421,9 @@ const useBarsStackedState = (
 
   const barCount = yScale.domain().length;
 
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const chartWidth = getChartWidth({ width, left, right });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
 
   // Here we adjust the height to make sure the bars have a minimum height and are legible
   const adjustedChartHeight =

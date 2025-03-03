@@ -10,6 +10,7 @@ import {
   useScatterplotStateVariables,
 } from "@/charts/scatterplot//scatterplot-state-props";
 import {
+  getChartWidth,
   useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
@@ -184,8 +185,9 @@ const useScatterplotState = (
     bottom: bottom + xAxisLabelMargin,
     left,
   };
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const chartWidth = getChartWidth({ width, left, right });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);

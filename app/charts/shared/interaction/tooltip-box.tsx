@@ -3,11 +3,10 @@ import throttle from "lodash/throttle";
 import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 
+import { getChartWidth } from "@/charts/shared/chart-dimensions";
 import { Margins, useSize } from "@/charts/shared/use-size";
 import { useIsMobile } from "@/utils/use-is-mobile";
 import { useResizeObserver } from "@/utils/use-resize-observer";
-
-import { useChartBounds } from "../chart-dimensions";
 
 const TRIANGLE_SIZE = 8;
 const TOOLTIP_OFFSET = 4;
@@ -138,8 +137,12 @@ export const TooltipBox = ({
   const [position, positionRef] = usePosition(y);
   const [tooltipRef, tooltipWidth] = useResizeObserver<HTMLDivElement>();
   const isMobile = useIsMobile();
-  const { width, height } = useSize();
-  const { chartWidth } = useChartBounds(width, margins, height);
+  const { width } = useSize();
+  const chartWidth = getChartWidth({
+    width,
+    left: margins.left,
+    right: margins.right,
+  });
   const tooltipXBoundary = isMobile
     ? getTooltipXBoundary(x!, tooltipWidth, chartWidth)
     : x!;

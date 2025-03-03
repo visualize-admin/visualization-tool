@@ -18,6 +18,7 @@ import {
 } from "@/charts/column/columns-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
+  getChartWidth,
   useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
@@ -230,27 +231,18 @@ const useColumnsState = (
       : xTimeRangeDomainLabels,
   });
   const right = 40;
+
+  const chartWidth = getChartWidth({ width, left, right });
+  xScale.range([0, chartWidth]);
+  xScaleInteraction.range([0, chartWidth]);
+  xScaleTimeRange.range([0, chartWidth]);
+
   const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
     label: yMeasure.label,
     width,
     marginLeft: left,
     marginRight: right,
   });
-  const margins = {
-    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
-    right,
-    bottom,
-    left,
-  };
-
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
-
-  xScale.range([0, chartWidth]);
-  xScaleInteraction.range([0, chartWidth]);
-  xScaleTimeRange.range([0, chartWidth]);
-  yScale.range([chartHeight, 0]);
-
   const { yOffset: yValueLabelsOffset, rotate: rotateValues } =
     useShowValuesLabelsHeightOffset({
       enabled: showValues,
@@ -258,11 +250,18 @@ const useColumnsState = (
       getFormattedValue: (d) => yValueFormatter(getY(d)),
       rotateThresholdWidth: xScale.bandwidth(),
     });
-  margins.top += yValueLabelsOffset;
+  const margins = {
+    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin + yValueLabelsOffset,
+    right,
+    bottom,
+    left,
+  };
+  const bounds = useChartBounds({ width, height, chartWidth, margins });
+  const { chartHeight } = bounds;
+  yScale.range([chartHeight, 0]);
   const renderEveryNthValue = useRenderEveryNthValue({
     bandwidth: xScale.bandwidth(),
   });
-
   const isMobile = useIsMobile();
 
   // Tooltip
