@@ -36,7 +36,7 @@ const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
       paddingLeft: theme.spacing(4),
     },
     header: {
-      justifyContent: "space-between",
+      justifyContent: "end",
       marginBottom: theme.spacing(5),
       [theme.breakpoints.up("md")]: {
         flexDirection: "row",
@@ -166,9 +166,11 @@ export const DataSetPreview = ({
               {dataCubeMetadata.title} - visualize.admin.ch
             </title>
           </Head>
-          <Typography className={classes.title} component="div" variant="h1">
-            {dataCubeMetadata.title}
-          </Typography>
+          {!isOdsIframe(router.query) && (
+            <Typography className={classes.title} component="div" variant="h1">
+              {dataCubeMetadata.title}
+            </Typography>
+          )}
           {onCreateChartFromDataset ? (
             <Button
               onClick={(ev) => onCreateChartFromDataset?.(ev, dataSetIri)}
@@ -217,7 +219,7 @@ export const DataSetPreview = ({
           )}
         </Flex>
         <Paper className={classes.paper} elevation={5}>
-          {dataCubeMetadata.description && (
+          {dataCubeMetadata.description && !isOdsIframe(router.query) && (
             <Typography
               className={classes.description}
               component="div"
