@@ -74,13 +74,18 @@ export type EncodingFieldType =
   | MapEncodingFieldType
   | RegularChartEncodingType;
 
-type OnEncodingOptionChange<V, T extends ChartConfig = ChartConfig> = (
+type OnEncodingOptionChange<
+  V,
+  T extends ChartConfig = ChartConfig,
+  F extends GenericField = GenericField,
+> = (
   value: V,
   options: {
     chartConfig: T;
     dimensions: Dimension[];
     measures: Measure[];
     field: EncodingFieldType;
+    oldField: F;
   }
 ) => void;
 
@@ -257,7 +262,10 @@ export type EncodingSortingOption<T extends ChartConfig = ChartConfig> = {
   };
 };
 
-type OnEncodingChange<T extends ChartConfig = ChartConfig> = (
+type OnEncodingChange<
+  T extends ChartConfig = ChartConfig,
+  F extends GenericField = GenericField,
+> = (
   id: string,
   options: {
     chartConfig: T;
@@ -266,10 +274,14 @@ type OnEncodingChange<T extends ChartConfig = ChartConfig> = (
     initializing: boolean;
     selectedValues: any[];
     field: EncodingFieldType;
+    oldField: F;
   }
 ) => void;
 
-export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
+export interface EncodingSpec<
+  T extends ChartConfig = ChartConfig,
+  F extends GenericField = GenericField,
+> {
   field: EncodingFieldType;
   optional: boolean;
   componentTypes: ComponentType[];
@@ -289,7 +301,7 @@ export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
       "field"
     >;
   };
-  onChange?: OnEncodingChange<T>;
+  onChange?: OnEncodingChange<T, F>;
   getDisabledState?: (
     chartConfig: T,
     components: Component[],
@@ -538,6 +550,30 @@ export const defaultSegmentOnChange: OnEncodingChange<
   }
 };
 
+const onColumnYFieldChange: OnEncodingChange<
+  ColumnConfig,
+  ColumnConfig["fields"]["y"]
+> = (id, { chartConfig, measures, oldField }) => {
+  chartConfig.fields.y.showValues = oldField.showValues;
+
+  if (chartConfig.fields.segment?.type === "stacked") {
+    const yMeasure = measures.find((d) => d.id === id);
+
+    if (disableStacked(yMeasure)) {
+      setWith(chartConfig, "fields.segment.type", "grouped", Object);
+
+      if (chartConfig.interactiveFiltersConfig?.calculation) {
+        setWith(
+          chartConfig,
+          "interactiveFiltersConfig.calculation",
+          { active: false, type: "identity" },
+          Object
+        );
+      }
+    }
+  }
+};
+
 const onMapFieldChange: OnEncodingChange<MapConfig> = (
   id,
   { chartConfig, dimensions, measures, field }
@@ -657,24 +693,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         idAttributes: ["componentId"],
         componentTypes: ["NumericalMeasure"],
         filters: false,
-        onChange: (id, { chartConfig, measures }) => {
-          if (chartConfig.fields.segment?.type === "stacked") {
-            const yMeasure = measures.find((d) => d.id === id);
-
-            if (disableStacked(yMeasure)) {
-              setWith(chartConfig, "fields.segment.type", "grouped", Object);
-
-              if (chartConfig.interactiveFiltersConfig?.calculation) {
-                setWith(
-                  chartConfig,
-                  "interactiveFiltersConfig.calculation",
-                  { active: false, type: "identity" },
-                  Object
-                );
-              }
-            }
-          }
-        },
+        onChange: onColumnYFieldChange,
         options: {
           colorPalette: {
             type: "single",
