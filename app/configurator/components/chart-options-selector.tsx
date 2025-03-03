@@ -484,7 +484,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                 <ChartOptionCheckboxField
                   path="showValues"
                   field={encoding.field}
-                  defaultValue
                   label={t({ id: "controls.section.show-values" })}
                 />
               </SwitchWrapper>
