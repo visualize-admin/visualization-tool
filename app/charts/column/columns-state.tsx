@@ -68,6 +68,7 @@ export type ColumnsState = CommonChartState &
     showValues: boolean;
     rotateValues: boolean;
     renderEveryNthValue: number;
+    yValueFormatter: (value: number | null) => string;
   };
 
 const useColumnsState = (
@@ -214,6 +215,9 @@ const useColumnsState = (
     getMinY,
   ]);
 
+  const yValueFormatter = (value: number | null) =>
+    formatNumberWithUnit(value, formatters[yMeasure.id] ?? formatNumber);
+
   const { left, bottom } = useChartPadding({
     yScale: paddingYScale,
     width,
@@ -236,7 +240,7 @@ const useColumnsState = (
     useShowValuesLabelsHeightOffset({
       enabled: showValues,
       chartData,
-      getValue: getY,
+      getFormattedValue: (d) => yValueFormatter(getY(d)),
       rotateThresholdWidth: xScale.bandwidth(),
     });
 
@@ -274,16 +278,14 @@ const useColumnsState = (
           xAnchor,
           topAnchor: !fields.segment,
         });
-
     const xLabel = getXAbbreviationOrLabel(d);
-
-    const yValueFormatter = (value: number | null) =>
+    const y = getY(d);
+    const yValueUnitFormatter = (value: number | null) =>
       formatNumberWithUnit(
         value,
         formatters[yMeasure.id] ?? formatNumber,
         yMeasure.unit
       );
-    const y = getY(d);
 
     return {
       xAnchor,
@@ -292,7 +294,7 @@ const useColumnsState = (
       value: xTimeUnit ? timeFormatUnit(xLabel, xTimeUnit) : xLabel,
       datum: {
         label: undefined,
-        value: y !== null && isNaN(y) ? "-" : `${yValueFormatter(getY(d))}`,
+        value: y !== null && isNaN(y) ? "-" : `${yValueUnitFormatter(getY(d))}`,
         error: getFormattedYUncertainty(d),
         color: "",
       },
@@ -315,6 +317,7 @@ const useColumnsState = (
     showValues,
     rotateValues,
     renderEveryNthValue,
+    yValueFormatter,
     ...variables,
   };
 };

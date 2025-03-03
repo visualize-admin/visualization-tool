@@ -63,7 +63,7 @@ export type RenderColumnValueDatum = {
   key: string;
   x: number;
   y: number;
-  value: number;
+  valueLabel: string;
 };
 
 export const renderColumnValues = (
@@ -96,7 +96,7 @@ export const renderColumnValues = (
           .style("transform-origin", "0% 50%")
           .style("line-height", 1)
           .style("opacity", 0)
-          .text((d) => d.value)
+          .text((d) => d.valueLabel)
           .call((enter) =>
             maybeTransition(enter, {
               transition,
@@ -110,7 +110,7 @@ export const renderColumnValues = (
                     })
                   )
                   .style("opacity", 1)
-                  .text((d) => d.value),
+                  .text((d) => d.valueLabel),
             })
           ),
       (update) =>
@@ -122,7 +122,7 @@ export const renderColumnValues = (
                 getColumnValueTransform(d, { rotate, labelHeight: fontSize })
               )
               .style("opacity", 1)
-              .text((d) => d.value),
+              .text((d) => d.valueLabel),
           transition,
         }),
       (exit) =>

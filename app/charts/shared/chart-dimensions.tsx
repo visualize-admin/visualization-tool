@@ -216,12 +216,12 @@ export const useAxisLabelHeightOffset = ({
 export const useShowValuesLabelsHeightOffset = ({
   enabled,
   chartData,
-  getValue,
+  getFormattedValue,
   rotateThresholdWidth,
 }: {
   enabled: boolean;
   chartData: Observation[];
-  getValue: (d: Observation) => number | null;
+  getFormattedValue: (d: Observation) => string;
   rotateThresholdWidth: number;
 }) => {
   const { labelFontSize: fontSize } = useChartTheme();
@@ -239,13 +239,8 @@ export const useShowValuesLabelsHeightOffset = ({
     let maxWidth = 0;
 
     chartData.forEach((d) => {
-      const value = getValue(d);
-
-      if (value === null || isNaN(value)) {
-        return;
-      }
-
-      const width = getTextWidth(`${value}`, { fontSize });
+      const formattedValue = getFormattedValue(d);
+      const width = getTextWidth(formattedValue, { fontSize });
 
       if (width - 2 > rotateThresholdWidth) {
         rotate = true;
@@ -266,7 +261,7 @@ export const useShowValuesLabelsHeightOffset = ({
       yOffset,
       rotate,
     };
-  }, [enabled, chartData, getValue, fontSize, rotateThresholdWidth]);
+  }, [enabled, chartData, getFormattedValue, fontSize, rotateThresholdWidth]);
 };
 
 export const useRenderEveryNthValue = ({
