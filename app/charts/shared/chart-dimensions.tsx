@@ -19,7 +19,6 @@ import {
   isLayoutingFreeCanvas,
   useConfiguratorState,
 } from "@/configurator";
-import { Observation } from "@/domain/data";
 import { getTextWidth } from "@/utils/get-text-width";
 
 type ComputeChartPaddingProps = {
@@ -229,65 +228,4 @@ export const useAxisLabelHeightOffset = ({
     offset: fontSize * LINE_HEIGHT * (lines - 1),
     labelWidth,
   };
-};
-
-export const useShowValuesLabelsHeightOffset = ({
-  enabled,
-  chartData,
-  getFormattedValue,
-  rotateThresholdWidth,
-}: {
-  enabled: boolean;
-  chartData: Observation[];
-  getFormattedValue: (d: Observation) => string;
-  rotateThresholdWidth: number;
-}) => {
-  const { labelFontSize: fontSize } = useChartTheme();
-
-  return useMemo(() => {
-    if (!enabled) {
-      return {
-        yOffset: 0,
-        rotate: false,
-      };
-    }
-
-    let yOffset = 0;
-    let rotate = false;
-    let maxWidth = 0;
-
-    chartData.forEach((d) => {
-      const formattedValue = getFormattedValue(d);
-      const width = getTextWidth(formattedValue, { fontSize });
-
-      if (width - 2 > rotateThresholdWidth) {
-        rotate = true;
-      }
-
-      if (width > maxWidth) {
-        maxWidth = width;
-      }
-    });
-
-    if (rotate) {
-      yOffset = maxWidth;
-    } else {
-      yOffset = fontSize;
-    }
-
-    return {
-      yOffset,
-      rotate,
-    };
-  }, [enabled, chartData, getFormattedValue, fontSize, rotateThresholdWidth]);
-};
-
-export const useRenderEveryNthValue = ({
-  bandwidth,
-}: {
-  bandwidth: number;
-}) => {
-  const { labelFontSize: fontSize } = useChartTheme();
-
-  return bandwidth > fontSize ? 1 : Math.ceil(fontSize / bandwidth);
 };

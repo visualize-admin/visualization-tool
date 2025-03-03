@@ -99,7 +99,7 @@ export const Columns = () => {
     showValues,
     rotateValues,
     renderEveryNthValue,
-    yValueFormatter,
+    valueLabelFormatter,
   } = useChartState() as ColumnsState;
   const { margins } = bounds;
   const { labelFontSize, fontFamily } = useChartTheme();
@@ -158,11 +158,11 @@ export const Columns = () => {
           key: d.key,
           x: d.x + d.width / 2,
           y: d.y,
-          valueLabel: yValueFormatter(d.value),
+          valueLabel: valueLabelFormatter(d.value),
         };
       })
       .filter(truthy);
-  }, [columnsData, renderEveryNthValue, showValues, yValueFormatter]);
+  }, [columnsData, renderEveryNthValue, showValues, valueLabelFormatter]);
 
   useEffect(() => {
     const g = ref.current;

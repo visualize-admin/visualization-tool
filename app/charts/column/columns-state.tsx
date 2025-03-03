@@ -22,14 +22,14 @@ import {
   useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
-  useRenderEveryNthValue,
-  useShowValuesLabelsHeightOffset,
 } from "@/charts/shared/chart-dimensions";
 import {
   ChartContext,
   ChartStateData,
   CommonChartState,
   InteractiveXTimeRangeState,
+  ShowValuesVariables,
+  useShowValuesVariables,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import {
@@ -58,7 +58,8 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type ColumnsState = CommonChartState &
   ColumnsStateVariables &
-  InteractiveXTimeRangeState & {
+  InteractiveXTimeRangeState &
+  Omit<ShowValuesVariables, "yOffset"> & {
     chartType: "column";
     xScale: ScaleBand<string>;
     xScaleInteraction: ScaleBand<string>;
@@ -66,10 +67,6 @@ export type ColumnsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
-    showValues: boolean;
-    rotateValues: boolean;
-    renderEveryNthValue: number;
-    yValueFormatter: (value: number | null) => string;
   };
 
 const useColumnsState = (
@@ -95,7 +92,6 @@ const useColumnsState = (
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const { y } = fields;
-  const { showValues = false } = y;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -216,9 +212,6 @@ const useColumnsState = (
     getMinY,
   ]);
 
-  const yValueFormatter = (value: number | null) =>
-    formatNumberWithUnit(value, formatters[yMeasure.id] ?? formatNumber);
-
   const { left, bottom } = useChartPadding({
     yScale: paddingYScale,
     width,
@@ -243,12 +236,13 @@ const useColumnsState = (
     marginLeft: left,
     marginRight: right,
   });
-  const { yOffset: yValueLabelsOffset, rotate: rotateValues } =
-    useShowValuesLabelsHeightOffset({
-      enabled: showValues,
+  const { yOffset: yValueLabelsOffset, ...showValuesVariables } =
+    useShowValuesVariables(y, {
       chartData,
-      getFormattedValue: (d) => yValueFormatter(getY(d)),
-      rotateThresholdWidth: xScale.bandwidth(),
+      dimensions: chartProps.dimensions,
+      measures: chartProps.measures,
+      getY,
+      bandwidth: xScale.bandwidth(),
     });
   const margins = {
     top: DEFAULT_MARGIN_TOP + yAxisLabelMargin + yValueLabelsOffset,
@@ -259,9 +253,6 @@ const useColumnsState = (
   const bounds = useChartBounds({ width, height, chartWidth, margins });
   const { chartHeight } = bounds;
   yScale.range([chartHeight, 0]);
-  const renderEveryNthValue = useRenderEveryNthValue({
-    bandwidth: xScale.bandwidth(),
-  });
   const isMobile = useIsMobile();
 
   // Tooltip
@@ -313,10 +304,7 @@ const useColumnsState = (
     xScaleInteraction,
     yScale,
     getAnnotationInfo,
-    showValues,
-    rotateValues,
-    renderEveryNthValue,
-    yValueFormatter,
+    ...showValuesVariables,
     ...variables,
   };
 };
