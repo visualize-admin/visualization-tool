@@ -12,12 +12,12 @@ import { getTickNumber } from "@/charts/shared/ticks";
 import { TICK_FONT_SIZE, useChartTheme } from "@/charts/shared/use-chart-theme";
 import { Bounds, Margins } from "@/charts/shared/use-size";
 import { CHART_GRID_MIN_HEIGHT } from "@/components/react-grid";
-import { getChartConfig } from "@/config-utils";
 import {
   ChartConfig,
   DashboardFiltersConfig,
   hasChartConfigs,
   isColumnConfig,
+  isComboLineColumnConfig,
   isLayoutingFreeCanvas,
   useConfiguratorState,
 } from "@/configurator";
@@ -92,12 +92,12 @@ const computeChartPadding = (
   }
 
   if (xLabelPresent) {
-    bottom += 10;
+    bottom += 20;
   }
 
   return isFlipped
     ? {
-        bottom: left + (xLabelPresent ? 10 : 0),
+        bottom: left + (xLabelPresent ? 20 : 0),
         left: bottom,
       }
     : { left, bottom };
@@ -235,14 +235,14 @@ export const getLongestXLabel = ({
   fontSize,
 }: {
   xScale: ScaleBand<string>;
-  getXLabel: (d: any) => string;
+  getXLabel: (d: string) => string;
   xTimeUnit?: string;
-  formatDate?: (d: any, timeUnit: string) => string;
+  formatDate?: (d: string, timeUnit: string) => string;
   fontSize: number;
 }) => {
   const domain = xScale.domain();
 
-  const formattedLabels = domain.map((d: any) => {
+  const formattedLabels = domain.map((d) => {
     if (xTimeUnit && formatDate) {
       return formatDate(d, xTimeUnit);
     } else {
@@ -250,29 +250,24 @@ export const getLongestXLabel = ({
     }
   });
 
-  const labelWidths = formattedLabels.map((text: string) =>
+  const labelWidths = formattedLabels.map((text) =>
     getTextWidth(text, { fontSize })
   );
 
-  const longestLabel = labelWidths.reduce((prev, current) =>
-    current > prev ? current : prev
-  );
+  const longestLabel = Math.max(...labelWidths);
 
   return longestLabel;
 };
 
 const AXIS_TITLE_PADDING = 20;
 
-export const useXAxisTitleOffset = () => {
-  const [state] = useConfiguratorState(hasChartConfigs);
-  const chartConfig = getChartConfig(state);
-
+export const useXAxisTitleOffset = (chartConfig: ChartConfig) => {
   const { xScale, getXLabel, xTimeUnit } = useChartState() as ColumnsState;
   const { axisLabelFontSize } = useChartTheme();
 
   return useMemo(() => {
     return (
-      (isColumnConfig(chartConfig)
+      (isColumnConfig(chartConfig) || isComboLineColumnConfig(chartConfig)
         ? getLongestXLabel({
             xScale,
             getXLabel,

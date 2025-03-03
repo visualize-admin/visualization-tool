@@ -12,7 +12,10 @@ import {
 } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import { getChartConfig } from "@/config-utils";
+import { hasChartConfigs } from "@/configurator";
 import { useFormatShortDateAuto } from "@/formatters";
+import { useConfiguratorState } from "@/src";
 import { useTransitionStore } from "@/stores/transition";
 
 import {
@@ -43,7 +46,9 @@ export const AxisTime = () => {
     fontFamily,
     axisLabelFontSize,
   } = useChartTheme();
-  const xAxisTitleOffset = useXAxisTitleOffset();
+  const [configState] = useConfiguratorState(hasChartConfigs);
+  const chartConfig = getChartConfig(configState);
+  const xAxisTitleOffset = useXAxisTitleOffset(chartConfig);
 
   const hasNegativeValues = yScale.domain()[0] < 0;
 

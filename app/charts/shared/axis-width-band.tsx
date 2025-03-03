@@ -10,7 +10,10 @@ import {
 } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import { getChartConfig } from "@/config-utils";
+import { hasChartConfigs } from "@/configurator";
 import { useTimeFormatUnit } from "@/formatters";
+import { useConfiguratorState } from "@/src";
 import { useTransitionStore } from "@/stores/transition";
 
 import {
@@ -34,7 +37,9 @@ export const AxisWidthBand = () => {
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDate = useTimeFormatUnit();
   const { chartHeight, chartWidth, margins } = bounds;
-  const xAxisTitleOffset = useXAxisTitleOffset();
+  const [configState] = useConfiguratorState(hasChartConfigs);
+  const chartConfig = getChartConfig(configState);
+  const xAxisTitleOffset = useXAxisTitleOffset(chartConfig);
 
   const {
     labelColor,
