@@ -236,16 +236,8 @@ const useColumnsState = (
     marginLeft: left,
     marginRight: right,
   });
-  const { yOffset: yValueLabelsOffset, rotate: rotateValues } =
-    useShowValuesLabelsHeightOffset({
-      enabled: showValues,
-      chartData,
-      getFormattedValue: (d) => yValueFormatter(getY(d)),
-      rotateThresholdWidth: xScale.bandwidth(),
-    });
-
   const margins = {
-    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin + yValueLabelsOffset,
+    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
     right,
     bottom,
     left,
@@ -259,6 +251,14 @@ const useColumnsState = (
   xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
+  const { yOffset: yValueLabelsOffset, rotate: rotateValues } =
+    useShowValuesLabelsHeightOffset({
+      enabled: showValues,
+      chartData,
+      getFormattedValue: (d) => yValueFormatter(getY(d)),
+      rotateThresholdWidth: xScale.bandwidth(),
+    });
+  margins.top += yValueLabelsOffset;
   const renderEveryNthValue = useRenderEveryNthValue({
     bandwidth: xScale.bandwidth(),
   });
