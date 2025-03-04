@@ -88,14 +88,16 @@ export const ErrorWhiskers = () => {
   return <g ref={ref} />;
 };
 
-export const Lines = () => {
+export const Lines = ({
+  dotSize,
+}: {
+  dotSize: LineConfig["fields"]["y"]["showDotsSize"];
+}) => {
   const { getX, xScale, getY, yScale, grouped, colors, bounds } =
     useChartState() as LinesState;
   const { margins } = bounds;
   const { labelFontSize, fontFamily } = useChartTheme();
-  const ref = useRef<SVGGElement>(null);
-  const enableTransition = useTransitionStore((state) => state.enable);
-  const transitionDuration = useTransitionStore((state) => state.duration);
+  const valueLabelsContainerRef = useRef<SVGGElement>(null);
 
   const lineGenerator = line<Observation>()
     .defined((d) => {
@@ -108,13 +110,13 @@ export const Lines = () => {
   const valueLabelsData = useRenderLineValueLabelsData();
 
   useEffect(() => {
-    if (ref.current) {
-      renderContainer(ref.current, {
-        id: "lines",
+    if (valueLabelsContainerRef.current) {
+      renderContainer(valueLabelsContainerRef.current, {
+        id: "lines-value-labels",
         transform: "translate(0, 0)",
         transition: {
-          enable: enableTransition,
-          duration: transitionDuration,
+          enable: false,
+          duration: 0,
         },
         render: (g, opts) =>
           renderValueLabels(g, valueLabelsData, {
@@ -125,18 +127,10 @@ export const Lines = () => {
           }),
       });
     }
-  }, [
-    enableTransition,
-    margins.left,
-    margins.top,
-    transitionDuration,
-    valueLabelsData,
-    labelFontSize,
-    fontFamily,
-  ]);
+  }, [margins.left, margins.top, valueLabelsData, labelFontSize, fontFamily]);
 
   return (
-    <g ref={ref} transform={`translate(${margins.left} ${margins.top})`}>
+    <g transform={`translate(${margins.left} ${margins.top})`}>
       {Array.from(grouped).map((observation, i) => {
         return (
           <Fragment key={observation[0]}>
@@ -148,6 +142,8 @@ export const Lines = () => {
           </Fragment>
         );
       })}
+      <Points dotSize={dotSize} />
+      <g ref={valueLabelsContainerRef} />
     </g>
   );
 };
@@ -178,14 +174,14 @@ const getPointRadius = (dotSize: LineConfig["fields"]["y"]["showDotsSize"]) => {
   }
 };
 
-export const Points = ({
+const Points = ({
   dotSize,
 }: {
   dotSize: LineConfig["fields"]["y"]["showDotsSize"];
 }) => {
   const { getX, xScale, getY, yScale, bounds, chartData, getSegment, colors } =
     useChartState() as LinesState;
-  const { margins, chartHeight, width } = bounds;
+  const { chartHeight, width } = bounds;
   const dots = useMemo(() => {
     return chartData.map((d) => {
       const x = xScale(getX(d));
@@ -217,7 +213,7 @@ export const Points = ({
   const r = getPointRadius(dotSize);
 
   return (
-    <g transform={`translate(${margins.left} ${margins.top})`}>
+    <g>
       {dots.map(({ x, y, fill }, i) => (
         <circle key={i} cx={x} cy={y} r={r} fill={fill} />
       ))}
