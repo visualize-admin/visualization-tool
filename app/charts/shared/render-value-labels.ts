@@ -9,7 +9,7 @@ import {
 } from "@/charts/shared/rendering-utils";
 import { truthy } from "@/domain/types";
 
-export type RenderValueLabelDatum = {
+type RenderValueLabelDatum = {
   key: string;
   x: number;
   y: number;
