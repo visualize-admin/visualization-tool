@@ -22,12 +22,14 @@ export const useShowLineValueLabelsVariables = (
   {
     dimensions,
     measures,
+    segment,
   }: {
     dimensions: Dimension[];
     measures: Measure[];
+    segment: LineFields["segment"];
   }
 ): ShowLineValueLabelsVariables => {
-  const { showValues = false } = y;
+  const { showValues: _showValues = false } = y;
   const yMeasure = measures.find((d) => d.id === y.componentId);
 
   if (!yMeasure) {
@@ -47,6 +49,8 @@ export const useShowLineValueLabelsVariables = (
     },
     [valueFormatter]
   );
+
+  const showValues = _showValues && !segment;
 
   return {
     yOffset: showValues ? fontSize : 0,

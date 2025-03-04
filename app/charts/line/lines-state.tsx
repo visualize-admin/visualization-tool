@@ -255,6 +255,7 @@ const useLinesState = (
     useShowLineValueLabelsVariables(y, {
       dimensions: chartProps.dimensions,
       measures: chartProps.measures,
+      segment: fields.segment,
     });
   const margins = {
     top: DEFAULT_MARGIN_TOP + yAxisLabelMargin + yValueLabelsOffset,
