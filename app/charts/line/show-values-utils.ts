@@ -9,6 +9,7 @@ import { LineFields } from "@/config-types";
 import { Dimension, Measure } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
+import { getTextWidth } from "@/utils/get-text-width";
 
 export type ShowLineValueLabelsVariables = {
   yOffset: number;
@@ -65,25 +66,61 @@ export const useRenderLineValueLabelsData = () => {
     getY,
     valueLabelFormatter,
   } = useChartState() as LinesState;
+  const { labelFontSize: fontSize } = useChartTheme();
+  const valueLabelWidthsByIndex = useMemo(() => {
+    return chartData.reduce((acc, d, i) => {
+      const formattedValue = valueLabelFormatter(getY(d));
+      const width = getTextWidth(formattedValue, { fontSize });
+      acc[i] = width;
+
+      return acc;
+    }, {}) as Record<number, number>;
+  }, [chartData, valueLabelFormatter, getY, fontSize]);
   const valueLabelsData: RenderValueLabelDatum[] = useMemo(() => {
     if (!showValues) {
       return [];
     }
 
+    const previous: {
+      datum: RenderValueLabelDatum;
+      width: number;
+    }[] = [];
+
     return chartData
-      .map((d) => {
+      .map((d, i) => {
         const key = getXAsString(d);
         const valueRaw = getY(d);
         const xScaled = xScale(getX(d)) as number;
         const value = valueRaw === null || isNaN(valueRaw) ? 0 : valueRaw;
         const yRender = yScale(Math.max(value, 0));
+        const valueLabel = valueLabelFormatter(value);
 
-        return {
+        const datum: RenderValueLabelDatum = {
           key,
           x: xScaled,
           y: yRender,
-          valueLabel: valueLabelFormatter(value),
+          valueLabel,
         };
+
+        const isOverlapping = getIsOverlapping({
+          previous,
+          current: {
+            datum,
+            width: valueLabelWidthsByIndex[i] ?? 0,
+          },
+          labelHeight: fontSize,
+        });
+
+        if (isOverlapping) {
+          return null;
+        }
+
+        previous.push({
+          datum,
+          width: valueLabelWidthsByIndex[i] ?? 0,
+        });
+
+        return datum;
       })
       .filter(truthy);
   }, [
@@ -95,7 +132,29 @@ export const useRenderLineValueLabelsData = () => {
     getX,
     yScale,
     valueLabelFormatter,
+    valueLabelWidthsByIndex,
+    fontSize,
   ]);
 
   return valueLabelsData;
+};
+
+const getIsOverlapping = ({
+  previous,
+  current,
+  labelHeight,
+}: {
+  previous: { datum: RenderValueLabelDatum; width: number }[];
+  current: { datum: RenderValueLabelDatum; width: number };
+  labelHeight: number;
+}) => {
+  return previous.some((prev) => {
+    const { x: xPrev, y: yPrev } = prev.datum;
+    const { x: xNext, y: yNext } = current.datum;
+
+    return (
+      Math.abs(xNext - xPrev) < prev.width / 2 + current.width / 2 &&
+      Math.abs(yNext - yPrev) < labelHeight
+    );
+  });
 };
