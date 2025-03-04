@@ -550,30 +550,6 @@ export const defaultSegmentOnChange: OnEncodingChange<
   }
 };
 
-const onColumnYFieldChange: OnEncodingChange<
-  ColumnConfig,
-  ColumnConfig["fields"]["y"]
-> = (id, { chartConfig, measures, oldField }) => {
-  chartConfig.fields.y.showValues = oldField.showValues;
-
-  if (chartConfig.fields.segment?.type === "stacked") {
-    const yMeasure = measures.find((d) => d.id === id);
-
-    if (disableStacked(yMeasure)) {
-      setWith(chartConfig, "fields.segment.type", "grouped", Object);
-
-      if (chartConfig.interactiveFiltersConfig?.calculation) {
-        setWith(
-          chartConfig,
-          "interactiveFiltersConfig.calculation",
-          { active: false, type: "identity" },
-          Object
-        );
-      }
-    }
-  }
-};
-
 const onMapFieldChange: OnEncodingChange<MapConfig> = (
   id,
   { chartConfig, dimensions, measures, field }
@@ -693,7 +669,24 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         idAttributes: ["componentId"],
         componentTypes: ["NumericalMeasure"],
         filters: false,
-        onChange: onColumnYFieldChange,
+        onChange: (id, { chartConfig, measures }) => {
+          if (chartConfig.fields.segment?.type === "stacked") {
+            const yMeasure = measures.find((d) => d.id === id);
+
+            if (disableStacked(yMeasure)) {
+              setWith(chartConfig, "fields.segment.type", "grouped", Object);
+
+              if (chartConfig.interactiveFiltersConfig?.calculation) {
+                setWith(
+                  chartConfig,
+                  "interactiveFiltersConfig.calculation",
+                  { active: false, type: "identity" },
+                  Object
+                );
+              }
+            }
+          }
+        },
         options: {
           colorPalette: {
             type: "single",
