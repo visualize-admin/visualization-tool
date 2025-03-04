@@ -4,10 +4,12 @@ import { ColumnsState } from "@/charts/column/columns-state";
 import {
   RenderColumnDatum,
   renderColumns,
-  RenderColumnValueDatum,
-  renderColumnValues,
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import {
+  RenderValueLabelDatum,
+  renderValueLabels,
+} from "@/charts/shared/render-value-labels";
 import {
   renderContainer,
   RenderContainerOptions,
@@ -143,7 +145,7 @@ export const Columns = () => {
     getRenderingKey,
   ]);
 
-  const valuesData: RenderColumnValueDatum[] = useMemo(() => {
+  const valueLabelsData: RenderValueLabelDatum[] = useMemo(() => {
     if (!showValues) {
       return [];
     }
@@ -186,7 +188,7 @@ export const Columns = () => {
       renderContainer(g, {
         ...common,
         render: (g, opts) =>
-          renderColumnValues(g, valuesData, {
+          renderValueLabels(g, valueLabelsData, {
             ...opts,
             rotate: rotateValues,
             fontFamily,
@@ -202,7 +204,7 @@ export const Columns = () => {
     transitionDuration,
     y0,
     showValues,
-    valuesData,
+    valueLabelsData,
     labelFontSize,
     rotateValues,
     fontFamily,
