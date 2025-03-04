@@ -109,7 +109,10 @@ export const useRenderTemporalValueLabelsData = () => {
 
         const padding = 8;
         const xScaledInBounds = Math.min(
-          Math.max(left - labelWidth / 2 + padding, xScaled),
+          Math.max(
+            Math.min(left - labelWidth / 2 + padding, labelWidth / 2),
+            xScaled
+          ),
           width - right - left - labelWidth / 2 + padding
         );
 
