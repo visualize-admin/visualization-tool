@@ -60,9 +60,17 @@ export const useShowTemporalValueLabelsVariables = (
   };
 };
 
+type RenderTemporalValueLabelDatum = RenderValueLabelDatum & {
+  width: number;
+};
+
 export const useRenderTemporalValueLabelsData = () => {
   const {
-    bounds: { width, height },
+    bounds: {
+      width,
+      height,
+      margins: { left, right },
+    },
     showValues,
     chartData,
     xScale,
@@ -82,18 +90,16 @@ export const useRenderTemporalValueLabelsData = () => {
       return acc;
     }, {}) as Record<number, number>;
   }, [chartData, valueLabelFormatter, getY, fontSize]);
-  const valueLabelsData: RenderValueLabelDatum[] = useMemo(() => {
+  const valueLabelsData: RenderTemporalValueLabelDatum[] = useMemo(() => {
     if (!showValues || !width || !height) {
       return [];
     }
 
-    const previous: {
-      datum: RenderValueLabelDatum;
-      width: number;
-    }[] = [];
+    const previousArray: RenderTemporalValueLabelDatum[] = [];
 
     return chartData
       .map((d, i) => {
+        const labelWidth = valueLabelWidthsByIndex[i] ?? 0;
         const key = getXAsString(d);
         const valueRaw = getY(d);
         const xScaled = xScale(getX(d)) as number;
@@ -101,19 +107,23 @@ export const useRenderTemporalValueLabelsData = () => {
         const yRender = yScale(Math.max(value, 0));
         const valueLabel = valueLabelFormatter(value);
 
-        const datum: RenderValueLabelDatum = {
+        const padding = 8;
+        const xScaledInBounds = Math.min(
+          Math.max(left - labelWidth / 2 + padding, xScaled),
+          width - right - left - labelWidth / 2 + padding
+        );
+
+        const datum: RenderTemporalValueLabelDatum = {
           key,
-          x: xScaled,
+          x: xScaledInBounds,
           y: yRender,
           valueLabel,
+          width: labelWidth,
         };
 
         const isOverlapping = getIsOverlapping({
-          previous,
-          current: {
-            datum,
-            width: valueLabelWidthsByIndex[i] ?? 0,
-          },
+          previousArray,
+          current: datum,
           labelHeight: fontSize,
         });
 
@@ -121,48 +131,45 @@ export const useRenderTemporalValueLabelsData = () => {
           return null;
         }
 
-        previous.push({
-          datum,
-          width: valueLabelWidthsByIndex[i] ?? 0,
-        });
+        previousArray.push(datum);
 
         return datum;
       })
       .filter(truthy);
   }, [
     showValues,
+    width,
+    height,
     chartData,
+    valueLabelWidthsByIndex,
     getXAsString,
     getY,
     xScale,
     getX,
     yScale,
     valueLabelFormatter,
-    valueLabelWidthsByIndex,
+    left,
+    right,
     fontSize,
-    width,
-    height,
   ]);
 
   return valueLabelsData;
 };
 
 const getIsOverlapping = ({
-  previous,
+  previousArray,
   current,
   labelHeight,
 }: {
-  previous: { datum: RenderValueLabelDatum; width: number }[];
-  current: { datum: RenderValueLabelDatum; width: number };
+  previousArray: RenderTemporalValueLabelDatum[];
+  current: RenderTemporalValueLabelDatum;
   labelHeight: number;
 }) => {
-  return previous.some((prev) => {
-    const { x: xPrev, y: yPrev } = prev.datum;
-    const { x: xNext, y: yNext } = current.datum;
-
+  return previousArray.some((previous) => {
     return (
-      Math.abs(xNext - xPrev) < prev.width / 2 + current.width / 2 &&
-      Math.abs(yNext - yPrev) < labelHeight
+      Math.abs(current.x - previous.x) <
+        previous.width / 2 + current.width / 2 &&
+      Math.abs(current.y - previous.y) < labelHeight
     );
   });
 };

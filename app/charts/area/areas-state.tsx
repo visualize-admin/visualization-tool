@@ -91,7 +91,7 @@ const useAreasState = (
   variables: AreasStateVariables,
   data: ChartStateData
 ): AreasState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     xDimension,
     getX,
@@ -362,8 +362,8 @@ const useAreasState = (
   });
   const { yOffset: yValueLabelsOffset, ...showValuesVariables } =
     useShowTemporalValueLabelsVariables(y, {
-      dimensions: chartProps.dimensions,
-      measures: chartProps.measures,
+      dimensions,
+      measures,
       segment: fields.segment,
     });
   const margins = {

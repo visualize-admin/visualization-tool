@@ -80,7 +80,7 @@ const useLinesState = (
   variables: LinesStateVariables,
   data: ChartStateData
 ): LinesState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     xDimension,
     getX,
@@ -253,8 +253,8 @@ const useLinesState = (
   });
   const { yOffset: yValueLabelsOffset, ...showValuesVariables } =
     useShowTemporalValueLabelsVariables(y, {
-      dimensions: chartProps.dimensions,
-      measures: chartProps.measures,
+      dimensions,
+      measures,
       segment: fields.segment,
     });
   const margins = {
