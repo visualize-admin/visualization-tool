@@ -7,8 +7,8 @@ import {
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
-  RenderValueLabelDatum,
   renderValueLabels,
+  useRenderValueLabelsData,
 } from "@/charts/shared/render-value-labels";
 import {
   renderContainer,
@@ -17,7 +17,6 @@ import {
   renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
-import { truthy } from "@/domain/types";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ErrorWhiskers = () => {
@@ -100,8 +99,6 @@ export const Columns = () => {
     colors,
     showValues,
     rotateValues,
-    renderEveryNthValue,
-    valueLabelFormatter,
   } = useChartState() as ColumnsState;
   const { margins } = bounds;
   const { labelFontSize, fontFamily } = useChartTheme();
@@ -145,26 +142,7 @@ export const Columns = () => {
     getRenderingKey,
   ]);
 
-  const valueLabelsData: RenderValueLabelDatum[] = useMemo(() => {
-    if (!showValues) {
-      return [];
-    }
-
-    return columnsData
-      .map((d, i) => {
-        if (i % renderEveryNthValue !== 0) {
-          return null;
-        }
-
-        return {
-          key: d.key,
-          x: d.x + d.width / 2,
-          y: d.y,
-          valueLabel: valueLabelFormatter(d.value),
-        };
-      })
-      .filter(truthy);
-  }, [columnsData, renderEveryNthValue, showValues, valueLabelFormatter]);
+  const valueLabelsData = useRenderValueLabelsData();
 
   useEffect(() => {
     const g = ref.current;
