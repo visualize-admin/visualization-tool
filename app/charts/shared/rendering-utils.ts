@@ -58,7 +58,7 @@ export const useRenderingKeyVariable = (
    * access the segment value from the data.
    */
   const getRenderingKey = useCallback(
-    (d: Observation, segment: string = "") => {
+    (d: Observation, segment = "") => {
       return filterableDimensionKeys
         .map((key) => d[key])
         .concat(segment)

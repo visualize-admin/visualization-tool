@@ -43,7 +43,7 @@ export const useShowColumnValueLabelsVariables = (
 
   if (!yMeasure) {
     throw Error(
-      `No dimension <${y.componentId}> in cube! (useNumericalYVariables)`
+      `No dimension <${y.componentId}> in cube! (useShowColumnValueLabelsVariables)`
     );
   }
 
