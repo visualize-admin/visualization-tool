@@ -2,14 +2,13 @@ import { I18nProvider } from "@lingui/react";
 import { ThemeProvider } from "@mui/material";
 import configureCors from "cors";
 import { GetServerSideProps } from "next";
-import { useEffect, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
 import {
-  ConfiguratorState,
   ConfiguratorStatePublished,
   decodeConfiguratorState,
 } from "@/configurator";
+import { increaseConfigViewCount } from "@/db/config";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { defaultLocale, i18n, Locale } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
@@ -53,41 +52,37 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
     state = JSON.parse(decodeURIComponent(encodedState));
   }
 
+  const migratedState = await migrateConfiguratorState(state);
+  const decodedState = decodeConfiguratorState({
+    ...migratedState,
+    state: "PUBLISHED",
+  } as ConfiguratorStatePublished);
+
+  await increaseConfigViewCount();
+
   return {
     props: {
       locale: (locale ?? defaultLocale) as Locale,
-      configuratorState: state,
+      configuratorState: JSON.stringify(decodedState),
     },
   };
 };
 
 export default function Preview({ configuratorState, locale }: PageProps) {
   i18n.activate(locale);
-  const [migrated, setMigrated] = useState<ConfiguratorState>();
-  useEffect(() => {
-    const run = async () => {
-      const migratedConfiguratorState = decodeConfiguratorState({
-        ...(await migrateConfiguratorState(configuratorState)),
-        // Force state published for <ChartPublished /> to work correctly
-        state: "PUBLISHED",
-      }) as ConfiguratorStatePublished;
-      setMigrated(migratedConfiguratorState);
-    };
-
-    run();
-  }, [configuratorState]);
+  const parsedState = JSON.parse(configuratorState);
 
   return (
     <LocaleProvider value={locale}>
       <I18nProvider i18n={i18n}>
         <GraphqlProvider>
           <ThemeProvider theme={federalTheme.theme}>
-            {migrated ? (
+            {parsedState ? (
               <ConfiguratorStateProvider
                 chartId="published"
-                initialState={migrated}
+                initialState={parsedState}
               >
-                <ChartPublished configKey="preview" {...migrated} />
+                <ChartPublished configKey="preview" {...parsedState} />
               </ConfiguratorStateProvider>
             ) : null}
           </ThemeProvider>

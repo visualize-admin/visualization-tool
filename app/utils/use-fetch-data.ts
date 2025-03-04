@@ -4,7 +4,7 @@ import { stringifyVariables } from "urql";
 type Status = "idle" | "fetching" | "success" | "error";
 
 export type UseFetchDataOptions<TDefault = undefined> = {
-  enable?: boolean;
+  pause?: boolean;
   initialStatus?: Status;
   defaultData: TDefault;
 };
@@ -66,12 +66,13 @@ const cache = new QueryCache();
 
 const useCacheKey = (cache: QueryCache, queryKey: QueryKey) => {
   const [version, setVersion] = useState(cache.version);
+
   useEffect(() => {
     return cache.listen(queryKey, () => {
       setVersion(() => cache.version);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [cache, stringifyVariables(queryKey)]);
 
   return version;
 };
@@ -91,35 +92,49 @@ export const useFetchData = <TData>({
   queryFn: () => Promise<TData>;
   options?: Partial<UseFetchDataOptions<TData>>;
 }) => {
-  const { enable = true, defaultData } = options;
+  const { pause, defaultData } = options;
 
   const cached = cache.get(queryKey) as QueryCacheValue<TData>;
   const { data, error, status } = cached ?? {};
 
   const fetchData = useCallback(async () => {
     const cached = cache.get(queryKey);
+
     if (cached?.status === "fetching") {
       return;
     }
+
     cache.set(queryKey, { ...cache.get(queryKey), status: "fetching" });
+
     try {
       const result = await queryFn();
-      cache.set(queryKey, { data: result, error: null, status: "success" });
+      const cacheEntry = {
+        data: result,
+        error: null,
+        status: "success" as const,
+      };
+      cache.set(queryKey, cacheEntry);
+
+      return cacheEntry;
     } catch (error) {
-      cache.set(queryKey, {
+      const cacheEntry = {
         data: null,
         error: error as Error,
-        status: "error",
-      });
+        status: "error" as const,
+      };
+      cache.set(queryKey, cacheEntry);
+
+      return cacheEntry;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryKey]);
+  }, [stringifyVariables(queryKey)]);
 
   useCacheKey(cache, queryKey);
 
   useEffect(() => {
-    if (!enable) {
+    if (pause) {
       cache.set(queryKey, { ...cache.get(queryKey), status: "idle" });
+
       return;
     }
 
@@ -127,7 +142,7 @@ export const useFetchData = <TData>({
       fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enable, fetchData, cached.data]);
+  }, [pause, fetchData, stringifyVariables(queryKey), cached.data]);
 
   const invalidate = useCallback(() => {
     fetchData();
@@ -141,8 +156,9 @@ export const useFetchData = <TData>({
  */
 export const useHydrate = <T>(queryKey: QueryKey, data: T) => {
   const hasHydrated = useRef(false);
+
   if (!hasHydrated.current) {
-    cache.set(queryKey, { data, error: null, status: "idle" });
+    cache.set(queryKey, { data, error: null, status: "success" });
     hasHydrated.current = true;
   }
 };

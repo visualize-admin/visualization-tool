@@ -54,23 +54,27 @@ export const HorizontalLimits = ({
       })
       .filter(truthy);
 
-    return preparedLimits.map((limit) => {
-      const fakeObservation: Observation = {
-        [relatedDimension?.id ?? ""]: limit.relatedDimensionValue,
-      };
-      const y = getY(fakeObservation) as (Date | number) & string;
+    return preparedLimits
+      .map((limit) => {
+        const fakeObservation: Observation = {
+          [relatedDimension?.id ?? ""]: limit.relatedDimensionValue,
+        };
+        const y = getY(fakeObservation);
+        const yScaled = yScale(y);
 
-      return {
-        key: limit.relatedDimensionValue,
-        y: yScale(y)! + bandwidth / 2 - limitHeight / 2,
-        x1: xScale(limit.y1),
-        x2: xScale(limit.y2),
-        height: limitHeight,
-        fill: limit.color,
-        lineType: limit.lineType,
-      } as RenderHorizontalLimitDatum;
-    });
-
+        return yScaled !== undefined
+          ? ({
+              key: limit.relatedDimensionValue,
+              y: yScaled + bandwidth / 2 - limitHeight / 2,
+              x1: xScale(limit.y1),
+              x2: xScale(limit.y2),
+              height: limitHeight,
+              fill: limit.color,
+              lineType: limit.lineType,
+            } as RenderHorizontalLimitDatum)
+          : null;
+      })
+      .filter(truthy);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     xScale,
@@ -152,23 +156,27 @@ export const VerticalLimits = ({
       })
       .filter(truthy);
 
-    return preparedLimits.map((limit) => {
-      const fakeObservation: Observation = {
-        [relatedDimension?.id ?? ""]: limit.relatedDimensionValue,
-      };
-      const x = getX(fakeObservation) as (Date | number) & string;
+    return preparedLimits
+      .map((limit) => {
+        const fakeObservation: Observation = {
+          [relatedDimension?.id ?? ""]: limit.relatedDimensionValue,
+        };
+        const x = getX(fakeObservation) as $IntentionalAny;
+        const xScaled = xScale(x);
 
-      return {
-        key: limit.relatedDimensionValue,
-        x: xScale(x)! + bandwidth / 2 - limitWidth / 2,
-        y1: yScale(limit.y1),
-        y2: yScale(limit.y2),
-        width: limitWidth,
-        fill: limit.color,
-        lineType: limit.lineType,
-      } as RenderVerticalLimitDatum;
-    });
-
+        return xScaled !== undefined
+          ? ({
+              key: limit.relatedDimensionValue,
+              x: xScaled + bandwidth / 2 - limitWidth / 2,
+              y1: yScale(limit.y1),
+              y2: yScale(limit.y2),
+              width: limitWidth,
+              fill: limit.color,
+              lineType: limit.lineType,
+            } as RenderVerticalLimitDatum)
+          : null;
+      })
+      .filter(truthy);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     xScale,

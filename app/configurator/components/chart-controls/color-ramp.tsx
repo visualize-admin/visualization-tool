@@ -198,8 +198,18 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
           width: "100%",
           "& .MuiSelect-select": { height: "44px", width: "100%" },
         }}
+        displayEmpty
         onChange={onSelectedItemChange}
-        renderValue={() => {
+        renderValue={(selected) => {
+          if (!selected) {
+            return (
+              <Typography color={"secondary.active"} variant="body2">
+                <Trans id="controls.color.palette.select">
+                  Select a color palette
+                </Trans>
+              </Typography>
+            );
+          }
           return (
             <ColorRamp
               colorInterpolator={selectedColorInterpolator}

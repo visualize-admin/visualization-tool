@@ -14,38 +14,40 @@ enum PUBLISHED_STATE {
 }
 
 model Config {
-  id         Int      @id @default(autoincrement())
-  key        String   @unique @db.Char(12)
-  data       Json
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @default(now()) @db.Timestamp(6)
+  id              Int      @id @default(autoincrement())
+  key             String   @unique @db.Char(12)
+  data            Json
+  created_at      DateTime @default(now()) @db.Timestamp(6)
+  updated_at      DateTime @default(now()) @db.Timestamp(6)
 
-  user    User? @relation(fields: [user_id], references: [id])
-  user_id Int?
+  user            User? @relation(fields: [user_id], references: [id])
+  user_id         Int?
 
-  views ConfigView[]
+  views           ConfigView[]
 
   published_state PUBLISHED_STATE @default(PUBLISHED)
 
   @@map("config")
+
+  @@index(fields: [data], type: Gin)
 }
 
 model User {
-  id     Int      @id @default(autoincrement())
-  sub    String?  @unique @db.VarChar(64)
-  name   String?  @db.VarChar(100)
-  Config Config[] @relation()
+  id      Int        @id @default(autoincrement())
+  sub     String?    @unique @db.VarChar(64)
+  name    String?    @db.VarChar(100)
+  Config  Config[]   @relation()
   Palette Palette[]  @relation()
 
   @@map("users")
 }
 
 model ConfigView {
-  id        Int      @id @default(autoincrement())
-  viewed_at DateTime @default(now()) @db.Timestamp(6)
+  id         Int      @id @default(autoincrement())
+  viewed_at  DateTime @default(now()) @db.Timestamp(6)
 
-  config    Config @relation(fields: [config_key], references: [key])
-  config_key String
+  config     Config?   @relation(fields: [config_key], references: [key])
+  config_key String?
 
   @@map("config_view")
 }
@@ -66,15 +68,15 @@ enum PALETTE_TYPE {
 }
 
 model Palette {
-  paletteId   String    @id @default(uuid())
-  name        String    @unique @db.VarChar(100)
-  type        PALETTE_TYPE  
-  colors      String[] 
-  created_at  DateTime  @default(now()) @db.Timestamp(6)
-  updated_at  DateTime  @default(now()) @db.Timestamp(6)
+  paletteId  String       @id @default(uuid())
+  name       String       @unique @db.VarChar(100)
+  type       PALETTE_TYPE  
+  colors     String[]
+  created_at DateTime     @default(now()) @db.Timestamp(6)
+  updated_at DateTime     @default(now()) @db.Timestamp(6)
   
-  user     User?      @relation(fields: [user_id], references: [id])
-  user_id  Int?
+  user       User?        @relation(fields: [user_id], references: [id])
+  user_id    Int?
 
   @@map("palettes")
 }

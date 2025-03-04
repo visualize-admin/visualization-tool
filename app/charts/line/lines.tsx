@@ -1,4 +1,3 @@
-import { bisector } from "d3-array";
 import { line } from "d3-shape";
 import { Fragment, memo, useEffect, useMemo, useRef } from "react";
 
@@ -148,25 +147,18 @@ export const Points = ({
 }) => {
   const { getX, xScale, getY, yScale, bounds, chartData, getSegment, colors } =
     useChartState() as LinesState;
-
   const { margins, chartHeight, width } = bounds;
+  const dots = useMemo(() => {
+    return chartData.map((d) => {
+      const x = xScale(getX(d));
+      const y = yScale(getY(d) as number);
+      const fill = colors(getSegment(d));
 
-  const ticksPos = useMemo(() => {
-    return xScale.ticks(bounds.chartWidth / 90).map((tick) => {
-      const x = xScale(tick);
-      const date = xScale.invert(x);
-
-      const bisectDate = bisector(
-        (d: Observation, date: Date) => getX(d).getTime() - date.getTime()
-      ).center;
-
-      const i = bisectDate(chartData, date, 0);
-      const y = yScale(getY(chartData[i]) as number);
-
-      const segment = getSegment(chartData[i]);
-      const color = colors(segment);
-
-      return { x, y, color };
+      return {
+        x,
+        y,
+        fill,
+      };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -184,12 +176,12 @@ export const Points = ({
     return null;
   }
 
-  const radius = getPointRadius(dotSize);
+  const r = getPointRadius(dotSize);
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
-      {ticksPos.map(({ x, y, color }, i) => (
-        <circle key={i} cx={x} cy={y} r={radius} fill={color} />
+      {dots.map(({ x, y, fill }, i) => (
+        <circle key={i} cx={x} cy={y} r={r} fill={fill} />
       ))}
     </g>
   );

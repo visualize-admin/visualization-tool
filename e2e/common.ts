@@ -2,7 +2,7 @@ import {
   locatorFixtures as fixtures,
   LocatorFixtures as TestingLibraryFixtures,
 } from "@playwright-testing-library/test/fixture";
-import { test as base, Page, PlaywrightTestOptions } from "@playwright/test";
+import { Page, PlaywrightTestOptions, test as base } from "@playwright/test";
 
 import { Actions, createActions } from "./actions";
 import { createSelectors, Selectors } from "./selectors";
@@ -19,7 +19,7 @@ const setup = (contextOptions?: PlaywrightTestOptions["contextOptions"]) => {
   }>({
     auth: async ({ page }, use) => {
       const auth = async () => {
-        const signInBtn = page.locator('[data-testId="test-sign-in"]');
+        const signInBtn = page.locator('[data-testid="test-sign-in"]');
         await signInBtn.waitFor({ state: "visible", timeout: 5000 });
         await signInBtn.click();
       };

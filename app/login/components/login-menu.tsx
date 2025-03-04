@@ -96,7 +96,7 @@ export const LoginMenu = () => {
         </>
       ) : (
         <Button
-          data-testId="test-sign-in"
+          data-testid="test-sign-in"
           variant="text"
           color="primary"
           size="small"

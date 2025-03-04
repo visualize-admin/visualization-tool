@@ -1,8 +1,11 @@
+import { ParsedUrlQuery } from "querystring";
+
 import { Trans } from "@lingui/macro";
 import { Box, Button, Paper, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 
 import { DataSetPreviewTable } from "@/browse/datatable";
@@ -17,7 +20,12 @@ import {
   useDataCubePreviewQuery,
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
+import SvgIcLinkExternal from "@/icons/components/IcLinkExternal";
 import { useLocale } from "@/locales/use-locale";
+
+export const isOdsIframe = (query: ParsedUrlQuery) => {
+  return query["odsiframe"] === "true";
+};
 
 const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
   (theme) => ({
@@ -28,7 +36,7 @@ const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
       paddingLeft: theme.spacing(4),
     },
     header: {
-      justifyContent: "space-between",
+      justifyContent: "end",
       marginBottom: theme.spacing(5),
       [theme.breakpoints.up("md")]: {
         flexDirection: "row",
@@ -108,6 +116,7 @@ export const DataSetPreview = ({
 }) => {
   const footnotesClasses = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
+  const router = useRouter();
   const variables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -157,18 +166,28 @@ export const DataSetPreview = ({
               {dataCubeMetadata.title} - visualize.admin.ch
             </title>
           </Head>
-          <Typography className={classes.title} component="div" variant="h1">
-            {dataCubeMetadata.title}
-          </Typography>
+          {!isOdsIframe(router.query) && (
+            <Typography className={classes.title} component="div" variant="h1">
+              {dataCubeMetadata.title}
+            </Typography>
+          )}
           {onCreateChartFromDataset ? (
             <Button
               onClick={(ev) => onCreateChartFromDataset?.(ev, dataSetIri)}
               className={classes.createChartButton}
               component="a"
+              endIcon={isOdsIframe(router.query) ? <SvgIcLinkExternal /> : null}
+              target={isOdsIframe(router.query) ? "_blank" : undefined}
             >
-              <Trans id="browse.dataset.create-visualization">
-                Create visualization from dataset
-              </Trans>
+              {!isOdsIframe(router.query) ? (
+                <Trans id="browse.dataset.create-visualization">
+                  Create visualization from dataset
+                </Trans>
+              ) : (
+                <Trans id="browse.dataset.create-visualization-visualize">
+                  Create with visualize.admin
+                </Trans>
+              )}
             </Button>
           ) : (
             <Link
@@ -176,18 +195,31 @@ export const DataSetPreview = ({
                 dataCubeMetadata.iri
               }&dataSource=${sourceToLabel(dataSource)}`}
               passHref
-              legacyBehavior
+              legacyBehavior={!isOdsIframe(router.query)}
+              target={isOdsIframe(router.query) ? "_blank" : undefined}
             >
-              <Button className={classes.createChartButton} component="a">
-                <Trans id="browse.dataset.create-visualization">
-                  Create visualization from dataset
-                </Trans>
+              <Button
+                endIcon={
+                  isOdsIframe(router.query) ? <SvgIcLinkExternal /> : null
+                }
+                className={classes.createChartButton}
+                component="a"
+              >
+                {!isOdsIframe(router.query) ? (
+                  <Trans id="browse.dataset.create-visualization">
+                    Create visualization from dataset
+                  </Trans>
+                ) : (
+                  <Trans id="browse.dataset.create-visualization-visualize">
+                    Create with visualize.admin
+                  </Trans>
+                )}
               </Button>
             </Link>
           )}
         </Flex>
         <Paper className={classes.paper} elevation={5}>
-          {dataCubeMetadata.description && (
+          {dataCubeMetadata.description && !isOdsIframe(router.query) && (
             <Typography
               className={classes.description}
               component="div"
@@ -206,11 +238,13 @@ export const DataSetPreview = ({
           </Flex>
           <Flex className={classes.footnotesWrapper}>
             <Flex className={footnotesClasses.actions}>
-              <DataDownloadMenu
-                dataSource={dataSource}
-                title={dataCubeMetadata.title}
-                filters={variables.cubeFilter}
-              />
+              {!isOdsIframe(router.query) && (
+                <DataDownloadMenu
+                  dataSource={dataSource}
+                  title={dataCubeMetadata.title}
+                  filters={variables.cubeFilter}
+                />
+              )}
             </Flex>
             <FirstTenRowsCaption />
           </Flex>

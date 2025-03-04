@@ -23,7 +23,7 @@ test("Custom Color Picker", async ({ page, selectors }) => {
     (el) => window.getComputedStyle(el).backgroundColor
   );
 
-  const saturation = page.locator('[data-testId="color-picker-saturation"]');
+  const saturation = page.locator('[data-testid="color-picker-saturation"]');
   await saturation.waitFor({ state: "visible", timeout: 5000 });
 
   await saturation.click();
@@ -47,7 +47,7 @@ test("Custom Color Picker", async ({ page, selectors }) => {
 
   expect(finalColor).toBe("rgb(255, 0, 0)");
 
-  const hue = page.locator('[data-testId="color-picker-hue"]');
+  const hue = page.locator('[data-testid="color-picker-hue"]');
   await hue.waitFor({ state: "visible", timeout: 5000 });
 
   await hue.click();
@@ -60,7 +60,7 @@ test("Custom Color Picker", async ({ page, selectors }) => {
   expect(selectedHueColor).toBe("rgb(0, 255, 248)");
 
   //FIXME: figure out a way to test the color picker pen tool in this env
-  // const picker = page.locator('[data-testId="color-picker-chrome"]');
+  // const picker = page.locator('[data-testid="color-picker-chrome"]');
   // await picker.waitFor({ state: "visible", timeout: 5000 });
 
   // await picker.click();

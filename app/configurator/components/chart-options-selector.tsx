@@ -1,8 +1,8 @@
 import { t, Trans } from "@lingui/macro";
 import {
   Box,
-  Stack,
   Switch as MUISwitch,
+  Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -55,6 +55,7 @@ import {
   ImputationType,
   imputationTypes,
   isAnimationInConfig,
+  isBarConfig,
   isColorInConfig,
   isComboChartConfig,
   isTableConfig,
@@ -76,6 +77,7 @@ import {
   SectionTitle,
   SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { CustomLayersSelector } from "@/configurator/components/custom-layers-selector";
 import {
   ChartFieldField,
   ChartOptionCheckboxField,
@@ -449,10 +451,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 
   const hasSubOptions = encoding.options?.chartSubType ?? false;
 
-  const locale = useLocale();
-
-  const [, dispatch] = useConfiguratorState(isConfiguring);
-
   const relatedLimitDimension = getRelatedLimitDimension({
     chartConfig,
     dimensions,
@@ -565,63 +563,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
         </ControlSection>
       )}
       {encoding.options?.showDots && (
-        <ControlSection collapse>
-          <SubsectionTitle iconName="chartLine">
-            <Trans id="controls.section.data-points">Data Points</Trans>
-          </SubsectionTitle>
-          <ControlSectionContent>
-            <Stack direction="column" gap={4}>
-              <ChartOptionSwitchField
-                path="showDots"
-                field={encoding.field}
-                onChange={(e) => {
-                  const { checked } = e.target;
-                  if ("y" in fields && !("showDots" in fields.y)) {
-                    dispatch({
-                      type: "COLOR_FIELD_UPDATED",
-                      value: {
-                        locale,
-                        field: "y",
-                        path: "showDotsSize",
-                        value: "Large",
-                      },
-                    });
-                  }
-                  dispatch({
-                    type: "COLOR_FIELD_UPDATED",
-                    value: {
-                      locale,
-                      field: encoding.field,
-                      path: "showDots",
-                      value: checked,
-                    },
-                  });
-                }}
-                label={t({ id: "controls.section.show-dots" })}
-                sx={{ mt: 2 }}
-              />
-              <Typography variant="caption" sx={{ mt: 2 }}>
-                <Trans id="controls.section.dots-size">Select a Size</Trans>
-              </Typography>
-              <Flex justifyContent="flex-start">
-                {["Small", "Medium", "Large"].map((d) => (
-                  <ChartOptionRadioField
-                    key={d}
-                    label={`${d}`}
-                    field="y"
-                    path="showDotsSize"
-                    value={d}
-                    disabled={
-                      "y" in fields &&
-                      (!("showDots" in fields.y) ||
-                        ("showDots" in fields.y && !fields.y.showDots))
-                    }
-                  />
-                ))}
-              </Flex>
-            </Stack>
-          </ControlSectionContent>
-        </ControlSection>
+        <ChartShowDots fields={chartConfig.fields} field={field} />
       )}
       {isComboChartConfig(chartConfig) && encoding.field === "y" && (
         <ChartComboYField chartConfig={chartConfig} measures={measures} />
@@ -654,7 +596,10 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       )}
       {/* FIXME: should be generic or shouldn't be a field at all */}
       {field === "baseLayer" && (
-        <ChartMapBaseLayerSettings chartConfig={chartConfig as MapConfig} />
+        <>
+          <ChartMapBaseLayerSettings chartConfig={chartConfig as MapConfig} />
+          <CustomLayersSelector />
+        </>
       )}
       {encoding.sorting &&
         component &&
@@ -726,10 +671,23 @@ const ChartLayoutOptions = ({
   hasSubOptions: boolean;
   measures: Measure[];
 }) => {
+  const activeField = chartConfig.activeField as EncodingFieldType | undefined;
+
+  if (!activeField) {
+    return null;
+  }
+
   const hasColorField = isColorInConfig(chartConfig);
   const values: { id: string; symbol: LegendSymbol }[] = hasColorField
     ? chartConfig.fields.color.type === "single"
-      ? [{ id: chartConfig.fields.y.componentId, symbol: "line" }]
+      ? [
+          {
+            id: isBarConfig(chartConfig)
+              ? chartConfig.fields.x.componentId
+              : chartConfig.fields.y.componentId,
+            symbol: "line",
+          },
+        ]
       : Object.keys(chartConfig.fields.color.colorMapping).map((key) => ({
           id: key,
           symbol: "line",
@@ -750,30 +708,28 @@ const ChartLayoutOptions = ({
             disabled={!component}
           />
         )}
-        <>
-          <ColorPalette
-            field="y"
-            // Faking a component here, because we don't have a real one.
-            // We use measure iris as dimension values, because that's how
-            // the color mapping is done.
-            component={
-              {
-                __typename: "",
-                values: values.map(({ id }) => ({
-                  value: id,
-                  label: id,
-                })),
-              } as any as Component
-            }
+        <ColorPalette
+          field={activeField}
+          // Faking a component here, because we don't have a real one.
+          // We use measure iris as dimension values, because that's how
+          // the color mapping is done.
+          component={
+            {
+              __typename: "",
+              values: values.map(({ id }) => ({
+                value: id,
+                label: id,
+              })),
+            } as any as Component
+          }
+        />
+        {hasColorField && chartConfig.fields.color.type === "single" && (
+          <ColorPickerField
+            field="color"
+            path="color"
+            label={measures.find((d) => d.id === values[0].id)!.label}
           />
-          {hasColorField && chartConfig.fields.color.type === "single" && (
-            <ColorPickerField
-              field="color"
-              path="color"
-              label={measures.find((d) => d.id === values[0].id)!.label}
-            />
-          )}
-        </>
+        )}
       </ControlSectionContent>
     </ControlSection>
   ) : null;
@@ -985,6 +941,112 @@ const ChartLimits = ({
       </ControlSectionContent>
     </ControlSection>
   ) : null;
+};
+
+const ChartShowDots = ({
+  fields,
+  field,
+}: {
+  fields: ChartConfig["fields"];
+  field: EncodingFieldType | null;
+}) => {
+  const locale = useLocale();
+  const [_, dispatch] = useConfiguratorState(isConfiguring);
+  const disabled =
+    "y" in fields &&
+    (!("showDots" in fields.y) ||
+      ("showDots" in fields.y && !fields.y.showDots));
+
+  return (
+    <ControlSection collapse>
+      <SubsectionTitle iconName="chartLine">
+        <Trans id="controls.section.data-points">Data Points</Trans>
+      </SubsectionTitle>
+      <ControlSectionContent>
+        <Stack direction="column" gap={4}>
+          <ChartOptionSwitchField
+            path="showDots"
+            field={field}
+            onChange={(e) => {
+              const { checked } = e.target;
+              if ("y" in fields && !("showDots" in fields.y)) {
+                dispatch({
+                  type: "COLOR_FIELD_UPDATED",
+                  value: {
+                    locale,
+                    field: "y",
+                    path: "showDotsSize",
+                    value: "Large",
+                  },
+                });
+              }
+              dispatch({
+                type: "COLOR_FIELD_UPDATED",
+                value: {
+                  locale,
+                  field,
+                  path: "showDots",
+                  value: checked,
+                },
+              });
+            }}
+            label={t({ id: "controls.section.show-dots" })}
+            sx={{ mt: 2 }}
+          />
+          <Typography variant="caption" sx={{ mt: 2 }}>
+            <Trans id="controls.section.dots-size">Select a Size</Trans>
+          </Typography>
+          <Flex justifyContent="flex-start">
+            <ChartShowDotRadio
+              size="Small"
+              label={t({
+                id: "controls.section.dots-size.small",
+                message: "Small",
+              })}
+              disabled={disabled}
+            />
+            <ChartShowDotRadio
+              size="Medium"
+              label={t({
+                id: "controls.section.dots-size.medium",
+                message: "Medium",
+              })}
+              disabled={disabled}
+            />
+            <ChartShowDotRadio
+              size="Large"
+              label={t({
+                id: "controls.section.dots-size.large",
+                message: "Large",
+              })}
+              disabled={disabled}
+            />
+          </Flex>
+        </Stack>
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
+const ChartShowDotRadio = ({
+  size,
+  label,
+  disabled,
+}: {
+  size: "Small" | "Medium" | "Large";
+  label: string;
+  disabled: boolean;
+}) => {
+  return (
+    <ChartOptionRadioField
+      key={size}
+      field="y"
+      path="showDotsSize"
+      value={size}
+      label={label}
+      disabled={disabled}
+    />
+  );
 };
 
 const ChartFieldAbbreviations = ({
@@ -1507,9 +1569,6 @@ const ColorSelection = ({
       <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
         <ColorPalette
           field="y"
-          // Faking a component here, because we don't have a real one.
-          // We use measure iris as dimension values, because that's how
-          // the color mapping is done.
           component={
             {
               __typename: "",
@@ -1673,10 +1732,6 @@ const ChartFieldMultiFilter = ({
   const colorComponent = [...dimensions, ...measures].find(
     (d) => d.id === colorComponentId
   );
-  const colorType = get(chartConfig, `fields["${field}"].color.type`) as
-    | ColorFieldType
-    | undefined;
-
   return encoding.filters && component ? (
     <ControlSection data-testid="chart-edition-multi-filters" collapse>
       <SubsectionTitle
@@ -1707,7 +1762,9 @@ const ChartFieldMultiFilter = ({
               colorComponent={colorComponent ?? component}
               // If colorType is defined, we are dealing with color field and
               // not segment.
-              colorConfigPath={colorType ? "color" : "colorMapping"}
+              colorConfigPath={
+                isColorInConfig(chartConfig) ? undefined : "colorMapping"
+              }
             />
           )
         )}
@@ -2172,7 +2229,13 @@ const ChartFieldColorComponent = ({
               colorConfigPath="color"
               colorComponent={colorComponent}
             />
-          ) : null
+          ) : (
+            <ColorPalette
+              field="symbolLayer"
+              colorConfigPath="color"
+              component={colorComponent}
+            />
+          )
         ) : colorType === "numerical" ? (
           <div>
             <ColorRampField field={field} path="color" nSteps={nbClass} />
@@ -2374,9 +2437,9 @@ const ChartMapBaseLayerSettings = ({
   }, [chartConfig.baseLayer.locked, dispatch, locale]);
 
   return (
-    <ControlSection>
+    <ControlSection hideTopBorder>
       <SectionTitle>
-        <Trans id="chart.map.layers.base">Map Display</Trans>
+        <Trans id="chart.map.layers.base">Base Layers</Trans>
       </SectionTitle>
       <ControlSectionContent gap="large">
         <ChartOptionCheckboxField
