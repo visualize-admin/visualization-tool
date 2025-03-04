@@ -222,7 +222,30 @@ export const useAxisLabelHeightOffset = ({
   };
 };
 
-export const getLongestXLabel = ({
+const AXIS_TITLE_PADDING = 20;
+
+export const useXAxisTitleOffset = (
+  xScale?: ScaleBand<string>,
+  getXLabel?: (d: string) => string,
+  xTimeUnit?: TimeUnit
+) => {
+  const { axisLabelFontSize } = useChartTheme();
+
+  return useMemo(() => {
+    return (
+      (xScale && getXLabel
+        ? getLongestXLabel({
+            xScale,
+            getXLabel,
+            xTimeUnit,
+            fontSize: axisLabelFontSize,
+          })
+        : axisLabelFontSize * LINE_HEIGHT) + AXIS_TITLE_PADDING
+    );
+  }, [axisLabelFontSize, xScale, getXLabel, xTimeUnit]);
+};
+
+const getLongestXLabel = ({
   xScale,
   getXLabel,
   xTimeUnit,
@@ -251,27 +274,4 @@ export const getLongestXLabel = ({
   const longestLabel = Math.max(...labelWidths);
 
   return longestLabel;
-};
-
-const AXIS_TITLE_PADDING = 20;
-
-export const useXAxisTitleOffset = (
-  xScale?: ScaleBand<string>,
-  getXLabel?: (d: string) => string,
-  xTimeUnit?: TimeUnit
-) => {
-  const { axisLabelFontSize } = useChartTheme();
-
-  return useMemo(() => {
-    return (
-      (xScale && getXLabel
-        ? getLongestXLabel({
-            xScale,
-            getXLabel,
-            xTimeUnit,
-            fontSize: axisLabelFontSize,
-          })
-        : axisLabelFontSize * LINE_HEIGHT) + AXIS_TITLE_PADDING
-    );
-  }, [axisLabelFontSize, xScale, getXLabel, xTimeUnit]);
 };
