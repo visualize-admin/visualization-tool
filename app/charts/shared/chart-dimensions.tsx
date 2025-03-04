@@ -16,16 +16,11 @@ import {
   ChartConfig,
   DashboardFiltersConfig,
   hasChartConfigs,
-  isColumnConfig,
-  isComboLineColumnConfig,
   isLayoutingFreeCanvas,
   useConfiguratorState,
 } from "@/configurator";
+import { TimeUnit } from "@/graphql/resolver-types";
 import { getTextWidth } from "@/utils/get-text-width";
-
-import { ColumnsState } from "../column/columns-state";
-
-import { useChartState } from "./chart-state";
 
 type ComputeChartPaddingProps = {
   xLabelPresent?: boolean;
@@ -241,7 +236,6 @@ export const getLongestXLabel = ({
   fontSize: number;
 }) => {
   const domain = xScale.domain();
-
   const formattedLabels = domain.map((d) => {
     if (xTimeUnit && formatDate) {
       return formatDate(d, xTimeUnit);
@@ -261,13 +255,16 @@ export const getLongestXLabel = ({
 
 const AXIS_TITLE_PADDING = 20;
 
-export const useXAxisTitleOffset = (chartConfig: ChartConfig) => {
-  const { xScale, getXLabel, xTimeUnit } = useChartState() as ColumnsState;
+export const useXAxisTitleOffset = (
+  xScale?: ScaleBand<string>,
+  getXLabel?: (d: string) => string,
+  xTimeUnit?: TimeUnit
+) => {
   const { axisLabelFontSize } = useChartTheme();
 
   return useMemo(() => {
     return (
-      (isColumnConfig(chartConfig) || isComboLineColumnConfig(chartConfig)
+      (xScale && getXLabel
         ? getLongestXLabel({
             xScale,
             getXLabel,
@@ -276,5 +273,5 @@ export const useXAxisTitleOffset = (chartConfig: ChartConfig) => {
           })
         : axisLabelFontSize * LINE_HEIGHT) + AXIS_TITLE_PADDING
     );
-  }, [chartConfig, axisLabelFontSize, xScale, getXLabel, xTimeUnit]);
+  }, [axisLabelFontSize, xScale, getXLabel, xTimeUnit]);
 };
