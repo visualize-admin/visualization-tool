@@ -17,6 +17,10 @@ import {
   useLinesStateVariables,
 } from "@/charts/line/lines-state-props";
 import {
+  ShowLineValueLabelsVariables,
+  useShowLineValueLabelsVariables,
+} from "@/charts/line/show-values-utils";
+import {
   getChartWidth,
   useAxisLabelHeightOffset,
   useChartBounds,
@@ -57,7 +61,8 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type LinesState = CommonChartState &
   LinesStateVariables &
-  InteractiveXTimeRangeState & {
+  InteractiveXTimeRangeState &
+  Omit<ShowLineValueLabelsVariables, "yOffset"> & {
     chartType: "line";
     segments: string[];
     xScale: ScaleTime<number, number>;
@@ -100,6 +105,7 @@ const useLinesState = (
     allData,
   } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { y } = fields;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -234,24 +240,31 @@ const useLinesState = (
     formatNumber,
   });
   const right = 40;
+
+  const chartWidth = getChartWidth({ width, left, right });
+  xScale.range([0, chartWidth]);
+  xScaleTimeRange.range([0, chartWidth]);
+
   const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
     label: yMeasure.label,
     width,
     marginLeft: left,
     marginRight: right,
   });
+  const { yOffset: yValueLabelsOffset, ...showValuesVariables } =
+    useShowLineValueLabelsVariables(y, {
+      dimensions: chartProps.dimensions,
+      measures: chartProps.measures,
+    });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin + yValueLabelsOffset,
     right,
     bottom,
     left,
   };
-  const chartWidth = getChartWidth({ width, left, right });
   const bounds = useChartBounds({ width, chartWidth, height, margins });
   const { chartHeight } = bounds;
 
-  xScale.range([0, chartWidth]);
-  xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   const isMobile = useIsMobile();
@@ -325,6 +338,7 @@ const useLinesState = (
     chartWideData,
     xKey,
     getAnnotationInfo,
+    ...showValuesVariables,
     ...variables,
   };
 };

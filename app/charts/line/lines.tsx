@@ -2,12 +2,15 @@ import { line } from "d3-shape";
 import { Fragment, memo, useEffect, useMemo, useRef } from "react";
 
 import { LinesState } from "@/charts/line/lines-state";
+import { useRenderLineValueLabelsData } from "@/charts/line/show-values-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import { renderValueLabels } from "@/charts/shared/render-value-labels";
 import {
   renderContainer,
   RenderVerticalWhiskerDatum,
   renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { LineConfig } from "@/config-types";
 import { Observation } from "@/domain/data";
 import { useTransitionStore } from "@/stores/transition";
@@ -88,6 +91,11 @@ export const ErrorWhiskers = () => {
 export const Lines = () => {
   const { getX, xScale, getY, yScale, grouped, colors, bounds } =
     useChartState() as LinesState;
+  const { margins } = bounds;
+  const { labelFontSize, fontFamily } = useChartTheme();
+  const ref = useRef<SVGGElement>(null);
+  const enableTransition = useTransitionStore((state) => state.enable);
+  const transitionDuration = useTransitionStore((state) => state.duration);
 
   const lineGenerator = line<Observation>()
     .defined((d) => {
@@ -97,13 +105,43 @@ export const Lines = () => {
     .x((d) => xScale(getX(d)))
     .y((d) => yScale(getY(d) as number));
 
+  const valueLabelsData = useRenderLineValueLabelsData();
+
+  useEffect(() => {
+    if (ref.current) {
+      renderContainer(ref.current, {
+        id: "lines",
+        transform: "translate(0, 0)",
+        transition: {
+          enable: enableTransition,
+          duration: transitionDuration,
+        },
+        render: (g, opts) =>
+          renderValueLabels(g, valueLabelsData, {
+            ...opts,
+            rotate: false,
+            fontFamily,
+            fontSize: labelFontSize,
+          }),
+      });
+    }
+  }, [
+    enableTransition,
+    margins.left,
+    margins.top,
+    transitionDuration,
+    valueLabelsData,
+    labelFontSize,
+    fontFamily,
+  ]);
+
   return (
-    <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>
-      {Array.from(grouped).map((observation, index) => {
+    <g ref={ref} transform={`translate(${margins.left} ${margins.top})`}>
+      {Array.from(grouped).map((observation, i) => {
         return (
           <Fragment key={observation[0]}>
             <Line
-              key={index}
+              key={i}
               path={lineGenerator(observation[1]) as string}
               color={colors(observation[0])}
             />
