@@ -12,6 +12,11 @@ You can also check the
 # Unreleased
 
 - Features
+  - Added an option to show all values in column charts
+
+# [5.3.1] - 2025-03-04
+
+- Features
   - It's now possible to preview charts by passing configurator state as a query
     parameter
   - It's now possible to add custom WMS layers coming from wms.geo.admin.ch to
@@ -19,11 +24,10 @@ You can also check the
   - Statistics page was enhanced with `Charts` and `Cubes` sections, including
     some general improvements
   - Application now collects data on chart previews, not only views
-  - Added an option to show all values in column charts
 - Fixes
   - Limits that are connected to values that are filtered out do not render in
     the chart anymore
-  - Removed title & description on open data swiss iframes.
+  - Removed title & description in opendata.swiss dataset previews
   - Persisting and showing colors on dimension changes
 - Maintenance
   - Updated documentation
