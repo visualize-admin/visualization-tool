@@ -9,19 +9,42 @@ import {
   renderContainer,
 } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useTimeFormatUnit } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
+
+import {
+  useAxisLabelHeightOffset,
+  useXAxisTitleOffset,
+} from "./chart-dimensions";
 
 export const AxisWidthBand = () => {
   const ref = useRef<SVGGElement>(null);
   const state = useChartState() as ColumnsState | ComboLineColumnState;
-  const { xScale, getXLabel, xTimeUnit, yScale, bounds } = state;
+  const {
+    xScale,
+    getXLabel,
+    xDimension,
+    xTimeUnit,
+    yScale,
+    bounds,
+    xAxisLabel,
+  } = state;
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDate = useTimeFormatUnit();
-  const { chartHeight, margins } = bounds;
-  const { labelColor, gridColor, labelFontSize, fontFamily, domainColor } =
-    useChartTheme();
+  const { chartHeight, chartWidth, margins } = bounds;
+
+  const xAxisTitleOffset = useXAxisTitleOffset(xScale, getXLabel, xTimeUnit);
+
+  const {
+    labelColor,
+    gridColor,
+    labelFontSize,
+    fontFamily,
+    axisLabelFontSize,
+    domainColor,
+  } = useChartTheme();
 
   useEffect(() => {
     if (ref.current) {
@@ -83,7 +106,29 @@ export const AxisWidthBand = () => {
     yScale,
   ]);
 
-  return <g ref={ref} />;
+  const { height, labelWidth } = useAxisLabelHeightOffset({
+    label: xAxisLabel,
+    width: chartWidth,
+    marginLeft: margins.left,
+    marginRight: margins.right,
+  });
+
+  return (
+    <>
+      <foreignObject
+        x={margins.left + chartWidth / 2 - labelWidth / 2}
+        y={margins.top + chartHeight + xAxisTitleOffset}
+        width={chartWidth}
+        height={height}
+        style={{ display: "flex", textAlign: "right" }}
+      >
+        <OpenMetadataPanelWrapper component={xDimension}>
+          <span style={{ fontSize: axisLabelFontSize }}>{xAxisLabel}</span>
+        </OpenMetadataPanelWrapper>
+      </foreignObject>
+      <g ref={ref} />
+    </>
+  );
 };
 
 export const AxisWidthBandDomain = () => {

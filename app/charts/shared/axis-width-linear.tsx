@@ -3,7 +3,10 @@ import { useEffect, useRef } from "react";
 
 import { BarsState } from "@/charts/bar/bars-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { useAxisLabelHeightOffset } from "@/charts/shared/chart-dimensions";
+import {
+  useAxisLabelHeightOffset,
+  useXAxisTitleOffset,
+} from "@/charts/shared/chart-dimensions";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   maybeTransition,
@@ -27,6 +30,8 @@ export const AxisWidthLinear = () => {
     gridColor,
     fontFamily,
   } = useChartTheme();
+  const xAxisTitleOffset = useXAxisTitleOffset();
+
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
@@ -97,7 +102,7 @@ export const AxisWidthLinear = () => {
     <>
       <foreignObject
         x={margins.left + chartWidth / 2 - labelWidth / 2}
-        y={margins.top + chartHeight + 40}
+        y={margins.top + chartHeight + xAxisTitleOffset}
         width={chartWidth}
         height={height}
         style={{ display: "flex", textAlign: "right" }}

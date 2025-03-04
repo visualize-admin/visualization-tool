@@ -1,5 +1,5 @@
 import { max } from "d3-array";
-import { ScaleLinear } from "d3-scale";
+import { ScaleBand, ScaleLinear } from "d3-scale";
 import { useMemo } from "react";
 
 import {
@@ -19,6 +19,7 @@ import {
   isLayoutingFreeCanvas,
   useConfiguratorState,
 } from "@/configurator";
+import { TimeUnit } from "@/graphql/resolver-types";
 import { getTextWidth } from "@/utils/get-text-width";
 
 type ComputeChartPaddingProps = {
@@ -77,7 +78,7 @@ const computeChartPadding = (
       ? BRUSH_BOTTOM_SPACE
       : isFlipped
         ? 15 // Eyeballed value
-        : 48 + (xLabelPresent ? 20 : 0);
+        : 48;
 
   if (bandDomain?.length) {
     bottom +=
@@ -85,7 +86,16 @@ const computeChartPadding = (
       70;
   }
 
-  return isFlipped ? { bottom: left, left: bottom } : { left, bottom };
+  if (xLabelPresent) {
+    bottom += 20;
+  }
+
+  return isFlipped
+    ? {
+        bottom: left + (xLabelPresent ? 20 : 0),
+        left: bottom,
+      }
+    : { left, bottom };
 };
 
 export const useChartPadding = (props: ComputeChartPaddingProps) => {
@@ -228,4 +238,58 @@ export const useAxisLabelHeightOffset = ({
     offset: fontSize * LINE_HEIGHT * (lines - 1),
     labelWidth,
   };
+};
+
+const AXIS_TITLE_PADDING = 20;
+
+export const useXAxisTitleOffset = (
+  xScale?: ScaleBand<string>,
+  getXLabel?: (d: string) => string,
+  xTimeUnit?: TimeUnit
+) => {
+  const { axisLabelFontSize } = useChartTheme();
+
+  return useMemo(() => {
+    return (
+      (xScale && getXLabel
+        ? getLongestXLabel({
+            xScale,
+            getXLabel,
+            xTimeUnit,
+            fontSize: axisLabelFontSize,
+          })
+        : axisLabelFontSize * LINE_HEIGHT) + AXIS_TITLE_PADDING
+    );
+  }, [axisLabelFontSize, xScale, getXLabel, xTimeUnit]);
+};
+
+const getLongestXLabel = ({
+  xScale,
+  getXLabel,
+  xTimeUnit,
+  formatDate,
+  fontSize,
+}: {
+  xScale: ScaleBand<string>;
+  getXLabel: (d: string) => string;
+  xTimeUnit?: string;
+  formatDate?: (d: string, timeUnit: string) => string;
+  fontSize: number;
+}) => {
+  const domain = xScale.domain();
+  const formattedLabels = domain.map((d) => {
+    if (xTimeUnit && formatDate) {
+      return formatDate(d, xTimeUnit);
+    } else {
+      return getXLabel(d);
+    }
+  });
+
+  const labelWidths = formattedLabels.map((text) =>
+    getTextWidth(text, { fontSize })
+  );
+
+  const longestLabel = Math.max(...labelWidths);
+
+  return longestLabel;
 };

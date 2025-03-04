@@ -79,7 +79,7 @@ const useComboLineColumnState = (
   data: ChartStateData
 ): ComboLineColumnState => {
   const { chartConfig } = chartProps;
-  const { getX, getXAsDate } = variables;
+  const { getX, getXAsDate, xAxisLabel } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const xKey = fields.x.componentId;
@@ -140,6 +140,7 @@ const useComboLineColumnState = (
 
   // Dimensions
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingLeftYScale,
     width,
     height,
