@@ -6,12 +6,12 @@ import {
   AnimationField,
   Filters,
   InteractiveFiltersConfig,
-  Limit
+  Limit,
 } from "@/configurator";
 import {
   Component,
   isStandardErrorDimension,
-  Observation
+  Observation,
 } from "@/domain/data";
 import { TransitionStore } from "@/stores/transition";
 
@@ -74,7 +74,7 @@ export type RenderOptions = {
   transition: Pick<TransitionStore, "enable" | "duration">;
 };
 
-type RenderContainerOptions = {
+export type RenderContainerOptions = {
   id: string;
   transform: string;
   transition: RenderOptions["transition"];
@@ -318,7 +318,7 @@ export const renderHorizontalLimits = (
               .attr("x", (d) => d.x2)
               .attr("y", (d) => d.y)
               .attr("width", LIMIT_SIZE)
-              .attr("height", d => d.height)
+              .attr("height", (d) => d.height)
               .attr("fill", (d) => d.fill)
               .attr("stroke", "none")
           )
@@ -359,7 +359,7 @@ export const renderHorizontalLimits = (
                   .select(".right")
                   .attr("x", (d) => d.x2)
                   .attr("y", (d) => d.y)
-                  .attr("height", d => d.height)
+                  .attr("height", (d) => d.height)
                   .attr("fill", (d) => d.fill)
               ),
           transition,

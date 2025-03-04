@@ -11,6 +11,7 @@ import {
   usePieStateVariables,
 } from "@/charts/pie/pie-state-props";
 import {
+  getChartWidth,
   useAxisLabelHeightOffset,
   useChartBounds,
 } from "@/charts/shared/chart-dimensions";
@@ -167,8 +168,8 @@ const usePieState = (
     bottom: 40,
     left,
   };
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth } = bounds;
+  const chartWidth = getChartWidth({ width, left, right });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
 
   // Pie data
   // Sort the pie according to the segments

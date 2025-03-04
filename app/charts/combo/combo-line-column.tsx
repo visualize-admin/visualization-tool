@@ -45,6 +45,7 @@ const Columns = () => {
 
       return {
         key,
+        value: y,
         x: xScaled,
         y: yRender,
         width: bandwidth,

@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Added an option to show all values in column charts
 
 # [5.3.1] - 2025-03-04
 

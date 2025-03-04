@@ -409,6 +409,7 @@ export const handleChartFieldChanged = (
     initializing: !f,
     selectedValues,
     field,
+    oldField: f,
   });
 
   // Remove the component from interactive data filters.
@@ -499,7 +500,13 @@ export const handleChartOptionChanged = (
         field,
         path
       );
-      sideEffect?.(value, { chartConfig, dimensions, measures, field });
+      sideEffect?.(value, {
+        chartConfig,
+        dimensions,
+        measures,
+        field,
+        oldField: get(chartConfig.fields, field),
+      });
     }
 
     if (value === FIELD_VALUE_NONE) {

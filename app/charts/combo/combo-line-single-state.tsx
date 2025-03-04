@@ -15,6 +15,7 @@ import {
   useYScales,
 } from "@/charts/combo/combo-state";
 import {
+  getChartWidth,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -112,8 +113,13 @@ const useComboLineSingleState = (
     formatNumber,
   });
   const margins = getMargins({ left, bottom });
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const chartWidth = getChartWidth({
+    width,
+    left: margins.left,
+    right: margins.right,
+  });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
   const xScales = [xScale, xScaleTimeRange];
   const yScales = [yScale];
   adjustScales(xScales, yScales, { chartWidth, chartHeight });

@@ -21,6 +21,7 @@ describe("defaultSegmentOnChange", () => {
       measures: [],
       initializing: true,
       selectedValues: [],
+      oldField: { componentId: "segment" },
     });
     expect(filters).toEqual({
       iri: {
@@ -39,6 +40,7 @@ describe("defaultSegmentOnChange", () => {
       measures: [],
       initializing: false,
       selectedValues: [],
+      oldField: { componentId: "segment" },
     });
     expect(Object.keys(chartConfig.fields)).toEqual(["segment", "color"]);
     expect(chartConfig.fields.segment).toEqual(
