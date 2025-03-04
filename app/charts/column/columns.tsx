@@ -1,15 +1,13 @@
 import { useEffect, useMemo, useRef } from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
+import { useRenderColumnValueLabelsData } from "@/charts/column/render-value-labels";
 import {
   RenderColumnDatum,
   renderColumns,
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import {
-  renderValueLabels,
-  useRenderValueLabelsData,
-} from "@/charts/shared/render-value-labels";
+import { renderValueLabels } from "@/charts/shared/render-value-labels";
 import {
   renderContainer,
   RenderContainerOptions,
@@ -142,7 +140,7 @@ export const Columns = () => {
     getRenderingKey,
   ]);
 
-  const valueLabelsData = useRenderValueLabelsData();
+  const valueLabelsData = useRenderColumnValueLabelsData();
 
   useEffect(() => {
     const g = ref.current;
