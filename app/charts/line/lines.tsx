@@ -91,7 +91,7 @@ export const ErrorWhiskers = () => {
 export const Lines = ({
   dotSize,
 }: {
-  dotSize: LineConfig["fields"]["y"]["showDotsSize"];
+  dotSize?: LineConfig["fields"]["y"]["showDotsSize"];
 }) => {
   const { getX, xScale, getY, yScale, grouped, colors, bounds } =
     useChartState() as LinesState;
