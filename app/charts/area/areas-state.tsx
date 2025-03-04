@@ -367,7 +367,7 @@ const useAreasState = (
       segment: fields.segment,
     });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin + yValueLabelsOffset,
     right,
     bottom,
     left,
