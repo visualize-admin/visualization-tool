@@ -35,6 +35,10 @@ import {
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
+import {
+  ShowTemporalValueLabelsVariables,
+  useShowTemporalValueLabelsVariables,
+} from "@/charts/shared/show-values-utils";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -57,7 +61,8 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type LinesState = CommonChartState &
   LinesStateVariables &
-  InteractiveXTimeRangeState & {
+  InteractiveXTimeRangeState &
+  Omit<ShowTemporalValueLabelsVariables, "yOffset"> & {
     chartType: "line";
     segments: string[];
     xScale: ScaleTime<number, number>;
@@ -75,7 +80,7 @@ const useLinesState = (
   variables: LinesStateVariables,
   data: ChartStateData
 ): LinesState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     xDimension,
     getX,
@@ -100,6 +105,7 @@ const useLinesState = (
     allData,
   } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { y } = fields;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -234,24 +240,32 @@ const useLinesState = (
     formatNumber,
   });
   const right = 40;
+
+  const chartWidth = getChartWidth({ width, left, right });
+  xScale.range([0, chartWidth]);
+  xScaleTimeRange.range([0, chartWidth]);
+
   const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
     label: yMeasure.label,
     width,
     marginLeft: left,
     marginRight: right,
   });
+  const { yOffset: yValueLabelsOffset, ...showValuesVariables } =
+    useShowTemporalValueLabelsVariables(y, {
+      dimensions,
+      measures,
+      segment: fields.segment,
+    });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin + yValueLabelsOffset,
     right,
     bottom,
     left,
   };
-  const chartWidth = getChartWidth({ width, left, right });
   const bounds = useChartBounds({ width, chartWidth, height, margins });
   const { chartHeight } = bounds;
 
-  xScale.range([0, chartWidth]);
-  xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   const isMobile = useIsMobile();
@@ -325,6 +339,7 @@ const useLinesState = (
     chartWideData,
     xKey,
     getAnnotationInfo,
+    ...showValuesVariables,
     ...variables,
   };
 };

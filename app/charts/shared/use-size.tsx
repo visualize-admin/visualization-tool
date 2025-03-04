@@ -39,10 +39,13 @@ export const Observer = ({ children }: { children: ReactNode }) => {
     prevWidth !== width ||
     prevHeight !== height ||
     (width === INIT_SIZE && height === INIT_SIZE);
+  const brushing = useTransitionStore((state) => state.brushing);
   const setEnableTransition = useTransitionStore((state) => state.setEnable);
   useEffect(() => {
-    setEnableTransition(!isResizing);
-  }, [isResizing, setEnableTransition]);
+    if (!brushing) {
+      setEnableTransition(!isResizing);
+    }
+  }, [brushing, isResizing, setEnableTransition]);
 
   const size = useMemo(
     () => ({

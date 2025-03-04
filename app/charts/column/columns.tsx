@@ -5,11 +5,9 @@ import {
   RenderColumnDatum,
   renderColumns,
 } from "@/charts/column/rendering-utils";
+import { useColumnValueLabelsData } from "@/charts/column/show-values-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import {
-  renderValueLabels,
-  useRenderValueLabelsData,
-} from "@/charts/shared/render-value-labels";
+import { renderValueLabels } from "@/charts/shared/render-value-labels";
 import {
   renderContainer,
   RenderContainerOptions,
@@ -142,7 +140,7 @@ export const Columns = () => {
     getRenderingKey,
   ]);
 
-  const valueLabelsData = useRenderValueLabelsData();
+  const valueLabelsData = useColumnValueLabelsData();
 
   useEffect(() => {
     const g = ref.current;

@@ -1014,6 +1014,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             draft.fields.y.componentId = oldValue;
           });
         },
+        showValues: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.showValues = oldValue;
+          });
+        },
       },
       segment: ({
         oldValue,
@@ -1250,6 +1255,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             draft.fields.y.componentId = oldValue;
           });
         },
+        showValues: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.showValues = oldValue;
+          });
+        },
       },
       segment: ({
         oldValue,
@@ -1341,6 +1351,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         componentId: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.y.componentId = oldValue;
+          });
+        },
+        showValues: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.showValues = oldValue;
           });
         },
       },
