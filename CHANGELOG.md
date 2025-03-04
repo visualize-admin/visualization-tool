@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.3.1] - 2025-03-04
+
 - Features
   - It's now possible to preview charts by passing configurator state as a query
     parameter
@@ -18,11 +22,11 @@ You can also check the
     map charts
   - Statistics page was enhanced with `Charts` and `Cubes` sections, including
     some general improvements
-  - Application now collect data on chart previews, not only views
+  - Application now collects data on chart previews, not only views
 - Fixes
   - Limits that are connected to values that are filtered out do not render in
     the chart anymore
-  - Removed title & description on open data swiss iframes.
+  - Removed title & description in opendata.swiss dataset previews
   - Persisting and showing colors on dimension changes
 - Maintenance
   - Updated documentation
