@@ -2,7 +2,6 @@ import { line } from "d3-shape";
 import { Fragment, memo, useEffect, useMemo, useRef } from "react";
 
 import { LinesState } from "@/charts/line/lines-state";
-import { useRenderLineValueLabelsData } from "@/charts/line/show-values-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { renderValueLabels } from "@/charts/shared/render-value-labels";
 import {
@@ -10,6 +9,7 @@ import {
   RenderVerticalWhiskerDatum,
   renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
+import { useRenderTemporalValueLabelsData } from "@/charts/shared/show-values-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { LineConfig } from "@/config-types";
 import { Observation } from "@/domain/data";
@@ -107,7 +107,7 @@ export const Lines = ({
     .x((d) => xScale(getX(d)))
     .y((d) => yScale(getY(d) as number));
 
-  const valueLabelsData = useRenderLineValueLabelsData();
+  const valueLabelsData = useRenderTemporalValueLabelsData();
 
   useEffect(() => {
     if (valueLabelsContainerRef.current) {

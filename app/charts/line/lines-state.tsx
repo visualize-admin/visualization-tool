@@ -17,10 +17,6 @@ import {
   useLinesStateVariables,
 } from "@/charts/line/lines-state-props";
 import {
-  ShowLineValueLabelsVariables,
-  useShowLineValueLabelsVariables,
-} from "@/charts/line/show-values-utils";
-import {
   getChartWidth,
   useAxisLabelHeightOffset,
   useChartBounds,
@@ -39,6 +35,10 @@ import {
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
+import {
+  ShowTemporalValueLabelsVariables,
+  useShowTemporalValueLabelsVariables,
+} from "@/charts/shared/show-values-utils";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -62,7 +62,7 @@ import { ChartProps } from "../shared/ChartProps";
 export type LinesState = CommonChartState &
   LinesStateVariables &
   InteractiveXTimeRangeState &
-  Omit<ShowLineValueLabelsVariables, "yOffset"> & {
+  Omit<ShowTemporalValueLabelsVariables, "yOffset"> & {
     chartType: "line";
     segments: string[];
     xScale: ScaleTime<number, number>;
@@ -252,7 +252,7 @@ const useLinesState = (
     marginRight: right,
   });
   const { yOffset: yValueLabelsOffset, ...showValuesVariables } =
-    useShowLineValueLabelsVariables(y, {
+    useShowTemporalValueLabelsVariables(y, {
       dimensions: chartProps.dimensions,
       measures: chartProps.measures,
       segment: fields.segment,

@@ -1,24 +1,25 @@
 import { useCallback, useMemo } from "react";
 
+import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { RenderValueLabelDatum } from "@/charts/shared/render-value-labels";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
-import { LineFields } from "@/config-types";
+import { AreaFields, LineFields } from "@/config-types";
 import { Dimension, Measure } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getTextWidth } from "@/utils/get-text-width";
 
-export type ShowLineValueLabelsVariables = {
+export type ShowTemporalValueLabelsVariables = {
   yOffset: number;
   showValues: boolean;
   valueLabelFormatter: (value: number | null) => string;
 };
 
-export const useShowLineValueLabelsVariables = (
-  y: LineFields["y"],
+export const useShowTemporalValueLabelsVariables = (
+  y: AreaFields["y"] | LineFields["y"],
   {
     dimensions,
     measures,
@@ -26,9 +27,9 @@ export const useShowLineValueLabelsVariables = (
   }: {
     dimensions: Dimension[];
     measures: Measure[];
-    segment: LineFields["segment"];
+    segment: AreaFields["segment"] | LineFields["segment"];
   }
-): ShowLineValueLabelsVariables => {
+): ShowTemporalValueLabelsVariables => {
   const { showValues: _showValues = false } = y;
   const yMeasure = measures.find((d) => d.id === y.componentId);
 
@@ -59,7 +60,7 @@ export const useShowLineValueLabelsVariables = (
   };
 };
 
-export const useRenderLineValueLabelsData = () => {
+export const useRenderTemporalValueLabelsData = () => {
   const {
     showValues,
     chartData,
@@ -69,7 +70,7 @@ export const useRenderLineValueLabelsData = () => {
     yScale,
     getY,
     valueLabelFormatter,
-  } = useChartState() as LinesState;
+  } = useChartState() as AreasState | LinesState;
   const { labelFontSize: fontSize } = useChartTheme();
   const valueLabelWidthsByIndex = useMemo(() => {
     return chartData.reduce((acc, d, i) => {
