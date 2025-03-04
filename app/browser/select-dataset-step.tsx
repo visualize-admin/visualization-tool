@@ -7,7 +7,7 @@ import uniqBy from "lodash/uniqBy";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
 import {
@@ -22,8 +22,13 @@ import {
   SearchDatasetInput,
   SearchFilters,
 } from "@/browser/dataset-browse";
-import { DataSetPreview, DataSetPreviewProps } from "@/browser/dataset-preview";
+import {
+  DataSetPreview,
+  DataSetPreviewProps,
+  isOdsIframe,
+} from "@/browser/dataset-preview";
 import { BrowseFilter, DataCubeAbout } from "@/browser/filters";
+import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
@@ -53,6 +58,7 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useConfiguratorState, useLocale } from "@/src";
+import { useResizeObserver } from "@/utils/use-resize-observer";
 
 const softJSONParse = (v: string) => {
   try {
@@ -67,14 +73,17 @@ const useStyles = makeStyles<
   {
     datasetPresent: boolean;
     variant: NonNullable<SelectDatasetStepContentProps["variant"]>;
+    isOdsIframe: boolean;
   }
 >((theme) => ({
   panelLayout: {
-    maxWidth: 1400,
+    maxWidth: ({ isOdsIframe }) => (isOdsIframe ? "auto" : 1400),
     margin: "auto",
     position: "static",
-    marginTop: ({ datasetPresent, variant }) =>
-      datasetPresent && variant !== "drawer" ? BANNER_MARGIN_TOP : 0,
+    marginTop: ({ datasetPresent, variant, isOdsIframe }) =>
+      datasetPresent && variant !== "drawer" && !isOdsIframe
+        ? BANNER_MARGIN_TOP
+        : 0,
     height: "auto",
     transition: "margin-top 0.5s ease",
   },
@@ -195,7 +204,19 @@ const SelectDatasetStepContent = ({
     leading: true,
   });
   const router = useRouter();
-  const classes = useStyles({ datasetPresent: !!dataset, variant });
+  const handleHeightChange = useCallback(
+    ({ height }: { width: number; height: number }) => {
+      window.parent.postMessage({ type: CHART_RESIZE_EVENT_TYPE, height }, "*");
+    },
+    []
+  );
+  const [ref] = useResizeObserver(handleHeightChange);
+
+  const classes = useStyles({
+    datasetPresent: !!dataset,
+    variant,
+    isOdsIframe: isOdsIframe(router.query),
+  });
   const backLink = useMemo(() => {
     return formatBackLink(router.query);
   }, [router.query]);
@@ -324,7 +345,7 @@ const SelectDatasetStepContent = ({
   }
 
   return (
-    <Box>
+    <Box ref={ref}>
       <AnimatePresence>
         {!dataset && variant === "page" && (
           <MotionBox key="banner" {...bannerPresenceProps}>
@@ -357,51 +378,57 @@ const SelectDatasetStepContent = ({
           </MotionBox>
         )}
       </AnimatePresence>
-      <PanelLayout type="LM" className={classes.panelLayout} key="panel">
-        <PanelBodyWrapper type="L" className={classes.panelLeft}>
-          <AnimatePresence mode="wait">
-            {dataset ? (
-              <MotionBox
-                key="metadata"
-                sx={{ mx: 4, px: 4 }}
-                {...navPresenceProps}
-              >
-                <NextLink href={backLink} passHref legacyBehavior>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<Icon name="chevronLeft" size={12} />}
-                    onClick={onClickBackLink}
-                  >
-                    <Trans id="dataset-preview.back-to-results">
-                      Back to the list
-                    </Trans>
-                  </Button>
-                </NextLink>
-                <MotionBox sx={{ mt: 6 }} {...smoothPresenceProps}>
-                  <DatasetMetadataSingleCubeAdapter
-                    datasetIri={dataset}
-                    dataSource={configState.dataSource}
+      <PanelLayout
+        type={isOdsIframe(router.query) ? "M" : "LM"}
+        className={classes.panelLayout}
+        key="panel"
+      >
+        {!isOdsIframe(router.query) && (
+          <PanelBodyWrapper type="L" className={classes.panelLeft}>
+            <AnimatePresence mode="wait">
+              {dataset ? (
+                <MotionBox
+                  key="metadata"
+                  sx={{ mx: 4, px: 4 }}
+                  {...navPresenceProps}
+                >
+                  <NextLink href={backLink} passHref legacyBehavior>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      startIcon={<Icon name="chevronLeft" size={12} />}
+                      onClick={onClickBackLink}
+                    >
+                      <Trans id="dataset-preview.back-to-results">
+                        Back to the list
+                      </Trans>
+                    </Button>
+                  </NextLink>
+                  <MotionBox sx={{ mt: 6 }} {...smoothPresenceProps}>
+                    <DatasetMetadataSingleCubeAdapter
+                      datasetIri={dataset}
+                      dataSource={configState.dataSource}
+                    />
+                  </MotionBox>
+                </MotionBox>
+              ) : (
+                <MotionBox key="search-filters" {...navPresenceProps}>
+                  <SearchFilters
+                    cubes={allCubes}
+                    themes={themes}
+                    orgs={orgs}
+                    termsets={termsets}
+                    disableNavLinks
                   />
                 </MotionBox>
-              </MotionBox>
-            ) : (
-              <MotionBox key="search-filters" {...navPresenceProps}>
-                <SearchFilters
-                  cubes={allCubes}
-                  themes={themes}
-                  orgs={orgs}
-                  termsets={termsets}
-                  disableNavLinks
-                />
-              </MotionBox>
-            )}
-          </AnimatePresence>
-        </PanelBodyWrapper>
+              )}
+            </AnimatePresence>
+          </PanelBodyWrapper>
+        )}
         <PanelBodyWrapper
-          type="M"
+          type={"M"}
           className={classes.panelMiddle}
-          sx={{ maxWidth: 1040, p: 6 }}
+          sx={isOdsIframe(router.query) ? { p: 6 } : { maxWidth: 1040, p: 6 }}
         >
           <AnimatePresence mode="wait">
             {dataset ? (
@@ -494,7 +521,7 @@ const SelectDatasetStepContent = ({
           </AnimatePresence>
         </PanelBodyWrapper>
       </PanelLayout>
-      {variant == "page" ? (
+      {variant == "page" && !isOdsIframe(router.query) ? (
         <Box
           sx={{
             borderTop: "2px solid rgba(0,0,0,0.05)",

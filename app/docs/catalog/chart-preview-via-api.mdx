@@ -30,12 +30,29 @@ While usually you'll want to publish your chart, sometimes you might want to
 simply preview it, without going through the publishing process. This could be
 especially helpful to programmatically generate charts based on many different
 configuration options. Visualize offers a way to preview charts without
-publishing them, by using a custom API.
+publishing them, by using a custom API or iframe query parameter.
 
-## iframe
+## iframe preview via query parameter
 
 **Demo**: Visit <a href="/_preview" target="_blank">`/_preview`</a> to see a
-page with an iframe containing a chart preview.
+page with two iframes containing chart previews. The first iframe gets the chart
+state a `state` query parameter.
+
+```html
+<iframe
+  id="chart"
+  src="https://visualize.admin.ch/it/preview?state={JSON.stringify(photovoltaikanlagenState)}"
+  width="100%"
+  height="500"
+  frameborder="0"
+/>
+```
+
+## iframe preview via API
+
+**Demo**: Visit <a href="/_preview" target="_blank">`/_preview`</a> to see a
+page with two iframes containing chart previews. The second iframe gets the
+chart state from posting a message to the iframe window.
 
 This method works by pointing an iframe to the `/preview` page, and posting a
 message with the chart state to the iframe window on load.

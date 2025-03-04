@@ -60,7 +60,6 @@ import {
   SEGMENT_ENABLED_COMPONENTS,
 } from "@/domain/data";
 import { getDefaultCategoricalPaletteId, getPalette } from "@/palettes";
-import { theme } from "@/themes/federal";
 
 /**
  * This module controls chart controls displayed in the UI.
@@ -632,8 +631,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           calculation: {},
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "category10",
+            color: schemeCategory10[0],
           },
           imputation: {
             shouldShow: (chartConfig, data) => {
@@ -676,8 +675,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "category10",
+            color: schemeCategory10[0],
           },
           showStandardError: {},
           showConfidenceInterval: {},
@@ -797,8 +796,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           },
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "category10",
+            color: schemeCategory10[0],
           },
           useAbbreviations: {},
         },
@@ -837,6 +836,11 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           showStandardError: {},
           showConfidenceInterval: {},
+          colorPalette: {
+            type: "single",
+            paletteId: "category10",
+            color: schemeCategory10[0],
+          },
         },
       },
       {
@@ -972,8 +976,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "category10",
+            color: schemeCategory10[0],
           },
           showStandardError: {},
           showConfidenceInterval: {},
@@ -999,8 +1003,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "category10",
+            color: schemeCategory10[0],
           },
           useAbbreviations: {},
         },
@@ -1096,8 +1100,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "category10",
+            color: schemeCategory10[0],
           },
           useAbbreviations: {},
         },
@@ -1133,8 +1137,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "category10",
+            color: schemeCategory10[0],
           },
           useAbbreviations: {},
         },

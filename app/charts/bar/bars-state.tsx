@@ -4,6 +4,8 @@ import {
   scaleBand,
   ScaleLinear,
   scaleLinear,
+  ScaleOrdinal,
+  scaleOrdinal,
   scaleTime,
 } from "d3-scale";
 import orderBy from "lodash/orderBy";
@@ -45,6 +47,7 @@ import {
   useFormatNumber,
   useTimeFormatUnit,
 } from "@/formatters";
+import { getPalette } from "@/palettes";
 import {
   getSortingOrders,
   makeDimensionValueSorters,
@@ -62,6 +65,8 @@ export type BarsState = CommonChartState &
     yScale: ScaleBand<string>;
     minY: string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
   };
 
 const useBarsState = (
@@ -82,6 +87,7 @@ const useBarsState = (
     getMinX,
     getXErrorRange,
     getFormattedXUncertainty,
+    getSegmentLabel,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -272,6 +278,19 @@ const useBarsState = (
     };
   };
 
+  const { colors } = useMemo(() => {
+    const colors = scaleOrdinal<string, string>();
+
+    colors.range(
+      getPalette({
+        paletteId: fields.color.paletteId,
+        colorField: fields.color,
+      })
+    );
+
+    return { colors };
+  }, [fields.color]);
+
   return {
     chartType: "bar",
     bounds: {
@@ -286,6 +305,8 @@ const useBarsState = (
     yScaleInteraction,
     yScale,
     getAnnotationInfo,
+    getColorLabel: getSegmentLabel,
+    colors,
     ...variables,
   };
 };

@@ -14,7 +14,7 @@ export const useUserPalettes = () => {
     queryKey,
     queryFn: getCustomColorPalettes,
     options: {
-      enable: !!user?.id,
+      pause: !user?.id,
     },
   });
 };

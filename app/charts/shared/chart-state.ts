@@ -205,9 +205,9 @@ export const useBandYVariables = (
     getYLabel,
     getYAbbreviationOrLabel,
     yTimeUnit,
-    getYAsDate: isTemporalDimension(yDimension)
-      ? getYAsDate
-      : getYTemporalEntity,
+    getYAsDate: isTemporalEntityDimension(yDimension)
+      ? getYTemporalEntity
+      : getYAsDate,
   };
 };
 
@@ -253,9 +253,9 @@ export const useBandXVariables = (
     getXLabel,
     getXAbbreviationOrLabel,
     xTimeUnit,
-    getXAsDate: isTemporalDimension(xDimension)
-      ? getXAsDate
-      : getXTemporalEntity,
+    getXAsDate: isTemporalEntityDimension(xDimension)
+      ? getXTemporalEntity
+      : getXAsDate,
   };
 };
 

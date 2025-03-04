@@ -34,6 +34,7 @@ import {
   Measure,
   Observation,
 } from "@/domain/data";
+import { useFormatNumber } from "@/formatters";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
@@ -202,7 +203,7 @@ export const LegendColor = memo(function LegendColor({
       {showTitle && segmentComponent && (
         <OpenMetadataPanelWrapper component={segmentComponent}>
           <Typography
-            data-testId="legendTitle"
+            data-testid="legendTitle"
             component="div"
             variant="caption"
             color="primary.main"
@@ -215,6 +216,10 @@ export const LegendColor = memo(function LegendColor({
         groups={groups}
         limits={limits?.map(({ configLimit, measureLimit }) => ({
           label: measureLimit.name,
+          values:
+            measureLimit.type === "single"
+              ? [measureLimit.value]
+              : [measureLimit.from, measureLimit.to],
           color: configLimit.color,
         }))}
         getColor={colors}
@@ -307,7 +312,7 @@ const LegendColorContent = ({
   numberOfOptions,
 }: {
   groups: ReturnType<typeof useLegendGroups>;
-  limits?: { label: string; color: string }[];
+  limits?: { label: string; values: number[]; color: string }[];
   getColor: (d: string) => string;
   getLabel: (d: string) => string;
   getItemDimension?: (dimensionLabel: string) => Measure | undefined;
@@ -335,6 +340,8 @@ const LegendColorContent = ({
       addCategory(item);
     }
   });
+
+  const formatNumber = useFormatNumber({ decimals: "auto" });
 
   return (
     <Flex
@@ -388,11 +395,11 @@ const LegendColorContent = ({
                   );
                 })}
                 {isLastGroup && limits
-                  ? limits.map((limit, i) => (
+                  ? limits.map(({ label, values, color }, i) => (
                       <LegendItem
                         key={i}
-                        item={limit.label}
-                        color={limit.color}
+                        item={`${label}: ${values.map(formatNumber).join("-")}`}
+                        color={color}
                         symbol="line"
                       />
                     ))

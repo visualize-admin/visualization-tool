@@ -37,7 +37,6 @@ import {
   Slider,
   Switch,
 } from "@/components/form";
-import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import SelectTree from "@/components/select-tree";
 import useDisclosure from "@/components/use-disclosure";
 import {
@@ -420,15 +419,7 @@ export const DataFilterTemporal = ({
     <>
       <DatePickerField
         name={`date-picker-${dimension.id}`}
-        label={
-          <FieldLabel
-            label={
-              <OpenMetadataPanelWrapper component={dimension}>
-                {label}
-              </OpenMetadataPanelWrapper>
-            }
-          />
-        }
+        label={<FieldLabel label={label} />}
         value={
           usesMostRecentDate ? maxDate : (parseDate(fieldProps.value) as Date)
         }
@@ -779,11 +770,11 @@ const useMultiFilterColorPicker = (
     [dispatch, colorField, value, hasColorField]
   );
 
-  const path = colorConfigPath ? colorConfigPath : "";
+  const path = colorConfigPath ? `color.${colorConfigPath}` : "";
 
   const color = get(
     chartConfig,
-    `fields["${colorField}"].${path}${!hasColorField ? ".colorMapping" : ""}["${value}"]`
+    `fields["${colorField}"].${path}${hasColorField ? "colorMapping" : ""}["${value}"]`
   );
 
   const palette = useMemo(() => {

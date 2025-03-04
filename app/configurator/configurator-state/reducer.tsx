@@ -44,6 +44,7 @@ import {
   GenericFields,
   isAreaConfig,
   isColorInConfig,
+  isMapConfig,
   isSegmentInConfig,
   isTableConfig,
   Limit,
@@ -547,8 +548,9 @@ export const updateColorMapping = (
         });
       }
     } else {
+      const { paletteId } = get(chartConfig, path);
       colorMapping = mapValueIrisToColor({
-        paletteId: "dimension",
+        paletteId,
         dimensionValues: values,
         colorMapping: oldColorMapping,
         random,
@@ -806,6 +808,66 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           action.value.value,
           Object
         );
+      }
+
+      return draft;
+
+    case "CUSTOM_LAYER_ADD":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+
+        if (isMapConfig(chartConfig)) {
+          chartConfig.baseLayer.customLayers.push(action.value.layer);
+        }
+      }
+
+      return draft;
+
+    case "CUSTOM_LAYER_UPDATE":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+
+        if (isMapConfig(chartConfig)) {
+          const { layer } = action.value;
+          const i = chartConfig.baseLayer.customLayers.findIndex(
+            (l) => l.type === layer.type && l.id === layer.id
+          );
+
+          if (i !== -1) {
+            chartConfig.baseLayer.customLayers[i] = layer;
+          }
+        }
+      }
+
+      return draft;
+
+    case "CUSTOM_LAYER_REMOVE":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+
+        if (isMapConfig(chartConfig)) {
+          const { type, id } = action.value;
+          chartConfig.baseLayer.customLayers =
+            chartConfig.baseLayer.customLayers.filter(
+              (layer) => !(layer.type === type && layer.id === id)
+            );
+        }
+      }
+
+      return draft;
+
+    case "CUSTOM_LAYER_SWAP":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+
+        if (isMapConfig(chartConfig)) {
+          const { oldIndex, newIndex } = action.value;
+          const customLayers = chartConfig.baseLayer.customLayers;
+          const newCustomLayers = [...customLayers];
+          const [removed] = newCustomLayers.splice(oldIndex, 1);
+          newCustomLayers.splice(newIndex, 0, removed);
+          chartConfig.baseLayer.customLayers = newCustomLayers;
+        }
       }
 
       return draft;

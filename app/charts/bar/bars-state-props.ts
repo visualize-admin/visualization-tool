@@ -10,6 +10,7 @@ import {
   NumericalXErrorVariables,
   NumericalXVariables,
   RenderingVariables,
+  SegmentVariables,
   SortingVariables,
   useBandYVariables,
   useBaseVariables,
@@ -17,6 +18,7 @@ import {
   useInteractiveFiltersVariables,
   useNumericalXErrorVariables,
   useNumericalXVariables,
+  useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { useChartConfigFilters } from "@/config-utils";
@@ -30,6 +32,7 @@ export type BarsStateVariables = BaseVariables &
   NumericalXVariables &
   BandYVariables &
   NumericalXErrorVariables &
+  SegmentVariables &
   RenderingVariables &
   InteractiveFiltersVariables;
 
@@ -45,7 +48,7 @@ export const useBarsStateVariables = (
     measuresById,
   } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const { x, y, animation } = fields;
+  const { x, y, animation, segment } = fields;
   const yDimension = dimensionsById[y.componentId];
   const filters = useChartConfigFilters(chartConfig);
 
@@ -92,6 +95,10 @@ export const useBarsStateVariables = (
     [getX, getYAsDate, getY, y.sorting, yDimension]
   );
 
+  const segmentVariables = useSegmentVariables(segment, {
+    dimensionsById,
+    observations,
+  });
   const getRenderingKey = useRenderingKeyVariable(
     dimensions,
     filters,
@@ -100,6 +107,7 @@ export const useBarsStateVariables = (
   );
 
   return {
+    ...segmentVariables,
     ...baseVariables,
     sortData,
     ...bandYVariables,
