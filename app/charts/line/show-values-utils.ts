@@ -48,7 +48,7 @@ export const useShowLineValueLabelsVariables = (
   );
 
   return {
-    yOffset: fontSize,
+    yOffset: showValues ? fontSize : 0,
     showValues,
     valueLabelFormatter,
   };
