@@ -47,6 +47,10 @@ import {
 } from "@/charts/shared/interaction/tooltip-box";
 import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
 import {
+  ShowTemporalValueLabelsVariables,
+  useShowTemporalValueLabelsVariables,
+} from "@/charts/shared/show-values-utils";
+import {
   getStackedTooltipValueFormatter,
   getStackedYScale,
 } from "@/charts/shared/stacked-helpers";
@@ -69,7 +73,8 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type AreasState = CommonChartState &
   AreasStateVariables &
-  InteractiveXTimeRangeState & {
+  InteractiveXTimeRangeState &
+  Omit<ShowTemporalValueLabelsVariables, "yOffset"> & {
     chartType: "area";
     xScale: ScaleTime<number, number>;
     yScale: ScaleLinear<number, number>;
@@ -109,6 +114,7 @@ const useAreasState = (
     allData,
   } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { y } = fields;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -343,25 +349,32 @@ const useAreasState = (
     normalize,
   });
   const right = 40;
+
+  const chartWidth = getChartWidth({ width, left, right });
+  xScale.range([0, chartWidth]);
+  xScaleTimeRange.range([0, chartWidth]);
+
   const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
     label: yMeasure.label,
     width,
     marginLeft: left,
     marginRight: right,
   });
+  const { yOffset: yValueLabelsOffset, ...showValuesVariables } =
+    useShowTemporalValueLabelsVariables(y, {
+      dimensions: chartProps.dimensions,
+      measures: chartProps.measures,
+      segment: fields.segment,
+    });
   const margins = {
     top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
     right,
     bottom,
     left,
   };
-  const chartWidth = getChartWidth({ width, left, right });
   const bounds = useChartBounds({ width, chartWidth, height, margins });
   const { chartHeight } = bounds;
 
-  /** Adjust scales according to dimensions */
-  xScale.range([0, chartWidth]);
-  xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   const isMobile = useIsMobile();
@@ -457,6 +470,7 @@ const useAreasState = (
     chartWideData,
     series,
     getAnnotationInfo,
+    ...showValuesVariables,
     ...variables,
   };
 };

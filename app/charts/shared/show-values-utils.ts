@@ -62,6 +62,7 @@ export const useShowTemporalValueLabelsVariables = (
 
 export const useRenderTemporalValueLabelsData = () => {
   const {
+    bounds: { width, height },
     showValues,
     chartData,
     xScale,
@@ -82,7 +83,7 @@ export const useRenderTemporalValueLabelsData = () => {
     }, {}) as Record<number, number>;
   }, [chartData, valueLabelFormatter, getY, fontSize]);
   const valueLabelsData: RenderValueLabelDatum[] = useMemo(() => {
-    if (!showValues) {
+    if (!showValues || !width || !height) {
       return [];
     }
 
@@ -139,6 +140,8 @@ export const useRenderTemporalValueLabelsData = () => {
     valueLabelFormatter,
     valueLabelWidthsByIndex,
     fontSize,
+    width,
+    height,
   ]);
 
   return valueLabelsData;

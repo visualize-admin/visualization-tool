@@ -592,6 +592,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             paletteId: "schemaCategory10",
             color: schemeCategory10[0],
           },
+          showValues: {},
         },
       },
       {

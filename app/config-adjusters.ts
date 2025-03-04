@@ -138,7 +138,10 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
 type AreaAdjusters = BaseAdjusters<AreaConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<AreaConfig, string> };
-    y: { componentId: FieldAdjuster<AreaConfig, string> };
+    y: {
+      componentId: FieldAdjuster<AreaConfig, string>;
+      showValues: FieldAdjuster<AreaConfig, boolean>;
+    };
     segment: FieldAdjuster<
       AreaConfig,
       | ColumnSegmentField
