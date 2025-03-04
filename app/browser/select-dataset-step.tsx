@@ -33,11 +33,11 @@ import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
+  bannerPresenceProps,
   BANNER_HEIGHT,
   BANNER_MARGIN_TOP,
   DURATION,
   MotionBox,
-  bannerPresenceProps,
   navPresenceProps,
   smoothPresenceProps,
 } from "@/components/presence";
@@ -426,7 +426,7 @@ const SelectDatasetStepContent = ({
           </PanelBodyWrapper>
         )}
         <PanelBodyWrapper
-          type={"M"}
+          type="M"
           className={classes.panelMiddle}
           sx={isOdsIframe(router.query) ? { p: 6 } : { maxWidth: 1040, p: 6 }}
         >

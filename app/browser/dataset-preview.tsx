@@ -36,7 +36,6 @@ const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
       paddingLeft: theme.spacing(4),
     },
     header: {
-      justifyContent: "end",
       marginBottom: theme.spacing(5),
       [theme.breakpoints.up("md")]: {
         flexDirection: "row",
@@ -160,7 +159,12 @@ export const DataSetPreview = ({
             </HintRed>
           </Box>
         )}
-        <Flex className={classes.header}>
+        <Flex
+          className={classes.header}
+          sx={{
+            justifyContent: isOdsIframe(router.query) ? "end" : "space-between",
+          }}
+        >
           <Head>
             <title key="title">
               {dataCubeMetadata.title} - visualize.admin.ch
