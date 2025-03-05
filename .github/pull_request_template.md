@@ -10,10 +10,16 @@ This PR...
 
 ## How to test
 
-1. Go to...
+1. Go to this link.
+2. ...
 
-<!--- Reproduction steps, in case of a bug -->
+<!-- ## Steps to reproduce
+
+1. Go to this link.
+2. ... -->
 
 ---
 
-- [ ] Add a CHANGELOG entry
+- [ ] I made a self-review of my own code
+- [ ] I wrote tests for the changes (if applicable)
+- [ ] I added a CHANGELOG entry
