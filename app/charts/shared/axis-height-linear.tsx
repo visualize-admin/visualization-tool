@@ -20,7 +20,6 @@ import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
-import { getTextWidth } from "@/utils/get-text-width";
 
 export const TICK_PADDING = 6;
 
@@ -36,10 +35,6 @@ export const AxisHeightLinear = () => {
       | LinesState
       | ScatterplotState
       | ComboLineSingleState;
-  const axisTitleWidth =
-    getTextWidth(yAxisLabel, {
-      fontSize: axisLabelFontSize,
-    }) + TICK_PADDING;
 
   useRenderAxisHeightLinear(ref, {
     id: "axis-height-linear",
@@ -63,7 +58,7 @@ export const AxisHeightLinear = () => {
         </text>
       ) : (
         <foreignObject
-          width={Math.min(axisTitleWidth, bounds.chartWidth)}
+          width={leftAxisLabelSize.width}
           height={leftAxisLabelSize.height}
           y={30}
           style={{ display: "flex" }}

@@ -101,7 +101,7 @@ export const AxisTime = () => {
         y={margins.top + chartHeight + xAxisTitleOffset}
         width={chartWidth}
         height={bottomAxisLabelSize.height}
-        style={{ display: "flex", textAlign: "right" }}
+        style={{ display: "flex" }}
       >
         <OpenMetadataPanelWrapper component={xDimension}>
           <span style={{ fontSize: axisLabelFontSize }}>{xAxisLabel}</span>

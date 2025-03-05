@@ -107,7 +107,7 @@ export const AxisWidthLinear = () => {
         y={margins.top + chartHeight + xAxisTitleOffset}
         width={chartWidth}
         height={bottomAxisLabelSize.height}
-        style={{ display: "flex", textAlign: "right" }}
+        style={{ display: "flex" }}
       >
         <OpenMetadataPanelWrapper component={xMeasure}>
           <span style={{ fontSize: axisLabelFontSize }}>{xAxisLabel}</span>

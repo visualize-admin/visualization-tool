@@ -115,7 +115,7 @@ export const AxisWidthBand = () => {
         y={margins.top + chartHeight + xAxisTitleOffset + 8}
         width={chartWidth}
         height={bottomAxisLabelSize.height}
-        style={{ display: "flex", textAlign: "right" }}
+        style={{ display: "flex" }}
       >
         <OpenMetadataPanelWrapper component={xDimension}>
           <span style={{ fontSize: axisLabelFontSize }}>{xAxisLabel}</span>
