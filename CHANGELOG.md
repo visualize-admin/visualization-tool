@@ -13,6 +13,7 @@ You can also check the
 
 - Features
   - Added an option to show all values in column charts
+  - X axis titles are now always displayed
 
 # [5.3.1] - 2025-03-04
 

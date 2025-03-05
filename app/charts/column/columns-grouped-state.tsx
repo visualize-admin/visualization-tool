@@ -23,8 +23,9 @@ import {
   PADDING_WITHIN,
 } from "@/charts/column/constants";
 import {
+  AxisLabelSizeVariables,
   getChartWidth,
-  useAxisLabelHeightOffset,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -69,6 +70,8 @@ export type GroupedColumnsState = CommonChartState &
     getColorLabel: (segment: string) => string;
     grouped: [string, Observation[]][];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useColumnsGroupedState = (
@@ -93,6 +96,8 @@ const useColumnsGroupedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
   } = variables;
   const {
     chartData,
@@ -345,21 +350,26 @@ const useColumnsGroupedState = (
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
     bandDomain: xTimeRangeDomainLabels.every((d) => d === undefined)
       ? xScale.domain()
       : xTimeRangeDomainLabels,
   });
   const right = 40;
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: yMeasure.label,
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,
   });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
     right,
     bottom,
     left,
@@ -368,7 +378,7 @@ const useColumnsGroupedState = (
   const bounds = useChartBounds({ width, chartWidth, height, margins });
   const { chartHeight } = bounds;
 
-  // Adjust of scales based on chart dimensions
+  // Adjust scales based on chart dimensions
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
   xScaleIn.range([0, xScale.bandwidth()]);
@@ -447,6 +457,8 @@ const useColumnsGroupedState = (
     getColorLabel: getSegmentLabel,
     grouped,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
     ...variables,
   };
 };

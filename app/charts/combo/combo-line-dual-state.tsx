@@ -13,10 +13,11 @@ import {
   useDualAxisMargins,
   useYScales,
 } from "@/charts/combo/combo-state";
-import { TITLE_V_PADDING } from "@/charts/combo/shared";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import {
+  AxisLabelSizeVariables,
   getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -32,7 +33,7 @@ import {
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import { getTickNumber } from "@/charts/shared/ticks";
-import { TICK_FONT_SIZE, useChartTheme } from "@/charts/shared/use-chart-theme";
+import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { ComboLineDualConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
@@ -58,6 +59,8 @@ export type ComboLineDualState = CommonChartState &
     chartWideData: ArrayLike<Observation>;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
     maxRightTickWidth: number;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useComboLineDualState = (
@@ -66,7 +69,7 @@ const useComboLineDualState = (
   data: ChartStateData
 ): ComboLineDualState => {
   const { chartConfig } = chartProps;
-  const { xDimension, getX, getXAsString } = variables;
+  const { xDimension, getX, getXAsString, xAxisLabel } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const xKey = fields.x.componentId;
@@ -117,6 +120,7 @@ const useComboLineDualState = (
 
   // Dimensions
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingLeftYScale,
     width,
     height,
@@ -138,6 +142,24 @@ const useComboLineDualState = (
     maxRightTickWidth,
     leftAxisTitle: variables.y.left.label,
     rightAxisTitle: variables.y.right.label,
+  });
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: variables.y.left.label,
+    width,
+    marginLeft: margins.left,
+    marginRight: margins.right,
+  });
+  const rightAxisLabelSize = useAxisLabelSizeVariables({
+    label: variables.y.right.label,
+    width,
+    marginLeft: margins.left,
+    marginRight: margins.right,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
+    marginLeft: margins.left,
+    marginRight: margins.right,
   });
   const chartWidth = getChartWidth({
     width,
@@ -220,6 +242,12 @@ const useComboLineDualState = (
     getColorLabel: (label) => label,
     chartWideData,
     getAnnotationInfo,
+    leftAxisLabelSize: {
+      width: Math.max(leftAxisLabelSize.width, rightAxisLabelSize.width),
+      height: Math.max(leftAxisLabelSize.height, rightAxisLabelSize.height),
+      offset: Math.max(leftAxisLabelSize.offset, rightAxisLabelSize.offset),
+    },
+    bottomAxisLabelSize,
     ...variables,
   };
 };
@@ -231,22 +259,6 @@ const ComboLineDualChartProvider = (
   const variables = useComboLineDualStateVariables(chartProps);
   const data = useComboLineDualStateData(chartProps, variables);
   const state = useComboLineDualState(chartProps, variables, data);
-  const { bounds, y } = state;
-
-  const { axisLabelFontSize } = useChartTheme();
-  const axisTitle = y["left"].label;
-  const axisTitleWidth =
-    getTextWidth(axisTitle, { fontSize: axisLabelFontSize }) + TICK_PADDING;
-  const otherAxisTitle = y["right"].label;
-  const otherAxisTitleWidth =
-    getTextWidth(otherAxisTitle, { fontSize: axisLabelFontSize }) +
-    TICK_PADDING;
-  const overLappingTitles =
-    axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
-
-  if (overLappingTitles) {
-    bounds.height += axisLabelFontSize + TITLE_V_PADDING;
-  }
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>

@@ -1,5 +1,5 @@
 import { max } from "d3-array";
-import { ScaleLinear } from "d3-scale";
+import { ScaleBand, ScaleLinear } from "d3-scale";
 import { useMemo } from "react";
 
 import {
@@ -19,6 +19,7 @@ import {
   isLayoutingFreeCanvas,
   useConfiguratorState,
 } from "@/configurator";
+import { TimeUnit } from "@/graphql/resolver-types";
 import { getTextWidth } from "@/utils/get-text-width";
 
 type ComputeChartPaddingProps = {
@@ -27,7 +28,6 @@ type ComputeChartPaddingProps = {
   width: number;
   height: number;
   interactiveFiltersConfig: ChartConfig["interactiveFiltersConfig"];
-  animationPresent?: boolean;
   formatNumber: (n: number) => string;
   bandDomain?: string[];
   normalize?: boolean;
@@ -35,24 +35,19 @@ type ComputeChartPaddingProps = {
   isFlipped?: boolean;
 };
 
-const computeChartPadding = (
-  props: ComputeChartPaddingProps & {
-    dashboardFilters: DashboardFiltersConfig | undefined;
-  }
-) => {
-  const {
-    xLabelPresent,
-    yScale,
-    height,
-    interactiveFiltersConfig,
-    animationPresent,
-    formatNumber,
-    bandDomain,
-    normalize,
-    dashboardFilters,
-    isFlipped,
-  } = props;
-
+const computeChartPadding = ({
+  xLabelPresent,
+  yScale,
+  height,
+  interactiveFiltersConfig,
+  formatNumber,
+  bandDomain,
+  normalize,
+  dashboardFilters,
+  isFlipped,
+}: ComputeChartPaddingProps & {
+  dashboardFilters: DashboardFiltersConfig | undefined;
+}) => {
   // Fake ticks to compute maximum tick length as
   // we need to take into account n between [0, 1] where numbers
   // with decimals have greater text length than the extremes.
@@ -70,14 +65,13 @@ const computeChartPadding = (
     minLeftTickWidth
   );
 
-  let bottom =
-    (!dashboardFilters?.timeRange.active &&
-      !!interactiveFiltersConfig?.timeRange.active) ||
-    animationPresent
-      ? BRUSH_BOTTOM_SPACE
-      : isFlipped
-        ? 15 // Eyeballed value
-        : 48 + (xLabelPresent ? 20 : 0);
+  const interactiveBottomElement =
+    !dashboardFilters?.timeRange.active &&
+    !!interactiveFiltersConfig?.timeRange.active;
+
+  let bottom = isFlipped
+    ? 15 // Eyeballed value
+    : 48;
 
   if (bandDomain?.length) {
     bottom +=
@@ -85,7 +79,21 @@ const computeChartPadding = (
       70;
   }
 
-  return isFlipped ? { bottom: left, left: bottom } : { left, bottom };
+  return isFlipped
+    ? {
+        bottom:
+          left +
+          (xLabelPresent ? 20 : 0) +
+          (interactiveBottomElement ? BRUSH_BOTTOM_SPACE : 0),
+        left: bottom,
+      }
+    : {
+        left,
+        bottom:
+          bottom +
+          (xLabelPresent ? 20 : 0) +
+          (interactiveBottomElement ? BRUSH_BOTTOM_SPACE : 0),
+      };
 };
 
 export const useChartPadding = (props: ComputeChartPaddingProps) => {
@@ -95,7 +103,6 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent,
     formatNumber,
     bandDomain,
     normalize,
@@ -109,7 +116,6 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
       width,
       height,
       interactiveFiltersConfig,
-      animationPresent,
       formatNumber,
       bandDomain,
       normalize,
@@ -122,7 +128,6 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent,
     formatNumber,
     bandDomain,
     normalize,
@@ -208,9 +213,15 @@ export const useChartBounds = ({
 
 const LINE_HEIGHT = 1.25;
 
-export const useAxisLabelHeightOffset = ({
+export type AxisLabelSizeVariables = {
+  width: number;
+  height: number;
+  offset: number;
+};
+
+export const useAxisLabelSizeVariables = ({
   label,
-  width,
+  width: _width,
   marginLeft,
   marginRight,
 }: {
@@ -218,14 +229,68 @@ export const useAxisLabelHeightOffset = ({
   width: number;
   marginLeft: number;
   marginRight: number;
-}) => {
+}): AxisLabelSizeVariables => {
   const { axisLabelFontSize: fontSize } = useChartTheme();
-  const labelWidth = getTextWidth(label, { fontSize });
-  const lines = Math.ceil(labelWidth / (width - marginLeft - marginRight));
+  const width = getTextWidth(label, { fontSize });
+  const lines = Math.ceil(width / (_width - marginLeft - marginRight));
 
   return {
+    width,
     height: fontSize * LINE_HEIGHT * lines,
     offset: fontSize * LINE_HEIGHT * (lines - 1),
-    labelWidth,
   };
+};
+
+const AXIS_TITLE_PADDING = 20;
+
+export const useXAxisTitleOffset = (
+  xScale?: ScaleBand<string>,
+  getXLabel?: (d: string) => string,
+  xTimeUnit?: TimeUnit
+) => {
+  const { axisLabelFontSize } = useChartTheme();
+
+  return useMemo(() => {
+    return (
+      (xScale && getXLabel
+        ? getLongestXLabel({
+            xScale,
+            getXLabel,
+            xTimeUnit,
+            fontSize: axisLabelFontSize,
+          })
+        : axisLabelFontSize * LINE_HEIGHT) + AXIS_TITLE_PADDING
+    );
+  }, [axisLabelFontSize, xScale, getXLabel, xTimeUnit]);
+};
+
+const getLongestXLabel = ({
+  xScale,
+  getXLabel,
+  xTimeUnit,
+  formatDate,
+  fontSize,
+}: {
+  xScale: ScaleBand<string>;
+  getXLabel: (d: string) => string;
+  xTimeUnit?: string;
+  formatDate?: (d: string, timeUnit: string) => string;
+  fontSize: number;
+}) => {
+  const domain = xScale.domain();
+  const formattedLabels = domain.map((d) => {
+    if (xTimeUnit && formatDate) {
+      return formatDate(d, xTimeUnit);
+    } else {
+      return getXLabel(d);
+    }
+  });
+
+  const labelWidths = formattedLabels.map((text) =>
+    getTextWidth(text, { fontSize })
+  );
+
+  const longestLabel = Math.max(...labelWidths);
+
+  return longestLabel;
 };

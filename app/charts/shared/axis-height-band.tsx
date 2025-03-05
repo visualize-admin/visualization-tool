@@ -11,12 +11,18 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useTimeFormatUnit } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
-import { getTextWidth } from "@/utils/get-text-width";
 
 export const AxisHeightBand = () => {
   const ref = useRef<SVGGElement>(null);
-  const state = useChartState() as BarsState;
-  const { xScale, getYLabel, yTimeUnit, yScale, bounds, yDimension } = state;
+  const {
+    xScale,
+    getYLabel,
+    yTimeUnit,
+    yScale,
+    bounds,
+    yDimension,
+    leftAxisLabelSize,
+  } = useChartState() as BarsState;
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDate = useTimeFormatUnit();
@@ -29,13 +35,8 @@ export const AxisHeightBand = () => {
     fontFamily,
     domainColor,
   } = useChartTheme();
-
-  const fontSize =
-    yScale.bandwidth() > labelFontSize ? labelFontSize : yScale.bandwidth();
-
-  const labelLength = getTextWidth(yDimension.label, {
-    fontSize: Math.max(labelFontSize, fontSize),
-  });
+  const bandwidth = yScale.bandwidth();
+  const fontSize = bandwidth > labelFontSize ? labelFontSize : bandwidth;
 
   useEffect(() => {
     if (ref.current) {
@@ -95,9 +96,14 @@ export const AxisHeightBand = () => {
   return (
     <>
       <g ref={ref} />
-      <foreignObject x={0} y={25} width={labelLength} height={20}>
+      <foreignObject
+        y={30}
+        width={leftAxisLabelSize.width}
+        height={leftAxisLabelSize.height}
+        style={{ display: "flex" }}
+      >
         <OpenMetadataPanelWrapper>
-          <span style={{ fontSize: `${axisLabelFontSize}px` }}>
+          <span style={{ fontSize: axisLabelFontSize }}>
             {yDimension.label}
           </span>
         </OpenMetadataPanelWrapper>

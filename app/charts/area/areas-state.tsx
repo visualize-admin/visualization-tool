@@ -23,8 +23,9 @@ import {
   useAreasStateVariables,
 } from "@/charts/area/areas-state-props";
 import {
+  AxisLabelSizeVariables,
   getChartWidth,
-  useAxisLabelHeightOffset,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -79,6 +80,8 @@ export type AreasState = CommonChartState &
     chartWideData: ArrayLike<Observation>;
     series: $FixMe[];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useAreasState = (
@@ -98,6 +101,8 @@ const useAreasState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
   } = variables;
   const getIdentityY = useGetIdentityY(yMeasure.id);
   const {
@@ -335,6 +340,7 @@ const useAreasState = (
 
   /** Dimensions */
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
     height,
@@ -343,14 +349,20 @@ const useAreasState = (
     normalize,
   });
   const right = 40;
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: yMeasure.label,
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,
   });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
     right,
     bottom,
     left,
@@ -457,6 +469,8 @@ const useAreasState = (
     chartWideData,
     series,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
     ...variables,
   };
 };
