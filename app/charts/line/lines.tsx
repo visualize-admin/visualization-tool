@@ -11,7 +11,7 @@ import {
 } from "@/charts/shared/rendering-utils";
 import { useRenderTemporalValueLabelsData } from "@/charts/shared/show-values-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
-import { LineConfig } from "@/config-types";
+import { LineConfig, LineFields } from "@/config-types";
 import { Observation } from "@/domain/data";
 import { useTransitionStore } from "@/stores/transition";
 
@@ -91,7 +91,7 @@ export const ErrorWhiskers = () => {
 export const Lines = ({
   dotSize,
 }: {
-  dotSize?: LineConfig["fields"]["y"]["showDotsSize"];
+  dotSize?: LineFields["y"]["showDotsSize"];
 }) => {
   const { getX, xScale, getY, yScale, grouped, colors, bounds } =
     useChartState() as LinesState;
@@ -174,11 +174,7 @@ const getPointRadius = (dotSize: LineConfig["fields"]["y"]["showDotsSize"]) => {
   }
 };
 
-const Points = ({
-  dotSize,
-}: {
-  dotSize: LineConfig["fields"]["y"]["showDotsSize"];
-}) => {
+const Points = ({ dotSize }: { dotSize: LineFields["y"]["showDotsSize"] }) => {
   const { getX, xScale, getY, yScale, bounds, chartData, getSegment, colors } =
     useChartState() as LinesState;
   const { chartHeight, width } = bounds;
