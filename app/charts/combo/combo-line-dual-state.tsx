@@ -13,7 +13,6 @@ import {
   useDualAxisMargins,
   useYScales,
 } from "@/charts/combo/combo-state";
-import { TITLE_V_PADDING } from "@/charts/combo/shared";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import {
   getChartWidth,
@@ -32,7 +31,7 @@ import {
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import { getTickNumber } from "@/charts/shared/ticks";
-import { TICK_FONT_SIZE, useChartTheme } from "@/charts/shared/use-chart-theme";
+import { TICK_FONT_SIZE } from "@/charts/shared/use-chart-theme";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { ComboLineDualConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
@@ -232,22 +231,6 @@ const ComboLineDualChartProvider = (
   const variables = useComboLineDualStateVariables(chartProps);
   const data = useComboLineDualStateData(chartProps, variables);
   const state = useComboLineDualState(chartProps, variables, data);
-  const { bounds, y } = state;
-
-  const { axisLabelFontSize } = useChartTheme();
-  const axisTitle = y["left"].label;
-  const axisTitleWidth =
-    getTextWidth(axisTitle, { fontSize: axisLabelFontSize }) + TICK_PADDING;
-  const otherAxisTitle = y["right"].label;
-  const otherAxisTitleWidth =
-    getTextWidth(otherAxisTitle, { fontSize: axisLabelFontSize }) +
-    TICK_PADDING;
-  const overLappingTitles =
-    axisTitleWidth + otherAxisTitleWidth > bounds.chartWidth;
-
-  if (overLappingTitles) {
-    bounds.height += axisLabelFontSize + TITLE_V_PADDING;
-  }
 
   return (
     <ChartContext.Provider value={state}>{children}</ChartContext.Provider>
