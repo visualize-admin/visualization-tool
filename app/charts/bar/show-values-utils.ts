@@ -7,6 +7,7 @@ import { truthy } from "@/domain/types";
 
 export const useBarValueLabelsData = () => {
   const {
+    bounds: { width, height },
     showValues,
     renderEveryNthValue,
     chartData,
@@ -19,7 +20,7 @@ export const useBarValueLabelsData = () => {
   } = useChartState() as BarsState;
   const bandwidth = yScale.bandwidth();
   const valueLabelsData: RenderValueLabelDatum[] = useMemo(() => {
-    if (!showValues) {
+    if (!showValues || !width || !height) {
       return [];
     }
 
@@ -45,13 +46,15 @@ export const useBarValueLabelsData = () => {
       .filter(truthy);
   }, [
     showValues,
+    width,
+    height,
     chartData,
     renderEveryNthValue,
     getRenderingKey,
-    getY,
-    xScale,
     getX,
+    xScale,
     yScale,
+    getY,
     bandwidth,
     valueLabelFormatter,
   ]);

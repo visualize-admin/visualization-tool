@@ -7,6 +7,7 @@ import { truthy } from "@/domain/types";
 
 export const useColumnValueLabelsData = () => {
   const {
+    bounds: { width, height },
     showValues,
     renderEveryNthValue,
     chartData,
@@ -19,7 +20,7 @@ export const useColumnValueLabelsData = () => {
   } = useChartState() as ColumnsState;
   const bandwidth = xScale.bandwidth();
   const valueLabelsData: RenderValueLabelDatum[] = useMemo(() => {
-    if (!showValues) {
+    if (!showValues || !width || !height) {
       return [];
     }
 
@@ -45,6 +46,8 @@ export const useColumnValueLabelsData = () => {
       .filter(truthy);
   }, [
     showValues,
+    width,
+    height,
     chartData,
     renderEveryNthValue,
     getRenderingKey,
