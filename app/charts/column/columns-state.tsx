@@ -18,6 +18,10 @@ import {
 } from "@/charts/column/columns-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
+  ShowColumnValueLabelsVariables,
+  useShowColumnValueLabelsVariables,
+} from "@/charts/column/show-values-utils";
+import {
   AxisLabelSizeVariables,
   getChartWidth,
   useAxisLabelSizeVariables,
@@ -29,8 +33,6 @@ import {
   ChartStateData,
   CommonChartState,
   InteractiveXTimeRangeState,
-  ShowValuesVariables,
-  useShowValuesVariables,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import {
@@ -60,7 +62,7 @@ import { ChartProps } from "../shared/ChartProps";
 export type ColumnsState = CommonChartState &
   ColumnsStateVariables &
   InteractiveXTimeRangeState &
-  Omit<ShowValuesVariables, "yOffset"> & {
+  Omit<ShowColumnValueLabelsVariables, "yOffset"> & {
     chartType: "column";
     xScale: ScaleBand<string>;
     xScaleInteraction: ScaleBand<string>;
@@ -248,7 +250,7 @@ const useColumnsState = (
     marginRight: right,
   });
   const { yOffset: yValueLabelsOffset, ...showValuesVariables } =
-    useShowValuesVariables(y, {
+    useShowColumnValueLabelsVariables(y, {
       chartData,
       dimensions,
       measures,

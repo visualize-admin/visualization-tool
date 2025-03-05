@@ -82,7 +82,10 @@ type BaseAdjusters<NewChartConfigType extends ChartConfig> = {
 type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<ColumnConfig, string> };
-    y: { componentId: FieldAdjuster<ColumnConfig, string> };
+    y: {
+      componentId: FieldAdjuster<ColumnConfig, string>;
+      showValues: FieldAdjuster<ColumnConfig, boolean>;
+    };
     segment: FieldAdjuster<
       ColumnConfig,
       | BarSegmentField
@@ -116,7 +119,10 @@ type BarAdjusters = BaseAdjusters<BarConfig> & {
 type LineAdjusters = BaseAdjusters<LineConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<LineConfig, string> };
-    y: { componentId: FieldAdjuster<LineConfig, string> };
+    y: {
+      componentId: FieldAdjuster<LineConfig, string>;
+      showValues: FieldAdjuster<LineConfig, boolean>;
+    };
     segment: FieldAdjuster<
       LineConfig,
       | ColumnSegmentField
@@ -132,7 +138,10 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
 type AreaAdjusters = BaseAdjusters<AreaConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<AreaConfig, string> };
-    y: { componentId: FieldAdjuster<AreaConfig, string> };
+    y: {
+      componentId: FieldAdjuster<AreaConfig, string>;
+      showValues: FieldAdjuster<AreaConfig, boolean>;
+    };
     segment: FieldAdjuster<
       AreaConfig,
       | ColumnSegmentField

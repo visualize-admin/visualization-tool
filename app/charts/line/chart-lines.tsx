@@ -1,7 +1,7 @@
 import { memo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
-import { ErrorWhiskers, Lines, Points } from "@/charts/line/lines";
+import { ErrorWhiskers, Lines } from "@/charts/line/lines";
 import { LineChart } from "@/charts/line/lines-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
@@ -44,12 +44,15 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
       <ChartContainer>
         <ChartSvg>
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
-          <Lines />
-          {"showDots" in chartConfig.fields.y &&
-          "showDotsSize" in chartConfig.fields.y &&
-          chartConfig.fields.y.showDots ? (
-            <Points dotSize={chartConfig.fields.y.showDotsSize} />
-          ) : null}
+          <Lines
+            dotSize={
+              "showDots" in chartConfig.fields.y &&
+              "showDotsSize" in chartConfig.fields.y &&
+              chartConfig.fields.y.showDots
+                ? chartConfig.fields.y.showDotsSize
+                : undefined
+            }
+          />
           <ErrorWhiskers />
           <VerticalLimits {...limits} />
           <InteractionHorizontal />

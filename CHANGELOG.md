@@ -12,7 +12,7 @@ You can also check the
 # Unreleased
 
 - Features
-  - Added an option to show all values in column charts
+  - Added an option to show all values in area, column and line charts
   - X axis titles are now always displayed
 
 # [5.3.1] - 2025-03-04

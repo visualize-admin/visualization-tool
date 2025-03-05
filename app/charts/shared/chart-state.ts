@@ -27,8 +27,6 @@ import {
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import { DimensionsById, MeasuresById } from "@/charts/shared/ChartProps";
-import useChartFormatters from "@/charts/shared/use-chart-formatters";
-import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { Bounds } from "@/charts/shared/use-size";
 import { TableChartState } from "@/charts/table/table-state";
 import {
@@ -66,14 +64,12 @@ import {
   TemporalEntityDimension,
 } from "@/domain/data";
 import { Has } from "@/domain/types";
-import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { RelatedDimensionType } from "@/graphql/query-hooks";
 import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
 import {
   useChartInteractiveFilters,
   useDashboardInteractiveFilters,
 } from "@/stores/interactive-filters";
-import { getTextWidth } from "@/utils/get-text-width";
 
 export type ChartState =
   | AreasState
@@ -431,95 +427,6 @@ export const useNumericalYVariables = (
     getY,
     yAxisLabel,
     getMinY,
-  };
-};
-
-export type ShowValuesVariables = {
-  yOffset: number;
-  showValues: boolean;
-  rotateValues: boolean;
-  renderEveryNthValue: number;
-  valueLabelFormatter: (value: number | null) => string;
-};
-
-export const useShowValuesVariables = (
-  y: ColumnFields["y"],
-  {
-    chartData,
-    dimensions,
-    measures,
-    getY,
-    bandwidth,
-  }: {
-    chartData: Observation[];
-    dimensions: Dimension[];
-    measures: Measure[];
-    getY: NumericalValueGetter;
-    bandwidth: number;
-  }
-): ShowValuesVariables => {
-  const { showValues = false } = y;
-  const yMeasure = measures.find((d) => d.id === y.componentId);
-
-  if (!yMeasure) {
-    throw Error(
-      `No dimension <${y.componentId}> in cube! (useNumericalYVariables)`
-    );
-  }
-
-  const { labelFontSize: fontSize } = useChartTheme();
-  const renderEveryNthValue =
-    bandwidth > fontSize ? 1 : Math.ceil(fontSize / bandwidth);
-
-  const formatNumber = useFormatNumber({ decimals: "auto" });
-  const formatters = useChartFormatters({ dimensions, measures });
-  const valueFormatter = formatters[yMeasure.id] ?? formatNumber;
-  const valueLabelFormatter = useCallback(
-    (value: number | null) => {
-      return formatNumberWithUnit(value, valueFormatter);
-    },
-    [valueFormatter]
-  );
-
-  const { yOffset, rotateValues } = useMemo(() => {
-    let yOffset = 0;
-    let rotateValues = false;
-
-    if (showValues) {
-      let maxWidth = 0;
-
-      chartData.forEach((d) => {
-        const formattedValue = valueLabelFormatter(getY(d));
-        const width = getTextWidth(formattedValue, { fontSize });
-
-        if (width - 2 > bandwidth) {
-          rotateValues = true;
-        }
-
-        if (width > maxWidth) {
-          maxWidth = width;
-        }
-      });
-
-      if (rotateValues) {
-        yOffset = maxWidth;
-      } else {
-        yOffset = fontSize;
-      }
-    }
-
-    return {
-      yOffset,
-      rotateValues,
-    };
-  }, [showValues, chartData, valueLabelFormatter, getY, fontSize, bandwidth]);
-
-  return {
-    yOffset,
-    showValues,
-    rotateValues,
-    renderEveryNthValue,
-    valueLabelFormatter,
   };
 };
 

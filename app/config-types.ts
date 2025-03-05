@@ -379,6 +379,7 @@ const LineFields = t.intersection([
     x: GenericField,
     y: t.intersection([
       GenericField,
+      ShowValuesFieldExtension,
       UncertaintyFieldExtension,
       t.partial({
         showDots: t.boolean,
@@ -429,6 +430,7 @@ const AreaFields = t.intersection([
     x: GenericField,
     y: t.intersection([
       GenericField,
+      ShowValuesFieldExtension,
       t.partial({ imputationType: ImputationType }),
     ]),
     color: t.union([SegmentColorField, SingleColorField]),

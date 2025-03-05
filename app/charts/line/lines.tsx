@@ -3,12 +3,15 @@ import { Fragment, memo, useEffect, useMemo, useRef } from "react";
 
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
+import { renderValueLabels } from "@/charts/shared/render-value-labels";
 import {
   renderContainer,
   RenderVerticalWhiskerDatum,
   renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
-import { LineConfig } from "@/config-types";
+import { useRenderTemporalValueLabelsData } from "@/charts/shared/show-values-utils";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { LineConfig, LineFields } from "@/config-types";
 import { Observation } from "@/domain/data";
 import { useTransitionStore } from "@/stores/transition";
 
@@ -85,9 +88,16 @@ export const ErrorWhiskers = () => {
   return <g ref={ref} />;
 };
 
-export const Lines = () => {
+export const Lines = ({
+  dotSize,
+}: {
+  dotSize?: LineFields["y"]["showDotsSize"];
+}) => {
   const { getX, xScale, getY, yScale, grouped, colors, bounds } =
     useChartState() as LinesState;
+  const { margins } = bounds;
+  const { labelFontSize, fontFamily } = useChartTheme();
+  const valueLabelsContainerRef = useRef<SVGGElement>(null);
 
   const lineGenerator = line<Observation>()
     .defined((d) => {
@@ -97,19 +107,43 @@ export const Lines = () => {
     .x((d) => xScale(getX(d)))
     .y((d) => yScale(getY(d) as number));
 
+  const valueLabelsData = useRenderTemporalValueLabelsData();
+
+  useEffect(() => {
+    if (valueLabelsContainerRef.current) {
+      renderContainer(valueLabelsContainerRef.current, {
+        id: "lines-value-labels",
+        transform: "translate(0, 0)",
+        transition: {
+          enable: false,
+          duration: 0,
+        },
+        render: (g, opts) =>
+          renderValueLabels(g, valueLabelsData, {
+            ...opts,
+            rotate: false,
+            fontFamily,
+            fontSize: labelFontSize,
+          }),
+      });
+    }
+  }, [margins.left, margins.top, valueLabelsData, labelFontSize, fontFamily]);
+
   return (
-    <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>
-      {Array.from(grouped).map((observation, index) => {
+    <g transform={`translate(${margins.left} ${margins.top})`}>
+      {Array.from(grouped).map((observation, i) => {
         return (
           <Fragment key={observation[0]}>
             <Line
-              key={index}
+              key={i}
               path={lineGenerator(observation[1]) as string}
               color={colors(observation[0])}
             />
           </Fragment>
         );
       })}
+      <Points dotSize={dotSize} />
+      <g ref={valueLabelsContainerRef} />
     </g>
   );
 };
@@ -140,14 +174,10 @@ const getPointRadius = (dotSize: LineConfig["fields"]["y"]["showDotsSize"]) => {
   }
 };
 
-export const Points = ({
-  dotSize,
-}: {
-  dotSize: LineConfig["fields"]["y"]["showDotsSize"];
-}) => {
+const Points = ({ dotSize }: { dotSize: LineFields["y"]["showDotsSize"] }) => {
   const { getX, xScale, getY, yScale, bounds, chartData, getSegment, colors } =
     useChartState() as LinesState;
-  const { margins, chartHeight, width } = bounds;
+  const { chartHeight, width } = bounds;
   const dots = useMemo(() => {
     return chartData.map((d) => {
       const x = xScale(getX(d));
@@ -179,7 +209,7 @@ export const Points = ({
   const r = getPointRadius(dotSize);
 
   return (
-    <g transform={`translate(${margins.left} ${margins.top})`}>
+    <g>
       {dots.map(({ x, y, fill }, i) => (
         <circle key={i} cx={x} cy={y} r={r} fill={fill} />
       ))}
