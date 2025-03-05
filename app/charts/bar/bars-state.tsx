@@ -22,7 +22,9 @@ import {
   PADDING_OUTER,
 } from "@/charts/bar/constants";
 import {
+  AxisLabelSizeVariables,
   getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -73,6 +75,8 @@ export type BarsState = CommonChartState &
     getAnnotationInfo: (d: Observation) => TooltipInfo;
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useBarsState = (
@@ -94,6 +98,8 @@ const useBarsState = (
     getXErrorRange,
     getFormattedXUncertainty,
     getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -212,7 +218,6 @@ const useBarsState = (
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
     bandDomain: yTimeRangeDomainLabels.every((d) => d === undefined)
       ? yScale.domain()
@@ -220,8 +225,20 @@ const useBarsState = (
     isFlipped: true,
   });
   const right = 40;
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
   const margins = {
-    top: DEFAULT_MARGIN_TOP,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
     right,
     bottom: bottom + 45,
     left,
@@ -322,6 +339,8 @@ const useBarsState = (
     getAnnotationInfo,
     getColorLabel: getSegmentLabel,
     colors,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
     ...showValuesVariables,
     ...variables,
   };
