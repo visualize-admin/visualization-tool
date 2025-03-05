@@ -13,6 +13,7 @@ You can also check the
 
 - Features
   - Added an option to show all values in column charts
+  - X axis titles are now always displayed
 
 # [5.3.1] - 2025-03-04
 
@@ -50,7 +51,6 @@ You can also check the
 - Features
   - Added a way to display limit values and targets coming from the data with
     compatible chart types
-  - Added X Axis Titles to Column, Lines, Area and all combo charts 
 - Fixes
   - Color picker's HEX code input now stays up-to-date with the selected color
   - Markdown links now open in a new tab
