@@ -2,15 +2,123 @@ import { useCallback, useMemo } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
-import { useChartState } from "@/charts/shared/chart-state";
+import {
+  NumericalValueGetter,
+  useChartState,
+} from "@/charts/shared/chart-state";
 import { RenderValueLabelDatum } from "@/charts/shared/render-value-labels";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
-import { AreaFields, LineFields } from "@/config-types";
-import { Dimension, Measure } from "@/domain/data";
+import {
+  AreaFields,
+  BarFields,
+  ColumnFields,
+  LineFields,
+} from "@/config-types";
+import { Dimension, Measure, Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getTextWidth } from "@/utils/get-text-width";
+
+export type ShowBandValueLabelsVariables = {
+  offset: number;
+  showValues: boolean;
+  rotateValues: boolean;
+  renderEveryNthValue: number;
+  valueLabelFormatter: (value: number | null) => string;
+};
+
+export const useShowBandValueLabelsVariables = (
+  measureField: BarFields["x"] | ColumnFields["y"],
+  {
+    chartData,
+    dimensions,
+    measures,
+    getValue,
+    bandwidth,
+  }: {
+    chartData: Observation[];
+    dimensions: Dimension[];
+    measures: Measure[];
+    getValue: NumericalValueGetter;
+    bandwidth?: number;
+  }
+): ShowBandValueLabelsVariables => {
+  const { showValues = false } = measureField;
+  const measure = measures.find((d) => d.id === measureField.componentId);
+
+  if (!measure) {
+    throw Error(
+      `No dimension <${measureField.componentId}> in cube! (useShowBandValueLabelsVariables)`
+    );
+  }
+
+  const disableRotation = !bandwidth;
+  const { labelFontSize: fontSize } = useChartTheme();
+  const renderEveryNthValue =
+    disableRotation || bandwidth > fontSize
+      ? 1
+      : Math.ceil(fontSize / bandwidth);
+
+  const formatNumber = useFormatNumber({ decimals: "auto" });
+  const formatters = useChartFormatters({ dimensions, measures });
+  const valueFormatter = formatters[measure.id] ?? formatNumber;
+  const valueLabelFormatter = useCallback(
+    (value: number | null) => {
+      return formatNumberWithUnit(value, valueFormatter);
+    },
+    [valueFormatter]
+  );
+
+  const { offset, rotateValues } = useMemo(() => {
+    let offset = 0;
+    let rotateValues = false;
+
+    if (showValues) {
+      let maxWidth = 0;
+
+      chartData.forEach((d) => {
+        const formattedValue = valueLabelFormatter(getValue(d));
+        const width = getTextWidth(formattedValue, { fontSize });
+
+        if (!disableRotation && width - 2 > bandwidth) {
+          rotateValues = true;
+        }
+
+        if (width > maxWidth) {
+          maxWidth = width;
+        }
+      });
+
+      if (disableRotation || rotateValues) {
+        offset = maxWidth;
+      } else {
+        offset = fontSize;
+      }
+    }
+
+    return {
+      offset,
+      rotateValues,
+    };
+  }, [
+    showValues,
+    chartData,
+    disableRotation,
+    valueLabelFormatter,
+    getValue,
+    fontSize,
+    bandwidth,
+  ]);
+
+  return {
+    offset,
+    showValues,
+    rotateValues,
+    renderEveryNthValue,
+    valueLabelFormatter,
+  };
+};
 
 export type ShowTemporalValueLabelsVariables = {
   yOffset: number;

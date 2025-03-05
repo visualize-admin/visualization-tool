@@ -40,6 +40,10 @@ import {
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
+import {
+  ShowBandValueLabelsVariables,
+  useShowBandValueLabelsVariables,
+} from "@/charts/shared/show-values-utils";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -61,7 +65,8 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type BarsState = CommonChartState &
   BarsStateVariables &
-  InteractiveYTimeRangeState & {
+  InteractiveYTimeRangeState &
+  Omit<ShowBandValueLabelsVariables, "offset"> & {
     chartType: "bar";
     xScale: ScaleLinear<number, number>;
     yScaleInteraction: ScaleBand<string>;
@@ -79,7 +84,7 @@ const useBarsState = (
   variables: BarsStateVariables,
   data: ChartStateData
 ): BarsState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     yDimension,
     getX,
@@ -98,6 +103,7 @@ const useBarsState = (
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { x } = fields;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -239,6 +245,13 @@ const useBarsState = (
   };
 
   const barCount = yScale.domain().length;
+  const { offset: xValueLabelsOffset, ...showValuesVariables } =
+    useShowBandValueLabelsVariables(x, {
+      chartData,
+      dimensions,
+      measures,
+      getValue: getX,
+    });
 
   const chartWidth = getChartWidth({ width, left, right });
   const bounds = useChartBounds({ width, chartWidth, height, margins });
@@ -250,7 +263,7 @@ const useBarsState = (
       ? barCount * MIN_BAR_HEIGHT
       : chartHeight;
 
-  xScale.range([0, chartWidth]);
+  xScale.range([0, chartWidth - xValueLabelsOffset]);
   yScaleInteraction.range([0, adjustedChartHeight]);
   yScaleTimeRange.range([0, adjustedChartHeight]);
   yScale.range([0, adjustedChartHeight]);
@@ -328,6 +341,7 @@ const useBarsState = (
     colors,
     leftAxisLabelSize,
     bottomAxisLabelSize,
+    ...showValuesVariables,
     ...variables,
   };
 };

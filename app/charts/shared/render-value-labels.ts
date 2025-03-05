@@ -17,12 +17,23 @@ export const renderValueLabels = (
   data: RenderValueLabelDatum[],
   options: RenderOptions & {
     rotate: boolean;
+    textAnchor?: "start" | "middle" | "end";
+    dx?: number;
+    dy?: number;
     fontSize: number;
     fontFamily: string;
   }
 ) => {
-  const { transition, rotate, fontFamily, fontSize } = options;
-  const textAnchor = getValueLabelTextAnchor(rotate);
+  const {
+    transition,
+    rotate,
+    textAnchor: _textAnchor,
+    dx = 0,
+    dy = -8,
+    fontFamily,
+    fontSize,
+  } = options;
+  const textAnchor = _textAnchor ?? getValueLabelTextAnchor(rotate);
 
   g.selectAll<SVGTextElement, RenderValueLabelDatum>("text")
     .data(data, (d) => d.key)
@@ -37,7 +48,12 @@ export const renderValueLabels = (
           .attr("stroke", "white")
           .attr("stroke-width", 3)
           .style("transform", (d) =>
-            getValueLabelTransform(d, { rotate, labelHeight: fontSize })
+            getValueLabelTransform(d, {
+              rotate,
+              labelHeight: fontSize,
+              dx,
+              dy,
+            })
           )
           .style("transform-origin", "0% 50%")
           .style("line-height", 1)
@@ -55,7 +71,12 @@ export const renderValueLabels = (
             g
               .attr("text-anchor", textAnchor)
               .style("transform", (d) =>
-                getValueLabelTransform(d, { rotate, labelHeight: fontSize })
+                getValueLabelTransform(d, {
+                  rotate,
+                  labelHeight: fontSize,
+                  dx,
+                  dy,
+                })
               )
               .style("opacity", 1)
               .text((d) => d.valueLabel),
@@ -71,13 +92,23 @@ export const renderValueLabels = (
 
 const getValueLabelTransform = (
   d: RenderValueLabelDatum,
-  { rotate, labelHeight }: { rotate: boolean; labelHeight: number }
+  {
+    rotate,
+    labelHeight,
+    dx,
+    dy,
+  }: {
+    rotate: boolean;
+    labelHeight: number;
+    dx: number;
+    dy: number;
+  }
 ) => {
   if (rotate) {
     return `translate(${d.x + labelHeight}px, ${d.y - labelHeight}px) rotate(-90deg)`;
   }
 
-  return `translate(${d.x}px, ${d.y - 8}px) rotate(0deg)`;
+  return `translate(${d.x + dx}px, ${d.y + dy}px) rotate(0deg)`;
 };
 
 const getValueLabelTextAnchor = (rotate: boolean) => {

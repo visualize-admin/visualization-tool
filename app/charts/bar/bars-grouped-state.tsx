@@ -371,7 +371,7 @@ const useBarsGroupedState = (
   const margins = {
     top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
     right,
-    bottom: bottom + 10,
+    bottom: bottom + 45,
     left,
   };
   const chartWidth = getChartWidth({ width, left, right });

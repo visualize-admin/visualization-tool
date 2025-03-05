@@ -101,7 +101,10 @@ type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
 
 type BarAdjusters = BaseAdjusters<BarConfig> & {
   fields: {
-    x: { componentId: FieldAdjuster<BarConfig, string> };
+    x: {
+      componentId: FieldAdjuster<BarConfig, string>;
+      showValues: FieldAdjuster<BarConfig, boolean>;
+    };
     y: { componentId: FieldAdjuster<BarConfig, string> };
     segment: FieldAdjuster<
       BarConfig,

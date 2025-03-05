@@ -95,7 +95,6 @@ export const Columns = () => {
     yScale,
     getRenderingKey,
     colors,
-    showValues,
     rotateValues,
   } = useChartState() as ColumnsState;
   const { margins } = bounds;
@@ -179,7 +178,6 @@ export const Columns = () => {
     columnsData,
     transitionDuration,
     y0,
-    showValues,
     valueLabelsData,
     labelFontSize,
     rotateValues,

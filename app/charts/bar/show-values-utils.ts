@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 
-import { ColumnsState } from "@/charts/column/columns-state";
+import { BarsState } from "@/charts/bar/bars-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { RenderValueLabelDatum } from "@/charts/shared/render-value-labels";
 import { truthy } from "@/domain/types";
 
-export const useColumnValueLabelsData = () => {
+export const useBarValueLabelsData = () => {
   const {
     bounds: { width, height },
     showValues,
@@ -17,8 +17,8 @@ export const useColumnValueLabelsData = () => {
     yScale,
     getY,
     valueLabelFormatter,
-  } = useChartState() as ColumnsState;
-  const bandwidth = xScale.bandwidth();
+  } = useChartState() as BarsState;
+  const bandwidth = yScale.bandwidth();
   const valueLabelsData: RenderValueLabelDatum[] = useMemo(() => {
     if (!showValues || !width || !height) {
       return [];
@@ -31,15 +31,15 @@ export const useColumnValueLabelsData = () => {
         }
 
         const key = getRenderingKey(d);
-        const valueRaw = getY(d);
-        const xScaled = xScale(getX(d)) as number;
+        const valueRaw = getX(d);
         const value = valueRaw === null || isNaN(valueRaw) ? 0 : valueRaw;
-        const yRender = yScale(Math.max(value, 0));
+        const xScaled = xScale(Math.max(value, 0));
+        const yRender = yScale(getY(d)) as number;
 
         return {
           key,
-          x: xScaled + bandwidth / 2,
-          y: yRender,
+          x: xScaled,
+          y: yRender + bandwidth / 2,
           valueLabel: valueLabelFormatter(value),
         };
       })
@@ -51,10 +51,10 @@ export const useColumnValueLabelsData = () => {
     chartData,
     renderEveryNthValue,
     getRenderingKey,
-    getY,
-    xScale,
     getX,
+    xScale,
     yScale,
+    getY,
     bandwidth,
     valueLabelFormatter,
   ]);

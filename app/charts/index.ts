@@ -1122,6 +1122,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
 
           return newChartConfig;
         },
+        showValues: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.x.showValues = oldValue;
+          });
+        },
       },
       y: {
         componentId: ({ oldValue, newChartConfig, dimensions }) => {
@@ -1976,6 +1981,7 @@ const chartConfigsPathOverrides: {
   column: {
     bar: {
       "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.x.showValues": { path: "fields.y.showValues" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
@@ -2009,14 +2015,17 @@ const chartConfigsPathOverrides: {
     column: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
+      "fields.y.showValues": { path: "fields.x.showValues" },
     },
     line: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
+      "fields.y.showValues": { path: "fields.x.showValues" },
     },
     area: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
+      "fields.y.showValues": { path: "fields.x.showValues" },
     },
     scatterplot: {
       "fields.x.componentId": { path: "fields.y.componentId" },
@@ -2055,6 +2064,7 @@ const chartConfigsPathOverrides: {
   line: {
     bar: {
       "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.x.showValues": { path: "fields.y.showValues" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
@@ -2086,6 +2096,7 @@ const chartConfigsPathOverrides: {
   area: {
     bar: {
       "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.x.showValues": { path: "fields.y.showValues" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
