@@ -259,7 +259,7 @@ export const useRenderTemporalValueLabelsData = () => {
   return valueLabelsData;
 };
 
-const getIsOverlapping = ({
+export const getIsOverlapping = ({
   previousArray,
   current,
   labelHeight,

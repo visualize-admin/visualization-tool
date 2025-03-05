@@ -3,8 +3,14 @@ import { useEffect, useMemo, useRef } from "react";
 
 import { PieState } from "@/charts/pie/pie-state";
 import { RenderDatum, renderPies } from "@/charts/pie/rendering-utils";
+import { useRenderPieValueLabelsData } from "@/charts/pie/show-values-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { renderContainer } from "@/charts/shared/rendering-utils";
+import { renderValueLabels } from "@/charts/shared/render-value-labels";
+import {
+  renderContainer,
+  RenderContainerOptions,
+} from "@/charts/shared/rendering-utils";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 import { useTransitionStore } from "@/stores/transition";
@@ -18,7 +24,9 @@ export const Pie = () => {
     getSegment,
     colors,
     getRenderingKey,
+    getY,
   } = useChartState() as PieState;
+  const { labelFontSize, fontFamily } = useChartTheme();
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const [, dispatch] = useInteraction();
@@ -36,14 +44,17 @@ export const Pie = () => {
     const arcs = getPieData(chartData);
 
     return arcs.map((arcDatum) => {
+      const y = getY(arcDatum.data);
+
       return {
         key: getRenderingKey(arcDatum.data),
+        value: y === null || isNaN(y) ? 0 : y,
         arcDatum,
         innerRadius,
         color: colors(getSegment(arcDatum.data)),
       };
     });
-  }, [getPieData, chartData, getRenderingKey, colors, getSegment]);
+  }, [getPieData, chartData, getY, getRenderingKey, colors, getSegment]);
 
   const arcGenerator = arc<$FixMe>()
     .innerRadius(innerRadius)
@@ -67,12 +78,28 @@ export const Pie = () => {
     });
   });
 
+  const valueLabelsData = useRenderPieValueLabelsData({
+    renderData,
+    outerRadius,
+  });
+
   useEffect(() => {
-    if (ref.current) {
-      renderContainer(ref.current, {
+    const g = ref.current;
+
+    if (g) {
+      const common: Pick<
+        RenderContainerOptions,
+        "id" | "transform" | "transition"
+      > = {
         id: "pies",
         transform: `translate(${xTranslate} ${yTranslate})`,
-        transition: { enable: enableTransition, duration: transitionDuration },
+        transition: {
+          enable: enableTransition,
+          duration: transitionDuration,
+        },
+      };
+      renderContainer(g, {
+        ...common,
         render: (g, opts) =>
           renderPies(g, renderData, {
             ...opts,
@@ -81,14 +108,29 @@ export const Pie = () => {
             handleMouseLeave,
           }),
       });
+      renderContainer(g, {
+        ...common,
+        render: (g, opts) =>
+          renderValueLabels(g, valueLabelsData, {
+            ...opts,
+            rotate: false,
+            dx: 0,
+            dy: 0,
+            fontFamily,
+            fontSize: labelFontSize,
+          }),
+      });
     }
   }, [
     arcGenerator,
     enableTransition,
+    fontFamily,
     handleMouseEnter,
     handleMouseLeave,
+    labelFontSize,
     renderData,
     transitionDuration,
+    valueLabelsData,
     xTranslate,
     yTranslate,
   ]);
