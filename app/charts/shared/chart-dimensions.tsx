@@ -87,7 +87,7 @@ const computeChartPadding = (
 
   const margins = isFlipped
     ? { bottom: left + (xLabelPresent ? 20 : 0), left: bottom }
-    : { left, bottom };
+    : { left, bottom: bottom + (xLabelPresent ? 20 : 0) };
 
   if (interactiveBottomElement) {
     bottom += BRUSH_BOTTOM_SPACE;
