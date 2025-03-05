@@ -493,7 +493,7 @@ export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
 
 const PieFields = t.intersection([
   t.type({
-    y: GenericField,
+    y: t.intersection([GenericField, ShowValuesFieldExtension]),
     segment: PieSegmentField,
     color: SegmentColorField,
   }),

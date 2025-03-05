@@ -1107,6 +1107,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
+        options: {
+          showValues: {},
+        },
       },
       {
         idAttributes: ["componentId"],

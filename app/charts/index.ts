@@ -1526,6 +1526,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             draft.fields.y.componentId = oldValue;
           });
         },
+        showValues: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.showValues = oldValue;
+          });
+        },
       },
       segment: ({
         oldValue,
@@ -2033,6 +2038,7 @@ const chartConfigsPathOverrides: {
     },
     pie: {
       "fields.y.componentId": { path: "fields.x.componentId" },
+      "fields.y.showValues": { path: "fields.x.showValues" },
     },
     map: {
       "fields.areaLayer.componentId": { path: "fields.y.componentId" },
@@ -2160,6 +2166,7 @@ const chartConfigsPathOverrides: {
     bar: {
       "fields.segment.componentId": { path: "fields.y.componentId" },
       "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.x.showValues": { path: "fields.y.showValues" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
