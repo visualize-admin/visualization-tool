@@ -223,7 +223,6 @@ const useColumnsState = (
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
     bandDomain: xTimeRangeDomainLabels.every((d) => d === undefined)
       ? xScale.domain()

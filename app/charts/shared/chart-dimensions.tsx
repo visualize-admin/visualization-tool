@@ -28,7 +28,6 @@ type ComputeChartPaddingProps = {
   width: number;
   height: number;
   interactiveFiltersConfig: ChartConfig["interactiveFiltersConfig"];
-  animationPresent?: boolean;
   formatNumber: (n: number) => string;
   bandDomain?: string[];
   normalize?: boolean;
@@ -36,24 +35,19 @@ type ComputeChartPaddingProps = {
   isFlipped?: boolean;
 };
 
-const computeChartPadding = (
-  props: ComputeChartPaddingProps & {
-    dashboardFilters: DashboardFiltersConfig | undefined;
-  }
-) => {
-  const {
-    xLabelPresent,
-    yScale,
-    height,
-    interactiveFiltersConfig,
-    animationPresent,
-    formatNumber,
-    bandDomain,
-    normalize,
-    dashboardFilters,
-    isFlipped,
-  } = props;
-
+const computeChartPadding = ({
+  xLabelPresent,
+  yScale,
+  height,
+  interactiveFiltersConfig,
+  formatNumber,
+  bandDomain,
+  normalize,
+  dashboardFilters,
+  isFlipped,
+}: ComputeChartPaddingProps & {
+  dashboardFilters: DashboardFiltersConfig | undefined;
+}) => {
   // Fake ticks to compute maximum tick length as
   // we need to take into account n between [0, 1] where numbers
   // with decimals have greater text length than the extremes.
@@ -72,9 +66,8 @@ const computeChartPadding = (
   );
 
   const interactiveBottomElement =
-    (!dashboardFilters?.timeRange.active &&
-      !!interactiveFiltersConfig?.timeRange.active) ||
-    animationPresent;
+    !dashboardFilters?.timeRange.active &&
+    !!interactiveFiltersConfig?.timeRange.active;
 
   let bottom = isFlipped
     ? 15 // Eyeballed value
@@ -110,7 +103,6 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent,
     formatNumber,
     bandDomain,
     normalize,
@@ -124,7 +116,6 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
       width,
       height,
       interactiveFiltersConfig,
-      animationPresent,
       formatNumber,
       bandDomain,
       normalize,
@@ -137,7 +128,6 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent,
     formatNumber,
     bandDomain,
     normalize,

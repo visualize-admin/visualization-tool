@@ -212,7 +212,6 @@ const useBarsState = (
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
     bandDomain: yTimeRangeDomainLabels.every((d) => d === undefined)
       ? yScale.domain()

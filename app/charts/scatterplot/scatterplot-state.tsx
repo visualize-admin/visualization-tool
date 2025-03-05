@@ -166,7 +166,6 @@ const useScatterplotState = (
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
   });
   const right = 40;
