@@ -96,6 +96,8 @@ const useBarsGroupedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
   } = variables;
   const {
     chartData,
@@ -356,13 +358,13 @@ const useBarsGroupedState = (
   });
   const right = 40;
   const leftAxisLabelSize = useAxisLabelSizeVariables({
-    label: yDimension.label,
+    label: yAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,
   });
   const bottomAxisLabelSize = useAxisLabelSizeVariables({
-    label: xMeasure.label,
+    label: xAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,

@@ -160,6 +160,7 @@ export const useBaseVariables = (chartConfig: ChartConfig): BaseVariables => {
 };
 
 export type BandYVariables = {
+  yAxisLabel: string;
   yDimension: Dimension;
   getY: StringValueGetter;
   getYLabel: (d: string) => string;
@@ -169,13 +170,13 @@ export type BandYVariables = {
 };
 
 export type BandXVariables = {
+  xAxisLabel: string;
   xDimension: Dimension;
   getX: StringValueGetter;
   getXLabel: (d: string) => string;
   getXAbbreviationOrLabel: (d: Observation) => string;
   xTimeUnit: TimeUnit | undefined;
   getXAsDate: TemporalValueGetter;
-  xAxisLabel: string;
 };
 
 export const useBandYVariables = (
@@ -211,7 +212,10 @@ export const useBandYVariables = (
     dimensionsById[y.componentId].values
   )(y.componentId);
 
+  const yAxisLabel = getLabelWithUnit(yDimension);
+
   return {
+    yAxisLabel,
     yDimension,
     getY,
     getYLabel,

@@ -60,6 +60,7 @@ const usePieState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    yAxisLabel,
   } = variables;
   // Segment dimension is guaranteed to be present, because it is required.
   const segmentDimension = _segmentDimension as Dimension;
@@ -159,7 +160,7 @@ const usePieState = (
   const left = 40;
   const right = 40;
   const leftAxisLabelSize = useAxisLabelSizeVariables({
-    label: yMeasure.label,
+    label: yAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,

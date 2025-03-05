@@ -102,6 +102,7 @@ const useAreasState = (
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
     xAxisLabel,
+    yAxisLabel,
   } = variables;
   const getIdentityY = useGetIdentityY(yMeasure.id);
   const {
@@ -349,7 +350,7 @@ const useAreasState = (
   });
   const right = 40;
   const leftAxisLabelSize = useAxisLabelSizeVariables({
-    label: yMeasure.label,
+    label: yAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,

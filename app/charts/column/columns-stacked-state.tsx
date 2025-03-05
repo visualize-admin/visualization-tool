@@ -109,6 +109,8 @@ const useColumnsStackedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
   } = variables;
   const getIdentityY = useGetIdentityY(yMeasure.id);
   const {
@@ -413,13 +415,13 @@ const useColumnsStackedState = (
   });
   const right = 40;
   const leftAxisLabelSize = useAxisLabelSizeVariables({
-    label: yMeasure.label,
+    label: yAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,
   });
   const bottomAxisLabelSize = useAxisLabelSizeVariables({
-    label: xDimension.label,
+    label: xAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,

@@ -92,6 +92,7 @@ const useColumnsState = (
     getFormattedYUncertainty,
     getSegmentLabel,
     xAxisLabel,
+    yAxisLabel,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -236,7 +237,7 @@ const useColumnsState = (
   xScaleTimeRange.range([0, chartWidth]);
 
   const leftAxisLabelSize = useAxisLabelSizeVariables({
-    label: yMeasure.label,
+    label: yAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,

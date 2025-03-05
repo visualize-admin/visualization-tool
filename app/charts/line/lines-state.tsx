@@ -94,6 +94,7 @@ const useLinesState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    yAxisLabel,
   } = variables;
   const {
     chartData,
@@ -240,7 +241,7 @@ const useLinesState = (
   });
   const right = 40;
   const leftAxisLabelSize = useAxisLabelSizeVariables({
-    label: yMeasure.label,
+    label: yAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,

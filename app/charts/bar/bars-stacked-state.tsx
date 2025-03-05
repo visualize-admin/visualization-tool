@@ -113,6 +113,8 @@ const useBarsStackedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
   } = variables;
   const getIdentityX = useGetIdentityX(xMeasure.id);
   const {
@@ -417,13 +419,13 @@ const useBarsStackedState = (
   });
   const right = 40;
   const leftAxisLabelSize = useAxisLabelSizeVariables({
-    label: yDimension.label,
+    label: yAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,
   });
   const bottomAxisLabelSize = useAxisLabelSizeVariables({
-    label: xMeasure.label,
+    label: xAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,
