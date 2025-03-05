@@ -11,11 +11,16 @@ import { useTransitionStore } from "@/stores/transition";
 import useEvent from "@/utils/use-event";
 
 export const Pie = () => {
-  const { chartData, getPieData, getSegment, colors, bounds, getRenderingKey } =
-    useChartState() as PieState;
+  const {
+    bounds: { width, height, chartWidth, chartHeight },
+    chartData,
+    getPieData,
+    getSegment,
+    colors,
+    getRenderingKey,
+  } = useChartState() as PieState;
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const { width, height, chartWidth, chartHeight } = bounds;
   const [, dispatch] = useInteraction();
   const ref = useRef<SVGGElement>(null);
 
@@ -27,8 +32,9 @@ export const Pie = () => {
   const xTranslate = width / 2;
   const yTranslate = height / 2;
 
-  const arcs = getPieData(chartData);
   const renderData: RenderDatum[] = useMemo(() => {
+    const arcs = getPieData(chartData);
+
     return arcs.map((arcDatum) => {
       return {
         key: getRenderingKey(arcDatum.data),
@@ -37,7 +43,7 @@ export const Pie = () => {
         color: colors(getSegment(arcDatum.data)),
       };
     });
-  }, [arcs, getRenderingKey, colors, getSegment]);
+  }, [getPieData, chartData, getRenderingKey, colors, getSegment]);
 
   const arcGenerator = arc<$FixMe>()
     .innerRadius(innerRadius)
@@ -49,7 +55,7 @@ export const Pie = () => {
       value: {
         interaction: {
           visible: true,
-          d: d as unknown as Observation, // FIXME
+          d: d as unknown as Observation,
         },
       },
     });
@@ -62,7 +68,7 @@ export const Pie = () => {
   });
 
   useEffect(() => {
-    if (ref.current && renderData) {
+    if (ref.current) {
       renderContainer(ref.current, {
         id: "pies",
         transform: `translate(${xTranslate} ${yTranslate})`,
