@@ -22,6 +22,7 @@ export const CalculationToggle = () => {
       })}
       checked={calculation.type === "percent"}
       onChange={onChange}
+      smaller
       sx={{ mr: 0 }}
     />
   );

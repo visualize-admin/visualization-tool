@@ -99,8 +99,8 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
           {...DISABLE_SCREENSHOT_ATTR}
           width={width - margins.right}
           y={0}
-          height="26"
-          style={{ display: "flex", textAlign: "right" }}
+          height={26}
+          style={{ display: "flex" }}
         >
           <CalculationToggle />
         </foreignObject>

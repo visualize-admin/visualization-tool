@@ -27,8 +27,9 @@ import {
 } from "@/charts/column/columns-stacked-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
+  AxisLabelSizeVariables,
   getChartWidth,
-  useAxisLabelHeightOffset,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -85,6 +86,8 @@ export type StackedColumnsState = CommonChartState &
       d: Observation,
       orderedSegments: string[]
     ) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useColumnsStackedState = (
@@ -106,6 +109,8 @@ const useColumnsStackedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
   } = variables;
   const getIdentityY = useGetIdentityY(yMeasure.id);
   const {
@@ -401,7 +406,6 @@ const useColumnsStackedState = (
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
     bandDomain: xTimeRangeDomainLabels.every((d) => d === undefined)
       ? xScale.domain()
@@ -409,14 +413,20 @@ const useColumnsStackedState = (
     normalize,
   });
   const right = 40;
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: yMeasure.label,
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,
   });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
     right,
     bottom,
     left,
@@ -522,6 +532,8 @@ const useColumnsStackedState = (
     chartWideData,
     series,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
     ...variables,
   };
 };

@@ -22,8 +22,9 @@ import {
   useShowColumnValueLabelsVariables,
 } from "@/charts/column/show-values-utils";
 import {
+  AxisLabelSizeVariables,
   getChartWidth,
-  useAxisLabelHeightOffset,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -69,6 +70,8 @@ export type ColumnsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useColumnsState = (
@@ -76,7 +79,7 @@ const useColumnsState = (
   variables: ColumnsStateVariables,
   data: ChartStateData
 ): ColumnsState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     xDimension,
     getX,
@@ -90,6 +93,8 @@ const useColumnsState = (
     getYErrorRange,
     getFormattedYUncertainty,
     getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -215,11 +220,11 @@ const useColumnsState = (
   ]);
 
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
     bandDomain: xTimeRangeDomainLabels.every((d) => d === undefined)
       ? xScale.domain()
@@ -232,8 +237,14 @@ const useColumnsState = (
   xScaleInteraction.range([0, chartWidth]);
   xScaleTimeRange.range([0, chartWidth]);
 
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: yMeasure.label,
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,
@@ -241,13 +252,13 @@ const useColumnsState = (
   const { yOffset: yValueLabelsOffset, ...showValuesVariables } =
     useShowColumnValueLabelsVariables(y, {
       chartData,
-      dimensions: chartProps.dimensions,
-      measures: chartProps.measures,
+      dimensions,
+      measures,
       getY,
       bandwidth: xScale.bandwidth(),
     });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin + yValueLabelsOffset,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset + yValueLabelsOffset,
     right,
     bottom,
     left,
@@ -306,6 +317,8 @@ const useColumnsState = (
     xScaleInteraction,
     yScale,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
     ...showValuesVariables,
     ...variables,
   };
