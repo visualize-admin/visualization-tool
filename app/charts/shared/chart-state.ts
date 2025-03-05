@@ -117,7 +117,10 @@ export const useChartState = () => {
 export type ChartWithInteractiveXTimeRangeState =
   | AreasState
   | ColumnsState
-  | LinesState;
+  | LinesState
+  | ComboLineSingleState
+  | ComboLineColumnState
+  | ComboLineDualState;
 
 export type ChartWithInteractiveYTimeRangeState = BarsState;
 
