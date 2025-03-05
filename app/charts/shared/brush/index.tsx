@@ -108,9 +108,11 @@ export const BrushTime = () => {
     if (chartType === "bar") {
       return getYAsDate;
     }
-    if (chartType === "column") {
+
+    if (chartType === "column" || chartType === "comboLineColumn") {
       return getXAsDate;
     }
+
     return getX;
   })();
   const fullData = allData;
