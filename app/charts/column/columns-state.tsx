@@ -18,10 +18,6 @@ import {
 } from "@/charts/column/columns-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
-  ShowColumnValueLabelsVariables,
-  useShowColumnValueLabelsVariables,
-} from "@/charts/column/show-values-utils";
-import {
   getChartWidth,
   useAxisLabelHeightOffset,
   useChartBounds,
@@ -39,6 +35,10 @@ import {
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
+import {
+  ShowBandValueLabelsVariables,
+  useShowBandValueLabelsVariables,
+} from "@/charts/shared/show-values-utils";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -61,7 +61,7 @@ import { ChartProps } from "../shared/ChartProps";
 export type ColumnsState = CommonChartState &
   ColumnsStateVariables &
   InteractiveXTimeRangeState &
-  Omit<ShowColumnValueLabelsVariables, "yOffset"> & {
+  Omit<ShowBandValueLabelsVariables, "offset"> & {
     chartType: "column";
     xScale: ScaleBand<string>;
     xScaleInteraction: ScaleBand<string>;
@@ -76,7 +76,7 @@ const useColumnsState = (
   variables: ColumnsStateVariables,
   data: ChartStateData
 ): ColumnsState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     xDimension,
     getX,
@@ -238,12 +238,12 @@ const useColumnsState = (
     marginLeft: left,
     marginRight: right,
   });
-  const { yOffset: yValueLabelsOffset, ...showValuesVariables } =
-    useShowColumnValueLabelsVariables(y, {
+  const { offset: yValueLabelsOffset, ...showValuesVariables } =
+    useShowBandValueLabelsVariables(y, {
       chartData,
-      dimensions: chartProps.dimensions,
-      measures: chartProps.measures,
-      getY,
+      dimensions,
+      measures,
+      getValue: getY,
       bandwidth: xScale.bandwidth(),
     });
   const margins = {
