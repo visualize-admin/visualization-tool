@@ -132,12 +132,14 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           </ChartContainer>
           {fields.animation || limits.limits.length > 0 ? (
             <ChartControlsContainer>
-              <LegendColor
-                limits={limits.limits}
-                dimensionsById={dimensionsById}
-                chartConfig={chartConfig}
-                symbol="square"
-              />
+              {limits.limits.length > 0 && (
+                <LegendColor
+                  limits={limits.limits}
+                  dimensionsById={dimensionsById}
+                  chartConfig={chartConfig}
+                  symbol="square"
+                />
+              )}
               {fields.animation && (
                 <TimeSlider
                   filters={filters}
