@@ -277,9 +277,9 @@ const getIsOverlapping = ({
   });
 };
 
-type ValueLabelFormatter = ReturnType<typeof useValueLabelFormatter>;
+export type ValueLabelFormatter = ReturnType<typeof useValueLabelFormatter>;
 
-const useValueLabelFormatter = ({
+export const useValueLabelFormatter = ({
   measureId,
   dimensions,
   measures,

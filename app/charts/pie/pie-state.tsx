@@ -11,6 +11,10 @@ import {
   usePieStateVariables,
 } from "@/charts/pie/pie-state-props";
 import {
+  ShowPieValueLabelsVariables,
+  useShowPieValueLabelsVariables,
+} from "@/charts/pie/show-values-utils";
+import {
   AxisLabelSizeVariables,
   getChartWidth,
   useAxisLabelSizeVariables,
@@ -37,7 +41,8 @@ import {
 import { ChartProps } from "../shared/ChartProps";
 
 export type PieState = CommonChartState &
-  PieStateVariables & {
+  PieStateVariables &
+  ShowPieValueLabelsVariables & {
     chartType: "pie";
     getPieData: Pie<$IntentionalAny, Observation>;
     colors: ScaleOrdinal<string, string>;
@@ -51,7 +56,7 @@ const usePieState = (
   variables: PieStateVariables,
   data: ChartStateData
 ): PieState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     yMeasure,
     getY,
@@ -66,6 +71,7 @@ const usePieState = (
   const segmentDimension = _segmentDimension as Dimension;
   const { chartData, segmentData, allData } = data;
   const { fields } = chartConfig;
+  const { y } = fields;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber();
@@ -165,6 +171,10 @@ const usePieState = (
     marginLeft: left,
     marginRight: right,
   });
+  const showValuesVariables = useShowPieValueLabelsVariables(y, {
+    dimensions,
+    measures,
+  });
   const margins = {
     top: 50 + leftAxisLabelSize.offset,
     right,
@@ -198,7 +208,7 @@ const usePieState = (
       return "-";
     }
 
-    const fValue = formatNumberWithUnit(
+    const formattedValue = formatNumberWithUnit(
       value,
       formatters[yMeasure.id] ?? formatNumber,
       yMeasure.unit
@@ -206,7 +216,7 @@ const usePieState = (
     const percentage = value / ySum;
     const rounded = Math.round(percentage * 100);
 
-    return `${rounded}% (${fValue})`;
+    return `${rounded}% (${formattedValue})`;
   };
 
   // Tooltip
@@ -263,6 +273,7 @@ const usePieState = (
     getColorLabel: getSegmentLabel,
     getAnnotationInfo,
     leftAxisLabelSize,
+    ...showValuesVariables,
     ...variables,
   };
 };
