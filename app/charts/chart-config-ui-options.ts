@@ -851,13 +851,14 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           }
         },
         options: {
-          showStandardError: {},
-          showConfidenceInterval: {},
           colorPalette: {
             type: "single",
             paletteId: "category10",
             color: schemeCategory10[0],
           },
+          showValues: {},
+          showStandardError: {},
+          showConfidenceInterval: {},
         },
       },
       {

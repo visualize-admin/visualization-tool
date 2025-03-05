@@ -349,7 +349,7 @@ export type BarSegmentField = t.TypeOf<typeof BarSegmentField>;
 
 const BarFields = t.intersection([
   t.type({
-    x: GenericField,
+    x: t.intersection([GenericField, ShowValuesFieldExtension]),
     y: t.intersection([GenericField, SortingField]),
     color: t.union([SegmentColorField, SingleColorField]),
   }),
