@@ -13,27 +13,27 @@ import {
   Box,
   BoxProps,
   ButtonBase,
+  Checkbox as MUICheckbox,
   CircularProgress,
   Divider,
   FormControlLabel,
   FormControlLabelProps,
+  Input as MUIInput,
   InputLabel,
   InputProps,
   ListSubheader,
   MenuItem,
-  Checkbox as MUICheckbox,
-  Input as MUIInput,
-  Radio as MUIRadio,
-  Select as MUISelect,
-  Slider as MUISlider,
-  Switch as MUISwitch,
   Paper,
   PaperProps,
+  Radio as MUIRadio,
+  Select as MUISelect,
   SelectProps,
   Skeleton,
+  Slider as MUISlider,
   SliderProps,
   Stack,
   styled,
+  Switch as MUISwitch,
   SxProps,
   Theme,
   Tooltip,
@@ -857,21 +857,24 @@ export const Switch = ({
   checked,
   disabled,
   onChange,
+  smaller,
   sx,
 }: {
   id?: string;
   label: React.ComponentProps<typeof FormControlLabel>["label"];
   disabled?: boolean;
+  smaller?: boolean;
   sx?: SxProps;
 } & FieldProps) => {
   const genId = `switch-${useId(id)}`;
+
   return (
     <FormControlLabel
       htmlFor={genId}
       label={label}
       componentsProps={{
         typography: {
-          variant: "body2",
+          variant: smaller ? "caption" : "body2",
           color: "grey.800",
         },
       }}
@@ -884,7 +887,11 @@ export const Switch = ({
           onChange={onChange}
         />
       }
-      sx={{ width: "fit-content", fontSize: "0.875rem", ...sx }}
+      sx={{
+        width: "fit-content",
+        fontSize: "0.875rem",
+        ...sx,
+      }}
     />
   );
 };

@@ -113,7 +113,10 @@ export const useChartState = () => {
 export type ChartWithInteractiveXTimeRangeState =
   | AreasState
   | ColumnsState
-  | LinesState;
+  | LinesState
+  | ComboLineSingleState
+  | ComboLineColumnState
+  | ComboLineDualState;
 
 export type ChartWithInteractiveYTimeRangeState = BarsState;
 
@@ -153,6 +156,7 @@ export const useBaseVariables = (chartConfig: ChartConfig): BaseVariables => {
 };
 
 export type BandYVariables = {
+  yAxisLabel: string;
   yDimension: Dimension;
   getY: StringValueGetter;
   getYLabel: (d: string) => string;
@@ -162,6 +166,7 @@ export type BandYVariables = {
 };
 
 export type BandXVariables = {
+  xAxisLabel: string;
   xDimension: Dimension;
   getX: StringValueGetter;
   getXLabel: (d: string) => string;
@@ -203,7 +208,10 @@ export const useBandYVariables = (
     dimensionsById[y.componentId].values
   )(y.componentId);
 
+  const yAxisLabel = getLabelWithUnit(yDimension);
+
   return {
+    yAxisLabel,
     yDimension,
     getY,
     getYLabel,
@@ -248,7 +256,10 @@ export const useBandXVariables = (
     dimensionsById[x.componentId].values
   )(x.componentId);
 
+  const xAxisLabel = getLabelWithUnit(xDimension);
+
   return {
+    xAxisLabel,
     xDimension,
     getX,
     getXLabel,
@@ -264,6 +275,7 @@ export type TemporalXVariables = {
   xDimension: TemporalDimension | TemporalEntityDimension;
   getX: TemporalValueGetter;
   getXAsString: StringValueGetter;
+  xAxisLabel: string;
 };
 
 export const useTemporalXVariables = (
@@ -290,7 +302,10 @@ export const useTemporalXVariables = (
   )(x.componentId);
   const getXAsString = useStringVariable(x.componentId);
 
+  const xAxisLabel = getLabelWithUnit(xDimension);
+
   return {
+    xAxisLabel,
     xDimension,
     getX: isTemporalDimension(xDimension) ? getXTemporal : getXTemporalEntity,
     getXAsString,
