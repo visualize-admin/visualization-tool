@@ -23,7 +23,9 @@ import {
   PADDING_WITHIN,
 } from "@/charts/bar/constants";
 import {
+  AxisLabelSizeVariables,
   getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -68,6 +70,8 @@ export type GroupedBarsState = CommonChartState &
     getColorLabel: (segment: string) => string;
     grouped: [string, Observation[]][];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useBarsGroupedState = (
@@ -351,8 +355,20 @@ const useBarsGroupedState = (
     isFlipped: true,
   });
   const right = 40;
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yDimension.label,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xMeasure.label,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
   const margins = {
-    top: DEFAULT_MARGIN_TOP,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
     right,
     bottom: bottom + 10,
     left,
@@ -440,6 +456,8 @@ const useBarsGroupedState = (
     getColorLabel: getSegmentLabel,
     grouped,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
     ...variables,
   };
 };

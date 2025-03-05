@@ -5,6 +5,7 @@ import { AreasState } from "@/charts/area/areas-state";
 import { ComboLineDualState } from "@/charts/combo/combo-line-dual-state";
 import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import { LinesState } from "@/charts/line/lines-state";
+import { useXAxisTitleOffset } from "@/charts/shared/chart-dimensions";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   maybeTransition,
@@ -15,11 +16,6 @@ import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatShortDateAuto } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
 
-import {
-  useAxisLabelHeightOffset,
-  useXAxisTitleOffset,
-} from "./chart-dimensions";
-
 // Approximate the longest date format we're using for.
 // Roughly equivalent to the text width of "99.99.9999" with 12px font size.
 const MAX_DATE_LABEL_LENGTH = 70;
@@ -29,7 +25,14 @@ export const AxisTime = () => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDateAuto = useFormatShortDateAuto();
-  const { xScale, yScale, bounds, xDimension, xAxisLabel } = useChartState() as
+  const {
+    xScale,
+    yScale,
+    bounds,
+    xDimension,
+    xAxisLabel,
+    bottomAxisLabelSize,
+  } = useChartState() as
     | LinesState
     | AreasState
     | ComboLineSingleState
@@ -44,15 +47,7 @@ export const AxisTime = () => {
     axisLabelFontSize,
   } = useChartTheme();
   const xAxisTitleOffset = useXAxisTitleOffset();
-
   const hasNegativeValues = yScale.domain()[0] < 0;
-
-  // This could be useful: use data points as tick values,
-  // but it does not solve the problem of overlapping.
-  // const tickValues =
-  //   bounds.chartWidth / (MAX_DATE_LABEL_LENGTH + 20) > xUniqueValues.length
-  //     ? xUniqueValues
-  //     : null;
   const ticks = bounds.chartWidth / (MAX_DATE_LABEL_LENGTH + 20);
 
   useEffect(() => {
@@ -99,20 +94,13 @@ export const AxisTime = () => {
     xScale,
   ]);
 
-  const { height, labelWidth } = useAxisLabelHeightOffset({
-    label: xAxisLabel,
-    width: chartWidth,
-    marginLeft: margins.left,
-    marginRight: margins.right,
-  });
-
   return (
     <>
       <foreignObject
-        x={margins.left + chartWidth / 2 - labelWidth / 2}
+        x={margins.left + chartWidth / 2 - bottomAxisLabelSize.width / 2}
         y={margins.top + chartHeight + xAxisTitleOffset}
         width={chartWidth}
-        height={height}
+        height={bottomAxisLabelSize.height}
         style={{ display: "flex", textAlign: "right" }}
       >
         <OpenMetadataPanelWrapper component={xDimension}>

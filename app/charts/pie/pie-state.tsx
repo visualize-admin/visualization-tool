@@ -11,8 +11,9 @@ import {
   usePieStateVariables,
 } from "@/charts/pie/pie-state-props";
 import {
+  AxisLabelSizeVariables,
   getChartWidth,
-  useAxisLabelHeightOffset,
+  useAxisLabelSizeVariables,
   useChartBounds,
 } from "@/charts/shared/chart-dimensions";
 import {
@@ -42,6 +43,7 @@ export type PieState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: PieArcDatum<Observation>) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const usePieState = (
@@ -156,14 +158,14 @@ const usePieState = (
   // Dimensions
   const left = 40;
   const right = 40;
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
     label: yMeasure.label,
     width,
     marginLeft: left,
     marginRight: right,
   });
   const margins = {
-    top: 50 + yAxisLabelMargin,
+    top: 50 + leftAxisLabelSize.offset,
     right,
     bottom: 40,
     left,
@@ -259,6 +261,7 @@ const usePieState = (
     colors,
     getColorLabel: getSegmentLabel,
     getAnnotationInfo,
+    leftAxisLabelSize,
     ...variables,
   };
 };

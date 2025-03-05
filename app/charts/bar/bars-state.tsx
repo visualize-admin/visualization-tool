@@ -22,7 +22,9 @@ import {
   PADDING_OUTER,
 } from "@/charts/bar/constants";
 import {
+  AxisLabelSizeVariables,
   getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -68,6 +70,8 @@ export type BarsState = CommonChartState &
     getAnnotationInfo: (d: Observation) => TooltipInfo;
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useBarsState = (
@@ -214,8 +218,20 @@ const useBarsState = (
     isFlipped: true,
   });
   const right = 40;
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yDimension.label,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xMeasure.label,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
   const margins = {
-    top: DEFAULT_MARGIN_TOP,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
     right,
     bottom: bottom + 45,
     left,
@@ -309,6 +325,8 @@ const useBarsState = (
     getAnnotationInfo,
     getColorLabel: getSegmentLabel,
     colors,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
     ...variables,
   };
 };

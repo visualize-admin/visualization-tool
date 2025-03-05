@@ -18,8 +18,9 @@ import {
 } from "@/charts/column/columns-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
+  AxisLabelSizeVariables,
   getChartWidth,
-  useAxisLabelHeightOffset,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -67,6 +68,8 @@ export type ColumnsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useColumnsState = (
@@ -74,7 +77,7 @@ const useColumnsState = (
   variables: ColumnsStateVariables,
   data: ChartStateData
 ): ColumnsState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     xDimension,
     getX,
@@ -232,8 +235,14 @@ const useColumnsState = (
   xScaleInteraction.range([0, chartWidth]);
   xScaleTimeRange.range([0, chartWidth]);
 
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
     label: yMeasure.label,
+    width,
+    marginLeft: left,
+    marginRight: right,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,
@@ -241,13 +250,13 @@ const useColumnsState = (
   const { yOffset: yValueLabelsOffset, ...showValuesVariables } =
     useShowValuesVariables(y, {
       chartData,
-      dimensions: chartProps.dimensions,
-      measures: chartProps.measures,
+      dimensions,
+      measures,
       getY,
       bandwidth: xScale.bandwidth(),
     });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin + yValueLabelsOffset,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset + yValueLabelsOffset,
     right,
     bottom,
     left,
@@ -306,6 +315,8 @@ const useColumnsState = (
     xScaleInteraction,
     yScale,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
     ...showValuesVariables,
     ...variables,
   };

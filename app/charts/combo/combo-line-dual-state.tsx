@@ -15,7 +15,9 @@ import {
 } from "@/charts/combo/combo-state";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import {
+  AxisLabelSizeVariables,
   getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -57,6 +59,8 @@ export type ComboLineDualState = CommonChartState &
     chartWideData: ArrayLike<Observation>;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
     maxRightTickWidth: number;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useComboLineDualState = (
@@ -139,6 +143,24 @@ const useComboLineDualState = (
     leftAxisTitle: variables.y.left.label,
     rightAxisTitle: variables.y.right.label,
   });
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: variables.y.left.label,
+    width,
+    marginLeft: margins.left,
+    marginRight: margins.right,
+  });
+  const rightAxisLabelSize = useAxisLabelSizeVariables({
+    label: variables.y.right.label,
+    width,
+    marginLeft: margins.left,
+    marginRight: margins.right,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
+    marginLeft: margins.left,
+    marginRight: margins.right,
+  });
   const chartWidth = getChartWidth({
     width,
     left: margins.left,
@@ -220,6 +242,12 @@ const useComboLineDualState = (
     getColorLabel: (label) => label,
     chartWideData,
     getAnnotationInfo,
+    leftAxisLabelSize: {
+      width: Math.max(leftAxisLabelSize.width, rightAxisLabelSize.width),
+      height: Math.max(leftAxisLabelSize.height, rightAxisLabelSize.height),
+      offset: Math.max(leftAxisLabelSize.offset, rightAxisLabelSize.offset),
+    },
+    bottomAxisLabelSize,
     ...variables,
   };
 };

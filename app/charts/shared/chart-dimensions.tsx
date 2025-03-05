@@ -223,9 +223,15 @@ export const useChartBounds = ({
 
 const LINE_HEIGHT = 1.25;
 
-export const useAxisLabelHeightOffset = ({
+export type AxisLabelSizeVariables = {
+  width: number;
+  height: number;
+  offset: number;
+};
+
+export const useAxisLabelSizeVariables = ({
   label,
-  width,
+  width: _width,
   marginLeft,
   marginRight,
 }: {
@@ -233,15 +239,15 @@ export const useAxisLabelHeightOffset = ({
   width: number;
   marginLeft: number;
   marginRight: number;
-}) => {
+}): AxisLabelSizeVariables => {
   const { axisLabelFontSize: fontSize } = useChartTheme();
-  const labelWidth = getTextWidth(label, { fontSize });
-  const lines = Math.ceil(labelWidth / (width - marginLeft - marginRight));
+  const width = getTextWidth(label, { fontSize });
+  const lines = Math.ceil(width / (_width - marginLeft - marginRight));
 
   return {
+    width,
     height: fontSize * LINE_HEIGHT * lines,
     offset: fontSize * LINE_HEIGHT * (lines - 1),
-    labelWidth,
   };
 };
 

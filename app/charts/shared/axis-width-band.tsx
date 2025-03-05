@@ -1,8 +1,11 @@
 import { axisBottom } from "d3-axis";
 import { useEffect, useRef } from "react";
 
+import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
+import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import { ColumnsState } from "@/charts/column/columns-state";
 import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
+import { useXAxisTitleOffset } from "@/charts/shared/chart-dimensions";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   maybeTransition,
@@ -13,14 +16,8 @@ import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useTimeFormatUnit } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
 
-import {
-  useAxisLabelHeightOffset,
-  useXAxisTitleOffset,
-} from "./chart-dimensions";
-
 export const AxisWidthBand = () => {
   const ref = useRef<SVGGElement>(null);
-  const state = useChartState() as ColumnsState | ComboLineColumnState;
   const {
     xScale,
     getXLabel,
@@ -29,7 +26,12 @@ export const AxisWidthBand = () => {
     yScale,
     bounds,
     xAxisLabel,
-  } = state;
+    bottomAxisLabelSize,
+  } = useChartState() as
+    | ColumnsState
+    | StackedColumnsState
+    | GroupedColumnsState
+    | ComboLineColumnState;
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDate = useTimeFormatUnit();
@@ -106,20 +108,13 @@ export const AxisWidthBand = () => {
     yScale,
   ]);
 
-  const { height, labelWidth } = useAxisLabelHeightOffset({
-    label: xAxisLabel,
-    width: chartWidth,
-    marginLeft: margins.left,
-    marginRight: margins.right,
-  });
-
   return (
     <>
       <foreignObject
-        x={margins.left + chartWidth / 2 - labelWidth / 2}
+        x={margins.left + chartWidth / 2 - bottomAxisLabelSize.width / 2}
         y={margins.top + chartHeight + xAxisTitleOffset + 8}
         width={chartWidth}
-        height={height}
+        height={bottomAxisLabelSize.height}
         style={{ display: "flex", textAlign: "right" }}
       >
         <OpenMetadataPanelWrapper component={xDimension}>
