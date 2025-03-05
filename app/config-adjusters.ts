@@ -175,7 +175,10 @@ type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
 
 type PieAdjusters = BaseAdjusters<PieConfig> & {
   fields: {
-    y: { componentId: FieldAdjuster<PieConfig, string> };
+    y: {
+      componentId: FieldAdjuster<PieConfig, string>;
+      showValues: FieldAdjuster<PieConfig, boolean>;
+    };
     segment: FieldAdjuster<
       PieConfig,
       | ColumnSegmentField
