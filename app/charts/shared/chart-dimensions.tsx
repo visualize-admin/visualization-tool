@@ -71,14 +71,14 @@ const computeChartPadding = (
     minLeftTickWidth
   );
 
-  let bottom =
+  const interactiveBottomElement =
     (!dashboardFilters?.timeRange.active &&
       !!interactiveFiltersConfig?.timeRange.active) ||
-    animationPresent
-      ? BRUSH_BOTTOM_SPACE
-      : isFlipped
-        ? 15 // Eyeballed value
-        : 48;
+    animationPresent;
+
+  let bottom = isFlipped
+    ? 15 // Eyeballed value
+    : 48;
 
   if (bandDomain?.length) {
     bottom +=
@@ -86,16 +86,21 @@ const computeChartPadding = (
       70;
   }
 
-  if (xLabelPresent) {
-    bottom += 20;
-  }
-
   return isFlipped
     ? {
-        bottom: left + (xLabelPresent ? 20 : 0),
+        bottom:
+          left +
+          (xLabelPresent ? 20 : 0) +
+          (interactiveBottomElement ? BRUSH_BOTTOM_SPACE : 0),
         left: bottom,
       }
-    : { left, bottom };
+    : {
+        left,
+        bottom:
+          bottom +
+          (xLabelPresent ? 20 : 0) +
+          (interactiveBottomElement ? BRUSH_BOTTOM_SPACE : 0),
+      };
 };
 
 export const useChartPadding = (props: ComputeChartPaddingProps) => {
