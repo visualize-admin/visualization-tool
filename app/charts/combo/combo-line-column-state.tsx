@@ -24,6 +24,7 @@ import {
 } from "@/charts/combo/combo-state";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import {
+  getChartWidth,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -163,8 +164,13 @@ const useComboLineColumnState = (
     leftAxisTitle: variables.y.left.label,
     rightAxisTitle: variables.y.right.label,
   });
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const chartWidth = getChartWidth({
+    width,
+    left: margins.left,
+    right: margins.right,
+  });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
   const xScales = [xScale, xScaleTime, xScaleTimeRange];
   const yScales = [yScale, yScaleLeft, yScaleRight];
   adjustScales(xScales, yScales, { chartWidth, chartHeight });

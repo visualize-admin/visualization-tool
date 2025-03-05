@@ -1114,6 +1114,10 @@ msgid "controls.section.show-standard-error.explanation"
 msgstr "Montrer les incertitudes via des barres d'erreur"
 
 #: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-values"
+msgstr "Toujours afficher les valeurs"
+
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.sorting"
 msgstr "Trier"
 

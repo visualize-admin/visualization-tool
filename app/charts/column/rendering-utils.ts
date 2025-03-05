@@ -1,27 +1,24 @@
 import { Selection } from "d3-selection";
 
 import {
-  RenderOptions,
   maybeTransition,
+  RenderOptions,
 } from "@/charts/shared/rendering-utils";
 
 export type RenderColumnDatum = {
   key: string;
   x: number;
   y: number;
+  value: number;
   width: number;
   height: number;
   color: string;
 };
 
-type RenderColumnOptions = RenderOptions & {
-  y0: number;
-};
-
 export const renderColumns = (
   g: Selection<SVGGElement, null, SVGGElement, unknown>,
   data: RenderColumnDatum[],
-  options: RenderColumnOptions
+  options: RenderOptions & { y0: number }
 ) => {
   const { transition, y0 } = options;
 

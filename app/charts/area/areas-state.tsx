@@ -23,6 +23,7 @@ import {
   useAreasStateVariables,
 } from "@/charts/area/areas-state-props";
 import {
+  getChartWidth,
   useAxisLabelHeightOffset,
   useChartBounds,
   useChartPadding,
@@ -356,8 +357,9 @@ const useAreasState = (
     bottom,
     left,
   };
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const chartWidth = getChartWidth({ width, left, right });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
 
   /** Adjust scales according to dimensions */
   xScale.range([0, chartWidth]);

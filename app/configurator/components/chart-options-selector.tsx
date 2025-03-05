@@ -1,8 +1,8 @@
 import { t, Trans } from "@lingui/macro";
 import {
   Box,
-  Switch as MUISwitch,
   Stack,
+  Switch as MUISwitch,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -10,7 +10,7 @@ import { groups } from "d3-array";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo } from "react";
+import { ReactNode, useCallback, useEffect, useMemo } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentId } from "@/charts";
 import {
@@ -479,15 +479,17 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                 components={components}
               />
             )}
+            {encoding.options?.showValues ? (
+              <SwitchWrapper>
+                <ChartOptionCheckboxField
+                  path="showValues"
+                  field={encoding.field}
+                  label={t({ id: "controls.section.show-values" })}
+                />
+              </SwitchWrapper>
+            ) : null}
             {encoding.options?.showStandardError && hasStandardError && (
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: 1,
-                  alignItems: "center",
-                  mt: 3,
-                }}
-              >
+              <SwitchWrapper>
                 <ChartOptionSwitchField
                   path="showStandardError"
                   field={encoding.field}
@@ -509,7 +511,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                     />
                   }
                 />
-              </Box>
+              </SwitchWrapper>
             )}
             {encoding.options?.showConfidenceInterval &&
               hasConfidenceInterval && (
@@ -651,6 +653,21 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           <ChartFieldAnimation field={chartConfig.fields.animation} />
         )}
     </div>
+  );
+};
+
+const SwitchWrapper = ({ children }: { children: ReactNode }) => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        gap: 1,
+        alignItems: "center",
+        mt: 3,
+      }}
+    >
+      {children}
+    </Box>
   );
 };
 

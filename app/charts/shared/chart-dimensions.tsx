@@ -148,17 +148,35 @@ type YAxisLabels = {
   rightLabel?: string;
 };
 
-export const useChartBounds = (
-  width: number,
-  margins: Margins,
-  height: number,
-  yAxisLabels?: YAxisLabels
-): Bounds & { yAxisTitleHeight: number } => {
+type ChartWidth = number & { __chartWidth: true };
+
+export const getChartWidth = ({
+  width,
+  left,
+  right,
+}: {
+  width: number;
+  left: number;
+  right: number;
+}): ChartWidth => {
+  return (width - left - right) as ChartWidth;
+};
+
+export const useChartBounds = ({
+  width,
+  chartWidth,
+  height,
+  margins,
+  yAxisLabels,
+}: {
+  width: number;
+  chartWidth: ChartWidth;
+  height: number;
+  margins: Margins;
+  yAxisLabels?: YAxisLabels;
+}): Bounds & { yAxisTitleHeight: number } => {
   const [state] = useConfiguratorState(hasChartConfigs);
-  const { left, top, right, bottom } = margins;
-
-  const chartWidth = width - left - right;
-
+  const { top, bottom } = margins;
   const yAxisTitleHeight = useMemo(() => {
     const leftAxisTitle = yAxisLabels?.leftLabel;
     const rightAxisTitle = yAxisLabels?.rightLabel;

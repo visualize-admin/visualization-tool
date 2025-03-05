@@ -1114,6 +1114,10 @@ msgid "controls.section.show-standard-error.explanation"
 msgstr "Show uncertainties extending from data points to represent standard errors"
 
 #: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-values"
+msgstr "Always show values"
+
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.sorting"
 msgstr "Sort"
 
