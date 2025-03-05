@@ -41,7 +41,7 @@ export const useShowBandValueLabelsVariables = (
     dimensions: Dimension[];
     measures: Measure[];
     getValue: NumericalValueGetter;
-    bandwidth: number;
+    bandwidth?: number;
   }
 ): ShowBandValueLabelsVariables => {
   const { showValues = false } = measureField;
@@ -53,9 +53,12 @@ export const useShowBandValueLabelsVariables = (
     );
   }
 
+  const disableRotation = !bandwidth;
   const { labelFontSize: fontSize } = useChartTheme();
   const renderEveryNthValue =
-    bandwidth > fontSize ? 1 : Math.ceil(fontSize / bandwidth);
+    disableRotation || bandwidth > fontSize
+      ? 1
+      : Math.ceil(fontSize / bandwidth);
 
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters({ dimensions, measures });
@@ -78,7 +81,7 @@ export const useShowBandValueLabelsVariables = (
         const formattedValue = valueLabelFormatter(getValue(d));
         const width = getTextWidth(formattedValue, { fontSize });
 
-        if (width - 2 > bandwidth) {
+        if (!disableRotation && width - 2 > bandwidth) {
           rotateValues = true;
         }
 
@@ -87,7 +90,7 @@ export const useShowBandValueLabelsVariables = (
         }
       });
 
-      if (rotateValues) {
+      if (disableRotation || rotateValues) {
         offset = maxWidth;
       } else {
         offset = fontSize;
@@ -101,6 +104,7 @@ export const useShowBandValueLabelsVariables = (
   }, [
     showValues,
     chartData,
+    disableRotation,
     valueLabelFormatter,
     getValue,
     fontSize,
