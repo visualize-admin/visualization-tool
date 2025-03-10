@@ -15,7 +15,7 @@ const query = `query PossibleFilters(
     sourceUrl: $sourceUrl
     cubeFilter: $cubeFilter
   ) {
-    iri
+    id
     type
     value
   }
