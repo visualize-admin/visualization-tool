@@ -213,7 +213,6 @@ const ColorField = t.union([
   SegmentColorField,
   MeasuresColorField,
 ]);
-//FIXME: Remove current type called ColorField and replace it with the new one
 export type ColorField = t.TypeOf<typeof ColorField>;
 
 const GenericField = t.intersection([
