@@ -33,7 +33,9 @@ export const Pie = () => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const [, dispatch] = useInteraction();
-  const ref = useRef<SVGGElement>(null);
+  const piesRef = useRef<SVGGElement>(null);
+  const labelsRef = useRef<SVGGElement>(null);
+  const connectorsRef = useRef<SVGGElement>(null);
 
   const maxSide = Math.min(chartWidth, chartHeight) / 2;
 
@@ -87,22 +89,21 @@ export const Pie = () => {
   });
 
   useEffect(() => {
-    const g = ref.current;
+    const piesContainer = piesRef.current;
+    const labelsContainer = labelsRef.current;
+    const connectorsContainer = connectorsRef.current;
 
-    if (g) {
-      const common: Pick<
-        RenderContainerOptions,
-        "id" | "transform" | "transition"
-      > = {
-        id: "pies",
+    if (piesContainer && labelsContainer && connectorsContainer) {
+      const common: Pick<RenderContainerOptions, "transform" | "transition"> = {
         transform: `translate(${xTranslate} ${yTranslate})`,
         transition: {
           enable: enableTransition,
           duration: transitionDuration,
         },
       };
-      renderContainer(g, {
+      renderContainer(piesContainer, {
         ...common,
+        id: "pies",
         render: (g, opts) =>
           renderPies(g, renderData, {
             ...opts,
@@ -111,15 +112,17 @@ export const Pie = () => {
             handleMouseLeave,
           }),
       });
-      renderContainer(g, {
+      renderContainer(connectorsContainer, {
         ...common,
+        id: "connectors",
         render: (g, opts) =>
           renderPieValueLabelConnectors(g, valueLabelsData, {
             ...opts,
           }),
       });
-      renderContainer(g, {
+      renderContainer(labelsContainer, {
         ...common,
+        id: "labels",
         render: (g, opts) =>
           renderValueLabels(g, valueLabelsData, {
             ...opts,
@@ -145,5 +148,11 @@ export const Pie = () => {
     yTranslate,
   ]);
 
-  return <g ref={ref} />;
+  return (
+    <>
+      <g ref={piesRef} />
+      <g ref={connectorsRef} />
+      <g ref={labelsRef} />
+    </>
+  );
 };
