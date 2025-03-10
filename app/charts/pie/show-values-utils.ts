@@ -104,7 +104,7 @@ export const useRenderPieValueLabelsData = ({
         const aSin = Math.sin(a);
         const aCos = Math.cos(a);
         const offset =
-          outerRadius + Math.min(48, Math.max(12 + labelWidth, 24)) * 1.5;
+          outerRadius + Math.min(36, Math.max(12 + labelWidth, 24)) * 1.5;
         const x = offset * aCos;
         const y = offset * aSin;
         const valueLabel = valueLabelFormatter(d.value);
@@ -121,11 +121,14 @@ export const useRenderPieValueLabelsData = ({
           },
         };
 
-        const isOverlapping = getIsOverlapping({
-          previousArray,
-          current: datum,
-          labelHeight: fontSize,
-        });
+        const isOverlapping =
+          getIsOverlapping({
+            previousArray,
+            current: datum,
+            labelHeight: fontSize,
+          }) ||
+          x - labelWidth / 2 < -width / 2 ||
+          x + labelWidth / 2 > width / 2;
 
         if (isOverlapping) {
           return null;

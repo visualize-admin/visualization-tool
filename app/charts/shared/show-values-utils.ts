@@ -263,14 +263,16 @@ export const getIsOverlapping = ({
   previousArray,
   current,
   labelHeight,
+  horizontalOffset = 8,
 }: {
   previousArray: RenderTemporalValueLabelDatum[];
   current: RenderTemporalValueLabelDatum;
   labelHeight: number;
+  horizontalOffset?: number;
 }) => {
   return previousArray.some((previous) => {
     return (
-      Math.abs(current.x - previous.x) <
+      Math.abs(current.x - previous.x) - horizontalOffset <
         previous.width / 2 + current.width / 2 &&
       Math.abs(current.y - previous.y) < labelHeight
     );

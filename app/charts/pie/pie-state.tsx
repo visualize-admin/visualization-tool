@@ -163,17 +163,17 @@ const usePieState = (
   ]);
 
   // Dimensions
+  const showValuesVariables = useShowPieValueLabelsVariables(y, {
+    dimensions,
+    measures,
+  });
   const left = 40;
-  const right = 40;
+  const right = left;
   const leftAxisLabelSize = useAxisLabelSizeVariables({
     label: yAxisLabel,
     width,
     marginLeft: left,
     marginRight: right,
-  });
-  const showValuesVariables = useShowPieValueLabelsVariables(y, {
-    dimensions,
-    measures,
   });
   const margins = {
     top: (showValuesVariables.showValues ? 90 : 50) + leftAxisLabelSize.offset,
