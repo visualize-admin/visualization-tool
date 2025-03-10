@@ -173,17 +173,6 @@ export type InteractiveFiltersConfig = t.TypeOf<
 >;
 
 // Chart Config
-const SortingOrder = t.union([t.literal("asc"), t.literal("desc")]);
-export type SortingOrder = t.TypeOf<typeof SortingOrder>;
-
-const SortingType = t.union([
-  t.literal("byDimensionLabel"),
-  t.literal("byMeasure"),
-  t.literal("byTotalSize"),
-  t.literal("byAuto"),
-]);
-export type SortingType = t.TypeOf<typeof SortingType>;
-
 const ColorMapping = t.record(t.string, t.string);
 export type ColorMapping = t.TypeOf<typeof ColorMapping>;
 
@@ -238,6 +227,17 @@ const AnimationField = t.intersection([
 ]);
 export type AnimationField = t.TypeOf<typeof AnimationField>;
 
+const SortingOrder = t.union([t.literal("asc"), t.literal("desc")]);
+export type SortingOrder = t.TypeOf<typeof SortingOrder>;
+
+const SortingType = t.union([
+  t.literal("byDimensionLabel"),
+  t.literal("byMeasure"),
+  t.literal("byTotalSize"),
+  t.literal("byAuto"),
+]);
+export type SortingType = t.TypeOf<typeof SortingType>;
+
 const SortingField = t.partial({
   sorting: t.type({
     sortingType: SortingType,
@@ -277,16 +277,10 @@ const GenericChartConfig = t.type({
 
 export type GenericChartConfig = t.TypeOf<typeof GenericChartConfig>;
 
-const ChartSubType = t.union([t.literal("stacked"), t.literal("grouped")]);
-export type ChartSubType = t.TypeOf<typeof ChartSubType>;
-
-const ColumnSegmentField = t.intersection([
-  GenericField,
-  SortingField,
-  t.type({ type: ChartSubType }),
-  t.partial({ showTitle: t.boolean }),
-]);
-export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
+const ShowTitleFieldExtension = t.partial({
+  showTitle: t.boolean,
+});
+export type ShowTitleFieldExtension = t.TypeOf<typeof ShowTitleFieldExtension>;
 
 const ShowValuesFieldExtension = t.partial({
   showValues: t.boolean,
@@ -303,6 +297,17 @@ export type UncertaintyFieldExtension = t.TypeOf<
   typeof UncertaintyFieldExtension
 >;
 
+const ChartSubType = t.union([t.literal("stacked"), t.literal("grouped")]);
+export type ChartSubType = t.TypeOf<typeof ChartSubType>;
+
+const ColumnSegmentField = t.intersection([
+  GenericField,
+  SortingField,
+  t.type({ type: ChartSubType }),
+  ShowTitleFieldExtension,
+]);
+export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
+
 const ColumnFields = t.intersection([
   t.type({
     x: t.intersection([GenericField, SortingField]),
@@ -318,6 +323,8 @@ const ColumnFields = t.intersection([
     animation: AnimationField,
   }),
 ]);
+export type ColumnFields = t.TypeOf<typeof ColumnFields>;
+
 const ColumnConfig = t.intersection([
   GenericChartConfig,
   t.type(
@@ -329,20 +336,13 @@ const ColumnConfig = t.intersection([
     "ColumnConfig"
   ),
 ]);
-export type ColumnFields = t.TypeOf<typeof ColumnFields>;
 export type ColumnConfig = t.TypeOf<typeof ColumnConfig>;
-
-const LineSegmentField = t.intersection([
-  GenericField,
-  SortingField,
-  t.partial({ showTitle: t.boolean }),
-]);
 
 const BarSegmentField = t.intersection([
   GenericField,
   SortingField,
   t.type({ type: ChartSubType }),
-  t.partial({ showTitle: t.boolean }),
+  ShowTitleFieldExtension,
 ]);
 export type BarSegmentField = t.TypeOf<typeof BarSegmentField>;
 
@@ -357,6 +357,8 @@ const BarFields = t.intersection([
     animation: AnimationField,
   }),
 ]);
+export type BarFields = t.TypeOf<typeof BarFields>;
+
 const BarConfig = t.intersection([
   GenericChartConfig,
   t.type(
@@ -368,9 +370,13 @@ const BarConfig = t.intersection([
     "BarConfig"
   ),
 ]);
-export type BarFields = t.TypeOf<typeof BarFields>;
 export type BarConfig = t.TypeOf<typeof BarConfig>;
 
+const LineSegmentField = t.intersection([
+  GenericField,
+  SortingField,
+  ShowTitleFieldExtension,
+]);
 export type LineSegmentField = t.TypeOf<typeof LineSegmentField>;
 
 const LineFields = t.intersection([
@@ -395,6 +401,8 @@ const LineFields = t.intersection([
     segment: LineSegmentField,
   }),
 ]);
+export type LineFields = t.TypeOf<typeof LineFields>;
+
 const LineConfig = t.intersection([
   GenericChartConfig,
   t.type(
@@ -406,13 +414,12 @@ const LineConfig = t.intersection([
     "LineConfig"
   ),
 ]);
-export type LineFields = t.TypeOf<typeof LineFields>;
 export type LineConfig = t.TypeOf<typeof LineConfig>;
 
 const AreaSegmentField = t.intersection([
   GenericField,
   SortingField,
-  t.partial({ showTitle: t.boolean }),
+  ShowTitleFieldExtension,
 ]);
 export type AreaSegmentField = t.TypeOf<typeof AreaSegmentField>;
 
@@ -438,6 +445,8 @@ const AreaFields = t.intersection([
     segment: AreaSegmentField,
   }),
 ]);
+export type AreaFields = t.TypeOf<typeof AreaFields>;
+
 const AreaConfig = t.intersection([
   GenericChartConfig,
   t.type(
@@ -449,12 +458,11 @@ const AreaConfig = t.intersection([
     "AreaConfig"
   ),
 ]);
-export type AreaFields = t.TypeOf<typeof AreaFields>;
 export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 
 const ScatterPlotSegmentField = t.intersection([
   GenericField,
-  t.partial({ showTitle: t.boolean }),
+  ShowTitleFieldExtension,
 ]);
 export type ScatterPlotSegmentField = t.TypeOf<typeof ScatterPlotSegmentField>;
 
@@ -469,6 +477,8 @@ const ScatterPlotFields = t.intersection([
     animation: AnimationField,
   }),
 ]);
+export type ScatterPlotFields = t.TypeOf<typeof ScatterPlotFields>;
+
 const ScatterPlotConfig = t.intersection([
   GenericChartConfig,
   t.type(
@@ -480,13 +490,12 @@ const ScatterPlotConfig = t.intersection([
     "ScatterPlotConfig"
   ),
 ]);
-export type ScatterPlotFields = t.TypeOf<typeof ScatterPlotFields>;
 export type ScatterPlotConfig = t.TypeOf<typeof ScatterPlotConfig>;
 
 const PieSegmentField = t.intersection([
   GenericField,
   SortingField,
-  t.partial({ showTitle: t.boolean }),
+  ShowTitleFieldExtension,
 ]);
 export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
 
@@ -498,6 +507,8 @@ const PieFields = t.intersection([
   }),
   t.partial({ animation: AnimationField }),
 ]);
+export type PieFields = t.TypeOf<typeof PieFields>;
+
 const PieConfig = t.intersection([
   GenericChartConfig,
   t.type(
@@ -509,7 +520,6 @@ const PieConfig = t.intersection([
     "PieConfig"
   ),
 ]);
-export type PieFields = t.TypeOf<typeof PieFields>;
 export type PieConfig = t.TypeOf<typeof PieConfig>;
 
 const DivergingPaletteType = t.union([
@@ -691,7 +701,9 @@ const TableSettings = t.type({
   showAllRows: t.boolean,
 });
 export type TableSettings = t.TypeOf<typeof TableSettings>;
+
 const TableFields = t.record(t.string, TableColumn);
+export type TableFields = t.TypeOf<typeof TableFields>;
 
 const TableSortingOption = t.type({
   componentId: t.string,
@@ -713,7 +725,6 @@ const TableConfig = t.intersection([
     "TableConfig"
   ),
 ]);
-export type TableFields = t.TypeOf<typeof TableFields>;
 export type TableConfig = t.TypeOf<typeof TableConfig>;
 
 const BBox = t.tuple([
@@ -793,7 +804,7 @@ export type MapColorField =
 
 const MapAreaLayer = t.type({
   componentId: t.string,
-  //FIXME:  convert to new color field type
+  // FIXME:  convert to new color field type
   color: t.union([CategoricalColorField, NumericalColorField]),
 });
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
@@ -802,7 +813,7 @@ const MapSymbolLayer = t.type({
   componentId: t.string,
   /** symbol radius (size) */
   measureId: t.string,
-  //FIXME:  convert to new color field type
+  // FIXME:  convert to new color field type
   color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
 });
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
