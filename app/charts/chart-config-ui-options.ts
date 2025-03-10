@@ -754,6 +754,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         onChange: (id, options) => {
           const { chartConfig, dimensions, measures } = options;
           defaultSegmentOnChange(id, options);
+          chartConfig.fields.y.showValues = false;
 
           const components = [...dimensions, ...measures];
           const segment: ColumnSegmentField = get(
@@ -922,6 +923,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         onChange: (id, options) => {
           const { chartConfig, dimensions, measures } = options;
           defaultSegmentOnChange(id, options);
+          chartConfig.fields.x.showValues = false;
 
           const components = [...dimensions, ...measures];
           const segment: ColumnSegmentField = get(
