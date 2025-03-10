@@ -7,7 +7,7 @@ import { DISTRIBUTION, PROJECT_ID } from "../../k6-utils.js";
 const query = `query Components(
   $iri: String!
   $sourceType: String!
-  $sourceUrl: String!
+  $sourceUrl: DataSourceUrl!
   $locale: String!
   $filters: Filters
   $componentIds: [String!]

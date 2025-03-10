@@ -7,7 +7,7 @@ const cubes = JSON.parse(
 );
 const query = `query PossibleFilters(
   $sourceType: String!
-  $sourceUrl: String!
+  $sourceUrl: DataSourceUrl!
   $cubeFilter: DataCubePossibleFiltersCubeFilter!
 ) {
   possibleFilters(
