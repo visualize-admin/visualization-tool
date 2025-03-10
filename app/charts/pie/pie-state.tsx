@@ -176,9 +176,9 @@ const usePieState = (
     measures,
   });
   const margins = {
-    top: 50 + leftAxisLabelSize.offset,
+    top: (showValuesVariables.showValues ? 90 : 50) + leftAxisLabelSize.offset,
     right,
-    bottom: 40,
+    bottom: showValuesVariables.showValues ? 90 : 50,
     left,
   };
   const chartWidth = getChartWidth({ width, left, right });
