@@ -1,9 +1,14 @@
+import { Selection } from "d3-selection";
 import { useMemo } from "react";
 
 import { PieState } from "@/charts/pie/pie-state";
 import { RenderDatum } from "@/charts/pie/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { RenderValueLabelDatum } from "@/charts/shared/render-value-labels";
+import {
+  maybeTransition,
+  RenderOptions,
+} from "@/charts/shared/rendering-utils";
 import {
   getIsOverlapping,
   useValueLabelFormatter,
@@ -143,4 +148,54 @@ export const useRenderPieValueLabelsData = ({
   ]);
 
   return valueLabelsData;
+};
+
+export const renderPieValueLabelConnectors = (
+  g: Selection<SVGGElement, null, SVGGElement, unknown>,
+  data: RenderPieValueLabelDatum[],
+  options: RenderOptions & {}
+) => {
+  const { transition } = options;
+
+  g.selectAll<SVGLineElement, RenderPieValueLabelDatum>("line")
+    .data(data, (d) => d.key)
+    .join(
+      (enter) =>
+        enter
+          .append("line")
+          .attr("x1", (d) => d.connector.x1)
+          .attr("y1", (d) => d.connector.y1)
+          .attr("x2", (d) => d.connector.x1)
+          .attr("y2", (d) => d.connector.y1)
+          .attr("stroke", "black")
+          .style("opacity", 0)
+          .call((enter) =>
+            maybeTransition(enter, {
+              transition,
+              s: (g) =>
+                g
+                  .attr("x1", (d) => d.connector.x1)
+                  .attr("y1", (d) => d.connector.y1)
+                  .attr("x2", (d) => d.x)
+                  .attr("y2", (d) => d.y)
+                  .style("opacity", 1),
+            })
+          ),
+      (update) =>
+        maybeTransition(update, {
+          s: (g) =>
+            g
+              .attr("x1", (d) => d.connector.x1)
+              .attr("y1", (d) => d.connector.y1)
+              .attr("x2", (d) => d.x)
+              .attr("y2", (d) => d.y)
+              .style("opacity", 1),
+          transition,
+        }),
+      (exit) =>
+        maybeTransition(exit, {
+          transition,
+          s: (g) => g.style("opacity", 0).remove(),
+        })
+    );
 };

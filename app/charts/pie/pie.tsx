@@ -3,7 +3,10 @@ import { useEffect, useMemo, useRef } from "react";
 
 import { PieState } from "@/charts/pie/pie-state";
 import { RenderDatum, renderPies } from "@/charts/pie/rendering-utils";
-import { useRenderPieValueLabelsData } from "@/charts/pie/show-values-utils";
+import {
+  renderPieValueLabelConnectors,
+  useRenderPieValueLabelsData,
+} from "@/charts/pie/show-values-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { renderValueLabels } from "@/charts/shared/render-value-labels";
 import {
@@ -106,6 +109,13 @@ export const Pie = () => {
             arcGenerator,
             handleMouseEnter,
             handleMouseLeave,
+          }),
+      });
+      renderContainer(g, {
+        ...common,
+        render: (g, opts) =>
+          renderPieValueLabelConnectors(g, valueLabelsData, {
+            ...opts,
           }),
       });
       renderContainer(g, {
