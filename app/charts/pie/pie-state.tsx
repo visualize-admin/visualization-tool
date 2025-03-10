@@ -175,10 +175,11 @@ const usePieState = (
     marginLeft: left,
     marginRight: right,
   });
+  const baseYMargin = showValuesVariables.showValues ? 90 : 50;
   const margins = {
-    top: (showValuesVariables.showValues ? 90 : 50) + leftAxisLabelSize.offset,
+    top: baseYMargin + leftAxisLabelSize.offset,
     right,
-    bottom: showValuesVariables.showValues ? 90 : 50,
+    bottom: baseYMargin,
     left,
   };
   const chartWidth = getChartWidth({ width, left, right });
