@@ -485,6 +485,10 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                   path="showValues"
                   field={encoding.field}
                   label={t({ id: "controls.section.show-values" })}
+                  disabled={
+                    encoding.options.showValues.getDisabledState?.(chartConfig)
+                      .disabled
+                  }
                 />
               </SwitchWrapper>
             ) : null}

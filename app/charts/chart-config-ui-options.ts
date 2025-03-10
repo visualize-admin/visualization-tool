@@ -118,6 +118,10 @@ type EncodingOption<T extends ChartConfig = ChartConfig> =
   | EncodingOptionImputation<T>
   | {
       field: "showValues";
+      getDisabledState?: (chartConfig: T) => {
+        disabled: boolean;
+        warnMessage?: string;
+      };
     }
   | {
       field: "showStandardError";
@@ -694,7 +698,13 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             paletteId: "category10",
             color: schemeCategory10[0],
           },
-          showValues: {},
+          showValues: {
+            getDisabledState: (chartConfig) => {
+              return {
+                disabled: !!chartConfig.fields.segment,
+              };
+            },
+          },
           showStandardError: {},
           showConfidenceInterval: {},
         },
@@ -856,7 +866,13 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             paletteId: "category10",
             color: schemeCategory10[0],
           },
-          showValues: {},
+          showValues: {
+            getDisabledState: (chartConfig) => {
+              return {
+                disabled: !!chartConfig.fields.segment,
+              };
+            },
+          },
           showStandardError: {},
           showConfidenceInterval: {},
         },
