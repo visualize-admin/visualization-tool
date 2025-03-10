@@ -3,21 +3,39 @@ import { useEffect, useMemo, useRef } from "react";
 
 import { PieState } from "@/charts/pie/pie-state";
 import { RenderDatum, renderPies } from "@/charts/pie/rendering-utils";
+import {
+  renderPieValueLabelConnectors,
+  useRenderPieValueLabelsData,
+} from "@/charts/pie/show-values-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { renderContainer } from "@/charts/shared/rendering-utils";
+import { renderValueLabels } from "@/charts/shared/render-value-labels";
+import {
+  renderContainer,
+  RenderContainerOptions,
+} from "@/charts/shared/rendering-utils";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 import { useTransitionStore } from "@/stores/transition";
 import useEvent from "@/utils/use-event";
 
 export const Pie = () => {
-  const { chartData, getPieData, getSegment, colors, bounds, getRenderingKey } =
-    useChartState() as PieState;
+  const {
+    bounds: { width, height, chartWidth, chartHeight },
+    chartData,
+    getPieData,
+    getSegment,
+    colors,
+    getRenderingKey,
+    getY,
+  } = useChartState() as PieState;
+  const { labelFontSize, fontFamily } = useChartTheme();
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const { width, height, chartWidth, chartHeight } = bounds;
   const [, dispatch] = useInteraction();
-  const ref = useRef<SVGGElement>(null);
+  const piesRef = useRef<SVGGElement>(null);
+  const labelsRef = useRef<SVGGElement>(null);
+  const connectorsRef = useRef<SVGGElement>(null);
 
   const maxSide = Math.min(chartWidth, chartHeight) / 2;
 
@@ -27,17 +45,21 @@ export const Pie = () => {
   const xTranslate = width / 2;
   const yTranslate = height / 2;
 
-  const arcs = getPieData(chartData);
   const renderData: RenderDatum[] = useMemo(() => {
+    const arcs = getPieData(chartData);
+
     return arcs.map((arcDatum) => {
+      const y = getY(arcDatum.data);
+
       return {
         key: getRenderingKey(arcDatum.data),
+        value: y === null || isNaN(y) ? 0 : y,
         arcDatum,
         innerRadius,
         color: colors(getSegment(arcDatum.data)),
       };
     });
-  }, [arcs, getRenderingKey, colors, getSegment]);
+  }, [getPieData, chartData, getY, getRenderingKey, colors, getSegment]);
 
   const arcGenerator = arc<$FixMe>()
     .innerRadius(innerRadius)
@@ -49,7 +71,7 @@ export const Pie = () => {
       value: {
         interaction: {
           visible: true,
-          d: d as unknown as Observation, // FIXME
+          d: d as unknown as Observation,
         },
       },
     });
@@ -61,12 +83,27 @@ export const Pie = () => {
     });
   });
 
+  const valueLabelsData = useRenderPieValueLabelsData({
+    renderData,
+    outerRadius,
+  });
+
   useEffect(() => {
-    if (ref.current && renderData) {
-      renderContainer(ref.current, {
-        id: "pies",
+    const piesContainer = piesRef.current;
+    const labelsContainer = labelsRef.current;
+    const connectorsContainer = connectorsRef.current;
+
+    if (piesContainer && labelsContainer && connectorsContainer) {
+      const common: Pick<RenderContainerOptions, "transform" | "transition"> = {
         transform: `translate(${xTranslate} ${yTranslate})`,
-        transition: { enable: enableTransition, duration: transitionDuration },
+        transition: {
+          enable: enableTransition,
+          duration: transitionDuration,
+        },
+      };
+      renderContainer(piesContainer, {
+        ...common,
+        id: "pies",
         render: (g, opts) =>
           renderPies(g, renderData, {
             ...opts,
@@ -75,17 +112,47 @@ export const Pie = () => {
             handleMouseLeave,
           }),
       });
+      renderContainer(connectorsContainer, {
+        ...common,
+        id: "connectors",
+        render: (g, opts) =>
+          renderPieValueLabelConnectors(g, valueLabelsData, {
+            ...opts,
+          }),
+      });
+      renderContainer(labelsContainer, {
+        ...common,
+        id: "labels",
+        render: (g, opts) =>
+          renderValueLabels(g, valueLabelsData, {
+            ...opts,
+            rotate: false,
+            dx: 0,
+            dy: 0,
+            fontFamily,
+            fontSize: labelFontSize,
+          }),
+      });
     }
   }, [
     arcGenerator,
     enableTransition,
+    fontFamily,
     handleMouseEnter,
     handleMouseLeave,
+    labelFontSize,
     renderData,
     transitionDuration,
+    valueLabelsData,
     xTranslate,
     yTranslate,
   ]);
 
-  return <g ref={ref} />;
+  return (
+    <>
+      <g ref={piesRef} />
+      <g ref={connectorsRef} />
+      <g ref={labelsRef} />
+    </>
+  );
 };

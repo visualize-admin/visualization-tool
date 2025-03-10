@@ -46,7 +46,7 @@ export const renderValueLabels = (
           .attr("text-anchor", textAnchor)
           .attr("paint-order", "stroke")
           .attr("stroke", "white")
-          .attr("stroke-width", 3)
+          .attr("stroke-width", 8)
           .style("transform", (d) =>
             getValueLabelTransform(d, {
               rotate,

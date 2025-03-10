@@ -25,7 +25,7 @@ export type ShowBandValueLabelsVariables = {
   showValues: boolean;
   rotateValues: boolean;
   renderEveryNthValue: number;
-  valueLabelFormatter: (value: number | null) => string;
+  valueLabelFormatter: ValueLabelFormatter;
 };
 
 export const useShowBandValueLabelsVariables = (
@@ -60,15 +60,11 @@ export const useShowBandValueLabelsVariables = (
       ? 1
       : Math.ceil(fontSize / bandwidth);
 
-  const formatNumber = useFormatNumber({ decimals: "auto" });
-  const formatters = useChartFormatters({ dimensions, measures });
-  const valueFormatter = formatters[measure.id] ?? formatNumber;
-  const valueLabelFormatter = useCallback(
-    (value: number | null) => {
-      return formatNumberWithUnit(value, valueFormatter);
-    },
-    [valueFormatter]
-  );
+  const valueLabelFormatter = useValueLabelFormatter({
+    measureId: measure.id,
+    dimensions,
+    measures,
+  });
 
   const { offset, rotateValues } = useMemo(() => {
     let offset = 0;
@@ -123,7 +119,7 @@ export const useShowBandValueLabelsVariables = (
 export type ShowTemporalValueLabelsVariables = {
   yOffset: number;
   showValues: boolean;
-  valueLabelFormatter: (value: number | null) => string;
+  valueLabelFormatter: ValueLabelFormatter;
 };
 
 export const useShowTemporalValueLabelsVariables = (
@@ -149,15 +145,11 @@ export const useShowTemporalValueLabelsVariables = (
 
   const { labelFontSize: fontSize } = useChartTheme();
 
-  const formatNumber = useFormatNumber({ decimals: "auto" });
-  const formatters = useChartFormatters({ dimensions, measures });
-  const valueFormatter = formatters[yMeasure.id] ?? formatNumber;
-  const valueLabelFormatter = useCallback(
-    (value: number | null) => {
-      return formatNumberWithUnit(value, valueFormatter);
-    },
-    [valueFormatter]
-  );
+  const valueLabelFormatter = useValueLabelFormatter({
+    measureId: yMeasure.id,
+    dimensions,
+    measures,
+  });
 
   const showValues = _showValues && !segment;
 
@@ -267,20 +259,45 @@ export const useRenderTemporalValueLabelsData = () => {
   return valueLabelsData;
 };
 
-const getIsOverlapping = ({
+export const getIsOverlapping = ({
   previousArray,
   current,
   labelHeight,
+  horizontalOffset = 8,
 }: {
   previousArray: RenderTemporalValueLabelDatum[];
   current: RenderTemporalValueLabelDatum;
   labelHeight: number;
+  horizontalOffset?: number;
 }) => {
   return previousArray.some((previous) => {
     return (
-      Math.abs(current.x - previous.x) <
+      Math.abs(current.x - previous.x) - horizontalOffset <
         previous.width / 2 + current.width / 2 &&
       Math.abs(current.y - previous.y) < labelHeight
     );
   });
+};
+
+export type ValueLabelFormatter = ReturnType<typeof useValueLabelFormatter>;
+
+export const useValueLabelFormatter = ({
+  measureId,
+  dimensions,
+  measures,
+}: {
+  measureId: string;
+  dimensions: Dimension[];
+  measures: Measure[];
+}) => {
+  const formatNumber = useFormatNumber({ decimals: "auto" });
+  const formatters = useChartFormatters({ dimensions, measures });
+  const valueFormatter = formatters[measureId] ?? formatNumber;
+
+  return useCallback(
+    (value: number | null) => {
+      return formatNumberWithUnit(value, valueFormatter);
+    },
+    [valueFormatter]
+  );
 };
