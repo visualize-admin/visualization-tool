@@ -51,8 +51,12 @@ export const useShowPieValueLabelsVariables = (
   };
 };
 
-type PieValueLabelDatum = RenderValueLabelDatum & {
+type RenderPieValueLabelDatum = RenderValueLabelDatum & {
   width: number;
+  connector: {
+    x1: number;
+    y1: number;
+  };
 };
 
 export const useRenderPieValueLabelsData = ({
@@ -80,30 +84,36 @@ export const useRenderPieValueLabelsData = ({
       {} as Record<number, number>
     );
   }, [renderData, valueLabelFormatter, fontSize]);
-  const valueLabelsData: PieValueLabelDatum[] = useMemo(() => {
+  const valueLabelsData: RenderPieValueLabelDatum[] = useMemo(() => {
     if (!showValues || !width || !height) {
       return [];
     }
 
-    const previousArray: PieValueLabelDatum[] = [];
-    const offset = 24;
+    const previousArray: RenderPieValueLabelDatum[] = [];
+    const connectorOffset = 8;
 
     return renderData
       .map((d, i) => {
         const labelWidth = valueLabelWidthsByIndex[i] ?? 0;
-        const middleAngle =
-          (d.arcDatum.startAngle + d.arcDatum.endAngle) / 2 - Math.PI / 2;
-        const x =
-          (outerRadius + offset + labelWidth / 2) * Math.cos(middleAngle);
-        const y = (outerRadius + offset + fontSize / 2) * Math.sin(middleAngle);
+        const a = (d.arcDatum.startAngle + d.arcDatum.endAngle - Math.PI) / 2;
+        const aSin = Math.sin(a);
+        const aCos = Math.cos(a);
+        const offset =
+          outerRadius + Math.min(48, Math.max(12 + labelWidth, 24)) * 1.5;
+        const x = offset * aCos;
+        const y = offset * aSin;
         const valueLabel = valueLabelFormatter(d.value);
 
-        const datum: PieValueLabelDatum = {
+        const datum: RenderPieValueLabelDatum = {
           key: d.key,
-          x: x,
-          y: y,
+          x,
+          y,
           valueLabel,
           width: labelWidth,
+          connector: {
+            x1: (outerRadius + connectorOffset) * aCos,
+            y1: (outerRadius + connectorOffset) * aSin,
+          },
         };
 
         const isOverlapping = getIsOverlapping({
