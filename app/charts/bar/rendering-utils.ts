@@ -65,6 +65,11 @@ export const renderBars = (
                   s: (g) => g.attr("x", (d) => d.x),
                 })
               )
+              .append("xhtml:div")
+              .style("display", "flex")
+              .style("align-items", "center")
+              .style("width", "100%")
+              .style("height", "100%")
               .append("xhtml:p")
               .call(setSegmentValueLabelStyles)
               .style("color", (d) => d.valueLabelColor ?? "black")
