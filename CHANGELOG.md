@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.4.0] - 2025-03-11
+
 - Features
   - Added an option to show all values in area, bar, column, line and pie charts
   - X axis titles are now always displayed
