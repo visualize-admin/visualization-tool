@@ -10,6 +10,7 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import {
+  Series,
   stack,
   stackOffsetDiverging,
   stackOrderAscending,
@@ -85,7 +86,7 @@ export type StackedBarsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
-    series: $FixMe[];
+    series: Series<{ [key: string]: number }, string>[];
     getAnnotationInfo: (
       d: Observation,
       orderedSegments: string[]

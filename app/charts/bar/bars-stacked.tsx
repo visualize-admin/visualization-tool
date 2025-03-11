@@ -19,7 +19,7 @@ export const BarsStacked = () => {
     return series.flatMap((d) => {
       const color = colors(d.key);
 
-      return d.map((segment: $FixMe) => {
+      return d.map((segment) => {
         const observation = segment.data;
 
         return {

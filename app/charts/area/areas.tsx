@@ -29,10 +29,10 @@ export const Areas = () => {
   const renderData: RenderAreaDatum[] = useMemo(() => {
     return series.map((d) => {
       return {
-        key: `${d.key}`,
+        key: d.key,
         d: areaGenerator(d) as string,
         dEmpty: areaGenerator(
-          d.map((d: [number, number]) => {
+          d.map((d) => {
             const dNew = { ...d };
             dNew[1] = d[0];
 

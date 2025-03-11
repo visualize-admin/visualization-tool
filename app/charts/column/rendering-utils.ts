@@ -9,7 +9,6 @@ export type RenderColumnDatum = {
   key: string;
   x: number;
   y: number;
-  value: number;
   width: number;
   height: number;
   color: string;
