@@ -32,6 +32,7 @@ import { TableChartState } from "@/charts/table/table-state";
 import {
   AreaFields,
   ChartConfig,
+  ChartSegmentField,
   ChartType,
   ColumnFields,
   GenericField,
@@ -674,10 +675,11 @@ export type SegmentVariables = {
   getSegment: StringValueGetter;
   getSegmentAbbreviationOrLabel: StringValueGetter;
   getSegmentLabel: (d: string) => string;
+  showValuesBySegmentMapping: ChartSegmentField["showValuesMapping"];
 };
 
 export const useSegmentVariables = (
-  segment: GenericField | undefined,
+  segment: ChartSegmentField | undefined,
   {
     dimensionsById,
     observations,
@@ -703,6 +705,7 @@ export const useSegmentVariables = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    showValuesBySegmentMapping: segment?.showValuesMapping ?? {},
   };
 };
 
