@@ -611,7 +611,7 @@ msgstr "Basis Farbe"
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption-categorical"
-msgstr "Verwenden Sie klare, kontrastreiche Farben. Vermeiden Sie die Verwendung von zu vielen Farben, maximal 5-7. Verwenden Sie sequenzielle Paletten für geordnete Daten und divergierende Paletten für Extreme."
+msgstr "Verwenden Sie klare, kontrastreiche Farben. Beschränken Sie sich auf 5–7 Farben. Nutzen Sie sequenzielle Paletten für geordnete Daten und divergierende Paletten für Extremwerte."
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
@@ -621,7 +621,7 @@ msgstr "Wählen Sie kontrastierende Farben für Start- und Endpunkt. Diese Farbe
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption-sequential"
-msgstr "Wählen Sie eine dunkle Endpunktfarbe für einen starken Kontrast zwischen niedrigen und hohen Werten; die helle Farbe wird automatisch berechnet. Sequentielle Farbpaletten eignen sich für geordnete Daten wie Temperaturen oder Bevölkerungsdichten."
+msgstr "Verwenden Sie klare, kontrastreiche Farben. Vermeiden Sie die Verwendung von zu vielen Farben, maximal 5-7. Verwenden Sie sequenzielle Paletten für geordnete Daten und divergierende Paletten für Extreme."
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.categorical"

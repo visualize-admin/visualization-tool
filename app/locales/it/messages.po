@@ -611,17 +611,17 @@ msgstr "Colore base"
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption-categorical"
-msgstr "Utilizzare colori distinti e ad alto contrasto. Evitare di usare troppi colori, massimo 5-7. Applicare tavolozze sequenziali per i dati ordinati e tavolozze divergenti per gli estremi."
+msgstr "Utilizza colori distinti con alto contrasto. Limita la palette a un massimo di 5-7 colori. Usa palette sequenziali per rappresentare dati e palette divergenti per evidenziare gli estremi."
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption-diverging"
-msgstr "Scegliere colori contrastanti per i punti iniziali e finali. Questi colori facilitano la distinzione visiva dei valori estremi. Le palette divergenti sono ideali per dati con un punto medio significativo, come zero o un valore medio."
+msgstr "Scegli colori contrastanti per i punti iniziali e finali: questo aiuterà a distinguere visivamente gli estremi. Le palette divergenti sono particolarmente efficaci per i dati che hanno un punto medio significativo, come zero o un valore medio."
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.caption-sequential"
-msgstr "Per ottenere un forte contrasto tra valori bassi e alti, è possibile selezionare un colore scuro per l'endpoint; il colore chiaro viene calcolato automaticamente. Le tavolozze di colori sequenziali sono adatte per dati ordinati come le temperature o le densità di popolazione."
+msgstr "Seleziona un colore scuro per il punto finale per creare un forte contrasto tra valori bassi e alti, il colore chiaro viene calcolato automaticamente. Le tavolozze di colori sequenziali sono ideali per rappresentare dati come temperature o densità della popolazione."
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.categorical"
@@ -679,7 +679,7 @@ msgstr "Titolo tavolozza (obbligatorio)"
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.title-unavailable"
-msgstr "Questo nome è già in uso. Scegliete un nome unico per la vostra tavolozza di colori."
+msgstr "Questo nome è già in uso. Scegliete un nome univoco per la vostra tavolozza di colori."
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.type"
@@ -1737,15 +1737,15 @@ msgstr "Le mie tavolozze"
 
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.delete"
-msgstr "Cancellare il colore Paleete"
+msgstr "Cancellare la tavolozza di colori"
 
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.description"
-msgstr "Salvate una tavolozza di colori personalizzata per selezionare facilmente i colori delle vostre visualizzazioni."
+msgstr "Salvate una tavolozza di colori personalizzata per selezionare facilmente i vostri colori durante la creazione di una visualizzazione."
 
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.edit"
-msgstr "Modifica colore Paleete"
+msgstr "Modifica colore della tavolozza"
 
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
