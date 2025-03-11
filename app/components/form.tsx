@@ -268,7 +268,7 @@ export const Checkbox = ({
         }}
       />
     }
-    sx={{ display: "flex" }}
+    sx={{ display: "flex", whiteSpace: "nowrap" }}
   />
 );
 

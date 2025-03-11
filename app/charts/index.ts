@@ -58,6 +58,7 @@ import {
   PieSegmentField,
   RegularChartType,
   ScatterPlotSegmentField,
+  ShowValuesSegmentFieldExtension,
   SortingOrder,
   SortingType,
   TableColumn,
@@ -551,6 +552,7 @@ export const getInitialConfig = (
           segment: {
             componentId: pieSegmentComponent.id,
             sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
+            showValuesMapping: {},
           },
           color: {
             type: "segment",
@@ -594,6 +596,7 @@ export const getInitialConfig = (
                 },
                 segment: {
                   componentId: scatterplotSegmentComponent.id,
+                  showValuesMapping: {},
                 },
               }
             : {
@@ -1048,6 +1051,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               ...maybeSegmentAndColorFields.segment,
               sorting: DEFAULT_SORTING,
               type: disableStacked(yMeasure) ? "grouped" : "stacked",
+              showValuesMapping: {},
             };
             newColor = maybeSegmentAndColorFields.color;
           }
@@ -1060,6 +1064,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
           newSegment = {
             ...oldSegment,
+            showValuesMapping: oldSegment.showValuesMapping ?? {},
             // We could encounter byMeasure sorting type (Pie chart); we should
             // switch to byTotalSize sorting then.
             sorting: adjustSegmentSorting({
@@ -1303,6 +1308,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
                 "sortingOrder" in oldSegment.sorting
                   ? (oldSegment.sorting ?? DEFAULT_FIXED_COLOR_FIELD)
                   : DEFAULT_SORTING,
+              showValuesMapping: oldSegment.showValuesMapping,
             };
             newColor = {
               type: "segment",
@@ -1413,6 +1419,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
                 acceptedValues: AREA_SEGMENT_SORTING.map((d) => d.sortingType),
                 defaultValue: "byTotalSize",
               }),
+              showValuesMapping: oldSegment.showValuesMapping,
             };
             newColor = {
               type: "segment",
@@ -1490,6 +1497,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
           newSegment = {
             componentId: oldSegment.componentId,
+            showValuesMapping: oldSegment.showValuesMapping,
           };
         }
 
@@ -1566,6 +1574,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               acceptedValues: PIE_SEGMENT_SORTING.map((d) => d.sortingType),
               defaultValue: "byMeasure",
             }),
+            showValuesMapping: oldSegment.showValuesMapping,
           };
           newColor = {
             type: "segment",
@@ -2618,7 +2627,12 @@ const convertTableFieldsToSegmentAndColorFields = ({
   fields: TableFields;
   dimensions: Dimension[];
   measures: Measure[];
-}): { segment: GenericField; color: ColorField } | undefined => {
+}):
+  | {
+      segment: GenericField & ShowValuesSegmentFieldExtension;
+      color: ColorField;
+    }
+  | undefined => {
   const groupedColumns = group(Object.values(fields), (d) => d.isGroup)
     .get(true)
     ?.filter((d) => SEGMENT_ENABLED_COMPONENTS.includes(d.componentType))
@@ -2638,6 +2652,7 @@ const convertTableFieldsToSegmentAndColorFields = ({
   return {
     segment: {
       componentId,
+      showValuesMapping: {},
     },
     color: {
       type: "segment",

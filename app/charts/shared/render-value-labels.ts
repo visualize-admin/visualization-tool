@@ -1,20 +1,20 @@
-import { Selection } from "d3-selection";
+import { BaseType, Selection } from "d3-selection";
 
 import {
   maybeTransition,
   RenderOptions,
 } from "@/charts/shared/rendering-utils";
 
-export type RenderValueLabelDatum = {
+export type RenderTotalValueLabelDatum = {
   key: string;
   x: number;
   y: number;
   valueLabel: string;
 };
 
-export const renderValueLabels = (
+export const renderTotalValueLabels = (
   g: Selection<SVGGElement, null, SVGGElement, unknown>,
-  data: RenderValueLabelDatum[],
+  data: RenderTotalValueLabelDatum[],
   options: RenderOptions & {
     rotate: boolean;
     textAnchor?: "start" | "middle" | "end";
@@ -35,7 +35,7 @@ export const renderValueLabels = (
   } = options;
   const textAnchor = _textAnchor ?? getValueLabelTextAnchor(rotate);
 
-  g.selectAll<SVGTextElement, RenderValueLabelDatum>("text")
+  g.selectAll<SVGTextElement, RenderTotalValueLabelDatum>("text")
     .data(data, (d) => d.key)
     .join(
       (enter) =>
@@ -91,7 +91,7 @@ export const renderValueLabels = (
 };
 
 const getValueLabelTransform = (
-  d: RenderValueLabelDatum,
+  d: RenderTotalValueLabelDatum,
   {
     rotate,
     labelHeight,
@@ -113,4 +113,17 @@ const getValueLabelTransform = (
 
 const getValueLabelTextAnchor = (rotate: boolean) => {
   return rotate ? "start" : "middle";
+};
+
+export const setSegmentValueLabelStyles = <
+  T extends { valueLabel?: string; valueLabelColor?: string },
+>(
+  g: Selection<BaseType, T, SVGGElement, null>
+) => {
+  return g
+    .style("overflow", "hidden")
+    .style("padding-left", "4px")
+    .style("font-size", "12px")
+    .style("white-space", "nowrap")
+    .style("text-overflow", "ellipsis");
 };

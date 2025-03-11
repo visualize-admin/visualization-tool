@@ -8,7 +8,7 @@ import {
   useRenderPieValueLabelsData,
 } from "@/charts/pie/show-values-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { renderValueLabels } from "@/charts/shared/render-value-labels";
+import { renderTotalValueLabels } from "@/charts/shared/render-value-labels";
 import {
   renderContainer,
   RenderContainerOptions,
@@ -124,7 +124,7 @@ export const Pie = () => {
         ...common,
         id: "labels",
         render: (g, opts) =>
-          renderValueLabels(g, valueLabelsData, {
+          renderTotalValueLabels(g, valueLabelsData, {
             ...opts,
             rotate: false,
             dx: 0,

@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { PieState } from "@/charts/pie/pie-state";
 import { RenderDatum } from "@/charts/pie/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { RenderValueLabelDatum } from "@/charts/shared/render-value-labels";
+import { RenderTotalValueLabelDatum } from "@/charts/shared/render-value-labels";
 import {
   maybeTransition,
   RenderOptions,
@@ -56,7 +56,7 @@ export const useShowPieValueLabelsVariables = (
   };
 };
 
-type RenderPieValueLabelDatum = RenderValueLabelDatum & {
+type RenderPieValueLabelDatum = RenderTotalValueLabelDatum & {
   width: number;
   connector: {
     x1: number;
@@ -180,7 +180,7 @@ export const renderPieValueLabelConnectors = (
                   .attr("x1", (d) => d.connector.x1)
                   .attr("y1", (d) => d.connector.y1)
                   .attr("x2", (d) => d.x)
-                  .attr("y2", (d) => d.y)
+                  .attr("y2", (d) => d.y - 4)
                   .style("opacity", 1),
             })
           ),
@@ -191,7 +191,7 @@ export const renderPieValueLabelConnectors = (
               .attr("x1", (d) => d.connector.x1)
               .attr("y1", (d) => d.connector.y1)
               .attr("x2", (d) => d.x)
-              .attr("y2", (d) => d.y)
+              .attr("y2", (d) => d.y - 4)
               .style("opacity", 1),
           transition,
         }),

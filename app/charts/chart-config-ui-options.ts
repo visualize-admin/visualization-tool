@@ -118,6 +118,10 @@ type EncodingOption<T extends ChartConfig = ChartConfig> =
   | EncodingOptionImputation<T>
   | {
       field: "showValues";
+      getDisabledState?: (chartConfig: T) => {
+        disabled: boolean;
+        warnMessage?: string;
+      };
     }
   | {
       field: "showStandardError";
@@ -530,6 +534,7 @@ export const defaultSegmentOnChange: OnEncodingChange<
     chartConfig.fields.segment = {
       componentId: id,
       sorting: DEFAULT_SORTING,
+      showValuesMapping: {},
     };
     chartConfig.fields.color = {
       type: "segment",
@@ -592,7 +597,13 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             paletteId: "schemaCategory10",
             color: schemeCategory10[0],
           },
-          showValues: {},
+          showValues: {
+            getDisabledState: (chartConfig) => {
+              return {
+                disabled: !!chartConfig.fields.segment,
+              };
+            },
+          },
         },
       },
       {
@@ -694,7 +705,13 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             paletteId: "category10",
             color: schemeCategory10[0],
           },
-          showValues: {},
+          showValues: {
+            getDisabledState: (chartConfig) => {
+              return {
+                disabled: !!chartConfig.fields.segment,
+              };
+            },
+          },
           showStandardError: {},
           showConfidenceInterval: {},
         },
@@ -744,6 +761,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         onChange: (id, options) => {
           const { chartConfig, dimensions, measures } = options;
           defaultSegmentOnChange(id, options);
+          chartConfig.fields.y.showValues = false;
 
           const components = [...dimensions, ...measures];
           const segment: ColumnSegmentField = get(
@@ -856,7 +874,13 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             paletteId: "category10",
             color: schemeCategory10[0],
           },
-          showValues: {},
+          showValues: {
+            getDisabledState: (chartConfig) => {
+              return {
+                disabled: !!chartConfig.fields.segment,
+              };
+            },
+          },
           showStandardError: {},
           showConfidenceInterval: {},
         },
@@ -906,6 +930,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         onChange: (id, options) => {
           const { chartConfig, dimensions, measures } = options;
           defaultSegmentOnChange(id, options);
+          chartConfig.fields.x.showValues = false;
 
           const components = [...dimensions, ...measures];
           const segment: ColumnSegmentField = get(
@@ -997,7 +1022,13 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             paletteId: "category10",
             color: schemeCategory10[0],
           },
-          showValues: {},
+          showValues: {
+            getDisabledState: (chartConfig) => {
+              return {
+                disabled: !!chartConfig.fields.segment,
+              };
+            },
+          },
           showStandardError: {},
           showConfidenceInterval: {},
           showDots: {},

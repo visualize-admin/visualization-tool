@@ -6,7 +6,7 @@ import {
   NumericalValueGetter,
   useChartState,
 } from "@/charts/shared/chart-state";
-import { RenderValueLabelDatum } from "@/charts/shared/render-value-labels";
+import { RenderTotalValueLabelDatum } from "@/charts/shared/render-value-labels";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import {
@@ -160,7 +160,7 @@ export const useShowTemporalValueLabelsVariables = (
   };
 };
 
-type RenderTemporalValueLabelDatum = RenderValueLabelDatum & {
+type RenderTemporalValueLabelDatum = RenderTotalValueLabelDatum & {
   width: number;
 };
 
@@ -285,14 +285,19 @@ export const useValueLabelFormatter = ({
   measureId,
   dimensions,
   measures,
+  normalize,
 }: {
   measureId: string;
   dimensions: Dimension[];
   measures: Measure[];
+  normalize?: boolean;
 }) => {
+  const formatPercent = useFormatNumber({ decimals: 0 });
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters({ dimensions, measures });
-  const valueFormatter = formatters[measureId] ?? formatNumber;
+  const valueFormatter = normalize
+    ? formatPercent
+    : (formatters[measureId] ?? formatNumber);
 
   return useCallback(
     (value: number | null) => {

@@ -3,7 +3,7 @@ import { Fragment, memo, useEffect, useMemo, useRef } from "react";
 
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
-import { renderValueLabels } from "@/charts/shared/render-value-labels";
+import { renderTotalValueLabels } from "@/charts/shared/render-value-labels";
 import {
   renderContainer,
   RenderVerticalWhiskerDatum,
@@ -119,7 +119,7 @@ export const Lines = ({
           duration: 0,
         },
         render: (g, opts) =>
-          renderValueLabels(g, valueLabelsData, {
+          renderTotalValueLabels(g, valueLabelsData, {
             ...opts,
             rotate: false,
             fontFamily,

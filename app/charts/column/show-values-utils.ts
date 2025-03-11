@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
 import { useChartState } from "@/charts/shared/chart-state";
-import { RenderValueLabelDatum } from "@/charts/shared/render-value-labels";
+import { RenderTotalValueLabelDatum } from "@/charts/shared/render-value-labels";
 import { truthy } from "@/domain/types";
 
 export const useColumnValueLabelsData = () => {
@@ -19,7 +19,7 @@ export const useColumnValueLabelsData = () => {
     valueLabelFormatter,
   } = useChartState() as ColumnsState;
   const bandwidth = xScale.bandwidth();
-  const valueLabelsData: RenderValueLabelDatum[] = useMemo(() => {
+  const valueLabelsData: RenderTotalValueLabelDatum[] = useMemo(() => {
     if (!showValues || !width || !height) {
       return [];
     }

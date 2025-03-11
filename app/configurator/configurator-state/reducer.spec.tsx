@@ -556,6 +556,7 @@ describe("deriveFiltersFromFields", () => {
           },
           "segment": Object {
             "componentId": "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+            "showValuesMapping": Object {},
             "sorting": Object {
               "sortingOrder": "asc",
               "sortingType": "byMeasure",
@@ -610,7 +611,7 @@ describe("deriveFiltersFromFields", () => {
             "it": "",
           },
         },
-        "version": "4.3.0",
+        "version": "4.4.0",
       }
     `);
   });

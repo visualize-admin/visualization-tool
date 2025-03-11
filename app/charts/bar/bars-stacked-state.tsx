@@ -10,6 +10,7 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import {
+  Series,
   stack,
   stackOffsetDiverging,
   stackOrderAscending,
@@ -54,6 +55,10 @@ import {
 } from "@/charts/shared/interaction/tooltip-box";
 import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
 import {
+  useValueLabelFormatter,
+  ValueLabelFormatter,
+} from "@/charts/shared/show-values-utils";
+import {
   getStackedTooltipValueFormatter,
   getStackedXScale,
 } from "@/charts/shared/stacked-helpers";
@@ -85,13 +90,14 @@ export type StackedBarsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
-    series: $FixMe[];
+    series: Series<{ [key: string]: number }, string>[];
     getAnnotationInfo: (
       d: Observation,
       orderedSegments: string[]
     ) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     bottomAxisLabelSize: AxisLabelSizeVariables;
+    valueLabelFormatter: ValueLabelFormatter;
   };
 
 const useBarsStackedState = (
@@ -99,7 +105,7 @@ const useBarsStackedState = (
   variables: BarsStackedStateVariables,
   data: BarsStackedStateData
 ): StackedBarsState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     yDimension,
     getX,
@@ -531,6 +537,13 @@ const useBarsStackedState = (
     ]
   );
 
+  const valueLabelFormatter = useValueLabelFormatter({
+    measureId: xMeasure.id,
+    dimensions,
+    measures,
+    normalize,
+  });
+
   return {
     chartType: "bar",
     bounds: {
@@ -551,6 +564,7 @@ const useBarsStackedState = (
     getAnnotationInfo,
     leftAxisLabelSize,
     bottomAxisLabelSize,
+    valueLabelFormatter,
     ...variables,
   };
 };

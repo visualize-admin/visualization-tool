@@ -64,6 +64,7 @@ export const fields = {
       sortingType: "byDimensionLabel",
       sortingOrder: "asc",
     } as SortingField["sorting"],
+    showValuesMapping: {},
   },
 };
 
