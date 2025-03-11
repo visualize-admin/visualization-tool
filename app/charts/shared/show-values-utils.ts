@@ -285,14 +285,19 @@ export const useValueLabelFormatter = ({
   measureId,
   dimensions,
   measures,
+  normalize,
 }: {
   measureId: string;
   dimensions: Dimension[];
   measures: Measure[];
+  normalize?: boolean;
 }) => {
+  const formatPercent = useFormatNumber({ decimals: 0 });
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters({ dimensions, measures });
-  const valueFormatter = formatters[measureId] ?? formatNumber;
+  const valueFormatter = normalize
+    ? formatPercent
+    : (formatters[measureId] ?? formatNumber);
 
   return useCallback(
     (value: number | null) => {
