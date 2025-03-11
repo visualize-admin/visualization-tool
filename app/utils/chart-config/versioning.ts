@@ -1514,6 +1514,56 @@ export const migrateChartConfig = makeMigrate<ChartConfig>(
   }
 );
 
+const makeBumpChartConfigVersionMigration = ({
+  fromVersion,
+  toVersion,
+  fromChartConfigVersion,
+  toChartConfigVersion,
+}: {
+  fromVersion: string;
+  toVersion: string;
+  fromChartConfigVersion: string;
+  toChartConfigVersion: string;
+}): Migration => {
+  return {
+    description: "ALL (bump ChartConfig version)",
+    from: fromVersion,
+    to: toVersion,
+    up: async (config) => {
+      const newConfig = { ...config, version: toVersion };
+      const chartConfigs = [];
+
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: toChartConfigVersion,
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
+
+      newConfig.chartConfigs = chartConfigs;
+
+      return newConfig;
+    },
+    down: async (config) => {
+      const newConfig = { ...config, version: fromVersion };
+      const chartConfigs = [];
+
+      for (const chartConfig of newConfig.chartConfigs) {
+        const migratedChartConfig = await migrateChartConfig(chartConfig, {
+          migrationProps: newConfig,
+          toVersion: fromChartConfigVersion,
+        });
+        chartConfigs.push(migratedChartConfig);
+      }
+
+      newConfig.chartConfigs = chartConfigs;
+
+      return newConfig;
+    },
+  };
+};
+
 export const configuratorStateMigrations: Migration[] = [
   {
     description: "ALL",
@@ -1615,43 +1665,12 @@ export const configuratorStateMigrations: Migration[] = [
       return newConfig;
     },
   },
-  {
-    description: "ALL (bump ChartConfig version)",
-    from: "3.0.0",
-    to: "3.0.1",
-    up: async (config) => {
-      const newConfig = { ...config, version: "3.0.1" };
-      const chartConfigs = [];
-
-      for (const chartConfig of newConfig.chartConfigs) {
-        const migratedChartConfig = await migrateChartConfig(chartConfig, {
-          migrationProps: newConfig,
-          toVersion: "3.0.0",
-        });
-        chartConfigs.push(migratedChartConfig);
-      }
-
-      newConfig.chartConfigs = chartConfigs;
-
-      return newConfig;
-    },
-    down: async (config) => {
-      const newConfig = { ...config, version: "3.0.0" };
-      const chartConfigs = [];
-
-      for (const chartConfig of newConfig.chartConfigs) {
-        const migratedChartConfig = await migrateChartConfig(chartConfig, {
-          migrationProps: newConfig,
-          toVersion: "2.3.0",
-        });
-        chartConfigs.push(migratedChartConfig);
-      }
-
-      newConfig.chartConfigs = chartConfigs;
-
-      return newConfig;
-    },
-  },
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "3.0.0",
+    toVersion: "3.0.1",
+    fromChartConfigVersion: "2.3.0",
+    toChartConfigVersion: "3.0.0",
+  }),
   {
     description: "ALL + layout",
     from: "3.0.1",
@@ -1688,43 +1707,12 @@ export const configuratorStateMigrations: Migration[] = [
       return newConfig;
     },
   },
-  {
-    description: "ALL (bump ChartConfig version)",
-    from: "3.1.0",
-    to: "3.2.0",
-    up: async (config) => {
-      const newConfig = { ...config, version: "3.2.0" };
-      const chartConfigs = [];
-
-      for (const chartConfig of newConfig.chartConfigs) {
-        const migratedChartConfig = await migrateChartConfig(chartConfig, {
-          migrationProps: newConfig,
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "3.1.0",
           toVersion: "3.2.0",
-        });
-        chartConfigs.push(migratedChartConfig);
-      }
-
-      newConfig.chartConfigs = chartConfigs;
-
-      return newConfig;
-    },
-    down: async (config) => {
-      const newConfig = { ...config, version: "3.1.0" };
-      const chartConfigs = [];
-
-      for (const chartConfig of newConfig.chartConfigs) {
-        const migratedChartConfig = await migrateChartConfig(chartConfig, {
-          migrationProps: newConfig,
-          toVersion: "3.1.0",
-        });
-        chartConfigs.push(migratedChartConfig);
-      }
-
-      newConfig.chartConfigs = chartConfigs;
-
-      return newConfig;
-    },
-  },
+    fromChartConfigVersion: "3.1.0",
+    toChartConfigVersion: "3.2.0",
+  }),
   {
     description: "ALL (add dataSource in case it's missing)",
     from: "3.2.0",
@@ -1771,43 +1759,12 @@ export const configuratorStateMigrations: Migration[] = [
       return newConfig;
     },
   },
-  {
-    description: "ALL (bump ChartConfig version)",
-    from: "3.3.0",
-    to: "3.4.0",
-    up: async (config) => {
-      const newConfig = { ...config, version: "3.4.0" };
-      const chartConfigs = [];
-
-      for (const chartConfig of newConfig.chartConfigs) {
-        const migratedChartConfig = await migrateChartConfig(chartConfig, {
-          migrationProps: newConfig,
-          toVersion: "3.3.0",
-        });
-        chartConfigs.push(migratedChartConfig);
-      }
-
-      newConfig.chartConfigs = chartConfigs;
-
-      return newConfig;
-    },
-    down: async (config) => {
-      const newConfig = { ...config, version: "3.3.0" };
-      const chartConfigs = [];
-
-      for (const chartConfig of newConfig.chartConfigs) {
-        const migratedChartConfig = await migrateChartConfig(chartConfig, {
-          migrationProps: newConfig,
-          toVersion: "3.2.0",
-        });
-        chartConfigs.push(migratedChartConfig);
-      }
-
-      newConfig.chartConfigs = chartConfigs;
-
-      return newConfig;
-    },
-  },
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "3.3.0",
+    toVersion: "3.4.0",
+    fromChartConfigVersion: "3.2.0",
+    toChartConfigVersion: "3.3.0",
+  }),
   {
     description: "ALL (modify dashboardFilters)",
     from: "3.4.0",
@@ -2009,7 +1966,7 @@ export const configuratorStateMigrations: Migration[] = [
     },
   },
   {
-    description: "ALL (bump ChartConfig version)",
+    description: "ALL (bump ChartConfig version) + migrate dataFilters",
     from: "3.8.0",
     to: "4.0.0",
     up: async (config) => {
@@ -2089,43 +2046,12 @@ export const configuratorStateMigrations: Migration[] = [
       return newConfig;
     },
   },
-  {
-    description: "ALL (bump ChartConfig version)",
-    from: "4.0.0",
-    to: "4.1.0",
-    up: async (config) => {
-      const newConfig = { ...config, version: "4.1.0" };
-      const chartConfigs = [];
-
-      for (const chartConfig of newConfig.chartConfigs) {
-        const migratedChartConfig = await migrateChartConfig(chartConfig, {
-          migrationProps: newConfig,
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "4.0.0",
           toVersion: "4.1.0",
-        });
-        chartConfigs.push(migratedChartConfig);
-      }
-
-      newConfig.chartConfigs = chartConfigs;
-
-      return newConfig;
-    },
-    down: async (config) => {
-      const newConfig = { ...config, version: "4.0.0" };
-      const chartConfigs = [];
-
-      for (const chartConfig of newConfig.chartConfigs) {
-        const migratedChartConfig = await migrateChartConfig(chartConfig, {
-          migrationProps: newConfig,
-          toVersion: "4.0.0",
-        });
-        chartConfigs.push(migratedChartConfig);
-      }
-
-      newConfig.chartConfigs = chartConfigs;
-
-      return newConfig;
-    },
-  },
+    fromChartConfigVersion: "4.0.0",
+    toChartConfigVersion: "4.1.0",
+  }),
   {
     description: `ALL {
       layout {
@@ -2174,80 +2100,18 @@ export const configuratorStateMigrations: Migration[] = [
       return newConfig;
     },
   },
-  {
-    description: "ALL (bump ChartConfig version)",
-    from: "4.2.0",
-    to: "4.3.0",
-    up: async (config) => {
-      const newConfig = { ...config, version: "4.3.0" };
-      const chartConfigs = [];
-
-      for (const chartConfig of newConfig.chartConfigs) {
-        const migratedChartConfig = await migrateChartConfig(chartConfig, {
-          migrationProps: newConfig,
-          toVersion: "4.2.0",
-        });
-        chartConfigs.push(migratedChartConfig);
-      }
-
-      newConfig.chartConfigs = chartConfigs;
-
-      return newConfig;
-    },
-    down: async (config) => {
-      const newConfig = { ...config, version: "4.2.0" };
-      const chartConfigs = [];
-
-      for (const chartConfig of newConfig.chartConfigs) {
-        const migratedChartConfig = await migrateChartConfig(chartConfig, {
-          migrationProps: newConfig,
-          toVersion: "4.1.0",
-        });
-        chartConfigs.push(migratedChartConfig);
-      }
-
-      newConfig.chartConfigs = chartConfigs;
-
-      return newConfig;
-    },
-  },
-  {
-    description: "ALL (bump ChartConfig version)",
-    from: "4.3.0",
-    to: "4.4.0",
-    up: async (config) => {
-      const newConfig = { ...config, version: "4.4.0" };
-      const chartConfigs = [];
-
-      for (const chartConfig of newConfig.chartConfigs) {
-        const migratedChartConfig = await migrateChartConfig(chartConfig, {
-          migrationProps: newConfig,
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "4.2.0",
           toVersion: "4.3.0",
-        });
-        chartConfigs.push(migratedChartConfig);
-      }
-
-      newConfig.chartConfigs = chartConfigs;
-
-      return newConfig;
-    },
-    down: async (config) => {
-      const newConfig = { ...config, version: "4.3.0" };
-      const chartConfigs = [];
-
-      for (const chartConfig of newConfig.chartConfigs) {
-        const migratedChartConfig = await migrateChartConfig(chartConfig, {
-          migrationProps: newConfig,
-          toVersion: "4.2.0",
-        });
-        chartConfigs.push(migratedChartConfig);
-      }
-
-      newConfig.chartConfigs = chartConfigs;
-
-      return newConfig;
-    },
-  },
+    fromChartConfigVersion: "4.1.0",
+    toChartConfigVersion: "4.2.0",
+  }),
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "4.3.0",
+    toVersion: "4.4.0",
+    fromChartConfigVersion: "4.2.0",
+    toChartConfigVersion: "4.3.0",
+  }),
 ];
 
 export const migrateConfiguratorState = makeMigrate<ConfiguratorState>(
