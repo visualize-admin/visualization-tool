@@ -713,6 +713,10 @@ msgid "controls.filter.select.none"
 msgstr "Deseleziona tutto"
 
 #: app/configurator/components/field.tsx
+msgid "controls.filter.show-values"
+msgstr "Mostra valori"
+
+#: app/configurator/components/field.tsx
 msgid "controls.filter.use-most-recent"
 msgstr "Usare il più recente"
 

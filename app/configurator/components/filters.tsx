@@ -52,6 +52,7 @@ import {
   getFilterValue,
   isConfiguring,
   MultiFilterContextProvider,
+  shouldEnableSettingShowValuesBySegment,
   useConfiguratorState,
   useMultiFilterContext,
 } from "@/configurator";
@@ -62,7 +63,8 @@ import {
 import {
   dimensionToFieldProps,
   MostRecentDateSwitch,
-  MultiFilterFieldColorPicker,
+  MultiFilterField,
+  ShowValuesMappingField,
   SingleFilterField,
 } from "@/configurator/components/field";
 import {
@@ -346,12 +348,15 @@ const MultiFilterContent = ({
       filterDimensionId: dimensionId,
     });
   }, [colorConfig, dimensionId, colorComponent]);
-
   useEnsureUpToDateColorMapping({
     colorComponentValues: colorComponent?.values,
     colorMapping:
       colorConfig?.type !== "single" ? colorConfig?.colorMapping : undefined,
   });
+
+  const enableSettingShowValuesBySegment =
+    chartConfig.activeField === "segment" &&
+    shouldEnableSettingShowValuesBySegment(chartConfig);
 
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
   const visibleLegendProps = useLegendTitleVisibility();
@@ -473,16 +478,20 @@ const MultiFilterContent = ({
                   data-testid="chart-filters-value"
                 >
                   {hasColorMapping ? (
-                    <MultiFilterFieldColorPicker
+                    <MultiFilterField
                       value={value}
                       label={label}
                       symbol={chartSymbol}
+                      enableShowValue={enableSettingShowValuesBySegment}
                     />
                   ) : (
                     <>
                       <Typography variant="body2" style={{ flexGrow: 1 }}>
                         {label}
                       </Typography>
+                      {enableSettingShowValuesBySegment ? (
+                        <ShowValuesMappingField value={value} />
+                      ) : null}
                       <SvgIcCheck />
                     </>
                   )}

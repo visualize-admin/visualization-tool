@@ -788,32 +788,32 @@ const useMultiFilterColorPicker = (
     });
   }, [chartConfig, colorField, customColorPalettes]);
 
-  const checkedState = dimensionId
+  const checked = dimensionId
     ? isMultiFilterFieldChecked(filters, dimensionId, value)
     : null;
 
-  return useMemo(
-    () => ({
+  return useMemo(() => {
+    return {
       color,
       palette,
       onChange,
-      checked: checkedState,
-    }),
-    [color, palette, onChange, checkedState]
-  );
+      checked,
+    };
+  }, [color, palette, onChange, checked]);
 };
 
-export const MultiFilterFieldColorPicker = ({
+export const MultiFilterField = ({
   value,
   label,
   symbol,
+  enableShowValue,
 }: {
   value: string;
   label: string;
   symbol: LegendSymbol;
+  enableShowValue?: boolean;
 }) => {
   const { data: customColorPalettes } = useUserPalettes();
-
   const { color, checked, palette, onChange } = useMultiFilterColorPicker(
     value,
     customColorPalettes
@@ -825,6 +825,7 @@ export const MultiFilterFieldColorPicker = ({
         width: "100%",
         justifyContent: "space-between",
         alignItems: "center",
+        gap: 2,
       }}
     >
       <LegendItem
@@ -833,13 +834,27 @@ export const MultiFilterFieldColorPicker = ({
         color={color}
         usage="colorPicker"
       />
-      <ColorPickerMenu
-        colors={palette}
-        selectedHexColor={color}
-        onChange={onChange}
-      />
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        {enableShowValue ? <ShowValuesMappingField value={value} /> : null}
+        <ColorPickerMenu
+          colors={palette}
+          selectedHexColor={color}
+          onChange={onChange}
+        />
+      </Box>
     </Flex>
   ) : null;
+};
+
+export const ShowValuesMappingField = ({ value }: { value: string }) => {
+  return (
+    <ChartOptionCheckboxField
+      label={t({ id: "controls.filter.show-values", message: "Show values" })}
+      field="segment"
+      path={`showValuesMapping["${value}"]`}
+      smaller
+    />
+  );
 };
 
 export const SingleFilterField = ({
@@ -1120,12 +1135,14 @@ export const ChartOptionCheckboxField = ({
   path,
   defaultValue = false,
   disabled = false,
+  smaller,
 }: {
   label: string;
   field: EncodingFieldType | null;
   path: string;
   defaultValue?: boolean;
   disabled?: boolean;
+  smaller?: boolean;
 }) => {
   const fieldProps = useChartOptionBooleanField({
     field,
@@ -1139,6 +1156,7 @@ export const ChartOptionCheckboxField = ({
       label={label}
       {...fieldProps}
       checked={fieldProps.checked ?? defaultValue}
+      smaller={smaller}
     />
   );
 };
