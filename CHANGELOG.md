@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - It's now possible to show segment value labels in column and bar charts
 
 # [5.4.0] - 2025-03-11
 
