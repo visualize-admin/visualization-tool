@@ -1,8 +1,8 @@
 import { Selection } from "d3-selection";
 
 import {
-  RenderOptions,
   maybeTransition,
+  RenderOptions,
 } from "@/charts/shared/rendering-utils";
 
 export type RenderBarDatum = {
@@ -12,6 +12,8 @@ export type RenderBarDatum = {
   width: number;
   height: number;
   color: string;
+  valueLabel?: string;
+  valueLabelColor?: string;
 };
 
 type RenderBarOptions = RenderOptions & {
@@ -25,39 +27,84 @@ export const renderBars = (
 ) => {
   const { transition, x0 } = options;
 
-  g.selectAll<SVGRectElement, RenderBarDatum>("rect")
+  g.selectAll<SVGGElement, RenderBarDatum>("g.bar")
     .data(data, (d) => d.key)
     .join(
       (enter) =>
         enter
-          .append("rect")
-          .attr("data-index", (_, i) => i)
-          .attr("y", (d) => d.y)
-          .attr("x", x0)
-          .attr("width", 0)
-          .attr("height", (d) => d.height)
-          .attr("fill", (d) => d.color)
-          .call((enter) =>
-            maybeTransition(enter, {
-              transition,
-              s: (g) => g.attr("x", (d) => d.x).attr("width", (d) => d.width),
-            })
+          .append("g")
+          .attr("class", "bar")
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("data-index", (_, i) => i)
+              .attr("y", (d) => d.y)
+              .attr("x", x0)
+              .attr("width", 0)
+              .attr("height", (d) => d.height)
+              .attr("fill", (d) => d.color)
+              .call((enter) =>
+                maybeTransition(enter, {
+                  transition,
+                  s: (g) =>
+                    g.attr("x", (d) => d.x).attr("width", (d) => d.width),
+                })
+              )
+          )
+          .call((g) =>
+            g
+              .append("foreignObject")
+              .attr("x", x0)
+              .attr("y", (d) => d.y)
+              .attr("width", (d) => d.width)
+              .attr("height", (d) => d.height)
+              .call((g) =>
+                maybeTransition(g, {
+                  transition,
+                  s: (g) => g.attr("x", (d) => d.x),
+                })
+              )
+              .append("xhtml:p")
+              .style("overflow", "hidden")
+              .style("padding-left", "4px")
+              .style("font-size", "12px")
+              .style("white-space", "nowrap")
+              .style("text-overflow", "ellipsis")
+              .style("color", (d) => d.valueLabelColor ?? "black")
+              .text((d) => d.valueLabel ?? "")
           ),
       (update) =>
         maybeTransition(update, {
           s: (g) =>
             g
-              .attr("x", (d) => d.x)
-              .attr("y", (d) => d.y)
-              .attr("width", (d) => d.width)
-              .attr("height", (d) => d.height)
-              .attr("fill", (d) => d.color),
+              .call((g) =>
+                g
+                  .select("rect")
+                  .attr("x", (d) => d.x)
+                  .attr("y", (d) => d.y)
+                  .attr("width", (d) => d.width)
+                  .attr("height", (d) => d.height)
+                  .attr("fill", (d) => d.color)
+              )
+              .call((g) =>
+                g
+                  .select("foreignObject")
+                  .attr("x", (d) => d.x)
+                  .attr("y", (d) => d.y)
+                  .attr("width", (d) => d.width)
+                  .attr("height", (d) => d.height)
+                  .select("p")
+                  .text((d) => d.valueLabel ?? "")
+              ),
           transition,
         }),
       (exit) =>
         maybeTransition(exit, {
           transition,
-          s: (g) => g.attr("x", x0).attr("height", 0).remove(),
+          s: (g) =>
+            g.call((g) =>
+              g.selectAll().attr("x", x0).attr("height", 0).remove()
+            ),
         })
     );
 };
