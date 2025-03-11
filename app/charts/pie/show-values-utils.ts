@@ -180,7 +180,7 @@ export const renderPieValueLabelConnectors = (
                   .attr("x1", (d) => d.connector.x1)
                   .attr("y1", (d) => d.connector.y1)
                   .attr("x2", (d) => d.x)
-                  .attr("y2", (d) => d.y)
+                  .attr("y2", (d) => d.y - 4)
                   .style("opacity", 1),
             })
           ),
@@ -191,7 +191,7 @@ export const renderPieValueLabelConnectors = (
               .attr("x1", (d) => d.connector.x1)
               .attr("y1", (d) => d.connector.y1)
               .attr("x2", (d) => d.x)
-              .attr("y2", (d) => d.y)
+              .attr("y2", (d) => d.y - 4)
               .style("opacity", 1),
           transition,
         }),
