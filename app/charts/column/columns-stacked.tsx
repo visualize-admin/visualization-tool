@@ -1,3 +1,4 @@
+import { getContrastingColor } from "@uiw/react-color";
 import { useEffect, useMemo, useRef } from "react";
 
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
@@ -13,25 +14,47 @@ export const ColumnsStacked = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const { bounds, getX, xScale, yScale, colors, series, getRenderingKey } =
-    useChartState() as StackedColumnsState;
+  const {
+    bounds,
+    getX,
+    xScale,
+    yScale,
+    colors,
+    series,
+    getRenderingKey,
+    showValuesBySegmentMapping,
+    segmentsByAbbreviationOrLabel,
+    valueLabelFormatter,
+  } = useChartState() as StackedColumnsState;
   const { margins, height } = bounds;
   const bandwidth = xScale.bandwidth();
   const y0 = yScale(0);
   const renderData: RenderColumnDatum[] = useMemo(() => {
-    return series.flatMap((d) => {
-      const color = colors(d.key);
+    return series.flatMap((s) => {
+      const segmentLabel = s.key;
+      const segment = segmentsByAbbreviationOrLabel.get(segmentLabel)?.value;
+      const color = colors(segmentLabel);
 
-      return d.map((segment) => {
-        const observation = segment.data;
+      return s.map((d) => {
+        const observation = d.data;
+        const value = observation[segmentLabel];
+        const valueLabel =
+          segment && showValuesBySegmentMapping[segment]
+            ? valueLabelFormatter(value)
+            : undefined;
+        const valueLabelColor = valueLabel
+          ? getContrastingColor(color)
+          : undefined;
 
         return {
-          key: getRenderingKey(observation, d.key),
+          key: getRenderingKey(observation, segmentLabel),
           x: xScale(getX(observation)) as number,
-          y: yScale(segment[1]),
+          y: yScale(d[1]),
           width: bandwidth,
-          height: Math.max(0, yScale(segment[0]) - yScale(segment[1])),
+          height: Math.max(0, yScale(d[0]) - yScale(d[1])),
           color,
+          valueLabel,
+          valueLabelColor,
         };
       });
     });
@@ -46,6 +69,9 @@ export const ColumnsStacked = () => {
     getRenderingKey,
     // Need to reset the yRange on height change
     height,
+    segmentsByAbbreviationOrLabel,
+    showValuesBySegmentMapping,
+    valueLabelFormatter,
   ]);
 
   useEffect(() => {

@@ -12,6 +12,8 @@ export type RenderColumnDatum = {
   width: number;
   height: number;
   color: string;
+  valueLabel?: string;
+  valueLabelColor?: string;
 };
 
 export const renderColumns = (
@@ -21,39 +23,84 @@ export const renderColumns = (
 ) => {
   const { transition, y0 } = options;
 
-  g.selectAll<SVGRectElement, RenderColumnDatum>("rect")
+  g.selectAll<SVGGElement, RenderColumnDatum>("g.column")
     .data(data, (d) => d.key)
     .join(
       (enter) =>
         enter
-          .append("rect")
-          .attr("data-index", (_, i) => i)
-          .attr("x", (d) => d.x)
-          .attr("y", y0)
-          .attr("width", (d) => d.width)
-          .attr("height", 0)
-          .attr("fill", (d) => d.color)
-          .call((enter) =>
-            maybeTransition(enter, {
-              transition,
-              s: (g) => g.attr("y", (d) => d.y).attr("height", (d) => d.height),
-            })
+          .append("g")
+          .attr("class", "column")
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("data-index", (_, i) => i)
+              .attr("x", (d) => d.x)
+              .attr("y", y0)
+              .attr("width", (d) => d.width)
+              .attr("height", 0)
+              .attr("fill", (d) => d.color)
+              .call((enter) =>
+                maybeTransition(enter, {
+                  transition,
+                  s: (g) =>
+                    g.attr("y", (d) => d.y).attr("height", (d) => d.height),
+                })
+              )
+          )
+          .call((g) =>
+            g
+              .append("foreignObject")
+              .attr("x", (d) => d.x)
+              .attr("y", y0)
+              .attr("width", (d) => d.width)
+              .attr("height", (d) => d.height)
+              .call((g) =>
+                maybeTransition(g, {
+                  transition,
+                  s: (g) => g.attr("y", (d) => d.y),
+                })
+              )
+              .append("xhtml:p")
+              .style("overflow", "hidden")
+              .style("padding-left", "4px")
+              .style("font-size", "12px")
+              .style("white-space", "nowrap")
+              .style("text-overflow", "ellipsis")
+              .style("color", (d) => d.valueLabelColor ?? "black")
+              .text((d) => d.valueLabel ?? "")
           ),
       (update) =>
         maybeTransition(update, {
           s: (g) =>
             g
-              .attr("x", (d) => d.x)
-              .attr("y", (d) => d.y)
-              .attr("width", (d) => d.width)
-              .attr("height", (d) => d.height)
-              .attr("fill", (d) => d.color),
+              .call((g) =>
+                g
+                  .select("rect")
+                  .attr("x", (d) => d.x)
+                  .attr("y", (d) => d.y)
+                  .attr("width", (d) => d.width)
+                  .attr("height", (d) => d.height)
+                  .attr("fill", (d) => d.color)
+              )
+              .call((g) =>
+                g
+                  .select("foreignObject")
+                  .attr("x", (d) => d.x)
+                  .attr("y", (d) => d.y)
+                  .attr("width", (d) => d.width)
+                  .attr("height", (d) => d.height)
+                  .select("p")
+                  .text((d) => d.valueLabel ?? "")
+              ),
           transition,
         }),
       (exit) =>
         maybeTransition(exit, {
           transition,
-          s: (g) => g.attr("y", y0).attr("height", 0).remove(),
+          s: (g) =>
+            g.call((g) =>
+              g.selectAll().attr("y", y0).attr("height", 0).remove()
+            ),
         })
     );
 };

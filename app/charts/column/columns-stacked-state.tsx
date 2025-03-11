@@ -51,6 +51,10 @@ import {
 } from "@/charts/shared/interaction/tooltip-box";
 import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
 import {
+  useValueLabelFormatter,
+  ValueLabelFormatter,
+} from "@/charts/shared/show-values-utils";
+import {
   getStackedTooltipValueFormatter,
   getStackedYScale,
 } from "@/charts/shared/stacked-helpers";
@@ -89,6 +93,7 @@ export type StackedColumnsState = CommonChartState &
     ) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     bottomAxisLabelSize: AxisLabelSizeVariables;
+    valueLabelFormatter: ValueLabelFormatter;
   };
 
 const useColumnsStackedState = (
@@ -96,7 +101,7 @@ const useColumnsStackedState = (
   variables: ColumnsStackedStateVariables,
   data: ColumnsStackedStateData
 ): StackedColumnsState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     xDimension,
     getX,
@@ -518,6 +523,13 @@ const useColumnsStackedState = (
     ]
   );
 
+  const valueLabelFormatter = useValueLabelFormatter({
+    measureId: yMeasure.id,
+    dimensions,
+    measures,
+    normalize,
+  });
+
   return {
     chartType: "column",
     bounds,
@@ -535,6 +547,7 @@ const useColumnsStackedState = (
     getAnnotationInfo,
     leftAxisLabelSize,
     bottomAxisLabelSize,
+    valueLabelFormatter,
     ...variables,
   };
 };
