@@ -109,9 +109,11 @@ export const renderBars = (
         maybeTransition(exit, {
           transition,
           s: (g) =>
-            g.call((g) =>
-              g.selectAll().attr("x", x0).attr("height", 0).remove()
-            ),
+            g
+              .call((g) =>
+                g.select("rect").attr("x", x0).attr("width", 0)
+              )
+              .remove(),
         })
     );
 };

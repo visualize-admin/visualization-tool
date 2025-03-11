@@ -100,9 +100,11 @@ export const renderColumns = (
         maybeTransition(exit, {
           transition,
           s: (g) =>
-            g.call((g) =>
-              g.selectAll().attr("y", y0).attr("height", 0).remove()
-            ),
+            g
+              .call((g) =>
+                g.select("rect").attr("y", y0).attr("height", 0)
+              )
+              .remove(),
         })
     );
 };
