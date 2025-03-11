@@ -534,6 +534,7 @@ export const defaultSegmentOnChange: OnEncodingChange<
     chartConfig.fields.segment = {
       componentId: id,
       sorting: DEFAULT_SORTING,
+      showValuesMapping: {},
     };
     chartConfig.fields.color = {
       type: "segment",

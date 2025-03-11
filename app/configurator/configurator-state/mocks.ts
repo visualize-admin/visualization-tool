@@ -209,13 +209,12 @@ export const configStateMock = {
           segment: {
             componentId:
               "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
-
             sorting: {
               sortingType: "byAuto",
               sortingOrder: "asc",
             },
-
             type: "stacked",
+            showValuesMapping: {},
           },
         },
         activeField: "segment",
@@ -1615,7 +1614,7 @@ export const configJoinedCubes: Partial<
     limits: {},
     chartType: "pie",
     interactiveFiltersConfig: {
-      legend: {active: false, componentId: "" },
+      legend: { active: false, componentId: "" },
       timeRange: {
         active: false,
         componentId: "",
@@ -1676,8 +1675,11 @@ export const configJoinedCubes: Partial<
           unversionedComponentIri:
             "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
         }),
-
-        sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
+        sorting: {
+          sortingType: "byMeasure",
+          sortingOrder: "asc",
+        },
+        showValuesMapping: {},
       },
     },
   },

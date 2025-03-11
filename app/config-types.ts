@@ -246,6 +246,21 @@ const SortingField = t.partial({
 });
 export type SortingField = t.TypeOf<typeof SortingField>;
 
+const ShowValuesBySegmentFieldExtension = t.type({
+  showValuesMapping: t.record(t.string, t.boolean),
+});
+export type ShowValuesSegmentFieldExtension = t.TypeOf<
+  typeof ShowValuesBySegmentFieldExtension
+>;
+export const shouldEnableSettingShowValuesBySegment = (
+  chartConfig: ChartConfig
+) => {
+  return (
+    (isBarConfig(chartConfig) || isColumnConfig(chartConfig)) &&
+    chartConfig.fields.segment?.type === "stacked"
+  );
+};
+
 const Cube = t.intersection([
   t.type({
     /** * Cube iri at publish time (stored in the database) and latest one on the client side. */
@@ -305,6 +320,7 @@ const ColumnSegmentField = t.intersection([
   SortingField,
   t.type({ type: ChartSubType }),
   ShowTitleFieldExtension,
+  ShowValuesBySegmentFieldExtension,
 ]);
 export type ColumnSegmentField = t.TypeOf<typeof ColumnSegmentField>;
 
@@ -343,6 +359,7 @@ const BarSegmentField = t.intersection([
   SortingField,
   t.type({ type: ChartSubType }),
   ShowTitleFieldExtension,
+  ShowValuesBySegmentFieldExtension,
 ]);
 export type BarSegmentField = t.TypeOf<typeof BarSegmentField>;
 
@@ -376,6 +393,7 @@ const LineSegmentField = t.intersection([
   GenericField,
   SortingField,
   ShowTitleFieldExtension,
+  ShowValuesBySegmentFieldExtension,
 ]);
 export type LineSegmentField = t.TypeOf<typeof LineSegmentField>;
 
@@ -420,6 +438,7 @@ const AreaSegmentField = t.intersection([
   GenericField,
   SortingField,
   ShowTitleFieldExtension,
+  ShowValuesBySegmentFieldExtension,
 ]);
 export type AreaSegmentField = t.TypeOf<typeof AreaSegmentField>;
 
@@ -463,6 +482,7 @@ export type AreaConfig = t.TypeOf<typeof AreaConfig>;
 const ScatterPlotSegmentField = t.intersection([
   GenericField,
   ShowTitleFieldExtension,
+  ShowValuesBySegmentFieldExtension,
 ]);
 export type ScatterPlotSegmentField = t.TypeOf<typeof ScatterPlotSegmentField>;
 
@@ -496,6 +516,7 @@ const PieSegmentField = t.intersection([
   GenericField,
   SortingField,
   ShowTitleFieldExtension,
+  ShowValuesBySegmentFieldExtension,
 ]);
 export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
 
@@ -953,8 +974,8 @@ export type ComboLineColumnConfig = t.TypeOf<typeof ComboLineColumnConfig>;
 
 export type ChartSegmentField =
   | AreaSegmentField
-  | ColumnSegmentField
   | BarSegmentField
+  | ColumnSegmentField
   | LineSegmentField
   | PieSegmentField
   | ScatterPlotSegmentField;

@@ -1505,6 +1505,35 @@ export const chartConfigMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    from: "4.3.0",
+    to: "4.4.0",
+    description: `all {
+      fields {
+        segment {
+          + showValuesMapping
+        }
+      }
+    }`,
+    up: (config) => {
+      const newConfig = { ...config, version: "4.4.0" };
+
+      if (newConfig.fields.segment) {
+        newConfig.fields.segment.showValuesMapping = {};
+      }
+
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "4.3.0" };
+
+      if (newConfig.fields.segment) {
+        delete newConfig.fields.segment.showValuesMapping;
+      }
+
+      return newConfig;
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -1709,7 +1738,7 @@ export const configuratorStateMigrations: Migration[] = [
   },
   makeBumpChartConfigVersionMigration({
     fromVersion: "3.1.0",
-          toVersion: "3.2.0",
+    toVersion: "3.2.0",
     fromChartConfigVersion: "3.1.0",
     toChartConfigVersion: "3.2.0",
   }),
@@ -2048,7 +2077,7 @@ export const configuratorStateMigrations: Migration[] = [
   },
   makeBumpChartConfigVersionMigration({
     fromVersion: "4.0.0",
-          toVersion: "4.1.0",
+    toVersion: "4.1.0",
     fromChartConfigVersion: "4.0.0",
     toChartConfigVersion: "4.1.0",
   }),
@@ -2102,7 +2131,7 @@ export const configuratorStateMigrations: Migration[] = [
   },
   makeBumpChartConfigVersionMigration({
     fromVersion: "4.2.0",
-          toVersion: "4.3.0",
+    toVersion: "4.3.0",
     fromChartConfigVersion: "4.1.0",
     toChartConfigVersion: "4.2.0",
   }),
@@ -2111,6 +2140,12 @@ export const configuratorStateMigrations: Migration[] = [
     toVersion: "4.4.0",
     fromChartConfigVersion: "4.2.0",
     toChartConfigVersion: "4.3.0",
+  }),
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "4.4.0",
+    toVersion: "4.5.0",
+    fromChartConfigVersion: "4.3.0",
+    toChartConfigVersion: "4.4.0",
   }),
 ];
 

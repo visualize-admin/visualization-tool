@@ -56,6 +56,7 @@ export const scatterplotFields: ScatterPlotFields = {
   segment: {
     componentId:
       "http://environment.ld.admin.ch/foen/px/0703010000_103/dimension/1",
+    showValuesMapping: {},
   },
 };
 
