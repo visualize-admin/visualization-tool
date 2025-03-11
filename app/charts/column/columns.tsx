@@ -7,7 +7,7 @@ import {
 } from "@/charts/column/rendering-utils";
 import { useColumnValueLabelsData } from "@/charts/column/show-values-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { renderValueLabels } from "@/charts/shared/render-value-labels";
+import { renderTotalValueLabels } from "@/charts/shared/render-value-labels";
 import {
   renderContainer,
   RenderContainerOptions,
@@ -163,7 +163,7 @@ export const Columns = () => {
       renderContainer(g, {
         ...common,
         render: (g, opts) =>
-          renderValueLabels(g, valueLabelsData, {
+          renderTotalValueLabels(g, valueLabelsData, {
             ...opts,
             rotate: rotateValues,
             fontFamily,

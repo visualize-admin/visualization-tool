@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { AreasState } from "@/charts/area/areas-state";
 import { RenderAreaDatum, renderAreas } from "@/charts/area/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { renderValueLabels } from "@/charts/shared/render-value-labels";
+import { renderTotalValueLabels } from "@/charts/shared/render-value-labels";
 import {
   renderContainer,
   RenderContainerOptions,
@@ -68,7 +68,7 @@ export const Areas = () => {
       renderContainer(g, {
         ...common,
         render: (g, opts) =>
-          renderValueLabels(g, valueLabelsData, {
+          renderTotalValueLabels(g, valueLabelsData, {
             ...opts,
             rotate: false,
             fontFamily,
