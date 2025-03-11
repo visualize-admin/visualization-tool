@@ -1,5 +1,6 @@
 import { Selection } from "d3-selection";
 
+import { setSegmentValueLabelStyles } from "@/charts/shared/render-value-labels";
 import {
   maybeTransition,
   RenderOptions,
@@ -61,11 +62,7 @@ export const renderColumns = (
                 })
               )
               .append("xhtml:p")
-              .style("overflow", "hidden")
-              .style("padding-left", "4px")
-              .style("font-size", "12px")
-              .style("white-space", "nowrap")
-              .style("text-overflow", "ellipsis")
+              .call(setSegmentValueLabelStyles)
               .style("color", (d) => d.valueLabelColor ?? "black")
               .text((d) => d.valueLabel ?? "")
           ),

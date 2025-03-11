@@ -1,4 +1,4 @@
-import { Selection } from "d3-selection";
+import { BaseType, Selection } from "d3-selection";
 
 import {
   maybeTransition,
@@ -113,4 +113,17 @@ const getValueLabelTransform = (
 
 const getValueLabelTextAnchor = (rotate: boolean) => {
   return rotate ? "start" : "middle";
+};
+
+export const setSegmentValueLabelStyles = <
+  T extends { valueLabel?: string; valueLabelColor?: string },
+>(
+  g: Selection<BaseType, T, SVGGElement, null>
+) => {
+  return g
+    .style("overflow", "hidden")
+    .style("padding-left", "4px")
+    .style("font-size", "12px")
+    .style("white-space", "nowrap")
+    .style("text-overflow", "ellipsis");
 };
