@@ -9,7 +9,7 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
-import { useMemo } from "react";
+import { PropsWithChildren, useMemo } from "react";
 
 import {
   LinesStateVariables,
@@ -43,6 +43,7 @@ import {
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
+import { useLimits } from "@/config-utils";
 import { LineConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import {
@@ -100,6 +101,8 @@ const useLinesState = (
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
     yAxisLabel,
+    minLimitValue,
+    maxLimitValue,
   } = variables;
   const {
     chartData,
@@ -157,7 +160,10 @@ const useLinesState = (
   const maxValue =
     max(scalesData, (d) => (getYErrorRange ? getYErrorRange(d)[1] : getY(d))) ??
     0;
-  const yDomain = [minValue, maxValue];
+  const yDomain = [
+    minLimitValue !== undefined ? Math.min(minLimitValue, minValue) : minValue,
+    maxLimitValue !== undefined ? Math.max(maxLimitValue, maxValue) : maxValue,
+  ];
   const yScale = scaleLinear().domain(yDomain).nice();
 
   const paddingMinValue = getMinY(paddingData, (d) =>
@@ -168,7 +174,14 @@ const useLinesState = (
       getYErrorRange ? getYErrorRange(d)[1] : getY(d)
     ) ?? 0;
   const paddingYScale = scaleLinear()
-    .domain([paddingMinValue, paddingMaxValue])
+    .domain([
+      minLimitValue !== undefined
+        ? Math.min(minLimitValue, paddingMinValue)
+        : paddingMinValue,
+      maxLimitValue !== undefined
+        ? Math.max(maxLimitValue, paddingMaxValue)
+        : paddingMaxValue,
+    ])
     .nice();
 
   // segments
@@ -359,7 +372,9 @@ const useLinesState = (
 };
 
 const LineChartProvider = (
-  props: React.PropsWithChildren<ChartProps<LineConfig>>
+  props: PropsWithChildren<
+    ChartProps<LineConfig> & { limits: ReturnType<typeof useLimits> }
+  >
 ) => {
   const { children, ...chartProps } = props;
   const variables = useLinesStateVariables(chartProps);
@@ -372,7 +387,9 @@ const LineChartProvider = (
 };
 
 export const LineChart = (
-  props: React.PropsWithChildren<ChartProps<LineConfig>>
+  props: PropsWithChildren<
+    ChartProps<LineConfig> & { limits: ReturnType<typeof useLimits> }
+  >
 ) => {
   return (
     <InteractionProvider>

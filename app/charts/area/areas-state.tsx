@@ -16,7 +16,7 @@ import {
   stackOrderReverse,
 } from "d3-shape";
 import orderBy from "lodash/orderBy";
-import React, { useCallback, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   AreasStateVariables,
@@ -59,6 +59,7 @@ import {
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
+import { useLimits } from "@/config-utils";
 import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
@@ -109,6 +110,8 @@ const useAreasState = (
     getSegmentLabel,
     xAxisLabel,
     yAxisLabel,
+    minLimitValue,
+    maxLimitValue,
   } = variables;
   const getIdentityY = useGetIdentityY(yMeasure.id);
   const {
@@ -311,8 +314,10 @@ const useAreasState = (
       normalize,
       getX: getXAsString,
       getY,
+      minLimitValue,
+      maxLimitValue,
     });
-  }, [scalesData, normalize, getXAsString, getY]);
+  }, [scalesData, normalize, getXAsString, getY, minLimitValue, maxLimitValue]);
 
   const paddingYScale = useMemo(() => {
     //  When the user can toggle between absolute and relative values, we use the
@@ -323,6 +328,8 @@ const useAreasState = (
         normalize: false,
         getX: getXAsString,
         getY,
+        minLimitValue,
+        maxLimitValue,
       });
 
       if (scale.domain()[1] < 100 && scale.domain()[0] > -100) {
@@ -336,13 +343,17 @@ const useAreasState = (
       normalize,
       getX: getXAsString,
       getY,
+      minLimitValue,
+      maxLimitValue,
     });
   }, [
+    interactiveFiltersConfig?.calculation.active,
     paddingData,
+    normalize,
     getXAsString,
     getY,
-    interactiveFiltersConfig?.calculation.active,
-    normalize,
+    minLimitValue,
+    maxLimitValue,
   ]);
 
   /** Dimensions */
@@ -491,7 +502,9 @@ const useAreasState = (
 };
 
 const AreaChartProvider = (
-  props: React.PropsWithChildren<ChartProps<AreaConfig>>
+  props: PropsWithChildren<
+    ChartProps<AreaConfig> & { limits: ReturnType<typeof useLimits> }
+  >
 ) => {
   const { children, ...chartProps } = props;
   const variables = useAreasStateVariables(chartProps);
@@ -504,7 +517,9 @@ const AreaChartProvider = (
 };
 
 export const AreaChart = (
-  props: React.PropsWithChildren<ChartProps<AreaConfig>>
+  props: PropsWithChildren<
+    ChartProps<AreaConfig> & { limits: ReturnType<typeof useLimits> }
+  >
 ) => {
   return (
     <InteractionProvider>

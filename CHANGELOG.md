@@ -13,6 +13,11 @@ You can also check the
 
 - Features
   - It's now possible to show segment value labels in column and bar charts
+  - Axes now adapt dynamically to always show appropriate limits, even when they
+    go beyond the data range
+- Fixes
+  - Pie chart's `Measure` field is now correctly labeled (`Measure` instead of
+    `Vertical Axis`)
 - Styles
   - Optimized the custom map legends loading indicator appearance
 
@@ -21,9 +26,6 @@ You can also check the
 - Features
   - Added an option to show all values in area, bar, column, line and pie charts
   - X axis titles are now always displayed
-- Fixes
-  - Pie chart's `Measure` field is now correctly labeled (`Measure` instead of
-    `Vertical Axis`)
 
 # [5.3.1] - 2025-03-04
 

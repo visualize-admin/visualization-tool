@@ -40,7 +40,7 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
   });
 
   return (
-    <LineChart {...props}>
+    <LineChart {...props} limits={limits}>
       <ChartContainer>
         <ChartSvg>
           <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />

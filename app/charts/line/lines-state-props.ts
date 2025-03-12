@@ -6,6 +6,7 @@ import {
   BaseVariables,
   ChartStateData,
   InteractiveFiltersVariables,
+  LimitsVariables,
   NumericalYErrorVariables,
   NumericalYVariables,
   SegmentVariables,
@@ -14,11 +15,13 @@ import {
   useBaseVariables,
   useChartData,
   useInteractiveFiltersVariables,
+  useLimitsVariables,
   useNumericalYErrorVariables,
   useNumericalYVariables,
   useSegmentVariables,
   useTemporalXVariables,
 } from "@/charts/shared/chart-state";
+import { useLimits } from "@/config-utils";
 import { LineConfig } from "@/configurator";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -29,10 +32,11 @@ export type LinesStateVariables = BaseVariables &
   NumericalYVariables &
   NumericalYErrorVariables &
   SegmentVariables &
-  InteractiveFiltersVariables;
+  InteractiveFiltersVariables &
+  LimitsVariables;
 
 export const useLinesStateVariables = (
-  props: ChartProps<LineConfig>
+  props: ChartProps<LineConfig> & { limits: ReturnType<typeof useLimits> }
 ): LinesStateVariables => {
   const {
     chartConfig,
@@ -41,6 +45,7 @@ export const useLinesStateVariables = (
     dimensionsById,
     measures,
     measuresById,
+    limits,
   } = props;
   const { fields } = chartConfig;
   const { x, y, segment } = fields;
@@ -65,6 +70,7 @@ export const useLinesStateVariables = (
     chartConfig.interactiveFiltersConfig,
     { dimensionsById }
   );
+  const limitsVariables = useLimitsVariables(limits);
 
   const { getX } = temporalXVariables;
   const sortData: LinesStateVariables["sortData"] = useCallback(
@@ -84,6 +90,7 @@ export const useLinesStateVariables = (
     ...numericalYErrorVariables,
     ...segmentVariables,
     ...interactiveFiltersVariables,
+    ...limitsVariables,
   };
 };
 
