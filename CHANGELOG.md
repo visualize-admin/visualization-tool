@@ -13,6 +13,8 @@ You can also check the
 
 - Features
   - It's now possible to show segment value labels in column and bar charts
+- Styles
+  - Optimized the custom map legends loading indicator appearance
 
 # [5.4.0] - 2025-03-11
 
