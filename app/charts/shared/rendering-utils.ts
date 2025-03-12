@@ -181,7 +181,7 @@ export const renderVerticalLimits = (
               .append("rect")
               .attr("class", "top")
               .attr("x", (d) => d.x)
-              .attr("y", (d) => d.y2)
+              .attr("y", (d) => d.y2 - LIMIT_SIZE / 2)
               .attr("width", (d) => d.width)
               .attr("height", LIMIT_SIZE)
               .attr("fill", (d) => d.fill)
@@ -193,8 +193,8 @@ export const renderVerticalLimits = (
               .attr("class", "middle")
               .attr("x1", (d) => d.x + d.width / 2)
               .attr("x2", (d) => d.x + d.width / 2)
-              .attr("y1", (d) => d.y1)
-              .attr("y2", (d) => d.y2)
+              .attr("y1", (d) => d.y1 - LIMIT_SIZE / 2)
+              .attr("y2", (d) => d.y2 - LIMIT_SIZE / 2)
               .attr("stroke", (d) => d.fill)
               .attr("stroke-width", LIMIT_SIZE)
               .attr("stroke-dasharray", (d) =>
@@ -206,7 +206,7 @@ export const renderVerticalLimits = (
               .append("rect")
               .attr("class", "bottom")
               .attr("x", (d) => d.x)
-              .attr("y", (d) => d.y1)
+              .attr("y", (d) => d.y1 - LIMIT_SIZE / 2)
               .attr("width", (d) => d.width)
               .attr("height", LIMIT_SIZE)
               .attr("fill", (d) => d.fill)
@@ -227,7 +227,7 @@ export const renderVerticalLimits = (
                 g
                   .select(".top")
                   .attr("x", (d) => d.x)
-                  .attr("y", (d) => d.y2)
+                  .attr("y", (d) => d.y2 - LIMIT_SIZE / 2)
                   .attr("width", (d) => d.width)
                   .attr("fill", (d) => d.fill)
               )
@@ -236,8 +236,8 @@ export const renderVerticalLimits = (
                   .select(".middle")
                   .attr("x1", (d) => d.x + d.width / 2)
                   .attr("x2", (d) => d.x + d.width / 2)
-                  .attr("y1", (d) => d.y1)
-                  .attr("y2", (d) => d.y2)
+                  .attr("y1", (d) => d.y1 - LIMIT_SIZE / 2)
+                  .attr("y2", (d) => d.y2 - LIMIT_SIZE / 2)
                   .attr("stroke", (d) => d.fill)
                   .attr("stroke-width", LIMIT_SIZE)
                   .attr("stroke-dasharray", (d) =>
@@ -248,7 +248,7 @@ export const renderVerticalLimits = (
                 g
                   .select(".bottom")
                   .attr("x", (d) => d.x)
-                  .attr("y", (d) => d.y1)
+                  .attr("y", (d) => d.y1 - LIMIT_SIZE / 2)
                   .attr("width", (d) => d.width)
                   .attr("fill", (d) => d.fill)
               ),
@@ -290,7 +290,7 @@ export const renderHorizontalLimits = (
             g
               .append("rect")
               .attr("class", "left")
-              .attr("x", (d) => d.x1)
+              .attr("x", (d) => d.x1 - LIMIT_SIZE / 2)
               .attr("y", (d) => d.y)
               .attr("width", LIMIT_SIZE)
               .attr("height", (d) => d.height)
@@ -301,8 +301,8 @@ export const renderHorizontalLimits = (
             g
               .append("line")
               .attr("class", "middle")
-              .attr("x1", (d) => d.x1)
-              .attr("x2", (d) => d.x2)
+              .attr("x1", (d) => d.x1 - LIMIT_SIZE / 2)
+              .attr("x2", (d) => d.x2 - LIMIT_SIZE / 2)
               .attr("y1", (d) => d.y + d.height / 2)
               .attr("y2", (d) => d.y + d.height / 2)
               .attr("stroke", (d) => d.fill)
@@ -315,7 +315,7 @@ export const renderHorizontalLimits = (
             g
               .append("rect")
               .attr("class", "right")
-              .attr("x", (d) => d.x2)
+              .attr("x", (d) => d.x2 - LIMIT_SIZE / 2)
               .attr("y", (d) => d.y)
               .attr("width", LIMIT_SIZE)
               .attr("height", (d) => d.height)
@@ -336,7 +336,7 @@ export const renderHorizontalLimits = (
               .call((g) =>
                 g
                   .select(".left")
-                  .attr("x", (d) => d.x1)
+                  .attr("x", (d) => d.x1 - LIMIT_SIZE / 2)
                   .attr("y", (d) => d.y)
                   .attr("height", (d) => d.height)
                   .attr("fill", (d) => d.fill)
@@ -344,8 +344,8 @@ export const renderHorizontalLimits = (
               .call((g) =>
                 g
                   .select(".middle")
-                  .attr("x1", (d) => d.x1)
-                  .attr("x2", (d) => d.x2)
+                  .attr("x1", (d) => d.x1 - LIMIT_SIZE / 2)
+                  .attr("x2", (d) => d.x2 - LIMIT_SIZE / 2)
                   .attr("y1", (d) => d.y + d.height / 2)
                   .attr("y2", (d) => d.y + d.height / 2)
                   .attr("stroke", (d) => d.fill)
@@ -357,7 +357,7 @@ export const renderHorizontalLimits = (
               .call((g) =>
                 g
                   .select(".right")
-                  .attr("x", (d) => d.x2)
+                  .attr("x", (d) => d.x2 - LIMIT_SIZE / 2)
                   .attr("y", (d) => d.y)
                   .attr("height", (d) => d.height)
                   .attr("fill", (d) => d.fill)
