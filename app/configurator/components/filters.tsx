@@ -235,7 +235,7 @@ export const getHasColorMapping = ({
     (colorConfig?.type === "single" ? false : colorConfig?.colorMapping) &&
     (colorComponent !== undefined
       ? filterDimensionId === colorComponent.id
-      : true)
+      : false)
   );
 };
 

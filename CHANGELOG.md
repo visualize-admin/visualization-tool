@@ -18,6 +18,10 @@ You can also check the
 - Fixes
   - Pie chart's `Measure` field is now correctly labeled (`Measure` instead of
     `Vertical Axis`)
+  - Opening a multi filter field that shouldn't enable setting the colors
+    doesn't longer allow to and doesn't overwrite the colors anymore
+  - It's now again possible to update the symbol layer colors based on
+    categorical dimensions
 - Styles
   - Optimized the custom map legends loading indicator appearance
 
