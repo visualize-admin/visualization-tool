@@ -17,9 +17,12 @@ export const getStackedYScale = (
     getX: StringValueGetter;
     getY: NumericalValueGetter;
     getTime?: StringValueGetter;
+    minLimitValue?: number;
+    maxLimitValue?: number;
   }
 ): ScaleLinear<number, number> => {
-  const { normalize, getX, getY, getTime } = options;
+  const { normalize, getX, getY, getTime, minLimitValue, maxLimitValue } =
+    options;
   const yScale = scaleLinear();
 
   if (normalize) {
@@ -43,7 +46,12 @@ export const getStackedYScale = (
       }
     }
 
-    yScale.domain([yMin, yMax]).nice();
+    yScale
+      .domain([
+        minLimitValue !== undefined ? Math.min(minLimitValue, yMin) : yMin,
+        maxLimitValue !== undefined ? Math.max(maxLimitValue, yMax) : yMax,
+      ])
+      .nice();
   }
 
   return yScale;

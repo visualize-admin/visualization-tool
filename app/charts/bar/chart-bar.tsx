@@ -118,7 +118,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
           </ChartControlsContainer>
         </GroupedBarChart>
       ) : (
-        <BarChart {...props}>
+        <BarChart {...props} limits={limits}>
           <ChartContainer>
             <ChartSvg>
               <AxisWidthLinear />

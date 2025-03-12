@@ -116,7 +116,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           </ChartControlsContainer>
         </GroupedColumnChart>
       ) : (
-        <ColumnChart {...props}>
+        <ColumnChart {...props} limits={limits}>
           <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear />

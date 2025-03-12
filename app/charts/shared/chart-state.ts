@@ -1,4 +1,4 @@
-import { min } from "d3-array";
+import { max, min } from "d3-array";
 import { ScaleTime } from "d3-scale";
 import get from "lodash/get";
 import overEvery from "lodash/overEvery";
@@ -29,6 +29,7 @@ import {
 import { DimensionsById, MeasuresById } from "@/charts/shared/ChartProps";
 import { Bounds } from "@/charts/shared/use-size";
 import { TableChartState } from "@/charts/table/table-state";
+import { useLimits } from "@/config-utils";
 import {
   AreaFields,
   ChartConfig,
@@ -742,6 +743,30 @@ export type SymbolLayerVariables = {
     | undefined;
   getSymbol: StringValueGetter;
   getSymbolLabel: (d: string) => string;
+};
+
+export type LimitsVariables = {
+  minLimitValue: number | undefined;
+  maxLimitValue: number | undefined;
+};
+
+export const useLimitsVariables = (limits: ReturnType<typeof useLimits>) => {
+  const values = limits.limits.flatMap((d) => {
+    switch (d.measureLimit.type) {
+      case "single":
+        return d.measureLimit.value;
+      case "range":
+        return [d.measureLimit.from, d.measureLimit.to];
+      default:
+        const _exhaustiveCheck: never = d.measureLimit;
+        return _exhaustiveCheck;
+    }
+  });
+
+  return {
+    minLimitValue: min(values),
+    maxLimitValue: max(values),
+  };
 };
 
 export type ChartStateData = {

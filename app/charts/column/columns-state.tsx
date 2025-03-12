@@ -9,7 +9,7 @@ import {
   scaleTime,
 } from "d3-scale";
 import orderBy from "lodash/orderBy";
-import { useMemo } from "react";
+import { PropsWithChildren, useMemo } from "react";
 
 import {
   ColumnsStateVariables,
@@ -43,6 +43,7 @@ import {
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
+import { useLimits } from "@/config-utils";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import {
@@ -95,6 +96,8 @@ const useColumnsState = (
     getSegmentLabel,
     xAxisLabel,
     yAxisLabel,
+    minLimitValue,
+    maxLimitValue,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
@@ -177,7 +180,16 @@ const useColumnsState = (
       ) ?? 0,
       0
     );
-    const yScale = scaleLinear().domain([minValue, maxValue]).nice();
+    const yScale = scaleLinear()
+      .domain([
+        minLimitValue !== undefined
+          ? Math.min(minValue, minLimitValue)
+          : minValue,
+        maxLimitValue !== undefined
+          ? Math.max(maxValue, maxLimitValue)
+          : maxValue,
+      ])
+      .nice();
 
     const paddingMinValue = getMinY(paddingData, (d) =>
       getYErrorRange ? getYErrorRange(d)[0] : getY(d)
@@ -189,7 +201,14 @@ const useColumnsState = (
       0
     );
     const paddingYScale = scaleLinear()
-      .domain([paddingMinValue, paddingMaxValue])
+      .domain([
+        minLimitValue !== undefined
+          ? Math.min(paddingMinValue, minLimitValue)
+          : paddingMinValue,
+        maxLimitValue !== undefined
+          ? Math.max(paddingMaxValue, maxLimitValue)
+          : paddingMaxValue,
+      ])
       .nice();
 
     return {
@@ -203,20 +222,22 @@ const useColumnsState = (
     };
   }, [
     fields.color,
-    getX,
-    getXLabel,
-    getXAsDate,
-    getY,
-    getYErrorRange,
-    scalesData,
-    paddingData,
-    timeRangeData,
     fields.x.sorting,
     fields.x.useAbbreviations,
     xDimension,
-    chartConfig.cubes,
     sumsByX,
+    chartConfig.cubes,
+    scalesData,
+    getX,
+    timeRangeData,
+    getXLabel,
     getMinY,
+    minLimitValue,
+    maxLimitValue,
+    paddingData,
+    getXAsDate,
+    getYErrorRange,
+    getY,
   ]);
 
   const { left, bottom } = useChartPadding({
@@ -325,7 +346,9 @@ const useColumnsState = (
 };
 
 const ColumnChartProvider = (
-  props: React.PropsWithChildren<ChartProps<ColumnConfig>>
+  props: PropsWithChildren<
+    ChartProps<ColumnConfig> & { limits: ReturnType<typeof useLimits> }
+  >
 ) => {
   const { children, ...chartProps } = props;
   const variables = useColumnsStateVariables(chartProps);
@@ -338,7 +361,9 @@ const ColumnChartProvider = (
 };
 
 export const ColumnChart = (
-  props: React.PropsWithChildren<ChartProps<ColumnConfig>>
+  props: PropsWithChildren<
+    ChartProps<ColumnConfig> & { limits: ReturnType<typeof useLimits> }
+  >
 ) => {
   return (
     <InteractionProvider>

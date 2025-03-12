@@ -13,6 +13,8 @@ You can also check the
 
 - Features
   - It's now possible to show segment value labels in column and bar charts
+  - Axes now adapt dynamically to always show appropriate limits, even when they
+    go beyond the data range
 - Fixes
   - Pie chart's `Measure` field is now correctly labeled (`Measure` instead of
     `Vertical Axis`)

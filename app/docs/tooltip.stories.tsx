@@ -62,6 +62,7 @@ const TooltipBoxStory = () => (
   <ReactSpecimen>
     <InteractiveFiltersChartProvider chartConfigKey="column-chart">
       <ColumnChart
+        limits={{ relatedDimension: undefined, limits: [] }}
         observations={observations}
         measures={measures}
         measuresById={keyBy(measures, (d) => d.id)}
@@ -95,7 +96,7 @@ const TooltipBoxStory = () => (
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
-            legend: { active: false, componentId: "", },
+            legend: { active: false, componentId: "" },
             timeRange: {
               active: false,
               componentId: "",
@@ -228,6 +229,7 @@ const TooltipContentStory = {
   render: () => (
     <InteractiveFiltersChartProvider chartConfigKey="column-chart">
       <ColumnChart
+        limits={{ relatedDimension: undefined, limits: [] }}
         observations={observations}
         measures={measures}
         measuresById={keyBy(measures, (d) => d.id)}
@@ -261,7 +263,7 @@ const TooltipContentStory = {
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
-            legend: { active: false, componentId: "",  },
+            legend: { active: false, componentId: "" },
             timeRange: {
               active: false,
               componentId: "",
@@ -297,6 +299,7 @@ export const TooltipContentStory2 = {
   render: () => (
     <InteractiveFiltersChartProvider chartConfigKey="column-chart">
       <ColumnChart
+        limits={{ relatedDimension: undefined, limits: [] }}
         observations={observations}
         measures={measures}
         measuresById={keyBy(measures, (d) => d.id)}
@@ -330,7 +333,7 @@ export const TooltipContentStory2 = {
           chartType: "column",
           fields,
           interactiveFiltersConfig: {
-            legend: { active: false, componentId: "",},
+            legend: { active: false, componentId: "" },
             timeRange: {
               active: false,
               componentId: "",
