@@ -1181,17 +1181,10 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "LIMIT_SET":
       if (isConfiguring(draft)) {
-        const {
-          measureId,
-          relatedDimensionId,
-          relatedDimensionValue,
-          color,
-          lineType,
-        } = action.value;
+        const { measureId, related, color, lineType } = action.value;
         const chartConfig = getChartConfig(draft);
         const newLimit: Limit = {
-          dimensionId: relatedDimensionId,
-          dimensionValue: relatedDimensionValue,
+          related,
           color,
           lineType,
         };
@@ -1199,10 +1192,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         if (!chartConfig.limits[measureId]) {
           chartConfig.limits[measureId] = [newLimit];
         } else {
-          const maybeLimitIndex = chartConfig.limits[measureId].findIndex(
-            (d) =>
-              d.dimensionId === relatedDimensionId &&
-              d.dimensionValue === relatedDimensionValue
+          const maybeLimitIndex = chartConfig.limits[measureId].findIndex((d) =>
+            d.related.every((r) =>
+              newLimit.related.every(
+                (nr) =>
+                  r.dimensionId === nr.dimensionId &&
+                  r.dimensionValue === nr.dimensionValue
+              )
+            )
           );
 
           if (maybeLimitIndex !== -1) {
@@ -1217,25 +1214,34 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "LIMIT_REMOVE":
       if (isConfiguring(draft)) {
-        const { measureId, relatedDimensionId, relatedDimensionValue } =
-          action.value;
+        const { measureId, related } = action.value;
         const chartConfig = getChartConfig(draft);
 
         const limits = chartConfig.limits[measureId] ?? [];
-        const limit = limits.find(
-          (d) =>
-            d.dimensionId === relatedDimensionId &&
-            d.dimensionValue === relatedDimensionValue
-        );
+        const limit = limits.find((l) => {
+          return l.related.every((lr) => {
+            return related.some((nr) => {
+              return (
+                lr.dimensionId === nr.dimensionId &&
+                lr.dimensionValue === nr.dimensionValue
+              );
+            });
+          });
+        });
 
         if (limits.length === 1 && limit) {
           delete chartConfig.limits[measureId];
         } else {
-          chartConfig.limits[measureId] = limits.filter(
-            (d) =>
-              d.dimensionId !== relatedDimensionId ||
-              d.dimensionValue !== relatedDimensionValue
-          );
+          chartConfig.limits[measureId] = limits.filter((l) => {
+            return l.related.some((lr) => {
+              return related.some((nr) => {
+                return (
+                  lr.dimensionId !== nr.dimensionId ||
+                  lr.dimensionValue !== nr.dimensionValue
+                );
+              });
+            });
+          });
         }
       }
 

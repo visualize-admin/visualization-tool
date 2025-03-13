@@ -15,11 +15,13 @@ You can also check the
   - It's now possible to show segment value labels in column and bar charts
   - Axes now adapt dynamically to always show appropriate limits, even when they
     go beyond the data range
+  - Limits are now also rendered when the axis dimension is a single filter
 - Fixes
   - Pie chart's `Measure` field is now correctly labeled (`Measure` instead of
     `Vertical Axis`)
 - Styles
   - Optimized the custom map legends loading indicator appearance
+  - Line-based limits now take the full bar / column width
 
 # [5.4.0] - 2025-03-11
 

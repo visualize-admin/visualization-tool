@@ -216,33 +216,33 @@ export const getMaybeValidChartConfigLimit = ({
   chartConfig,
   measureId,
   limit,
-  relatedDimension,
+  axisDimension,
   filters,
 }: {
   chartConfig: ChartConfig;
   measureId: string;
   limit: Limit;
-  relatedDimension: Dimension;
+  axisDimension?: Dimension;
   filters: Filters;
 }): {
   /** The limit that is valid in the context of related dimension and filters. */
   limit: ConfigLimit | undefined;
-  /** The related dimension id and value that is valid in the context of current related dimension. */
-  validRelated: { dimensionId: string; dimensionValue: string } | undefined;
+  /** The related value label that is valid in the context of current axis dimension. */
+  relatedAxisDimensionValueLabel: string | undefined;
   /** If the limit would be valid in the context of current filters. */
   wouldBeValid: boolean;
 } => {
-  const validRelated = limit.related.find(
-    (related) => related.dimensionId === relatedDimension.id
-  );
-
-  if (!validRelated) {
-    return { limit: undefined, validRelated: undefined, wouldBeValid: false };
-  }
-
-  const relatedToFilterBys = limit.related.filter(
-    (related) => related.dimensionId !== relatedDimension.id
-  );
+  const relatedAxisDimensionValue = axisDimension
+    ? limit.related.find((r) => r.dimensionId === axisDimension.id)
+        ?.dimensionValue
+    : undefined;
+  const relatedAxisDimensionValueLabel = axisDimension
+    ? axisDimension.values.find((v) => v.value === relatedAxisDimensionValue)
+        ?.label
+    : undefined;
+  const relatedToFilterBys = axisDimension
+    ? limit.related.filter((r) => r.dimensionId !== axisDimension.id)
+    : limit.related;
 
   for (const relatedToFilterBy of relatedToFilterBys) {
     const maybeFilter = filters[relatedToFilterBy.dimensionId];
@@ -252,24 +252,33 @@ export const getMaybeValidChartConfigLimit = ({
         : undefined;
 
     if (maybeFilterValue !== relatedToFilterBy.dimensionValue) {
-      return { limit: undefined, validRelated, wouldBeValid: false };
+      return {
+        limit: undefined,
+        relatedAxisDimensionValueLabel,
+        wouldBeValid: false,
+      };
     }
   }
 
-  const measureChartConfigLimits = chartConfig.limits[measureId] ?? [];
+  const measureConfigLimits = chartConfig.limits[measureId] ?? [];
 
   return {
-    limit: measureChartConfigLimits.find(
-      (limit) =>
-        limit.dimensionId === relatedDimension.id &&
-        limit.dimensionValue === validRelated.dimensionValue
-    ),
-    validRelated,
+    limit: measureConfigLimits.find((configLimit) => {
+      return configLimit.related.every((cr) => {
+        return limit.related.some((lr) => {
+          return (
+            lr.dimensionId === cr.dimensionId &&
+            lr.dimensionValue === cr.dimensionValue
+          );
+        });
+      });
+    }),
+    relatedAxisDimensionValueLabel,
     wouldBeValid: true,
   };
 };
 
-export const getRelatedLimitDimension = ({
+export const getAxisDimension = ({
   chartConfig,
   dimensions,
 }: {
@@ -283,10 +292,13 @@ export const getRelatedLimitDimension = ({
       return dimensions.find((d) => d.id === chartConfig.fields.x.componentId);
     case "bar":
       return dimensions.find((d) => d.id === chartConfig.fields.y.componentId);
+    // For maps, we don't really have a "related dimension", as it's used as single filter.
+    case "map":
+      return;
+    // These chart types do not support the display of the limits.
     case "comboLineColumn":
     case "comboLineDual":
     case "comboLineSingle":
-    case "map":
     case "pie":
     case "scatterplot":
     case "table":
@@ -334,47 +346,47 @@ export const useLimits = ({
   dimensions: Dimension[];
   measures: Measure[];
 }): {
-  relatedDimension: Dimension | undefined;
+  axisDimension: Dimension | undefined;
   limits: {
     configLimit: ConfigLimit;
     measureLimit: Limit;
+    relatedAxisDimensionValueLabel: string | undefined;
   }[];
 } => {
   const filters = useDefinitiveFilters();
   const measure = getLimitMeasure({ chartConfig, measures });
-  const relatedDimension = getRelatedLimitDimension({
-    chartConfig,
-    dimensions,
-  });
+  const axisDimension = getAxisDimension({ chartConfig, dimensions });
 
   return useMemo(() => {
-    if (!measure || !relatedDimension) {
+    if (!measure) {
       return {
-        relatedDimension,
+        axisDimension,
         limits: [],
       };
     }
 
     return {
-      relatedDimension: relatedDimension,
+      axisDimension,
       limits: measure.limits
         .map((limit) => {
-          const { limit: maybeLimit } = getMaybeValidChartConfigLimit({
-            chartConfig,
-            measureId: measure.id,
-            limit,
-            relatedDimension,
-            filters,
-          });
+          const { limit: maybeLimit, relatedAxisDimensionValueLabel } =
+            getMaybeValidChartConfigLimit({
+              chartConfig,
+              measureId: measure.id,
+              limit,
+              axisDimension,
+              filters,
+            });
 
           return maybeLimit
             ? {
                 configLimit: maybeLimit,
                 measureLimit: limit,
+                relatedAxisDimensionValueLabel,
               }
             : null;
         })
         .filter(truthy),
     };
-  }, [chartConfig, filters, measure, relatedDimension]);
+  }, [chartConfig, filters, measure, axisDimension]);
 };
