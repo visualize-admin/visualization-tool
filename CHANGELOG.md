@@ -24,6 +24,8 @@ You can also check the
     doesn't longer allow to and doesn't overwrite the colors anymore
   - It's now again possible to update the symbol layer colors based on
     categorical dimensions
+  - Color palette names are now correctly translated in user profile (instead of
+    always displaying in German)
 - Styles
   - Optimized the custom map legends loading indicator appearance
   - Line-based limits now take the full bar / column width
