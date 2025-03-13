@@ -1234,7 +1234,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         } else {
           chartConfig.limits[measureId] = limits.filter((l) => {
             return l.related.some((lr) => {
-              return related.some((nr) => {
+              return related.every((nr) => {
                 return (
                   lr.dimensionId !== nr.dimensionId ||
                   lr.dimensionValue !== nr.dimensionValue
