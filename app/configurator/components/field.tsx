@@ -24,7 +24,7 @@ import React, {
 } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
-import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
+import { LegendSymbol, StaticLegendItem } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
 import {
   Checkbox,
@@ -828,10 +828,10 @@ export const MultiFilterField = ({
         gap: 2,
       }}
     >
-      <LegendItem
-        symbol={symbol}
+      <StaticLegendItem
         item={label}
         color={color}
+        symbol={symbol}
         usage="colorPicker"
       />
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -922,7 +922,7 @@ export const ColorPickerField = ({
         width: "100%",
       }}
     >
-      <LegendItem
+      <StaticLegendItem
         item={label}
         color={color}
         symbol={symbol}
