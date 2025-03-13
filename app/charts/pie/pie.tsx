@@ -131,6 +131,7 @@ export const Pie = () => {
             dy: 0,
             fontFamily,
             fontSize: labelFontSize,
+            strokeWidth: 8,
           }),
       });
     }

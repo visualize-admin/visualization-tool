@@ -17,6 +17,7 @@ import { Cube, MapConfig } from "@/config-types";
 import {
   useChartConfigFilters,
   useDefinitiveTemporalFilterValue,
+  useLimits,
 } from "@/config-utils";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import {
@@ -183,15 +184,21 @@ export type ChartMapProps = ChartProps<MapConfig> & {
 };
 
 const ChartMap = memo((props: ChartMapProps) => {
-  const { chartConfig, dimensions, observations } = props;
+  const { chartConfig, dimensions, measures, observations } = props;
   const { fields } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
   const temporalFilterValue = useDefinitiveTemporalFilterValue({ dimensions });
+  const limits = useLimits({
+    chartConfig,
+    dimensions,
+    measures,
+  });
 
   return (
     <MapChart {...props}>
       <ChartContainer>
         <MapComponent
+          limits={limits}
           customLayers={chartConfig.baseLayer.customLayers}
           value={temporalFilterValue ? +temporalFilterValue : undefined}
         />
@@ -213,7 +220,11 @@ const ChartMap = memo((props: ChartMapProps) => {
             flexWrap: "wrap",
           }}
         >
-          <MapLegend chartConfig={chartConfig} observations={observations} />
+          <MapLegend
+            chartConfig={chartConfig}
+            observations={observations}
+            limits={limits.limits}
+          />
           <MapCustomLayersLegend
             chartConfig={chartConfig}
             value={temporalFilterValue ? +temporalFilterValue : undefined}

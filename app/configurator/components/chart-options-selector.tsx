@@ -64,9 +64,9 @@ import {
   SortingType,
 } from "@/config-types";
 import {
+  getAxisDimension,
   getChartConfig,
   getMaybeValidChartConfigLimit,
-  getRelatedLimitDimension,
   useChartConfigFilters,
 } from "@/config-utils";
 import { ColorPalette } from "@/configurator/components/chart-controls/color-palette";
@@ -452,10 +452,12 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 
   const hasSubOptions = encoding.options?.chartSubType ?? false;
 
-  const relatedLimitDimension = getRelatedLimitDimension({
-    chartConfig,
-    dimensions,
-  });
+  const limitMeasure =
+    isMapConfig(chartConfig) && chartConfig.activeField === "symbolLayer"
+      ? measures.find((m) => m.id === chartConfig.fields.symbolLayer?.measureId)
+      : isMeasure(component)
+        ? component
+        : undefined;
 
   return (
     <div
@@ -588,13 +590,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           measures={measures}
         />
       )}
-      {isMeasure(component) && relatedLimitDimension ? (
-        <ChartLimits
-          chartConfig={chartConfig}
-          measure={component}
-          relatedDimension={relatedLimitDimension}
-        />
-      ) : null}
       {encoding.options?.imputation?.shouldShow(chartConfig, observations) && (
         <ChartImputation chartConfig={chartConfig} />
       )}
@@ -630,6 +625,13 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           getFieldOptionGroups={getFieldOptionGroups}
         />
       )}
+      {limitMeasure ? (
+        <ChartLimits
+          chartConfig={chartConfig}
+          dimensions={dimensions}
+          measure={limitMeasure}
+        />
+      ) : null}
       {encoding.options?.colorComponent && component && (
         <ChartFieldColorComponent
           chartConfig={chartConfig}
@@ -761,39 +763,26 @@ const ChartLayoutOptions = ({
 
 const ChartLimits = ({
   chartConfig,
+  dimensions,
   measure,
-  relatedDimension,
 }: {
   chartConfig: ChartConfig;
+  dimensions: Dimension[];
   measure: Measure;
-  relatedDimension: Dimension;
 }) => {
   const [_, dispatch] = useConfiguratorState(isConfiguring);
   const filters = useChartConfigFilters(chartConfig);
   const onToggle = useEvent((checked: boolean, limit: Limit) => {
-    const { validRelated, wouldBeValid } = getMaybeValidChartConfigLimit({
-      chartConfig,
+    const actionProps = {
       measureId: measure.id,
-      limit,
-      relatedDimension,
-      filters,
-    });
-
-    if (!validRelated || !wouldBeValid) {
-      return;
-    }
-
-    const commonDispatchProps = {
-      measureId: measure.id,
-      relatedDimensionId: relatedDimension.id,
-      relatedDimensionValue: validRelated.dimensionValue,
+      related: limit.related,
     };
 
     if (checked) {
       dispatch({
         type: "LIMIT_SET",
         value: {
-          ...commonDispatchProps,
+          ...actionProps,
           color: "#ff0000",
           lineType: "solid",
         },
@@ -801,10 +790,11 @@ const ChartLimits = ({
     } else {
       dispatch({
         type: "LIMIT_REMOVE",
-        value: commonDispatchProps,
+        value: actionProps,
       });
     }
   });
+  const axisDimension = getAxisDimension({ chartConfig, dimensions });
 
   const availableLimitOptions = useMemo(() => {
     return measure.limits
@@ -813,8 +803,8 @@ const ChartLimits = ({
           getMaybeValidChartConfigLimit({
             chartConfig,
             measureId: measure.id,
+            axisDimension,
             limit,
-            relatedDimension: relatedDimension,
             filters,
           });
 
@@ -832,10 +822,10 @@ const ChartLimits = ({
         };
       })
       .filter(truthy);
-  }, [chartConfig, relatedDimension, filters, measure.id, measure.limits]);
+  }, [axisDimension, chartConfig, filters, measure.id, measure.limits]);
 
   const { data: userPalettes } = useUserPalettes();
-  const paletteId = get(chartConfig, `fields.color.paletteId`);
+  const paletteId = get(chartConfig, "fields.color.paletteId");
   const colors = getPalette({
     paletteId,
     fallbackPalette: userPalettes?.find((d) => d.paletteId === paletteId)
@@ -897,8 +887,7 @@ const ChartLimits = ({
                           type: "LIMIT_SET",
                           value: {
                             measureId: measure.id,
-                            relatedDimensionId: relatedDimension.id,
-                            relatedDimensionValue: maybeLimit!.dimensionValue,
+                            related: limit.related,
                             color,
                             lineType,
                           },
@@ -925,8 +914,7 @@ const ChartLimits = ({
                           type: "LIMIT_SET",
                           value: {
                             measureId: measure.id,
-                            relatedDimensionId: relatedDimension.id,
-                            relatedDimensionValue: maybeLimit!.dimensionValue,
+                            related: limit.related,
                             color,
                             lineType: "solid",
                           },
@@ -947,8 +935,7 @@ const ChartLimits = ({
                           type: "LIMIT_SET",
                           value: {
                             measureId: measure.id,
-                            relatedDimensionId: relatedDimension.id,
-                            relatedDimensionValue: maybeLimit!.dimensionValue,
+                            related: limit.related,
                             color,
                             lineType: "dashed",
                           },

@@ -281,19 +281,13 @@ export type ConfiguratorStateAction =
       type: "LIMIT_SET";
       value: {
         measureId: string;
-        relatedDimensionId: string;
-        relatedDimensionValue: string;
-        color: string;
-        lineType: Limit["lineType"];
-      };
+      } & Limit;
     }
   | {
       type: "LIMIT_REMOVE";
       value: {
         measureId: string;
-        relatedDimensionId: string;
-        relatedDimensionValue: string;
-      };
+      } & Pick<Limit, "related">;
     }
   | {
       type: "LAYOUT_BLOCK_SWAP";

@@ -189,6 +189,8 @@ const SelectDatasetStepContent = ({
 }: SelectDatasetStepContentProps) => {
   const locale = useLocale();
   const [configState] = useConfiguratorState();
+  const router = useRouter();
+  const odsIframe = isOdsIframe(router.query);
 
   const browseState = useBrowseContext();
   const {
@@ -203,7 +205,6 @@ const SelectDatasetStepContent = ({
   const [debouncedQuery] = useDebounce(search, 500, {
     leading: true,
   });
-  const router = useRouter();
   const handleHeightChange = useCallback(
     ({ height }: { width: number; height: number }) => {
       window.parent.postMessage({ type: CHART_RESIZE_EVENT_TYPE, height }, "*");
@@ -215,7 +216,7 @@ const SelectDatasetStepContent = ({
   const classes = useStyles({
     datasetPresent: !!dataset,
     variant,
-    isOdsIframe: isOdsIframe(router.query),
+    isOdsIframe: odsIframe,
   });
   const backLink = useMemo(() => {
     return formatBackLink(router.query);
@@ -345,7 +346,7 @@ const SelectDatasetStepContent = ({
   }
 
   return (
-    <Box ref={ref}>
+    <Box ref={odsIframe ? ref : null}>
       <AnimatePresence>
         {!dataset && variant === "page" && (
           <MotionBox key="banner" {...bannerPresenceProps}>
@@ -379,11 +380,11 @@ const SelectDatasetStepContent = ({
         )}
       </AnimatePresence>
       <PanelLayout
-        type={isOdsIframe(router.query) ? "M" : "LM"}
+        type={odsIframe ? "M" : "LM"}
         className={classes.panelLayout}
         key="panel"
       >
-        {!isOdsIframe(router.query) && (
+        {!odsIframe && (
           <PanelBodyWrapper type="L" className={classes.panelLeft}>
             <AnimatePresence mode="wait">
               {dataset ? (
@@ -428,7 +429,7 @@ const SelectDatasetStepContent = ({
         <PanelBodyWrapper
           type="M"
           className={classes.panelMiddle}
-          sx={isOdsIframe(router.query) ? { p: 6 } : { maxWidth: 1040, p: 6 }}
+          sx={odsIframe ? { p: 6 } : { maxWidth: 1040, p: 6 }}
         >
           <AnimatePresence mode="wait">
             {dataset ? (
@@ -521,7 +522,7 @@ const SelectDatasetStepContent = ({
           </AnimatePresence>
         </PanelBodyWrapper>
       </PanelLayout>
-      {variant == "page" && !isOdsIframe(router.query) ? (
+      {variant == "page" && !odsIframe ? (
         <Box
           sx={{
             borderTop: "2px solid rgba(0,0,0,0.05)",

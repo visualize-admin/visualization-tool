@@ -274,8 +274,12 @@ const Cube = t.intersection([
 export type Cube = t.TypeOf<typeof Cube>;
 
 const Limit = t.type({
-  dimensionId: t.string,
-  dimensionValue: t.string,
+  related: t.array(
+    t.type({
+      dimensionId: t.string,
+      dimensionValue: t.string,
+    })
+  ),
   color: t.string,
   lineType: t.union([t.literal("dashed"), t.literal("solid")]),
 });

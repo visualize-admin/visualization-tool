@@ -67,7 +67,7 @@ const LineChartStory = () => (
     <InteractiveFiltersProvider chartConfigs={[chartConfig]}>
       <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
         <LineChart
-          limits={{ relatedDimension: undefined, limits: [] }}
+          limits={{ axisDimension: undefined, limits: [] }}
           observations={observations}
           dimensions={dimensions}
           dimensionsById={keyBy(dimensions, (d) => d.id)}
