@@ -759,7 +759,7 @@ const useMultiFilterColorPicker = (
           type: "CHART_COLOR_CHANGED",
           value: {
             field: colorField,
-            colorConfigPath: hasColorField ? "" : colorField,
+            colorConfigPath: hasColorField ? "" : "color",
             color,
             value,
           },
