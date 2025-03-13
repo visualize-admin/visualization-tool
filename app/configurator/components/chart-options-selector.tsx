@@ -452,11 +452,12 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 
   const hasSubOptions = encoding.options?.chartSubType ?? false;
 
-  const limitMeasure = isMapConfig(chartConfig)
-    ? measures.find((m) => m.id === chartConfig.fields.symbolLayer?.measureId)
-    : isMeasure(component)
-      ? component
-      : undefined;
+  const limitMeasure =
+    isMapConfig(chartConfig) && chartConfig.activeField === "symbolLayer"
+      ? measures.find((m) => m.id === chartConfig.fields.symbolLayer?.measureId)
+      : isMeasure(component)
+        ? component
+        : undefined;
 
   return (
     <div
