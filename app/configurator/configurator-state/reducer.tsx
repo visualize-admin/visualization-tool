@@ -1194,7 +1194,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         } else {
           const maybeLimitIndex = chartConfig.limits[measureId].findIndex((d) =>
             d.related.every((r) =>
-              newLimit.related.every(
+              newLimit.related.some(
                 (nr) =>
                   r.dimensionId === nr.dimensionId &&
                   r.dimensionValue === nr.dimensionValue
