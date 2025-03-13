@@ -22,6 +22,7 @@ export const renderTotalValueLabels = (
     dy?: number;
     fontSize: number;
     fontFamily: string;
+    strokeWidth?: number;
   }
 ) => {
   const {
@@ -32,6 +33,7 @@ export const renderTotalValueLabels = (
     dy = -8,
     fontFamily,
     fontSize,
+    strokeWidth = 3,
   } = options;
   const textAnchor = _textAnchor ?? getValueLabelTextAnchor(rotate);
 
@@ -46,7 +48,7 @@ export const renderTotalValueLabels = (
           .attr("text-anchor", textAnchor)
           .attr("paint-order", "stroke")
           .attr("stroke", "white")
-          .attr("stroke-width", 8)
+          .attr("stroke-width", strokeWidth)
           .style("transform", (d) =>
             getValueLabelTransform(d, {
               rotate,
