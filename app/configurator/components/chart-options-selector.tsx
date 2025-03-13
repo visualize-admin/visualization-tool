@@ -589,13 +589,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           measures={measures}
         />
       )}
-      {limitMeasure ? (
-        <ChartLimits
-          chartConfig={chartConfig}
-          dimensions={dimensions}
-          measure={limitMeasure}
-        />
-      ) : null}
       {encoding.options?.imputation?.shouldShow(chartConfig, observations) && (
         <ChartImputation chartConfig={chartConfig} />
       )}
@@ -631,6 +624,13 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           getFieldOptionGroups={getFieldOptionGroups}
         />
       )}
+      {limitMeasure ? (
+        <ChartLimits
+          chartConfig={chartConfig}
+          dimensions={dimensions}
+          measure={limitMeasure}
+        />
+      ) : null}
       {encoding.options?.colorComponent && component && (
         <ChartFieldColorComponent
           chartConfig={chartConfig}
