@@ -323,10 +323,13 @@ const getLimitMeasure = ({
       return measures.find((d) => d.id === chartConfig.fields.y.componentId);
     case "bar":
       return measures.find((d) => d.id === chartConfig.fields.x.componentId);
+    case "map":
+      return measures.find(
+        (d) => d.id === chartConfig.fields.symbolLayer?.measureId
+      );
     case "comboLineColumn":
     case "comboLineDual":
     case "comboLineSingle":
-    case "map":
     case "pie":
     case "scatterplot":
     case "table":

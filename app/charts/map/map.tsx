@@ -1,7 +1,12 @@
-import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers";
+import {
+  GeoJsonLayer,
+  ScatterplotLayer,
+  ScatterplotLayerProps,
+} from "@deck.gl/layers";
 import { supported } from "@mapbox/mapbox-gl-supported";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { hexToRgba } from "@uiw/react-color";
 import { geoArea } from "d3-geo";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
@@ -14,6 +19,7 @@ import {
   FLY_TO_DURATION,
   RESET_DURATION,
 } from "@/charts/map/constants";
+import DashedScatterplotLayer from "@/charts/map/dashed-scatterplot-layer";
 import { useMapStyle } from "@/charts/map/get-base-layer-style";
 import {
   BASE_VIEW_STATE,
@@ -27,6 +33,7 @@ import { getWMSTile, useWMSLayers } from "@/charts/map/wms-utils";
 import { getWMTSTile, useWMTSLayers } from "@/charts/map/wmts-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
+import { useLimits } from "@/config-utils";
 import {
   BaseLayer,
   BBox,
@@ -38,6 +45,7 @@ import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
+
 import "maplibre-gl/dist/maplibre-gl.css";
 
 // supported was removed as of maplibre-gl v3.0.0, so we need to add it back
@@ -91,9 +99,11 @@ const resizeAndFit = debounce((map: mapboxgl.Map, bbox: BBox) => {
 }, 0);
 
 export const MapComponent = ({
+  limits,
   customLayers,
   value,
 }: {
+  limits: ReturnType<typeof useLimits>;
   customLayers: BaseLayer["customLayers"];
   value?: string | number;
 }) => {
@@ -378,9 +388,9 @@ export const MapComponent = ({
     sortedShapes,
   ]);
 
-  const scatterplotLayer = useMemo(() => {
+  const scatterplotLayers = useMemo(() => {
     if (!symbolLayer) {
-      return;
+      return [];
     }
 
     const getFillColor = ({ properties: { observation } }: GeoPoint) => {
@@ -407,38 +417,86 @@ export const MapComponent = ({
     const data = features.symbolLayer?.points;
     const sortedData = data ? orderBy(data, getRadius, "desc") : [];
 
-    return new ScatterplotLayer({
-      id: "symbolLayer",
-      pickable: identicalLayerComponentIds ? !areaLayer : true,
-      autoHighlight: true,
-      filled: true,
-      stroked: true,
-      lineWidthMinPixels: 0.8,
-      data: sortedData,
-      getPosition,
-      getRadius,
-      radiusUnits: "pixels",
-      radiusMinPixels,
-      radiusMaxPixels,
-      // @ts-ignore
-      getFillColor,
-      onHover: ({
-        x,
-        y,
-        object,
-      }: {
-        x: number;
-        y: number;
-        object?: GeoFeature;
-      }) => onHover({ type: "symbol", x, y, object }),
-      updateTriggers: {
-        getFillColor,
+    return [
+      new ScatterplotLayer({
+        id: "symbolLayer",
+        pickable: identicalLayerComponentIds ? !areaLayer : true,
+        autoHighlight: true,
+        filled: true,
+        stroked: true,
+        lineWidthMinPixels: 0.8,
+        data: sortedData,
         getPosition,
         getRadius,
-        onHover,
-      },
-    });
+        radiusUnits: "pixels",
+        radiusMinPixels,
+        radiusMaxPixels,
+        // @ts-ignore
+        getFillColor,
+        onHover: ({
+          x,
+          y,
+          object,
+        }: {
+          x: number;
+          y: number;
+          object?: GeoFeature;
+        }) => onHover({ type: "symbol", x, y, object }),
+        updateTriggers: {
+          getFillColor,
+          getPosition,
+          getRadius,
+          onHover,
+        },
+      }),
+      ...limits.limits.map((limit, i) => {
+        const { configLimit, measureLimit } = limit;
+        const rgba = hexToRgba(configLimit.color);
+        const baseLayerProps: Partial<ScatterplotLayerProps<GeoPoint>> = {
+          filled: false,
+          stroked: true,
+          getLineColor: [rgba.r, rgba.g, rgba.b, 255],
+          lineWidthMinPixels: 0.8,
+          data: sortedData,
+          getPosition,
+          radiusUnits: "pixels",
+        };
+        const mkGetLimitRadius =
+          (value: number) =>
+          ({ properties: { observation } }: GeoPoint) => {
+            return observation ? symbolLayer.radiusScale(value) : 0;
+          };
+
+        switch (measureLimit.type) {
+          case "single":
+            return [
+              new DashedScatterplotLayer({
+                id: `symbolLayerLimit-${i}`,
+                getRadius: mkGetLimitRadius(measureLimit.value),
+                ...baseLayerProps,
+              }),
+            ];
+          case "range":
+            return [
+              new DashedScatterplotLayer({
+                id: `symbolLayerLimit-${i}-from`,
+                getRadius: mkGetLimitRadius(measureLimit.from),
+                ...baseLayerProps,
+              }),
+              new DashedScatterplotLayer({
+                id: `symbolLayerLimit-${i}-to`,
+                getRadius: mkGetLimitRadius(measureLimit.to),
+                ...baseLayerProps,
+              }),
+            ];
+          default:
+            const _exhaustiveCheck: never = measureLimit;
+            return _exhaustiveCheck;
+        }
+      }),
+    ];
   }, [
+    limits,
     areaLayer,
     features.symbolLayer,
     identicalLayerComponentIds,
@@ -534,7 +592,7 @@ export const MapComponent = ({
               geoJsonLayer,
               hoverLayer,
               ...afterAreaCustomLayers,
-              scatterplotLayer,
+              ...scatterplotLayers,
             ]}
           />
         </Map>
