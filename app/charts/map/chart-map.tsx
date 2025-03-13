@@ -220,7 +220,11 @@ const ChartMap = memo((props: ChartMapProps) => {
             flexWrap: "wrap",
           }}
         >
-          <MapLegend chartConfig={chartConfig} observations={observations} />
+          <MapLegend
+            chartConfig={chartConfig}
+            observations={observations}
+            limits={limits.limits}
+          />
           <MapCustomLayersLegend
             chartConfig={chartConfig}
             value={temporalFilterValue ? +temporalFilterValue : undefined}

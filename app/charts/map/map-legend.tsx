@@ -21,11 +21,16 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import Flex from "@/components/flex";
+import { useLimits } from "@/config-utils";
 import { MapConfig, PaletteType } from "@/configurator";
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { useDimensionFormatters, useFormatInteger } from "@/formatters";
+import {
+  useDimensionFormatters,
+  useFormatInteger,
+  useFormatNumber,
+} from "@/formatters";
 import { getColorInterpolator } from "@/palettes";
 import { getTextWidth } from "@/utils/get-text-width";
 
@@ -77,9 +82,11 @@ const makeAxis = (
 export const MapLegend = ({
   chartConfig,
   observations,
+  limits,
 }: {
   chartConfig: MapConfig;
   observations: Observation[];
+  limits: ReturnType<typeof useLimits>["limits"];
 }) => {
   const { areaLayer, symbolLayer } = useChartState() as MapState;
   const showAreaLegend =
@@ -202,6 +209,41 @@ export const MapLegend = ({
             )}
           </Flex>
         )}
+
+        {limits.map((limit) => {
+          const { configLimit, measureLimit } = limit;
+
+          switch (measureLimit.type) {
+            case "single":
+              return (
+                <Box>
+                  <Typography component="div" variant="caption">
+                    {measureLimit.name}
+                  </Typography>
+                  <LimitLegend
+                    maxValue={measureLimit.value}
+                    color={configLimit.color}
+                  />
+                </Box>
+              );
+            case "range":
+              return (
+                <Box>
+                  <Typography component="div" variant="caption">
+                    {measureLimit.name}
+                  </Typography>
+                  <LimitLegend
+                    minValue={measureLimit.from}
+                    maxValue={measureLimit.to}
+                    color={configLimit.color}
+                  />
+                </Box>
+              );
+            default:
+              const _exhaustiveCheck: never = measureLimit;
+              return _exhaustiveCheck;
+          }
+        })}
       </Flex>
 
       {areaLayer?.colors.type === "categorical" && (
@@ -372,6 +414,59 @@ const CircleLegend = ({
               fontSize={AXIS_LABEL_FONT_SIZE}
             />
           )}
+      </g>
+    </svg>
+  );
+};
+
+const LimitLegend = ({
+  minValue,
+  maxValue,
+  color,
+}: {
+  minValue?: number;
+  maxValue: number;
+  color: string;
+}) => {
+  const formatNumber = useFormatNumber({ decimals: "auto" });
+  const width = useLegendWidth();
+
+  const { symbolLayer } = useChartState() as MapState;
+  const { radiusScale } = symbolLayer as NonNullable<MapState["symbolLayer"]>;
+
+  const minRadius = radiusScale(minValue ?? 0);
+  const maxRadius = radiusScale(maxValue);
+
+  return (
+    <svg width={width} height={maxRadius * 2 + MARGIN.top + MARGIN.bottom}>
+      <g
+        transform={`translate(${maxRadius + MARGIN.left}, ${maxRadius + MARGIN.top})`}
+      >
+        <Circle
+          value={formatNumber(maxValue)}
+          label=""
+          fill="none"
+          stroke={color}
+          radius={maxRadius}
+          maxRadius={maxRadius}
+          fontSize={AXIS_LABEL_FONT_SIZE}
+          showLine
+          dashed
+        />
+        {minValue !== undefined ? (
+          <Circle
+            value={formatNumber(minValue)}
+            label=""
+            fill="none"
+            stroke={color}
+            radius={minRadius}
+            maxRadius={maxRadius}
+            fontSize={AXIS_LABEL_FONT_SIZE}
+            showLine
+            dashed
+            center
+          />
+        ) : null}
       </g>
     </svg>
   );
