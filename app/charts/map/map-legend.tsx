@@ -32,7 +32,7 @@ import { getTextWidth } from "@/utils/get-text-width";
 const MAX_WIDTH = 204;
 const HEIGHT = 40;
 const COLOR_RAMP_HEIGHT = 10;
-const MARGIN = { top: 6, right: 4, bottom: 0, left: 4 };
+const MARGIN = { top: 6, right: 4, bottom: 6, left: 4 };
 const AXIS_TICK_ROTATE_ANGLE = 45;
 const AXIS_LABEL_FONT_SIZE = 10;
 
@@ -228,7 +228,18 @@ export const MapLegend = ({
   );
 };
 
-interface CircleProps {
+const Circle = ({
+  value,
+  label,
+  fill,
+  stroke,
+  radius,
+  maxRadius,
+  fontSize,
+  showLine = true,
+  dashed,
+  center,
+}: {
   value: string;
   label: string;
   fill?: string;
@@ -237,44 +248,35 @@ interface CircleProps {
   maxRadius: number;
   fontSize: number;
   showLine?: boolean;
-}
-
-const Circle = (props: CircleProps) => {
-  const {
-    value,
-    label,
-    fill,
-    stroke,
-    radius,
-    maxRadius,
-    fontSize,
-    showLine = true,
-  } = props;
+  dashed?: boolean;
+  center?: boolean;
+}) => {
+  const cy = center ? -maxRadius + radius : 0;
 
   return (
     <g transform={`translate(0, ${maxRadius - radius})`}>
       <circle
         cx={0}
-        cy={0}
+        cy={cy}
         r={radius}
         fill={fill}
         stroke={stroke}
+        strokeDasharray={dashed ? "4 4" : 0}
         fillOpacity={0.1}
       />
       {showLine && (
         <>
           <line
             x1={0}
-            y1={-radius}
+            y1={cy - radius}
             x2={maxRadius + 4}
-            y2={-radius}
-            stroke={stroke}
+            y2={cy - radius}
+            stroke="black"
           />
           <text
             x={maxRadius + 6}
-            y={-radius}
+            y={cy - radius}
             dy={5}
-            fill={stroke}
             textAnchor="start"
             fontSize={fontSize}
             paintOrder="stroke"
