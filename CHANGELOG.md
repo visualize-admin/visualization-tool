@@ -17,6 +17,7 @@ You can also check the
     go beyond the data range
   - Limits are now also rendered when the axis dimension is a single filter
   - It's now possible to display limits in map charts
+  - Statistics page is now linked in the footer
 - Fixes
   - Pie chart's `Measure` field is now correctly labeled (`Measure` instead of
     `Vertical Axis`)
