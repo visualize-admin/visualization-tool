@@ -1246,7 +1246,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.limits = mapValues(oldValue, (limits) =>
-          limits.map(({ symbolType = "dot", ...rest }) => ({
+          limits.map(({ symbolType = "circle", ...rest }) => ({
             ...rest,
             symbolType,
           }))
@@ -1350,7 +1350,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.limits = mapValues(oldValue, (limits) =>
-          limits.map(({ symbolType = "dot", ...rest }) => ({
+          limits.map(({ symbolType = "circle", ...rest }) => ({
             ...rest,
             symbolType,
           }))

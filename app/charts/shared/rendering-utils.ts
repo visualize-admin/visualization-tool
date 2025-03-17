@@ -177,7 +177,7 @@ const getBottomRotate = (d: RenderVerticalLimitDatum) => {
   return d.symbolType === "cross" ? "rotate(-45deg)" : "rotate(0deg)";
 };
 const getMiddleRadius = (d: RenderVerticalLimitDatum) => {
-  return d.symbolType === "dot" ? LIMIT_SIZE * 1.5 : 0;
+  return d.symbolType === "circle" ? LIMIT_SIZE * 1.5 : 0;
 };
 
 export const renderVerticalLimits = (

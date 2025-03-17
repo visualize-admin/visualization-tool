@@ -285,7 +285,7 @@ const Limit = t.intersection([
     lineType: t.union([t.literal("dashed"), t.literal("solid")]),
   }),
   t.partial({
-    symbolType: t.union([t.literal("cross"), t.literal("dot")]),
+    symbolType: t.union([t.literal("cross"), t.literal("circle")]),
   }),
 ]);
 export type Limit = t.TypeOf<typeof Limit>;

@@ -816,7 +816,7 @@ const ChartLimits = ({
         const {
           color = "#ffffff",
           lineType = "solid",
-          symbolType = "dot",
+          symbolType = "circle",
         } = maybeLimit ?? {};
 
         return {
@@ -916,7 +916,7 @@ const ChartLimits = ({
                       name={`limit-${i}-symbol-type-dot`}
                       label={t({ id: "controls.symbol.dot", message: "Dot" })}
                       value="dot"
-                      checked={symbolType === "dot"}
+                      checked={symbolType === "circle"}
                       onChange={() => {
                         dispatch({
                           type: "LIMIT_SET",
@@ -925,7 +925,7 @@ const ChartLimits = ({
                             related: limit.related,
                             color,
                             lineType,
-                            symbolType: "dot",
+                            symbolType: "circle",
                           },
                         });
                       }}

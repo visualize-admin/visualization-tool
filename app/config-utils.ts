@@ -388,7 +388,7 @@ export const useLimits = ({
                   symbolType:
                     limit.type === "single" &&
                     getSupportsLimitSymbols(chartConfig)
-                      ? (maybeLimit.symbolType ?? "dot")
+                      ? (maybeLimit.symbolType ?? "circle")
                       : undefined,
                 },
                 measureLimit: limit,
