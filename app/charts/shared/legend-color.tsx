@@ -398,6 +398,7 @@ const LegendColorContent = ({
                       onToggle={handleToggle}
                       checked={interactive && active}
                       disabled={soleItemChecked && active}
+                      usage="legend"
                     />
                   );
                 })}
@@ -441,11 +442,12 @@ export const LegendItem = (props: LegendItemProps) => {
     onToggle,
     checked,
     disabled,
-    usage = "legend",
+    usage: _usage,
   } = props;
+  const usage = _usage ?? "legend";
   const classes = useItemStyles({ symbol, color, usage });
   const shouldBeBigger =
-    (symbol === "circle" && usage !== "legend") || usage === "colorPicker";
+    (symbol === "circle" && _usage !== "legend") || usage === "colorPicker";
 
   return interactive && onToggle ? (
     <MaybeTooltip
