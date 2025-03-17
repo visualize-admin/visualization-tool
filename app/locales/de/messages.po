@@ -1548,6 +1548,10 @@ msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/de/home.html"
 
 #: app/components/footer.tsx
+msgid "footer.statistics"
+msgstr "Statistiken"
+
+#: app/components/footer.tsx
 msgid "footer.status"
 msgstr "Status"
 
