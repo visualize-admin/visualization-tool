@@ -1544,6 +1544,10 @@ msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/en/home.html"
 
 #: app/components/footer.tsx
+msgid "footer.statistics"
+msgstr "Statistics"
+
+#: app/components/footer.tsx
 msgid "footer.status"
 msgstr "Status"
 
@@ -1591,6 +1595,7 @@ msgstr "You can share this visualization by copying the URL or by embedding it o
 
 #: app/components/chart-filters-list.tsx
 #: app/components/form.tsx
+#: app/components/hint.tsx
 #: app/components/hint.tsx
 msgid "hint.loading.data"
 msgstr "Loading data..."
