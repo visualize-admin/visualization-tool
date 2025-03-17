@@ -1023,6 +1023,10 @@ msgid "controls.section.data.filters"
 msgstr "Filtres"
 
 #: app/configurator/components/chart-configurator.tsx
+msgid "controls.section.data.filters.default-open"
+msgstr "Afficher la zone de filtre ouverte par défaut"
+
+#: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.none"
 msgstr "Aucun filtre"
 
@@ -1554,6 +1558,10 @@ msgstr "Office fédéral de l'environnement OFEV"
 #: app/components/footer.tsx
 msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/fr/home.html"
+
+#: app/components/footer.tsx
+msgid "footer.statistics"
+msgstr "Statistiques"
 
 #: app/components/footer.tsx
 msgid "footer.status"

@@ -18,9 +18,17 @@ You can also check the
   - Limits are now also rendered when the axis dimension is a single filter
   - It's now possible to display limits in map charts
   - Added a way to set different limit symbols for area and line charts
+  - Interactive filters can now be set to be opened by default
+  - Statistics page is now linked in the footer
 - Fixes
   - Pie chart's `Measure` field is now correctly labeled (`Measure` instead of
     `Vertical Axis`)
+  - Opening a multi filter field that shouldn't enable setting the colors
+    doesn't longer allow to and doesn't overwrite the colors anymore
+  - It's now again possible to update the symbol layer colors based on
+    categorical dimensions
+  - Color palette names are now correctly translated in user profile (instead of
+    always displaying in German)
 - Styles
   - Optimized the custom map legends loading indicator appearance
   - Line-based limits now take the full bar / column width

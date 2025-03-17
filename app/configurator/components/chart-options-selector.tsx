@@ -1798,7 +1798,9 @@ const ChartFieldMultiFilter = ({
 }) => {
   const colorComponentId = get(
     chartConfig,
-    `fields["${field}"].color.componentId`
+    isMapConfig(chartConfig)
+      ? `fields["${field}"].color.componentId`
+      : `fields.segment.componentId`
   );
   const colorComponent = [...dimensions, ...measures].find(
     (d) => d.id === colorComponentId
@@ -1830,7 +1832,7 @@ const ChartFieldMultiFilter = ({
             <DimensionValuesMultiFilter
               dimension={component}
               field={field}
-              colorComponent={colorComponent ?? component}
+              colorComponent={colorComponent}
               // If colorType is defined, we are dealing with color field and
               // not segment.
               colorConfigPath={

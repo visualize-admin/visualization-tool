@@ -1023,6 +1023,10 @@ msgid "controls.section.data.filters"
 msgstr "Filters"
 
 #: app/configurator/components/chart-configurator.tsx
+msgid "controls.section.data.filters.default-open"
+msgstr "Show filter area open per default"
+
+#: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.none"
 msgstr "No filters"
 
@@ -1554,6 +1558,10 @@ msgstr "Federal Office for the Environment FOEN"
 #: app/components/footer.tsx
 msgid "footer.institution.url"
 msgstr "https://www.bafu.admin.ch/bafu/en/home.html"
+
+#: app/components/footer.tsx
+msgid "footer.statistics"
+msgstr "Statistics"
 
 #: app/components/footer.tsx
 msgid "footer.status"

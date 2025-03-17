@@ -87,7 +87,6 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
           </Trans>
         </FooterLink>
       </Box>
-
       <Flex
         sx={{
           width: ["100%", "auto"],
@@ -106,7 +105,6 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
         >
           <Logo />
         </Box>
-
         <Flex
           sx={{
             justifyContent: "flex-end",
@@ -133,10 +131,14 @@ export const Footer = ({ sx }: { sx?: FlexProps["sx"] }) => {
           <FooterLinkBottom href="https://www.youtube.com/channel/UCNK0uJTJ74kbv3jmNtZfgOw">
             <Trans id="footer.tutorials">Tutorials</Trans>
           </FooterLinkBottom>
-
           <FooterLinkBottom href="https://visualization-tool.status.interactivethings.io/">
             <Trans id="footer.status">Status</Trans>
           </FooterLinkBottom>
+          <NextLink href="/statistics" passHref legacyBehavior>
+            <FooterLinkBottom>
+              <Trans id="footer.statistics">Statistics</Trans>
+            </FooterLinkBottom>
+          </NextLink>
           <NextLink
             href={contentRoutes.legal[locale].path}
             passHref

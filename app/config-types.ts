@@ -140,10 +140,15 @@ export type InteractiveFiltersTimeRange = t.TypeOf<
   typeof InteractiveFiltersTimeRange
 >;
 
-const InteractiveFiltersDataConfig = t.type({
-  active: t.boolean,
-  componentIds: t.array(t.string),
-});
+const InteractiveFiltersDataConfig = t.intersection([
+  t.type({
+    active: t.boolean,
+    componentIds: t.array(t.string),
+  }),
+  t.partial({
+    defaultOpen: t.boolean,
+  }),
+]);
 export type InteractiveFiltersDataConfig = t.TypeOf<
   typeof InteractiveFiltersDataConfig
 >;
