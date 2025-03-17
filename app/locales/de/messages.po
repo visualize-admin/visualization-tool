@@ -1023,6 +1023,10 @@ msgid "controls.section.data.filters"
 msgstr "Filter"
 
 #: app/configurator/components/chart-configurator.tsx
+msgid "controls.section.data.filters.default-open"
+msgstr "Filterbereich standardmässig geöffnet anzeigen"
+
+#: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.none"
 msgstr "Keine Filter"
 
