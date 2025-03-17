@@ -76,15 +76,21 @@ export const useChartDataFiltersState = ({
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
 }) => {
-  const componentIds =
-    chartConfig.interactiveFiltersConfig?.dataFilters.componentIds;
-  const [open, setOpen] = useState(false);
+  const dataFiltersConfig = chartConfig.interactiveFiltersConfig?.dataFilters;
+  const active = dataFiltersConfig?.active;
+  const defaultOpen = dataFiltersConfig?.defaultOpen;
+  const componentIds = dataFiltersConfig?.componentIds;
+  const [open, setOpen] = useState<boolean>(!!defaultOpen);
 
   useEffect(() => {
     if (componentIds?.length === 0) {
       setOpen(false);
     }
   }, [componentIds?.length]);
+
+  useEffect(() => {
+    setOpen(!!defaultOpen);
+  }, [active, defaultOpen]);
 
   const { loading } = useLoadingState();
   const queryFilters = useQueryFilters({

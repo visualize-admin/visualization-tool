@@ -1023,6 +1023,10 @@ msgid "controls.section.data.filters"
 msgstr "Filtres"
 
 #: app/configurator/components/chart-configurator.tsx
+msgid "controls.section.data.filters.default-open"
+msgstr "Afficher la zone de filtre ouverte par défaut"
+
+#: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.none"
 msgstr "Aucun filtre"
 
@@ -1591,6 +1595,7 @@ msgstr "Vous pouvez partager cette visualisation en copiant l'URL ou en l'intég
 
 #: app/components/chart-filters-list.tsx
 #: app/components/form.tsx
+#: app/components/hint.tsx
 #: app/components/hint.tsx
 msgid "hint.loading.data"
 msgstr "Chargement des données..."
