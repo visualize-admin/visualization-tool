@@ -1149,6 +1149,10 @@ msgstr "Selezionare il tipo di linea"
 msgid "controls.section.targets-and-limit-values.show-target"
 msgstr "Mostra bersaglio"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.symbol-type"
+msgstr "Seleziona il tipo di simbolo"
+
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
 msgid "controls.section.title.warning"
@@ -1327,6 +1331,14 @@ msgstr "Ordina per"
 #: app/configurator/components/chart-type-selector.tsx
 msgid "controls.switch.chart.type"
 msgstr "Passa a un altro tipo di grafico mantenendo la maggior parte delle impostazioni dei filtri"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.symbol.cross"
+msgstr "Attraverso"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.symbol.dot"
+msgstr "Punto"
 
 #: app/configurator/table/table-chart-options.tsx
 msgid "controls.table.column.group"
@@ -1591,6 +1603,7 @@ msgstr "È possibile condividere questa visualizzazione copiando l'URL o incorpo
 
 #: app/components/chart-filters-list.tsx
 #: app/components/form.tsx
+#: app/components/hint.tsx
 #: app/components/hint.tsx
 msgid "hint.loading.data"
 msgstr "Caricamento dei dati..."
