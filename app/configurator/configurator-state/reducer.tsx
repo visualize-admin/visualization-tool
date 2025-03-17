@@ -47,7 +47,6 @@ import {
   isMapConfig,
   isSegmentInConfig,
   isTableConfig,
-  Limit,
   ReactGridLayoutType,
   SingleColorField,
 } from "@/config-types";
@@ -1181,20 +1180,15 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "LIMIT_SET":
       if (isConfiguring(draft)) {
-        const { measureId, related, color, lineType } = action.value;
+        const { measureId, ...limit } = action.value;
         const chartConfig = getChartConfig(draft);
-        const newLimit: Limit = {
-          related,
-          color,
-          lineType,
-        };
 
         if (!chartConfig.limits[measureId]) {
-          chartConfig.limits[measureId] = [newLimit];
+          chartConfig.limits[measureId] = [limit];
         } else {
           const maybeLimitIndex = chartConfig.limits[measureId].findIndex((d) =>
             d.related.every((r) =>
-              newLimit.related.some(
+              limit.related.some(
                 (nr) =>
                   r.dimensionId === nr.dimensionId &&
                   r.dimensionValue === nr.dimensionValue
@@ -1203,9 +1197,9 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           );
 
           if (maybeLimitIndex !== -1) {
-            chartConfig.limits[measureId][maybeLimitIndex] = newLimit;
+            chartConfig.limits[measureId][maybeLimitIndex] = limit;
           } else {
-            chartConfig.limits[measureId].push(newLimit);
+            chartConfig.limits[measureId].push(limit);
           }
         }
       }

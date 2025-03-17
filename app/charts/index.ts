@@ -3,6 +3,7 @@ import { ascending, descending, group, rollup, rollups } from "d3-array";
 import produce from "immer";
 import get from "lodash/get";
 import sortBy from "lodash/sortBy";
+import mapValues from "lodash/mapValues";
 
 import {
   AREA_SEGMENT_SORTING,
@@ -995,7 +996,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1113,7 +1116,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1240,7 +1245,12 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType = "dot", ...rest }) => ({
+            ...rest,
+            symbolType,
+          }))
+        );
       });
     },
     fields: {
@@ -1339,7 +1349,12 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType = "dot", ...rest }) => ({
+            ...rest,
+            symbolType,
+          }))
+        );
       });
     },
     fields: {
@@ -1450,7 +1465,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1524,7 +1541,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1645,7 +1664,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1695,7 +1716,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1766,7 +1789,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1887,7 +1912,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {

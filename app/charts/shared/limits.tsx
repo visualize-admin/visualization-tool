@@ -160,6 +160,7 @@ export const VerticalLimits = ({
         const y2 = yScale(limit.y2);
         const fill = limit.color;
         const lineType = limit.lineType;
+        const symbolType = limit.symbolType;
 
         const axisObservation: Observation = {
           [axisDimension?.id ?? ""]: limit.relatedAxisDimensionValueLabel ?? "",
@@ -181,6 +182,7 @@ export const VerticalLimits = ({
               width,
               fill,
               lineType,
+              symbolType,
             } as RenderVerticalLimitDatum)
           : null;
       })
