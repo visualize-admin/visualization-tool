@@ -160,6 +160,24 @@ export type RenderVerticalLimitDatum = {
   width: number;
   fill: string;
   lineType: Limit["lineType"];
+  symbolType: Limit["symbolType"];
+};
+
+const getTopBottomLineHeight = (d: RenderVerticalLimitDatum) => {
+  return d.symbolType
+    ? d.symbolType === "cross"
+      ? LIMIT_SIZE
+      : 0
+    : LIMIT_SIZE;
+};
+const getTopRotate = (d: RenderVerticalLimitDatum) => {
+  return d.symbolType === "cross" ? "rotate(45deg)" : "rotate(0deg)";
+};
+const getBottomRotate = (d: RenderVerticalLimitDatum) => {
+  return d.symbolType === "cross" ? "rotate(-45deg)" : "rotate(0deg)";
+};
+const getMiddleRadius = (d: RenderVerticalLimitDatum) => {
+  return d.symbolType === "circle" ? LIMIT_SIZE * 1.5 : 0;
 };
 
 export const renderVerticalLimits = (
@@ -183,14 +201,17 @@ export const renderVerticalLimits = (
               .attr("x", (d) => d.x)
               .attr("y", (d) => d.y2 - LIMIT_SIZE / 2)
               .attr("width", (d) => d.width)
-              .attr("height", LIMIT_SIZE)
+              .attr("height", getTopBottomLineHeight)
               .attr("fill", (d) => d.fill)
               .attr("stroke", "none")
+              .style("transform-box", "fill-box")
+              .style("transform-origin", "center")
+              .style("transform", getTopRotate)
           )
           .call((g) =>
             g
               .append("line")
-              .attr("class", "middle")
+              .attr("class", "middle-line")
               .attr("x1", (d) => d.x + d.width / 2)
               .attr("x2", (d) => d.x + d.width / 2)
               .attr("y1", (d) => d.y1 - LIMIT_SIZE / 2)
@@ -203,14 +224,26 @@ export const renderVerticalLimits = (
           )
           .call((g) =>
             g
+              .append("circle")
+              .attr("class", "middle-dot")
+              .attr("cx", (d) => d.x + d.width / 2)
+              .attr("cy", (d) => (d.y1 + d.y2) / 2)
+              .attr("r", getMiddleRadius)
+              .attr("fill", (d) => d.fill)
+          )
+          .call((g) =>
+            g
               .append("rect")
               .attr("class", "bottom")
               .attr("x", (d) => d.x)
               .attr("y", (d) => d.y1 - LIMIT_SIZE / 2)
               .attr("width", (d) => d.width)
-              .attr("height", LIMIT_SIZE)
+              .attr("height", getTopBottomLineHeight)
               .attr("fill", (d) => d.fill)
               .attr("stroke", "none")
+              .style("transform-box", "fill-box")
+              .style("transform-origin", "center")
+              .style("transform", getBottomRotate)
           )
           .call((enter) =>
             maybeTransition(enter, {
@@ -229,11 +262,13 @@ export const renderVerticalLimits = (
                   .attr("x", (d) => d.x)
                   .attr("y", (d) => d.y2 - LIMIT_SIZE / 2)
                   .attr("width", (d) => d.width)
+                  .attr("height", getTopBottomLineHeight)
                   .attr("fill", (d) => d.fill)
+                  .style("transform", getTopRotate)
               )
               .call((g) =>
                 g
-                  .select(".middle")
+                  .select(".middle-line")
                   .attr("x1", (d) => d.x + d.width / 2)
                   .attr("x2", (d) => d.x + d.width / 2)
                   .attr("y1", (d) => d.y1 - LIMIT_SIZE / 2)
@@ -246,11 +281,21 @@ export const renderVerticalLimits = (
               )
               .call((g) =>
                 g
+                  .select(".middle-dot")
+                  .attr("cx", (d) => d.x + d.width / 2)
+                  .attr("cy", (d) => (d.y1 + d.y2) / 2)
+                  .attr("r", getMiddleRadius)
+                  .attr("fill", (d) => d.fill)
+              )
+              .call((g) =>
+                g
                   .select(".bottom")
                   .attr("x", (d) => d.x)
                   .attr("y", (d) => d.y1 - LIMIT_SIZE / 2)
                   .attr("width", (d) => d.width)
+                  .attr("height", getTopBottomLineHeight)
                   .attr("fill", (d) => d.fill)
+                  .style("transform", getBottomRotate)
               ),
           transition,
         }),

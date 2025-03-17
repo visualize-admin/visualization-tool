@@ -67,6 +67,7 @@ import {
   getAxisDimension,
   getChartConfig,
   getMaybeValidChartConfigLimit,
+  getSupportsLimitSymbols,
   useChartConfigFilters,
 } from "@/config-utils";
 import { ColorPalette } from "@/configurator/components/chart-controls/color-palette";
@@ -812,13 +813,18 @@ const ChartLimits = ({
           return;
         }
 
-        const { color = "#ffffff", lineType = "solid" } = maybeLimit ?? {};
+        const {
+          color = "#ffffff",
+          lineType = "solid",
+          symbolType = "circle",
+        } = maybeLimit ?? {};
 
         return {
           limit,
           maybeLimit,
           color,
           lineType,
+          symbolType,
         };
       })
       .filter(truthy);
@@ -831,6 +837,7 @@ const ChartLimits = ({
     fallbackPalette: userPalettes?.find((d) => d.paletteId === paletteId)
       ?.colors,
   });
+  const supportsLimitSymbols = getSupportsLimitSymbols(chartConfig);
 
   return availableLimitOptions.length > 0 ? (
     <ControlSection collapse>
@@ -841,7 +848,7 @@ const ChartLimits = ({
       </SubsectionTitle>
       <ControlSectionContent component="fieldset">
         {availableLimitOptions.map(
-          ({ maybeLimit, limit, color, lineType }, i) => {
+          ({ maybeLimit, limit, color, lineType, symbolType }, i) => {
             return (
               <Box key={i} sx={{ mb: 2 }}>
                 <Box
@@ -849,7 +856,7 @@ const ChartLimits = ({
                     display: "flex",
                     flexDirection: "column",
                     gap: 4,
-                    mb: limit.type === "range" ? 4 : 0,
+                    mb: limit.type === "range" || supportsLimitSymbols ? 4 : 0,
                   }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
@@ -890,6 +897,7 @@ const ChartLimits = ({
                             related: limit.related,
                             color,
                             lineType,
+                            symbolType,
                           },
                         });
                       }}
@@ -897,6 +905,56 @@ const ChartLimits = ({
                     />
                   </Flex>
                 </Box>
+                {limit.type === "single" && supportsLimitSymbols ? (
+                  <div>
+                    <Typography variant="body2" sx={{ mb: 2 }}>
+                      <Trans id="controls.section.targets-and-limit-values.symbol-type">
+                        Select symbol type
+                      </Trans>
+                    </Typography>
+                    <Radio
+                      name={`limit-${i}-symbol-type-dot`}
+                      label={t({ id: "controls.symbol.dot", message: "Dot" })}
+                      value="dot"
+                      checked={symbolType === "circle"}
+                      onChange={() => {
+                        dispatch({
+                          type: "LIMIT_SET",
+                          value: {
+                            measureId: measure.id,
+                            related: limit.related,
+                            color,
+                            lineType,
+                            symbolType: "circle",
+                          },
+                        });
+                      }}
+                      disabled={!maybeLimit}
+                    />
+                    <Radio
+                      name={`limit-${i}-symbol-type-cross`}
+                      label={t({
+                        id: "controls.symbol.cross",
+                        message: "Cross",
+                      })}
+                      value="cross"
+                      checked={symbolType === "cross"}
+                      onChange={() => {
+                        dispatch({
+                          type: "LIMIT_SET",
+                          value: {
+                            measureId: measure.id,
+                            related: limit.related,
+                            color,
+                            lineType,
+                            symbolType: "cross",
+                          },
+                        });
+                      }}
+                      disabled={!maybeLimit}
+                    />
+                  </div>
+                ) : null}
                 {limit.type === "range" ? (
                   <div>
                     <Typography variant="body2" sx={{ mb: 2 }}>
@@ -917,6 +975,7 @@ const ChartLimits = ({
                             related: limit.related,
                             color,
                             lineType: "solid",
+                            symbolType,
                           },
                         });
                       }}
@@ -938,6 +997,7 @@ const ChartLimits = ({
                             related: limit.related,
                             color,
                             lineType: "dashed",
+                            symbolType,
                           },
                         });
                       }}

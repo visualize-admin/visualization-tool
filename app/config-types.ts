@@ -278,16 +278,21 @@ const Cube = t.intersection([
 ]);
 export type Cube = t.TypeOf<typeof Cube>;
 
-const Limit = t.type({
-  related: t.array(
-    t.type({
-      dimensionId: t.string,
-      dimensionValue: t.string,
-    })
-  ),
-  color: t.string,
-  lineType: t.union([t.literal("dashed"), t.literal("solid")]),
-});
+const Limit = t.intersection([
+  t.type({
+    related: t.array(
+      t.type({
+        dimensionId: t.string,
+        dimensionValue: t.string,
+      })
+    ),
+    color: t.string,
+    lineType: t.union([t.literal("dashed"), t.literal("solid")]),
+  }),
+  t.partial({
+    symbolType: t.union([t.literal("cross"), t.literal("circle")]),
+  }),
+]);
 export type Limit = t.TypeOf<typeof Limit>;
 
 const GenericChartConfig = t.type({

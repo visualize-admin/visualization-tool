@@ -1153,6 +1153,10 @@ msgstr "Linientyp auswählen"
 msgid "controls.section.targets-and-limit-values.show-target"
 msgstr "Zielvorgabe anzeigen"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.symbol-type"
+msgstr "Symboltyp auswählen"
+
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
 msgid "controls.section.title.warning"
@@ -1331,6 +1335,14 @@ msgstr "Sortieren nach"
 #: app/configurator/components/chart-type-selector.tsx
 msgid "controls.switch.chart.type"
 msgstr "Wechseln Sie zu einem anderen Diagrammtyp unter Beibehaltung der meisten Filtereinstellungen"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.symbol.cross"
+msgstr "Kreuz"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.symbol.dot"
+msgstr "Punkt"
 
 #: app/configurator/table/table-chart-options.tsx
 msgid "controls.table.column.group"

@@ -383,7 +383,14 @@ export const useLimits = ({
 
           return maybeLimit
             ? {
-                configLimit: maybeLimit,
+                configLimit: {
+                  ...maybeLimit,
+                  symbolType:
+                    limit.type === "single" &&
+                    getSupportsLimitSymbols(chartConfig)
+                      ? (maybeLimit.symbolType ?? "circle")
+                      : undefined,
+                },
                 measureLimit: limit,
                 relatedAxisDimensionValueLabel,
               }
@@ -392,4 +399,8 @@ export const useLimits = ({
         .filter(truthy),
     };
   }, [chartConfig, filters, measure, axisDimension]);
+};
+
+export const getSupportsLimitSymbols = (chartConfig: ChartConfig) => {
+  return chartConfig.chartType === "area" || chartConfig.chartType === "line";
 };
