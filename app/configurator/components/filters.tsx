@@ -602,7 +602,6 @@ const TreeAccordionSummary = styled(AccordionSummary)(({ theme }) => ({
     minHeight: 0,
   },
   "& > .MuiAccordionSummary-content": {
-    alignItems: "center",
     marginTop: 0,
     marginBottom: 0,
     minHeight: 32,
