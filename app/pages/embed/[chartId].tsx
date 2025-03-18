@@ -11,6 +11,10 @@ import {
 } from "@/configurator";
 import { getConfig, increaseConfigViewCount } from "@/db/config";
 import { serializeProps } from "@/db/serialize";
+import {
+  EmbedQueryParam,
+  LegacyEmbedQueryParam,
+} from "@/components/publish-actions";
 
 type PageProps =
   | {
@@ -59,8 +63,10 @@ const EmbedPage = (props: PageProps) => {
     config: { key, data: state },
   } = props;
 
-  // We keep disableBorder for backwards compatibility.
-  const { disableBorder, removeBorder } = query;
+  const { disableBorder, removeBorder } = query as unknown as Record<
+    EmbedQueryParam | LegacyEmbedQueryParam,
+    boolean
+  >;
 
   return (
     <ConfiguratorStateProvider

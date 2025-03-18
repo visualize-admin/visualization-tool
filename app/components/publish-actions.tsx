@@ -243,7 +243,9 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
   );
 };
 
-type EmbedQueryParam =
+export type LegacyEmbedQueryParam = "disableBorder";
+
+export type EmbedQueryParam =
   | "removeBorder"
   | "optimizeSpace"
   | "removeMoreOptionsButton"
