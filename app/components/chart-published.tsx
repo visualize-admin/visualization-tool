@@ -442,11 +442,15 @@ const ChartPublishedInnerImpl = ({
               dataSource={dataSource}
               chartConfig={chartConfig}
               dashboardFilters={state.dashboardFilters}
-              metadataPanelProps={{
-                components: allComponents,
-                container: rootRef.current,
-                allowMultipleOpen: true,
-              }}
+              metadataPanelProps={
+                embedParams?.removeMoreOptionsButton
+                  ? undefined
+                  : {
+                      components: allComponents,
+                      container: rootRef.current,
+                      allowMultipleOpen: true,
+                    }
+              }
             />
             <TablePreviewWrapper>
               {isTable ? (
@@ -476,6 +480,15 @@ const ChartPublishedInnerImpl = ({
                 state.layout.type !== "dashboard" ||
                 (state.layout.type === "dashboard" &&
                   state.chartConfigs.length === 1)
+              }
+              metadataPanelProps={
+                embedParams?.removeMoreOptionsButton
+                  ? {
+                      components: allComponents,
+                      container: rootRef.current,
+                      allowMultipleOpen: true,
+                    }
+                  : undefined
               }
             />
           </InteractiveFiltersChartProvider>

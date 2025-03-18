@@ -2,12 +2,15 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import uniqBy from "lodash/uniqBy";
-import { ReactNode, useMemo } from "react";
+import { ComponentProps, ReactNode, useMemo } from "react";
 
 import { extractChartConfigUsedComponents } from "@/charts/shared/chart-helpers";
 import { LegendItem } from "@/charts/shared/legend-color";
 import { ChartFiltersList } from "@/components/chart-filters-list";
-import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import {
+  MetadataPanel,
+  OpenMetadataPanelWrapper,
+} from "@/components/metadata-panel";
 import {
   ChartConfig,
   ComboLineColumnConfig,
@@ -51,6 +54,7 @@ export const ChartFootnotes = ({
   components,
   showVisualizeLink = false,
   configKey,
+  metadataPanelProps,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
@@ -58,6 +62,10 @@ export const ChartFootnotes = ({
   components: Component[];
   showVisualizeLink?: boolean;
   configKey?: string;
+  metadataPanelProps?: Omit<
+    ComponentProps<typeof MetadataPanel>,
+    "dataSource" | "chartConfig" | "dashboardFilters"
+  >;
 }) => {
   const locale = useLocale();
   const usedComponents = useMemo(() => {
@@ -84,6 +92,14 @@ export const ChartFootnotes = ({
     >
       {data?.dataCubesMetadata.map((metadata) => (
         <div key={metadata.iri}>
+          {metadataPanelProps ? (
+            <MetadataPanel
+              dataSource={dataSource}
+              chartConfig={chartConfig}
+              dashboardFilters={dashboardFilters}
+              {...metadataPanelProps}
+            />
+          ) : null}
           <ChartFootnotesLegend
             chartConfig={chartConfig}
             components={components}

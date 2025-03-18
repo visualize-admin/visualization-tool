@@ -103,16 +103,17 @@ export const ChartControls = ({
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
-  metadataPanelProps: Omit<
+  metadataPanelProps?: Omit<
     ComponentProps<typeof MetadataPanel>,
     "dataSource" | "chartConfig" | "dashboardFilters"
   >;
 }) => {
+  const chartDataFilters = chartConfig.interactiveFiltersConfig?.dataFilters;
+  const dashboardDataFilters = dashboardFilters?.dataFilters;
   const showFilters =
-    chartConfig.interactiveFiltersConfig?.dataFilters.active &&
-    chartConfig.interactiveFiltersConfig.dataFilters.componentIds.some(
-      (componentId) =>
-        !dashboardFilters?.dataFilters.componentIds.includes(componentId)
+    chartDataFilters?.active &&
+    chartDataFilters?.componentIds.some(
+      (id) => !dashboardDataFilters?.componentIds.includes(id)
     );
   const chartFiltersState = useChartDataFiltersState({
     dataSource,
@@ -134,20 +135,22 @@ export const ChartControls = ({
       <Box sx={{ gridArea: "filtersToggle" }}>
         {showFilters && <ChartDataFiltersToggle {...chartFiltersState} />}
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          gridArea: "metadataToggle",
-        }}
-      >
-        <MetadataPanel
-          dataSource={dataSource}
-          chartConfig={chartConfig}
-          dashboardFilters={dashboardFilters}
-          {...metadataPanelProps}
-        />
-      </Box>
+      {metadataPanelProps ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gridArea: "metadataToggle",
+          }}
+        >
+          <MetadataPanel
+            dataSource={dataSource}
+            chartConfig={chartConfig}
+            dashboardFilters={dashboardFilters}
+            {...metadataPanelProps}
+          />
+        </Box>
+      ) : null}
       <Box sx={{ gridArea: "filtersList" }}>
         {showFilters && <ChartDataFiltersList {...chartFiltersState} />}
       </Box>
