@@ -1877,6 +1877,10 @@ msgid "publication.embed.iframe.optimize-space"
 msgstr "Optimieren Sie den Leerraum um und innerhalb des Diagramms"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-axis-labels-interactivity"
+msgstr "Keine interaktiven Achsenbeschriftungen"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
 msgstr "Rand entfernen"
 

@@ -247,6 +247,7 @@ type EmbedQueryParam =
   | "removeBorder"
   | "optimizeSpace"
   | "removeMoreOptionsButton"
+  | "removeAxisLabelsInteractivity";
 
 export const EmbedContent = ({
   locale,
@@ -366,6 +367,16 @@ export const EmbedContent = ({
                   id: "publication.embed.iframe.remove-more-options-button",
                   message:
                     "Remove options for table view, copy & edit, sharing, and downloading",
+                })}
+              />
+              <EmbedToggleSwitch
+                checked={queryParams.includes("removeAxisLabelsInteractivity")}
+                onChange={(_, checked) => {
+                  setQueryParam("removeAxisLabelsInteractivity", checked);
+                }}
+                label={t({
+                  id: "publication.embed.iframe.remove-axis-labels-interactivity",
+                  message: "No interactive axis labels",
                 })}
               />
             </AccordionDetails>
