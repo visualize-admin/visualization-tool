@@ -172,7 +172,6 @@ const EmbedToggleSwitch = ({
   label,
   ...rest
 }: {
-  value: string;
   checked: boolean;
   onChange: (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -322,7 +321,6 @@ export const EmbedContent = ({
             </AccordionSummary>
             <AccordionDetails>
               <EmbedToggleSwitch
-                value="remove-border"
                 checked={disableBorder}
                 onChange={handleDisableBorderChange}
                 label={t({
