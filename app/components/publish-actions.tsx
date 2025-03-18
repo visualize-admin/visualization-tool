@@ -243,7 +243,10 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
   );
 };
 
-type EmbedQueryParam = "disableBorder" | "optimizeSpace";
+type EmbedQueryParam =
+  | "disableBorder"
+  | "optimizeSpace"
+  | "disableMoreOptionsButton";
 
 export const EmbedContent = ({
   locale,
@@ -352,6 +355,17 @@ export const EmbedContent = ({
                 label={t({
                   id: "publication.embed.iframe.optimize-space",
                   message: "Optimize white space around and within chart",
+                })}
+              />
+              <EmbedToggleSwitch
+                checked={queryParams.includes("disableMoreOptionsButton")}
+                onChange={(_, checked) => {
+                  setQueryParam("disableMoreOptionsButton", checked);
+                }}
+                label={t({
+                  id: "publication.embed.iframe.disable-more-options-button",
+                  message:
+                    "Remove options for table view, copy & edit, sharing, and downloading",
                 })}
               />
             </AccordionDetails>

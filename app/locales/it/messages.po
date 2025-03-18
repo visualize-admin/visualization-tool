@@ -1873,6 +1873,10 @@ msgid "publication.embed.iframe.caption"
 msgstr "Usa questo codice per incorporare il grafico in una pagina web"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.disable-more-options-button"
+msgstr "Rimuovi le opzioni per la visualizzazione della tabella, copia e modifica, condivisione e download"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.optimize-space"
 msgstr "Ottimizza lo spazio bianco attorno e all'interno del grafico"
 
