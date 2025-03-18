@@ -14,7 +14,14 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  ReactNode,
+  RefObject,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { CopyToClipboardTextInput } from "@/components/copy-to-clipboard-text-input";
@@ -236,6 +243,8 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
   );
 };
 
+type EmbedQueryParam = "disableBorder";
+
 export const EmbedContent = ({
   locale,
   configKey,
@@ -248,13 +257,26 @@ export const EmbedContent = ({
   const [embedUrl, setEmbedUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
   const [responsive, setResponsive] = useState(true);
-  const [disableBorder, setDisableBorder] = useState(false);
+  const [queryParams, setQueryParams] = useState<EmbedQueryParam[]>([]);
+  const setQueryParam = useCallback(
+    (param: EmbedQueryParam, value: boolean) => {
+      setQueryParams((prev) => {
+        if (value) {
+          return [...prev, param];
+        } else {
+          return prev.filter((qp) => qp !== param);
+        }
+      });
+    },
+    []
+  );
+
   useEffect(() => {
     const { origin } = window.location;
-    const embedPath = `${configKey}${disableBorder ? "?disableBorder=true" : ""}`;
+    const embedPath = `${configKey}${queryParams.length ? `?${queryParams.map((qp) => `${qp}=true`).join("&")}` : ""}`;
     setEmbedUrl(`${origin}/${locale}/embed/${embedPath}`);
     setEmbedAEMUrl(`${origin}/api/embed-aem-ext/${locale}/${embedPath}`);
-  }, [configKey, locale, disableBorder]);
+  }, [configKey, locale, queryParams]);
 
   return (
     <Flex sx={{ flexDirection: "column", gap: 4, p: 4 }}>
@@ -308,8 +330,10 @@ export const EmbedContent = ({
             </AccordionSummary>
             <AccordionDetails>
               <EmbedToggleSwitch
-                checked={disableBorder}
-                onChange={(_, checked) => setDisableBorder(checked)}
+                checked={queryParams.includes("disableBorder")}
+                onChange={(_, checked) => {
+                  setQueryParam("disableBorder", checked);
+                }}
                 label={t({
                   id: "publication.embed.iframe.remove-border",
                   message: "Remove border",
