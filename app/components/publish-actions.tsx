@@ -253,9 +253,8 @@ export const EmbedContent = ({
   const router = useRouter();
   const [embedUrl, setEmbedUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
-  const [responsive, setResponsive] = useState(true);
-
   const { embedParams, setEmbedQueryParam } = useEmbedQueryParams(router.query);
+  const [responsive, setResponsive] = useState(true);
 
   useEffect(() => {
     const { origin } = window.location;
@@ -336,7 +335,10 @@ export const EmbedContent = ({
           />
         </Flex>
         {showAdvancedSettings ? (
-          <Accordion sx={{ mb: 4 }}>
+          <Accordion
+            sx={{ mb: 4 }}
+            defaultExpanded={Object.values(embedParams).some((d) => d)}
+          >
             <AccordionSummary>
               <Typography variant="h5" component="p">
                 <Trans id="publication.embed.advanced-settings">
