@@ -59,6 +59,7 @@ import {
   InteractiveFiltersProvider,
 } from "@/stores/interactive-filters";
 import { useResizeObserver } from "@/utils/use-resize-observer";
+import { EmbedQueryParams } from "@/components/embed-params";
 
 type ChartPublishedIndividualChartProps = Omit<
   ChartPublishInnerProps,
@@ -98,10 +99,10 @@ const ChartPublishedIndividualChart = forwardRef<
 
 export const ChartPublished = ({
   configKey,
-  removeBorder,
+  embedParams,
 }: {
   configKey?: string;
-  removeBorder?: boolean;
+  embedParams?: EmbedQueryParams;
 }) => {
   const [state] = useConfiguratorState(isPublished);
   const { dataSource } = state;
@@ -116,9 +117,10 @@ export const ChartPublished = ({
         state={state}
         chartConfig={chartConfig}
         configKey={configKey}
+        embedParams={embedParams}
       />
     ),
-    [configKey, dataSource, state]
+    [configKey, dataSource, embedParams, state]
   );
   const renderBlock = useCallback(
     (block: LayoutBlock) => {
@@ -211,7 +213,7 @@ export const ChartPublished = ({
                     chartConfig={getChartConfig(state)}
                     configKey={configKey}
                     metadataPanelStore={metadataPanelStore}
-                    removeBorder={removeBorder}
+                    embedParams={embedParams}
                   />
                 </ChartWrapper>
               </ChartTablePreviewProvider>
@@ -258,20 +260,19 @@ type ChartPublishInnerProps = {
   className?: string;
   children?: React.ReactNode;
   metadataPanelStore: ReturnType<typeof createMetadataPanelStore>;
-  removeBorder?: boolean;
+  embedParams?: EmbedQueryParams;
 };
 
-const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
-  const {
-    dataSource = DEFAULT_DATA_SOURCE,
-    state,
-    chartConfig,
-    configKey,
-    className,
-    children,
-    metadataPanelStore,
-    removeBorder,
-  } = props;
+const ChartPublishedInnerImpl = ({
+  dataSource = DEFAULT_DATA_SOURCE,
+  state,
+  chartConfig,
+  configKey,
+  className,
+  children,
+  metadataPanelStore,
+  embedParams,
+}: ChartPublishInnerProps) => {
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
   const { isTable, computeContainerHeight } = useChartTablePreview();
@@ -294,7 +295,9 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
     return () => unsubscribe();
   });
 
-  const chartClasses = useChartStyles({ removeBorder });
+  const chartClasses = useChartStyles({
+    removeBorder: embedParams?.removeBorder,
+  });
   const publishedChartClasses = usePublishedChartStyles({
     shrink: shouldShrink,
   });

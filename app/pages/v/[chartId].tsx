@@ -97,9 +97,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   // Keep initial value of publishSuccess
   const [publishSuccess] = useState(() => !!query.publishSuccess);
   const { status, config } = deserializeProps(props);
-  const {
-    embedParams: { removeBorder },
-  } = useEmbedQueryParams(query);
+  const { embedParams } = useEmbedQueryParams(query);
 
   const session = useSession();
   const canEdit =
@@ -245,7 +243,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 chartId="published"
                 initialState={state}
               >
-                <ChartPublished configKey={key} removeBorder={removeBorder} />
+                <ChartPublished configKey={key} embedParams={embedParams} />
               </ConfiguratorStateProvider>
             </Box>
 

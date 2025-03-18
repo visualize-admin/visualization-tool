@@ -51,9 +51,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
 const EmbedPage = (props: PageProps) => {
   const { query } = useRouter();
-  const {
-    embedParams: { removeBorder },
-  } = useEmbedQueryParams(query);
+  const { embedParams } = useEmbedQueryParams(query);
 
   if (props.status === "notfound") {
     return <ErrorPage statusCode={404} />;
@@ -68,7 +66,7 @@ const EmbedPage = (props: PageProps) => {
       chartId="published"
       initialState={{ ...state, state: "PUBLISHED" }}
     >
-      <ChartPublished configKey={key} removeBorder={removeBorder} />
+      <ChartPublished configKey={key} embedParams={embedParams} />
     </ConfiguratorStateProvider>
   );
 };
