@@ -40,7 +40,8 @@ export const ChartColumnsVisualization = (
 };
 
 const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
-  const { chartConfig, dimensions, measures, dimensionsById } = props;
+  const { chartConfig, dimensions, measures, dimensionsById, embedParams } =
+    props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
@@ -75,13 +76,15 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
                 {...fields.animation}
               />
             )}
-            <LegendColor
-              dimensionsById={dimensionsById}
-              chartConfig={chartConfig}
-              symbol="square"
-              interactive={interactiveFiltersConfig?.legend.active}
-              showTitle={fields.segment.showTitle}
-            />
+            {embedParams?.removeLegend ? null : (
+              <LegendColor
+                dimensionsById={dimensionsById}
+                chartConfig={chartConfig}
+                symbol="square"
+                interactive={interactiveFiltersConfig?.legend.active}
+                showTitle={fields.segment.showTitle}
+              />
+            )}
           </ChartControlsContainer>
         </StackedColumnsChart>
       ) : fields.segment?.componentId && fields.segment.type === "grouped" ? (
@@ -106,13 +109,15 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
                 {...fields.animation}
               />
             )}
-            <LegendColor
-              dimensionsById={dimensionsById}
-              chartConfig={chartConfig}
-              symbol="square"
-              interactive={interactiveFiltersConfig?.legend.active}
-              showTitle={fields.segment.showTitle}
-            />
+            {embedParams?.removeLegend ? null : (
+              <LegendColor
+                dimensionsById={dimensionsById}
+                chartConfig={chartConfig}
+                symbol="square"
+                interactive={interactiveFiltersConfig?.legend.active}
+                showTitle={fields.segment.showTitle}
+              />
+            )}
           </ChartControlsContainer>
         </GroupedColumnChart>
       ) : (
@@ -132,7 +137,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           </ChartContainer>
           {fields.animation || limits.limits.length > 0 ? (
             <ChartControlsContainer>
-              {limits.limits.length > 0 && (
+              {limits.limits.length > 0 && !embedParams?.removeLegend && (
                 <LegendColor
                   limits={limits.limits}
                   dimensionsById={dimensionsById}

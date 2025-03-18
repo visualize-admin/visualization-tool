@@ -10,6 +10,7 @@ import {
   DashboardFiltersConfig,
   DataSource,
 } from "@/configurator";
+import { EmbedQueryParams } from "@/components/embed-params";
 
 const ChartAreasVisualization = dynamic(
   import("@/charts/area/chart-area").then(
@@ -83,10 +84,16 @@ type GenericChartProps = {
   componentIds: string[] | undefined;
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
+  embedParams?: EmbedQueryParams;
 };
 
-const GenericChart = (props: GenericChartProps) => {
-  const { dataSource, componentIds, chartConfig, dashboardFilters } = props;
+const GenericChart = ({
+  dataSource,
+  componentIds,
+  chartConfig,
+  dashboardFilters,
+  embedParams,
+}: GenericChartProps) => {
   const observationQueryFilters = useQueryFilters({
     chartConfig,
     dashboardFilters,
@@ -97,6 +104,7 @@ const GenericChart = (props: GenericChartProps) => {
     dataSource,
     observationQueryFilters,
     componentIds,
+    embedParams,
   };
 
   switch (chartConfig.chartType) {
@@ -168,6 +176,7 @@ type ChartWithFiltersProps = {
   componentIds: string[] | undefined;
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
+  embedParams?: EmbedQueryParams;
 };
 
 export const useChartWithFiltersClasses = makeStyles(() => ({

@@ -26,6 +26,7 @@ import {
 } from "@/graphql/hooks";
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 import { useLocale } from "@/src";
+import { EmbedQueryParams } from "@/components/embed-params";
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
 
@@ -55,6 +56,7 @@ const ChartDataWrapperInner = <
   ComponentProps,
   componentIds,
   dataSource,
+  embedParams,
   observationQueryFilters,
   fetching: fetchingProp = false,
   error: propError,
@@ -68,6 +70,7 @@ const ChartDataWrapperInner = <
   >;
   componentIds?: string[];
   dataSource: DataSource;
+  embedParams?: EmbedQueryParams;
   observationQueryFilters: DataCubeObservationFilter[];
   fetching?: boolean;
   /* Use this if extra data is loaded and the possible error must be shown by ChartDataWrapper*/
@@ -188,6 +191,7 @@ const ChartDataWrapperInner = <
           measures,
           measuresById,
           chartConfig,
+          embedParams,
           ...ComponentProps,
         } as ChartProps<TChartConfig> & TOtherProps)}
 

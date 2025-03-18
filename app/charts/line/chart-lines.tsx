@@ -30,7 +30,8 @@ export const ChartLinesVisualization = (
 };
 
 const ChartLines = memo((props: ChartProps<LineConfig>) => {
-  const { chartConfig, dimensions, measures, dimensionsById } = props;
+  const { chartConfig, dimensions, measures, dimensionsById, embedParams } =
+    props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
   const limits = useLimits({
@@ -65,18 +66,19 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
         <HoverDotMultiple />
         <Tooltip type={fields.segment ? "multiple" : "single"} />
       </ChartContainer>
-      {(fields.segment || limits.limits.length > 0) && (
-        <ChartControlsContainer>
-          <LegendColor
-            dimensionsById={dimensionsById}
-            chartConfig={chartConfig}
-            symbol="line"
-            interactive={interactiveFiltersConfig?.legend.active}
-            showTitle={fields.segment?.showTitle}
-            limits={limits.limits}
-          />
-        </ChartControlsContainer>
-      )}
+      {(fields.segment || limits.limits.length > 0) &&
+        !embedParams?.removeLegend && (
+          <ChartControlsContainer>
+            <LegendColor
+              dimensionsById={dimensionsById}
+              chartConfig={chartConfig}
+              symbol="line"
+              interactive={interactiveFiltersConfig?.legend.active}
+              showTitle={fields.segment?.showTitle}
+              limits={limits.limits}
+            />
+          </ChartControlsContainer>
+        )}
     </LineChart>
   );
 });

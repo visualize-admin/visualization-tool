@@ -462,6 +462,7 @@ const ChartPublishedInnerImpl = ({
                   componentIds={componentIds}
                   chartConfig={chartConfig}
                   dashboardFilters={state.dashboardFilters}
+                  embedParams={embedParams}
                 />
               )}
             </TablePreviewWrapper>

@@ -33,7 +33,7 @@ export const ChartScatterplotVisualization = (
 };
 
 const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
-  const { chartConfig, dimensions, dimensionsById } = props;
+  const { chartConfig, dimensions, dimensionsById, embedParams } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
 
@@ -60,7 +60,7 @@ const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
               {...fields.animation}
             />
           )}
-          {fields.segment && (
+          {fields.segment && !embedParams?.removeLegend && (
             <LegendColor
               dimensionsById={dimensionsById}
               chartConfig={chartConfig}

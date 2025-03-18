@@ -40,7 +40,8 @@ export const ChartBarsVisualization = (
 };
 
 const ChartBars = memo((props: ChartProps<BarConfig>) => {
-  const { chartConfig, dimensions, dimensionsById, measures } = props;
+  const { chartConfig, dimensions, dimensionsById, measures, embedParams } =
+    props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
@@ -77,13 +78,15 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
                 {...fields.animation}
               />
             )}
-            <LegendColor
-              dimensionsById={dimensionsById}
-              chartConfig={chartConfig}
-              symbol="square"
-              interactive={interactiveFiltersConfig?.legend.active}
-              showTitle={fields.segment.showTitle}
-            />
+            {embedParams?.removeLegend ? null : (
+              <LegendColor
+                dimensionsById={dimensionsById}
+                chartConfig={chartConfig}
+                symbol="square"
+                interactive={interactiveFiltersConfig?.legend.active}
+                showTitle={fields.segment.showTitle}
+              />
+            )}
           </ChartControlsContainer>
         </StackedBarsChart>
       ) : fields.segment?.componentId && fields.segment.type === "grouped" ? (
