@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.4.1] - 2025-03-18
+
 - Features
   - It's now possible to show segment value labels in column and bar charts
   - Axes now adapt dynamically to always show appropriate limits, even when they
