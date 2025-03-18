@@ -1873,6 +1873,10 @@ msgid "publication.embed.iframe.caption"
 msgstr "Use this link to embed the chart in any webpage."
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.optimize-space"
+msgstr "Optimize white space around and within chart"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
 msgstr "Remove border"
 

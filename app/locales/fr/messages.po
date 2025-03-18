@@ -1873,6 +1873,10 @@ msgid "publication.embed.iframe.caption"
 msgstr "Utilisez ce code pour intégrer le graphique sur une page web"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.optimize-space"
+msgstr "Optimiser l'espace blanc autour et dans le graphique"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
 msgstr "Supprimer la bordure"
 

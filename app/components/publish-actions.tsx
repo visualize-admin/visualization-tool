@@ -243,7 +243,7 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
   );
 };
 
-type EmbedQueryParam = "disableBorder";
+type EmbedQueryParam = "disableBorder" | "optimizeSpace";
 
 export const EmbedContent = ({
   locale,
@@ -342,6 +342,16 @@ export const EmbedContent = ({
                   id: "publication.embed.iframe.remove-border.warn",
                   message:
                     "For embedding visualizations in systems without a border.",
+                })}
+              />
+              <EmbedToggleSwitch
+                checked={queryParams.includes("optimizeSpace")}
+                onChange={(_, checked) => {
+                  setQueryParam("optimizeSpace", checked);
+                }}
+                label={t({
+                  id: "publication.embed.iframe.optimize-space",
+                  message: "Optimize white space around and within chart",
                 })}
               />
             </AccordionDetails>

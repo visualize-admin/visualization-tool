@@ -1873,6 +1873,10 @@ msgid "publication.embed.iframe.caption"
 msgstr "Verwenden Sie diesen Code, um das Diagramm auf einer Webseite einzubetten"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.optimize-space"
+msgstr "Optimieren Sie den Leerraum um und innerhalb des Diagramms"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
 msgstr "Rand entfernen"
 
