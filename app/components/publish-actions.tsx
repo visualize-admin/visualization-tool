@@ -251,23 +251,10 @@ export const EmbedContent = ({
   const [disableBorder, setDisableBorder] = useState(false);
   useEffect(() => {
     const { origin } = window.location;
-    setEmbedUrl(
-      `${origin}/${locale}/embed/${configKey}${disableBorder ? "?disableBorder=true" : ""}`
-    );
-    setEmbedAEMUrl(
-      `${origin}/api/embed-aem-ext/${locale}/${configKey}${disableBorder ? "?disableBorder=true" : ""}`
-    );
+    const embedPath = `${configKey}${disableBorder ? "?disableBorder=true" : ""}`;
+    setEmbedUrl(`${origin}/${locale}/embed/${embedPath}`);
+    setEmbedAEMUrl(`${origin}/api/embed-aem-ext/${locale}/${embedPath}`);
   }, [configKey, locale, disableBorder]);
-
-  const handleResponsiveChange = useEvent(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setResponsive(e.target.value === "responsive");
-    }
-  );
-
-  const handleDisableBorderChange = useEvent((_, checked: boolean) => {
-    setDisableBorder(checked);
-  });
 
   return (
     <Flex sx={{ flexDirection: "column", gap: 4, p: 4 }}>
@@ -284,7 +271,7 @@ export const EmbedContent = ({
           <EmbedRadio
             value="responsive"
             checked={responsive}
-            onChange={handleResponsiveChange}
+            onChange={() => setResponsive(true)}
             label={t({
               id: "publication.embed.iframe.responsive",
               message: "Responsive iframe",
@@ -298,7 +285,7 @@ export const EmbedContent = ({
           <EmbedRadio
             value="static"
             checked={!responsive}
-            onChange={handleResponsiveChange}
+            onChange={() => setResponsive(false)}
             label={t({
               id: "publication.embed.iframe.static",
               message: "Static iframe",
@@ -322,7 +309,7 @@ export const EmbedContent = ({
             <AccordionDetails>
               <EmbedToggleSwitch
                 checked={disableBorder}
-                onChange={handleDisableBorderChange}
+                onChange={(_, checked) => setDisableBorder(checked)}
                 label={t({
                   id: "publication.embed.iframe.remove-border",
                   message: "Remove border",
