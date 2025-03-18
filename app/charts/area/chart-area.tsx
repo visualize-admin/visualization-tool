@@ -28,8 +28,7 @@ export const ChartAreasVisualization = (
 };
 
 const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
-  const { chartConfig, dimensions, measures, dimensionsById, embedParams } =
-    props;
+  const { chartConfig, dimensions, measures, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const limits = useLimits({
     chartConfig,
@@ -50,19 +49,18 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
         <Tooltip type={fields.segment ? "multiple" : "single"} />
         <Ruler />
       </ChartContainer>
-      {(fields.segment || limits.limits.length > 0) &&
-        !embedParams?.removeLegend && (
-          <ChartControlsContainer>
-            <LegendColor
-              chartConfig={chartConfig}
-              symbol="square"
-              interactive={interactiveFiltersConfig?.legend.active}
-              showTitle={fields.segment?.showTitle}
-              dimensionsById={dimensionsById}
-              limits={limits.limits}
-            />
-          </ChartControlsContainer>
-        )}
+      {(fields.segment || limits.limits.length > 0) && (
+        <ChartControlsContainer>
+          <LegendColor
+            chartConfig={chartConfig}
+            symbol="square"
+            interactive={interactiveFiltersConfig?.legend.active}
+            showTitle={fields.segment?.showTitle}
+            dimensionsById={dimensionsById}
+            limits={limits.limits}
+          />
+        </ChartControlsContainer>
+      )}
     </AreaChart>
   );
 });

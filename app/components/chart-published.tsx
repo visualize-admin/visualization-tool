@@ -481,6 +481,7 @@ const ChartPublishedInnerImpl = ({
                 (state.layout.type === "dashboard" &&
                   state.chartConfigs.length === 1)
               }
+              hideMetadata={embedParams?.removeLegend}
               metadataPanelProps={
                 embedParams?.removeMoreOptionsButton
                   ? {

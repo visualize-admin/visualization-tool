@@ -53,6 +53,7 @@ export const ChartFootnotes = ({
   dashboardFilters,
   components,
   showVisualizeLink = false,
+  hideMetadata,
   configKey,
   metadataPanelProps,
 }: {
@@ -61,6 +62,7 @@ export const ChartFootnotes = ({
   dashboardFilters: DashboardFiltersConfig | undefined;
   components: Component[];
   showVisualizeLink?: boolean;
+  hideMetadata?: boolean;
   configKey?: string;
   metadataPanelProps?: Omit<
     ComponentProps<typeof MetadataPanel>,
@@ -90,45 +92,50 @@ export const ChartFootnotes = ({
       className={CHART_FOOTNOTES_CLASS_NAME}
       sx={{ mt: 1, "& > :not(:last-child)": { mb: 3 } }}
     >
+      {metadataPanelProps ? (
+        <MetadataPanel
+          dataSource={dataSource}
+          chartConfig={chartConfig}
+          dashboardFilters={dashboardFilters}
+          {...metadataPanelProps}
+        />
+      ) : null}
       {data?.dataCubesMetadata.map((metadata) => (
         <div key={metadata.iri}>
-          {metadataPanelProps ? (
-            <MetadataPanel
-              dataSource={dataSource}
-              chartConfig={chartConfig}
-              dashboardFilters={dashboardFilters}
-              {...metadataPanelProps}
-            />
-          ) : null}
           <ChartFootnotesLegend
             chartConfig={chartConfig}
             components={components}
             cubeIri={metadata.iri}
           />
-          <ChartFiltersList
-            dataSource={dataSource}
-            chartConfig={chartConfig}
-            dashboardFilters={dashboardFilters}
-            components={components}
-            cubeIri={metadata.iri}
-          />
-          <Typography component="span" variant="caption" color="grey.600">
-            <OpenMetadataPanelWrapper>
-              <Trans id="dataset.footnotes.dataset">Dataset</Trans>
-            </OpenMetadataPanelWrapper>
-            : {metadata.title}
-          </Typography>
-          {metadata.dateModified ? (
-            <Typography component="span" variant="caption" color="grey.600">
-              {", "}
-              <Trans id="dataset.footnotes.updated">
-                Latest data update
-              </Trans>:{" "}
-              {formatLocale.format("%d.%m.%Y %H:%M")(
-                new Date(metadata.dateModified)
-              )}
-            </Typography>
-          ) : null}
+          {hideMetadata ? null : (
+            <>
+              <ChartFiltersList
+                dataSource={dataSource}
+                chartConfig={chartConfig}
+                dashboardFilters={dashboardFilters}
+                components={components}
+                cubeIri={metadata.iri}
+              />
+              <Typography component="span" variant="caption" color="grey.600">
+                <OpenMetadataPanelWrapper>
+                  <Trans id="dataset.footnotes.dataset">Dataset</Trans>
+                </OpenMetadataPanelWrapper>
+                : {metadata.title}
+              </Typography>
+              {metadata.dateModified ? (
+                <Typography component="span" variant="caption" color="grey.600">
+                  {", "}
+                  <Trans id="dataset.footnotes.updated">
+                    Latest data update
+                  </Trans>
+                  :{" "}
+                  {formatLocale.format("%d.%m.%Y %H:%M")(
+                    new Date(metadata.dateModified)
+                  )}
+                </Typography>
+              ) : null}
+            </>
+          )}
         </div>
       ))}
       {showVisualizeLink && configKey ? (

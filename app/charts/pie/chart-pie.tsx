@@ -22,8 +22,7 @@ export const ChartPieVisualization = (props: VisualizationProps<PieConfig>) => {
 };
 
 const ChartPie = memo((props: ChartProps<PieConfig>) => {
-  const { chartConfig, observations, dimensions, dimensionsById, embedParams } =
-    props;
+  const { chartConfig, observations, dimensions, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const somePositive = observations.some(
     (d) => (d[fields?.y?.componentId] as number) > 0
@@ -50,17 +49,15 @@ const ChartPie = memo((props: ChartProps<PieConfig>) => {
             {...fields.animation}
           />
         )}
-        {embedParams?.removeLegend ? null : (
-          <LegendColor
-            dimensionsById={dimensionsById}
-            chartConfig={chartConfig}
-            symbol="square"
-            interactive={
-              fields.segment && interactiveFiltersConfig?.legend.active
-            }
-            showTitle={fields.segment.showTitle}
-          />
-        )}
+        <LegendColor
+          dimensionsById={dimensionsById}
+          chartConfig={chartConfig}
+          symbol="square"
+          interactive={
+            fields.segment && interactiveFiltersConfig?.legend.active
+          }
+          showTitle={fields.segment.showTitle}
+        />
       </ChartControlsContainer>
     </PieChart>
   );

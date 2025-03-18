@@ -184,8 +184,7 @@ export type ChartMapProps = ChartProps<MapConfig> & {
 };
 
 const ChartMap = memo((props: ChartMapProps) => {
-  const { chartConfig, dimensions, measures, observations, embedParams } =
-    props;
+  const { chartConfig, dimensions, measures, observations } = props;
   const { fields } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
   const temporalFilterValue = useDefinitiveTemporalFilterValue({ dimensions });
@@ -213,26 +212,24 @@ const ChartMap = memo((props: ChartMapProps) => {
             {...fields.animation}
           />
         )}
-        {embedParams?.removeLegend ? null : (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 4,
-              flexWrap: "wrap",
-            }}
-          >
-            <MapLegend
-              chartConfig={chartConfig}
-              observations={observations}
-              limits={limits.limits}
-            />
-            <MapCustomLayersLegend
-              chartConfig={chartConfig}
-              value={temporalFilterValue ? +temporalFilterValue : undefined}
-            />
-          </Box>
-        )}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 4,
+            flexWrap: "wrap",
+          }}
+        >
+          <MapLegend
+            chartConfig={chartConfig}
+            observations={observations}
+            limits={limits.limits}
+          />
+          <MapCustomLayersLegend
+            chartConfig={chartConfig}
+            value={temporalFilterValue ? +temporalFilterValue : undefined}
+          />
+        </Box>
       </ChartControlsContainer>
     </MapChart>
   );
