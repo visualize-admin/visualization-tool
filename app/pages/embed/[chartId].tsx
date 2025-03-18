@@ -59,14 +59,18 @@ const EmbedPage = (props: PageProps) => {
     config: { key, data: state },
   } = props;
 
-  const { disableBorder } = query;
+  // We keep disableBorder for backwards compatibility.
+  const { disableBorder, removeBorder } = query;
 
   return (
     <ConfiguratorStateProvider
       chartId="published"
       initialState={{ ...state, state: "PUBLISHED" }}
     >
-      <ChartPublished configKey={key} disableBorder={!!disableBorder} />
+      <ChartPublished
+        configKey={key}
+        removeBorder={!!disableBorder || !!removeBorder}
+      />
     </ConfiguratorStateProvider>
   );
 };

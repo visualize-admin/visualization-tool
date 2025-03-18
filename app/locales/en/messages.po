@@ -1873,10 +1873,6 @@ msgid "publication.embed.iframe.caption"
 msgstr "Use this link to embed the chart in any webpage."
 
 #: app/components/publish-actions.tsx
-msgid "publication.embed.iframe.disable-more-options-button"
-msgstr "Remove options for table view, copy & edit, sharing, and downloading"
-
-#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.optimize-space"
 msgstr "Optimize white space around and within chart"
 
@@ -1887,6 +1883,10 @@ msgstr "Remove border"
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border.warn"
 msgstr "For embedding visualizations in systems without a border."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-more-options-button"
+msgstr "Remove options for table view, copy & edit, sharing, and downloading"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"

@@ -1873,10 +1873,6 @@ msgid "publication.embed.iframe.caption"
 msgstr "Utilisez ce code pour intégrer le graphique sur une page web"
 
 #: app/components/publish-actions.tsx
-msgid "publication.embed.iframe.disable-more-options-button"
-msgstr "Supprimer les options d'affichage du tableau, de copie et de modification, de partage et de téléchargement"
-
-#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.optimize-space"
 msgstr "Optimiser l'espace blanc autour et dans le graphique"
 
@@ -1887,6 +1883,10 @@ msgstr "Supprimer la bordure"
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border.warn"
 msgstr "Pour intégrer des visualisations sans bordure dans des systèmes externes."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-more-options-button"
+msgstr "Supprimer les options d'affichage du tableau, de copie et de modification, de partage et de téléchargement"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"

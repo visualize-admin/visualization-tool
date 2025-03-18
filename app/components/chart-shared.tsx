@@ -67,14 +67,14 @@ import {
 export const CHART_GRID_ROW_COUNT = 7;
 
 /** Generic styles shared between `ChartPreview` and `ChartPublished`. */
-export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
+export const useChartStyles = makeStyles<Theme, { removeBorder?: boolean }>(
   (theme) => ({
     root: {
       flexGrow: 1,
       padding: theme.spacing(6),
       backgroundColor: theme.palette.background.paper,
-      border: ({ disableBorder }) =>
-        disableBorder ? "none" : `1px solid ${theme.palette.divider}`,
+      border: ({ removeBorder }) =>
+        removeBorder ? "none" : `1px solid ${theme.palette.divider}`,
       color: theme.palette.grey[800],
       [`.${chartPanelLayoutGridClasses.root} &`]: {
         display: "flex",

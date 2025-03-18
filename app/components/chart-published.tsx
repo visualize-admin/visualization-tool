@@ -98,10 +98,10 @@ const ChartPublishedIndividualChart = forwardRef<
 
 export const ChartPublished = ({
   configKey,
-  disableBorder,
+  removeBorder,
 }: {
   configKey?: string;
-  disableBorder?: boolean;
+  removeBorder?: boolean;
 }) => {
   const [state] = useConfiguratorState(isPublished);
   const { dataSource } = state;
@@ -211,7 +211,7 @@ export const ChartPublished = ({
                     chartConfig={getChartConfig(state)}
                     configKey={configKey}
                     metadataPanelStore={metadataPanelStore}
-                    disableBorder={disableBorder}
+                    removeBorder={removeBorder}
                   />
                 </ChartWrapper>
               </ChartTablePreviewProvider>
@@ -258,7 +258,7 @@ type ChartPublishInnerProps = {
   className?: string;
   children?: React.ReactNode;
   metadataPanelStore: ReturnType<typeof createMetadataPanelStore>;
-  disableBorder?: boolean;
+  removeBorder?: boolean;
 };
 
 const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
@@ -270,7 +270,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
     className,
     children,
     metadataPanelStore,
-    disableBorder,
+    removeBorder,
   } = props;
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
@@ -294,7 +294,7 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
     return () => unsubscribe();
   });
 
-  const chartClasses = useChartStyles({ disableBorder });
+  const chartClasses = useChartStyles({ removeBorder });
   const publishedChartClasses = usePublishedChartStyles({
     shrink: shouldShrink,
   });

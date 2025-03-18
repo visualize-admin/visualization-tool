@@ -244,9 +244,9 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
 };
 
 type EmbedQueryParam =
-  | "disableBorder"
+  | "removeBorder"
   | "optimizeSpace"
-  | "disableMoreOptionsButton";
+  | "removeMoreOptionsButton"
 
 export const EmbedContent = ({
   locale,
@@ -333,9 +333,9 @@ export const EmbedContent = ({
             </AccordionSummary>
             <AccordionDetails>
               <EmbedToggleSwitch
-                checked={queryParams.includes("disableBorder")}
+                checked={queryParams.includes("removeBorder")}
                 onChange={(_, checked) => {
-                  setQueryParam("disableBorder", checked);
+                  setQueryParam("removeBorder", checked);
                 }}
                 label={t({
                   id: "publication.embed.iframe.remove-border",
@@ -358,12 +358,12 @@ export const EmbedContent = ({
                 })}
               />
               <EmbedToggleSwitch
-                checked={queryParams.includes("disableMoreOptionsButton")}
+                checked={queryParams.includes("removeMoreOptionsButton")}
                 onChange={(_, checked) => {
-                  setQueryParam("disableMoreOptionsButton", checked);
+                  setQueryParam("removeMoreOptionsButton", checked);
                 }}
                 label={t({
-                  id: "publication.embed.iframe.disable-more-options-button",
+                  id: "publication.embed.iframe.remove-more-options-button",
                   message:
                     "Remove options for table view, copy & edit, sharing, and downloading",
                 })}
