@@ -14,14 +14,8 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import {
-  ChangeEvent,
-  ReactNode,
-  RefObject,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { CopyToClipboardTextInput } from "@/components/copy-to-clipboard-text-input";
@@ -33,7 +27,10 @@ import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
 import { useI18n } from "@/utils/use-i18n";
 import { useResizeObserver } from "@/utils/use-resize-observer";
-import { EmbedQueryParam } from "@/components/embed-params";
+import {
+  isEmbedQueryParam,
+  useEmbedQueryParams,
+} from "@/components/embed-params";
 
 type PublishActionProps = {
   chartWrapperRef: RefObject<HTMLDivElement>;
@@ -253,29 +250,49 @@ export const EmbedContent = ({
   iframeHeight?: number;
   showAdvancedSettings?: boolean;
 } & Omit<PublishActionProps, "chartWrapperRef" | "state">) => {
+  const router = useRouter();
   const [embedUrl, setEmbedUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
   const [responsive, setResponsive] = useState(true);
-  const [queryParams, setQueryParams] = useState<EmbedQueryParam[]>([]);
-  const setQueryParam = useCallback(
-    (param: EmbedQueryParam, value: boolean) => {
-      setQueryParams((prev) => {
-        if (value) {
-          return [...prev, param];
-        } else {
-          return prev.filter((qp) => qp !== param);
-        }
-      });
-    },
-    []
-  );
+
+  const { embedParams, setEmbedQueryParam } = useEmbedQueryParams(router.query);
 
   useEffect(() => {
     const { origin } = window.location;
-    const embedPath = `${configKey}${queryParams.length ? `?${queryParams.map((qp) => `${qp}=true`).join("&")}` : ""}`;
+    const activeEmbedParams = Object.entries(embedParams)
+      .filter(([_, value]) => value)
+      .map(([key]) => `${key}=true`)
+      .join("&");
+    const embedPath = `${configKey}${activeEmbedParams ? `?${activeEmbedParams}` : ""}`;
     setEmbedUrl(`${origin}/${locale}/embed/${embedPath}`);
     setEmbedAEMUrl(`${origin}/api/embed-aem-ext/${locale}/${embedPath}`);
-  }, [configKey, locale, queryParams]);
+
+    if (router.isReady) {
+      const nonEmbedParams = Object.fromEntries(
+        Object.entries(router.query).filter(([key]) => !isEmbedQueryParam(key))
+      );
+      const updatedQuery = {
+        ...nonEmbedParams,
+        ...Object.fromEntries(
+          Object.entries(embedParams)
+            .filter(([_, v]) => v)
+            .map(([k]) => [k, "true"])
+        ),
+      } as Record<string, string>;
+      const currentQueryString = new URLSearchParams(
+        router.query as Record<string, string>
+      ).toString();
+      const newQueryString = new URLSearchParams(updatedQuery).toString();
+
+      if (currentQueryString !== newQueryString) {
+        router.replace(
+          { pathname: router.pathname, query: updatedQuery },
+          undefined,
+          { shallow: true }
+        );
+      }
+    }
+  }, [configKey, locale, embedParams, router]);
 
   return (
     <Flex sx={{ flexDirection: "column", gap: 4, p: 4 }}>
@@ -329,9 +346,9 @@ export const EmbedContent = ({
             </AccordionSummary>
             <AccordionDetails>
               <EmbedToggleSwitch
-                checked={queryParams.includes("removeBorder")}
+                checked={embedParams.removeBorder}
                 onChange={(_, checked) => {
-                  setQueryParam("removeBorder", checked);
+                  setEmbedQueryParam("removeBorder", checked);
                 }}
                 label={t({
                   id: "publication.embed.iframe.remove-border",
@@ -344,9 +361,9 @@ export const EmbedContent = ({
                 })}
               />
               <EmbedToggleSwitch
-                checked={queryParams.includes("optimizeSpace")}
+                checked={embedParams.optimizeSpace}
                 onChange={(_, checked) => {
-                  setQueryParam("optimizeSpace", checked);
+                  setEmbedQueryParam("optimizeSpace", checked);
                 }}
                 label={t({
                   id: "publication.embed.iframe.optimize-space",
@@ -354,9 +371,9 @@ export const EmbedContent = ({
                 })}
               />
               <EmbedToggleSwitch
-                checked={queryParams.includes("removeMoreOptionsButton")}
+                checked={embedParams.removeMoreOptionsButton}
                 onChange={(_, checked) => {
-                  setQueryParam("removeMoreOptionsButton", checked);
+                  setEmbedQueryParam("removeMoreOptionsButton", checked);
                 }}
                 label={t({
                   id: "publication.embed.iframe.remove-more-options-button",
@@ -365,9 +382,9 @@ export const EmbedContent = ({
                 })}
               />
               <EmbedToggleSwitch
-                checked={queryParams.includes("removeAxisLabelsInteractivity")}
+                checked={embedParams.removeAxisLabelsInteractivity}
                 onChange={(_, checked) => {
-                  setQueryParam("removeAxisLabelsInteractivity", checked);
+                  setEmbedQueryParam("removeAxisLabelsInteractivity", checked);
                 }}
                 label={t({
                   id: "publication.embed.iframe.remove-axis-labels-interactivity",
@@ -375,9 +392,9 @@ export const EmbedContent = ({
                 })}
               />
               <EmbedToggleSwitch
-                checked={queryParams.includes("removeLegend")}
+                checked={embedParams.removeLegend}
                 onChange={(_, checked) => {
-                  setQueryParam("removeLegend", checked);
+                  setEmbedQueryParam("removeLegend", checked);
                 }}
                 label={t({
                   id: "publication.embed.iframe.remove-legend",

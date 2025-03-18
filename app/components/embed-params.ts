@@ -1,7 +1,9 @@
 import { ParsedUrlQuery } from "querystring";
 
-const LEGACY_EMBED_QUERY_PARAMS = ["disableBorder"] as const;
+import { useRouter } from "next/router";
+import { useCallback, useMemo } from "react";
 
+const LEGACY_EMBED_QUERY_PARAMS = ["disableBorder"] as const;
 export type LegacyEmbedQueryParam = (typeof LEGACY_EMBED_QUERY_PARAMS)[number];
 
 const migrateEmbedQueryParam = (
@@ -29,27 +31,61 @@ const EMBED_QUERY_PARAMS = [
   "removeAxisLabelsInteractivity",
   "removeLegend",
 ] as const;
-
 export type EmbedQueryParam = (typeof EMBED_QUERY_PARAMS)[number];
+export type EmbedQueryParams = Record<EmbedQueryParam, boolean>;
 
 export const isEmbedQueryParam = (param: string): param is EmbedQueryParam => {
-  return EMBED_QUERY_PARAMS.includes(param as $IntentionalAny);
+  return [...LEGACY_EMBED_QUERY_PARAMS, ...EMBED_QUERY_PARAMS].includes(
+    param as $IntentionalAny
+  );
 };
 
 export const useEmbedQueryParams = (query: ParsedUrlQuery) => {
-  const embedParams: Record<EmbedQueryParam, boolean> = {
-    removeBorder: false,
-    optimizeSpace: false,
-    removeMoreOptionsButton: false,
-    removeAxisLabelsInteractivity: false,
-    removeLegend: false,
-  };
+  const router = useRouter();
+  const embedParams = useMemo(() => {
+    return [
+      ...LEGACY_EMBED_QUERY_PARAMS,
+      ...EMBED_QUERY_PARAMS,
+    ].reduce<EmbedQueryParams>(
+      (acc, param) => {
+        if (query[param] === "true") {
+          acc[migrateEmbedQueryParam(param)] = true;
+        }
+        return acc;
+      },
+      {
+        removeBorder: false,
+        optimizeSpace: false,
+        removeMoreOptionsButton: false,
+        removeAxisLabelsInteractivity: false,
+        removeLegend: false,
+      }
+    );
+  }, [query]);
+  const setEmbedQueryParam = useCallback(
+    (param: EmbedQueryParam, value: boolean) => {
+      const updatedParams = { ...embedParams, [param]: value };
+      const nonEmbedParams = Object.fromEntries(
+        Object.entries(query).filter(([key]) => !isEmbedQueryParam(key))
+      );
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: {
+            ...nonEmbedParams,
+            ...Object.fromEntries(
+              Object.entries(updatedParams)
+                .filter(([_, v]) => v)
+                .map(([k]) => [k, "true"])
+            ),
+          },
+        },
+        undefined,
+        { shallow: true }
+      );
+    },
+    [embedParams, query, router]
+  );
 
-  [...LEGACY_EMBED_QUERY_PARAMS, ...EMBED_QUERY_PARAMS].forEach((param) => {
-    if (query[param] === "true") {
-      embedParams[migrateEmbedQueryParam(param)] = true;
-    }
-  });
-
-  return embedParams;
+  return { embedParams, setEmbedQueryParam };
 };

@@ -51,7 +51,9 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
 const EmbedPage = (props: PageProps) => {
   const { query } = useRouter();
-  const { removeBorder } = useEmbedQueryParams(query);
+  const {
+    embedParams: { removeBorder },
+  } = useEmbedQueryParams(query);
 
   if (props.status === "notfound") {
     return <ErrorPage statusCode={404} />;

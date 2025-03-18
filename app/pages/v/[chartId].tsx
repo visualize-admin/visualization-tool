@@ -97,7 +97,9 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   // Keep initial value of publishSuccess
   const [publishSuccess] = useState(() => !!query.publishSuccess);
   const { status, config } = deserializeProps(props);
-  const { removeBorder } = useEmbedQueryParams(query);
+  const {
+    embedParams: { removeBorder },
+  } = useEmbedQueryParams(query);
 
   const session = useSession();
   const canEdit =
