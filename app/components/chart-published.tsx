@@ -417,14 +417,16 @@ const ChartPublishedInnerImpl = ({
                 // title and the chart (subgrid layout)
                 <span style={{ height: 1 }} />
               )}
-              <ActionElementsContainer>
-                <ChartMoreButton
-                  configKey={configKey}
-                  chartKey={chartConfig.key}
-                  chartWrapperNode={rootRef.current}
-                  components={allComponents}
-                />
-              </ActionElementsContainer>
+              {embedParams?.removeMoreOptionsButton ? null : (
+                <ActionElementsContainer>
+                  <ChartMoreButton
+                    configKey={configKey}
+                    chartKey={chartConfig.key}
+                    chartWrapperNode={rootRef.current}
+                    components={allComponents}
+                  />
+                </ActionElementsContainer>
+              )}
             </Flex>
             {meta.description[locale] ? (
               <Description
