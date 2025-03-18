@@ -26,7 +26,7 @@ import { OverflowTooltip } from "@/components/overflow-tooltip";
 import {
   EmbedContent,
   ShareContent,
-  shouldAllowDisablingBorder,
+  shouldShowAdvancedEmbedSettings,
   TriggeredPopover,
 } from "@/components/publish-actions";
 import { RenameDialog } from "@/components/rename-dialog";
@@ -433,7 +433,7 @@ const ProfileVisualizationsRow = (props: {
           trigger={embedEl}
         >
           <EmbedContent
-            shouldAllowDisablingBorder={shouldAllowDisablingBorder(config.data)}
+            showAdvancedSettings={shouldShowAdvancedEmbedSettings(config.data)}
             locale={locale}
             configKey={config.key}
           />

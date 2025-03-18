@@ -1853,6 +1853,10 @@ msgid "profile.chart.rename-dialog.title"
 msgstr "Benennen Sie die Visualisierung um"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.advanced-settings"
+msgstr "Erweiterte Einstellungen"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.external-application"
 msgstr "Embed-Code für «Externe Applikation»"
 

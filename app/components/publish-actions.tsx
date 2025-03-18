@@ -1,5 +1,8 @@
 import { t, Trans } from "@lingui/macro";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
   Divider,
@@ -127,7 +130,7 @@ const Embed = ({
         iframeHeight={iframeHeight}
         configKey={configKey}
         locale={locale}
-        shouldAllowDisablingBorder={shouldAllowDisablingBorder(state)}
+        showAdvancedSettings={shouldShowAdvancedEmbedSettings(state)}
       />
     </TriggeredPopover>
   );
@@ -234,39 +237,37 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
   );
 };
 
-type EmbedContentProps = {
-  iframeHeight?: number;
-  shouldAllowDisablingBorder?: boolean;
-} & Omit<PublishActionProps, "chartWrapperRef" | "state">;
-
 export const EmbedContent = ({
   locale,
   configKey,
   iframeHeight,
-  shouldAllowDisablingBorder,
-}: EmbedContentProps) => {
+  showAdvancedSettings,
+}: {
+  iframeHeight?: number;
+  showAdvancedSettings?: boolean;
+} & Omit<PublishActionProps, "chartWrapperRef" | "state">) => {
   const [embedUrl, setEmbedUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
-  const [isResponsive, setIsResponsive] = useState(true);
-  const [isWithoutBorder, setIsWithoutBorder] = useState(false);
+  const [responsive, setResponsive] = useState(true);
+  const [disableBorder, setDisableBorder] = useState(false);
   useEffect(() => {
     const { origin } = window.location;
     setEmbedUrl(
-      `${origin}/${locale}/embed/${configKey}${isWithoutBorder ? "?disableBorder=true" : ""}`
+      `${origin}/${locale}/embed/${configKey}${disableBorder ? "?disableBorder=true" : ""}`
     );
     setEmbedAEMUrl(
-      `${origin}/api/embed-aem-ext/${locale}/${configKey}${isWithoutBorder ? "?disableBorder=true" : ""}`
+      `${origin}/api/embed-aem-ext/${locale}/${configKey}${disableBorder ? "?disableBorder=true" : ""}`
     );
-  }, [configKey, locale, isWithoutBorder]);
+  }, [configKey, locale, disableBorder]);
 
   const handleResponsiveChange = useEvent(
     (e: ChangeEvent<HTMLInputElement>) => {
-      setIsResponsive(e.target.value === "responsive");
+      setResponsive(e.target.value === "responsive");
     }
   );
 
-  const handleStylingChange = useEvent((_, checked: boolean) => {
-    setIsWithoutBorder(checked);
+  const handleDisableBorderChange = useEvent((_, checked: boolean) => {
+    setDisableBorder(checked);
   });
 
   return (
@@ -283,7 +284,7 @@ export const EmbedContent = ({
         <Flex sx={{ alignItems: "center", gap: 4, mt: 3, mb: 2 }}>
           <EmbedRadio
             value="responsive"
-            checked={isResponsive}
+            checked={responsive}
             onChange={handleResponsiveChange}
             label={t({
               id: "publication.embed.iframe.responsive",
@@ -297,7 +298,7 @@ export const EmbedContent = ({
           />
           <EmbedRadio
             value="static"
-            checked={!isResponsive}
+            checked={!responsive}
             onChange={handleResponsiveChange}
             label={t({
               id: "publication.embed.iframe.static",
@@ -309,25 +310,36 @@ export const EmbedContent = ({
                 "For embedding visualizations in systems without JavaScript support (e.g. WordPress).",
             })}
           />
-          {shouldAllowDisablingBorder && (
-            <EmbedToggleSwitch
-              value="remove-border"
-              checked={isWithoutBorder}
-              onChange={handleStylingChange}
-              label={t({
-                id: "publication.embed.iframe.remove-border",
-                message: "Remove border",
-              })}
-              infoMessage={t({
-                id: "publication.embed.iframe.remove-border.warn",
-                message:
-                  "For embedding visualizations in systems without a border.",
-              })}
-            />
-          )}
         </Flex>
+        {showAdvancedSettings ? (
+          <Accordion sx={{ mb: 4 }}>
+            <AccordionSummary>
+              <Typography variant="h5" component="p">
+                <Trans id="publication.embed.advanced-settings">
+                  Advanced settings
+                </Trans>
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <EmbedToggleSwitch
+                value="remove-border"
+                checked={disableBorder}
+                onChange={handleDisableBorderChange}
+                label={t({
+                  id: "publication.embed.iframe.remove-border",
+                  message: "Remove border",
+                })}
+                infoMessage={t({
+                  id: "publication.embed.iframe.remove-border.warn",
+                  message:
+                    "For embedding visualizations in systems without a border.",
+                })}
+              />
+            </AccordionDetails>
+          </Accordion>
+        ) : null}
         <CopyToClipboardTextInput
-          content={`<iframe src="${embedUrl}" width="100%" style="${isResponsive ? "" : `height: ${iframeHeight || 640}px; `}border: 0px #ffffff none;"  name="visualize.admin.ch"></iframe>${isResponsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
+          content={`<iframe src="${embedUrl}" width="100%" style="${responsive ? "" : `height: ${iframeHeight || 640}px; `}border: 0px #ffffff none;"  name="visualize.admin.ch"></iframe>${responsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
         />
       </div>
       <div>
@@ -424,7 +436,7 @@ export const ShareContent = ({
   );
 };
 
-export const shouldAllowDisablingBorder = (
+export const shouldShowAdvancedEmbedSettings = (
   state?: ConfiguratorStatePublished
 ) => {
   return state?.chartConfigs?.length === 1 && state?.layout.type === "tab";
