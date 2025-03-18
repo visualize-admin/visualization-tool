@@ -247,7 +247,8 @@ type EmbedQueryParam =
   | "removeBorder"
   | "optimizeSpace"
   | "removeMoreOptionsButton"
-  | "removeAxisLabelsInteractivity";
+  | "removeAxisLabelsInteractivity"
+  | "removeLegend";
 
 export const EmbedContent = ({
   locale,
@@ -377,6 +378,16 @@ export const EmbedContent = ({
                 label={t({
                   id: "publication.embed.iframe.remove-axis-labels-interactivity",
                   message: "No interactive axis labels",
+                })}
+              />
+              <EmbedToggleSwitch
+                checked={queryParams.includes("removeLegend")}
+                onChange={(_, checked) => {
+                  setQueryParam("removeLegend", checked);
+                }}
+                label={t({
+                  id: "publication.embed.iframe.remove-legend",
+                  message: "Remove legend",
                 })}
               />
             </AccordionDetails>

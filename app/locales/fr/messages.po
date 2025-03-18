@@ -1889,6 +1889,10 @@ msgid "publication.embed.iframe.remove-border.warn"
 msgstr "Pour intégrer des visualisations sans bordure dans des systèmes externes."
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-legend"
+msgstr "Supprimer la légende"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-more-options-button"
 msgstr "Supprimer les options d'affichage du tableau, de copie et de modification, de partage et de téléchargement"
 

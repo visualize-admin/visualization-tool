@@ -1889,6 +1889,10 @@ msgid "publication.embed.iframe.remove-border.warn"
 msgstr "Per visualizzazioni incorporate in sistemi senza bordi."
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-legend"
+msgstr "Rimuovi legenda"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-more-options-button"
 msgstr "Rimuovi le opzioni per la visualizzazione della tabella, copia e modifica, condivisione e download"
 
