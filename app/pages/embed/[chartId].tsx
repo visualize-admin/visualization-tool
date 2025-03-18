@@ -11,10 +11,7 @@ import {
 } from "@/configurator";
 import { getConfig, increaseConfigViewCount } from "@/db/config";
 import { serializeProps } from "@/db/serialize";
-import {
-  EmbedQueryParam,
-  LegacyEmbedQueryParam,
-} from "@/components/publish-actions";
+import { useEmbedQueryParams } from "@/components/embed-params";
 
 type PageProps =
   | {
@@ -54,6 +51,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
 const EmbedPage = (props: PageProps) => {
   const { query } = useRouter();
+  const { removeBorder } = useEmbedQueryParams(query);
 
   if (props.status === "notfound") {
     return <ErrorPage statusCode={404} />;
@@ -63,20 +61,12 @@ const EmbedPage = (props: PageProps) => {
     config: { key, data: state },
   } = props;
 
-  const { disableBorder, removeBorder } = query as unknown as Record<
-    EmbedQueryParam | LegacyEmbedQueryParam,
-    boolean
-  >;
-
   return (
     <ConfiguratorStateProvider
       chartId="published"
       initialState={{ ...state, state: "PUBLISHED" }}
     >
-      <ChartPublished
-        configKey={key}
-        removeBorder={!!disableBorder || !!removeBorder}
-      />
+      <ChartPublished configKey={key} removeBorder={removeBorder} />
     </ConfiguratorStateProvider>
   );
 };

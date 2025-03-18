@@ -29,6 +29,7 @@ import { getConfig, increaseConfigViewCount } from "@/db/config";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
+import { useEmbedQueryParams } from "@/components/embed-params";
 
 type PageProps =
   | {
@@ -96,6 +97,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   // Keep initial value of publishSuccess
   const [publishSuccess] = useState(() => !!query.publishSuccess);
   const { status, config } = deserializeProps(props);
+  const { removeBorder } = useEmbedQueryParams(query);
 
   const session = useSession();
   const canEdit =
@@ -241,7 +243,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 chartId="published"
                 initialState={state}
               >
-                <ChartPublished configKey={key} />
+                <ChartPublished configKey={key} removeBorder={removeBorder} />
               </ConfiguratorStateProvider>
             </Box>
 

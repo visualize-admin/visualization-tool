@@ -33,6 +33,7 @@ import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
 import { useI18n } from "@/utils/use-i18n";
 import { useResizeObserver } from "@/utils/use-resize-observer";
+import { EmbedQueryParam } from "@/components/embed-params";
 
 type PublishActionProps = {
   chartWrapperRef: RefObject<HTMLDivElement>;
@@ -242,15 +243,6 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
     </TriggeredPopover>
   );
 };
-
-export type LegacyEmbedQueryParam = "disableBorder";
-
-export type EmbedQueryParam =
-  | "removeBorder"
-  | "optimizeSpace"
-  | "removeMoreOptionsButton"
-  | "removeAxisLabelsInteractivity"
-  | "removeLegend";
 
 export const EmbedContent = ({
   locale,
