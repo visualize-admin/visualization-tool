@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Divider,
+  FormControlLabel,
   Popover,
   PopoverProps,
   Stack,
@@ -178,9 +179,12 @@ const EmbedToggleSwitch = ({
   infoMessage?: string;
 }) => {
   return (
-    <Flex sx={{ alignItems: "center", gap: 1 }}>
-      <Switch {...rest} />
-      <Typography variant="body2">{label}</Typography>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+      <FormControlLabel
+        control={<Switch {...rest} />}
+        label={<Typography variant="body2">{label}</Typography>}
+        sx={{ mr: 0 }}
+      />
       {infoMessage && (
         <Tooltip
           arrow
@@ -195,7 +199,7 @@ const EmbedToggleSwitch = ({
           </Box>
         </Tooltip>
       )}
-    </Flex>
+    </Box>
   );
 };
 
