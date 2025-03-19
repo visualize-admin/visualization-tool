@@ -390,7 +390,7 @@ export const EmbedContent = ({
                 }}
                 label={t({
                   id: "publication.embed.iframe.remove-axis-labels-interactivity",
-                  message: "No interactive axis labels",
+                  message: "Hide interactive labels",
                 })}
               />
               <EmbedToggleSwitch
@@ -400,7 +400,7 @@ export const EmbedContent = ({
                 }}
                 label={t({
                   id: "publication.embed.iframe.remove-legend",
-                  message: "Remove legend",
+                  message: "Hide footnotes",
                 })}
               />
               <EmbedToggleSwitch
@@ -410,7 +410,7 @@ export const EmbedContent = ({
                 }}
                 label={t({
                   id: "publication.embed.iframe.remove-filters",
-                  message: "Remove filters",
+                  message: "Hide filters",
                 })}
               />
             </AccordionDetails>

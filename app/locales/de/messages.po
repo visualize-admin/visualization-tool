@@ -1878,7 +1878,7 @@ msgstr "Optimieren Sie den Leerraum um und innerhalb des Diagramms"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-axis-labels-interactivity"
-msgstr "Keine interaktiven Achsenbeschriftungen"
+msgstr "Interaktive Beschriftungen ausblenden"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
@@ -1890,11 +1890,11 @@ msgstr "Zur Einbettung von Visualisierungen in Systeme ohne Rand."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-filters"
-msgstr "Filter aufheben"
+msgstr "Filter ausblenden"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-legend"
-msgstr "Legende entfernen"
+msgstr "Fussnoten ausblenden"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-more-options-button"

@@ -1878,7 +1878,7 @@ msgstr "Optimize white space around and within chart"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-axis-labels-interactivity"
-msgstr "No interactive axis labels"
+msgstr "Hide interactive labels"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
@@ -1890,11 +1890,11 @@ msgstr "For embedding visualizations in systems without a border."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-filters"
-msgstr "Remove filters"
+msgstr "Hide filters"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-legend"
-msgstr "Remove legend"
+msgstr "Hide footnotes"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-more-options-button"

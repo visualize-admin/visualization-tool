@@ -1878,7 +1878,7 @@ msgstr "Optimiser l'espace blanc autour et dans le graphique"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-axis-labels-interactivity"
-msgstr "Aucune étiquette d'axe interactive"
+msgstr "Masquer les étiquettes interactives"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
@@ -1890,11 +1890,11 @@ msgstr "Pour intégrer des visualisations sans bordure dans des systèmes extern
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-filters"
-msgstr "Supprimer les filtres"
+msgstr "Masquer les filtres"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-legend"
-msgstr "Supprimer la légende"
+msgstr "Masquer les notes de bas de page"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-more-options-button"
