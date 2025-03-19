@@ -32,8 +32,7 @@ COPY app/package.json ./app/
 RUN yarn install --frozen-lockfile
 
 ENV NODE_ENV production
-ENV NODE_OPTIONS=--max_old_space_size=2048
-ENV NODE_OPTIONS=--max-http-header-size=65536
+ENV NODE_OPTIONS="--max-http-header-size=65536 --max_old_space_size=2048"
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV STORYBOOK_DISABLE_TELEMETRY=1
 ENV PORT 3000
