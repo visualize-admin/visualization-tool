@@ -11,7 +11,7 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Extended maximum URL length in Node to 64KB
 
 # [5.4.1] - 2025-03-18
 
