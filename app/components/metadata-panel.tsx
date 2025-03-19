@@ -80,9 +80,9 @@ import { assert } from "@/utils/assert";
 import { useEventEmitter } from "@/utils/eventEmitter";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
-
-import Flex from "./flex";
-import { JoinByChip } from "./JoinByChip";
+import { useEmbedQueryParams } from "@/components/embed-params";
+import Flex from "@/components/flex";
+import { JoinByChip } from "@/components/JoinByChip";
 
 const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
   return {
@@ -178,7 +178,7 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
         borderBottom: "none",
       },
     },
-    openComponent: {
+    openComponentInteractive: {
       minHeight: 0,
       verticalAlign: "baseline",
       padding: 0,
@@ -190,6 +190,15 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       "&:hover": {
         opacity: 0.9,
       },
+    },
+    openComponentNonInteractive: {
+      position: "relative",
+      display: "inline-flex",
+      width: "fit-content",
+      fontSize: "inherit",
+      textAlign: "left",
+      lineHeight: 1.25,
+      color: theme.palette.grey[800],
     },
   };
 });
@@ -216,6 +225,7 @@ export const OpenMetadataPanelWrapper = ({
   children: ReactNode;
   component?: Component;
 }) => {
+  const { embedParams } = useEmbedQueryParams();
   const classes = useOtherStyles();
   const { openComponent, setOpen, setActiveSection } =
     useMetadataPanelStoreActions();
@@ -229,9 +239,11 @@ export const OpenMetadataPanelWrapper = ({
     }
   });
 
-  return (
+  return embedParams.removeAxisLabelsInteractivity ? (
+    <div className={classes.openComponentNonInteractive}>{children}</div>
+  ) : (
     <Button
-      className={classes.openComponent}
+      className={classes.openComponentInteractive}
       variant="text"
       size="small"
       onClick={handleClick}
