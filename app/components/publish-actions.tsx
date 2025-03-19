@@ -22,7 +22,6 @@ import { CopyToClipboardTextInput } from "@/components/copy-to-clipboard-text-in
 import Flex from "@/components/flex";
 import { Radio } from "@/components/form";
 import { IconLink } from "@/components/links";
-import { ConfiguratorStatePublished } from "@/configurator";
 import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
 import { useI18n } from "@/utils/use-i18n";
@@ -36,7 +35,6 @@ type PublishActionProps = {
   chartWrapperRef: RefObject<HTMLDivElement>;
   configKey: string;
   locale: string;
-  state?: ConfiguratorStatePublished;
 };
 
 export const PublishActions = (props: PublishActionProps) => {
@@ -90,12 +88,7 @@ export const TriggeredPopover = (props: TriggeredPopoverProps) => {
   );
 };
 
-const Embed = ({
-  chartWrapperRef,
-  configKey,
-  locale,
-  state,
-}: PublishActionProps) => {
+const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
   const [iframeHeight, setIframeHeight] = useState(0);
 
   const handlePopoverOpen = useEvent(() => {
@@ -135,7 +128,6 @@ const Embed = ({
         iframeHeight={iframeHeight}
         configKey={configKey}
         locale={locale}
-        showAdvancedSettings={shouldShowAdvancedEmbedSettings(state)}
       />
     </TriggeredPopover>
   );
@@ -245,10 +237,8 @@ export const EmbedContent = ({
   locale,
   configKey,
   iframeHeight,
-  showAdvancedSettings,
 }: {
   iframeHeight?: number;
-  showAdvancedSettings?: boolean;
 } & Omit<PublishActionProps, "chartWrapperRef" | "state">) => {
   const router = useRouter();
   const [embedUrl, setEmbedUrl] = useState("");
@@ -334,88 +324,86 @@ export const EmbedContent = ({
             })}
           />
         </Flex>
-        {showAdvancedSettings ? (
-          <Accordion
-            sx={{ mb: 4 }}
-            defaultExpanded={Object.values(embedParams).some((d) => d)}
-          >
-            <AccordionSummary>
-              <Typography variant="h5" component="p">
-                <Trans id="publication.embed.advanced-settings">
-                  Advanced settings
-                </Trans>
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <EmbedToggleSwitch
-                checked={embedParams.removeBorder}
-                onChange={(_, checked) => {
-                  setEmbedQueryParam("removeBorder", checked);
-                }}
-                label={t({
-                  id: "publication.embed.iframe.remove-border",
-                  message: "Remove border",
-                })}
-                infoMessage={t({
-                  id: "publication.embed.iframe.remove-border.warn",
-                  message:
-                    "For embedding visualizations in systems without a border.",
-                })}
-              />
-              <EmbedToggleSwitch
-                checked={embedParams.optimizeSpace}
-                onChange={(_, checked) => {
-                  setEmbedQueryParam("optimizeSpace", checked);
-                }}
-                label={t({
-                  id: "publication.embed.iframe.optimize-space",
-                  message: "Optimize white space around and within chart",
-                })}
-              />
-              <EmbedToggleSwitch
-                checked={embedParams.removeMoreOptionsButton}
-                onChange={(_, checked) => {
-                  setEmbedQueryParam("removeMoreOptionsButton", checked);
-                }}
-                label={t({
-                  id: "publication.embed.iframe.remove-more-options-button",
-                  message:
-                    "Remove options for table view, copy & edit, sharing, and downloading",
-                })}
-              />
-              <EmbedToggleSwitch
-                checked={embedParams.removeAxisLabelsInteractivity}
-                onChange={(_, checked) => {
-                  setEmbedQueryParam("removeAxisLabelsInteractivity", checked);
-                }}
-                label={t({
-                  id: "publication.embed.iframe.remove-axis-labels-interactivity",
-                  message: "Hide interactive labels",
-                })}
-              />
-              <EmbedToggleSwitch
-                checked={embedParams.removeLegend}
-                onChange={(_, checked) => {
-                  setEmbedQueryParam("removeLegend", checked);
-                }}
-                label={t({
-                  id: "publication.embed.iframe.remove-legend",
-                  message: "Hide footnotes",
-                })}
-              />
-              <EmbedToggleSwitch
-                checked={embedParams.removeFilters}
-                onChange={(_, checked) => {
-                  setEmbedQueryParam("removeFilters", checked);
-                }}
-                label={t({
-                  id: "publication.embed.iframe.remove-filters",
-                  message: "Hide filters",
-                })}
-              />
-            </AccordionDetails>
-          </Accordion>
-        ) : null}
+        <Accordion
+          sx={{ mb: 4 }}
+          defaultExpanded={Object.values(embedParams).some((d) => d)}
+        >
+          <AccordionSummary>
+            <Typography variant="h5" component="p">
+              <Trans id="publication.embed.advanced-settings">
+                Advanced settings
+              </Trans>
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <EmbedToggleSwitch
+              checked={embedParams.removeBorder}
+              onChange={(_, checked) => {
+                setEmbedQueryParam("removeBorder", checked);
+              }}
+              label={t({
+                id: "publication.embed.iframe.remove-border",
+                message: "Remove border",
+              })}
+              infoMessage={t({
+                id: "publication.embed.iframe.remove-border.warn",
+                message:
+                  "For embedding visualizations in systems without a border.",
+              })}
+            />
+            <EmbedToggleSwitch
+              checked={embedParams.optimizeSpace}
+              onChange={(_, checked) => {
+                setEmbedQueryParam("optimizeSpace", checked);
+              }}
+              label={t({
+                id: "publication.embed.iframe.optimize-space",
+                message: "Optimize white space around and within chart",
+              })}
+            />
+            <EmbedToggleSwitch
+              checked={embedParams.removeMoreOptionsButton}
+              onChange={(_, checked) => {
+                setEmbedQueryParam("removeMoreOptionsButton", checked);
+              }}
+              label={t({
+                id: "publication.embed.iframe.remove-more-options-button",
+                message:
+                  "Remove options for table view, copy & edit, sharing, and downloading",
+              })}
+            />
+            <EmbedToggleSwitch
+              checked={embedParams.removeAxisLabelsInteractivity}
+              onChange={(_, checked) => {
+                setEmbedQueryParam("removeAxisLabelsInteractivity", checked);
+              }}
+              label={t({
+                id: "publication.embed.iframe.remove-axis-labels-interactivity",
+                message: "Hide interactive labels",
+              })}
+            />
+            <EmbedToggleSwitch
+              checked={embedParams.removeLegend}
+              onChange={(_, checked) => {
+                setEmbedQueryParam("removeLegend", checked);
+              }}
+              label={t({
+                id: "publication.embed.iframe.remove-legend",
+                message: "Hide footnotes",
+              })}
+            />
+            <EmbedToggleSwitch
+              checked={embedParams.removeFilters}
+              onChange={(_, checked) => {
+                setEmbedQueryParam("removeFilters", checked);
+              }}
+              label={t({
+                id: "publication.embed.iframe.remove-filters",
+                message: "Hide filters",
+              })}
+            />
+          </AccordionDetails>
+        </Accordion>
         <CopyToClipboardTextInput
           content={`<iframe src="${embedUrl}" width="100%" style="${responsive ? "" : `height: ${iframeHeight || 640}px; `}border: 0px #ffffff none;"  name="visualize.admin.ch"></iframe>${responsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
         />
@@ -512,10 +500,4 @@ export const ShareContent = ({
       </Box>
     </Box>
   );
-};
-
-export const shouldShowAdvancedEmbedSettings = (
-  state?: ConfiguratorStatePublished
-) => {
-  return state?.chartConfigs?.length === 1 && state?.layout.type === "tab";
 };

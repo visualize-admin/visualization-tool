@@ -69,33 +69,47 @@ type ChartPublishedIndividualChartProps = Omit<
 const ChartPublishedIndividualChart = forwardRef<
   HTMLDivElement,
   ChartPublishedIndividualChartProps
->(({ dataSource, state, chartConfig, configKey, children, ...rest }, ref) => {
-  const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
-  return (
-    <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
-      <ChartTablePreviewProvider key={chartConfig.key}>
-        <ChartWrapper
-          key={chartConfig.key}
-          layout={state.layout}
-          ref={ref}
-          chartKey={chartConfig.key}
-          {...rest}
-        >
-          <ChartPublishedInner
+>(
+  (
+    {
+      dataSource,
+      state,
+      chartConfig,
+      configKey,
+      children,
+      embedParams,
+      ...rest
+    },
+    ref
+  ) => {
+    const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
+    return (
+      <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
+        <ChartTablePreviewProvider key={chartConfig.key}>
+          <ChartWrapper
             key={chartConfig.key}
-            dataSource={dataSource}
-            state={state}
-            chartConfig={chartConfig}
-            configKey={configKey}
-            metadataPanelStore={metadataPanelStore}
+            layout={state.layout}
+            ref={ref}
+            chartKey={chartConfig.key}
+            {...rest}
           >
-            {children}
-          </ChartPublishedInner>
-        </ChartWrapper>
-      </ChartTablePreviewProvider>
-    </MetadataPanelStoreContext.Provider>
-  );
-});
+            <ChartPublishedInner
+              key={chartConfig.key}
+              dataSource={dataSource}
+              state={state}
+              chartConfig={chartConfig}
+              configKey={configKey}
+              metadataPanelStore={metadataPanelStore}
+              embedParams={embedParams}
+            >
+              {children}
+            </ChartPublishedInner>
+          </ChartWrapper>
+        </ChartTablePreviewProvider>
+      </MetadataPanelStoreContext.Provider>
+    );
+  }
+);
 
 export const ChartPublished = ({
   configKey,
@@ -170,7 +184,6 @@ export const ChartPublished = ({
                   <Description text={state.layout.meta.description[locale]} />
                 )}
               </Box>
-
               <ChartPanelLayout
                 layoutType={state.layout.layout}
                 renderBlock={renderBlock}
@@ -276,6 +289,7 @@ const ChartPublishedInnerImpl = ({
   metadataPanelStore,
   embedParams,
 }: ChartPublishInnerProps) => {
+  console.log(embedParams);
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
   const { isTable, computeContainerHeight } = useChartTablePreview();
