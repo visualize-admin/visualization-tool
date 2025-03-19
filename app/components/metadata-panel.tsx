@@ -106,6 +106,7 @@ const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
 const useOtherStyles = makeStyles<Theme>((theme) => {
   return {
     toggleButton: {
+      minHeight: 0,
       padding: 0,
     },
     header: {
@@ -249,6 +250,7 @@ export const MetadataPanel = ({
   top = 0,
   allowMultipleOpen,
   renderToggle = true,
+  smallerToggle,
 }: {
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
@@ -258,6 +260,7 @@ export const MetadataPanel = ({
   top?: number;
   allowMultipleOpen?: boolean;
   renderToggle?: boolean;
+  smallerToggle?: boolean;
 }) => {
   const router = useRouter();
   const drawerClasses = useDrawerStyles({ top });
@@ -295,7 +298,9 @@ export const MetadataPanel = ({
 
   return (
     <>
-      {renderToggle && <ToggleButton onClick={handleToggle} />}
+      {renderToggle && (
+        <ToggleButton smaller={smallerToggle} onClick={handleToggle} />
+      )}
       <Drawer
         data-testid="panel-metadata"
         className={drawerClasses.root}
@@ -360,7 +365,13 @@ export const MetadataPanel = ({
   );
 };
 
-const ToggleButton = ({ onClick }: { onClick: () => void }) => {
+const ToggleButton = ({
+  onClick,
+  smaller,
+}: {
+  onClick: () => void;
+  smaller?: boolean;
+}) => {
   const classes = useOtherStyles();
   return (
     <Button
@@ -371,7 +382,7 @@ const ToggleButton = ({ onClick }: { onClick: () => void }) => {
       size="small"
       onClick={onClick}
     >
-      <Typography variant="body2">
+      <Typography variant={smaller ? "caption" : "body2"} component="p">
         <Trans id="controls.metadata-panel.metadata">Details</Trans>
       </Typography>
     </Button>
