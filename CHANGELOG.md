@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Added advances embed options
 
 # [5.4.1] - 2025-03-18
 
