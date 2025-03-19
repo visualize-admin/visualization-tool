@@ -14,6 +14,7 @@ import {
 } from "@/configurator";
 import { useTransitionStore } from "@/stores/transition";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
+import { useEmbedQueryParams } from "@/components/embed-params";
 
 export const useStyles = makeStyles<{}, {}, "chartContainer">(() => ({
   chartContainer: {
@@ -58,9 +59,7 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
   const ref = useRef<SVGSVGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const chartState = useChartState();
-  const { bounds, interactiveFiltersConfig } = chartState;
-
+  const { bounds, interactiveFiltersConfig } = useChartState();
   const { width, margins, chartHeight } = bounds;
 
   useEffect(() => {
@@ -112,6 +111,8 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
 
 export const ChartControlsContainer = (props: BoxProps) => {
   const { sx, ...rest } = props;
+  const { embedParams } = useEmbedQueryParams();
+
   return (
     <Box
       sx={{
@@ -119,7 +120,7 @@ export const ChartControlsContainer = (props: BoxProps) => {
         flexDirection: "column",
         gap: 4,
         mt: 2,
-        mb: 4,
+        mb: embedParams.optimizeSpace ? 3 : 4,
         ...sx,
       }}
       {...rest}

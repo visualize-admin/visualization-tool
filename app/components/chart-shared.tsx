@@ -121,7 +121,7 @@ export const ChartControls = ({
     dashboardFilters,
   });
 
-  return (
+  return showFilters || metadataPanelProps ? (
     <Box
       {...DISABLE_SCREENSHOT_ATTR}
       sx={{
@@ -155,6 +155,8 @@ export const ChartControls = ({
         {showFilters && <ChartDataFiltersList {...chartFiltersState} />}
       </Box>
     </Box>
+  ) : (
+    <span style={{ height: 1 }} />
   );
 };
 

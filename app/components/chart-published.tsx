@@ -225,32 +225,35 @@ export const ChartPublished = ({
   );
 };
 
-const usePublishedChartStyles = makeStyles<Theme, { shrink: boolean }>(
-  (theme) => ({
-    root: {
-      // Needed for the metadata panel to be contained inside the root.
-      position: "relative",
-      paddingLeft: ({ shrink }) =>
-        `calc(${theme.spacing(5)} + ${shrink ? DRAWER_WIDTH : 0}px)`,
-      transition: "padding 0.25s ease",
+const usePublishedChartStyles = makeStyles<
+  Theme,
+  { shrink: boolean; optimizeSpace?: boolean }
+>((theme) => ({
+  root: {
+    // Needed for the metadata panel to be contained inside the root.
+    position: "relative",
+    paddingLeft: ({ shrink }) =>
+      `calc(${theme.spacing(5)} + ${shrink ? DRAWER_WIDTH : 0}px)`,
+    padding: ({ optimizeSpace }) =>
+      optimizeSpace ? theme.spacing(3) : theme.spacing(6),
+    transition: "padding 0.25s ease",
+  },
+  dashboardBoxWrapper: {
+    [theme.breakpoints.up("xs")]: {
+      padding: theme.spacing(5, 4, 2, 4),
     },
-    dashboardBoxWrapper: {
-      [theme.breakpoints.up("xs")]: {
-        padding: theme.spacing(5, 4, 2, 4),
-      },
-      [theme.breakpoints.up("md")]: {
-        padding: theme.spacing(5),
-      },
-      [theme.breakpoints.up("lg")]: {
-        padding: theme.spacing(6),
-      },
-      gap: 16,
-      display: "flex",
-      flexDirection: "column",
-      backgroundColor: theme.palette.grey[200],
+    [theme.breakpoints.up("md")]: {
+      padding: theme.spacing(5),
     },
-  })
-);
+    [theme.breakpoints.up("lg")]: {
+      padding: theme.spacing(6),
+    },
+    gap: 16,
+    display: "flex",
+    flexDirection: "column",
+    backgroundColor: theme.palette.grey[200],
+  },
+}));
 
 type ChartPublishInnerProps = {
   dataSource: DataSource | undefined;
@@ -300,6 +303,7 @@ const ChartPublishedInnerImpl = ({
   });
   const publishedChartClasses = usePublishedChartStyles({
     shrink: shouldShrink,
+    optimizeSpace: embedParams?.optimizeSpace,
   });
   const locale = useLocale();
   const isTrustedDataSource = useIsTrustedDataSource(dataSource);
