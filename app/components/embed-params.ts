@@ -1,5 +1,3 @@
-import { ParsedUrlQuery } from "querystring";
-
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 
@@ -42,7 +40,7 @@ export const isEmbedQueryParam = (param: string): param is EmbedQueryParam => {
   );
 };
 
-export const useEmbedQueryParams = (query: ParsedUrlQuery) => {
+export const useEmbedQueryParams = () => {
   const router = useRouter();
   const embedParams = useMemo(() => {
     return [
@@ -50,9 +48,10 @@ export const useEmbedQueryParams = (query: ParsedUrlQuery) => {
       ...EMBED_QUERY_PARAMS,
     ].reduce<EmbedQueryParams>(
       (acc, param) => {
-        if (query[param] === "true") {
+        if (router.query[param] === "true") {
           acc[migrateEmbedQueryParam(param)] = true;
         }
+
         return acc;
       },
       {
@@ -64,12 +63,12 @@ export const useEmbedQueryParams = (query: ParsedUrlQuery) => {
         removeFilters: false,
       }
     );
-  }, [query]);
+  }, [router.query]);
   const setEmbedQueryParam = useCallback(
     (param: EmbedQueryParam, value: boolean) => {
       const updatedParams = { ...embedParams, [param]: value };
       const nonEmbedParams = Object.fromEntries(
-        Object.entries(query).filter(([key]) => !isEmbedQueryParam(key))
+        Object.entries(router.query).filter(([key]) => !isEmbedQueryParam(key))
       );
       router.replace(
         {
@@ -87,8 +86,11 @@ export const useEmbedQueryParams = (query: ParsedUrlQuery) => {
         { shallow: true }
       );
     },
-    [embedParams, query, router]
+    [embedParams, router]
   );
 
-  return { embedParams, setEmbedQueryParam };
+  return {
+    embedParams,
+    setEmbedQueryParam,
+  };
 };

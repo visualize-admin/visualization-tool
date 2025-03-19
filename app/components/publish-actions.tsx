@@ -253,7 +253,7 @@ export const EmbedContent = ({
   const router = useRouter();
   const [embedUrl, setEmbedUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
-  const { embedParams, setEmbedQueryParam } = useEmbedQueryParams(router.query);
+  const { embedParams, setEmbedQueryParam } = useEmbedQueryParams();
   const [responsive, setResponsive] = useState(true);
 
   useEffect(() => {
