@@ -53,6 +53,7 @@ export const ChartFootnotes = ({
   dashboardFilters,
   components,
   showVisualizeLink = false,
+  hideFilters,
   hideMetadata,
   configKey,
   metadataPanelProps,
@@ -62,6 +63,7 @@ export const ChartFootnotes = ({
   dashboardFilters: DashboardFiltersConfig | undefined;
   components: Component[];
   showVisualizeLink?: boolean;
+  hideFilters?: boolean;
   hideMetadata?: boolean;
   configKey?: string;
   metadataPanelProps?: Omit<
@@ -117,15 +119,17 @@ export const ChartFootnotes = ({
               components={components}
               cubeIri={metadata.iri}
             />
+            {hideFilters ? null : (
+              <ChartFiltersList
+                dataSource={dataSource}
+                chartConfig={chartConfig}
+                dashboardFilters={dashboardFilters}
+                components={components}
+                cubeIri={metadata.iri}
+              />
+            )}
             {hideMetadata ? null : (
               <>
-                <ChartFiltersList
-                  dataSource={dataSource}
-                  chartConfig={chartConfig}
-                  dashboardFilters={dashboardFilters}
-                  components={components}
-                  cubeIri={metadata.iri}
-                />
                 <Typography component="span" variant="caption" color="grey.600">
                   <OpenMetadataPanelWrapper>
                     <Trans id="dataset.footnotes.dataset">Dataset</Trans>

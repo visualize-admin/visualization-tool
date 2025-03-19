@@ -1889,6 +1889,10 @@ msgid "publication.embed.iframe.remove-border.warn"
 msgstr "Pour intégrer des visualisations sans bordure dans des systèmes externes."
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-filters"
+msgstr "Supprimer les filtres"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-legend"
 msgstr "Supprimer la légende"
 

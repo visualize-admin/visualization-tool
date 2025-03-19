@@ -403,6 +403,16 @@ export const EmbedContent = ({
                   message: "Remove legend",
                 })}
               />
+              <EmbedToggleSwitch
+                checked={embedParams.removeFilters}
+                onChange={(_, checked) => {
+                  setEmbedQueryParam("removeFilters", checked);
+                }}
+                label={t({
+                  id: "publication.embed.iframe.remove-filters",
+                  message: "Remove filters",
+                })}
+              />
             </AccordionDetails>
           </Accordion>
         ) : null}

@@ -16,6 +16,7 @@ const migrateEmbedQueryParam = (
     case "removeAxisLabelsInteractivity":
     case "removeBorder":
     case "removeLegend":
+    case "removeFilters":
     case "removeMoreOptionsButton":
       return param;
     default:
@@ -30,6 +31,7 @@ const EMBED_QUERY_PARAMS = [
   "removeMoreOptionsButton",
   "removeAxisLabelsInteractivity",
   "removeLegend",
+  "removeFilters",
 ] as const;
 export type EmbedQueryParam = (typeof EMBED_QUERY_PARAMS)[number];
 export type EmbedQueryParams = Record<EmbedQueryParam, boolean>;
@@ -59,6 +61,7 @@ export const useEmbedQueryParams = (query: ParsedUrlQuery) => {
         removeMoreOptionsButton: false,
         removeAxisLabelsInteractivity: false,
         removeLegend: false,
+        removeFilters: false,
       }
     );
   }, [query]);
