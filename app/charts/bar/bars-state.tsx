@@ -249,14 +249,10 @@ const useBarsState = (
   const leftAxisLabelSize = useAxisLabelSizeVariables({
     label: yAxisLabel,
     width,
-    marginLeft: left,
-    marginRight: right,
   });
   const bottomAxisLabelSize = useAxisLabelSizeVariables({
     label: xAxisLabel,
     width,
-    marginLeft: left,
-    marginRight: right,
   });
   const margins = {
     top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,

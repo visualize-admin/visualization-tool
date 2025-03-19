@@ -172,8 +172,6 @@ const usePieState = (
   const leftAxisLabelSize = useAxisLabelSizeVariables({
     label: yAxisLabel,
     width,
-    marginLeft: left,
-    marginRight: right,
   });
   const baseYMargin = showValuesVariables.showValues ? 90 : 50;
   const margins = {

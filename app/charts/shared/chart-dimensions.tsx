@@ -21,6 +21,7 @@ import {
 } from "@/configurator";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { getTextWidth } from "@/utils/get-text-width";
+import { getTextSize } from "@/utils/get-text-size";
 
 type ComputeChartPaddingProps = {
   xLabelPresent?: boolean;
@@ -222,22 +223,21 @@ export type AxisLabelSizeVariables = {
 export const useAxisLabelSizeVariables = ({
   label,
   width: _width,
-  marginLeft,
-  marginRight,
 }: {
   label: string;
   width: number;
-  marginLeft: number;
-  marginRight: number;
 }): AxisLabelSizeVariables => {
   const { axisLabelFontSize: fontSize } = useChartTheme();
-  const width = getTextWidth(label, { fontSize });
-  const lines = Math.ceil(width / (_width - marginLeft - marginRight));
+  const { width, height } = getTextSize(label, {
+    width: _width,
+    fontSize,
+    fontWeight: 400,
+  });
 
   return {
     width,
-    height: fontSize * LINE_HEIGHT * lines,
-    offset: fontSize * LINE_HEIGHT * (lines - 1),
+    height,
+    offset: height - fontSize,
   };
 };
 

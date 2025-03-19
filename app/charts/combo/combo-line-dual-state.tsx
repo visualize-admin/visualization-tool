@@ -146,20 +146,14 @@ const useComboLineDualState = (
   const leftAxisLabelSize = useAxisLabelSizeVariables({
     label: variables.y.left.label,
     width,
-    marginLeft: margins.left,
-    marginRight: margins.right,
   });
   const rightAxisLabelSize = useAxisLabelSizeVariables({
     label: variables.y.right.label,
     width,
-    marginLeft: margins.left,
-    marginRight: margins.right,
   });
   const bottomAxisLabelSize = useAxisLabelSizeVariables({
     label: xAxisLabel,
     width,
-    marginLeft: margins.left,
-    marginRight: margins.right,
   });
   const chartWidth = getChartWidth({
     width,

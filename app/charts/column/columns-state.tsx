@@ -261,14 +261,10 @@ const useColumnsState = (
   const leftAxisLabelSize = useAxisLabelSizeVariables({
     label: yAxisLabel,
     width,
-    marginLeft: left,
-    marginRight: right,
   });
   const bottomAxisLabelSize = useAxisLabelSizeVariables({
     label: xAxisLabel,
     width,
-    marginLeft: left,
-    marginRight: right,
   });
   const { offset: yValueLabelsOffset, ...showValuesVariables } =
     useShowBandValueLabelsVariables(y, {
