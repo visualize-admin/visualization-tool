@@ -86,11 +86,17 @@ export const ChartFootnotes = ({
     pause: !usedComponents.length,
   });
   const formatLocale = useTimeFormatLocale();
+  const hideLegend = !shouldShowChartFootnotesLegend(chartConfig);
 
   return (
     <Box
       className={CHART_FOOTNOTES_CLASS_NAME}
-      sx={{ mt: 1, "& > :not(:last-child)": { mb: 3 } }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        mt: 1,
+        "& > :not(:last-child)": { mb: 3 },
+      }}
     >
       {metadataPanelProps ? (
         <MetadataPanel
@@ -98,46 +104,55 @@ export const ChartFootnotes = ({
           chartConfig={chartConfig}
           dashboardFilters={dashboardFilters}
           {...metadataPanelProps}
+          smallerToggle
         />
       ) : null}
-      {data?.dataCubesMetadata.map((metadata) => (
-        <div key={metadata.iri}>
-          <ChartFootnotesLegend
-            chartConfig={chartConfig}
-            components={components}
-            cubeIri={metadata.iri}
-          />
-          {hideMetadata ? null : (
-            <>
-              <ChartFiltersList
-                dataSource={dataSource}
-                chartConfig={chartConfig}
-                dashboardFilters={dashboardFilters}
-                components={components}
-                cubeIri={metadata.iri}
-              />
-              <Typography component="span" variant="caption" color="grey.600">
-                <OpenMetadataPanelWrapper>
-                  <Trans id="dataset.footnotes.dataset">Dataset</Trans>
-                </OpenMetadataPanelWrapper>
-                : {metadata.title}
-              </Typography>
-              {metadata.dateModified ? (
+      {data?.dataCubesMetadata.map((metadata) => {
+        const hide = hideLegend && hideMetadata;
+
+        return hide ? null : (
+          <div key={metadata.iri}>
+            <ChartFootnotesLegend
+              chartConfig={chartConfig}
+              components={components}
+              cubeIri={metadata.iri}
+            />
+            {hideMetadata ? null : (
+              <>
+                <ChartFiltersList
+                  dataSource={dataSource}
+                  chartConfig={chartConfig}
+                  dashboardFilters={dashboardFilters}
+                  components={components}
+                  cubeIri={metadata.iri}
+                />
                 <Typography component="span" variant="caption" color="grey.600">
-                  {", "}
-                  <Trans id="dataset.footnotes.updated">
-                    Latest data update
-                  </Trans>
-                  :{" "}
-                  {formatLocale.format("%d.%m.%Y %H:%M")(
-                    new Date(metadata.dateModified)
-                  )}
+                  <OpenMetadataPanelWrapper>
+                    <Trans id="dataset.footnotes.dataset">Dataset</Trans>
+                  </OpenMetadataPanelWrapper>
+                  : {metadata.title}
                 </Typography>
-              ) : null}
-            </>
-          )}
-        </div>
-      ))}
+                {metadata.dateModified ? (
+                  <Typography
+                    component="span"
+                    variant="caption"
+                    color="grey.600"
+                  >
+                    {", "}
+                    <Trans id="dataset.footnotes.updated">
+                      Latest data update
+                    </Trans>
+                    :{" "}
+                    {formatLocale.format("%d.%m.%Y %H:%M")(
+                      new Date(metadata.dateModified)
+                    )}
+                  </Typography>
+                ) : null}
+              </>
+            )}
+          </div>
+        );
+      })}
       {showVisualizeLink && configKey ? (
         <VisualizeLink
           configKey={configKey}
@@ -145,6 +160,12 @@ export const ChartFootnotes = ({
         />
       ) : null}
     </Box>
+  );
+};
+
+const shouldShowChartFootnotesLegend = (chartConfig: ChartConfig) => {
+  return ["comboLineColumn", "comboLineDual", "comboLineSingle"].includes(
+    chartConfig.chartType
   );
 };
 
@@ -157,6 +178,10 @@ const ChartFootnotesLegend = ({
   components: Component[];
   cubeIri: string;
 }) => {
+  if (!shouldShowChartFootnotesLegend(chartConfig)) {
+    return null;
+  }
+
   switch (chartConfig.chartType) {
     case "comboLineColumn": {
       return (
