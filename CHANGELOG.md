@@ -12,7 +12,7 @@ You can also check the
 # Unreleased
 
 - Features
-  - Added advances embed options
+  - Added advanced embed options
 
 # [5.4.1] - 2025-03-18
 
