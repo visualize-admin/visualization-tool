@@ -35,12 +35,12 @@ import {
   Observation,
 } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
+import { Icon } from "@/icons";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
-import { Icon } from "@/icons";
 
 import { DimensionsById } from "./ChartProps";
 

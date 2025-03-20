@@ -11,14 +11,15 @@ import {
 import { makeStyles } from "@mui/styles";
 import { Config as PrismaConfig, PUBLISHED_STATE } from "@prisma/client";
 import { GetServerSideProps } from "next";
-import { useSession } from "next-auth/react";
 import ErrorPage from "next/error";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
+import { useEmbedQueryParams } from "@/components/embed-params";
 import { PublishSuccess } from "@/components/hint";
 import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
@@ -29,7 +30,6 @@ import { getConfig, increaseConfigViewCount } from "@/db/config";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
-import { useEmbedQueryParams } from "@/components/embed-params";
 
 type PageProps =
   | {

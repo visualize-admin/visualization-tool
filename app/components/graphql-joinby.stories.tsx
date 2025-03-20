@@ -1,4 +1,5 @@
 import {
+  alpha,
   CircularProgress,
   MenuItem,
   Select,
@@ -9,7 +10,6 @@ import {
   TableHead,
   TableRow,
   Theme,
-  alpha,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Meta } from "@storybook/react";

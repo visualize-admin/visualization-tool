@@ -5,12 +5,12 @@ import { forwardRef } from "react";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { Observer } from "@/charts/shared/use-size";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
+import { EmbedQueryParams } from "@/components/embed-params";
 import {
   ChartConfig,
   DashboardFiltersConfig,
   DataSource,
 } from "@/configurator";
-import { EmbedQueryParams } from "@/components/embed-params";
 
 const ChartAreasVisualization = dynamic(
   import("@/charts/area/chart-area").then(

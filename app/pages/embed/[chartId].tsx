@@ -4,13 +4,13 @@ import { GetServerSideProps } from "next";
 import ErrorPage from "next/error";
 
 import { ChartPublished } from "@/components/chart-published";
+import { useEmbedQueryParams } from "@/components/embed-params";
 import {
   ConfiguratorStateProvider,
   ConfiguratorStatePublished,
 } from "@/configurator";
 import { getConfig, increaseConfigViewCount } from "@/db/config";
 import { serializeProps } from "@/db/serialize";
-import { useEmbedQueryParams } from "@/components/embed-params";
 
 type PageProps =
   | {

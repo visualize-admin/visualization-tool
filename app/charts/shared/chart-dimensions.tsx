@@ -20,8 +20,8 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { TimeUnit } from "@/graphql/resolver-types";
-import { getTextWidth } from "@/utils/get-text-width";
 import { getTextSize } from "@/utils/get-text-size";
+import { getTextWidth } from "@/utils/get-text-width";
 
 type ComputeChartPaddingProps = {
   xLabelPresent?: boolean;

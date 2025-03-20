@@ -35,9 +35,9 @@ import { Footer } from "@/components/footer";
 import {
   BANNER_HEIGHT,
   BANNER_MARGIN_TOP,
+  bannerPresenceProps,
   DURATION,
   MotionBox,
-  bannerPresenceProps,
   navPresenceProps,
   smoothPresenceProps,
 } from "@/components/presence";

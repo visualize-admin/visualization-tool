@@ -6,9 +6,9 @@ import {
   BaseVariables,
   ChartStateData,
   InteractiveFiltersVariables,
+  shouldUseDynamicMinScaleValue,
   SortingVariables,
   TemporalXVariables,
-  shouldUseDynamicMinScaleValue,
   useBaseVariables,
   useChartData,
   useInteractiveFiltersVariables,
@@ -16,8 +16,8 @@ import {
 } from "@/charts/shared/chart-state";
 import { ComboLineSingleConfig } from "@/configurator";
 
-import { ChartProps } from "../shared/ChartProps";
 import { usePlottableData } from "../shared/chart-helpers";
+import { ChartProps } from "../shared/ChartProps";
 
 type NumericalYComboLineSingleVariables = {
   y: {

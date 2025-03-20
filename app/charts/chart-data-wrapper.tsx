@@ -11,6 +11,7 @@ import React, {
 import { A11yTable } from "@/charts/shared/a11y-table";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
 import { ChartProps } from "@/charts/shared/ChartProps";
+import { EmbedQueryParams } from "@/components/embed-params";
 import Flex from "@/components/flex";
 import {
   Loading,
@@ -26,7 +27,6 @@ import {
 } from "@/graphql/hooks";
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 import { useLocale } from "@/src";
-import { EmbedQueryParams } from "@/components/embed-params";
 
 type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
 

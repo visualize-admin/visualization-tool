@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { useMemo, useRef } from "react";
 
 type Changes<K, U> = (readonly [K, U, U])[];
 

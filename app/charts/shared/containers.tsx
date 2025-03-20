@@ -6,6 +6,7 @@ import { ReactNode, useEffect, useRef } from "react";
 import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
 import { useObserverRef } from "@/charts/shared/use-size";
+import { useEmbedQueryParams } from "@/components/embed-params";
 import { getChartConfig } from "@/config-utils";
 import {
   hasChartConfigs,
@@ -14,7 +15,6 @@ import {
 } from "@/configurator";
 import { useTransitionStore } from "@/stores/transition";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
-import { useEmbedQueryParams } from "@/components/embed-params";
 
 export const useStyles = makeStyles<{}, {}, "chartContainer">(() => ({
   chartContainer: {

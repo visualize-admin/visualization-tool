@@ -221,8 +221,8 @@ const TooltipBoxStory = () => (
 export {
   RulerStory as Ruler,
   TooltipBoxStory as TooltipBox,
-  TooltipContentStory as TooltipContent,
   TooltipContentStory2 as TooltipContent2,
+  TooltipContentStory as TooltipContent,
 };
 
 const TooltipContentStory = {

@@ -2,8 +2,8 @@ import { Trans } from "@lingui/macro";
 import {
   Box,
   Link,
-  LinkProps,
   Link as MUILink,
+  LinkProps,
   Stack,
   Typography,
   TypographyProps,
