@@ -38,8 +38,11 @@ import {
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { DatasetMetadata } from "@/components/dataset-metadata";
+import { useEmbedQueryParams } from "@/components/embed-params";
+import Flex from "@/components/flex";
 import { Error, Loading } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
+import { JoinByChip } from "@/components/JoinByChip";
 import {
   useMetadataPanelStore,
   useMetadataPanelStoreActions,
@@ -80,9 +83,6 @@ import { assert } from "@/utils/assert";
 import { useEventEmitter } from "@/utils/eventEmitter";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
-import { useEmbedQueryParams } from "@/components/embed-params";
-import Flex from "@/components/flex";
-import { JoinByChip } from "@/components/JoinByChip";
 
 const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
   return {
@@ -239,7 +239,7 @@ export const OpenMetadataPanelWrapper = ({
     }
   });
 
-  return embedParams.removeAxisLabelsInteractivity ? (
+  return embedParams.removeLabelsInteractivity ? (
     <div className={classes.openComponentNonInteractive}>{children}</div>
   ) : (
     <Button

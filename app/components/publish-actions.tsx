@@ -14,11 +14,15 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
 
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { CopyToClipboardTextInput } from "@/components/copy-to-clipboard-text-input";
+import {
+  isEmbedQueryParam,
+  useEmbedQueryParams,
+} from "@/components/embed-params";
 import Flex from "@/components/flex";
 import { Radio } from "@/components/form";
 import { IconLink } from "@/components/links";
@@ -26,10 +30,6 @@ import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
 import { useI18n } from "@/utils/use-i18n";
 import { useResizeObserver } from "@/utils/use-resize-observer";
-import {
-  isEmbedQueryParam,
-  useEmbedQueryParams,
-} from "@/components/embed-params";
 
 type PublishActionProps = {
   chartWrapperRef: RefObject<HTMLDivElement>;
@@ -373,9 +373,9 @@ export const EmbedContent = ({
               })}
             />
             <EmbedToggleSwitch
-              checked={embedParams.removeAxisLabelsInteractivity}
+              checked={embedParams.removeLabelsInteractivity}
               onChange={(_, checked) => {
-                setEmbedQueryParam("removeAxisLabelsInteractivity", checked);
+                setEmbedQueryParam("removeLabelsInteractivity", checked);
               }}
               label={t({
                 id: "publication.embed.iframe.remove-axis-labels-interactivity",
@@ -383,9 +383,9 @@ export const EmbedContent = ({
               })}
             />
             <EmbedToggleSwitch
-              checked={embedParams.removeLegend}
+              checked={embedParams.removeFootnotes}
               onChange={(_, checked) => {
-                setEmbedQueryParam("removeLegend", checked);
+                setEmbedQueryParam("removeFootnotes", checked);
               }}
               label={t({
                 id: "publication.embed.iframe.remove-legend",

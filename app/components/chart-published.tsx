@@ -26,6 +26,7 @@ import {
 } from "@/components/chart-table-preview";
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
+import { EmbedQueryParams } from "@/components/embed-params";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import {
@@ -59,7 +60,6 @@ import {
   InteractiveFiltersProvider,
 } from "@/stores/interactive-filters";
 import { useResizeObserver } from "@/utils/use-resize-observer";
-import { EmbedQueryParams } from "@/components/embed-params";
 
 type ChartPublishedIndividualChartProps = Omit<
   ChartPublishInnerProps,
@@ -500,7 +500,7 @@ const ChartPublishedInnerImpl = ({
                   state.chartConfigs.length === 1)
               }
               hideFilters={embedParams?.removeFilters}
-              hideMetadata={embedParams?.removeLegend}
+              hideMetadata={embedParams?.removeFootnotes}
               metadataPanelProps={
                 embedParams?.removeMoreOptionsButton
                   ? {

@@ -11,9 +11,9 @@ const migrateEmbedQueryParam = (
     case "disableBorder":
       return "removeBorder";
     case "optimizeSpace":
-    case "removeAxisLabelsInteractivity":
+    case "removeLabelsInteractivity":
     case "removeBorder":
-    case "removeLegend":
+    case "removeFootnotes":
     case "removeFilters":
     case "removeMoreOptionsButton":
       return param;
@@ -27,8 +27,8 @@ const EMBED_QUERY_PARAMS = [
   "removeBorder",
   "optimizeSpace",
   "removeMoreOptionsButton",
-  "removeAxisLabelsInteractivity",
-  "removeLegend",
+  "removeLabelsInteractivity",
+  "removeFootnotes",
   "removeFilters",
 ] as const;
 export type EmbedQueryParam = (typeof EMBED_QUERY_PARAMS)[number];
@@ -58,8 +58,8 @@ export const useEmbedQueryParams = () => {
         removeBorder: false,
         optimizeSpace: false,
         removeMoreOptionsButton: false,
-        removeAxisLabelsInteractivity: false,
-        removeLegend: false,
+        removeLabelsInteractivity: false,
+        removeFootnotes: false,
         removeFilters: false,
       }
     );
