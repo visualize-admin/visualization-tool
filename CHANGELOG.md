@@ -11,7 +11,12 @@ You can also check the
 
 # Unreleased
 
-- Extended maximum URL length in Node to 64KB
+- Features
+  - Interactive filters area is now open by default
+  - When interactive filters area is initialized open, it's no longer possible
+    to collapse it
+- Maintenance
+  - Extended maximum URL length in Node to 64KB
 
 # [5.4.1] - 2025-03-18
 
