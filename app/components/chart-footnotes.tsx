@@ -110,7 +110,7 @@ export const ChartFootnotes = ({
         />
       ) : null}
       {data?.dataCubesMetadata.map((metadata) => {
-        const hide = hideLegend && hideMetadata;
+        const hide = hideLegend && hideMetadata && hideFilters;
 
         return hide ? null : (
           <div key={metadata.iri}>
