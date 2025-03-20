@@ -711,7 +711,7 @@ export const ChartConfigurator = ({
                 <ChartOptionCheckboxField
                   label={t({
                     id: "controls.section.data.filters.default-open",
-                    message: "Show filter area open per default",
+                    message: "Show filter area open",
                   })}
                   field={null}
                   path="interactiveFiltersConfig.dataFilters.defaultOpen"

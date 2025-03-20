@@ -13,6 +13,9 @@ You can also check the
 
 - Features
   - Added advanced embed options
+  - Interactive filters area is now open by default
+  - When interactive filters area is initialized open, it's no longer possible
+    to collapse it
 - Maintenance
   - Extended maximum URL length in Node to 64KB
 
