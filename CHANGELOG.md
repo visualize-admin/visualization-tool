@@ -13,6 +13,8 @@ You can also check the
 
 - Features
   - Added advanced embed options
+- Maintenance
+  - Extended maximum URL length in Node to 64KB
 
 # [5.4.1] - 2025-03-18
 
