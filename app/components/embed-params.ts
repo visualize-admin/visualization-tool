@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 
 const LEGACY_EMBED_QUERY_PARAMS = ["disableBorder"] as const;
-export type LegacyEmbedQueryParam = (typeof LEGACY_EMBED_QUERY_PARAMS)[number];
+type LegacyEmbedQueryParam = (typeof LEGACY_EMBED_QUERY_PARAMS)[number];
 
 const migrateEmbedQueryParam = (
   param: LegacyEmbedQueryParam | EmbedQueryParam
@@ -31,7 +31,7 @@ const EMBED_QUERY_PARAMS = [
   "removeFootnotes",
   "removeFilters",
 ] as const;
-export type EmbedQueryParam = (typeof EMBED_QUERY_PARAMS)[number];
+type EmbedQueryParam = (typeof EMBED_QUERY_PARAMS)[number];
 export type EmbedQueryParams = Record<EmbedQueryParam, boolean>;
 
 export const isEmbedQueryParam = (param: string): param is EmbedQueryParam => {
