@@ -15,8 +15,8 @@ import { defaultLocale } from "@/locales/locales";
 import { useLocale } from "@/src";
 import { BaseStatsCard } from "@/statistics/base-stats-card";
 import { CardGrid } from "@/statistics/card-grid";
-import { ChartLink } from "@/statistics/chart-link";
 import { formatInteger } from "@/statistics/formatters";
+import { ChartLink, CubeLink } from "@/statistics/links";
 import {
   fetchChartCountByDay,
   fetchChartsMetadata,
@@ -174,7 +174,6 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 const Statistics = (props: Serialized<PageProps>) => {
   const { charts, views } = deserializeProps(props);
   const locale = useLocale();
-  console.log(charts.countByLayoutTypeAndSubtype);
 
   return (
     <AppLayout>
@@ -325,11 +324,16 @@ const Statistics = (props: Serialized<PageProps>) => {
               uniq(charts.countByCubeIri.map((d) => d.iri)).length
             )} cubes`}
             subtitle="Cubes are the data sources used in individual charts."
-            data={charts.countByCubeIri.map(({ title, count }) => [
+            data={charts.countByCubeIri.map(({ iri, title, count }) => [
               title,
               {
                 count,
-                label: title,
+                label:
+                  iri === title ? (
+                    title
+                  ) : (
+                    <CubeLink locale={locale} iri={iri} title={title} />
+                  ),
               },
             ])}
             columnName="Cube name (IRI if name is missing)"
