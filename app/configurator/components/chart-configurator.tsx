@@ -144,7 +144,10 @@ export const DataFilterSelectGeneric = ({
     keepPreviousData: true,
   });
 
-  const dimension = data?.dataCubesComponents?.dimensions?.[0] ?? rawDimension;
+  const dimension =
+    data?.dataCubesComponents?.dimensions.find(
+      (d) => d.cubeIri === rawDimension.cubeIri
+    ) ?? rawDimension;
   const controls = dimension.isKeyDimension ? null : (
     <Box sx={{ display: "flex", flexGrow: 1 }}>
       <IconButton
@@ -766,6 +769,7 @@ export const ChartConfigurator = ({
                                         key={dim.id}
                                         rawDimension={dim}
                                         filterDimensionIds={filterDimensions
+                                          .filter((d) => d.cubeIri === cubeIri)
                                           .slice(0, i)
                                           .map((d) => d.id)}
                                         index={i}
