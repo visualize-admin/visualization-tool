@@ -9,6 +9,7 @@ import {
 } from "d3-scale";
 import { useMemo } from "react";
 
+import { BaseYGetter } from "@/charts/combo/combo-state-props";
 import {
   SINGLE_LINE_AXIS_LABEL_HEIGHT,
   useAxisTitleSize,
@@ -24,11 +25,7 @@ type UseCommonComboStateOptions = {
   xKey: string;
   getXAsDate: (d: Observation) => Date;
   getXAsString: (d: Observation) => string;
-  yGetters: {
-    label: string;
-    getY: (d: Observation) => number | null;
-    color: string;
-  }[];
+  yGetters: BaseYGetter[];
   computeTotal: boolean;
 };
 
@@ -86,7 +83,7 @@ export const useCommonComboState = (options: UseCommonComboStateOptions) => {
   }, [getXAsDate, timeRangeData]);
 
   const colors = useMemo(() => {
-    const domain = yGetters.map((d) => d.label);
+    const domain = yGetters.map((d) => d.id);
     const range = yGetters.map((d) => d.color);
 
     return scaleOrdinal<string, string>().domain(domain).range(range);
