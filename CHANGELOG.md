@@ -12,6 +12,7 @@ You can also check the
 # Unreleased
 
 - Features
+  - Added advanced embed options
   - Interactive filters area is now open by default
   - When interactive filters area is initialized open, it's no longer possible
     to collapse it

@@ -60,7 +60,6 @@ export const AxisHeightLinear = () => {
         <foreignObject
           width={leftAxisLabelSize.width}
           height={leftAxisLabelSize.height}
-          y={30}
           style={{ display: "flex" }}
         >
           <OpenMetadataPanelWrapper component={rest.yMeasure}>

@@ -2,12 +2,12 @@ import { I18nProvider } from "@lingui/react";
 import "core-js/features/array/flat-map";
 // Used for color-picker component. Must include here because of next.js constraints about global CSS imports
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { Session } from "next-auth";
+import { SessionProvider } from "next-auth/react";
 import { useEffect } from "react";
 
 import { SnackbarProvider } from "@/components/snackbar";

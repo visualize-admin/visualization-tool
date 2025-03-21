@@ -2,9 +2,9 @@ import { Config as PrismaConfig } from "@prisma/client";
 import "iframe-resizer/js/iframeResizer.contentWindow.js";
 import { GetServerSideProps } from "next";
 import ErrorPage from "next/error";
-import { useRouter } from "next/router";
 
 import { ChartPublished } from "@/components/chart-published";
+import { useEmbedQueryParams } from "@/components/embed-params";
 import {
   ConfiguratorStateProvider,
   ConfiguratorStatePublished,
@@ -49,7 +49,7 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 };
 
 const EmbedPage = (props: PageProps) => {
-  const { query } = useRouter();
+  const { embedParams } = useEmbedQueryParams();
 
   if (props.status === "notfound") {
     return <ErrorPage statusCode={404} />;
@@ -59,14 +59,12 @@ const EmbedPage = (props: PageProps) => {
     config: { key, data: state },
   } = props;
 
-  const { disableBorder } = query;
-
   return (
     <ConfiguratorStateProvider
       chartId="published"
       initialState={{ ...state, state: "PUBLISHED" }}
     >
-      <ChartPublished configKey={key} disableBorder={!!disableBorder} />
+      <ChartPublished configKey={key} embedParams={embedParams} />
     </ConfiguratorStateProvider>
   );
 };

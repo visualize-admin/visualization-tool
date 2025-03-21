@@ -1,9 +1,9 @@
 import { schemeCategory10 } from "d3-scale-chromatic";
-import React, { useMemo, useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 
 import {
-  RenderDatum,
   renderCircles,
+  RenderDatum,
 } from "@/charts/scatterplot/rendering-utils";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";

@@ -11,7 +11,6 @@ import {
   TimeUnit,
 } from "@/graphql/resolver-types";
 // @ts-ignore
-import { resolveDimensionType } from "@/graphql/resolvers";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { Limit } from "@/rdf/limits";
 

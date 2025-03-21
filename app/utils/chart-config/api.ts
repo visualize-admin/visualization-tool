@@ -10,9 +10,9 @@ import { ConfiguratorState, CustomPaletteType } from "../../config-types";
 import { apiFetch } from "../api";
 import { createId } from "../create-id";
 
+import type apiConfig from "../../pages/api/config/[key]";
 import type apiConfigCreate from "../../pages/api/config-create";
 import type apiConfigUpdate from "../../pages/api/config-update";
-import type apiConfig from "../../pages/api/config/[key]";
 
 export type CreateCustomColorPalette = Omit<CustomPaletteType, "paletteId">;
 export type UpdateCustomColorPalette = Partial<

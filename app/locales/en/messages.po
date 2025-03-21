@@ -1853,6 +1853,10 @@ msgid "profile.chart.rename-dialog.title"
 msgstr "Rename the visualization"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.advanced-settings"
+msgstr "Advanced settings"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.external-application"
 msgstr "Embed Code for \"External Application\""
 
@@ -1869,12 +1873,32 @@ msgid "publication.embed.iframe.caption"
 msgstr "Use this link to embed the chart in any webpage."
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.optimize-space"
+msgstr "Optimize white space around and within chart"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-axis-labels-interactivity"
+msgstr "Hide interactive labels"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
 msgstr "Remove border"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border.warn"
 msgstr "For embedding visualizations in systems without a border."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-filters"
+msgstr "Hide filters"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-legend"
+msgstr "Hide footnotes"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-more-options-button"
+msgstr "Remove options for table view, copy & edit, sharing, and downloading"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"

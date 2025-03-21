@@ -38,8 +38,11 @@ import {
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { DatasetMetadata } from "@/components/dataset-metadata";
+import { useEmbedQueryParams } from "@/components/embed-params";
+import Flex from "@/components/flex";
 import { Error, Loading } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
+import { JoinByChip } from "@/components/JoinByChip";
 import {
   useMetadataPanelStore,
   useMetadataPanelStoreActions,
@@ -81,9 +84,6 @@ import { useEventEmitter } from "@/utils/eventEmitter";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
-import Flex from "./flex";
-import { JoinByChip } from "./JoinByChip";
-
 const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
   return {
     root: {
@@ -106,6 +106,7 @@ const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
 const useOtherStyles = makeStyles<Theme>((theme) => {
   return {
     toggleButton: {
+      minHeight: 0,
       padding: 0,
     },
     header: {
@@ -177,7 +178,7 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
         borderBottom: "none",
       },
     },
-    openComponent: {
+    openComponentInteractive: {
       minHeight: 0,
       verticalAlign: "baseline",
       padding: 0,
@@ -189,6 +190,15 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       "&:hover": {
         opacity: 0.9,
       },
+    },
+    openComponentNonInteractive: {
+      position: "relative",
+      display: "inline-flex",
+      width: "fit-content",
+      fontSize: "inherit",
+      textAlign: "left",
+      lineHeight: 1.25,
+      color: theme.palette.grey[800],
     },
   };
 });
@@ -215,6 +225,7 @@ export const OpenMetadataPanelWrapper = ({
   children: ReactNode;
   component?: Component;
 }) => {
+  const { embedParams } = useEmbedQueryParams();
   const classes = useOtherStyles();
   const { openComponent, setOpen, setActiveSection } =
     useMetadataPanelStoreActions();
@@ -228,9 +239,11 @@ export const OpenMetadataPanelWrapper = ({
     }
   });
 
-  return (
+  return embedParams.removeLabelsInteractivity ? (
+    <div className={classes.openComponentNonInteractive}>{children}</div>
+  ) : (
     <Button
-      className={classes.openComponent}
+      className={classes.openComponentInteractive}
       variant="text"
       size="small"
       onClick={handleClick}
@@ -249,6 +262,7 @@ export const MetadataPanel = ({
   top = 0,
   allowMultipleOpen,
   renderToggle = true,
+  smallerToggle,
 }: {
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
@@ -258,6 +272,7 @@ export const MetadataPanel = ({
   top?: number;
   allowMultipleOpen?: boolean;
   renderToggle?: boolean;
+  smallerToggle?: boolean;
 }) => {
   const router = useRouter();
   const drawerClasses = useDrawerStyles({ top });
@@ -295,7 +310,9 @@ export const MetadataPanel = ({
 
   return (
     <>
-      {renderToggle && <ToggleButton onClick={handleToggle} />}
+      {renderToggle && (
+        <ToggleButton smaller={smallerToggle} onClick={handleToggle} />
+      )}
       <Drawer
         data-testid="panel-metadata"
         className={drawerClasses.root}
@@ -360,7 +377,13 @@ export const MetadataPanel = ({
   );
 };
 
-const ToggleButton = ({ onClick }: { onClick: () => void }) => {
+const ToggleButton = ({
+  onClick,
+  smaller,
+}: {
+  onClick: () => void;
+  smaller?: boolean;
+}) => {
   const classes = useOtherStyles();
   return (
     <Button
@@ -371,7 +394,7 @@ const ToggleButton = ({ onClick }: { onClick: () => void }) => {
       size="small"
       onClick={onClick}
     >
-      <Typography variant="body2">
+      <Typography variant={smaller ? "caption" : "body2"} component="p">
         <Trans id="controls.metadata-panel.metadata">Details</Trans>
       </Typography>
     </Button>

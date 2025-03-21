@@ -1,6 +1,6 @@
 import {
-  HierarchyNode,
   getHierarchy,
+  HierarchyNode,
 } from "@zazuko/cube-hierarchy-query/index";
 import { AnyPointer } from "clownface";
 import orderBy from "lodash/orderBy";

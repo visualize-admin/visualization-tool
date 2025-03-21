@@ -3,8 +3,8 @@ import { Box, Button, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { User } from "@prisma/client";
 import clsx from "clsx";
-import { signOut } from "next-auth/react";
 import NextLink from "next/link";
+import { signOut } from "next-auth/react";
 
 import { ADFS_PROFILE_URL } from "@/domain/env";
 import { useRootStyles } from "@/login/utils";

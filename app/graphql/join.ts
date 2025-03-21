@@ -8,10 +8,10 @@ import { OperationResult } from "urql";
 import { ChartConfig, Cube } from "@/config-types";
 import {
   Dimension,
+  isJoinByComponent,
   JoinByComponent,
   Observation,
   ObservationValue,
-  isJoinByComponent,
 } from "@/domain/data";
 import { ComponentId } from "@/graphql/make-component-id";
 import {

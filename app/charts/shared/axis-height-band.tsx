@@ -97,7 +97,6 @@ export const AxisHeightBand = () => {
     <>
       <g ref={ref} />
       <foreignObject
-        y={30}
         width={leftAxisLabelSize.width}
         height={leftAxisLabelSize.height}
         style={{ display: "flex" }}

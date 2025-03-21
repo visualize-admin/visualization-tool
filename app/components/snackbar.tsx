@@ -5,8 +5,8 @@ import {
 } from "notistack";
 
 import SvgIcChecked from "@/icons/components/IcChecked";
-import SvgIcInfo from "@/icons/components/IcInfo";
 import SvgIcClear from "@/icons/components/IcClear";
+import SvgIcInfo from "@/icons/components/IcInfo";
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(
   ({ theme }) => ({

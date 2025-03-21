@@ -1853,6 +1853,10 @@ msgid "profile.chart.rename-dialog.title"
 msgstr "Rinomina la visualizzazione"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.advanced-settings"
+msgstr "Impostazioni avanzate"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.external-application"
 msgstr "Codice da incorporare per \"External Application\""
 
@@ -1869,12 +1873,32 @@ msgid "publication.embed.iframe.caption"
 msgstr "Usa questo codice per incorporare il grafico in una pagina web"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.optimize-space"
+msgstr "Ottimizza lo spazio bianco attorno e all'interno del grafico"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-axis-labels-interactivity"
+msgstr "Nascondi etichette interattive"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
 msgstr "Rimuovere il bordo"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border.warn"
 msgstr "Per visualizzazioni incorporate in sistemi senza bordi."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-filters"
+msgstr "Nascondi filtri"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-legend"
+msgstr "Nascondi note a piè di pagina"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-more-options-button"
+msgstr "Rimuovi le opzioni per la visualizzazione della tabella, copia e modifica, condivisione e download"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"

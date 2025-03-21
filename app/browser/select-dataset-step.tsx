@@ -33,9 +33,9 @@ import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
-  bannerPresenceProps,
   BANNER_HEIGHT,
   BANNER_MARGIN_TOP,
+  bannerPresenceProps,
   DURATION,
   MotionBox,
   navPresenceProps,

@@ -11,14 +11,15 @@ import {
 import { makeStyles } from "@mui/styles";
 import { Config as PrismaConfig, PUBLISHED_STATE } from "@prisma/client";
 import { GetServerSideProps } from "next";
-import { useSession } from "next-auth/react";
 import ErrorPage from "next/error";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
+import { useEmbedQueryParams } from "@/components/embed-params";
 import { PublishSuccess } from "@/components/hint";
 import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
@@ -96,6 +97,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
   // Keep initial value of publishSuccess
   const [publishSuccess] = useState(() => !!query.publishSuccess);
   const { status, config } = deserializeProps(props);
+  const { embedParams } = useEmbedQueryParams();
 
   const session = useSession();
   const canEdit =
@@ -173,7 +175,6 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
               chartWrapperRef={chartWrapperRef}
               configKey={key}
               locale={locale}
-              state={state}
             />
           </Box>
         )}
@@ -241,7 +242,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 chartId="published"
                 initialState={state}
               >
-                <ChartPublished configKey={key} />
+                <ChartPublished configKey={key} embedParams={embedParams} />
               </ConfiguratorStateProvider>
             </Box>
 

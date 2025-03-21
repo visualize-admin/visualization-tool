@@ -121,14 +121,10 @@ const useComboLineSingleState = (
   const leftAxisLabelSize = useAxisLabelSizeVariables({
     label: yAxisLabel,
     width,
-    marginLeft: margins.left,
-    marginRight: margins.right,
   });
   const bottomAxisLabelSize = useAxisLabelSizeVariables({
     label: xAxisLabel,
     width,
-    marginLeft: margins.left,
-    marginRight: margins.right,
   });
   const chartWidth = getChartWidth({
     width,

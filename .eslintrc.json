@@ -1,6 +1,12 @@
 {
   "extends": "next",
-  "plugins": ["import", "visualize-admin", "jest", "deprecate"],
+  "plugins": [
+    "import",
+    "visualize-admin",
+    "jest",
+    "deprecate",
+    "unused-imports"
+  ],
   "rules": {
     "no-restricted-imports": [
       "error",
@@ -32,6 +38,11 @@
     "import/order": [
       2,
       {
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        },
+        "named": true,
         "newlines-between": "always",
         "groups": [
           "builtin",
@@ -51,7 +62,8 @@
         ],
         "pathGroupsExcludedImportTypes": ["builtin"]
       }
-    ]
+    ],
+    "unused-imports/no-unused-imports": "warn"
   },
   "overrides": [
     {

@@ -5,6 +5,7 @@ import { forwardRef } from "react";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { Observer } from "@/charts/shared/use-size";
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
+import { EmbedQueryParams } from "@/components/embed-params";
 import {
   ChartConfig,
   DashboardFiltersConfig,
@@ -83,10 +84,16 @@ type GenericChartProps = {
   componentIds: string[] | undefined;
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
+  embedParams?: EmbedQueryParams;
 };
 
-const GenericChart = (props: GenericChartProps) => {
-  const { dataSource, componentIds, chartConfig, dashboardFilters } = props;
+const GenericChart = ({
+  dataSource,
+  componentIds,
+  chartConfig,
+  dashboardFilters,
+  embedParams,
+}: GenericChartProps) => {
   const observationQueryFilters = useQueryFilters({
     chartConfig,
     dashboardFilters,
@@ -97,6 +104,7 @@ const GenericChart = (props: GenericChartProps) => {
     dataSource,
     observationQueryFilters,
     componentIds,
+    embedParams,
   };
 
   switch (chartConfig.chartType) {
@@ -168,6 +176,7 @@ type ChartWithFiltersProps = {
   componentIds: string[] | undefined;
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
+  embedParams?: EmbedQueryParams;
 };
 
 export const useChartWithFiltersClasses = makeStyles(() => ({

@@ -267,14 +267,10 @@ const useLinesState = (
   const leftAxisLabelSize = useAxisLabelSizeVariables({
     label: yAxisLabel,
     width,
-    marginLeft: left,
-    marginRight: right,
   });
   const bottomAxisLabelSize = useAxisLabelSizeVariables({
     label: xAxisLabel,
     width,
-    marginLeft: left,
-    marginRight: right,
   });
   const { yOffset: yValueLabelsOffset, ...showValuesVariables } =
     useShowTemporalValueLabelsVariables(y, {
