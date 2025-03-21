@@ -2,8 +2,8 @@ import { t } from "@lingui/macro";
 import { ascending, descending, group, rollup, rollups } from "d3-array";
 import produce from "immer";
 import get from "lodash/get";
-import sortBy from "lodash/sortBy";
 import mapValues from "lodash/mapValues";
+import sortBy from "lodash/sortBy";
 
 import {
   AREA_SEGMENT_SORTING,
@@ -204,6 +204,7 @@ const getInitialInteractiveFiltersConfig = (options?: {
     dataFilters: {
       active: false,
       componentIds: [],
+      defaultOpen: true,
     },
     calculation: {
       active: false,

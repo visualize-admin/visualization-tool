@@ -133,6 +133,7 @@ export const useChartDataFiltersState = ({
   return {
     open,
     setOpen,
+    defaultOpen,
     dataSource,
     chartConfig,
     loading,
@@ -142,11 +143,14 @@ export const useChartDataFiltersState = ({
   };
 };
 
-export const ChartDataFiltersToggle = (
-  props: ReturnType<typeof useChartDataFiltersState>
-) => {
-  const { open, setOpen, loading, error, componentIds } = props;
-
+export const ChartDataFiltersToggle = ({
+  open,
+  setOpen,
+  defaultOpen,
+  loading,
+  error,
+  componentIds,
+}: ReturnType<typeof useChartDataFiltersState>) => {
   return error ? (
     <Typography variant="body2" color="error">
       <Trans id="controls.section.data.filters.possible-filters-error">
@@ -154,7 +158,7 @@ export const ChartDataFiltersToggle = (
         reload the page.
       </Trans>
     </Typography>
-  ) : (
+  ) : defaultOpen ? null : (
     <Flex sx={{ flexDirection: "column", width: "100%" }}>
       <Flex
         sx={{
