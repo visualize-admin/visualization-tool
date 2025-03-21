@@ -289,7 +289,6 @@ const ChartPublishedInnerImpl = ({
   metadataPanelStore,
   embedParams,
 }: ChartPublishInnerProps) => {
-  console.log(embedParams);
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
   const { isTable, computeContainerHeight } = useChartTablePreview();
