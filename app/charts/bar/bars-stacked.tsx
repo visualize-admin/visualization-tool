@@ -29,7 +29,8 @@ export const BarsStacked = () => {
   const renderData: RenderBarDatum[] = useMemo(() => {
     return series.flatMap((s) => {
       const segmentLabel = s.key;
-      const segment = segmentsByAbbreviationOrLabel.get(segmentLabel)?.value;
+      const segment =
+        segmentsByAbbreviationOrLabel.get(segmentLabel)?.value ?? segmentLabel;
       const color = colors(segmentLabel);
 
       return s.map((d) => {

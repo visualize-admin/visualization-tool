@@ -18,6 +18,8 @@ You can also check the
     to collapse it
   - Valid cube iris in Statistics page (coming from the same data source as the
     environment's default one) are now pointing to Visualize dataset previews
+- Fixes
+  - Showing segmented values was fixed for some cubes
 - Maintenance
   - Extended maximum URL length in Node to 64KB
 
