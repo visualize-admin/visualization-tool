@@ -7,7 +7,9 @@ import {
   Typography,
   useEventCallback,
 } from "@mui/material";
-import { useMemo } from "react";
+import WMTSCapabilities from "ol/format/WMTSCapabilities.js";
+import { optionsFromCapabilities } from "ol/source/WMTS";
+import { useEffect, useMemo } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -33,10 +35,28 @@ import {
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 
+const parser = new WMTSCapabilities();
+
 export const CustomLayersSelector = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state) as MapConfig;
   const customLayers = chartConfig.baseLayer.customLayers;
+  useEffect(() => {
+    const go = async () => {
+      fetch("https://wmts.geo.admin.ch/EPSG/3857/1.0.0/WMTSCapabilities.xml")
+        .then(function (response) {
+          return response.text();
+        })
+        .then(function (text) {
+          const result = parser.read(text);
+          const options = optionsFromCapabilities(result, {
+            layer: "ch.bafu.wald-wasserverfuegbarkeit_pflanzen",
+          });
+          console.log(options);
+        });
+    };
+    go();
+  }, []);
   const { data: wmsLayers, error: wmsError } = useWMSLayers();
   const { data: wmtsLayers, error: wmtsError } = useWMTSLayers();
   const error = wmsError ?? wmtsError;
