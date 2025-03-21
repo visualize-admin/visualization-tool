@@ -18,6 +18,7 @@ import {
   ComboLineSingleConfig,
   DashboardFiltersConfig,
   DataSource,
+  isComboChartConfig,
 } from "@/configurator";
 import { Component, Measure } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
@@ -168,9 +169,7 @@ export const ChartFootnotes = ({
 };
 
 const shouldShowChartFootnotesLegend = (chartConfig: ChartConfig) => {
-  return ["comboLineColumn", "comboLineDual", "comboLineSingle"].includes(
-    chartConfig.chartType
-  );
+  return isComboChartConfig(chartConfig);
 };
 
 const ChartFootnotesLegend = ({
