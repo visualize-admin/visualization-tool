@@ -2,10 +2,6 @@ name: GitLab Mirror
 
 on: [push, delete]
 
-# Ensures that only one mirror task will run at a time.
-concurrency:
-  group: to_gitlab
-
 jobs:
   to_gitlab:
     runs-on: ubuntu-latest
