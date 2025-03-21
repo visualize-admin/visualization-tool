@@ -96,6 +96,7 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => {
           : theme.typography.caption.fontSize,
       fontWeight: theme.typography.fontWeightRegular,
       color: theme.palette.grey[700],
+      wordBreak: "break-word",
 
       "&::before": {
         content: "''",

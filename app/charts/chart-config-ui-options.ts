@@ -19,6 +19,7 @@ import {
   AreaConfig,
   BarConfig,
   ChartConfig,
+  ChartSegmentField,
   ChartSubType,
   ChartType,
   ColorScaleType,
@@ -529,7 +530,8 @@ export const defaultSegmentOnChange: OnEncodingChange<
   });
 
   if (chartConfig.fields.segment) {
-    chartConfig.fields.segment.componentId = id;
+    (chartConfig.fields.segment as ChartSegmentField).componentId = id;
+    (chartConfig.fields.segment as ChartSegmentField).showValuesMapping = {};
   } else {
     chartConfig.fields.segment = {
       componentId: id,

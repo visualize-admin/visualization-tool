@@ -19,6 +19,9 @@ You can also check the
   - Valid cube iris in Statistics page (coming from the same data source as the
     environment's default one) are now pointing to Visualize dataset previews
 - Fixes
+  - Changing segmentation dimension now correctly sets underlying chart
+    parameters, which prevents saving wrong chart configuration in a database
+  - Very long words in legend items and multi-filter panel now correctly break
   - Showing segmented values was fixed for some cubes
 - Maintenance
   - Extended maximum URL length in Node to 64KB
