@@ -20,6 +20,10 @@ You can also check the
     environment's default one) are now pointing to Visualize dataset previews
 - Fixes
   - Showing segmented values was fixed for some cubes
+  - Changing filter values when using merged cubes with dimensions with the same
+    iris doesn't change both filters at the same time
+  - Multi-line charts now correctly separate legend items by cube in case
+    working with merged cubes that have dimensions with the same iris
 - Maintenance
   - Extended maximum URL length in Node to 64KB
 
