@@ -45,8 +45,13 @@ export const useCommonComboState = (options: UseCommonComboStateOptions) => {
   const timeFormatUnit = useTimeFormatUnit();
 
   const chartDataByX = useMemo(() => {
-    return groups(chartData, getXAsString).sort();
-  }, [chartData, getXAsString]);
+    return groups(
+      chartData.sort(
+        (a, b) => getXAsDate(a).getTime() - getXAsDate(b).getTime()
+      ),
+      getXAsString
+    );
+  }, [chartData, getXAsDate, getXAsString]);
 
   const chartWideData = useMemo(() => {
     const chartWideData: Observation[] = [];
