@@ -21,7 +21,6 @@ process.env.NEXT_PUBLIC_GITHUB_REPO = pkg.repository.url.replace(
   ""
 );
 // Dynamic NEXTAUTH_URL logic
-const isProduction = process.env.NODE_ENV === "production";
 const isVercelPreview = !!process.env.VERCEL_URL;
 
 // Dynamically set NEXTAUTH_URL
