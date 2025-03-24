@@ -179,6 +179,7 @@
     "@graphql-codegen/typescript-operations": "^1.18.2",
     "@graphql-codegen/typescript-resolvers": "^1.19.4",
     "@graphql-codegen/typescript-urql": "^2.0.9",
+    "@graphql-tools/schema": "^10.0.16",
     "@lingui/cli": "^3.17.2",
     "@lingui/macro": "^3.17.2",
     "@mdx-js/loader": "^1.6.22",

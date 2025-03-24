@@ -1552,12 +1552,24 @@ msgid "flashes.couldnt-load-cube.view-cube-checker"
 msgstr "Voir dans Cube Validator"
 
 #: app/components/footer.tsx
-msgid "footer.institution.name"
-msgstr "Office fédéral de l'environnement OFEV"
+msgid "footer.about_us.label"
+msgstr "À propos de ce portail"
 
 #: app/components/footer.tsx
-msgid "footer.institution.url"
-msgstr "https://www.bafu.admin.ch/bafu/fr/home.html"
+msgid "footer.about_us.text"
+msgstr "Le portail visualize.admin.ch permet de visualiser les Open Government Data suisses fournies par le LINDAS Linked Data Service. Les Open Government Data (OGD) sont des données mises gratuitement à la disposition du public dans un format lisible par ordinateur."
+
+#: app/components/footer.tsx
+msgid "footer.button.lindas"
+msgstr "Services de données liées LINDAS"
+
+#: app/components/footer.tsx
+msgid "footer.contact.title"
+msgstr "Rester informé"
+
+#: app/components/footer.tsx
+msgid "footer.information.title"
+msgstr "Plus d'informations"
 
 #: app/components/footer.tsx
 msgid "footer.statistics"
