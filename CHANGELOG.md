@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.5.0] - 2025-03-24
+
 - Features
   - Added advanced embed options
   - Interactive filters area is now open by default
