@@ -22,6 +22,8 @@ You can also check the
   - Showing segmented values was fixed for some cubes
   - Changing filter values when using merged cubes with dimensions with the same
     iris doesn't change both filters at the same time
+  - Interactive filters for merged cubes should now works correctly, as we scope
+    them per cube now
   - Multi-line charts now correctly separate legend items by cube in case
     working with merged cubes that have dimensions with the same iris
 - Maintenance
