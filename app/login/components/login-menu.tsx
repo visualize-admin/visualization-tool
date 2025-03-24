@@ -5,6 +5,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { MenuActionItem } from "@/components/menu-action-item";
 import { ADFS_PROFILE_URL } from "@/domain/env";
+import { isVercelPreviewHost } from "@/flags/flag";
 import { Icon } from "@/icons";
 import { useUser } from "@/login/utils";
 import { useLocale } from "@/src";
@@ -98,6 +99,7 @@ export const LoginMenu = () => {
         </>
       ) : (
         <Button
+          data-testid="test-sign-in"
           variant="text"
           sx={{
             color: "muted.colored",
@@ -108,7 +110,12 @@ export const LoginMenu = () => {
             },
           }}
           size="small"
-          onClick={() => signIn("adfs")}
+          onClick={() =>
+            isVercelPreviewHost(window.location.host) ||
+            process.env.E2E_ENV === "true"
+              ? signIn("credentials")
+              : signIn("adfs")
+          }
         >
           <Trans id="login.sign-in">Sign in</Trans>
         </Button>

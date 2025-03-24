@@ -10,6 +10,7 @@ import {
 } from "@/charts/shared/imputation";
 import { useObservationLabels } from "@/charts/shared/observation-labels";
 import {
+  AnimationField,
   ChartConfig,
   ChartType,
   Filters,
@@ -18,6 +19,7 @@ import {
   InteractiveFiltersDataConfig,
   InteractiveFiltersLegend,
   InteractiveFiltersTimeRange,
+  isAnimationInConfig,
   MapConfig,
 } from "@/config-types";
 import { getChartConfigFilters } from "@/config-utils";
@@ -51,31 +53,43 @@ import {
 // - merges publisher data filters, interactive data filters, and dashboard filters
 //   if applicable
 // - removes none values since they should not be sent as part of the GraphQL query
-export const prepareCubeQueryFilters = (
-  chartType: ChartType,
-  cubeFilters: Filters,
-  interactiveFiltersConfig: InteractiveFiltersConfig,
-  dashboardFiltersConfig: DashboardFiltersConfig | undefined,
-  interactiveDataFilters: InteractiveFiltersState["dataFilters"],
-  allowNoneValues = false
-): Filters => {
+export const prepareCubeQueryFilters = ({
+  chartType,
+  cubeFilters,
+  animationField,
+  interactiveFiltersConfig,
+  dashboardFilters,
+  interactiveDataFilters,
+  allowNoneValues = false,
+}: {
+  chartType: ChartType;
+  cubeFilters: Filters;
+  animationField: AnimationField | undefined;
+  interactiveFiltersConfig: InteractiveFiltersConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
+  interactiveDataFilters: InteractiveFiltersState["dataFilters"];
+  allowNoneValues?: boolean;
+}): Filters => {
   const queryFilters = { ...cubeFilters };
 
   if (chartType !== "table") {
     for (const [k, v] of Object.entries(
-      dashboardFiltersConfig?.dataFilters.filters ?? {}
+      dashboardFilters?.dataFilters.filters ?? {}
     )) {
       if (
         k in cubeFilters &&
-        dashboardFiltersConfig?.dataFilters.componentIds?.includes(k)
+        dashboardFilters?.dataFilters.componentIds?.includes(k) &&
+        animationField?.componentId !== k
       ) {
         queryFilters[k] = v;
       }
     }
+
     for (const [k, v] of Object.entries(interactiveDataFilters)) {
       if (
-        interactiveFiltersConfig?.dataFilters.active ||
-        dashboardFiltersConfig?.dataFilters.componentIds?.includes(k)
+        (interactiveFiltersConfig?.dataFilters.active ||
+          dashboardFilters?.dataFilters.componentIds?.includes(k)) &&
+        animationField?.componentId !== k
       ) {
         queryFilters[k] = v;
       }
@@ -104,6 +118,9 @@ export const useQueryFilters = ({
   const chartInteractiveFilters = useChartInteractiveFilters(
     (d) => d.dataFilters
   );
+  const animationField = isAnimationInConfig(chartConfig)
+    ? chartConfig.fields.animation
+    : undefined;
 
   return useMemo(() => {
     return chartConfig.cubes.map((cube) => {
@@ -111,24 +128,21 @@ export const useQueryFilters = ({
         cubeIri: cube.iri,
       });
       const cubeFiltersKeys = Object.keys(cubeFilters);
-      // TODO: Currently, in case of two dimensions with the same IRI, the last one wins.
-      // This is a bigger issue we should address in the future, probably by keeping
-      // track of interactive data filters per cube.
-      // Only include data filters that are part of the chart config.
       const cubeInteractiveDataFilters = Object.fromEntries(
         Object.entries(chartInteractiveFilters).filter(([key]) =>
           cubeFiltersKeys.includes(key)
         )
       );
 
-      const preparedFilters = prepareCubeQueryFilters(
-        chartConfig.chartType,
+      const preparedFilters = prepareCubeQueryFilters({
+        chartType: chartConfig.chartType,
         cubeFilters,
-        chartConfig.interactiveFiltersConfig,
+        animationField,
+        interactiveFiltersConfig: chartConfig.interactiveFiltersConfig,
         dashboardFilters,
-        cubeInteractiveDataFilters,
-        allowNoneValues
-      );
+        interactiveDataFilters: cubeInteractiveDataFilters,
+        allowNoneValues,
+      });
 
       const filters: DataCubeObservationFilter = {
         iri: cube.iri,
@@ -144,9 +158,10 @@ export const useQueryFilters = ({
     chartConfig.chartType,
     chartConfig.interactiveFiltersConfig,
     chartInteractiveFilters,
-    componentIds,
+    animationField,
     dashboardFilters,
     allowNoneValues,
+    componentIds,
   ]);
 };
 
@@ -365,28 +380,39 @@ const makeUseParsedVariable =
     return useCallback((d: Observation) => parser(d[key]), [key]);
   };
 
-// retrieving variables
 export const useOptionalNumericVariable = makeUseParsedVariable((x) =>
   x !== null ? Number(x) : null
 );
+
 export const useStringVariable = makeUseParsedVariable((x) =>
   x !== null ? `${x}` : ""
 );
+
 export const useTemporalVariable = makeUseParsedVariable((x) =>
   parseDate(`${x}`)
 );
+
 export const useTemporalEntityVariable = (
   dimensionValues: DimensionValue[]
 ) => {
-  const indexedValues = new Map(dimensionValues.map((d) => [d.label, d]));
-  return makeUseParsedVariable((label) => {
-    const dimensionValue = indexedValues.get(`${label}`);
-    const value = dimensionValue
-      ? getTemporalEntityValue(dimensionValue)
-      : undefined;
+  const indexedValues = useMemo(() => {
+    return new Map(dimensionValues.map((d) => [d.label, d]));
+  }, [dimensionValues]);
 
-    return parseDate(`${value}`);
-  });
+  return useCallback(
+    (key: string) => {
+      return (d: Observation) => {
+        const label = d[key];
+        const dimensionValue = indexedValues.get(`${label}`);
+        const value = dimensionValue
+          ? getTemporalEntityValue(dimensionValue)
+          : undefined;
+
+        return parseDate(`${value}`);
+      };
+    },
+    [indexedValues]
+  );
 };
 
 export const getSegment =
@@ -583,7 +609,7 @@ export const normalizeData = (
 
     return {
       ...d,
-      [key]: 100 * (axisValue ? axisValue / totalGroupValue : axisValue ?? 0),
+      [key]: 100 * (axisValue ? axisValue / totalGroupValue : (axisValue ?? 0)),
       [getIdentityId(key)]: axisValue,
     };
   });

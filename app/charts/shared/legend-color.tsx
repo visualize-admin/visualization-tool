@@ -13,29 +13,38 @@ import { Checkbox, CheckboxProps } from "@/components/form";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { TooltipTitle } from "@/components/tooltip-utils";
-import { useChartConfigFilters } from "@/config-utils";
+import { useChartConfigFilters, useLimits } from "@/config-utils";
 import {
+  AreaConfig,
+  BarConfig,
   ChartConfig,
+  ColumnConfig,
   GenericField,
   isSegmentInConfig,
+  LineConfig,
   MapConfig,
+  PieConfig,
+  ScatterPlotConfig,
   useReadOnlyConfiguratorState,
 } from "@/configurator";
 import {
   Component,
-  Dimension,
   isOrdinalDimension,
   isOrdinalMeasure,
   Measure,
   Observation,
 } from "@/domain/data";
+import { useFormatNumber } from "@/formatters";
+import { Icon } from "@/icons";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
-export type LegendSymbol = "square" | "line" | "circle";
+import { DimensionsById } from "./ChartProps";
+
+export type LegendSymbol = "square" | "line" | "circle" | "cross";
 
 type LegendItemUsage = "legend" | "tooltip" | "colorPicker";
 
@@ -87,11 +96,12 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => {
           : theme.typography.caption.fontSize,
       fontWeight: theme.typography.fontWeightRegular,
       color: theme.palette.grey[700],
+      wordBreak: "break-word",
 
       "&::before": {
         content: "''",
         position: "relative",
-        display: "block",
+        display: ({ symbol }) => (symbol === "cross" ? "none" : "block"),
         width: `calc(0.5rem * var(--size-adjust, 1))`,
         height: ({ symbol }) =>
           `calc(${["square", "circle"].includes(symbol) ? "0.5rem" : "2px"} * var(--size-adjust, 1))`,
@@ -122,21 +132,16 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => {
   };
 });
 
-const emptyObj = {};
-
 const useLegendGroups = ({
   chartConfig,
-  segmentDimension,
   title,
   values,
 }: {
   chartConfig: ChartConfig;
-  segmentDimension?: Dimension;
   title?: string;
   values: string[];
 }) => {
   const configState = useReadOnlyConfiguratorState();
-  const filters = useChartConfigFilters(chartConfig);
 
   if (
     configState.state === "INITIAL" ||
@@ -148,73 +153,104 @@ const useLegendGroups = ({
   const segmentField = (
     isSegmentInConfig(chartConfig) ? chartConfig.fields.segment : null
   ) as GenericField | null | undefined;
-  const segmentFilters = segmentField?.componentId
-    ? filters[segmentField.componentId]
-    : null;
-  const segmentValues =
-    segmentFilters?.type === "multi" ? segmentFilters.values : emptyObj;
 
   return useMemo(() => {
     return getLegendGroups({
       title,
       values,
-      hierarchy: segmentDimension?.hierarchy,
       sort: !!(segmentField && "sorting" in segmentField),
-      labelIris: segmentValues,
     });
-  }, [title, values, segmentDimension?.hierarchy, segmentField, segmentValues]);
+  }, [title, values, segmentField]);
 };
 
-type LegendColorProps = {
-  chartConfig: ChartConfig;
-  segmentDimension?: Dimension;
+export const LegendColor = memo(function LegendColor({
+  chartConfig,
+  symbol,
+  getLegendItemDimension,
+  interactive,
+  showTitle,
+  dimensionsById,
+  limits,
+}: {
+  chartConfig:
+    | AreaConfig
+    | BarConfig
+    | ColumnConfig
+    | LineConfig
+    | PieConfig
+    | ScatterPlotConfig;
   symbol: LegendSymbol;
-  // If the legend is based on measures, this function can be used to get the
-  // corresponding measure to open the metadata panel.
+  /** If the legend is based on measures, this function can be used to get the
+   * corresponding measure to open the metadata panel.
+   **/
   getLegendItemDimension?: (dimensionLabel: string) => Measure | undefined;
   interactive?: boolean;
-};
-
-export const LegendColor = memo(function LegendColor(props: LegendColorProps) {
-  const {
-    chartConfig,
-    segmentDimension,
-    symbol,
-    getLegendItemDimension,
-    interactive,
-  } = props;
+  showTitle?: boolean;
+  dimensionsById?: DimensionsById;
+  limits?: ReturnType<typeof useLimits>["limits"];
+}) {
   const { colors, getColorLabel } = useChartState() as ColorsChartState;
-  const values = colors.domain();
-  const groups = useLegendGroups({ chartConfig, segmentDimension, values });
+  const values =
+    chartConfig.fields.color.type === "segment" ? colors.domain() : [];
+  const groups = useLegendGroups({ chartConfig, values });
+  const segmentComponent =
+    isSegmentInConfig(chartConfig) &&
+    chartConfig.fields.segment &&
+    dimensionsById
+      ? dimensionsById[chartConfig.fields.segment.componentId]
+      : null;
 
   return (
-    <LegendColorContent
-      groups={groups}
-      getColor={(v) => colors(v)}
-      getLabel={getColorLabel}
-      getItemDimension={getLegendItemDimension}
-      symbol={symbol}
-      interactive={interactive}
-      numberOfOptions={values.length}
-    />
+    <div>
+      {showTitle && segmentComponent && (
+        <OpenMetadataPanelWrapper component={segmentComponent}>
+          <Typography
+            data-testid="legendTitle"
+            component="div"
+            variant="caption"
+            color="primary.main"
+          >
+            {segmentComponent.label}
+          </Typography>
+        </OpenMetadataPanelWrapper>
+      )}
+      <LegendColorContent
+        groups={groups}
+        limits={limits?.map(({ configLimit, measureLimit }) => ({
+          label: measureLimit.name,
+          values:
+            measureLimit.type === "single"
+              ? [measureLimit.value]
+              : [measureLimit.from, measureLimit.to],
+          color: configLimit.color,
+          symbol: !configLimit.symbolType ? "line" : configLimit.symbolType,
+        }))}
+        getColor={colors}
+        getLabel={getColorLabel}
+        getItemDimension={getLegendItemDimension}
+        symbol={symbol}
+        interactive={interactive}
+        numberOfOptions={values.length}
+      />
+    </div>
   );
 });
 
 const removeOpacity = (rgb: number[]) => rgb.slice(0, 3);
 
-type MapLegendColorProps = {
+export const MapLegendColor = memo(function LegendColor({
+  component,
+  getColor,
+  useAbbreviations,
+  chartConfig,
+  observations,
+}: {
   component: Component;
   getColor: (d: Observation) => number[];
   useAbbreviations: boolean;
   chartConfig: MapConfig;
   observations: Observation[];
-};
-
-export const MapLegendColor = memo(function LegendColor(
-  props: MapLegendColorProps
-) {
-  const { component, getColor, useAbbreviations, chartConfig, observations } =
-    props;
+}) {
   const filters = useChartConfigFilters(chartConfig);
   const dimensionFilter = filters[component.id];
   const sortedValues = useMemo(() => {
@@ -268,26 +304,30 @@ export const MapLegendColor = memo(function LegendColor(
   );
 });
 
-type LegendColorContentProps = {
+const LegendColorContent = ({
+  groups,
+  limits,
+  getColor,
+  getLabel,
+  getItemDimension,
+  symbol,
+  interactive,
+  numberOfOptions,
+}: {
   groups: ReturnType<typeof useLegendGroups>;
+  limits?: {
+    label: string;
+    values: number[];
+    color: string;
+    symbol: LegendSymbol;
+  }[];
   getColor: (d: string) => string;
   getLabel: (d: string) => string;
   getItemDimension?: (dimensionLabel: string) => Measure | undefined;
   symbol: LegendSymbol;
   interactive?: boolean;
   numberOfOptions: number;
-};
-
-const LegendColorContent = (props: LegendColorContentProps) => {
-  const {
-    groups,
-    getColor,
-    getLabel,
-    getItemDimension,
-    symbol,
-    interactive,
-    numberOfOptions,
-  } = props;
+}) => {
   const classes = useStyles();
   const categories = useChartInteractiveFilters((d) => d.categories);
   const addCategory = useChartInteractiveFilters((d) => d.addCategory);
@@ -309,6 +349,8 @@ const LegendColorContent = (props: LegendColorContentProps) => {
     }
   });
 
+  const formatNumber = useFormatNumber({ decimals: "auto" });
+
   return (
     <Flex
       className={clsx(
@@ -317,8 +359,10 @@ const LegendColorContent = (props: LegendColorContentProps) => {
       )}
     >
       {groups
-        ? groups.map(([g, colorValues]) => {
-            const headerLabelsArray = g.map((n) => n.label);
+        ? groups.map(([g, colorValues], i) => {
+            const isLastGroup = i === groups.length - 1;
+            const headerLabelsArray = g.map((d) => d.label);
+
             return (
               <div
                 className={classes.legendGroup}
@@ -355,9 +399,20 @@ const LegendColorContent = (props: LegendColorContentProps) => {
                       onToggle={handleToggle}
                       checked={interactive && active}
                       disabled={soleItemChecked && active}
+                      usage="legend"
                     />
                   );
                 })}
+                {isLastGroup && limits
+                  ? limits.map(({ label, values, color, symbol }, i) => (
+                      <LegendItem
+                        key={i}
+                        item={`${label}: ${values.map(formatNumber).join("-")}`}
+                        color={color}
+                        symbol={symbol}
+                      />
+                    ))
+                  : null}
               </div>
             );
           })
@@ -388,10 +443,12 @@ export const LegendItem = (props: LegendItemProps) => {
     onToggle,
     checked,
     disabled,
-    usage = "legend",
+    usage: _usage,
   } = props;
+  const usage = _usage ?? "legend";
   const classes = useItemStyles({ symbol, color, usage });
-  const shouldBeBigger = symbol === "circle" || usage === "colorPicker";
+  const shouldBeBigger =
+    (symbol === "circle" && _usage !== "legend") || usage === "colorPicker";
 
   return interactive && onToggle ? (
     <MaybeTooltip
@@ -426,7 +483,14 @@ export const LegendItem = (props: LegendItemProps) => {
     <Flex
       data-testid="legendItem"
       className={clsx(classes.legendItem, shouldBeBigger && classes.bigger)}
+      sx={{
+        alignItems: symbol === "cross" ? "center !important" : "flex-start",
+      }}
     >
+      {/* TODO: Use icons instead of ::before when migrating to new CI / CD */}
+      {symbol === "cross" ? (
+        <Icon size={16} name="close" color={color} />
+      ) : null}
       {dimension ? (
         <OpenMetadataPanelWrapper component={dimension}>
           {/* Account for the added space, to align the symbol and label. */}

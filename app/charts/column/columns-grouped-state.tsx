@@ -23,7 +23,9 @@ import {
   PADDING_WITHIN,
 } from "@/charts/column/constants";
 import {
-  useAxisLabelHeightOffset,
+  AxisLabelSizeVariables,
+  getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -38,6 +40,7 @@ import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
+import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
@@ -67,6 +70,8 @@ export type GroupedColumnsState = CommonChartState &
     getColorLabel: (segment: string) => string;
     grouped: [string, Observation[]][];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useColumnsGroupedState = (
@@ -91,6 +96,8 @@ const useColumnsGroupedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
   } = variables;
   const {
     chartData,
@@ -343,29 +350,31 @@ const useColumnsGroupedState = (
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
     bandDomain: xTimeRangeDomainLabels.every((d) => d === undefined)
       ? xScale.domain()
       : xTimeRangeDomainLabels,
   });
   const right = 40;
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: yMeasure.label,
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
     width,
-    marginLeft: left,
-    marginRight: right,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
   });
   const margins = {
-    top: 70 + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
     right,
     bottom,
     left,
   };
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const chartWidth = getChartWidth({ width, left, right });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
 
-  // Adjust of scales based on chart dimensions
+  // Adjust scales based on chart dimensions
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
   xScaleIn.range([0, xScale.bandwidth()]);
@@ -444,6 +453,8 @@ const useColumnsGroupedState = (
     getColorLabel: getSegmentLabel,
     grouped,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
     ...variables,
   };
 };

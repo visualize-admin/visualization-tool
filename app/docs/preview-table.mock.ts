@@ -857,6 +857,7 @@ export const measures: Measure[] = [
     ],
     unit: "CFU/100mL",
     __typename: "NumericalMeasure",
+    limits: [],
   },
 ];
 

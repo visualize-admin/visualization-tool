@@ -15,7 +15,7 @@ export const columnFields = {
     type: "segment" as const,
     paletteId: "dimension",
     colorMapping: {},
-  }
+  },
 };
 
 export const chartConfig: ColumnConfig = {
@@ -43,6 +43,7 @@ export const chartConfig: ColumnConfig = {
     },
   },
   cubes: [{ iri: "", filters: {} }],
+  limits: {},
   fields: columnFields,
   interactiveFiltersConfig: {
     legend: {

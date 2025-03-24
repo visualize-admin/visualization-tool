@@ -197,6 +197,37 @@ const makeStandardAlertVariant = ({
 });
 
 theme.components = {
+  MuiAccordion: {
+    defaultProps: {
+      disableGutters: true,
+    },
+    styleOverrides: {
+      root: {
+        boxShadow: "none !important",
+        "&::before": {
+          display: "none",
+        },
+      },
+    },
+  },
+  MuiAccordionDetails: {
+    styleOverrides: {
+      root: {
+        padding: 0,
+      },
+    },
+  },
+  MuiAccordionSummary: {
+    defaultProps: {
+      expandIcon: <Icon name="chevronDown" />,
+    },
+    styleOverrides: {
+      root: {
+        alignItems: "center",
+        padding: 0,
+      },
+    },
+  },
   MuiLink: {
     defaultProps: {
       underline: "hover",

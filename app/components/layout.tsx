@@ -4,18 +4,26 @@ import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 
-export const AppLayout = ({ children }: { children?: ReactNode }) => (
-  <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
-    <Header contentId={undefined} />
-    <Flex
-      component="main"
-      role="main"
-      sx={{ flex: 1, flexDirection: "column" }}
-    >
-      {children}
+export const AppLayout = ({
+  children,
+  isOdsIframe,
+}: {
+  children?: ReactNode;
+  isOdsIframe?: boolean;
+}) => {
+  return (
+    <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
+      {isOdsIframe ? null : <Header contentId={undefined} />}
+      <Flex
+        component="main"
+        role="main"
+        sx={{ flex: 1, flexDirection: "column" }}
+      >
+        {children}
+      </Flex>
     </Flex>
-  </Flex>
-);
+  );
+};
 
 export const ContentLayout = ({
   children,

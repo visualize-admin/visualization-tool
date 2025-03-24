@@ -3,6 +3,7 @@ import { toPng, toSvg } from "html-to-image";
 import { addMetadata } from "meta-png";
 import { useCallback, useState } from "react";
 
+import { CHART_SVG_ID } from "@/charts/shared/containers";
 import { TABLE_PREVIEW_WRAPPER_CLASS_NAME } from "@/components/chart-table-preview";
 import { animationFrame } from "@/utils/animation-frame";
 
@@ -127,14 +128,14 @@ const makeScreenshot = async ({
   const tableWrapper = clonedNode.querySelector(
     `.${TABLE_PREVIEW_WRAPPER_CLASS_NAME}`
   ) as HTMLElement | null;
-  const svg = tableWrapper?.querySelector("svg");
-  const svgHeight = svg?.getAttribute("height");
-  const svgParent = svg?.parentElement;
+  const chartSvg = tableWrapper?.querySelector(`#${CHART_SVG_ID}`);
+  const chartSvgHeight = chartSvg?.getAttribute("height");
+  const chartSvgParent = chartSvg?.parentElement;
 
-  if (tableWrapper && svgHeight && svgParent) {
+  if (tableWrapper && chartSvgHeight && chartSvgParent) {
     tableWrapper.style.height = "fit-content";
-    svgParent.style.height = `${svgHeight}px`;
-    svgParent.style.overflow = "visible";
+    chartSvgParent.style.height = `${chartSvgHeight}px`;
+    chartSvgParent.style.overflow = "visible";
   }
 
   await animationFrame();
@@ -181,7 +182,9 @@ const makeScreenshot = async ({
       }
     })
     .catch((error) => console.error(error))
-    .finally(() => wrapperNode.remove());
+    .finally(() => {
+      wrapperNode.remove();
+    });
 };
 
 export const DISABLE_SCREENSHOT_ATTR_KEY = "data-disable-screenshot";

@@ -19,6 +19,7 @@ import {
   AreaConfig,
   BarConfig,
   ChartConfig,
+  ChartSegmentField,
   ChartSubType,
   ChartType,
   ColorScaleType,
@@ -60,7 +61,6 @@ import {
   SEGMENT_ENABLED_COMPONENTS,
 } from "@/domain/data";
 import { getDefaultCategoricalPaletteId, getPalette } from "@/palettes";
-import { theme } from "@/themes/federal";
 
 /**
  * This module controls chart controls displayed in the UI.
@@ -75,13 +75,18 @@ export type EncodingFieldType =
   | MapEncodingFieldType
   | RegularChartEncodingType;
 
-type OnEncodingOptionChange<V, T extends ChartConfig = ChartConfig> = (
+type OnEncodingOptionChange<
+  V,
+  T extends ChartConfig = ChartConfig,
+  F extends GenericField = GenericField,
+> = (
   value: V,
   options: {
     chartConfig: T;
     dimensions: Dimension[];
     measures: Measure[];
     field: EncodingFieldType;
+    oldField: F;
   }
 ) => void;
 
@@ -112,6 +117,13 @@ type EncodingOption<T extends ChartConfig = ChartConfig> =
     }
   | EncodingOptionColorComponent
   | EncodingOptionImputation<T>
+  | {
+      field: "showValues";
+      getDisabledState?: (chartConfig: T) => {
+        disabled: boolean;
+        warnMessage?: string;
+      };
+    }
   | {
       field: "showStandardError";
     }
@@ -255,7 +267,10 @@ export type EncodingSortingOption<T extends ChartConfig = ChartConfig> = {
   };
 };
 
-type OnEncodingChange<T extends ChartConfig = ChartConfig> = (
+type OnEncodingChange<
+  T extends ChartConfig = ChartConfig,
+  F extends GenericField = GenericField,
+> = (
   id: string,
   options: {
     chartConfig: T;
@@ -264,10 +279,14 @@ type OnEncodingChange<T extends ChartConfig = ChartConfig> = (
     initializing: boolean;
     selectedValues: any[];
     field: EncodingFieldType;
+    oldField: F;
   }
 ) => void;
 
-export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
+export interface EncodingSpec<
+  T extends ChartConfig = ChartConfig,
+  F extends GenericField = GenericField,
+> {
   field: EncodingFieldType;
   optional: boolean;
   componentTypes: ComponentType[];
@@ -287,7 +306,7 @@ export interface EncodingSpec<T extends ChartConfig = ChartConfig> {
       "field"
     >;
   };
-  onChange?: OnEncodingChange<T>;
+  onChange?: OnEncodingChange<T, F>;
   getDisabledState?: (
     chartConfig: T,
     components: Component[],
@@ -511,11 +530,13 @@ export const defaultSegmentOnChange: OnEncodingChange<
   });
 
   if (chartConfig.fields.segment) {
-    chartConfig.fields.segment.componentId = id;
+    (chartConfig.fields.segment as ChartSegmentField).componentId = id;
+    (chartConfig.fields.segment as ChartSegmentField).showValuesMapping = {};
   } else {
     chartConfig.fields.segment = {
       componentId: id,
       sorting: DEFAULT_SORTING,
+      showValuesMapping: {},
     };
     chartConfig.fields.color = {
       type: "segment",
@@ -578,6 +599,13 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             paletteId: "schemaCategory10",
             color: schemeCategory10[0],
           },
+          showValues: {
+            getDisabledState: (chartConfig) => {
+              return {
+                disabled: !!chartConfig.fields.segment,
+              };
+            },
+          },
         },
       },
       {
@@ -632,8 +660,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           calculation: {},
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "category10",
+            color: schemeCategory10[0],
           },
           imputation: {
             shouldShow: (chartConfig, data) => {
@@ -676,8 +704,15 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "category10",
+            color: schemeCategory10[0],
+          },
+          showValues: {
+            getDisabledState: (chartConfig) => {
+              return {
+                disabled: !!chartConfig.fields.segment,
+              };
+            },
           },
           showStandardError: {},
           showConfidenceInterval: {},
@@ -728,6 +763,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         onChange: (id, options) => {
           const { chartConfig, dimensions, measures } = options;
           defaultSegmentOnChange(id, options);
+          chartConfig.fields.y.showValues = false;
 
           const components = [...dimensions, ...measures];
           const segment: ColumnSegmentField = get(
@@ -797,8 +833,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           },
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "category10",
+            color: schemeCategory10[0],
           },
           useAbbreviations: {},
         },
@@ -835,6 +871,18 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           }
         },
         options: {
+          colorPalette: {
+            type: "single",
+            paletteId: "category10",
+            color: schemeCategory10[0],
+          },
+          showValues: {
+            getDisabledState: (chartConfig) => {
+              return {
+                disabled: !!chartConfig.fields.segment,
+              };
+            },
+          },
           showStandardError: {},
           showConfidenceInterval: {},
         },
@@ -884,6 +932,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         onChange: (id, options) => {
           const { chartConfig, dimensions, measures } = options;
           defaultSegmentOnChange(id, options);
+          chartConfig.fields.x.showValues = false;
 
           const components = [...dimensions, ...measures];
           const segment: ColumnSegmentField = get(
@@ -972,8 +1021,15 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "category10",
+            color: schemeCategory10[0],
+          },
+          showValues: {
+            getDisabledState: (chartConfig) => {
+              return {
+                disabled: !!chartConfig.fields.segment,
+              };
+            },
           },
           showStandardError: {},
           showConfidenceInterval: {},
@@ -999,8 +1055,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "category10",
+            color: schemeCategory10[0],
           },
           useAbbreviations: {},
         },
@@ -1084,6 +1140,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
+        options: {
+          showValues: {},
+        },
       },
       {
         idAttributes: ["componentId"],
@@ -1096,8 +1155,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "category10",
+            color: schemeCategory10[0],
           },
           useAbbreviations: {},
         },
@@ -1133,8 +1192,8 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         options: {
           colorPalette: {
             type: "single",
-            paletteId: "dimension",
-            color: theme.palette.primary.main,
+            paletteId: "category10",
+            color: schemeCategory10[0],
           },
           useAbbreviations: {},
         },

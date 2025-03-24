@@ -2,12 +2,15 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Link, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import uniqBy from "lodash/uniqBy";
-import { ReactNode, useMemo } from "react";
+import { ComponentProps, ReactNode, useMemo } from "react";
 
 import { extractChartConfigUsedComponents } from "@/charts/shared/chart-helpers";
 import { LegendItem } from "@/charts/shared/legend-color";
 import { ChartFiltersList } from "@/components/chart-filters-list";
-import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import {
+  MetadataPanel,
+  OpenMetadataPanelWrapper,
+} from "@/components/metadata-panel";
 import {
   ChartConfig,
   ComboLineColumnConfig,
@@ -15,6 +18,7 @@ import {
   ComboLineSingleConfig,
   DashboardFiltersConfig,
   DataSource,
+  isComboChartConfig,
 } from "@/configurator";
 import { Component, Measure } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
@@ -50,12 +54,23 @@ export const ChartFootnotes = ({
   dashboardFilters,
   components,
   showVisualizeLink = false,
+  hideFilters,
+  hideMetadata,
+  configKey,
+  metadataPanelProps,
 }: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
   components: Component[];
   showVisualizeLink?: boolean;
+  hideFilters?: boolean;
+  hideMetadata?: boolean;
+  configKey?: string;
+  metadataPanelProps?: Omit<
+    ComponentProps<typeof MetadataPanel>,
+    "dataSource" | "chartConfig" | "dashboardFilters"
+  >;
 }) => {
   const locale = useLocale();
   const usedComponents = useMemo(() => {
@@ -74,50 +89,87 @@ export const ChartFootnotes = ({
     pause: !usedComponents.length,
   });
   const formatLocale = useTimeFormatLocale();
+  const hideLegend = !shouldShowChartFootnotesLegend(chartConfig);
 
   return (
     <Box
       className={CHART_FOOTNOTES_CLASS_NAME}
-      sx={{ mt: 1, "& > :not(:last-child)": { mb: 3 } }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        mt: 1,
+        "& > :not(:last-child)": { mb: 3 },
+      }}
     >
-      {data?.dataCubesMetadata.map((metadata) => (
-        <div key={metadata.iri}>
-          <ChartFootnotesLegend
-            chartConfig={chartConfig}
-            components={components}
-            cubeIri={metadata.iri}
-          />
-          <ChartFiltersList
-            dataSource={dataSource}
-            chartConfig={chartConfig}
-            dashboardFilters={dashboardFilters}
-            components={components}
-            cubeIri={metadata.iri}
-          />
-          <Typography component="span" variant="caption" color="grey.600">
-            <OpenMetadataPanelWrapper>
-              <Trans id="dataset.footnotes.dataset">Dataset</Trans>
-            </OpenMetadataPanelWrapper>
-            : {metadata.title}
-          </Typography>
-          {metadata.dateModified ? (
-            <Typography component="span" variant="caption" color="grey.600">
-              {", "}
-              <Trans id="dataset.footnotes.updated">
-                Latest data update
-              </Trans>:{" "}
-              {formatLocale.format("%d.%m.%Y %H:%M")(
-                new Date(metadata.dateModified)
-              )}
-            </Typography>
-          ) : null}
-        </div>
-      ))}
-      {showVisualizeLink ? (
-        <VisualizeLink createdWith={t({ id: "metadata.link.created.with" })} />
+      {metadataPanelProps ? (
+        <MetadataPanel
+          dataSource={dataSource}
+          chartConfig={chartConfig}
+          dashboardFilters={dashboardFilters}
+          {...metadataPanelProps}
+          smallerToggle
+        />
+      ) : null}
+      {data?.dataCubesMetadata.map((metadata) => {
+        const hide = hideLegend && hideMetadata && hideFilters;
+
+        return hide ? null : (
+          <div key={metadata.iri}>
+            <ChartFootnotesLegend
+              chartConfig={chartConfig}
+              components={components}
+              cubeIri={metadata.iri}
+            />
+            {hideFilters ? null : (
+              <ChartFiltersList
+                dataSource={dataSource}
+                chartConfig={chartConfig}
+                dashboardFilters={dashboardFilters}
+                components={components}
+                cubeIri={metadata.iri}
+              />
+            )}
+            {hideMetadata ? null : (
+              <>
+                <Typography component="span" variant="caption" color="grey.600">
+                  <OpenMetadataPanelWrapper>
+                    <Trans id="dataset.footnotes.dataset">Dataset</Trans>
+                  </OpenMetadataPanelWrapper>
+                  : {metadata.title}
+                </Typography>
+                {metadata.dateModified ? (
+                  <Typography
+                    component="span"
+                    variant="caption"
+                    color="grey.600"
+                  >
+                    {", "}
+                    <Trans id="dataset.footnotes.updated">
+                      Latest data update
+                    </Trans>
+                    :{" "}
+                    {formatLocale.format("%d.%m.%Y %H:%M")(
+                      new Date(metadata.dateModified)
+                    )}
+                  </Typography>
+                ) : null}
+              </>
+            )}
+          </div>
+        );
+      })}
+      {showVisualizeLink && configKey ? (
+        <VisualizeLink
+          configKey={configKey}
+          createdWith={t({ id: "metadata.link.created.with" })}
+        />
       ) : null}
     </Box>
   );
+};
+
+const shouldShowChartFootnotesLegend = (chartConfig: ChartConfig) => {
+  return isComboChartConfig(chartConfig);
 };
 
 const ChartFootnotesLegend = ({
@@ -129,6 +181,10 @@ const ChartFootnotesLegend = ({
   components: Component[];
   cubeIri: string;
 }) => {
+  if (!shouldShowChartFootnotesLegend(chartConfig)) {
+    return null;
+  }
+
   switch (chartConfig.chartType) {
     case "comboLineColumn": {
       return (
@@ -166,7 +222,13 @@ const ChartFootnotesLegendContainer = ({
 }: {
   children: React.ReactNode;
 }) => {
-  return <Box sx={{ display: "flex", gap: 3, mb: 1 }}>{children}</Box>;
+  return (
+    <Box
+      sx={{ display: "flex", flexWrap: "wrap", rowGap: 1, columnGap: 3, mb: 1 }}
+    >
+      {children}
+    </Box>
+  );
 };
 
 const ChartFootnotesComboLineColumn = ({
@@ -289,14 +351,20 @@ const ChartFootnotesComboLineSingle = ({
   ) : null;
 };
 
-export const VisualizeLink = ({ createdWith }: { createdWith: ReactNode }) => {
+export const VisualizeLink = ({
+  createdWith,
+  configKey,
+}: {
+  createdWith: ReactNode;
+  configKey: string;
+}) => {
   const locale = useLocale();
 
   return (
     <Typography variant="caption" color="grey.600" {...DISABLE_SCREENSHOT_ATTR}>
       {createdWith}
       <Link
-        href={`https://visualize.admin.ch/${locale}/`}
+        href={`https://visualize.admin.ch/${locale}/v/${configKey}`}
         target="_blank"
         rel="noopener noreferrer"
         color="primary.main"

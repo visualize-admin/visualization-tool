@@ -144,6 +144,7 @@ import { default as TableColumnTime } from "@/icons/components/IcTableColumnTime
 import { default as TableColumnTimeHidden } from "@/icons/components/IcTableColumnTimeHidden";
 import { default as TabletLandscape } from "@/icons/components/IcTabletLandscape";
 import { default as TabletPortrait } from "@/icons/components/IcTabletPortrait";
+import { default as Target } from "@/icons/components/IcTarget";
 import { default as Template } from "@/icons/components/IcTemplate";
 import { default as Text } from "@/icons/components/IcText";
 import { default as Time } from "@/icons/components/IcTime";
@@ -307,6 +308,7 @@ export const Icons = {
   tableColumnTimeHidden: TableColumnTimeHidden,
   tabletLandscape: TabletLandscape,
   tabletPortrait: TabletPortrait,
+  target: Target,
   template: Template,
   text: Text,
   time: Time,

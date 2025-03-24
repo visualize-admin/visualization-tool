@@ -1,27 +1,52 @@
 import { axisBottom } from "d3-axis";
 import { useEffect, useRef } from "react";
 
+import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
+import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import { ColumnsState } from "@/charts/column/columns-state";
 import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
+import { useXAxisTitleOffset } from "@/charts/shared/chart-dimensions";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   maybeTransition,
   renderContainer,
 } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useTimeFormatUnit } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
 
 export const AxisWidthBand = () => {
   const ref = useRef<SVGGElement>(null);
-  const state = useChartState() as ColumnsState | ComboLineColumnState;
-  const { xScale, getXLabel, xTimeUnit, yScale, bounds } = state;
+  const {
+    xScale,
+    getXLabel,
+    xDimension,
+    xTimeUnit,
+    yScale,
+    bounds,
+    xAxisLabel,
+    bottomAxisLabelSize,
+  } = useChartState() as
+    | ColumnsState
+    | StackedColumnsState
+    | GroupedColumnsState
+    | ComboLineColumnState;
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDate = useTimeFormatUnit();
-  const { chartHeight, margins } = bounds;
-  const { labelColor, gridColor, labelFontSize, fontFamily, domainColor } =
-    useChartTheme();
+  const { chartHeight, chartWidth, margins } = bounds;
+
+  const xAxisTitleOffset = useXAxisTitleOffset(xScale, getXLabel, xTimeUnit);
+
+  const {
+    labelColor,
+    gridColor,
+    labelFontSize,
+    fontFamily,
+    axisLabelFontSize,
+    domainColor,
+  } = useChartTheme();
 
   useEffect(() => {
     if (ref.current) {
@@ -83,7 +108,22 @@ export const AxisWidthBand = () => {
     yScale,
   ]);
 
-  return <g ref={ref} />;
+  return (
+    <>
+      <foreignObject
+        x={margins.left + chartWidth / 2 - bottomAxisLabelSize.width / 2}
+        y={margins.top + chartHeight + xAxisTitleOffset + 8}
+        width={chartWidth}
+        height={bottomAxisLabelSize.height}
+        style={{ display: "flex" }}
+      >
+        <OpenMetadataPanelWrapper component={xDimension}>
+          <span style={{ fontSize: axisLabelFontSize }}>{xAxisLabel}</span>
+        </OpenMetadataPanelWrapper>
+      </foreignObject>
+      <g ref={ref} />
+    </>
+  );
 };
 
 export const AxisWidthBandDomain = () => {

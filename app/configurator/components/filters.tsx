@@ -52,6 +52,7 @@ import {
   getFilterValue,
   isConfiguring,
   MultiFilterContextProvider,
+  shouldEnableSettingShowValuesBySegment,
   useConfiguratorState,
   useMultiFilterContext,
 } from "@/configurator";
@@ -62,13 +63,15 @@ import {
 import {
   dimensionToFieldProps,
   MostRecentDateSwitch,
-  MultiFilterFieldColorPicker,
+  MultiFilterField,
+  ShowValuesMappingField,
   SingleFilterField,
 } from "@/configurator/components/field";
 import {
   canRenderDatePickerField,
   DatePickerField,
 } from "@/configurator/components/field-date-picker";
+import { useLegendTitleVisibility } from "@/configurator/configurator-state/segment-config-state";
 import { EditorBrush } from "@/configurator/interactive-filters/editor-brush";
 import {
   useInteractiveFiltersToggle,
@@ -101,11 +104,10 @@ import {
   pruneTree,
   sortHierarchy,
 } from "@/rdf/tree-utils";
+import { interlace } from "@/utils/interlace";
 import { valueComparator } from "@/utils/sorting-values";
+import { getTimeFilterOptions } from "@/utils/time-filter-options";
 import useEvent from "@/utils/use-event";
-
-import { interlace } from "../../utils/interlace";
-import { getTimeFilterOptions } from "../../utils/time-filter-options";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -162,9 +164,9 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     selectedValueRow: {
       display: "flex",
-      alignItems: "flex-start",
+      alignItems: "center",
       marginBottom: "0.5rem",
-      gap: "0.5rem",
+      gap: "1rem",
     },
   };
 });
@@ -233,7 +235,7 @@ export const getHasColorMapping = ({
     (colorConfig?.type === "single" ? false : colorConfig?.colorMapping) &&
     (colorComponent !== undefined
       ? filterDimensionId === colorComponent.id
-      : true)
+      : false)
   );
 };
 
@@ -346,52 +348,82 @@ const MultiFilterContent = ({
       filterDimensionId: dimensionId,
     });
   }, [colorConfig, dimensionId, colorComponent]);
-
   useEnsureUpToDateColorMapping({
     colorComponentValues: colorComponent?.values,
     colorMapping:
       colorConfig?.type !== "single" ? colorConfig?.colorMapping : undefined,
   });
 
+  const enableSettingShowValuesBySegment =
+    chartConfig.activeField === "segment" &&
+    shouldEnableSettingShowValuesBySegment(chartConfig);
+
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
+  const visibleLegendProps = useLegendTitleVisibility();
   const chartSymbol = getChartSymbol(chartConfig.chartType);
 
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
-        <Box sx={{ justifyContent: "space-between", display: "flex" }}>
+        <Box
+          sx={{
+            justifyContent: "space-between",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           {chartConfig.activeField === "segment" ? (
-            <FormControlLabel
-              componentsProps={{ typography: { variant: "body2" } }}
-              control={<Switch {...interactiveFilterProps} />}
-              label={
-                <MaybeTooltip
-                  tooltipProps={{ enterDelay: 600 }}
-                  title={
-                    <TooltipTitle
-                      text={
-                        <Trans id="controls.filters.interactive.tooltip">
-                          Allow users to change filters
-                        </Trans>
+            <>
+              <Flex sx={{ py: 1, alignItems: "center", width: "100%" }}>
+                <FormControlLabel
+                  componentsProps={{ typography: { variant: "body2" } }}
+                  control={<Switch {...interactiveFilterProps} />}
+                  label={
+                    <MaybeTooltip
+                      tooltipProps={{ enterDelay: 600 }}
+                      title={
+                        <TooltipTitle
+                          text={
+                            <Trans id="controls.filters.interactive.tooltip">
+                              Allow users to change filters
+                            </Trans>
+                          }
+                        />
                       }
-                    />
+                    >
+                      <div>
+                        <Trans id="controls.filters.interactive.toggle">
+                          Interactive
+                        </Trans>
+                      </div>
+                    </MaybeTooltip>
                   }
-                >
-                  <div>
-                    <Trans id="controls.filters.interactive.toggle">
-                      Interactive
+                />
+              </Flex>
+              <Flex sx={{ py: 1, alignItems: "center", width: "100%" }}>
+                <FormControlLabel
+                  componentsProps={{ typography: { variant: "body2" } }}
+                  control={<Switch {...visibleLegendProps} />}
+                  label={
+                    <Trans id="controls.filters.show-legend.toggle">
+                      Show legend titles
                     </Trans>
-                  </div>
-                </MaybeTooltip>
-              }
-            />
+                  }
+                />
+              </Flex>
+            </>
           ) : null}
           <Button
             variant="contained"
             size="small"
             color="primary"
             onClick={handleOpenAutocomplete}
-            sx={{ justifyContent: "center", mb: 2 }}
+            sx={{
+              justifyContent: "center",
+              mt: 4,
+              mb: 2,
+              width: "fit-content",
+            }}
           >
             <Trans id="controls.set-filters">Edit filters</Trans>
           </Button>
@@ -446,16 +478,20 @@ const MultiFilterContent = ({
                   data-testid="chart-filters-value"
                 >
                   {hasColorMapping ? (
-                    <MultiFilterFieldColorPicker
+                    <MultiFilterField
                       value={value}
                       label={label}
                       symbol={chartSymbol}
+                      enableShowValue={enableSettingShowValuesBySegment}
                     />
                   ) : (
                     <>
                       <Typography variant="body2" style={{ flexGrow: 1 }}>
                         {label}
                       </Typography>
+                      {enableSettingShowValuesBySegment ? (
+                        <ShowValuesMappingField value={value} />
+                      ) : null}
                       <SvgIcCheck />
                     </>
                   )}
@@ -486,8 +522,8 @@ const MultiFilterContent = ({
  * and contains new values in the color dimension.
  * */
 const useEnsureUpToDateColorMapping = ({
-  colorComponentValues = [],
-  colorMapping = {},
+  colorComponentValues,
+  colorMapping,
 }: {
   colorComponentValues?: DimensionValue[];
   colorMapping?: ColorMapping;
@@ -498,31 +534,36 @@ const useEnsureUpToDateColorMapping = ({
   const { activeField } = chartConfig;
 
   const hasOutdatedMapping = useMemo(() => {
-    return colorComponentValues.some((value) => !colorMapping[value.value]);
+    return colorMapping && colorComponentValues
+      ? colorComponentValues.some((value) => !colorMapping[value.value])
+      : false;
   }, [colorComponentValues, colorMapping]);
 
+  const field = isColorInConfig(chartConfig) ? "color" : activeField;
+
   useEffect(() => {
-    if (activeField && hasOutdatedMapping) {
+    if (hasOutdatedMapping && colorMapping && colorComponentValues && field) {
       dispatch({
         type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
         value: {
           dimensionId,
           colorConfigPath,
           colorMapping,
-          field: activeField,
+          field,
           values: colorComponentValues,
           random: false,
         },
       });
     }
   }, [
+    field,
+    chartConfig,
     hasOutdatedMapping,
     dispatch,
     dimensionId,
     colorConfigPath,
     colorMapping,
     colorComponentValues,
-    activeField,
   ]);
 };
 
@@ -561,7 +602,6 @@ const TreeAccordionSummary = styled(AccordionSummary)(({ theme }) => ({
     minHeight: 0,
   },
   "& > .MuiAccordionSummary-content": {
-    alignItems: "center",
     marginTop: 0,
     marginBottom: 0,
     minHeight: 32,
@@ -940,9 +980,9 @@ export const DimensionValuesMultiFilter = ({
   const chartConfig = getChartConfig(state);
   const getValueColor = useEvent((value: string) => {
     const colorPath = getPathToColorConfigProperty({
-      field,
+      field: isColorInConfig(chartConfig) ? "color" : field,
       colorConfigPath,
-      propertyPath: `colorMapping["${value}"]`,
+      propertyPath: `["${value}"]`,
     });
     return get(chartConfig, colorPath);
   });

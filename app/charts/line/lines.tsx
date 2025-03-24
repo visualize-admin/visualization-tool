@@ -1,15 +1,17 @@
-import { bisector } from "d3-array";
 import { line } from "d3-shape";
 import { Fragment, memo, useEffect, useMemo, useRef } from "react";
 
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
+import { renderTotalValueLabels } from "@/charts/shared/render-value-labels";
 import {
-  RenderVerticalWhiskerDatum,
   renderContainer,
+  RenderVerticalWhiskerDatum,
   renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
-import { LineConfig } from "@/config-types";
+import { useRenderTemporalValueLabelsData } from "@/charts/shared/show-values-utils";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { LineConfig, LineFields } from "@/config-types";
 import { Observation } from "@/domain/data";
 import { useTransitionStore } from "@/stores/transition";
 
@@ -86,9 +88,16 @@ export const ErrorWhiskers = () => {
   return <g ref={ref} />;
 };
 
-export const Lines = () => {
+export const Lines = ({
+  dotSize,
+}: {
+  dotSize?: LineFields["y"]["showDotsSize"];
+}) => {
   const { getX, xScale, getY, yScale, grouped, colors, bounds } =
     useChartState() as LinesState;
+  const { margins } = bounds;
+  const { labelFontSize, fontFamily } = useChartTheme();
+  const valueLabelsContainerRef = useRef<SVGGElement>(null);
 
   const lineGenerator = line<Observation>()
     .defined((d) => {
@@ -98,19 +107,43 @@ export const Lines = () => {
     .x((d) => xScale(getX(d)))
     .y((d) => yScale(getY(d) as number));
 
+  const valueLabelsData = useRenderTemporalValueLabelsData();
+
+  useEffect(() => {
+    if (valueLabelsContainerRef.current) {
+      renderContainer(valueLabelsContainerRef.current, {
+        id: "lines-value-labels",
+        transform: "translate(0, 0)",
+        transition: {
+          enable: false,
+          duration: 0,
+        },
+        render: (g, opts) =>
+          renderTotalValueLabels(g, valueLabelsData, {
+            ...opts,
+            rotate: false,
+            fontFamily,
+            fontSize: labelFontSize,
+          }),
+      });
+    }
+  }, [margins.left, margins.top, valueLabelsData, labelFontSize, fontFamily]);
+
   return (
-    <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>
-      {Array.from(grouped).map((observation, index) => {
+    <g transform={`translate(${margins.left} ${margins.top})`}>
+      {Array.from(grouped).map((observation, i) => {
         return (
           <Fragment key={observation[0]}>
             <Line
-              key={index}
+              key={i}
               path={lineGenerator(observation[1]) as string}
               color={colors(observation[0])}
             />
           </Fragment>
         );
       })}
+      <Points dotSize={dotSize} />
+      <g ref={valueLabelsContainerRef} />
     </g>
   );
 };
@@ -122,7 +155,7 @@ const Line = memo(function Line({
   path: string;
   color: string;
 }) {
-  return <path d={path} stroke={color} fill="none" />;
+  return <path data-testid="chart-line" d={path} stroke={color} fill="none" />;
 });
 
 const getPointRadius = (dotSize: LineConfig["fields"]["y"]["showDotsSize"]) => {
@@ -141,32 +174,21 @@ const getPointRadius = (dotSize: LineConfig["fields"]["y"]["showDotsSize"]) => {
   }
 };
 
-export const Points = ({
-  dotSize,
-}: {
-  dotSize: LineConfig["fields"]["y"]["showDotsSize"];
-}) => {
+const Points = ({ dotSize }: { dotSize: LineFields["y"]["showDotsSize"] }) => {
   const { getX, xScale, getY, yScale, bounds, chartData, getSegment, colors } =
     useChartState() as LinesState;
+  const { chartHeight, width } = bounds;
+  const dots = useMemo(() => {
+    return chartData.map((d) => {
+      const x = xScale(getX(d));
+      const y = yScale(getY(d) as number);
+      const fill = colors(getSegment(d));
 
-  const { margins, chartHeight, width } = bounds;
-
-  const ticksPos = useMemo(() => {
-    return xScale.ticks(bounds.chartWidth / 90).map((tick) => {
-      const x = xScale(tick);
-      const date = xScale.invert(x);
-
-      const bisectDate = bisector(
-        (d: Observation, date: Date) => getX(d).getTime() - date.getTime()
-      ).center;
-
-      const i = bisectDate(chartData, date, 0);
-      const y = yScale(getY(chartData[i]) as number);
-
-      const segment = getSegment(chartData[i]);
-      const color = colors(segment);
-
-      return { x, y, color };
+      return {
+        x,
+        y,
+        fill,
+      };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -184,12 +206,12 @@ export const Points = ({
     return null;
   }
 
-  const radius = getPointRadius(dotSize);
+  const r = getPointRadius(dotSize);
 
   return (
-    <g transform={`translate(${margins.left} ${margins.top})`}>
-      {ticksPos.map(({ x, y, color }, i) => (
-        <circle key={i} cx={x} cy={y} r={radius} fill={color} />
+    <g>
+      {dots.map(({ x, y, fill }, i) => (
+        <circle key={i} cx={x} cy={y} r={r} fill={fill} />
       ))}
     </g>
   );

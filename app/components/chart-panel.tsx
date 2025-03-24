@@ -13,10 +13,13 @@ import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import { useSyncTextBlockHeight } from "@/components/text-block";
 import { Layout, LayoutDashboard } from "@/config-types";
-import { hasChartConfigs, isLayouting, LayoutBlock } from "@/configurator";
+import { hasChartConfigs, LayoutBlock } from "@/configurator";
 import { useConfiguratorState } from "@/src";
 
-const useStyles = makeStyles<Theme, { editable?: boolean }>((theme) => ({
+const useStyles = makeStyles<
+  Theme,
+  { freeCanvas?: boolean; isEditing?: boolean }
+>((theme) => ({
   panelLayout: {
     containerType: "inline-size",
     display: "flex",
@@ -24,7 +27,7 @@ const useStyles = makeStyles<Theme, { editable?: boolean }>((theme) => ({
     gap: theme.spacing(4),
   },
   chartWrapper: {
-    display: "flex",
+    display: ({ freeCanvas }) => (freeCanvas ? "flex" : "contents"),
     flexDirection: "column",
     overflow: "hidden",
     [`.${chartPanelLayoutGridClasses.root} &`]: {
@@ -38,7 +41,9 @@ const useStyles = makeStyles<Theme, { editable?: boolean }>((theme) => ({
       },
   },
   chartWrapperInner: {
-    display: "contents",
+    display: ({ freeCanvas, isEditing }) =>
+      isEditing || !freeCanvas ? "contents" : "flex",
+    flexDirection: "column",
     width: "auto",
     height: "100%",
   },
@@ -49,14 +54,17 @@ export const getChartWrapperId = (chartKey: string) =>
 
 export type ChartWrapperProps = BoxProps & {
   editing?: boolean;
-  layoutType?: Layout["type"];
+  layout?: Layout;
   chartKey: string;
 };
 
 export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
   (props, ref) => {
-    const { children, editing, layoutType, ...rest } = props;
-    const classes = useStyles({});
+    const { children, editing, layout, ...rest } = props;
+    const classes = useStyles({
+      freeCanvas: layout?.type === "dashboard" && layout.layout === "canvas",
+      isEditing: editing,
+    });
 
     return (
       <Box
@@ -65,7 +73,7 @@ export const ChartWrapper = forwardRef<HTMLDivElement, ChartWrapperProps>(
         id={getChartWrapperId(props.chartKey)}
         className={clsx(classes.chartWrapper, props.className)}
       >
-        {(editing || layoutType === "tab") && <ChartSelectionTabs />}
+        {(editing || layout?.type === "tab") && <ChartSelectionTabs />}
         <Box
           className={classes.chartWrapperInner}
           sx={{ minHeight: [150, 300, 500] }}
@@ -106,8 +114,7 @@ export const ChartPanelLayout = ({
   ...rest
 }: ChartPanelLayoutProps) => {
   const [state] = useConfiguratorState(hasChartConfigs);
-  const layouting = isLayouting(state);
-  const classes = useStyles({ editable: layouting });
+  const classes = useStyles({});
   const Wrapper = Wrappers[layoutType];
   const { layout } = state;
   const { blocks } = layout;

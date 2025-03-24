@@ -1,5 +1,5 @@
 import { Box, Card } from "@mui/material";
-import { Transition, motion } from "framer-motion";
+import { motion, Transition } from "framer-motion";
 
 export const MotionBox = motion(Box);
 export const MotionCard = motion(Card) as typeof Card;

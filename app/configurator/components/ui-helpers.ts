@@ -7,7 +7,12 @@ import { useMemo } from "react";
 import { match } from "ts-pattern";
 
 import type { BaseChartProps } from "@/charts/shared/ChartProps";
-import { ColorMapping, TableColumn, TableFields } from "@/config-types";
+import {
+  ColorMapping,
+  CustomPaletteType,
+  TableColumn,
+  TableFields,
+} from "@/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   Component,
@@ -272,26 +277,31 @@ export const mapValueIrisToColor = ({
   dimensionValues,
   colorMapping: oldColorMapping,
   random,
+  customPalette,
 }: {
   paletteId: string;
   dimensionValues: DimensionValue[];
   colorMapping?: ColorMapping;
   random?: boolean;
+  customPalette?: CustomPaletteType;
 }) => {
   if (!dimensionValues) {
     return {};
   }
 
-  const paletteValues = getPalette({ paletteId });
+  const paletteValues = customPalette?.colors || getPalette({ paletteId });
+
   const colors = dimensionValues.map(
     (d, i) =>
       (paletteId === "dimension" && d.color) ||
       oldColorMapping?.[`${d.value}`] ||
       paletteValues[i % paletteValues.length]
   );
+
   const colorScale = scaleOrdinal<string, string>()
     .domain(dimensionValues.map((d) => `${d.value}`))
     .range(random ? [...colors].sort(randomComparator) : colors);
+
   const colorMapping = {} as { [k: string]: string };
   dimensionValues.forEach((d) => {
     colorMapping[`${d.value}`] = colorScale(`${d.value}`);

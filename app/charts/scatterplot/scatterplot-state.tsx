@@ -1,5 +1,5 @@
 import { max } from "d3-array";
-import { ScaleLinear, ScaleOrdinal, scaleLinear, scaleOrdinal } from "d3-scale";
+import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
 import { useMemo } from "react";
@@ -10,7 +10,9 @@ import {
   useScatterplotStateVariables,
 } from "@/charts/scatterplot//scatterplot-state-props";
 import {
-  useAxisLabelHeightOffset,
+  AxisLabelSizeVariables,
+  getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -21,6 +23,7 @@ import {
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import { TooltipScatterplot } from "@/charts/shared/interaction/tooltip-content";
+import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { ScatterPlotConfig, SortingField } from "@/configurator";
@@ -45,6 +48,8 @@ export type ScatterplotState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useScatterplotState = (
@@ -138,7 +143,7 @@ const useScatterplotState = (
         label: segment,
         color:
           fields.color.type === "segment"
-            ? fields.color.colorMapping![dvIri] ?? schemeCategory10[0]
+            ? (fields.color.colorMapping![dvIri] ?? schemeCategory10[0])
             : schemeCategory10[0],
       };
     });
@@ -156,34 +161,31 @@ const useScatterplotState = (
   }
   // Dimensions
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
   });
   const right = 40;
-  const { offset: xAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: xAxisLabel,
-    width,
-    marginLeft: left,
-    marginRight: right,
-  });
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
     label: yAxisLabel,
     width,
-    marginLeft: left,
-    marginRight: right,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
   });
   const margins = {
-    top: 75 + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
     right,
-    bottom: bottom + xAxisLabelMargin,
+    bottom: bottom + bottomAxisLabelSize.offset,
     left,
   };
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const chartWidth = getChartWidth({ width, left, right });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
@@ -247,6 +249,8 @@ const useScatterplotState = (
     colors,
     getColorLabel: getSegmentLabel,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
     ...variables,
   };
 };

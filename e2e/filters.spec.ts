@@ -56,12 +56,11 @@ describe("Filters", () => {
     page,
     actions,
     selectors,
-    within,
   }) => {
     test.slow();
 
     await page.goto(
-      "/en/create/new?cube=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/5&dataSource=Prod"
+      "/en/create/new?cube=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10&dataSource=Prod"
     );
     await selectors.chart.loaded();
     await selectors.edition.drawerLoaded();
@@ -84,5 +83,36 @@ describe("Filters", () => {
       await page.getByRole("button", { name: year, exact: true });
     }
     await page.getByRole("button", { name: "2014", exact: true }).click();
+  });
+  test("Show legend titles, should toggle legend titles visibility", async ({
+    page,
+    actions,
+    selectors,
+  }) => {
+    await page.goto(
+      "/en/create/new?cube=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10&dataSource=Prod"
+    );
+    await selectors.chart.loaded();
+
+    await actions.editor.selectActiveField("Segmentation");
+
+    await selectors.edition.drawerLoaded();
+
+    await (await selectors.panels.drawer().within().findByText("None")).click();
+
+    await actions.mui.selectOption("Kanton");
+
+    const legend = page.locator('[data-testid="legendTitle"]');
+
+    await legend.waitFor({ state: "hidden", timeout: 5000 });
+    await expect(legend).toHaveCount(0);
+
+    await (
+      await selectors.panels.drawer().within().findByText("Show legend titles")
+    ).click();
+
+    expect(legend).toHaveCount(1);
+
+    await page.waitForTimeout(1000);
   });
 });

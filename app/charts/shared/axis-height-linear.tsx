@@ -9,7 +9,6 @@ import type { ColumnsState } from "@/charts/column/columns-state";
 import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import type { LinesState } from "@/charts/line/lines-state";
 import type { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { useAxisLabelHeightOffset } from "@/charts/shared/chart-dimensions";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   maybeTransition,
@@ -21,64 +20,50 @@ import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
-import { getTextWidth } from "@/utils/get-text-width";
 
 export const TICK_PADDING = 6;
 
 export const AxisHeightLinear = () => {
   const { gridColor, labelColor, axisLabelFontSize } = useChartTheme();
   const [ref, setRef] = useState<SVGGElement | null>(null);
-  const state = useChartState() as
-    | AreasState
-    | ColumnsState
-    | GroupedColumnsState
-    | StackedColumnsState
-    | LinesState
-    | ScatterplotState
-    | ComboLineSingleState;
-  const axisTitleWidth =
-    getTextWidth(state.yAxisLabel, {
-      fontSize: axisLabelFontSize,
-    }) + TICK_PADDING;
+  const { yScale, bounds, yAxisLabel, leftAxisLabelSize, ...rest } =
+    useChartState() as
+      | AreasState
+      | ColumnsState
+      | GroupedColumnsState
+      | StackedColumnsState
+      | LinesState
+      | ScatterplotState
+      | ComboLineSingleState;
 
   useRenderAxisHeightLinear(ref, {
     id: "axis-height-linear",
     orientation: "left",
-    scale: state.yScale,
-    width: state.bounds.chartWidth,
-    height: state.bounds.chartHeight,
-    margins: state.bounds.margins,
+    scale: yScale,
+    width: bounds.chartWidth,
+    height: bounds.chartHeight,
+    margins: bounds.margins,
     lineColor: gridColor,
     textColor: labelColor,
   });
 
-  const { height } = useAxisLabelHeightOffset({
-    label: state.yAxisLabel,
-    width: state.bounds.chartWidth,
-    marginLeft: state.bounds.margins.left,
-    marginRight: state.bounds.margins.right,
-  });
-
   return (
     <>
-      {state.chartType === "comboLineSingle" ? (
+      {rest.chartType === "comboLineSingle" ? (
         <text
           y={axisLabelFontSize}
           style={{ fontSize: axisLabelFontSize, fill: "black" }}
         >
-          {state.yAxisLabel}
+          {yAxisLabel}
         </text>
       ) : (
         <foreignObject
-          width={Math.min(axisTitleWidth, state.bounds.chartWidth)}
-          height={height}
-          y={30}
+          width={leftAxisLabelSize.width}
+          height={leftAxisLabelSize.height}
           style={{ display: "flex" }}
         >
-          <OpenMetadataPanelWrapper component={state.yMeasure}>
-            <span style={{ fontSize: axisLabelFontSize }}>
-              {state.yAxisLabel}
-            </span>
+          <OpenMetadataPanelWrapper component={rest.yMeasure}>
+            <span style={{ fontSize: axisLabelFontSize }}>{yAxisLabel}</span>
           </OpenMetadataPanelWrapper>
         </foreignObject>
       )}

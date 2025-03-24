@@ -6,10 +6,14 @@ import { Transition } from "d3-transition";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { AreasState } from "@/charts/area/areas-state";
+import type { BarsState } from "@/charts/bar/bars-state";
 import type { ColumnsState } from "@/charts/column/columns-state";
 import type { LinesState } from "@/charts/line/lines-state";
 import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
-import type { ChartWithInteractiveXTimeRangeState } from "@/charts/shared/chart-state";
+import type {
+  ChartWithInteractiveXTimeRangeState,
+  ChartWithInteractiveYTimeRangeState,
+} from "@/charts/shared/chart-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import {
@@ -61,6 +65,7 @@ export const BrushTime = () => {
   const setTimeRange = useChartInteractiveFilters((d) => d.setTimeRange);
   const getInteractiveFiltersState = useInteractiveFiltersGetState();
   const setEnableTransition = useTransitionStore((d) => d.setEnable);
+  const setBrushing = useTransitionStore((d) => d.setBrushing);
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
   const [selectionExtent, setSelectionExtent] = useState(0);
   const updateSelectionExtent = (selection: [number, number] | undefined) => {
@@ -70,8 +75,6 @@ export const BrushTime = () => {
       setSelectionExtent(0);
     }
   };
-
-  const { from, to } = timeRange;
   const {
     brushOverlayColor,
     brushSelectionColor,
@@ -79,10 +82,21 @@ export const BrushTime = () => {
     brushHandleFillColor,
     labelFontSize,
   } = useChartTheme();
-  const { chartType, bounds, xScaleTimeRange, xDimension } =
+  const { bounds, xScaleTimeRange, xDimension } =
     useChartState() as ChartWithInteractiveXTimeRangeState;
+  const { chartType } = useChartState() as
+    | ChartWithInteractiveYTimeRangeState
+    | ChartWithInteractiveXTimeRangeState;
+  const { yScaleTimeRange, yDimension } =
+    useChartState() as ChartWithInteractiveYTimeRangeState;
   const formatDateUnit = useTimeFormatUnit();
   const formatDate = (date: Date) => {
+    if (chartType === "bar") {
+      return formatDateUnit(
+        date,
+        (yDimension as TemporalDimension | TemporalEntityDimension).timeUnit
+      );
+    }
     return formatDateUnit(
       date,
       (xDimension as TemporalDimension | TemporalEntityDimension).timeUnit
@@ -90,22 +104,44 @@ export const BrushTime = () => {
   };
   const { getX } = useChartState() as LinesState | AreasState;
   const { getXAsDate, allData } = useChartState() as ColumnsState;
-  const getDate = chartType === "column" ? getXAsDate : getX;
+  const { getYAsDate } = useChartState() as BarsState;
+  const getDate = (() => {
+    if (chartType === "bar") {
+      return getYAsDate;
+    }
+
+    if (chartType === "column" || chartType === "comboLineColumn") {
+      return getXAsDate;
+    }
+
+    return getX;
+  })();
   const fullData = allData;
 
   // Brush dimensions
   const { width, margins, chartHeight } = bounds;
+  const scaleTimeRange =
+    chartType === "bar" ? yScaleTimeRange : xScaleTimeRange;
+
+  let { from, to } = timeRange;
+
+  // FIXME: Should be fixed in useSyncInteractiveFilters where we try to parse
+  // the date that can be a string (VISUALIZE_MOST_RECENT_VALUE).
+  if (isNaN(to?.getTime() ?? 0)) {
+    to = scaleTimeRange.domain()[1];
+  }
+
   const brushLabelsWidth =
-    getTextWidth(formatDate(xScaleTimeRange.domain()[0]), {
+    getTextWidth(formatDate(scaleTimeRange.domain()[0]), {
       fontSize: labelFontSize,
     }) +
     getTextWidth(" - ", { fontSize: labelFontSize }) +
-    getTextWidth(formatDate(xScaleTimeRange.domain()[1]), {
+    getTextWidth(formatDate(scaleTimeRange.domain()[1]), {
       fontSize: labelFontSize,
     }) +
     HANDLE_HEIGHT;
   const brushWidth = width - brushLabelsWidth - margins.right;
-  const brushWidthScale = xScaleTimeRange.copy();
+  const brushWidthScale = scaleTimeRange.copy();
 
   brushWidthScale.range([0, brushWidth]);
 
@@ -171,6 +207,7 @@ export const BrushTime = () => {
 
       if (e.sourceEvent instanceof MouseEvent) {
         setEnableTransition(false);
+        setBrushing(true);
       }
     })
     .on("brush", brushed)
@@ -185,6 +222,7 @@ export const BrushTime = () => {
         // we want to compute mx basing on MouseEvent.
         if (e.sourceEvent instanceof MouseEvent) {
           setEnableTransition(true);
+          setBrushing(false);
 
           if (!e.selection && ref.current) {
             const g = select(ref.current);

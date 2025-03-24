@@ -6,6 +6,7 @@ import {
   AnimationField,
   Filters,
   InteractiveFiltersConfig,
+  Limit,
 } from "@/configurator";
 import {
   Component,
@@ -57,7 +58,7 @@ export const useRenderingKeyVariable = (
    * access the segment value from the data.
    */
   const getRenderingKey = useCallback(
-    (d: Observation, segment: string = "") => {
+    (d: Observation, segment = "") => {
       return filterableDimensionKeys
         .map((key) => d[key])
         .concat(segment)
@@ -73,7 +74,7 @@ export type RenderOptions = {
   transition: Pick<TransitionStore, "enable" | "duration">;
 };
 
-type RenderContainerOptions = {
+export type RenderContainerOptions = {
   id: string;
   transform: string;
   transition: RenderOptions["transition"];
@@ -148,6 +149,273 @@ export function maybeTransition<
 
 type AnySelection = Selection<any, any, any, any>;
 type AnyTransition = Transition<any, any, any, any>;
+
+const LIMIT_SIZE = 3;
+
+export type RenderVerticalLimitDatum = {
+  key: string;
+  x: number;
+  y1: number;
+  y2: number;
+  width: number;
+  fill: string;
+  lineType: Limit["lineType"];
+  symbolType: Limit["symbolType"];
+};
+
+const getTopBottomLineHeight = (d: RenderVerticalLimitDatum) => {
+  return d.symbolType
+    ? d.symbolType === "cross"
+      ? LIMIT_SIZE
+      : 0
+    : LIMIT_SIZE;
+};
+const getTopRotate = (d: RenderVerticalLimitDatum) => {
+  return d.symbolType === "cross" ? "rotate(45deg)" : "rotate(0deg)";
+};
+const getBottomRotate = (d: RenderVerticalLimitDatum) => {
+  return d.symbolType === "cross" ? "rotate(-45deg)" : "rotate(0deg)";
+};
+const getMiddleRadius = (d: RenderVerticalLimitDatum) => {
+  return d.symbolType === "circle" ? LIMIT_SIZE * 1.5 : 0;
+};
+
+export const renderVerticalLimits = (
+  g: Selection<SVGGElement, null, SVGGElement, unknown>,
+  data: RenderVerticalLimitDatum[],
+  options: RenderOptions
+) => {
+  const { transition } = options;
+
+  g.selectAll<SVGGElement, RenderVerticalLimitDatum>("g")
+    .data(data, (d) => d.key)
+    .join(
+      (enter) =>
+        enter
+          .append("g")
+          .attr("opacity", 0)
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("class", "top")
+              .attr("x", (d) => d.x)
+              .attr("y", (d) => d.y2 - LIMIT_SIZE / 2)
+              .attr("width", (d) => d.width)
+              .attr("height", getTopBottomLineHeight)
+              .attr("fill", (d) => d.fill)
+              .attr("stroke", "none")
+              .style("transform-box", "fill-box")
+              .style("transform-origin", "center")
+              .style("transform", getTopRotate)
+          )
+          .call((g) =>
+            g
+              .append("line")
+              .attr("class", "middle-line")
+              .attr("x1", (d) => d.x + d.width / 2)
+              .attr("x2", (d) => d.x + d.width / 2)
+              .attr("y1", (d) => d.y1 - LIMIT_SIZE / 2)
+              .attr("y2", (d) => d.y2 - LIMIT_SIZE / 2)
+              .attr("stroke", (d) => d.fill)
+              .attr("stroke-width", LIMIT_SIZE)
+              .attr("stroke-dasharray", (d) =>
+                d.lineType === "dashed" ? "3 3" : "none"
+              )
+          )
+          .call((g) =>
+            g
+              .append("circle")
+              .attr("class", "middle-dot")
+              .attr("cx", (d) => d.x + d.width / 2)
+              .attr("cy", (d) => (d.y1 + d.y2) / 2)
+              .attr("r", getMiddleRadius)
+              .attr("fill", (d) => d.fill)
+          )
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("class", "bottom")
+              .attr("x", (d) => d.x)
+              .attr("y", (d) => d.y1 - LIMIT_SIZE / 2)
+              .attr("width", (d) => d.width)
+              .attr("height", getTopBottomLineHeight)
+              .attr("fill", (d) => d.fill)
+              .attr("stroke", "none")
+              .style("transform-box", "fill-box")
+              .style("transform-origin", "center")
+              .style("transform", getBottomRotate)
+          )
+          .call((enter) =>
+            maybeTransition(enter, {
+              s: (g) => g.attr("opacity", 1),
+              transition,
+            })
+          ),
+      (update) =>
+        maybeTransition(update, {
+          s: (g) =>
+            g
+              .attr("opacity", 1)
+              .call((g) =>
+                g
+                  .select(".top")
+                  .attr("x", (d) => d.x)
+                  .attr("y", (d) => d.y2 - LIMIT_SIZE / 2)
+                  .attr("width", (d) => d.width)
+                  .attr("height", getTopBottomLineHeight)
+                  .attr("fill", (d) => d.fill)
+                  .style("transform", getTopRotate)
+              )
+              .call((g) =>
+                g
+                  .select(".middle-line")
+                  .attr("x1", (d) => d.x + d.width / 2)
+                  .attr("x2", (d) => d.x + d.width / 2)
+                  .attr("y1", (d) => d.y1 - LIMIT_SIZE / 2)
+                  .attr("y2", (d) => d.y2 - LIMIT_SIZE / 2)
+                  .attr("stroke", (d) => d.fill)
+                  .attr("stroke-width", LIMIT_SIZE)
+                  .attr("stroke-dasharray", (d) =>
+                    d.lineType === "dashed" ? "3 3" : "none"
+                  )
+              )
+              .call((g) =>
+                g
+                  .select(".middle-dot")
+                  .attr("cx", (d) => d.x + d.width / 2)
+                  .attr("cy", (d) => (d.y1 + d.y2) / 2)
+                  .attr("r", getMiddleRadius)
+                  .attr("fill", (d) => d.fill)
+              )
+              .call((g) =>
+                g
+                  .select(".bottom")
+                  .attr("x", (d) => d.x)
+                  .attr("y", (d) => d.y1 - LIMIT_SIZE / 2)
+                  .attr("width", (d) => d.width)
+                  .attr("height", getTopBottomLineHeight)
+                  .attr("fill", (d) => d.fill)
+                  .style("transform", getBottomRotate)
+              ),
+          transition,
+        }),
+      (exit) =>
+        maybeTransition(exit, {
+          transition,
+          s: (g) => g.attr("opacity", 0).remove(),
+        })
+    );
+};
+
+export type RenderHorizontalLimitDatum = {
+  key: string;
+  y: number;
+  x1: number;
+  x2: number;
+  height: number;
+  fill: string;
+  lineType: Limit["lineType"];
+};
+
+export const renderHorizontalLimits = (
+  g: Selection<SVGGElement, null, SVGGElement, unknown>,
+  data: RenderHorizontalLimitDatum[],
+  options: RenderOptions
+) => {
+  const { transition } = options;
+
+  g.selectAll<SVGGElement, RenderHorizontalLimitDatum>("g")
+    .data(data, (d) => d.key)
+    .join(
+      (enter) =>
+        enter
+          .append("g")
+          .attr("opacity", 0)
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("class", "left")
+              .attr("x", (d) => d.x1 - LIMIT_SIZE / 2)
+              .attr("y", (d) => d.y)
+              .attr("width", LIMIT_SIZE)
+              .attr("height", (d) => d.height)
+              .attr("fill", (d) => d.fill)
+              .attr("stroke", "none")
+          )
+          .call((g) =>
+            g
+              .append("line")
+              .attr("class", "middle")
+              .attr("x1", (d) => d.x1 - LIMIT_SIZE / 2)
+              .attr("x2", (d) => d.x2 - LIMIT_SIZE / 2)
+              .attr("y1", (d) => d.y + d.height / 2)
+              .attr("y2", (d) => d.y + d.height / 2)
+              .attr("stroke", (d) => d.fill)
+              .attr("stroke-width", LIMIT_SIZE)
+              .attr("stroke-dasharray", (d) =>
+                d.lineType === "dashed" ? "3 3" : "none"
+              )
+          )
+          .call((g) =>
+            g
+              .append("rect")
+              .attr("class", "right")
+              .attr("x", (d) => d.x2 - LIMIT_SIZE / 2)
+              .attr("y", (d) => d.y)
+              .attr("width", LIMIT_SIZE)
+              .attr("height", (d) => d.height)
+              .attr("fill", (d) => d.fill)
+              .attr("stroke", "none")
+          )
+          .call((enter) =>
+            maybeTransition(enter, {
+              s: (g) => g.attr("opacity", 1),
+              transition,
+            })
+          ),
+      (update) =>
+        maybeTransition(update, {
+          s: (g) =>
+            g
+              .attr("opacity", 1)
+              .call((g) =>
+                g
+                  .select(".left")
+                  .attr("x", (d) => d.x1 - LIMIT_SIZE / 2)
+                  .attr("y", (d) => d.y)
+                  .attr("height", (d) => d.height)
+                  .attr("fill", (d) => d.fill)
+              )
+              .call((g) =>
+                g
+                  .select(".middle")
+                  .attr("x1", (d) => d.x1 - LIMIT_SIZE / 2)
+                  .attr("x2", (d) => d.x2 - LIMIT_SIZE / 2)
+                  .attr("y1", (d) => d.y + d.height / 2)
+                  .attr("y2", (d) => d.y + d.height / 2)
+                  .attr("stroke", (d) => d.fill)
+                  .attr("stroke-width", LIMIT_SIZE)
+                  .attr("stroke-dasharray", (d) =>
+                    d.lineType === "dashed" ? "3 3" : "none"
+                  )
+              )
+              .call((g) =>
+                g
+                  .select(".right")
+                  .attr("x", (d) => d.x2 - LIMIT_SIZE / 2)
+                  .attr("y", (d) => d.y)
+                  .attr("height", (d) => d.height)
+                  .attr("fill", (d) => d.fill)
+              ),
+          transition,
+        }),
+      (exit) =>
+        maybeTransition(exit, {
+          transition,
+          s: (g) => g.attr("opacity", 0).remove(),
+        })
+    );
+};
 
 const ERROR_WHISKER_SIZE = 1;
 const ERROR_WHISKER_MIDDLE_CIRCLE_RADIUS = 3.5;

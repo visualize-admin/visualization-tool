@@ -4,10 +4,12 @@ import {
   scaleBand,
   ScaleLinear,
   scaleLinear,
+  ScaleOrdinal,
+  scaleOrdinal,
   scaleTime,
 } from "d3-scale";
 import orderBy from "lodash/orderBy";
-import { useMemo } from "react";
+import { PropsWithChildren, useMemo } from "react";
 
 import {
   BarsStateVariables,
@@ -20,6 +22,9 @@ import {
   PADDING_OUTER,
 } from "@/charts/bar/constants";
 import {
+  AxisLabelSizeVariables,
+  getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -34,9 +39,15 @@ import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
+import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
+import {
+  ShowBandValueLabelsVariables,
+  useShowBandValueLabelsVariables,
+} from "@/charts/shared/show-values-utils";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
+import { useLimits } from "@/config-utils";
 import { BarConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import {
@@ -44,6 +55,7 @@ import {
   useFormatNumber,
   useTimeFormatUnit,
 } from "@/formatters";
+import { getPalette } from "@/palettes";
 import {
   getSortingOrders,
   makeDimensionValueSorters,
@@ -54,13 +66,18 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type BarsState = CommonChartState &
   BarsStateVariables &
-  InteractiveYTimeRangeState & {
+  InteractiveYTimeRangeState &
+  Omit<ShowBandValueLabelsVariables, "offset"> & {
     chartType: "bar";
     xScale: ScaleLinear<number, number>;
     yScaleInteraction: ScaleBand<string>;
     yScale: ScaleBand<string>;
     minY: string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    colors: ScaleOrdinal<string, string>;
+    getColorLabel: (segment: string) => string;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useBarsState = (
@@ -68,7 +85,7 @@ const useBarsState = (
   variables: BarsStateVariables,
   data: ChartStateData
 ): BarsState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     yDimension,
     getX,
@@ -81,9 +98,15 @@ const useBarsState = (
     getMinX,
     getXErrorRange,
     getFormattedXUncertainty,
+    getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
+    minLimitValue,
+    maxLimitValue,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { x } = fields;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -151,7 +174,16 @@ const useBarsState = (
       ) ?? 0,
       0
     );
-    const xScale = scaleLinear().domain([minValue, maxValue]).nice();
+    const xScale = scaleLinear()
+      .domain([
+        minLimitValue !== undefined
+          ? Math.min(minLimitValue, minValue)
+          : minValue,
+        maxLimitValue !== undefined
+          ? Math.max(maxLimitValue, maxValue)
+          : maxValue,
+      ])
+      .nice();
 
     const paddingMinValue = getMinX(paddingData, (d) =>
       getXErrorRange ? getXErrorRange(d)[0] : getX(d)
@@ -163,7 +195,14 @@ const useBarsState = (
       0
     );
     const paddingYScale = scaleLinear()
-      .domain([paddingMinValue, paddingMaxValue])
+      .domain([
+        minLimitValue !== undefined
+          ? Math.min(minLimitValue, paddingMinValue)
+          : paddingMinValue,
+        maxLimitValue !== undefined
+          ? Math.max(maxLimitValue, paddingMaxValue)
+          : paddingMaxValue,
+      ])
       .nice();
 
     return {
@@ -176,28 +215,30 @@ const useBarsState = (
       yTimeRangeDomainLabels,
     };
   }, [
-    getX,
-    getYLabel,
-    getYAsDate,
-    getY,
-    getXErrorRange,
-    scalesData,
-    paddingData,
-    timeRangeData,
+    yDimension,
     fields.y.sorting,
     fields.y.useAbbreviations,
-    yDimension,
-    chartConfig.cubes,
     sumsByY,
+    chartConfig.cubes,
+    scalesData,
+    getY,
+    timeRangeData,
+    getYLabel,
     getMinX,
+    minLimitValue,
+    maxLimitValue,
+    paddingData,
+    getYAsDate,
+    getXErrorRange,
+    getX,
   ]);
 
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xMeasure.label,
     yScale: paddingYScale,
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
     bandDomain: yTimeRangeDomainLabels.every((d) => d === undefined)
       ? yScale.domain()
@@ -205,28 +246,44 @@ const useBarsState = (
     isFlipped: true,
   });
   const right = 40;
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
+    width,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
+  });
   const margins = {
-    top: 55,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
     right,
-    bottom: bottom + 30,
+    bottom: bottom + 45,
     left,
   };
 
   const barCount = yScale.domain().length;
+  const { offset: xValueLabelsOffset, ...showValuesVariables } =
+    useShowBandValueLabelsVariables(x, {
+      chartData,
+      dimensions,
+      measures,
+      getValue: getX,
+    });
+
+  const chartWidth = getChartWidth({ width, left, right });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
 
   // Here we adjust the height to make sure the bars have a minimum height and are legible
-  const adjustedHeight =
-    barCount * MIN_BAR_HEIGHT > height
+  const adjustedChartHeight =
+    barCount * MIN_BAR_HEIGHT > chartHeight
       ? barCount * MIN_BAR_HEIGHT
-      : height - margins.bottom;
+      : chartHeight;
 
-  const bounds = useChartBounds(width, margins, adjustedHeight);
-  const { chartWidth, chartHeight } = bounds;
-
-  xScale.range([0, chartWidth]);
-  yScaleInteraction.range([0, adjustedHeight]);
-  yScaleTimeRange.range([0, adjustedHeight]);
-  yScale.range([0, adjustedHeight]);
+  xScale.range([0, chartWidth - xValueLabelsOffset]);
+  yScaleInteraction.range([0, adjustedChartHeight]);
+  yScaleTimeRange.range([0, adjustedChartHeight]);
+  yScale.range([0, adjustedChartHeight]);
 
   const isMobile = useIsMobile();
 
@@ -270,11 +327,24 @@ const useBarsState = (
     };
   };
 
+  const { colors } = useMemo(() => {
+    const colors = scaleOrdinal<string, string>();
+
+    colors.range(
+      getPalette({
+        paletteId: fields.color.paletteId,
+        colorField: fields.color,
+      })
+    );
+
+    return { colors };
+  }, [fields.color]);
+
   return {
     chartType: "bar",
     bounds: {
       ...bounds,
-      chartHeight: adjustedHeight,
+      chartHeight: adjustedChartHeight,
     },
     chartData,
     allData,
@@ -284,12 +354,19 @@ const useBarsState = (
     yScaleInteraction,
     yScale,
     getAnnotationInfo,
+    getColorLabel: getSegmentLabel,
+    colors,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
+    ...showValuesVariables,
     ...variables,
   };
 };
 
 const BarChartProvider = (
-  props: React.PropsWithChildren<ChartProps<BarConfig>>
+  props: PropsWithChildren<
+    ChartProps<BarConfig> & { limits: ReturnType<typeof useLimits> }
+  >
 ) => {
   const { children, ...chartProps } = props;
   const variables = useBarsStateVariables(chartProps);
@@ -302,7 +379,9 @@ const BarChartProvider = (
 };
 
 export const BarChart = (
-  props: React.PropsWithChildren<ChartProps<BarConfig>>
+  props: PropsWithChildren<
+    ChartProps<BarConfig> & { limits: ReturnType<typeof useLimits> }
+  >
 ) => {
   return (
     <InteractionProvider>

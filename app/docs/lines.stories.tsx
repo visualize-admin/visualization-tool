@@ -67,6 +67,7 @@ const LineChartStory = () => (
     <InteractiveFiltersProvider chartConfigs={[chartConfig]}>
       <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
         <LineChart
+          limits={{ axisDimension: undefined, limits: [] }}
           observations={observations}
           dimensions={dimensions}
           dimensionsById={keyBy(dimensions, (d) => d.id)}
@@ -83,7 +84,12 @@ const LineChartStory = () => (
           </ChartContainer>
 
           {fields.segment && (
-            <LegendColor chartConfig={chartConfig} symbol="line" interactive />
+            <LegendColor
+              chartConfig={chartConfig}
+              symbol="line"
+              interactive
+              showTitle
+            />
           )}
         </LineChart>
       </InteractiveFiltersChartProvider>

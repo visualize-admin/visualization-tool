@@ -1,4 +1,4 @@
-import { min } from "d3-array";
+import { max, min } from "d3-array";
 import { ScaleTime } from "d3-scale";
 import get from "lodash/get";
 import overEvery from "lodash/overEvery";
@@ -18,7 +18,6 @@ import { LinesState } from "@/charts/line/lines-state";
 import { MapState } from "@/charts/map/map-state";
 import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { DimensionsById, MeasuresById } from "@/charts/shared/ChartProps";
 import {
   getLabelWithUnit,
   useDimensionWithAbbreviations,
@@ -27,15 +26,23 @@ import {
   useTemporalEntityVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
+import { DimensionsById, MeasuresById } from "@/charts/shared/ChartProps";
 import { Bounds } from "@/charts/shared/use-size";
 import { TableChartState } from "@/charts/table/table-state";
+import { useLimits } from "@/config-utils";
 import {
+  AreaFields,
   ChartConfig,
+  ChartSegmentField,
   ChartType,
+  ColumnFields,
   GenericField,
-  InteractiveFiltersConfig,
   getAnimationField,
   hasChartConfigs,
+  InteractiveFiltersConfig,
+  LineFields,
+  PieFields,
+  ScatterPlotFields,
   useConfiguratorState,
 } from "@/configurator";
 import {
@@ -49,14 +56,14 @@ import {
   DimensionValue,
   GeoCoordinatesDimension,
   GeoShapesDimension,
+  isNumericalMeasure,
+  isTemporalDimension,
+  isTemporalEntityDimension,
   Measure,
   NumericalMeasure,
   Observation,
   TemporalDimension,
   TemporalEntityDimension,
-  isNumericalMeasure,
-  isTemporalDimension,
-  isTemporalEntityDimension,
 } from "@/domain/data";
 import { Has } from "@/domain/types";
 import { RelatedDimensionType } from "@/graphql/query-hooks";
@@ -92,7 +99,7 @@ export type CommonChartState = {
   interactiveFiltersConfig: InteractiveFiltersConfig;
 };
 
-export type ColorsChartState = Has<ChartState, "colors" | "getColorLabel">;
+export type ColorsChartState = Has<ChartState, "colors">;
 export const ChartContext = createContext<ChartState>(undefined);
 
 export const useChartState = () => {
@@ -108,7 +115,12 @@ export const useChartState = () => {
 export type ChartWithInteractiveXTimeRangeState =
   | AreasState
   | ColumnsState
-  | LinesState;
+  | LinesState
+  | ComboLineSingleState
+  | ComboLineColumnState
+  | ComboLineDualState;
+
+export type ChartWithInteractiveYTimeRangeState = BarsState;
 
 export type NumericalValueGetter = (d: Observation) => number | null;
 
@@ -146,6 +158,7 @@ export const useBaseVariables = (chartConfig: ChartConfig): BaseVariables => {
 };
 
 export type BandYVariables = {
+  yAxisLabel: string;
   yDimension: Dimension;
   getY: StringValueGetter;
   getYLabel: (d: string) => string;
@@ -155,6 +168,7 @@ export type BandYVariables = {
 };
 
 export type BandXVariables = {
+  xAxisLabel: string;
   xDimension: Dimension;
   getX: StringValueGetter;
   getXLabel: (d: string) => string;
@@ -196,15 +210,18 @@ export const useBandYVariables = (
     dimensionsById[y.componentId].values
   )(y.componentId);
 
+  const yAxisLabel = getLabelWithUnit(yDimension);
+
   return {
+    yAxisLabel,
     yDimension,
     getY,
     getYLabel,
     getYAbbreviationOrLabel,
     yTimeUnit,
-    getYAsDate: isTemporalDimension(yDimension)
-      ? getYAsDate
-      : getYTemporalEntity,
+    getYAsDate: isTemporalEntityDimension(yDimension)
+      ? getYTemporalEntity
+      : getYAsDate,
   };
 };
 
@@ -241,15 +258,18 @@ export const useBandXVariables = (
     dimensionsById[x.componentId].values
   )(x.componentId);
 
+  const xAxisLabel = getLabelWithUnit(xDimension);
+
   return {
+    xAxisLabel,
     xDimension,
     getX,
     getXLabel,
     getXAbbreviationOrLabel,
     xTimeUnit,
-    getXAsDate: isTemporalDimension(xDimension)
-      ? getXAsDate
-      : getXTemporalEntity,
+    getXAsDate: isTemporalEntityDimension(xDimension)
+      ? getXTemporalEntity
+      : getXAsDate,
   };
 };
 
@@ -257,6 +277,7 @@ export type TemporalXVariables = {
   xDimension: TemporalDimension | TemporalEntityDimension;
   getX: TemporalValueGetter;
   getXAsString: StringValueGetter;
+  xAxisLabel: string;
 };
 
 export const useTemporalXVariables = (
@@ -283,7 +304,10 @@ export const useTemporalXVariables = (
   )(x.componentId);
   const getXAsString = useStringVariable(x.componentId);
 
+  const xAxisLabel = getLabelWithUnit(xDimension);
+
   return {
+    xAxisLabel,
     xDimension,
     getX: isTemporalDimension(xDimension) ? getXTemporal : getXTemporalEntity,
     getXAsString,
@@ -328,7 +352,7 @@ export const useNumericalXVariables = (
           return Math.min(0, min(data, _getX) ?? 0);
         case "scatterplot":
           return shouldUseDynamicMinScaleValue(xMeasure.scaleType)
-            ? min(data, _getX) ?? 0
+            ? (min(data, _getX) ?? 0)
             : Math.min(0, min(data, _getX) ?? 0);
         default:
           const _exhaustiveCheck: never = chartType;
@@ -358,10 +382,16 @@ export type NumericalYVariables = {
 export const useNumericalYVariables = (
   // Combo charts have their own logic for y scales.
   chartType: "area" | "column" | "line" | "pie" | "scatterplot",
-  y: GenericField,
+  y:
+    | AreaFields["y"]
+    | ColumnFields["y"]
+    | LineFields["y"]
+    | PieFields["y"]
+    | ScatterPlotFields["y"],
   { measuresById }: { measuresById: MeasuresById }
 ): NumericalYVariables => {
   const yMeasure = measuresById[y.componentId];
+
   if (!yMeasure) {
     throw Error(
       `No dimension <${y.componentId}> in cube! (useNumericalYVariables)`
@@ -384,7 +414,7 @@ export const useNumericalYVariables = (
         case "line":
         case "scatterplot":
           return shouldUseDynamicMinScaleValue(yMeasure.scaleType)
-            ? min(data, _getY) ?? 0
+            ? (min(data, _getY) ?? 0)
             : Math.min(0, min(data, _getY) ?? 0);
         default:
           const _exhaustiveCheck: never = chartType;
@@ -646,10 +676,11 @@ export type SegmentVariables = {
   getSegment: StringValueGetter;
   getSegmentAbbreviationOrLabel: StringValueGetter;
   getSegmentLabel: (d: string) => string;
+  showValuesBySegmentMapping: ChartSegmentField["showValuesMapping"];
 };
 
 export const useSegmentVariables = (
-  segment: GenericField | undefined,
+  segment: ChartSegmentField | undefined,
   {
     dimensionsById,
     observations,
@@ -675,6 +706,7 @@ export const useSegmentVariables = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    showValuesBySegmentMapping: segment?.showValuesMapping ?? {},
   };
 };
 
@@ -711,6 +743,30 @@ export type SymbolLayerVariables = {
     | undefined;
   getSymbol: StringValueGetter;
   getSymbolLabel: (d: string) => string;
+};
+
+export type LimitsVariables = {
+  minLimitValue: number | undefined;
+  maxLimitValue: number | undefined;
+};
+
+export const useLimitsVariables = (limits: ReturnType<typeof useLimits>) => {
+  const values = limits.limits.flatMap((d) => {
+    switch (d.measureLimit.type) {
+      case "single":
+        return d.measureLimit.value;
+      case "range":
+        return [d.measureLimit.from, d.measureLimit.to];
+      default:
+        const _exhaustiveCheck: never = d.measureLimit;
+        return _exhaustiveCheck;
+    }
+  });
+
+  return {
+    minLimitValue: min(values),
+    maxLimitValue: max(values),
+  };
 };
 
 export type ChartStateData = {

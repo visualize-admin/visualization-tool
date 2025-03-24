@@ -1,7 +1,7 @@
 import mitt, { Emitter } from "mitt";
 
 import localStorageAdapter from "./local-storage-adapter";
-import { FlagName, FlagValue, FLAG_NAMES } from "./types";
+import { FLAG_NAMES, FlagName, FlagValue } from "./types";
 
 type Events = {
   change: string;

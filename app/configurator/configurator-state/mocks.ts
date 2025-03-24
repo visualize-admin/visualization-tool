@@ -38,6 +38,7 @@ export const configStateMock = {
         >["baseLayer"],
         activeField: "",
         cubes: [{ iri: "https://first-dataset", filters: {} }],
+        limits: {},
         fields: {
           areaLayer: {
             componentId: "year-period-1",
@@ -134,6 +135,7 @@ export const configStateMock = {
             filters: {},
           },
         ],
+        limits: {},
         chartType: "column",
         interactiveFiltersConfig: {
           legend: {
@@ -207,13 +209,12 @@ export const configStateMock = {
           segment: {
             componentId:
               "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
-
             sorting: {
               sortingType: "byAuto",
               sortingOrder: "asc",
             },
-
             type: "stacked",
+            showValuesMapping: {},
           },
         },
         activeField: "segment",
@@ -693,6 +694,7 @@ export const groupedColumnChartMeasures: Measure[] = [
       { value: "992", label: "992" },
     ],
     related: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -915,6 +917,7 @@ export const groupedColumnChartMeasures: Measure[] = [
       { value: "98.28", label: "98.28" },
     ],
     related: [],
+    limits: [],
   },
   {
     __typename: "NumericalMeasure",
@@ -1136,6 +1139,7 @@ export const groupedColumnChartMeasures: Measure[] = [
       { value: "991739.2", label: "991739.2" },
     ],
     related: [],
+    limits: [],
   },
 ];
 
@@ -1230,6 +1234,7 @@ export const configJoinedCubes: Partial<
         ],
       },
     ],
+    limits: {},
     chartType: "table",
     settings: { showSearch: true, showAllRows: false },
     sorting: [],
@@ -1606,6 +1611,7 @@ export const configJoinedCubes: Partial<
         ],
       },
     ],
+    limits: {},
     chartType: "pie",
     interactiveFiltersConfig: {
       legend: { active: false, componentId: "" },
@@ -1669,8 +1675,11 @@ export const configJoinedCubes: Partial<
           unversionedComponentIri:
             "https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
         }),
-
-        sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
+        sorting: {
+          sortingType: "byMeasure",
+          sortingOrder: "asc",
+        },
+        showValuesMapping: {},
       },
     },
   },

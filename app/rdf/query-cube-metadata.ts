@@ -6,7 +6,7 @@ import { DataCubeMetadata } from "@/domain/data";
 import { DataCubePublicationStatus } from "@/graphql/query-hooks";
 import { pragmas } from "@/rdf/create-source";
 import * as ns from "@/rdf/namespace";
-import { GROUP_SEPARATOR, buildLocalizedSubQuery } from "@/rdf/query-utils";
+import { buildLocalizedSubQuery, GROUP_SEPARATOR } from "@/rdf/query-utils";
 
 type RawDataCubeMetadata = {
   iri: NamedNode;

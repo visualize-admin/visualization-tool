@@ -3,13 +3,13 @@ import {
   ScaleLinear,
   ScalePower,
   ScaleQuantile,
-  ScaleQuantize,
-  ScaleSequential,
-  ScaleThreshold,
   scaleQuantile,
+  ScaleQuantize,
   scaleQuantize,
+  ScaleSequential,
   scaleSequential,
   scaleSqrt,
+  ScaleThreshold,
   scaleThreshold,
 } from "d3-scale";
 import {
@@ -54,12 +54,13 @@ import {
   Component,
   Dimension,
   GeoData,
+  isGeoShapesDimension,
   Measure,
   Observation,
-  isGeoShapesDimension,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { getColorInterpolator } from "@/palettes";
+import { getFittingColorInterpolator } from "@/utils/color-palette-utils";
 
 export type MapState = CommonChartState &
   MapStateVariables & {
@@ -285,7 +286,10 @@ const getNumericalColorScale = ({
   data: Observation[];
   dataDomain: [number, number];
 }) => {
-  const interpolator = getColorInterpolator(color.paletteId);
+  const interpolator = getFittingColorInterpolator(
+    { color },
+    getColorInterpolator
+  );
 
   switch (color.scaleType) {
     case "continuous":

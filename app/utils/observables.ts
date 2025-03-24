@@ -55,7 +55,7 @@ export class Timeline extends Observable {
   public playing = false;
   /** Animation progress (0-1). */
   private animationProgress = 1;
-  /** Duration of the animation in miliseconds. */
+  /** Duration of the animation in milliseconds. */
   private animationDuration: number;
   private requestAnimationFrameId: number | undefined;
   /** Timestamp set when animation beings. */
@@ -63,7 +63,7 @@ export class Timeline extends Observable {
 
   // Timeline state.
   private values: (number | string)[];
-  /** Miliseconds mapped to a timeline. */
+  /** Milliseconds mapped to a timeline. */
   private msValues: number[];
   /** Based on current progress. */
   private msValue: number;

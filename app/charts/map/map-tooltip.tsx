@@ -1,9 +1,9 @@
 import { Box, Typography } from "@mui/material";
 import { hcl } from "d3-color";
 import {
+  createContext,
   Dispatch,
   ReactNode,
-  createContext,
   useContext,
   useMemo,
   useState,
@@ -46,6 +46,12 @@ export const MapTooltipProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+const isTooltipValueValid = (
+  v: string | number | null
+): v is number | string => {
+  return v !== null && (typeof v === "number" ? !isNaN(v) : true);
+};
+
 export const MapTooltip = () => {
   const [hoverObjectType] = useMapTooltip();
   const [{ interaction }] = useInteraction();
@@ -74,25 +80,26 @@ export const MapTooltip = () => {
     if (areaLayer && obs) {
       const { colors } = areaLayer;
       const value = colors.getValue(obs);
-      if (value !== null) {
-        const formattedError =
-          colors.type === "continuous" ? colors.getFormattedError?.(obs) : null;
+
+      if (isTooltipValueValid(value)) {
         const show = identicalLayerComponentIds || hoverObjectType === "area";
         const color = rgbArrayToHex(colors.getColor(obs));
         const textColor = getTooltipTextColor(color);
-        const valueFormatter = (d: number | null) =>
-          formatNumberWithUnit(
+        const valueFormatter = (d: number | null) => {
+          return formatNumberWithUnit(
             d,
             formatters[colors.component.id] ?? formatNumber,
             colors.component.unit
           );
-        const formattedValue =
-          typeof value === "number" ? valueFormatter(value) : value;
+        };
 
         return {
           show,
-          value: formattedValue,
-          error: formattedError,
+          value: typeof value === "number" ? valueFormatter(value) : value,
+          error:
+            colors.type === "continuous"
+              ? colors.getFormattedError?.(obs)
+              : null,
           componentId: colors.component.id,
           label: colors.component.label,
           color,
@@ -116,20 +123,19 @@ export const MapTooltip = () => {
       const { colors } = symbolLayer;
       const value = symbolLayer.getValue(obs);
 
-      if (value !== null) {
-        const formattedError = formatSymbolError?.(obs);
+      if (isTooltipValueValid(value)) {
         const show = identicalLayerComponentIds || hoverObjectType === "symbol";
         const color = rgbArrayToHex(colors.getColor(obs));
         const textColor = getTooltipTextColor(color);
-        const valueFormatter = (d: number | null) =>
-          formatNumberWithUnit(
+        const valueFormatter = (d: number | null) => {
+          return formatNumberWithUnit(
             d,
             symbolLayer.measureDimension?.id
-              ? formatters[symbolLayer.measureDimension.id] ?? formatNumber
+              ? (formatters[symbolLayer.measureDimension.id] ?? formatNumber)
               : formatNumber,
             symbolLayer.measureDimension?.unit
           );
-        const formattedValue = valueFormatter(value);
+        };
 
         let preparedColors;
 
@@ -171,8 +177,8 @@ export const MapTooltip = () => {
         }
 
         return {
-          value: formattedValue,
-          error: formattedError,
+          value: valueFormatter(value),
+          error: formatSymbolError?.(obs),
           measureDimension: symbolLayer.measureDimension,
           show,
           color,

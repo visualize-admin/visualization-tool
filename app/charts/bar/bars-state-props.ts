@@ -7,19 +7,23 @@ import {
   BaseVariables,
   ChartStateData,
   InteractiveFiltersVariables,
+  LimitsVariables,
   NumericalXErrorVariables,
   NumericalXVariables,
   RenderingVariables,
+  SegmentVariables,
   SortingVariables,
   useBandYVariables,
   useBaseVariables,
   useChartData,
   useInteractiveFiltersVariables,
+  useLimitsVariables,
   useNumericalXErrorVariables,
   useNumericalXVariables,
+  useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import { useChartConfigFilters } from "@/config-utils";
+import { useChartConfigFilters, useLimits } from "@/config-utils";
 import { BarConfig } from "@/configurator";
 import { isTemporalEntityDimension } from "@/domain/data";
 
@@ -30,11 +34,13 @@ export type BarsStateVariables = BaseVariables &
   NumericalXVariables &
   BandYVariables &
   NumericalXErrorVariables &
+  SegmentVariables &
   RenderingVariables &
-  InteractiveFiltersVariables;
+  InteractiveFiltersVariables &
+  LimitsVariables;
 
 export const useBarsStateVariables = (
-  props: ChartProps<BarConfig>
+  props: ChartProps<BarConfig> & { limits: ReturnType<typeof useLimits> }
 ): BarsStateVariables => {
   const {
     chartConfig,
@@ -43,9 +49,10 @@ export const useBarsStateVariables = (
     dimensionsById,
     measures,
     measuresById,
+    limits,
   } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const { x, y, animation } = fields;
+  const { x, y, animation, segment } = fields;
   const yDimension = dimensionsById[y.componentId];
   const filters = useChartConfigFilters(chartConfig);
 
@@ -66,6 +73,7 @@ export const useBarsStateVariables = (
     interactiveFiltersConfig,
     { dimensionsById }
   );
+  const limitsVariables = useLimitsVariables(limits);
 
   const { getY, getYAsDate } = bandYVariables;
   const { getX } = numericalXVariables;
@@ -92,6 +100,10 @@ export const useBarsStateVariables = (
     [getX, getYAsDate, getY, y.sorting, yDimension]
   );
 
+  const segmentVariables = useSegmentVariables(segment, {
+    dimensionsById,
+    observations,
+  });
   const getRenderingKey = useRenderingKeyVariable(
     dimensions,
     filters,
@@ -100,12 +112,14 @@ export const useBarsStateVariables = (
   );
 
   return {
+    ...segmentVariables,
     ...baseVariables,
     sortData,
     ...bandYVariables,
     ...numericalXVariables,
     ...numericalXErrorVariables,
     ...interactiveFiltersVariables,
+    ...limitsVariables,
     getRenderingKey,
   };
 };

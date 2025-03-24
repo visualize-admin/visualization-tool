@@ -9,7 +9,7 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
-import { useMemo } from "react";
+import { PropsWithChildren, useMemo } from "react";
 
 import {
   LinesStateVariables,
@@ -17,7 +17,9 @@ import {
   useLinesStateVariables,
 } from "@/charts/line/lines-state-props";
 import {
-  useAxisLabelHeightOffset,
+  AxisLabelSizeVariables,
+  getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -33,9 +35,15 @@ import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
+import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
+import {
+  ShowTemporalValueLabelsVariables,
+  useShowTemporalValueLabelsVariables,
+} from "@/charts/shared/show-values-utils";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
+import { useLimits } from "@/config-utils";
 import { LineConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import {
@@ -55,7 +63,8 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type LinesState = CommonChartState &
   LinesStateVariables &
-  InteractiveXTimeRangeState & {
+  InteractiveXTimeRangeState &
+  Omit<ShowTemporalValueLabelsVariables, "yOffset"> & {
     chartType: "line";
     segments: string[];
     xScale: ScaleTime<number, number>;
@@ -66,6 +75,8 @@ export type LinesState = CommonChartState &
     chartWideData: ArrayLike<Observation>;
     xKey: string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useLinesState = (
@@ -73,7 +84,7 @@ const useLinesState = (
   variables: LinesStateVariables,
   data: ChartStateData
 ): LinesState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     xDimension,
     getX,
@@ -83,11 +94,15 @@ const useLinesState = (
     getYErrorRange,
     getFormattedYUncertainty,
     getMinY,
+    xAxisLabel,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    yAxisLabel,
+    minLimitValue,
+    maxLimitValue,
   } = variables;
   const {
     chartData,
@@ -98,6 +113,7 @@ const useLinesState = (
     allData,
   } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { y } = fields;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -144,7 +160,10 @@ const useLinesState = (
   const maxValue =
     max(scalesData, (d) => (getYErrorRange ? getYErrorRange(d)[1] : getY(d))) ??
     0;
-  const yDomain = [minValue, maxValue];
+  const yDomain = [
+    minLimitValue !== undefined ? Math.min(minLimitValue, minValue) : minValue,
+    maxLimitValue !== undefined ? Math.max(maxLimitValue, maxValue) : maxValue,
+  ];
   const yScale = scaleLinear().domain(yDomain).nice();
 
   const paddingMinValue = getMinY(paddingData, (d) =>
@@ -155,7 +174,14 @@ const useLinesState = (
       getYErrorRange ? getYErrorRange(d)[1] : getY(d)
     ) ?? 0;
   const paddingYScale = scaleLinear()
-    .domain([paddingMinValue, paddingMaxValue])
+    .domain([
+      minLimitValue !== undefined
+        ? Math.min(minLimitValue, paddingMinValue)
+        : paddingMinValue,
+      maxLimitValue !== undefined
+        ? Math.max(maxLimitValue, paddingMaxValue)
+        : paddingMaxValue,
+    ])
     .nice();
 
   // segments
@@ -206,7 +232,7 @@ const useLinesState = (
         label: segment,
         color:
           fields.color.type === "segment"
-            ? fields.color.colorMapping![dvIri] ?? schemeCategory10[0]
+            ? (fields.color.colorMapping![dvIri] ?? schemeCategory10[0])
             : schemeCategory10[0],
       };
     });
@@ -225,6 +251,7 @@ const useLinesState = (
 
   // Dimensions
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
     height,
@@ -232,23 +259,34 @@ const useLinesState = (
     formatNumber,
   });
   const right = 40;
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: yMeasure.label,
+
+  const chartWidth = getChartWidth({ width, left, right });
+  xScale.range([0, chartWidth]);
+  xScaleTimeRange.range([0, chartWidth]);
+
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
     width,
-    marginLeft: left,
-    marginRight: right,
   });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
+  });
+  const { yOffset: yValueLabelsOffset, ...showValuesVariables } =
+    useShowTemporalValueLabelsVariables(y, {
+      dimensions,
+      measures,
+      segment: fields.segment,
+    });
   const margins = {
-    top: 50 + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset + yValueLabelsOffset,
     right,
     bottom,
     left,
   };
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
 
-  xScale.range([0, chartWidth]);
-  xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   const isMobile = useIsMobile();
@@ -322,12 +360,17 @@ const useLinesState = (
     chartWideData,
     xKey,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
+    ...showValuesVariables,
     ...variables,
   };
 };
 
 const LineChartProvider = (
-  props: React.PropsWithChildren<ChartProps<LineConfig>>
+  props: PropsWithChildren<
+    ChartProps<LineConfig> & { limits: ReturnType<typeof useLimits> }
+  >
 ) => {
   const { children, ...chartProps } = props;
   const variables = useLinesStateVariables(chartProps);
@@ -340,7 +383,9 @@ const LineChartProvider = (
 };
 
 export const LineChart = (
-  props: React.PropsWithChildren<ChartProps<LineConfig>>
+  props: PropsWithChildren<
+    ChartProps<LineConfig> & { limits: ReturnType<typeof useLimits> }
+  >
 ) => {
   return (
     <InteractionProvider>

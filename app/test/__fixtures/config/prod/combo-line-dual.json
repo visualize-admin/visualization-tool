@@ -1,0 +1,136 @@
+{
+  "key": "PNBBZ_QZSBdK",
+  "data": {
+    "state": "PUBLISHED",
+    "key": "PNBBZ_QZSBdK",
+    "layout": {
+      "meta": {
+        "label": {
+          "de": "",
+          "en": "",
+          "fr": "",
+          "it": ""
+        },
+        "title": {
+          "de": "",
+          "en": "",
+          "fr": "",
+          "it": ""
+        },
+        "description": {
+          "de": "",
+          "en": "",
+          "fr": "",
+          "it": ""
+        }
+      },
+      "type": "tab",
+      "blocks": [
+        {
+          "key": "ftcfNaXEz1Dt",
+          "type": "chart",
+          "initialized": false
+        }
+      ]
+    },
+    "version": "4.2.0",
+    "dataSource": {
+      "url": "https://lindas-cached.cluster.ldbar.ch/query",
+      "type": "sparql"
+    },
+    "chartConfigs": [
+      {
+        "key": "ftcfNaXEz1Dt",
+        "meta": {
+          "label": {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": ""
+          },
+          "title": {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": ""
+          },
+          "description": {
+            "de": "",
+            "en": "",
+            "fr": "",
+            "it": ""
+          }
+        },
+        "cubes": [
+          {
+            "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+            "filters": {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": {
+                "type": "single",
+                "value": "https://ld.admin.ch/canton/1"
+              }
+            }
+          }
+        ],
+        "fields": {
+          "x": {
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
+          },
+          "y": {
+            "leftAxisComponentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagenPro100000Einwohner",
+            "rightAxisComponentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen"
+          },
+          "color": {
+            "type": "measures",
+            "paletteId": "category10",
+            "colorMapping": {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen": "#ff7f0e",
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagenPro100000Einwohner": "#1f77b4"
+            }
+          }
+        },
+        "version": "4.1.0",
+        "chartType": "comboLineDual",
+        "activeField": "y",
+        "interactiveFiltersConfig": {
+          "legend": {
+            "active": false,
+            "componentId": ""
+          },
+          "timeRange": {
+            "active": false,
+            "presets": {
+              "to": "",
+              "from": "",
+              "type": "range"
+            },
+            "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr"
+          },
+          "calculation": {
+            "type": "identity",
+            "active": false
+          },
+          "dataFilters": {
+            "active": false,
+            "componentIds": []
+          }
+        }
+      }
+    ],
+    "activeChartKey": "ftcfNaXEz1Dt",
+    "dashboardFilters": {
+      "timeRange": {
+        "active": false,
+        "presets": {
+          "to": "",
+          "from": ""
+        },
+        "timeUnit": ""
+      },
+      "dataFilters": {
+        "filters": {},
+        "componentIds": []
+      }
+    }
+  }
+}

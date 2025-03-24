@@ -5,12 +5,12 @@ import { axisBottom } from "d3-axis";
 import {
   NumberValue,
   ScaleLinear,
+  scaleLinear,
   ScaleQuantile,
   ScaleQuantize,
   ScaleThreshold,
-  scaleLinear,
 } from "d3-scale";
-import { Selection, select } from "d3-selection";
+import { select, Selection } from "d3-selection";
 import { useEffect, useMemo, useRef } from "react";
 
 import { MapState } from "@/charts/map/map-state";
@@ -21,18 +21,23 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import Flex from "@/components/flex";
+import { useLimits } from "@/config-utils";
 import { MapConfig, PaletteType } from "@/configurator";
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { useDimensionFormatters, useFormatInteger } from "@/formatters";
+import {
+  useDimensionFormatters,
+  useFormatInteger,
+  useFormatNumber,
+} from "@/formatters";
 import { getColorInterpolator } from "@/palettes";
 import { getTextWidth } from "@/utils/get-text-width";
 
 const MAX_WIDTH = 204;
 const HEIGHT = 40;
 const COLOR_RAMP_HEIGHT = 10;
-const MARGIN = { top: 6, right: 4, bottom: 0, left: 4 };
+const MARGIN = { top: 6, right: 4, bottom: 6, left: 4 };
 const AXIS_TICK_ROTATE_ANGLE = 45;
 const AXIS_LABEL_FONT_SIZE = 10;
 
@@ -77,9 +82,11 @@ const makeAxis = (
 export const MapLegend = ({
   chartConfig,
   observations,
+  limits,
 }: {
   chartConfig: MapConfig;
   observations: Observation[];
+  limits: ReturnType<typeof useLimits>["limits"];
 }) => {
   const { areaLayer, symbolLayer } = useChartState() as MapState;
   const showAreaLegend =
@@ -98,7 +105,7 @@ export const MapLegend = ({
   const formatters = useDimensionFormatters(measureDimensions);
 
   return (
-    <Box>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       <Flex sx={{ flexWrap: "wrap", gap: 4 }}>
         {areaLayer && showAreaLegend && (
           <Box>
@@ -202,6 +209,41 @@ export const MapLegend = ({
             )}
           </Flex>
         )}
+
+        {limits.map((limit) => {
+          const { configLimit, measureLimit } = limit;
+
+          switch (measureLimit.type) {
+            case "single":
+              return (
+                <Box>
+                  <Typography component="div" variant="caption">
+                    {measureLimit.name}
+                  </Typography>
+                  <LimitLegend
+                    maxValue={measureLimit.value}
+                    color={configLimit.color}
+                  />
+                </Box>
+              );
+            case "range":
+              return (
+                <Box>
+                  <Typography component="div" variant="caption">
+                    {measureLimit.name}
+                  </Typography>
+                  <LimitLegend
+                    minValue={measureLimit.from}
+                    maxValue={measureLimit.to}
+                    color={configLimit.color}
+                  />
+                </Box>
+              );
+            default:
+              const _exhaustiveCheck: never = measureLimit;
+              return _exhaustiveCheck;
+          }
+        })}
       </Flex>
 
       {areaLayer?.colors.type === "categorical" && (
@@ -228,7 +270,18 @@ export const MapLegend = ({
   );
 };
 
-interface CircleProps {
+const Circle = ({
+  value,
+  label,
+  fill,
+  stroke,
+  radius,
+  maxRadius,
+  fontSize,
+  showLine = true,
+  dashed,
+  center,
+}: {
   value: string;
   label: string;
   fill?: string;
@@ -237,44 +290,35 @@ interface CircleProps {
   maxRadius: number;
   fontSize: number;
   showLine?: boolean;
-}
-
-const Circle = (props: CircleProps) => {
-  const {
-    value,
-    label,
-    fill,
-    stroke,
-    radius,
-    maxRadius,
-    fontSize,
-    showLine = true,
-  } = props;
+  dashed?: boolean;
+  center?: boolean;
+}) => {
+  const cy = center ? -maxRadius + radius : 0;
 
   return (
     <g transform={`translate(0, ${maxRadius - radius})`}>
       <circle
         cx={0}
-        cy={0}
+        cy={cy}
         r={radius}
         fill={fill}
         stroke={stroke}
+        strokeDasharray={dashed ? "4 4" : 0}
         fillOpacity={0.1}
       />
       {showLine && (
         <>
           <line
             x1={0}
-            y1={-radius}
+            y1={cy - radius}
             x2={maxRadius + 4}
-            y2={-radius}
-            stroke={stroke}
+            y2={cy - radius}
+            stroke="black"
           />
           <text
             x={maxRadius + 6}
-            y={-radius}
+            y={cy - radius}
             dy={5}
-            fill={stroke}
             textAnchor="start"
             fontSize={fontSize}
             paintOrder="stroke"
@@ -370,6 +414,59 @@ const CircleLegend = ({
               fontSize={AXIS_LABEL_FONT_SIZE}
             />
           )}
+      </g>
+    </svg>
+  );
+};
+
+const LimitLegend = ({
+  minValue,
+  maxValue,
+  color,
+}: {
+  minValue?: number;
+  maxValue: number;
+  color: string;
+}) => {
+  const formatNumber = useFormatNumber({ decimals: "auto" });
+  const width = useLegendWidth();
+
+  const { symbolLayer } = useChartState() as MapState;
+  const { radiusScale } = symbolLayer as NonNullable<MapState["symbolLayer"]>;
+
+  const minRadius = radiusScale(minValue ?? 0);
+  const maxRadius = radiusScale(maxValue);
+
+  return (
+    <svg width={width} height={maxRadius * 2 + MARGIN.top + MARGIN.bottom}>
+      <g
+        transform={`translate(${maxRadius + MARGIN.left}, ${maxRadius + MARGIN.top})`}
+      >
+        <Circle
+          value={formatNumber(maxValue)}
+          label=""
+          fill="none"
+          stroke={color}
+          radius={maxRadius}
+          maxRadius={maxRadius}
+          fontSize={AXIS_LABEL_FONT_SIZE}
+          showLine
+          dashed
+        />
+        {minValue !== undefined ? (
+          <Circle
+            value={formatNumber(minValue)}
+            label=""
+            fill="none"
+            stroke={color}
+            radius={minRadius}
+            maxRadius={maxRadius}
+            fontSize={AXIS_LABEL_FONT_SIZE}
+            showLine
+            dashed
+            center
+          />
+        ) : null}
       </g>
     </svg>
   );

@@ -6,6 +6,7 @@ import { ReactNode, useEffect, useRef } from "react";
 import { useChartState } from "@/charts/shared/chart-state";
 import { CalculationToggle } from "@/charts/shared/interactive-filter-calculation-toggle";
 import { useObserverRef } from "@/charts/shared/use-size";
+import { useEmbedQueryParams } from "@/components/embed-params";
 import { getChartConfig } from "@/config-utils";
 import {
   hasChartConfigs,
@@ -52,13 +53,13 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
   );
 };
 
+export const CHART_SVG_ID = "chart-svg";
+
 export const ChartSvg = ({ children }: { children: ReactNode }) => {
   const ref = useRef<SVGSVGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const chartState = useChartState();
-  const { bounds, interactiveFiltersConfig } = chartState;
-
+  const { bounds, interactiveFiltersConfig } = useChartState();
   const { width, margins, chartHeight } = bounds;
 
   useEffect(() => {
@@ -88,6 +89,7 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
   return (
     <svg
       ref={ref}
+      id={CHART_SVG_ID}
       width={width}
       style={{ position: "absolute", left: 0, top: 0 }}
     >
@@ -96,8 +98,8 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
           {...DISABLE_SCREENSHOT_ATTR}
           width={width - margins.right}
           y={0}
-          height="26"
-          style={{ display: "flex", textAlign: "right" }}
+          height={26}
+          style={{ display: "flex" }}
         >
           <CalculationToggle />
         </foreignObject>
@@ -109,6 +111,8 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
 
 export const ChartControlsContainer = (props: BoxProps) => {
   const { sx, ...rest } = props;
+  const { embedParams } = useEmbedQueryParams();
+
   return (
     <Box
       sx={{
@@ -116,7 +120,7 @@ export const ChartControlsContainer = (props: BoxProps) => {
         flexDirection: "column",
         gap: 4,
         mt: 2,
-        mb: 4,
+        mb: embedParams.optimizeSpace ? 3 : 4,
         ...sx,
       }}
       {...rest}

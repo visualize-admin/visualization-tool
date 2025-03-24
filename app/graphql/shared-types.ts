@@ -4,6 +4,7 @@ import { DataCubeMetadata, Observation } from "@/domain/data";
 import { RelatedDimension } from "@/graphql/query-hooks";
 import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
 import { ExtendedCube } from "@/rdf/extended-cube";
+import { Limit } from "@/rdf/limits";
 
 export type ResolvedDataCube = {
   cube: ExtendedCube;
@@ -37,6 +38,7 @@ export type ResolvedDimension = {
     timeFormat?: string;
     scaleType?: ScaleType;
     hasHierarchy?: boolean;
+    limits?: Limit[];
   };
 };
 

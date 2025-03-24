@@ -5,42 +5,50 @@ import { AreasState } from "@/charts/area/areas-state";
 import { ComboLineDualState } from "@/charts/combo/combo-line-dual-state";
 import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import { LinesState } from "@/charts/line/lines-state";
+import { useXAxisTitleOffset } from "@/charts/shared/chart-dimensions";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   maybeTransition,
   renderContainer,
 } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
+import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatShortDateAuto } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
 
 // Approximate the longest date format we're using for.
 // Roughly equivalent to the text width of "99.99.9999" with 12px font size.
-const MAX_DATE_LABEL_LENGHT = 70;
+const MAX_DATE_LABEL_LENGTH = 70;
 
 export const AxisTime = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDateAuto = useFormatShortDateAuto();
-  const { xScale, yScale, bounds } = useChartState() as
+  const {
+    xScale,
+    yScale,
+    bounds,
+    xDimension,
+    xAxisLabel,
+    bottomAxisLabelSize,
+  } = useChartState() as
     | LinesState
     | AreasState
     | ComboLineSingleState
     | ComboLineDualState;
-  const { chartHeight, margins } = bounds;
-  const { labelColor, gridColor, domainColor, labelFontSize, fontFamily } =
-    useChartTheme();
-
+  const { chartHeight, chartWidth, margins } = bounds;
+  const {
+    labelColor,
+    gridColor,
+    domainColor,
+    labelFontSize,
+    fontFamily,
+    axisLabelFontSize,
+  } = useChartTheme();
+  const xAxisTitleOffset = useXAxisTitleOffset();
   const hasNegativeValues = yScale.domain()[0] < 0;
-
-  // This could be useful: use data points as tick values,
-  // but it does not solve the problem of overlapping.
-  // const tickValues =
-  //   bounds.chartWidth / (MAX_DATE_LABEL_LENGHT + 20) > xUniqueValues.length
-  //     ? xUniqueValues
-  //     : null;
-  const ticks = bounds.chartWidth / (MAX_DATE_LABEL_LENGHT + 20);
+  const ticks = bounds.chartWidth / (MAX_DATE_LABEL_LENGTH + 20);
 
   useEffect(() => {
     if (ref.current) {
@@ -86,7 +94,22 @@ export const AxisTime = () => {
     xScale,
   ]);
 
-  return <g ref={ref} />;
+  return (
+    <>
+      <foreignObject
+        x={margins.left + chartWidth / 2 - bottomAxisLabelSize.width / 2}
+        y={margins.top + chartHeight + xAxisTitleOffset}
+        width={chartWidth}
+        height={bottomAxisLabelSize.height}
+        style={{ display: "flex" }}
+      >
+        <OpenMetadataPanelWrapper component={xDimension}>
+          <span style={{ fontSize: axisLabelFontSize }}>{xAxisLabel}</span>
+        </OpenMetadataPanelWrapper>
+      </foreignObject>
+      <g ref={ref} />
+    </>
+  );
 };
 
 export const AxisTimeDomain = () => {

@@ -18,12 +18,15 @@ import {
 } from "@/charts/combo/combo-line-column-state-props";
 import {
   adjustScales,
-  getMargins,
   useCommonComboState,
+  useDualAxisMargins,
   useYScales,
 } from "@/charts/combo/combo-state";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import {
+  AxisLabelSizeVariables,
+  getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -48,7 +51,6 @@ import { useFormatFullDateAuto } from "@/formatters";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { getTimeInterval } from "@/intervals";
 import { getTextWidth } from "@/utils/get-text-width";
-import { useAxisTitleAdjustments } from "@/utils/use-axis-title-adjustments";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -71,6 +73,8 @@ export type ComboLineColumnState = CommonChartState &
     chartWideData: ArrayLike<Observation>;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
     maxRightTickWidth: number;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useComboLineColumnState = (
@@ -79,7 +83,7 @@ const useComboLineColumnState = (
   data: ChartStateData
 ): ComboLineColumnState => {
   const { chartConfig } = chartProps;
-  const { getX, getXAsDate } = variables;
+  const { getX, getXAsDate, xAxisLabel } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const xKey = fields.x.componentId;
@@ -140,6 +144,7 @@ const useComboLineColumnState = (
 
   // Dimensions
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingLeftYScale,
     width,
     height,
@@ -155,22 +160,33 @@ const useComboLineColumnState = (
         TICK_PADDING
     )
   );
-
-  const { topMarginAxisTitleAdjustment } = useAxisTitleAdjustments({
+  const margins = useDualAxisMargins({
+    width,
+    left,
+    bottom,
+    maxRightTickWidth,
     leftAxisTitle: variables.y.left.label,
     rightAxisTitle: variables.y.right.label,
-    containerWidth: width,
   });
-
-  const right = Math.max(maxRightTickWidth, 40);
-  const margins = getMargins({
-    left,
-    right,
-    bottom,
-    top: topMarginAxisTitleAdjustment,
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: variables.y.left.label,
+    width,
   });
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const rightAxisLabelSize = useAxisLabelSizeVariables({
+    label: variables.y.right.label,
+    width,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
+  });
+  const chartWidth = getChartWidth({
+    width,
+    left: margins.left,
+    right: margins.right,
+  });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
   const xScales = [xScale, xScaleTime, xScaleTimeRange];
   const yScales = [yScale, yScaleLeft, yScaleRight];
   adjustScales(xScales, yScales, { chartWidth, chartHeight });
@@ -234,6 +250,12 @@ const useComboLineColumnState = (
     getColorLabel: (label) => label,
     chartWideData,
     getAnnotationInfo,
+    leftAxisLabelSize: {
+      width: Math.max(leftAxisLabelSize.width, rightAxisLabelSize.width),
+      height: Math.max(leftAxisLabelSize.height, rightAxisLabelSize.height),
+      offset: Math.max(leftAxisLabelSize.offset, rightAxisLabelSize.offset),
+    },
+    bottomAxisLabelSize,
     ...variables,
   };
 };

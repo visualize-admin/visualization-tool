@@ -17,7 +17,6 @@ import { ControlSectionSkeleton } from "@/configurator/components/chart-controls
 import { IconButton } from "@/configurator/components/icon-button";
 import { useAddOrEditChartType } from "@/configurator/config-form";
 import { ConfiguratorStateWithChartConfigs } from "@/configurator/configurator-state";
-import { useFlag } from "@/flags";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
 
@@ -40,7 +39,6 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
     chartKey,
     ...rest
   } = props;
-  const enableBarChart = useFlag("enable-experimental-features");
   const locale = useLocale();
   const chartConfig = getChartConfig(state);
   const [{ data }] = useDataCubesComponentsQuery({
@@ -123,11 +121,7 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
                 message: "Regular",
               })}
               currentChartType={chartType}
-              chartTypes={
-                enableBarChart
-                  ? regularChartTypes
-                  : regularChartTypes.filter((chartType) => chartType !== "bar")
-              }
+              chartTypes={regularChartTypes}
               possibleChartTypesDict={possibleChartTypesDict}
               onClick={handleClick}
               testId="chart-type-selector-regular"

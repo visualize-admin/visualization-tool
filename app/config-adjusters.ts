@@ -75,13 +75,17 @@ type _InteractiveFiltersAdjusters = {
 
 type BaseAdjusters<NewChartConfigType extends ChartConfig> = {
   cubes: FieldAdjuster<NewChartConfigType, GenericChartConfig["cubes"]>;
+  limits: FieldAdjuster<NewChartConfigType, GenericChartConfig["limits"]>;
   interactiveFiltersConfig: InteractiveFiltersAdjusters;
 };
 
 type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<ColumnConfig, string> };
-    y: { componentId: FieldAdjuster<ColumnConfig, string> };
+    y: {
+      componentId: FieldAdjuster<ColumnConfig, string>;
+      showValues: FieldAdjuster<ColumnConfig, boolean>;
+    };
     segment: FieldAdjuster<
       ColumnConfig,
       | BarSegmentField
@@ -97,7 +101,10 @@ type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
 
 type BarAdjusters = BaseAdjusters<BarConfig> & {
   fields: {
-    x: { componentId: FieldAdjuster<BarConfig, string> };
+    x: {
+      componentId: FieldAdjuster<BarConfig, string>;
+      showValues: FieldAdjuster<BarConfig, boolean>;
+    };
     y: { componentId: FieldAdjuster<BarConfig, string> };
     segment: FieldAdjuster<
       BarConfig,
@@ -115,7 +122,10 @@ type BarAdjusters = BaseAdjusters<BarConfig> & {
 type LineAdjusters = BaseAdjusters<LineConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<LineConfig, string> };
-    y: { componentId: FieldAdjuster<LineConfig, string> };
+    y: {
+      componentId: FieldAdjuster<LineConfig, string>;
+      showValues: FieldAdjuster<LineConfig, boolean>;
+    };
     segment: FieldAdjuster<
       LineConfig,
       | ColumnSegmentField
@@ -131,7 +141,10 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
 type AreaAdjusters = BaseAdjusters<AreaConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<AreaConfig, string> };
-    y: { componentId: FieldAdjuster<AreaConfig, string> };
+    y: {
+      componentId: FieldAdjuster<AreaConfig, string>;
+      showValues: FieldAdjuster<AreaConfig, boolean>;
+    };
     segment: FieldAdjuster<
       AreaConfig,
       | ColumnSegmentField
@@ -162,7 +175,10 @@ type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
 
 type PieAdjusters = BaseAdjusters<PieConfig> & {
   fields: {
-    y: { componentId: FieldAdjuster<PieConfig, string> };
+    y: {
+      componentId: FieldAdjuster<PieConfig, string>;
+      showValues: FieldAdjuster<PieConfig, boolean>;
+    };
     segment: FieldAdjuster<
       PieConfig,
       | ColumnSegmentField

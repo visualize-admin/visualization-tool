@@ -64,6 +64,7 @@ export const fields = {
       sortingType: "byDimensionLabel",
       sortingOrder: "asc",
     } as SortingField["sorting"],
+    showValuesMapping: {},
   },
 };
 
@@ -91,6 +92,7 @@ export const chartConfig: LineConfig = {
     },
   },
   cubes: [{ iri: "", filters: {} }],
+  limits: {},
   chartType: "line",
   interactiveFiltersConfig,
   fields,

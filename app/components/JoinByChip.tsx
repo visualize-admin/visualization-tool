@@ -1,4 +1,4 @@
-import { Chip, ChipProps, chipClasses } from "@mui/material";
+import { Chip, chipClasses, ChipProps } from "@mui/material";
 
 import SvgIcMergeddimension from "@/icons/components/IcMergedDimension";
 

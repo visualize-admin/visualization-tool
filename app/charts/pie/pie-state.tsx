@@ -11,7 +11,13 @@ import {
   usePieStateVariables,
 } from "@/charts/pie/pie-state-props";
 import {
-  useAxisLabelHeightOffset,
+  ShowPieValueLabelsVariables,
+  useShowPieValueLabelsVariables,
+} from "@/charts/pie/show-values-utils";
+import {
+  AxisLabelSizeVariables,
+  getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
 } from "@/charts/shared/chart-dimensions";
 import {
@@ -35,12 +41,14 @@ import {
 import { ChartProps } from "../shared/ChartProps";
 
 export type PieState = CommonChartState &
-  PieStateVariables & {
+  PieStateVariables &
+  ShowPieValueLabelsVariables & {
     chartType: "pie";
     getPieData: Pie<$IntentionalAny, Observation>;
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: PieArcDatum<Observation>) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const usePieState = (
@@ -48,7 +56,7 @@ const usePieState = (
   variables: PieStateVariables,
   data: ChartStateData
 ): PieState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     yMeasure,
     getY,
@@ -57,11 +65,13 @@ const usePieState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    yAxisLabel,
   } = variables;
   // Segment dimension is guaranteed to be present, because it is required.
   const segmentDimension = _segmentDimension as Dimension;
   const { chartData, segmentData, allData } = data;
   const { fields } = chartConfig;
+  const { y } = fields;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber();
@@ -153,22 +163,25 @@ const usePieState = (
   ]);
 
   // Dimensions
-  const left = 40;
-  const right = 40;
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: yMeasure.label,
-    width,
-    marginLeft: left,
-    marginRight: right,
+  const showValuesVariables = useShowPieValueLabelsVariables(y, {
+    dimensions,
+    measures,
   });
+  const left = 40;
+  const right = left;
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
+    width,
+  });
+  const baseYMargin = showValuesVariables.showValues ? 90 : 50;
   const margins = {
-    top: 50 + yAxisLabelMargin,
+    top: baseYMargin + leftAxisLabelSize.offset,
     right,
-    bottom: 40,
+    bottom: baseYMargin,
     left,
   };
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth } = bounds;
+  const chartWidth = getChartWidth({ width, left, right });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
 
   // Pie data
   // Sort the pie according to the segments
@@ -194,7 +207,7 @@ const usePieState = (
       return "-";
     }
 
-    const fValue = formatNumberWithUnit(
+    const formattedValue = formatNumberWithUnit(
       value,
       formatters[yMeasure.id] ?? formatNumber,
       yMeasure.unit
@@ -202,7 +215,7 @@ const usePieState = (
     const percentage = value / ySum;
     const rounded = Math.round(percentage * 100);
 
-    return `${rounded}% (${fValue})`;
+    return `${rounded}% (${formattedValue})`;
   };
 
   // Tooltip
@@ -258,6 +271,8 @@ const usePieState = (
     colors,
     getColorLabel: getSegmentLabel,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    ...showValuesVariables,
     ...variables,
   };
 };

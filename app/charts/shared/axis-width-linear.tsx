@@ -1,9 +1,11 @@
 import { axisBottom } from "d3-axis";
 import { useEffect, useRef } from "react";
 
+import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
+import { StackedBarsState } from "@/charts/bar/bars-stacked-state";
 import { BarsState } from "@/charts/bar/bars-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
-import { useAxisLabelHeightOffset } from "@/charts/shared/chart-dimensions";
+import { useXAxisTitleOffset } from "@/charts/shared/chart-dimensions";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   maybeTransition,
@@ -17,8 +19,18 @@ import { getTextWidth } from "@/utils/get-text-width";
 
 export const AxisWidthLinear = () => {
   const formatNumber = useFormatNumber();
-  const { xScale, bounds, xAxisLabel, xMeasure, chartType } =
-    useChartState() as ScatterplotState | BarsState;
+  const {
+    xScale,
+    bounds,
+    xAxisLabel,
+    xMeasure,
+    chartType,
+    bottomAxisLabelSize,
+  } = useChartState() as
+    | ScatterplotState
+    | BarsState
+    | GroupedBarsState
+    | StackedBarsState;
   const { chartWidth, chartHeight, margins } = bounds;
   const {
     labelColor,
@@ -27,6 +39,8 @@ export const AxisWidthLinear = () => {
     gridColor,
     fontFamily,
   } = useChartTheme();
+  const xAxisTitleOffset = useXAxisTitleOffset();
+
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
@@ -86,21 +100,14 @@ export const AxisWidthLinear = () => {
     xScale,
   ]);
 
-  const { height, labelWidth } = useAxisLabelHeightOffset({
-    label: xAxisLabel,
-    width: chartWidth,
-    marginLeft: margins.left,
-    marginRight: margins.right,
-  });
-
   return (
     <>
       <foreignObject
-        x={margins.left + chartWidth / 2 - labelWidth / 2}
-        y={margins.top + chartHeight + 34}
+        x={margins.left + chartWidth / 2 - bottomAxisLabelSize.width / 2}
+        y={margins.top + chartHeight + xAxisTitleOffset}
         width={chartWidth}
-        height={height}
-        style={{ display: "flex", textAlign: "right" }}
+        height={bottomAxisLabelSize.height}
+        style={{ display: "flex" }}
       >
         <OpenMetadataPanelWrapper component={xMeasure}>
           <span style={{ fontSize: axisLabelFontSize }}>{xAxisLabel}</span>

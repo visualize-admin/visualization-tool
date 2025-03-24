@@ -1,21 +1,25 @@
-import { GeoJsonLayer, ScatterplotLayer } from "@deck.gl/layers/typed";
+import {
+  GeoJsonLayer,
+  ScatterplotLayer,
+  ScatterplotLayerProps,
+} from "@deck.gl/layers";
 import { supported } from "@mapbox/mapbox-gl-supported";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { hexToRgba } from "@uiw/react-color";
 import { geoArea } from "d3-geo";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
-import maplibreglraw from "maplibre-gl";
+import maplibreglRaw from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Map, { LngLatLike, MapboxEvent } from "react-map-gl";
-
-import "maplibre-gl/dist/maplibre-gl.css";
 
 import {
   DEFAULT_COLOR,
   FLY_TO_DURATION,
   RESET_DURATION,
 } from "@/charts/map/constants";
+import DashedScatterplotLayer from "@/charts/map/dashed-scatterplot-layer";
 import { useMapStyle } from "@/charts/map/get-base-layer-style";
 import {
   BASE_VIEW_STATE,
@@ -25,17 +29,27 @@ import {
 import { MapState } from "@/charts/map/map-state";
 import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
 import { getMap, setMap } from "@/charts/map/ref";
+import { getWMSTile, useWMSLayers } from "@/charts/map/wms-utils";
+import { getWMTSTile, useWMTSLayers } from "@/charts/map/wmts-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { BBox } from "@/configurator";
+import { useLimits } from "@/config-utils";
+import {
+  BaseLayer,
+  BBox,
+  getWMSCustomLayers,
+  getWMTSCustomLayers,
+} from "@/configurator";
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/src";
 import useEvent from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
+import "maplibre-gl/dist/maplibre-gl.css";
+
 // supported was removed as of maplibre-gl v3.0.0, so we need to add it back
-const maplibregl = { ...maplibreglraw, supported };
+const maplibregl = { ...maplibreglRaw, supported };
 
 const useStyles = makeStyles<Theme>((theme) => ({
   controlButtons: {
@@ -84,9 +98,77 @@ const resizeAndFit = debounce((map: mapboxgl.Map, bbox: BBox) => {
   map.fitBounds(bbox, { duration: 0 });
 }, 0);
 
-export const MapComponent = () => {
+export const MapComponent = ({
+  limits,
+  customLayers,
+  value,
+}: {
+  limits: ReturnType<typeof useLimits>;
+  customLayers: BaseLayer["customLayers"];
+  value?: string | number;
+}) => {
   const classes = useStyles();
   const locale = useLocale();
+
+  const { wmsCustomLayers, wmtsCustomLayers } = useMemo(() => {
+    return {
+      wmsCustomLayers: getWMSCustomLayers(customLayers),
+      wmtsCustomLayers: getWMTSCustomLayers(customLayers),
+    };
+  }, [customLayers]);
+
+  const { data: wmsLayers } = useWMSLayers({
+    pause: wmsCustomLayers.length === 0,
+  });
+  const { data: wmtsLayers } = useWMTSLayers({
+    pause: wmtsCustomLayers.length === 0,
+  });
+  const { behindAreaCustomLayers, afterAreaCustomLayers } = useMemo(() => {
+    return {
+      behindAreaCustomLayers: customLayers
+        .filter((customLayer) => customLayer.isBehindAreaLayer)
+        .map((customLayer) => {
+          switch (customLayer.type) {
+            case "wms":
+              return getWMSTile({
+                wmsLayers,
+                customLayer,
+                beforeId: "areaLayer",
+              });
+            case "wmts":
+              return getWMTSTile({
+                wmtsLayers,
+                customLayer,
+                beforeId: "areaLayer",
+                value,
+              });
+            default:
+              const _exhaustiveCheck: never = customLayer;
+              return _exhaustiveCheck;
+          }
+        }),
+      afterAreaCustomLayers: customLayers
+        .filter((customLayer) => !customLayer.isBehindAreaLayer)
+        .map((customLayer) => {
+          switch (customLayer.type) {
+            case "wms":
+              return getWMSTile({
+                wmsLayers,
+                customLayer,
+              });
+            case "wmts":
+              return getWMTSTile({
+                wmtsLayers,
+                customLayer,
+                value,
+              });
+            default:
+              const _exhaustiveCheck: never = customLayer;
+              return _exhaustiveCheck;
+          }
+        }),
+    };
+  }, [customLayers, value, wmsLayers, wmtsLayers]);
 
   const [{ interaction }, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
@@ -228,6 +310,7 @@ export const MapComponent = () => {
     return new GeoJsonLayer({
       id: "areaLayer",
       beforeId: showBaseLayer ? "water_polygon" : undefined,
+      // @ts-ignore this is correct
       data: sortedShapes,
       pickable: true,
       parameters: {
@@ -285,6 +368,9 @@ export const MapComponent = () => {
 
       return new GeoJsonLayer({
         id: "hoverLayer",
+        beforeId: afterAreaCustomLayers.length
+          ? afterAreaCustomLayers[0]?.props.id
+          : undefined,
         // @ts-ignore
         data: shape,
         filled: true,
@@ -294,11 +380,17 @@ export const MapComponent = () => {
         getFillColor,
       });
     }
-  }, [areaLayer, interaction.d, interaction.visible, sortedShapes]);
+  }, [
+    afterAreaCustomLayers,
+    areaLayer,
+    interaction.d,
+    interaction.visible,
+    sortedShapes,
+  ]);
 
-  const scatterplotLayer = useMemo(() => {
+  const scatterplotLayers = useMemo(() => {
     if (!symbolLayer) {
-      return;
+      return [];
     }
 
     const getFillColor = ({ properties: { observation } }: GeoPoint) => {
@@ -325,38 +417,86 @@ export const MapComponent = () => {
     const data = features.symbolLayer?.points;
     const sortedData = data ? orderBy(data, getRadius, "desc") : [];
 
-    return new ScatterplotLayer({
-      id: "symbolLayer",
-      pickable: identicalLayerComponentIds ? !areaLayer : true,
-      autoHighlight: true,
-      filled: true,
-      stroked: true,
-      lineWidthMinPixels: 0.8,
-      data: sortedData,
-      getPosition,
-      getRadius,
-      radiusUnits: "pixels",
-      radiusMinPixels,
-      radiusMaxPixels,
-      // @ts-ignore
-      getFillColor,
-      onHover: ({
-        x,
-        y,
-        object,
-      }: {
-        x: number;
-        y: number;
-        object?: GeoFeature;
-      }) => onHover({ type: "symbol", x, y, object }),
-      updateTriggers: {
-        getFillColor,
+    return [
+      new ScatterplotLayer({
+        id: "symbolLayer",
+        pickable: identicalLayerComponentIds ? !areaLayer : true,
+        autoHighlight: true,
+        filled: true,
+        stroked: true,
+        lineWidthMinPixels: 0.8,
+        data: sortedData,
         getPosition,
         getRadius,
-        onHover,
-      },
-    });
+        radiusUnits: "pixels",
+        radiusMinPixels,
+        radiusMaxPixels,
+        // @ts-ignore
+        getFillColor,
+        onHover: ({
+          x,
+          y,
+          object,
+        }: {
+          x: number;
+          y: number;
+          object?: GeoFeature;
+        }) => onHover({ type: "symbol", x, y, object }),
+        updateTriggers: {
+          getFillColor,
+          getPosition,
+          getRadius,
+          onHover,
+        },
+      }),
+      ...limits.limits.map((limit, i) => {
+        const { configLimit, measureLimit } = limit;
+        const rgba = hexToRgba(configLimit.color);
+        const baseLayerProps: Partial<ScatterplotLayerProps<GeoPoint>> = {
+          filled: false,
+          stroked: true,
+          getLineColor: [rgba.r, rgba.g, rgba.b, 255],
+          lineWidthMinPixels: 0.8,
+          data: sortedData,
+          getPosition,
+          radiusUnits: "pixels",
+        };
+        const mkGetLimitRadius =
+          (value: number) =>
+          ({ properties: { observation } }: GeoPoint) => {
+            return observation ? symbolLayer.radiusScale(value) : 0;
+          };
+
+        switch (measureLimit.type) {
+          case "single":
+            return [
+              new DashedScatterplotLayer({
+                id: `symbolLayerLimit-${i}`,
+                getRadius: mkGetLimitRadius(measureLimit.value),
+                ...baseLayerProps,
+              }),
+            ];
+          case "range":
+            return [
+              new DashedScatterplotLayer({
+                id: `symbolLayerLimit-${i}-from`,
+                getRadius: mkGetLimitRadius(measureLimit.from),
+                ...baseLayerProps,
+              }),
+              new DashedScatterplotLayer({
+                id: `symbolLayerLimit-${i}-to`,
+                getRadius: mkGetLimitRadius(measureLimit.to),
+                ...baseLayerProps,
+              }),
+            ];
+          default:
+            const _exhaustiveCheck: never = measureLimit;
+            return _exhaustiveCheck;
+        }
+      }),
+    ];
   }, [
+    limits,
     areaLayer,
     features.symbolLayer,
     identicalLayerComponentIds,
@@ -444,10 +584,16 @@ export const MapComponent = () => {
           onResize={handleResize}
           {...viewState}
         >
-          <div data-map-loaded={loaded ? "true" : "false"} />
+          <div data-map-loaded={loaded} />
           <DeckGLOverlay
             interleaved
-            layers={[geoJsonLayer, hoverLayer, scatterplotLayer]}
+            layers={[
+              ...behindAreaCustomLayers,
+              geoJsonLayer,
+              hoverLayer,
+              ...afterAreaCustomLayers,
+              ...scatterplotLayers,
+            ]}
           />
         </Map>
       ) : null}

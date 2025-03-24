@@ -9,13 +9,14 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import {
+  Series,
   stack,
   stackOrderAscending,
   stackOrderDescending,
   stackOrderReverse,
 } from "d3-shape";
 import orderBy from "lodash/orderBy";
-import React, { useCallback, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   AreasStateVariables,
@@ -23,7 +24,9 @@ import {
   useAreasStateVariables,
 } from "@/charts/area/areas-state-props";
 import {
-  useAxisLabelHeightOffset,
+  AxisLabelSizeVariables,
+  getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -44,6 +47,11 @@ import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
+import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
+import {
+  ShowTemporalValueLabelsVariables,
+  useShowTemporalValueLabelsVariables,
+} from "@/charts/shared/show-values-utils";
 import {
   getStackedTooltipValueFormatter,
   getStackedYScale,
@@ -51,6 +59,7 @@ import {
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
+import { useLimits } from "@/config-utils";
 import { AreaConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
@@ -67,7 +76,8 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type AreasState = CommonChartState &
   AreasStateVariables &
-  InteractiveXTimeRangeState & {
+  InteractiveXTimeRangeState &
+  Omit<ShowTemporalValueLabelsVariables, "yOffset"> & {
     chartType: "area";
     xScale: ScaleTime<number, number>;
     yScale: ScaleLinear<number, number>;
@@ -75,8 +85,10 @@ export type AreasState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
-    series: $FixMe[];
+    series: Series<{ [key: string]: number }, string>[];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useAreasState = (
@@ -84,7 +96,7 @@ const useAreasState = (
   variables: AreasStateVariables,
   data: ChartStateData
 ): AreasState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     xDimension,
     getX,
@@ -96,6 +108,10 @@ const useAreasState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
+    minLimitValue,
+    maxLimitValue,
   } = variables;
   const getIdentityY = useGetIdentityY(yMeasure.id);
   const {
@@ -107,6 +123,7 @@ const useAreasState = (
     allData,
   } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { y } = fields;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -297,8 +314,10 @@ const useAreasState = (
       normalize,
       getX: getXAsString,
       getY,
+      minLimitValue,
+      maxLimitValue,
     });
-  }, [scalesData, normalize, getXAsString, getY]);
+  }, [scalesData, normalize, getXAsString, getY, minLimitValue, maxLimitValue]);
 
   const paddingYScale = useMemo(() => {
     //  When the user can toggle between absolute and relative values, we use the
@@ -309,6 +328,8 @@ const useAreasState = (
         normalize: false,
         getX: getXAsString,
         getY,
+        minLimitValue,
+        maxLimitValue,
       });
 
       if (scale.domain()[1] < 100 && scale.domain()[0] > -100) {
@@ -322,17 +343,22 @@ const useAreasState = (
       normalize,
       getX: getXAsString,
       getY,
+      minLimitValue,
+      maxLimitValue,
     });
   }, [
+    interactiveFiltersConfig?.calculation.active,
     paddingData,
+    normalize,
     getXAsString,
     getY,
-    interactiveFiltersConfig?.calculation.active,
-    normalize,
+    minLimitValue,
+    maxLimitValue,
   ]);
 
   /** Dimensions */
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
     height,
@@ -341,24 +367,34 @@ const useAreasState = (
     normalize,
   });
   const right = 40;
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: yMeasure.label,
+
+  const chartWidth = getChartWidth({ width, left, right });
+  xScale.range([0, chartWidth]);
+  xScaleTimeRange.range([0, chartWidth]);
+
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
     width,
-    marginLeft: left,
-    marginRight: right,
   });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
+  });
+  const { yOffset: yValueLabelsOffset, ...showValuesVariables } =
+    useShowTemporalValueLabelsVariables(y, {
+      dimensions,
+      measures,
+      segment: fields.segment,
+    });
   const margins = {
-    top: 70 + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset + yValueLabelsOffset,
     right,
     bottom,
     left,
   };
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
 
-  /** Adjust scales according to dimensions */
-  xScale.range([0, chartWidth]);
-  xScaleTimeRange.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
 
   const isMobile = useIsMobile();
@@ -454,12 +490,17 @@ const useAreasState = (
     chartWideData,
     series,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
+    ...showValuesVariables,
     ...variables,
   };
 };
 
 const AreaChartProvider = (
-  props: React.PropsWithChildren<ChartProps<AreaConfig>>
+  props: PropsWithChildren<
+    ChartProps<AreaConfig> & { limits: ReturnType<typeof useLimits> }
+  >
 ) => {
   const { children, ...chartProps } = props;
   const variables = useAreasStateVariables(chartProps);
@@ -472,7 +513,9 @@ const AreaChartProvider = (
 };
 
 export const AreaChart = (
-  props: React.PropsWithChildren<ChartProps<AreaConfig>>
+  props: PropsWithChildren<
+    ChartProps<AreaConfig> & { limits: ReturnType<typeof useLimits> }
+  >
 ) => {
   return (
     <InteractionProvider>

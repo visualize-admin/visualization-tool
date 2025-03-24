@@ -10,7 +10,8 @@
     "streetsidesoftware.code-spell-checker",
     "mquandalle.graphql",
     "codeandstuff.package-json-upgrade",
-    "ambar.bundle-size"
+    "ambar.bundle-size",
+    "joffreykern.markdown-toc"
   ],
   // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
   "unwantedRecommendations": []

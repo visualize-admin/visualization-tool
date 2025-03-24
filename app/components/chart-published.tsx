@@ -26,6 +26,7 @@ import {
 } from "@/components/chart-table-preview";
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
+import { EmbedQueryParams } from "@/components/embed-params";
 import Flex from "@/components/flex";
 import { HintBlue, HintRed, HintYellow } from "@/components/hint";
 import {
@@ -68,40 +69,54 @@ type ChartPublishedIndividualChartProps = Omit<
 const ChartPublishedIndividualChart = forwardRef<
   HTMLDivElement,
   ChartPublishedIndividualChartProps
->(({ dataSource, state, chartConfig, configKey, children, ...rest }, ref) => {
-  const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
-  return (
-    <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
-      <ChartTablePreviewProvider key={chartConfig.key}>
-        <ChartWrapper
-          key={chartConfig.key}
-          layoutType={state.layout.type}
-          ref={ref}
-          chartKey={chartConfig.key}
-          {...rest}
-        >
-          <ChartPublishedInner
+>(
+  (
+    {
+      dataSource,
+      state,
+      chartConfig,
+      configKey,
+      children,
+      embedParams,
+      ...rest
+    },
+    ref
+  ) => {
+    const metadataPanelStore = useMemo(() => createMetadataPanelStore(), []);
+    return (
+      <MetadataPanelStoreContext.Provider value={metadataPanelStore}>
+        <ChartTablePreviewProvider key={chartConfig.key}>
+          <ChartWrapper
             key={chartConfig.key}
-            dataSource={dataSource}
-            state={state}
-            chartConfig={chartConfig}
-            configKey={configKey}
-            metadataPanelStore={metadataPanelStore}
+            layout={state.layout}
+            ref={ref}
+            chartKey={chartConfig.key}
+            {...rest}
           >
-            {children}
-          </ChartPublishedInner>
-        </ChartWrapper>
-      </ChartTablePreviewProvider>
-    </MetadataPanelStoreContext.Provider>
-  );
-});
+            <ChartPublishedInner
+              key={chartConfig.key}
+              dataSource={dataSource}
+              state={state}
+              chartConfig={chartConfig}
+              configKey={configKey}
+              metadataPanelStore={metadataPanelStore}
+              embedParams={embedParams}
+            >
+              {children}
+            </ChartPublishedInner>
+          </ChartWrapper>
+        </ChartTablePreviewProvider>
+      </MetadataPanelStoreContext.Provider>
+    );
+  }
+);
 
 export const ChartPublished = ({
   configKey,
-  disableBorder,
+  embedParams,
 }: {
   configKey?: string;
-  disableBorder?: boolean;
+  embedParams?: EmbedQueryParams;
 }) => {
   const [state] = useConfiguratorState(isPublished);
   const { dataSource } = state;
@@ -116,9 +131,10 @@ export const ChartPublished = ({
         state={state}
         chartConfig={chartConfig}
         configKey={configKey}
+        embedParams={embedParams}
       />
     ),
-    [configKey, dataSource, state]
+    [configKey, dataSource, embedParams, state]
   );
   const renderBlock = useCallback(
     (block: LayoutBlock) => {
@@ -168,13 +184,13 @@ export const ChartPublished = ({
                   <Description text={state.layout.meta.description[locale]} />
                 )}
               </Box>
-
               <ChartPanelLayout
                 layoutType={state.layout.layout}
                 renderBlock={renderBlock}
               />
-              {state.chartConfigs.length !== 1 && (
+              {state.chartConfigs.length !== 1 && configKey && (
                 <VisualizeLink
+                  configKey={configKey}
                   createdWith={t({ id: "metadata.link.created.with" })}
                 />
               )}
@@ -201,7 +217,7 @@ export const ChartPublished = ({
               <ChartTablePreviewProvider>
                 <DashboardInteractiveFilters />
                 <ChartWrapper
-                  layoutType={state.layout.type}
+                  layout={state.layout}
                   chartKey={state.activeChartKey}
                 >
                   <ChartPublishedInner
@@ -210,7 +226,7 @@ export const ChartPublished = ({
                     chartConfig={getChartConfig(state)}
                     configKey={configKey}
                     metadataPanelStore={metadataPanelStore}
-                    disableBorder={disableBorder}
+                    embedParams={embedParams}
                   />
                 </ChartWrapper>
               </ChartTablePreviewProvider>
@@ -222,33 +238,35 @@ export const ChartPublished = ({
   );
 };
 
-const usePublishedChartStyles = makeStyles<Theme, { shrink: boolean }>(
-  (theme) => ({
-    root: {
-      // Needed for the metadata panel to be contained inside the root.
-      position: "relative",
-      paddingLeft: ({ shrink }) =>
-        `calc(${theme.spacing(5)} + ${shrink ? DRAWER_WIDTH : 0}px)`,
-      transition: "padding 0.25s ease",
+const usePublishedChartStyles = makeStyles<
+  Theme,
+  { shrink: boolean; optimizeSpace?: boolean }
+>((theme) => ({
+  root: {
+    // Needed for the metadata panel to be contained inside the root.
+    position: "relative",
+    paddingLeft: ({ shrink }) =>
+      `calc(${theme.spacing(5)} + ${shrink ? DRAWER_WIDTH : 0}px)`,
+    padding: ({ optimizeSpace }) =>
+      optimizeSpace ? theme.spacing(3) : theme.spacing(6),
+    transition: "padding 0.25s ease",
+  },
+  dashboardBoxWrapper: {
+    [theme.breakpoints.up("xs")]: {
+      padding: theme.spacing(5, 4, 2, 4),
     },
-    dashboardBoxWrapper: {
-      [theme.breakpoints.up("xs")]: {
-        padding: theme.spacing(5, 4, 2, 4),
-      },
-      [theme.breakpoints.up("md")]: {
-        padding: theme.spacing(5),
-      },
-      [theme.breakpoints.up("lg")]: {
-        padding: theme.spacing(6),
-      },
-
-      gap: 16,
-      display: "flex",
-      flexDirection: "column",
-      backgroundColor: theme.palette.grey[200],
+    [theme.breakpoints.up("md")]: {
+      padding: theme.spacing(5),
     },
-  })
-);
+    [theme.breakpoints.up("lg")]: {
+      padding: theme.spacing(6),
+    },
+    gap: 16,
+    display: "flex",
+    flexDirection: "column",
+    backgroundColor: theme.palette.grey[200],
+  },
+}));
 
 type ChartPublishInnerProps = {
   dataSource: DataSource | undefined;
@@ -258,20 +276,19 @@ type ChartPublishInnerProps = {
   className?: string;
   children?: React.ReactNode;
   metadataPanelStore: ReturnType<typeof createMetadataPanelStore>;
-  disableBorder?: boolean;
+  embedParams?: EmbedQueryParams;
 };
 
-const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
-  const {
-    dataSource = DEFAULT_DATA_SOURCE,
-    state,
-    chartConfig,
-    configKey,
-    className,
-    children,
-    metadataPanelStore,
-    disableBorder,
-  } = props;
+const ChartPublishedInnerImpl = ({
+  dataSource = DEFAULT_DATA_SOURCE,
+  state,
+  chartConfig,
+  configKey,
+  className,
+  children,
+  metadataPanelStore,
+  embedParams,
+}: ChartPublishInnerProps) => {
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
   const { isTable, computeContainerHeight } = useChartTablePreview();
@@ -294,9 +311,12 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
     return () => unsubscribe();
   });
 
-  const chartClasses = useChartStyles({ disableBorder });
+  const chartClasses = useChartStyles({
+    removeBorder: embedParams?.removeBorder,
+  });
   const publishedChartClasses = usePublishedChartStyles({
     shrink: shouldShrink,
+    optimizeSpace: embedParams?.optimizeSpace,
   });
   const locale = useLocale();
   const isTrustedDataSource = useIsTrustedDataSource(dataSource);
@@ -339,7 +359,12 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
   return (
     <Box
       ref={rootRef}
-      className={clsx(chartClasses.root, publishedChartClasses.root, className)}
+      className={clsx(
+        chartClasses.root,
+        chartClasses.pastEditing,
+        publishedChartClasses.root,
+        className
+      )}
     >
       {children}
       <ChartErrorBoundary resetKeys={[chartConfig]}>
@@ -409,14 +434,16 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 // title and the chart (subgrid layout)
                 <span style={{ height: 1 }} />
               )}
-              <ActionElementsContainer>
-                <ChartMoreButton
-                  configKey={configKey}
-                  chartKey={chartConfig.key}
-                  chartWrapperNode={rootRef.current}
-                  components={allComponents}
-                />
-              </ActionElementsContainer>
+              {embedParams?.removeMoreOptionsButton ? null : (
+                <ActionElementsContainer>
+                  <ChartMoreButton
+                    configKey={configKey}
+                    chartKey={chartConfig.key}
+                    chartWrapperNode={rootRef.current}
+                    components={allComponents}
+                  />
+                </ActionElementsContainer>
+              )}
             </Flex>
             {meta.description[locale] ? (
               <Description
@@ -432,11 +459,15 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
               dataSource={dataSource}
               chartConfig={chartConfig}
               dashboardFilters={state.dashboardFilters}
-              metadataPanelProps={{
-                components: allComponents,
-                container: rootRef.current,
-                allowMultipleOpen: true,
-              }}
+              metadataPanelProps={
+                embedParams?.removeMoreOptionsButton
+                  ? undefined
+                  : {
+                      components: allComponents,
+                      container: rootRef.current,
+                      allowMultipleOpen: true,
+                    }
+              }
             />
             <TablePreviewWrapper>
               {isTable ? (
@@ -452,10 +483,12 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                   componentIds={componentIds}
                   chartConfig={chartConfig}
                   dashboardFilters={state.dashboardFilters}
+                  embedParams={embedParams}
                 />
               )}
             </TablePreviewWrapper>
             <ChartFootnotes
+              configKey={configKey}
               dataSource={dataSource}
               chartConfig={chartConfig}
               dashboardFilters={state.dashboardFilters}
@@ -464,6 +497,17 @@ const ChartPublishedInnerImpl = (props: ChartPublishInnerProps) => {
                 state.layout.type !== "dashboard" ||
                 (state.layout.type === "dashboard" &&
                   state.chartConfigs.length === 1)
+              }
+              hideFilters={embedParams?.removeFilters}
+              hideMetadata={embedParams?.removeFootnotes}
+              metadataPanelProps={
+                embedParams?.removeMoreOptionsButton
+                  ? {
+                      components: allComponents,
+                      container: rootRef.current,
+                      allowMultipleOpen: true,
+                    }
+                  : undefined
               }
             />
           </InteractiveFiltersChartProvider>

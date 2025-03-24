@@ -303,6 +303,7 @@ CONSTRUCT {
         currencyExponent: parseNumericalTerm(qCurrencyExponent?.object),
         resolution: parseResolution(dataType),
         isNumerical: getIsNumerical(dataType),
+        limits: [],
       };
 
       measures.push(result);

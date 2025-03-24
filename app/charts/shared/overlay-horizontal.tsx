@@ -1,6 +1,6 @@
 import { bisector } from "d3-array";
 import { pointer } from "d3-selection";
-import { MouseEvent, memo, useRef } from "react";
+import { memo, MouseEvent, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";

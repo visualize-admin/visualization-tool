@@ -120,7 +120,6 @@ const useTableState = (
   );
   const rowHeight = hasBar ? 56 : 40;
 
-  // Dimensions
   const { width } = useSize();
   const margins = {
     top: 10,
@@ -128,7 +127,7 @@ const useTableState = (
     bottom: 10,
     left: 10,
   };
-  const chartWidth = width - margins.left - margins.right; // We probably don't need this
+  const chartWidth = width - margins.left - margins.right;
   const chartHeight = Math.min(
     TABLE_HEIGHT,
     // + 1 for the header row
@@ -166,23 +165,24 @@ const useTableState = (
     function replaceKeys() {
       // Only read keys once
       const keys = Object.keys(chartData[0] ?? []);
-      const lkey = keys.length;
+      const n = keys.length;
       const slugifiedKeys = keys.map(getSlugifiedId);
 
       return chartData.map((d, index) => {
         const o = { id: index } as $IntentionalAny;
-        // This is run often, so let's optimize it
-        for (let i = 0; i < lkey; i++) {
-          const ski = slugifiedKeys[i];
-          const ki = keys[i];
-          const v = d[ki];
-          o[ski] =
-            types[ski] !== "NumericalMeasure"
-              ? v
-              : v !== null && v !== undefined
-                ? +v!
+
+        for (let i = 0; i < n; i++) {
+          const slugifiedKey = slugifiedKeys[i];
+          const key = keys[i];
+          const value = d[key];
+          o[slugifiedKey] =
+            types[slugifiedKey] !== "NumericalMeasure"
+              ? value
+              : value !== null && value !== undefined
+                ? +value
                 : null;
         }
+
         return o;
       });
     },
@@ -320,17 +320,13 @@ const useTableState = (
         } else if (columnStyleType === "category") {
           const { colorMapping } = columnStyle as ColumnStyleCategory;
           const dimension = allColumnsById[id];
-
-          // Color scale (always from colorMappings)
           const colorScale = scaleOrdinal<string>();
-
-          // get label (translated) matched with color
           const labelsAndColor = Object.keys(colorMapping).map(
             (colorMappingIri) => {
               const dvLabel = (
                 dimension.values.find((s) => {
                   return s.value === colorMappingIri;
-                }) || { label: "unknown" }
+                }) ?? { label: "unknown" }
               ).label;
 
               return {

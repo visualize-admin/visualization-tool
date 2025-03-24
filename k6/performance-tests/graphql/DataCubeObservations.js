@@ -7,7 +7,7 @@ const cubes = JSON.parse(
 );
 const query = `query DataCubeObservations(
   $sourceType: String!
-  $sourceUrl: String!
+  $sourceUrl: DataSourceUrl!
   $locale: String!
   $cubeFilter: DataCubeObservationFilter!
 ) {

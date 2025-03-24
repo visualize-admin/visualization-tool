@@ -41,12 +41,14 @@ import {
   DashboardTimeRangeFilter,
   enableLayouting,
   Filters,
-  GenericField,
   GenericFields,
   isAreaConfig,
   isColorInConfig,
+  isMapConfig,
+  isSegmentInConfig,
   isTableConfig,
   ReactGridLayoutType,
+  SingleColorField,
 } from "@/config-types";
 import { getChartConfig, makeMultiFilter } from "@/config-utils";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -68,6 +70,7 @@ import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive
 import { Dimension, isGeoDimension, isJoinByComponent } from "@/domain/data";
 import { getOriginalDimension, isJoinByCube } from "@/graphql/join";
 import { PossibleFilterValue } from "@/graphql/query-hooks";
+import { DEFAULT_CATEGORICAL_PALETTE_ID } from "@/palettes";
 import { findInHierarchy } from "@/rdf/tree-utils";
 import { theme } from "@/themes/federal";
 import { getCachedComponents } from "@/urql-cache";
@@ -405,6 +408,7 @@ export const handleChartFieldChanged = (
     initializing: !f,
     selectedValues,
     field,
+    oldField: f,
   });
 
   // Remove the component from interactive data filters.
@@ -427,9 +431,51 @@ export const handleChartFieldChanged = (
   return draft;
 };
 
+export const handleChartFieldDeleted = (
+  draft: ConfiguratorState,
+  action: Extract<ConfiguratorStateAction, { type: "CHART_FIELD_DELETED" }>
+) => {
+  if (isConfiguring(draft)) {
+    const chartConfig = getChartConfig(draft);
+    delete (chartConfig.fields as GenericFields)[action.value.field];
+    const dataCubesComponents = getCachedComponents({
+      locale: action.value.locale,
+      dataSource: draft.dataSource,
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        joinBy: cube.joinBy,
+      })),
+    });
+    const dimensions = dataCubesComponents?.dimensions ?? [];
+    const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
+    const index = draft.chartConfigs.findIndex(
+      (d) => d.key === chartConfig.key
+    );
+    draft.chartConfigs[index] = newConfig;
+
+    if (action.value.field === "segment") {
+      if (chartConfig.interactiveFiltersConfig) {
+        chartConfig.interactiveFiltersConfig.calculation.active = false;
+        chartConfig.interactiveFiltersConfig.calculation.type = "identity";
+      }
+
+      if (isColorInConfig(chartConfig)) {
+        const newColorField: SingleColorField = {
+          type: "single",
+          paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
+          color: theme.palette.primary.main,
+        };
+        chartConfig.fields.color = newColorField;
+      }
+    }
+  }
+
+  return draft;
+};
+
 export const handleChartOptionChanged = (
   draft: ConfiguratorState,
-  action: Extract<ConfiguratorStateAction, { type: "COLOR_MAPPING_UPDATED" }>
+  action: Extract<ConfiguratorStateAction, { type: "COLOR_FIELD_UPDATED" }>
 ) => {
   if (isConfiguring(draft)) {
     const { locale, path, field, value } = action.value;
@@ -453,7 +499,13 @@ export const handleChartOptionChanged = (
         field,
         path
       );
-      sideEffect?.(value, { chartConfig, dimensions, measures, field });
+      sideEffect?.(value, {
+        chartConfig,
+        dimensions,
+        measures,
+        field,
+        oldField: get(chartConfig.fields, field),
+      });
     }
 
     if (value === FIELD_VALUE_NONE) {
@@ -478,7 +530,6 @@ export const updateColorMapping = (
       field,
       colorConfigPath,
       colorMapping: oldColorMapping,
-      dimensionId,
       values,
       random,
     } = action.value;
@@ -503,17 +554,13 @@ export const updateColorMapping = (
         });
       }
     } else {
-      const fieldValue: (GenericField & { paletteId: string }) | undefined =
-        get(chartConfig, path);
-
-      if (fieldValue?.componentId === dimensionId) {
-        colorMapping = mapValueIrisToColor({
-          paletteId: fieldValue.paletteId,
-          dimensionValues: values,
-          colorMapping: oldColorMapping,
-          random,
-        });
-      }
+      const { paletteId } = get(chartConfig, path);
+      colorMapping = mapValueIrisToColor({
+        paletteId,
+        dimensionValues: values,
+        colorMapping: oldColorMapping,
+        random,
+      });
     }
 
     if (colorMapping) {
@@ -585,7 +632,7 @@ const handleAddNewChartConfig = (
   draft: ConfiguratorState,
   chartConfig: ChartConfig
 ) => {
-  if (isConfiguring(draft)) {
+  if (isConfiguring(draft) || isLayouting(draft)) {
     draft.chartConfigs.push(chartConfig);
     draft.activeChartKey = chartConfig.key;
     draft.layout.blocks.push({
@@ -662,43 +709,24 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
     case "CHART_FIELD_CHANGED":
       return handleChartFieldChanged(draft, action);
 
-    case "CHART_FIELD_DELETED":
+    case "CHART_SHOW_LEGEND_TITLE_CHANGED":
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
-        delete (chartConfig.fields as GenericFields)[action.value.field];
-        const dataCubesComponents = getCachedComponents({
-          locale: action.value.locale,
-          dataSource: draft.dataSource,
-          cubeFilters: chartConfig.cubes.map((cube) => ({
-            iri: cube.iri,
-            joinBy: cube.joinBy,
-          })),
-        });
-        const dimensions = dataCubesComponents?.dimensions ?? [];
-        const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
+
+        if (isSegmentInConfig(chartConfig) && chartConfig.fields.segment) {
+          chartConfig.fields.segment.showTitle = action.value;
+        }
         const index = draft.chartConfigs.findIndex(
           (d) => d.key === chartConfig.key
         );
-        draft.chartConfigs[index] = newConfig;
-
-        if (
-          action.value.field === "segment" &&
-          chartConfig.interactiveFiltersConfig
-        ) {
-          chartConfig.interactiveFiltersConfig.calculation.active = false;
-          chartConfig.interactiveFiltersConfig.calculation.type = "identity";
-          if (isColorInConfig(chartConfig)) {
-            chartConfig.fields.color.type = "single";
-            if (chartConfig.fields.color.type === "single") {
-              chartConfig.fields.color.color = theme.palette.primary.main;
-            }
-          }
-        }
+        draft.chartConfigs[index] = chartConfig;
       }
-
       return draft;
 
-    case "COLOR_MAPPING_UPDATED":
+    case "CHART_FIELD_DELETED":
+      return handleChartFieldDeleted(draft, action);
+
+    case "COLOR_FIELD_UPDATED":
       return handleChartOptionChanged(draft, action);
 
     case "COLOR_FIELD_SET":
@@ -786,6 +814,66 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           action.value.value,
           Object
         );
+      }
+
+      return draft;
+
+    case "CUSTOM_LAYER_ADD":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+
+        if (isMapConfig(chartConfig)) {
+          chartConfig.baseLayer.customLayers.push(action.value.layer);
+        }
+      }
+
+      return draft;
+
+    case "CUSTOM_LAYER_UPDATE":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+
+        if (isMapConfig(chartConfig)) {
+          const { layer } = action.value;
+          const i = chartConfig.baseLayer.customLayers.findIndex(
+            (l) => l.type === layer.type && l.id === layer.id
+          );
+
+          if (i !== -1) {
+            chartConfig.baseLayer.customLayers[i] = layer;
+          }
+        }
+      }
+
+      return draft;
+
+    case "CUSTOM_LAYER_REMOVE":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+
+        if (isMapConfig(chartConfig)) {
+          const { type, id } = action.value;
+          chartConfig.baseLayer.customLayers =
+            chartConfig.baseLayer.customLayers.filter(
+              (layer) => !(layer.type === type && layer.id === id)
+            );
+        }
+      }
+
+      return draft;
+
+    case "CUSTOM_LAYER_SWAP":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+
+        if (isMapConfig(chartConfig)) {
+          const { oldIndex, newIndex } = action.value;
+          const customLayers = chartConfig.baseLayer.customLayers;
+          const newCustomLayers = [...customLayers];
+          const [removed] = newCustomLayers.splice(oldIndex, 1);
+          newCustomLayers.splice(newIndex, 0, removed);
+          chartConfig.baseLayer.customLayers = newCustomLayers;
+        }
       }
 
       return draft;
@@ -1090,6 +1178,69 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
+    case "LIMIT_SET":
+      if (isConfiguring(draft)) {
+        const { measureId, ...limit } = action.value;
+        const chartConfig = getChartConfig(draft);
+
+        if (!chartConfig.limits[measureId]) {
+          chartConfig.limits[measureId] = [limit];
+        } else {
+          const maybeLimitIndex = chartConfig.limits[measureId].findIndex((d) =>
+            d.related.every((r) =>
+              limit.related.some(
+                (nr) =>
+                  r.dimensionId === nr.dimensionId &&
+                  r.dimensionValue === nr.dimensionValue
+              )
+            )
+          );
+
+          if (maybeLimitIndex !== -1) {
+            chartConfig.limits[measureId][maybeLimitIndex] = limit;
+          } else {
+            chartConfig.limits[measureId].push(limit);
+          }
+        }
+      }
+
+      return draft;
+
+    case "LIMIT_REMOVE":
+      if (isConfiguring(draft)) {
+        const { measureId, related } = action.value;
+        const chartConfig = getChartConfig(draft);
+
+        const limits = chartConfig.limits[measureId] ?? [];
+        const limit = limits.find((l) => {
+          return l.related.every((lr) => {
+            return related.some((nr) => {
+              return (
+                lr.dimensionId === nr.dimensionId &&
+                lr.dimensionValue === nr.dimensionValue
+              );
+            });
+          });
+        });
+
+        if (limits.length === 1 && limit) {
+          delete chartConfig.limits[measureId];
+        } else {
+          chartConfig.limits[measureId] = limits.filter((l) => {
+            return l.related.some((lr) => {
+              return related.every((nr) => {
+                return (
+                  lr.dimensionId !== nr.dimensionId ||
+                  lr.dimensionValue !== nr.dimensionValue
+                );
+              });
+            });
+          });
+        }
+      }
+
+      return draft;
+
     case "LAYOUT_BLOCK_SWAP":
       if (isConfiguring(draft) || draft.state === "LAYOUTING") {
         const { oldIndex, newIndex } = action.value;
@@ -1113,13 +1264,12 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       return draft;
 
     case "LAYOUT_CHANGED":
-      if (draft.state === "LAYOUTING") {
+      if (draft.state === "LAYOUTING" || draft.state === "PUBLISHED") {
         if (!isEqual(draft.layout, action.value)) {
           draft.layout = action.value;
+          ensureDashboardLayoutIsCorrect(draft);
         }
       }
-
-      ensureDashboardLayoutIsCorrect(draft);
 
       return draft;
 

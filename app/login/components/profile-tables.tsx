@@ -26,7 +26,6 @@ import { OverflowTooltip } from "@/components/overflow-tooltip";
 import {
   EmbedContent,
   ShareContent,
-  shouldAllowDisablingBorder,
   TriggeredPopover,
 } from "@/components/publish-actions";
 import { RenameDialog } from "@/components/rename-dialog";
@@ -46,19 +45,21 @@ import { useMutate } from "@/utils/use-fetch-data";
 const PREVIEW_LIMIT = 3;
 const POPOVER_PADDING = 8;
 
-const SectionContent = ({
+export const SectionContent = ({
   children,
   title,
 }: {
   children: React.ReactNode;
-  title: string;
+  title?: string;
 }) => {
   const rootClasses = useRootStyles();
   return (
     <Box className={rootClasses.sectionContent}>
-      <Typography variant="h3" sx={{ mb: 4 }}>
-        {title}
-      </Typography>
+      {title && (
+        <Typography variant="h3" sx={{ mb: 4 }}>
+          {title}
+        </Typography>
+      )}
 
       {children}
     </Box>
@@ -310,8 +311,9 @@ const ProfileVisualizationsRow = (props: {
               id: "login.profile.chart.delete-draft.warning",
               message: "This action cannot be undone.",
             }),
-        onClick: () => {
-          return removeConfigMut.mutate({ key: config.key });
+        onClick: async () => {
+          await removeConfigMut.mutate({ key: config.key });
+          invalidateUserConfigs();
         },
         onSuccess: () => {
           invalidateUserConfigs();
@@ -429,11 +431,7 @@ const ProfileVisualizationsRow = (props: {
           }}
           trigger={embedEl}
         >
-          <EmbedContent
-            shouldAllowDisablingBorder={shouldAllowDisablingBorder(config.data)}
-            locale={locale}
-            configKey={config.key}
-          />
+          <EmbedContent locale={locale} configKey={config.key} />
         </TriggeredPopover>
         <TriggeredPopover
           popoverProps={{
