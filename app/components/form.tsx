@@ -13,27 +13,27 @@ import {
   Box,
   BoxProps,
   ButtonBase,
+  Checkbox as MUICheckbox,
   CircularProgress,
   Divider,
   FormControlLabel,
   FormControlLabelProps,
+  Input as MUIInput,
   InputLabel,
   InputProps,
   ListSubheader,
   MenuItem,
-  Checkbox as MUICheckbox,
-  Input as MUIInput,
-  Radio as MUIRadio,
-  Select as MUISelect,
-  Slider as MUISlider,
-  Switch as MUISwitch,
   Paper,
   PaperProps,
+  Radio as MUIRadio,
+  Select as MUISelect,
   SelectProps,
   Skeleton,
+  Slider as MUISlider,
   SliderProps,
   Stack,
   styled,
+  Switch as MUISwitch,
   SxProps,
   Theme,
   Tooltip,
@@ -57,13 +57,13 @@ import React, {
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
+import { HEADER_HEIGHT_CSS_VAR } from "@/components/header";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BlockTypeMenu } from "@/components/mdx-editor/block-type-menu";
 import { BoldItalicUnderlineToggles } from "@/components/mdx-editor/bold-italic-underline-toggles";
 import { linkDialogPlugin } from "@/components/mdx-editor/link-dialog";
 import { LinkDialogToggle } from "@/components/mdx-editor/link-dialog-toggle";
 import { ListToggles } from "@/components/mdx-editor/list-toggles";
-import { BANNER_MARGIN_TOP } from "@/components/presence";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import VisuallyHidden from "@/components/visually-hidden";
 import {
@@ -295,7 +295,7 @@ const MenuPaper = styled(Paper, {
   // specZ: The maximum height of a simple menu should be one or more rows less than the view
   // height. This ensures a tapable area outside of the simple menu with which to dismiss
   // the menu.
-  maxHeight: `calc(100% - ${BANNER_MARGIN_TOP}px)`,
+  maxHeight: `calc(100% - ${HEADER_HEIGHT_CSS_VAR})`,
   // Add iOS momentum scrolling for iOS < 13.0
   WebkitOverflowScrolling: "touch",
 });

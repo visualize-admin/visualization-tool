@@ -5,7 +5,6 @@ import uniq from "lodash/uniq";
 import { GetServerSideProps } from "next";
 
 import { AppLayout } from "@/components/layout";
-import { BANNER_MARGIN_TOP } from "@/components/presence";
 import { ChartType, LayoutDashboard } from "@/config-types";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
@@ -182,7 +181,7 @@ const Statistics = (props: Serialized<PageProps>) => {
           width: "100%",
           maxWidth: 1400,
           mx: "auto",
-          my: `${BANNER_MARGIN_TOP + 36}px`,
+          my: "36px",
           px: 4,
         }}
       >

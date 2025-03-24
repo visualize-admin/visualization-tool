@@ -20,7 +20,7 @@ import { useDebounce } from "use-debounce";
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
 import { extractChartConfigComponentIds } from "@/charts/shared/chart-helpers";
 import { ChartPreview } from "@/components/chart-preview";
-import { HEADER_HEIGHT } from "@/components/header-constants";
+import { HEADER_HEIGHT_CSS_VAR } from "@/components/header";
 import { Loading } from "@/components/hint";
 import {
   createMetadataPanelStore,
@@ -816,7 +816,7 @@ const LoadingConfigureChartStep = () => {
         alignItems: "center",
         justifyContent: "center",
         width: "100%",
-        height: `calc(100vh - ${HEADER_HEIGHT}px)`,
+        height: `calc(100vh - ${HEADER_HEIGHT_CSS_VAR})`,
       }}
     >
       <Loading delayMs={0} />

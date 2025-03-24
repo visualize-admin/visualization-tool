@@ -34,7 +34,6 @@ import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
   BANNER_HEIGHT,
-  BANNER_MARGIN_TOP,
   bannerPresenceProps,
   DURATION,
   MotionBox,
@@ -72,7 +71,6 @@ const useStyles = makeStyles<
   Theme,
   {
     datasetPresent: boolean;
-    variant: NonNullable<SelectDatasetStepContentProps["variant"]>;
     isOdsIframe: boolean;
   }
 >((theme) => ({
@@ -80,16 +78,11 @@ const useStyles = makeStyles<
     maxWidth: ({ isOdsIframe }) => (isOdsIframe ? "auto" : 1400),
     margin: "auto",
     position: "static",
-    marginTop: ({ datasetPresent, variant, isOdsIframe }) =>
-      datasetPresent && variant !== "drawer" && !isOdsIframe
-        ? BANNER_MARGIN_TOP
-        : 0,
     height: "auto",
     transition: "margin-top 0.5s ease",
   },
   panelLeft: {
-    // To prevent weird look when dataset metadata is loading
-    minHeight: `calc(100vh - ${BANNER_MARGIN_TOP}px)`,
+    minHeight: "100vh",
     backgroundColor: "transparent",
     paddingTop: ({ datasetPresent }) =>
       datasetPresent ? 48 : theme.spacing(5),
@@ -113,7 +106,6 @@ const useStyles = makeStyles<
       gridTemplateAreas: `". banner ."`,
     },
     minHeight: BANNER_HEIGHT,
-    marginTop: BANNER_MARGIN_TOP,
     backgroundColor: theme.palette.primary.light,
   },
   panelBanner: {
@@ -212,10 +204,8 @@ const SelectDatasetStepContent = ({
     []
   );
   const [ref] = useResizeObserver(handleHeightChange);
-
   const classes = useStyles({
     datasetPresent: !!dataset,
-    variant,
     isOdsIframe: odsIframe,
   });
   const backLink = useMemo(() => {

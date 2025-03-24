@@ -12,10 +12,22 @@ import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
 import localeConfig from "@/locales/locales.json";
 import { useLocale } from "@/locales/use-locale";
 import { LoginMenu } from "@/login/components/login-menu";
+import { useResizeObserver } from "@/utils/use-resize-observer";
+
+const __HEADER_HEIGHT_CSS_VAR = "--header-height";
+export const HEADER_HEIGHT_CSS_VAR = `var(${__HEADER_HEIGHT_CSS_VAR})`;
 
 export const Header = ({ contentId }: { contentId?: string }) => {
   const currentLocale = useLocale();
   const { push, pathname, query } = useRouter();
+  const [ref] = useResizeObserver<HTMLDivElement>(({ height }) => {
+    if (height) {
+      document.documentElement.style.setProperty(
+        __HEADER_HEIGHT_CSS_VAR,
+        `${height}px`
+      );
+    }
+  });
 
   const alternates =
     contentId && contentId in contentRoutes
@@ -25,14 +37,10 @@ export const Header = ({ contentId }: { contentId?: string }) => {
           }
         )[contentId]
       : undefined;
+
   return (
-    <>
-      <TopBar
-        sx={{
-          zIndex: 2, // So the banner in the browse page does not overlap
-        }}
-        ContentWrapperProps={{ sx: { justifyContent: "space-between" } }}
-      >
+    <div ref={ref} style={{ zIndex: 1 }}>
+      <TopBar ContentWrapperProps={{ sx: { justifyContent: "space-between" } }}>
         {SOURCE_OPTIONS.length > 1 && <DataSourceMenu />}
         <Box display="flex" alignItems="center" gap={3} marginLeft="auto">
           <LoginMenu />
@@ -41,6 +49,7 @@ export const Header = ({ contentId }: { contentId?: string }) => {
             locales={localeConfig.locales}
             onLocaleChange={(locale: string) => {
               const alternate = alternates?.[locale];
+
               if (alternate) {
                 push(alternate.path, undefined, { locale: false });
               } else {
@@ -54,7 +63,8 @@ export const Header = ({ contentId }: { contentId?: string }) => {
         longTitle="visualize.admin.ch"
         shortTitle="visualize"
         rootHref="/"
+        sx={{ backgroundColor: "white" }}
       />
-    </>
+    </div>
   );
 };

@@ -51,7 +51,6 @@ import {
   createMetadataPanelStore,
   MetadataPanelStoreContext,
 } from "@/components/metadata-panel-store";
-import { BANNER_MARGIN_TOP } from "@/components/presence";
 import {
   DndTextBlock,
   renderBaseTextBlock,
@@ -587,7 +586,7 @@ const ChartPreviewInner = ({
                   dashboardFilters={state.dashboardFilters}
                   metadataPanelProps={{
                     components: allComponents,
-                    top: BANNER_MARGIN_TOP,
+                    top: "var(--header-height)",
                   }}
                 />
                 <TablePreviewWrapper>
