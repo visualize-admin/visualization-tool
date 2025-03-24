@@ -46,6 +46,7 @@ import DebugPanel from "@/components/debug-panel";
 import { DragHandle, useDragOverClasses } from "@/components/drag-handle";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
+import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import { HintYellow } from "@/components/hint";
 import {
   createMetadataPanelStore,
@@ -586,7 +587,7 @@ const ChartPreviewInner = ({
                   dashboardFilters={state.dashboardFilters}
                   metadataPanelProps={{
                     components: allComponents,
-                    top: "var(--header-height)",
+                    top: HEADER_HEIGHT_CSS_VAR,
                   }}
                 />
                 <TablePreviewWrapper>
