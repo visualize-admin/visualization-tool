@@ -230,7 +230,6 @@ theme.components = {
   },
   MuiLink: {
     defaultProps: {
-      underline: "hover",
       color: "inherit",
     },
     styleOverrides: {},
