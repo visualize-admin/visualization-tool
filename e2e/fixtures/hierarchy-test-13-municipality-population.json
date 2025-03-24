@@ -1,6 +1,6 @@
 {
   "state": "CONFIGURING_CHART",
-  "dataSet": "https://environment.ld.admin.ch/foen/fab_hierarchy_test13_switzerland_canton_municipality/3",
+  "dataSet": "https://environment.ld.admin.ch/foen/fab_hierarchy_test12_switzerland_canton_municipality/5",
   "dataSource": {
     "type": "sparql",
     "url": "https://lindas-cached.int.cluster.ldbar.ch/query"
@@ -13,11 +13,11 @@
     "version": "1.3.0",
     "chartType": "column",
     "filters": {
-      "https://environment.ld.admin.ch/foen/fab_hierarchy_test13_switzerland_canton_municipality/date": {
+      "https://environment.ld.admin.ch/foen/fab_hierarchy_test12_switzerland_canton_municipality/date": {
         "type": "single",
         "value": "2022-01-01"
       },
-      "https://environment.ld.admin.ch/foen/fab_hierarchy_test13_switzerland_canton_municipality/BFSIdentifier": {
+      "https://environment.ld.admin.ch/foen/fab_hierarchy_test12_switzerland_canton_municipality/BFSIdentifier": {
         "type": "multi",
         "values": {
           "https://ld.admin.ch/municipality/261": true,
@@ -37,10 +37,10 @@
     },
     "fields": {
       "x": {
-        "componentIri": "https://environment.ld.admin.ch/foen/fab_hierarchy_test13_switzerland_canton_municipality/BFSIdentifier"
+        "componentIri": "https://environment.ld.admin.ch/foen/fab_hierarchy_test12_switzerland_canton_municipality/BFSIdentifier"
       },
       "y": {
-        "componentIri": "https://environment.ld.admin.ch/foen/fab_hierarchy_test13_switzerland_canton_municipality/population"
+        "componentIri": "https://environment.ld.admin.ch/foen/fab_hierarchy_test12_switzerland_canton_municipality/population"
       }
     }
   },

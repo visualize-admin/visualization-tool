@@ -183,7 +183,7 @@ const useComboLineDualState = (
     const xScaled = xScale(x);
 
     const values = [variables.y.left, variables.y.right]
-      .map(({ orientation, getY, label }) => {
+      .map(({ orientation, getY, id, label }) => {
         const y = getY(d);
         const yPos = yOrientationScales[orientation](y ?? 0);
         if (!Number.isFinite(y) || y === null) {
@@ -193,7 +193,7 @@ const useComboLineDualState = (
         return {
           label,
           value: `${y}`,
-          color: colors(label),
+          color: colors(id),
           hide: y === null,
           yPos: yPos,
           symbol: "line",

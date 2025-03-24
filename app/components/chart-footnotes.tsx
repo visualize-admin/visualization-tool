@@ -209,6 +209,7 @@ const ChartFootnotesLegend = ({
         <ChartFootnotesComboLineSingle
           chartConfig={chartConfig}
           components={components}
+          cubeIri={cubeIri}
         />
       );
     }
@@ -324,9 +325,11 @@ const ChartFootnotesComboLineDual = ({
 const ChartFootnotesComboLineSingle = ({
   chartConfig,
   components,
+  cubeIri,
 }: {
   chartConfig: ComboLineSingleConfig;
   components: Component[];
+  cubeIri: string;
 }) => {
   const {
     y: { componentIds },
@@ -335,7 +338,10 @@ const ChartFootnotesComboLineSingle = ({
   return componentIds.length ? (
     <ChartFootnotesLegendContainer>
       {componentIds.map((id) => {
-        const component = components.find((d) => d.id === id);
+        const component = components.find(
+          (d) => d.id === id && d.cubeIri === cubeIri
+        );
+
         return component ? (
           <LegendItem
             key={component.id}

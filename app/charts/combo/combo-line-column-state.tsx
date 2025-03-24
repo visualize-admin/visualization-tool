@@ -198,7 +198,7 @@ const useComboLineColumnState = (
     const x = getX(d);
     const xScaled = (xScale(x) as number) + xScale.bandwidth() * 0.5;
     const values = [variables.y.left, variables.y.right]
-      .map(({ orientation, getY, label, chartType }) => {
+      .map(({ orientation, getY, id, label, chartType }) => {
         const y = getY(d);
         const yPos = yOrientationScales[orientation](y ?? 0);
         if (!Number.isFinite(y) || y === null) {
@@ -207,7 +207,7 @@ const useComboLineColumnState = (
         return {
           label,
           value: `${y}`,
-          color: colors(label),
+          color: colors(id),
           hide: y === null,
           yPos,
           symbol: chartType === "line" ? "line" : "square",

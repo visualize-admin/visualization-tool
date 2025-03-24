@@ -273,7 +273,7 @@ const DataFilter = ({
   disabled: boolean;
 }) => {
   const locale = useLocale();
-  const filters = useChartConfigFilters(chartConfig);
+  const filters = useChartConfigFilters(chartConfig, { cubeIri });
   const chartLoadingState = useLoadingState();
   const updateDataFilter = useChartInteractiveFilters(
     (d) => d.updateDataFilter
