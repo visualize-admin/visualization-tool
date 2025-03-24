@@ -613,7 +613,7 @@ const useMinimalisticSelectStyles = makeStyles<Theme>((theme) => ({
     borderColor: "transparent",
     lineHeight: "normal !important",
     backgroundColor: "transparent",
-    //@ts-ignore
+    // @ts-ignore
     color: theme.palette.muted.colored, // FIXME: once the new colors are in place
     padding: 0,
     height: "auto",
@@ -625,11 +625,11 @@ const useMinimalisticSelectStyles = makeStyles<Theme>((theme) => ({
     },
     "& .MuiSelect-icon": {
       right: -10,
-      top: -2,
+      top: -4,
     },
     "& .MuiInput-input": {
       paddingRight: "1.25rem !important",
-      //@ts-ignore
+      // @ts-ignore
       color: theme.palette.muted.colored, // FIXME: once the new colors are in place
       marginBottom: "1px",
       height: "auto",
