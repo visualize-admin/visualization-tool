@@ -94,7 +94,7 @@ export const Footer = ({ sx }: { sx?: SxProps }) => {
         <Link
           href={`https://lindas.admin.ch/?lang=${locale}`}
           target="_blank"
-          sx={{ textDecoration: "none" }}
+          underline="none"
         >
           <FooterSectionButton
             iconName="external"
@@ -107,7 +107,7 @@ export const Footer = ({ sx }: { sx?: SxProps }) => {
         <Link
           href={`https://www.youtube.com/@visualizetutorials`}
           target="_blank"
-          sx={{ textDecoration: "none" }}
+          underline="none"
         >
           <FooterSectionButton
             iconName="external"
@@ -120,7 +120,7 @@ export const Footer = ({ sx }: { sx?: SxProps }) => {
         <Link
           href={`https://visualization-tool.status.interactivethings.io/`}
           target="_blank"
-          sx={{ textDecoration: "none" }}
+          underline="none"
         >
           <FooterSectionButton
             iconName="external"
@@ -131,7 +131,7 @@ export const Footer = ({ sx }: { sx?: SxProps }) => {
           />
         </Link>
         <NextLink href="/statistics" passHref legacyBehavior>
-          <Link sx={{ textDecoration: "none" }}>
+          <Link underline="none">
             <FooterSectionButton
               label={t({ id: "footer.statistics", message: "Statistics" })}
             />
