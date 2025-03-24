@@ -629,14 +629,13 @@ const useMinimalisticSelectStyles = makeStyles<Theme>((theme) => ({
     },
     "& .MuiInput-input": {
       paddingRight: "1.25rem !important",
-      // @ts-ignore
-      color: theme.palette.muted.colored, // FIXME: once the new colors are in place
       marginBottom: "1px",
       height: "auto",
       minHeight: "auto",
       paddingTop: 0,
       paddingBottom: 0,
       fontSize: "1em",
+
       [theme.breakpoints.down("md")]: {
         fontSize: "0.875rem",
       },
