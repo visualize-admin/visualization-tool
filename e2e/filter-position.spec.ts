@@ -4,7 +4,7 @@ const { test, expect } = setup();
 
 test("Filters should be sorted by position", async ({ selectors, actions }) => {
   await actions.chart.createFrom({
-    iri: "https://environment.ld.admin.ch/foen/ubd003001_colors_jan2024",
+    iri: "https://environment.ld.admin.ch/foen/UBD003002/6",
     dataSource: "Int",
   });
 
@@ -45,5 +45,6 @@ test("Filters should be sorted by position", async ({ selectors, actions }) => {
     "Endangered",
     "Critically endangered",
     "Regionally extinct",
+    "Extinct in the world",
   ]);
 });
