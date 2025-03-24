@@ -57,7 +57,7 @@ import React, {
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
-import { HEADER_HEIGHT_CSS_VAR } from "@/components/header";
+import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BlockTypeMenu } from "@/components/mdx-editor/block-type-menu";
 import { BoldItalicUnderlineToggles } from "@/components/mdx-editor/bold-italic-underline-toggles";

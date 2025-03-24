@@ -2,7 +2,7 @@ import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 
-import { HEADER_HEIGHT_CSS_VAR } from "@/components/header";
+import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 
 export const LAYOUT_HEADER_HEIGHT = 96;

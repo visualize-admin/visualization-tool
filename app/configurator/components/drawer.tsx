@@ -1,7 +1,7 @@
 import { Drawer as MuiDrawer } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-import { HEADER_HEIGHT_CSS_VAR } from "@/components/header";
+import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 
 export const DRAWER_WIDTH = 340;
 

@@ -31,7 +31,7 @@ import {
   getPossibleFiltersQueryVariables,
   skipPossibleFiltersQuery,
 } from "@/charts/shared/possible-filters";
-import { HEADER_HEIGHT_CSS_VAR } from "@/components/header";
+import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import {
   MetadataPanel,
   OpenMetadataPanelWrapper,
