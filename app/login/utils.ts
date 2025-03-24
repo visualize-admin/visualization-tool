@@ -6,7 +6,6 @@ import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 
 export const useRootStyles = makeStyles<Theme>((theme) => ({
   root: {
-    marginTop: HEADER_HEIGHT_CSS_VAR,
     minHeight: `calc(100vh - ${HEADER_HEIGHT_CSS_VAR})`,
     display: "flex",
     flexDirection: "column",

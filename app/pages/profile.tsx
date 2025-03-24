@@ -61,8 +61,8 @@ const ProfilePage = (props: Serialized<PageProps>) => {
         <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
           <ProfileContentTabs userId={user.id} />
         </Box>
-        <Footer />
       </Box>
+      <Footer />
     </AppLayout>
   );
 };
