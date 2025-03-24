@@ -1,8 +1,8 @@
 import { Selection } from "d3-selection";
 
 import {
-  RenderOptions,
   maybeTransition,
+  RenderOptions,
 } from "@/charts/shared/rendering-utils";
 
 export type RenderDatum = {

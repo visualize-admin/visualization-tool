@@ -713,6 +713,10 @@ msgid "controls.filter.select.none"
 msgstr "Tout déselectionner"
 
 #: app/configurator/components/field.tsx
+msgid "controls.filter.show-values"
+msgstr "Afficher les valeurs"
+
+#: app/configurator/components/field.tsx
 msgid "controls.filter.use-most-recent"
 msgstr "Utiliser le plus récent"
 
@@ -1019,6 +1023,10 @@ msgid "controls.section.data.filters"
 msgstr "Filtres"
 
 #: app/configurator/components/chart-configurator.tsx
+msgid "controls.section.data.filters.default-open"
+msgstr "Afficher la zone de filtre ouverte"
+
+#: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.none"
 msgstr "Aucun filtre"
 
@@ -1114,6 +1122,10 @@ msgid "controls.section.show-standard-error.explanation"
 msgstr "Montrer les incertitudes via des barres d'erreur"
 
 #: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-values"
+msgstr "Toujours afficher les valeurs"
+
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.sorting"
 msgstr "Trier"
 
@@ -1140,6 +1152,10 @@ msgstr "Sélectionner le type de ligne"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.targets-and-limit-values.show-target"
 msgstr "Afficher la cible"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.symbol-type"
+msgstr "Sélectionnez le type de symbole"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -1319,6 +1335,14 @@ msgstr "Trier par"
 #: app/configurator/components/chart-type-selector.tsx
 msgid "controls.switch.chart.type"
 msgstr "Passer à une autre visualisation tout en conservant la plupart des filtres"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.symbol.cross"
+msgstr "Croix"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.symbol.dot"
+msgstr "Point"
 
 #: app/configurator/table/table-chart-options.tsx
 msgid "controls.table.column.group"
@@ -1548,6 +1572,10 @@ msgid "footer.information.title"
 msgstr "Plus d'informations"
 
 #: app/components/footer.tsx
+msgid "footer.statistics"
+msgstr "Statistiques"
+
+#: app/components/footer.tsx
 msgid "footer.status"
 msgstr "Statut"
 
@@ -1595,6 +1623,7 @@ msgstr "Vous pouvez partager cette visualisation en copiant l'URL ou en l'intég
 
 #: app/components/chart-filters-list.tsx
 #: app/components/form.tsx
+#: app/components/hint.tsx
 #: app/components/hint.tsx
 msgid "hint.loading.data"
 msgstr "Chargement des données..."
@@ -1836,6 +1865,10 @@ msgid "profile.chart.rename-dialog.title"
 msgstr "Renommer la visualisation"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.advanced-settings"
+msgstr "Paramètres avancés"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.external-application"
 msgstr "Code pour intégration dans une \"Application Externe\""
 
@@ -1852,12 +1885,32 @@ msgid "publication.embed.iframe.caption"
 msgstr "Utilisez ce code pour intégrer le graphique sur une page web"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.optimize-space"
+msgstr "Optimiser l'espace blanc autour et dans le graphique"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-axis-labels-interactivity"
+msgstr "Masquer les étiquettes interactives"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
 msgstr "Supprimer la bordure"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border.warn"
 msgstr "Pour intégrer des visualisations sans bordure dans des systèmes externes."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-filters"
+msgstr "Masquer les filtres"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-legend"
+msgstr "Masquer les notes de bas de page"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-more-options-button"
+msgstr "Supprimer les options d'affichage du tableau, de copie et de modification, de partage et de téléchargement"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"

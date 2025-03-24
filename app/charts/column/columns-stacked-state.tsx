@@ -10,6 +10,7 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import {
+  Series,
   stack,
   stackOffsetDiverging,
   stackOrderAscending,
@@ -27,7 +28,9 @@ import {
 } from "@/charts/column/columns-stacked-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
-  useAxisLabelHeightOffset,
+  AxisLabelSizeVariables,
+  getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -47,6 +50,10 @@ import {
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
+import {
+  useValueLabelFormatter,
+  ValueLabelFormatter,
+} from "@/charts/shared/show-values-utils";
 import {
   getStackedTooltipValueFormatter,
   getStackedYScale,
@@ -79,11 +86,14 @@ export type StackedColumnsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
-    series: $FixMe[];
+    series: Series<{ [key: string]: number }, string>[];
     getAnnotationInfo: (
       d: Observation,
       orderedSegments: string[]
     ) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
+    valueLabelFormatter: ValueLabelFormatter;
   };
 
 const useColumnsStackedState = (
@@ -91,7 +101,7 @@ const useColumnsStackedState = (
   variables: ColumnsStackedStateVariables,
   data: ColumnsStackedStateData
 ): StackedColumnsState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     xDimension,
     getX,
@@ -105,6 +115,8 @@ const useColumnsStackedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
   } = variables;
   const getIdentityY = useGetIdentityY(yMeasure.id);
   const {
@@ -400,7 +412,6 @@ const useColumnsStackedState = (
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
     bandDomain: xTimeRangeDomainLabels.every((d) => d === undefined)
       ? xScale.domain()
@@ -408,20 +419,23 @@ const useColumnsStackedState = (
     normalize,
   });
   const right = 40;
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: yMeasure.label,
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
     width,
-    marginLeft: left,
-    marginRight: right,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
   });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
     right,
     bottom,
     left,
   };
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const chartWidth = getChartWidth({ width, left, right });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);
   xScaleInteraction.range([0, chartWidth]);
@@ -505,6 +519,13 @@ const useColumnsStackedState = (
     ]
   );
 
+  const valueLabelFormatter = useValueLabelFormatter({
+    measureId: yMeasure.id,
+    dimensions,
+    measures,
+    normalize,
+  });
+
   return {
     chartType: "column",
     bounds,
@@ -520,6 +541,9 @@ const useColumnsStackedState = (
     chartWideData,
     series,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
+    valueLabelFormatter,
     ...variables,
   };
 };

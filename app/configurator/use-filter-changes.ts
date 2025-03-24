@@ -2,7 +2,7 @@ import isEqual from "lodash/isEqual";
 
 import useChanges from "../utils/use-changes";
 
-import { FilterValue, Filters } from ".";
+import { Filters, FilterValue } from ".";
 
 const isEqualFilter = (fa?: FilterValue, fb?: FilterValue) => {
   if (fa?.type === "single" && fb?.type === "single") {

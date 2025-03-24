@@ -23,6 +23,9 @@ import {
   PADDING_WITHIN,
 } from "@/charts/bar/constants";
 import {
+  AxisLabelSizeVariables,
+  getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -67,6 +70,8 @@ export type GroupedBarsState = CommonChartState &
     getColorLabel: (segment: string) => string;
     grouped: [string, Observation[]][];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useBarsGroupedState = (
@@ -91,6 +96,8 @@ const useBarsGroupedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
   } = variables;
   const {
     chartData,
@@ -342,7 +349,6 @@ const useBarsGroupedState = (
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
     bandDomain: yTimeRangeDomainLabels.every((d) => d === undefined)
       ? yScale.domain()
@@ -350,14 +356,23 @@ const useBarsGroupedState = (
     isFlipped: true,
   });
   const right = 40;
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
+    width,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
+  });
   const margins = {
-    top: DEFAULT_MARGIN_TOP,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
     right,
-    bottom: bottom + 10,
+    bottom: bottom + 45,
     left,
   };
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const chartWidth = getChartWidth({ width, left, right });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
 
   // Adjust of scales based on chart dimensions
   yScale.range([0, chartHeight]);
@@ -438,6 +453,8 @@ const useBarsGroupedState = (
     getColorLabel: getSegmentLabel,
     grouped,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
     ...variables,
   };
 };

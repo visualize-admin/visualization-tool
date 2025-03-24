@@ -1,12 +1,12 @@
 import { ascending } from "d3-array";
 import { useCallback, useMemo } from "react";
 
-import { ChartProps } from "@/charts/shared/ChartProps";
 import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
   BaseVariables,
   ChartStateData,
   InteractiveFiltersVariables,
+  LimitsVariables,
   NumericalYVariables,
   SegmentVariables,
   SortingVariables,
@@ -14,23 +14,28 @@ import {
   useBaseVariables,
   useChartData,
   useInteractiveFiltersVariables,
+  useLimitsVariables,
   useNumericalYVariables,
   useSegmentVariables,
   useTemporalXVariables,
 } from "@/charts/shared/chart-state";
+import { ChartProps } from "@/charts/shared/ChartProps";
 import { AreaConfig } from "@/config-types";
+import { useLimits } from "@/config-utils";
 
 export type AreasStateVariables = BaseVariables &
   SortingVariables &
   TemporalXVariables &
   NumericalYVariables &
   SegmentVariables &
-  InteractiveFiltersVariables;
+  InteractiveFiltersVariables &
+  LimitsVariables;
 
 export const useAreasStateVariables = (
-  props: ChartProps<AreaConfig>
+  props: ChartProps<AreaConfig> & { limits: ReturnType<typeof useLimits> }
 ): AreasStateVariables => {
-  const { chartConfig, observations, dimensionsById, measuresById } = props;
+  const { chartConfig, observations, dimensionsById, measuresById, limits } =
+    props;
   const { fields } = chartConfig;
   const { x, y, segment } = fields;
 
@@ -49,6 +54,7 @@ export const useAreasStateVariables = (
     chartConfig.interactiveFiltersConfig,
     { dimensionsById }
   );
+  const limitsVariables = useLimitsVariables(limits);
 
   const { getX } = temporalXVariables;
   const sortData: AreasStateVariables["sortData"] = useCallback(
@@ -67,6 +73,7 @@ export const useAreasStateVariables = (
     ...numericalYVariables,
     ...segmentVariables,
     ...interactiveFiltersVariables,
+    ...limitsVariables,
   };
 };
 

@@ -52,6 +52,7 @@ import {
   getFilterValue,
   isConfiguring,
   MultiFilterContextProvider,
+  shouldEnableSettingShowValuesBySegment,
   useConfiguratorState,
   useMultiFilterContext,
 } from "@/configurator";
@@ -62,13 +63,15 @@ import {
 import {
   dimensionToFieldProps,
   MostRecentDateSwitch,
-  MultiFilterFieldColorPicker,
+  MultiFilterField,
+  ShowValuesMappingField,
   SingleFilterField,
 } from "@/configurator/components/field";
 import {
   canRenderDatePickerField,
   DatePickerField,
 } from "@/configurator/components/field-date-picker";
+import { useLegendTitleVisibility } from "@/configurator/configurator-state/segment-config-state";
 import { EditorBrush } from "@/configurator/interactive-filters/editor-brush";
 import {
   useInteractiveFiltersToggle,
@@ -101,12 +104,10 @@ import {
   pruneTree,
   sortHierarchy,
 } from "@/rdf/tree-utils";
+import { interlace } from "@/utils/interlace";
 import { valueComparator } from "@/utils/sorting-values";
+import { getTimeFilterOptions } from "@/utils/time-filter-options";
 import useEvent from "@/utils/use-event";
-
-import { interlace } from "../../utils/interlace";
-import { getTimeFilterOptions } from "../../utils/time-filter-options";
-import { useLegendTitleVisibility } from "../configurator-state/segment-config-state";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -163,9 +164,9 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     selectedValueRow: {
       display: "flex",
-      alignItems: "flex-start",
+      alignItems: "center",
       marginBottom: "0.5rem",
-      gap: "0.5rem",
+      gap: "1rem",
     },
   };
 });
@@ -234,7 +235,7 @@ export const getHasColorMapping = ({
     (colorConfig?.type === "single" ? false : colorConfig?.colorMapping) &&
     (colorComponent !== undefined
       ? filterDimensionId === colorComponent.id
-      : true)
+      : false)
   );
 };
 
@@ -347,12 +348,15 @@ const MultiFilterContent = ({
       filterDimensionId: dimensionId,
     });
   }, [colorConfig, dimensionId, colorComponent]);
-
   useEnsureUpToDateColorMapping({
     colorComponentValues: colorComponent?.values,
     colorMapping:
       colorConfig?.type !== "single" ? colorConfig?.colorMapping : undefined,
   });
+
+  const enableSettingShowValuesBySegment =
+    chartConfig.activeField === "segment" &&
+    shouldEnableSettingShowValuesBySegment(chartConfig);
 
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
   const visibleLegendProps = useLegendTitleVisibility();
@@ -474,16 +478,20 @@ const MultiFilterContent = ({
                   data-testid="chart-filters-value"
                 >
                   {hasColorMapping ? (
-                    <MultiFilterFieldColorPicker
+                    <MultiFilterField
                       value={value}
                       label={label}
                       symbol={chartSymbol}
+                      enableShowValue={enableSettingShowValuesBySegment}
                     />
                   ) : (
                     <>
                       <Typography variant="body2" style={{ flexGrow: 1 }}>
                         {label}
                       </Typography>
+                      {enableSettingShowValuesBySegment ? (
+                        <ShowValuesMappingField value={value} />
+                      ) : null}
                       <SvgIcCheck />
                     </>
                   )}
@@ -531,33 +539,31 @@ const useEnsureUpToDateColorMapping = ({
       : false;
   }, [colorComponentValues, colorMapping]);
 
+  const field = isColorInConfig(chartConfig) ? "color" : activeField;
+
   useEffect(() => {
-    if (
-      activeField &&
-      hasOutdatedMapping &&
-      colorMapping &&
-      colorComponentValues
-    ) {
+    if (hasOutdatedMapping && colorMapping && colorComponentValues && field) {
       dispatch({
         type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
         value: {
           dimensionId,
           colorConfigPath,
           colorMapping,
-          field: activeField,
+          field,
           values: colorComponentValues,
           random: false,
         },
       });
     }
   }, [
+    field,
+    chartConfig,
     hasOutdatedMapping,
     dispatch,
     dimensionId,
     colorConfigPath,
     colorMapping,
     colorComponentValues,
-    activeField,
   ]);
 };
 
@@ -596,7 +602,6 @@ const TreeAccordionSummary = styled(AccordionSummary)(({ theme }) => ({
     minHeight: 0,
   },
   "& > .MuiAccordionSummary-content": {
-    alignItems: "center",
     marginTop: 0,
     marginBottom: 0,
     minHeight: 32,

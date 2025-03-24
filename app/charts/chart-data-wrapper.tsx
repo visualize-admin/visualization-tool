@@ -11,6 +11,7 @@ import React, {
 import { A11yTable } from "@/charts/shared/a11y-table";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
 import { ChartProps } from "@/charts/shared/ChartProps";
+import { EmbedQueryParams } from "@/components/embed-params";
 import Flex from "@/components/flex";
 import {
   Loading,
@@ -55,6 +56,7 @@ const ChartDataWrapperInner = <
   ComponentProps,
   componentIds,
   dataSource,
+  embedParams,
   observationQueryFilters,
   fetching: fetchingProp = false,
   error: propError,
@@ -68,6 +70,7 @@ const ChartDataWrapperInner = <
   >;
   componentIds?: string[];
   dataSource: DataSource;
+  embedParams?: EmbedQueryParams;
   observationQueryFilters: DataCubeObservationFilter[];
   fetching?: boolean;
   /* Use this if extra data is loaded and the possible error must be shown by ChartDataWrapper*/
@@ -188,6 +191,7 @@ const ChartDataWrapperInner = <
           measures,
           measuresById,
           chartConfig,
+          embedParams,
           ...ComponentProps,
         } as ChartProps<TChartConfig> & TOtherProps)}
 

@@ -1,8 +1,12 @@
 import { t, Trans } from "@lingui/macro";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
   Divider,
+  FormControlLabel,
   Popover,
   PopoverProps,
   Stack,
@@ -10,14 +14,18 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useRouter } from "next/router";
 import { ChangeEvent, ReactNode, RefObject, useEffect, useState } from "react";
 
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { CopyToClipboardTextInput } from "@/components/copy-to-clipboard-text-input";
+import {
+  isEmbedQueryParam,
+  useEmbedQueryParams,
+} from "@/components/embed-params";
 import Flex from "@/components/flex";
 import { Radio } from "@/components/form";
 import { IconLink } from "@/components/links";
-import { ConfiguratorStatePublished } from "@/configurator";
 import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
 import { useI18n } from "@/utils/use-i18n";
@@ -27,7 +35,6 @@ type PublishActionProps = {
   chartWrapperRef: RefObject<HTMLDivElement>;
   configKey: string;
   locale: string;
-  state?: ConfiguratorStatePublished;
 };
 
 export const PublishActions = (props: PublishActionProps) => {
@@ -81,12 +88,7 @@ export const TriggeredPopover = (props: TriggeredPopoverProps) => {
   );
 };
 
-const Embed = ({
-  chartWrapperRef,
-  configKey,
-  locale,
-  state,
-}: PublishActionProps) => {
+const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
   const [iframeHeight, setIframeHeight] = useState(0);
 
   const handlePopoverOpen = useEvent(() => {
@@ -126,7 +128,6 @@ const Embed = ({
         iframeHeight={iframeHeight}
         configKey={configKey}
         locale={locale}
-        shouldAllowDisablingBorder={shouldAllowDisablingBorder(state)}
       />
     </TriggeredPopover>
   );
@@ -168,7 +169,6 @@ const EmbedToggleSwitch = ({
   label,
   ...rest
 }: {
-  value: string;
   checked: boolean;
   onChange: (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -178,9 +178,12 @@ const EmbedToggleSwitch = ({
   infoMessage?: string;
 }) => {
   return (
-    <Flex sx={{ alignItems: "center", gap: 1 }}>
-      <Switch {...rest} />
-      <Typography variant="body2">{label}</Typography>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+      <FormControlLabel
+        control={<Switch {...rest} />}
+        label={<Typography variant="body2">{label}</Typography>}
+        sx={{ mr: 0 }}
+      />
       {infoMessage && (
         <Tooltip
           arrow
@@ -195,7 +198,7 @@ const EmbedToggleSwitch = ({
           </Box>
         </Tooltip>
       )}
-    </Flex>
+    </Box>
   );
 };
 
@@ -230,40 +233,55 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
   );
 };
 
-type EmbedContentProps = {
-  iframeHeight?: number;
-  shouldAllowDisablingBorder?: boolean;
-} & Omit<PublishActionProps, "chartWrapperRef" | "state">;
-
 export const EmbedContent = ({
   locale,
   configKey,
   iframeHeight,
-  shouldAllowDisablingBorder,
-}: EmbedContentProps) => {
+}: {
+  iframeHeight?: number;
+} & Omit<PublishActionProps, "chartWrapperRef" | "state">) => {
+  const router = useRouter();
   const [embedUrl, setEmbedUrl] = useState("");
   const [embedAEMUrl, setEmbedAEMUrl] = useState("");
-  const [isResponsive, setIsResponsive] = useState(true);
-  const [isWithoutBorder, setIsWithoutBorder] = useState(false);
+  const { embedParams, setEmbedQueryParam } = useEmbedQueryParams();
+  const [responsive, setResponsive] = useState(true);
+
   useEffect(() => {
     const { origin } = window.location;
-    setEmbedUrl(
-      `${origin}/${locale}/embed/${configKey}${isWithoutBorder ? "?disableBorder=true" : ""}`
-    );
-    setEmbedAEMUrl(
-      `${origin}/api/embed-aem-ext/${locale}/${configKey}${isWithoutBorder ? "?disableBorder=true" : ""}`
-    );
-  }, [configKey, locale, isWithoutBorder]);
+    const activeEmbedParams = Object.entries(embedParams)
+      .filter(([_, value]) => value)
+      .map(([key]) => `${key}=true`)
+      .join("&");
+    const embedPath = `${configKey}${activeEmbedParams ? `?${activeEmbedParams}` : ""}`;
+    setEmbedUrl(`${origin}/${locale}/embed/${embedPath}`);
+    setEmbedAEMUrl(`${origin}/api/embed-aem-ext/${locale}/${embedPath}`);
 
-  const handleResponsiveChange = useEvent(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setIsResponsive(e.target.value === "responsive");
+    if (router.isReady) {
+      const nonEmbedParams = Object.fromEntries(
+        Object.entries(router.query).filter(([key]) => !isEmbedQueryParam(key))
+      );
+      const updatedQuery = {
+        ...nonEmbedParams,
+        ...Object.fromEntries(
+          Object.entries(embedParams)
+            .filter(([_, v]) => v)
+            .map(([k]) => [k, "true"])
+        ),
+      } as Record<string, string>;
+      const currentQueryString = new URLSearchParams(
+        router.query as Record<string, string>
+      ).toString();
+      const newQueryString = new URLSearchParams(updatedQuery).toString();
+
+      if (currentQueryString !== newQueryString) {
+        router.replace(
+          { pathname: router.pathname, query: updatedQuery },
+          undefined,
+          { shallow: true }
+        );
+      }
     }
-  );
-
-  const handleStylingChange = useEvent((_, checked: boolean) => {
-    setIsWithoutBorder(checked);
-  });
+  }, [configKey, locale, embedParams, router]);
 
   return (
     <Flex sx={{ flexDirection: "column", gap: 4, p: 4 }}>
@@ -279,8 +297,8 @@ export const EmbedContent = ({
         <Flex sx={{ alignItems: "center", gap: 4, mt: 3, mb: 2 }}>
           <EmbedRadio
             value="responsive"
-            checked={isResponsive}
-            onChange={handleResponsiveChange}
+            checked={responsive}
+            onChange={() => setResponsive(true)}
             label={t({
               id: "publication.embed.iframe.responsive",
               message: "Responsive iframe",
@@ -293,8 +311,8 @@ export const EmbedContent = ({
           />
           <EmbedRadio
             value="static"
-            checked={!isResponsive}
-            onChange={handleResponsiveChange}
+            checked={!responsive}
+            onChange={() => setResponsive(false)}
             label={t({
               id: "publication.embed.iframe.static",
               message: "Static iframe",
@@ -305,11 +323,24 @@ export const EmbedContent = ({
                 "For embedding visualizations in systems without JavaScript support (e.g. WordPress).",
             })}
           />
-          {shouldAllowDisablingBorder && (
+        </Flex>
+        <Accordion
+          sx={{ mb: 4 }}
+          defaultExpanded={Object.values(embedParams).some((d) => d)}
+        >
+          <AccordionSummary>
+            <Typography variant="h5" component="p">
+              <Trans id="publication.embed.advanced-settings">
+                Advanced settings
+              </Trans>
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
             <EmbedToggleSwitch
-              value="remove-border"
-              checked={isWithoutBorder}
-              onChange={handleStylingChange}
+              checked={embedParams.removeBorder}
+              onChange={(_, checked) => {
+                setEmbedQueryParam("removeBorder", checked);
+              }}
               label={t({
                 id: "publication.embed.iframe.remove-border",
                 message: "Remove border",
@@ -320,10 +351,61 @@ export const EmbedContent = ({
                   "For embedding visualizations in systems without a border.",
               })}
             />
-          )}
-        </Flex>
+            <EmbedToggleSwitch
+              checked={embedParams.optimizeSpace}
+              onChange={(_, checked) => {
+                setEmbedQueryParam("optimizeSpace", checked);
+              }}
+              label={t({
+                id: "publication.embed.iframe.optimize-space",
+                message: "Optimize white space around and within chart",
+              })}
+            />
+            <EmbedToggleSwitch
+              checked={embedParams.removeMoreOptionsButton}
+              onChange={(_, checked) => {
+                setEmbedQueryParam("removeMoreOptionsButton", checked);
+              }}
+              label={t({
+                id: "publication.embed.iframe.remove-more-options-button",
+                message:
+                  "Remove options for table view, copy & edit, sharing, and downloading",
+              })}
+            />
+            <EmbedToggleSwitch
+              checked={embedParams.removeLabelsInteractivity}
+              onChange={(_, checked) => {
+                setEmbedQueryParam("removeLabelsInteractivity", checked);
+              }}
+              label={t({
+                id: "publication.embed.iframe.remove-axis-labels-interactivity",
+                message: "Hide interactive labels",
+              })}
+            />
+            <EmbedToggleSwitch
+              checked={embedParams.removeFootnotes}
+              onChange={(_, checked) => {
+                setEmbedQueryParam("removeFootnotes", checked);
+              }}
+              label={t({
+                id: "publication.embed.iframe.remove-legend",
+                message: "Hide footnotes",
+              })}
+            />
+            <EmbedToggleSwitch
+              checked={embedParams.removeFilters}
+              onChange={(_, checked) => {
+                setEmbedQueryParam("removeFilters", checked);
+              }}
+              label={t({
+                id: "publication.embed.iframe.remove-filters",
+                message: "Hide filters",
+              })}
+            />
+          </AccordionDetails>
+        </Accordion>
         <CopyToClipboardTextInput
-          content={`<iframe src="${embedUrl}" width="100%" style="${isResponsive ? "" : `height: ${iframeHeight || 640}px; `}border: 0px #ffffff none;"  name="visualize.admin.ch"></iframe>${isResponsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
+          content={`<iframe src="${embedUrl}" width="100%" style="${responsive ? "" : `height: ${iframeHeight || 640}px; `}border: 0px #ffffff none;"  name="visualize.admin.ch"></iframe>${responsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
         />
       </div>
       <div>
@@ -418,10 +500,4 @@ export const ShareContent = ({
       </Box>
     </Box>
   );
-};
-
-export const shouldAllowDisablingBorder = (
-  state?: ConfiguratorStatePublished
-) => {
-  return state?.chartConfigs?.length === 1 && state?.layout.type === "tab";
 };

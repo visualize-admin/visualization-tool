@@ -713,6 +713,10 @@ msgid "controls.filter.select.none"
 msgstr "Select none"
 
 #: app/configurator/components/field.tsx
+msgid "controls.filter.show-values"
+msgstr "Show values"
+
+#: app/configurator/components/field.tsx
 msgid "controls.filter.use-most-recent"
 msgstr "Use most recent"
 
@@ -1019,6 +1023,10 @@ msgid "controls.section.data.filters"
 msgstr "Filters"
 
 #: app/configurator/components/chart-configurator.tsx
+msgid "controls.section.data.filters.default-open"
+msgstr "Show filter area open"
+
+#: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.none"
 msgstr "No filters"
 
@@ -1114,6 +1122,10 @@ msgid "controls.section.show-standard-error.explanation"
 msgstr "Show uncertainties extending from data points to represent standard errors"
 
 #: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-values"
+msgstr "Always show values"
+
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.sorting"
 msgstr "Sort"
 
@@ -1140,6 +1152,10 @@ msgstr "Select line type"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.targets-and-limit-values.show-target"
 msgstr "Show target"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.symbol-type"
+msgstr "Select symbol type"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -1319,6 +1335,14 @@ msgstr "Sort by"
 #: app/configurator/components/chart-type-selector.tsx
 msgid "controls.switch.chart.type"
 msgstr "Switch to another chart type while maintaining most filter settings."
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.symbol.cross"
+msgstr "Cross"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.symbol.dot"
+msgstr "Dot"
 
 #: app/configurator/table/table-chart-options.tsx
 msgid "controls.table.column.group"
@@ -1548,6 +1572,10 @@ msgid "footer.information.title"
 msgstr "Further information"
 
 #: app/components/footer.tsx
+msgid "footer.statistics"
+msgstr "Statistics"
+
+#: app/components/footer.tsx
 msgid "footer.status"
 msgstr "Status"
 
@@ -1595,6 +1623,7 @@ msgstr "You can share this visualization by copying the URL or by embedding it o
 
 #: app/components/chart-filters-list.tsx
 #: app/components/form.tsx
+#: app/components/hint.tsx
 #: app/components/hint.tsx
 msgid "hint.loading.data"
 msgstr "Loading data..."
@@ -1836,6 +1865,10 @@ msgid "profile.chart.rename-dialog.title"
 msgstr "Rename the visualization"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.advanced-settings"
+msgstr "Advanced settings"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.external-application"
 msgstr "Embed Code for \"External Application\""
 
@@ -1852,12 +1885,32 @@ msgid "publication.embed.iframe.caption"
 msgstr "Use this link to embed the chart in any webpage."
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.optimize-space"
+msgstr "Optimize white space around and within chart"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-axis-labels-interactivity"
+msgstr "Hide interactive labels"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
 msgstr "Remove border"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border.warn"
 msgstr "For embedding visualizations in systems without a border."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-filters"
+msgstr "Hide filters"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-legend"
+msgstr "Hide footnotes"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-more-options-button"
+msgstr "Remove options for table view, copy & edit, sharing, and downloading"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"

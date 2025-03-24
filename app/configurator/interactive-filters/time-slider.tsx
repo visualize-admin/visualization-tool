@@ -156,7 +156,6 @@ export const TimeSlider = (props: TimeSliderProps) => {
 
 const Root = ({ showPlayButton }: { showPlayButton: boolean }) => {
   const timeline = useTimeline();
-  const chartState = useChartState();
 
   return (
     <Box
@@ -166,7 +165,7 @@ const Root = ({ showPlayButton }: { showPlayButton: boolean }) => {
         alignItems: "center",
         gap: 5,
         mb: 5,
-        mr: `${chartState.bounds.margins.right}px`,
+        mr: "10px",
       }}
     >
       {showPlayButton && <PlayButton />}

@@ -9,6 +9,7 @@ import {
 } from "@interactivethings/swiss-federal-ci/dist/components";
 import { t } from "@lingui/macro";
 import { Link, SxProps } from "@mui/material";
+import NextLink from "next/link";
 
 import contentRoutes from "@/content-routes.json";
 import { BUILD_COMMIT, BUILD_GITHUB_REPO, BUILD_VERSION } from "@/domain/env";
@@ -46,6 +47,7 @@ export const Footer = ({ sx }: { sx?: SxProps }) => {
     external: false,
   };
   const versionLink = mkVersionLink();
+
   return (
     <SwissFederalCiFooter
       ContentWrapperProps={{ sx: sx ?? undefined }}
@@ -128,6 +130,13 @@ export const Footer = ({ sx }: { sx?: SxProps }) => {
             })}
           />
         </Link>
+        <NextLink href="/statistics" passHref legacyBehavior>
+          <Link sx={{ textDecoration: "none" }}>
+            <FooterSectionButton
+              label={t({ id: "footer.statistics", message: "Statistics" })}
+            />
+          </Link>
+        </NextLink>
       </FooterSection>
     </SwissFederalCiFooter>
   );

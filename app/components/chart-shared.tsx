@@ -67,14 +67,14 @@ import {
 export const CHART_GRID_ROW_COUNT = 7;
 
 /** Generic styles shared between `ChartPreview` and `ChartPublished`. */
-export const useChartStyles = makeStyles<Theme, { disableBorder?: boolean }>(
+export const useChartStyles = makeStyles<Theme, { removeBorder?: boolean }>(
   (theme) => ({
     root: {
       flexGrow: 1,
       padding: theme.spacing(6),
       backgroundColor: theme.palette.background.paper,
-      border: ({ disableBorder }) =>
-        disableBorder ? "none" : `1px solid ${theme.palette.divider}`,
+      border: ({ removeBorder }) =>
+        removeBorder ? "none" : `1px solid ${theme.palette.divider}`,
       color: theme.palette.grey[800],
       [`.${chartPanelLayoutGridClasses.root} &`]: {
         display: "flex",
@@ -103,16 +103,17 @@ export const ChartControls = ({
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
-  metadataPanelProps: Omit<
+  metadataPanelProps?: Omit<
     ComponentProps<typeof MetadataPanel>,
     "dataSource" | "chartConfig" | "dashboardFilters"
   >;
 }) => {
+  const chartDataFilters = chartConfig.interactiveFiltersConfig?.dataFilters;
+  const dashboardDataFilters = dashboardFilters?.dataFilters;
   const showFilters =
-    chartConfig.interactiveFiltersConfig?.dataFilters.active &&
-    chartConfig.interactiveFiltersConfig.dataFilters.componentIds.some(
-      (componentId) =>
-        !dashboardFilters?.dataFilters.componentIds.includes(componentId)
+    chartDataFilters?.active &&
+    chartDataFilters?.componentIds.some(
+      (id) => !dashboardDataFilters?.componentIds.includes(id)
     );
   const chartFiltersState = useChartDataFiltersState({
     dataSource,
@@ -120,7 +121,7 @@ export const ChartControls = ({
     dashboardFilters,
   });
 
-  return (
+  return showFilters || metadataPanelProps ? (
     <Box
       {...DISABLE_SCREENSHOT_ATTR}
       sx={{
@@ -134,24 +135,28 @@ export const ChartControls = ({
       <Box sx={{ gridArea: "filtersToggle" }}>
         {showFilters && <ChartDataFiltersToggle {...chartFiltersState} />}
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          gridArea: "metadataToggle",
-        }}
-      >
-        <MetadataPanel
-          dataSource={dataSource}
-          chartConfig={chartConfig}
-          dashboardFilters={dashboardFilters}
-          {...metadataPanelProps}
-        />
-      </Box>
+      {metadataPanelProps ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gridArea: "metadataToggle",
+          }}
+        >
+          <MetadataPanel
+            dataSource={dataSource}
+            chartConfig={chartConfig}
+            dashboardFilters={dashboardFilters}
+            {...metadataPanelProps}
+          />
+        </Box>
+      ) : null}
       <Box sx={{ gridArea: "filtersList" }}>
         {showFilters && <ChartDataFiltersList {...chartFiltersState} />}
       </Box>
     </Box>
+  ) : (
+    <span style={{ height: 1 }} />
   );
 };
 

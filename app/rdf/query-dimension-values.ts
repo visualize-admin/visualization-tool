@@ -9,7 +9,7 @@ import { ParsingClient } from "sparql-http-client/ParsingClient";
 import { ResultRow } from "sparql-http-client/ResultParser";
 import { LRUCache } from "typescript-lru-cache";
 
-import { FilterValue, Filters } from "@/config-types";
+import { Filters, FilterValue } from "@/config-types";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { DimensionValue, parseObservationValue } from "@/domain/data";
 import { isMostRecentValue } from "@/domain/most-recent-value";

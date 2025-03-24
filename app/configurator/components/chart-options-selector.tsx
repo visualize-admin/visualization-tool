@@ -1,8 +1,8 @@
 import { t, Trans } from "@lingui/macro";
 import {
   Box,
-  Switch as MUISwitch,
   Stack,
+  Switch as MUISwitch,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -10,7 +10,7 @@ import { groups } from "d3-array";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo } from "react";
+import { ReactNode, useCallback, useEffect, useMemo } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentId } from "@/charts";
 import {
@@ -58,14 +58,16 @@ import {
   isBarConfig,
   isColorInConfig,
   isComboChartConfig,
+  isMapConfig,
   isTableConfig,
   MapConfig,
   SortingType,
 } from "@/config-types";
 import {
+  getAxisDimension,
   getChartConfig,
   getMaybeValidChartConfigLimit,
-  getRelatedLimitDimension,
+  getSupportsLimitSymbols,
   useChartConfigFilters,
 } from "@/config-utils";
 import { ColorPalette } from "@/configurator/components/chart-controls/color-palette";
@@ -451,10 +453,12 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 
   const hasSubOptions = encoding.options?.chartSubType ?? false;
 
-  const relatedLimitDimension = getRelatedLimitDimension({
-    chartConfig,
-    dimensions,
-  });
+  const limitMeasure =
+    isMapConfig(chartConfig) && chartConfig.activeField === "symbolLayer"
+      ? measures.find((m) => m.id === chartConfig.fields.symbolLayer?.measureId)
+      : isMeasure(component)
+        ? component
+        : undefined;
 
   return (
     <div
@@ -467,7 +471,9 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       {/* Only show component select if necessary */}
       {encoding.componentTypes.length > 0 && (
         <ControlSection hideTopBorder>
-          <SectionTitle>{getFieldLabel(encoding.field)}</SectionTitle>
+          <SectionTitle>
+            {getFieldLabel(`${chartConfig.chartType}.${encoding.field}`)}
+          </SectionTitle>
           <ControlSectionContent gap="none">
             {!encoding.customComponent && (
               <ChartFieldField
@@ -479,15 +485,21 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                 components={components}
               />
             )}
+            {encoding.options?.showValues ? (
+              <SwitchWrapper>
+                <ChartOptionCheckboxField
+                  path="showValues"
+                  field={encoding.field}
+                  label={t({ id: "controls.section.show-values" })}
+                  disabled={
+                    encoding.options.showValues.getDisabledState?.(chartConfig)
+                      .disabled
+                  }
+                />
+              </SwitchWrapper>
+            ) : null}
             {encoding.options?.showStandardError && hasStandardError && (
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: 1,
-                  alignItems: "center",
-                  mt: 3,
-                }}
-              >
+              <SwitchWrapper>
                 <ChartOptionSwitchField
                   path="showStandardError"
                   field={encoding.field}
@@ -509,7 +521,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                     />
                   }
                 />
-              </Box>
+              </SwitchWrapper>
             )}
             {encoding.options?.showConfidenceInterval &&
               hasConfidenceInterval && (
@@ -579,13 +591,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           measures={measures}
         />
       )}
-      {isMeasure(component) && relatedLimitDimension ? (
-        <ChartLimits
-          chartConfig={chartConfig}
-          measure={component}
-          relatedDimension={relatedLimitDimension}
-        />
-      ) : null}
       {encoding.options?.imputation?.shouldShow(chartConfig, observations) && (
         <ChartImputation chartConfig={chartConfig} />
       )}
@@ -621,6 +626,13 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           getFieldOptionGroups={getFieldOptionGroups}
         />
       )}
+      {limitMeasure ? (
+        <ChartLimits
+          chartConfig={chartConfig}
+          dimensions={dimensions}
+          measure={limitMeasure}
+        />
+      ) : null}
       {encoding.options?.colorComponent && component && (
         <ChartFieldColorComponent
           chartConfig={chartConfig}
@@ -651,6 +663,21 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           <ChartFieldAnimation field={chartConfig.fields.animation} />
         )}
     </div>
+  );
+};
+
+const SwitchWrapper = ({ children }: { children: ReactNode }) => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        gap: 1,
+        alignItems: "center",
+        mt: 3,
+      }}
+    >
+      {children}
+    </Box>
   );
 };
 
@@ -737,39 +764,26 @@ const ChartLayoutOptions = ({
 
 const ChartLimits = ({
   chartConfig,
+  dimensions,
   measure,
-  relatedDimension,
 }: {
   chartConfig: ChartConfig;
+  dimensions: Dimension[];
   measure: Measure;
-  relatedDimension: Dimension;
 }) => {
   const [_, dispatch] = useConfiguratorState(isConfiguring);
   const filters = useChartConfigFilters(chartConfig);
   const onToggle = useEvent((checked: boolean, limit: Limit) => {
-    const { validRelated, wouldBeValid } = getMaybeValidChartConfigLimit({
-      chartConfig,
+    const actionProps = {
       measureId: measure.id,
-      limit,
-      relatedDimension,
-      filters,
-    });
-
-    if (!validRelated || !wouldBeValid) {
-      return;
-    }
-
-    const commonDispatchProps = {
-      measureId: measure.id,
-      relatedDimensionId: relatedDimension.id,
-      relatedDimensionValue: validRelated.dimensionValue,
+      related: limit.related,
     };
 
     if (checked) {
       dispatch({
         type: "LIMIT_SET",
         value: {
-          ...commonDispatchProps,
+          ...actionProps,
           color: "#ff0000",
           lineType: "solid",
         },
@@ -777,10 +791,11 @@ const ChartLimits = ({
     } else {
       dispatch({
         type: "LIMIT_REMOVE",
-        value: commonDispatchProps,
+        value: actionProps,
       });
     }
   });
+  const axisDimension = getAxisDimension({ chartConfig, dimensions });
 
   const availableLimitOptions = useMemo(() => {
     return measure.limits
@@ -789,8 +804,8 @@ const ChartLimits = ({
           getMaybeValidChartConfigLimit({
             chartConfig,
             measureId: measure.id,
+            axisDimension,
             limit,
-            relatedDimension: relatedDimension,
             filters,
           });
 
@@ -798,25 +813,31 @@ const ChartLimits = ({
           return;
         }
 
-        const { color = "#ffffff", lineType = "solid" } = maybeLimit ?? {};
+        const {
+          color = "#ffffff",
+          lineType = "solid",
+          symbolType = "circle",
+        } = maybeLimit ?? {};
 
         return {
           limit,
           maybeLimit,
           color,
           lineType,
+          symbolType,
         };
       })
       .filter(truthy);
-  }, [chartConfig, relatedDimension, filters, measure.id, measure.limits]);
+  }, [axisDimension, chartConfig, filters, measure.id, measure.limits]);
 
   const { data: userPalettes } = useUserPalettes();
-  const paletteId = get(chartConfig, `fields.color.paletteId`);
+  const paletteId = get(chartConfig, "fields.color.paletteId");
   const colors = getPalette({
     paletteId,
     fallbackPalette: userPalettes?.find((d) => d.paletteId === paletteId)
       ?.colors,
   });
+  const supportsLimitSymbols = getSupportsLimitSymbols(chartConfig);
 
   return availableLimitOptions.length > 0 ? (
     <ControlSection collapse>
@@ -827,7 +848,7 @@ const ChartLimits = ({
       </SubsectionTitle>
       <ControlSectionContent component="fieldset">
         {availableLimitOptions.map(
-          ({ maybeLimit, limit, color, lineType }, i) => {
+          ({ maybeLimit, limit, color, lineType, symbolType }, i) => {
             return (
               <Box key={i} sx={{ mb: 2 }}>
                 <Box
@@ -835,7 +856,7 @@ const ChartLimits = ({
                     display: "flex",
                     flexDirection: "column",
                     gap: 4,
-                    mb: limit.type === "range" ? 4 : 0,
+                    mb: limit.type === "range" || supportsLimitSymbols ? 4 : 0,
                   }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
@@ -873,10 +894,10 @@ const ChartLimits = ({
                           type: "LIMIT_SET",
                           value: {
                             measureId: measure.id,
-                            relatedDimensionId: relatedDimension.id,
-                            relatedDimensionValue: maybeLimit!.dimensionValue,
+                            related: limit.related,
                             color,
                             lineType,
+                            symbolType,
                           },
                         });
                       }}
@@ -884,6 +905,56 @@ const ChartLimits = ({
                     />
                   </Flex>
                 </Box>
+                {limit.type === "single" && supportsLimitSymbols ? (
+                  <div>
+                    <Typography variant="body2" sx={{ mb: 2 }}>
+                      <Trans id="controls.section.targets-and-limit-values.symbol-type">
+                        Select symbol type
+                      </Trans>
+                    </Typography>
+                    <Radio
+                      name={`limit-${i}-symbol-type-dot`}
+                      label={t({ id: "controls.symbol.dot", message: "Dot" })}
+                      value="dot"
+                      checked={symbolType === "circle"}
+                      onChange={() => {
+                        dispatch({
+                          type: "LIMIT_SET",
+                          value: {
+                            measureId: measure.id,
+                            related: limit.related,
+                            color,
+                            lineType,
+                            symbolType: "circle",
+                          },
+                        });
+                      }}
+                      disabled={!maybeLimit}
+                    />
+                    <Radio
+                      name={`limit-${i}-symbol-type-cross`}
+                      label={t({
+                        id: "controls.symbol.cross",
+                        message: "Cross",
+                      })}
+                      value="cross"
+                      checked={symbolType === "cross"}
+                      onChange={() => {
+                        dispatch({
+                          type: "LIMIT_SET",
+                          value: {
+                            measureId: measure.id,
+                            related: limit.related,
+                            color,
+                            lineType,
+                            symbolType: "cross",
+                          },
+                        });
+                      }}
+                      disabled={!maybeLimit}
+                    />
+                  </div>
+                ) : null}
                 {limit.type === "range" ? (
                   <div>
                     <Typography variant="body2" sx={{ mb: 2 }}>
@@ -901,10 +972,10 @@ const ChartLimits = ({
                           type: "LIMIT_SET",
                           value: {
                             measureId: measure.id,
-                            relatedDimensionId: relatedDimension.id,
-                            relatedDimensionValue: maybeLimit!.dimensionValue,
+                            related: limit.related,
                             color,
                             lineType: "solid",
+                            symbolType,
                           },
                         });
                       }}
@@ -923,10 +994,10 @@ const ChartLimits = ({
                           type: "LIMIT_SET",
                           value: {
                             measureId: measure.id,
-                            relatedDimensionId: relatedDimension.id,
-                            relatedDimensionValue: maybeLimit!.dimensionValue,
+                            related: limit.related,
                             color,
                             lineType: "dashed",
+                            symbolType,
                           },
                         });
                       }}
@@ -1727,15 +1798,13 @@ const ChartFieldMultiFilter = ({
 }) => {
   const colorComponentId = get(
     chartConfig,
-    `fields["${field}"].color.componentId`
+    isMapConfig(chartConfig)
+      ? `fields["${field}"].color.componentId`
+      : `fields.segment.componentId`
   );
   const colorComponent = [...dimensions, ...measures].find(
     (d) => d.id === colorComponentId
   );
-  const colorType = get(chartConfig, `fields["${field}"].color.type`) as
-    | ColorFieldType
-    | undefined;
-
   return encoding.filters && component ? (
     <ControlSection data-testid="chart-edition-multi-filters" collapse>
       <SubsectionTitle
@@ -1763,10 +1832,12 @@ const ChartFieldMultiFilter = ({
             <DimensionValuesMultiFilter
               dimension={component}
               field={field}
-              colorComponent={colorComponent ?? component}
+              colorComponent={colorComponent}
               // If colorType is defined, we are dealing with color field and
               // not segment.
-              colorConfigPath={colorType ? "color" : "colorMapping"}
+              colorConfigPath={
+                isColorInConfig(chartConfig) ? undefined : "colorMapping"
+              }
             />
           )
         )}

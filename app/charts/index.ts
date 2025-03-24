@@ -2,6 +2,7 @@ import { t } from "@lingui/macro";
 import { ascending, descending, group, rollup, rollups } from "d3-array";
 import produce from "immer";
 import get from "lodash/get";
+import mapValues from "lodash/mapValues";
 import sortBy from "lodash/sortBy";
 
 import {
@@ -58,6 +59,7 @@ import {
   PieSegmentField,
   RegularChartType,
   ScatterPlotSegmentField,
+  ShowValuesSegmentFieldExtension,
   SortingOrder,
   SortingType,
   TableColumn,
@@ -202,6 +204,7 @@ const getInitialInteractiveFiltersConfig = (options?: {
     dataFilters: {
       active: false,
       componentIds: [],
+      defaultOpen: true,
     },
     calculation: {
       active: false,
@@ -551,6 +554,7 @@ export const getInitialConfig = (
           segment: {
             componentId: pieSegmentComponent.id,
             sorting: { sortingType: "byMeasure", sortingOrder: "asc" },
+            showValuesMapping: {},
           },
           color: {
             type: "segment",
@@ -594,6 +598,7 @@ export const getInitialConfig = (
                 },
                 segment: {
                   componentId: scatterplotSegmentComponent.id,
+                  showValuesMapping: {},
                 },
               }
             : {
@@ -992,7 +997,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1012,6 +1019,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         componentId: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.y.componentId = oldValue;
+          });
+        },
+        showValues: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.showValues = oldValue;
           });
         },
       },
@@ -1043,6 +1055,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               ...maybeSegmentAndColorFields.segment,
               sorting: DEFAULT_SORTING,
               type: disableStacked(yMeasure) ? "grouped" : "stacked",
+              showValuesMapping: {},
             };
             newColor = maybeSegmentAndColorFields.color;
           }
@@ -1055,6 +1068,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
           newSegment = {
             ...oldSegment,
+            showValuesMapping: oldSegment.showValuesMapping ?? {},
             // We could encounter byMeasure sorting type (Pie chart); we should
             // switch to byTotalSize sorting then.
             sorting: adjustSegmentSorting({
@@ -1103,7 +1117,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1116,6 +1132,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
 
           return newChartConfig;
+        },
+        showValues: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.x.showValues = oldValue;
+          });
         },
       },
       y: {
@@ -1225,7 +1246,12 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType = "circle", ...rest }) => ({
+            ...rest,
+            symbolType,
+          }))
+        );
       });
     },
     fields: {
@@ -1248,6 +1274,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         componentId: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.y.componentId = oldValue;
+          });
+        },
+        showValues: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.showValues = oldValue;
           });
         },
       },
@@ -1288,6 +1319,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
                 "sortingOrder" in oldSegment.sorting
                   ? (oldSegment.sorting ?? DEFAULT_FIXED_COLOR_FIELD)
                   : DEFAULT_SORTING,
+              showValuesMapping: oldSegment.showValuesMapping,
             };
             newColor = {
               type: "segment",
@@ -1318,7 +1350,12 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType = "circle", ...rest }) => ({
+            ...rest,
+            symbolType,
+          }))
+        );
       });
     },
     fields: {
@@ -1341,6 +1378,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         componentId: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.y.componentId = oldValue;
+          });
+        },
+        showValues: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.showValues = oldValue;
           });
         },
       },
@@ -1393,6 +1435,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
                 acceptedValues: AREA_SEGMENT_SORTING.map((d) => d.sortingType),
                 defaultValue: "byTotalSize",
               }),
+              showValuesMapping: oldSegment.showValuesMapping,
             };
             newColor = {
               type: "segment",
@@ -1423,7 +1466,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1470,6 +1515,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
           newSegment = {
             componentId: oldSegment.componentId,
+            showValuesMapping: oldSegment.showValuesMapping,
           };
         }
 
@@ -1496,7 +1542,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1504,6 +1552,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         componentId: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.y.componentId = oldValue;
+          });
+        },
+        showValues: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.showValues = oldValue;
           });
         },
       },
@@ -1541,6 +1594,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               acceptedValues: PIE_SEGMENT_SORTING.map((d) => d.sortingType),
               defaultValue: "byMeasure",
             }),
+            showValuesMapping: oldSegment.showValuesMapping,
           };
           newColor = {
             type: "segment",
@@ -1611,7 +1665,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1661,7 +1717,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1732,7 +1790,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1853,7 +1913,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.limits = oldValue;
+        draft.limits = mapValues(oldValue, (limits) =>
+          limits.map(({ symbolType, ...rest }) => rest)
+        );
       });
     },
     fields: {
@@ -1961,6 +2023,7 @@ const chartConfigsPathOverrides: {
   column: {
     bar: {
       "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.x.showValues": { path: "fields.y.showValues" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
@@ -1994,14 +2057,17 @@ const chartConfigsPathOverrides: {
     column: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
+      "fields.y.showValues": { path: "fields.x.showValues" },
     },
     line: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
+      "fields.y.showValues": { path: "fields.x.showValues" },
     },
     area: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
+      "fields.y.showValues": { path: "fields.x.showValues" },
     },
     scatterplot: {
       "fields.x.componentId": { path: "fields.y.componentId" },
@@ -2009,6 +2075,7 @@ const chartConfigsPathOverrides: {
     },
     pie: {
       "fields.y.componentId": { path: "fields.x.componentId" },
+      "fields.y.showValues": { path: "fields.x.showValues" },
     },
     map: {
       "fields.areaLayer.componentId": { path: "fields.y.componentId" },
@@ -2040,6 +2107,7 @@ const chartConfigsPathOverrides: {
   line: {
     bar: {
       "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.x.showValues": { path: "fields.y.showValues" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
@@ -2071,6 +2139,7 @@ const chartConfigsPathOverrides: {
   area: {
     bar: {
       "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.x.showValues": { path: "fields.y.showValues" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
@@ -2134,6 +2203,7 @@ const chartConfigsPathOverrides: {
     bar: {
       "fields.segment.componentId": { path: "fields.y.componentId" },
       "fields.x.componentId": { path: "fields.y.componentId" },
+      "fields.x.showValues": { path: "fields.y.showValues" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
@@ -2585,7 +2655,12 @@ const convertTableFieldsToSegmentAndColorFields = ({
   fields: TableFields;
   dimensions: Dimension[];
   measures: Measure[];
-}): { segment: GenericField; color: ColorField } | undefined => {
+}):
+  | {
+      segment: GenericField & ShowValuesSegmentFieldExtension;
+      color: ColorField;
+    }
+  | undefined => {
   const groupedColumns = group(Object.values(fields), (d) => d.isGroup)
     .get(true)
     ?.filter((d) => SEGMENT_ENABLED_COMPONENTS.includes(d.componentType))
@@ -2605,6 +2680,7 @@ const convertTableFieldsToSegmentAndColorFields = ({
   return {
     segment: {
       componentId,
+      showValuesMapping: {},
     },
     color: {
       type: "segment",

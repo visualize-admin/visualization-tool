@@ -47,7 +47,6 @@ import {
   isMapConfig,
   isSegmentInConfig,
   isTableConfig,
-  Limit,
   ReactGridLayoutType,
   SingleColorField,
 } from "@/config-types";
@@ -409,6 +408,7 @@ export const handleChartFieldChanged = (
     initializing: !f,
     selectedValues,
     field,
+    oldField: f,
   });
 
   // Remove the component from interactive data filters.
@@ -499,7 +499,13 @@ export const handleChartOptionChanged = (
         field,
         path
       );
-      sideEffect?.(value, { chartConfig, dimensions, measures, field });
+      sideEffect?.(value, {
+        chartConfig,
+        dimensions,
+        measures,
+        field,
+        oldField: get(chartConfig.fields, field),
+      });
     }
 
     if (value === FIELD_VALUE_NONE) {
@@ -548,8 +554,9 @@ export const updateColorMapping = (
         });
       }
     } else {
+      const { paletteId } = get(chartConfig, path);
       colorMapping = mapValueIrisToColor({
-        paletteId: "dimension",
+        paletteId,
         dimensionValues: values,
         colorMapping: oldColorMapping,
         random,
@@ -1173,34 +1180,26 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "LIMIT_SET":
       if (isConfiguring(draft)) {
-        const {
-          measureId,
-          relatedDimensionId,
-          relatedDimensionValue,
-          color,
-          lineType,
-        } = action.value;
+        const { measureId, ...limit } = action.value;
         const chartConfig = getChartConfig(draft);
-        const newLimit: Limit = {
-          dimensionId: relatedDimensionId,
-          dimensionValue: relatedDimensionValue,
-          color,
-          lineType,
-        };
 
         if (!chartConfig.limits[measureId]) {
-          chartConfig.limits[measureId] = [newLimit];
+          chartConfig.limits[measureId] = [limit];
         } else {
-          const maybeLimitIndex = chartConfig.limits[measureId].findIndex(
-            (d) =>
-              d.dimensionId === relatedDimensionId &&
-              d.dimensionValue === relatedDimensionValue
+          const maybeLimitIndex = chartConfig.limits[measureId].findIndex((d) =>
+            d.related.every((r) =>
+              limit.related.some(
+                (nr) =>
+                  r.dimensionId === nr.dimensionId &&
+                  r.dimensionValue === nr.dimensionValue
+              )
+            )
           );
 
           if (maybeLimitIndex !== -1) {
-            chartConfig.limits[measureId][maybeLimitIndex] = newLimit;
+            chartConfig.limits[measureId][maybeLimitIndex] = limit;
           } else {
-            chartConfig.limits[measureId].push(newLimit);
+            chartConfig.limits[measureId].push(limit);
           }
         }
       }
@@ -1209,25 +1208,34 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "LIMIT_REMOVE":
       if (isConfiguring(draft)) {
-        const { measureId, relatedDimensionId, relatedDimensionValue } =
-          action.value;
+        const { measureId, related } = action.value;
         const chartConfig = getChartConfig(draft);
 
         const limits = chartConfig.limits[measureId] ?? [];
-        const limit = limits.find(
-          (d) =>
-            d.dimensionId === relatedDimensionId &&
-            d.dimensionValue === relatedDimensionValue
-        );
+        const limit = limits.find((l) => {
+          return l.related.every((lr) => {
+            return related.some((nr) => {
+              return (
+                lr.dimensionId === nr.dimensionId &&
+                lr.dimensionValue === nr.dimensionValue
+              );
+            });
+          });
+        });
 
         if (limits.length === 1 && limit) {
           delete chartConfig.limits[measureId];
         } else {
-          chartConfig.limits[measureId] = limits.filter(
-            (d) =>
-              d.dimensionId !== relatedDimensionId ||
-              d.dimensionValue !== relatedDimensionValue
-          );
+          chartConfig.limits[measureId] = limits.filter((l) => {
+            return l.related.some((lr) => {
+              return related.every((nr) => {
+                return (
+                  lr.dimensionId !== nr.dimensionId ||
+                  lr.dimensionValue !== nr.dimensionValue
+                );
+              });
+            });
+          });
         }
       }
 

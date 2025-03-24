@@ -76,15 +76,21 @@ export const useChartDataFiltersState = ({
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
 }) => {
-  const componentIds =
-    chartConfig.interactiveFiltersConfig?.dataFilters.componentIds;
-  const [open, setOpen] = useState(false);
+  const dataFiltersConfig = chartConfig.interactiveFiltersConfig?.dataFilters;
+  const active = dataFiltersConfig?.active;
+  const defaultOpen = dataFiltersConfig?.defaultOpen;
+  const componentIds = dataFiltersConfig?.componentIds;
+  const [open, setOpen] = useState<boolean>(!!defaultOpen);
 
   useEffect(() => {
     if (componentIds?.length === 0) {
       setOpen(false);
     }
   }, [componentIds?.length]);
+
+  useEffect(() => {
+    setOpen(!!defaultOpen);
+  }, [active, defaultOpen]);
 
   const { loading } = useLoadingState();
   const queryFilters = useQueryFilters({
@@ -127,6 +133,7 @@ export const useChartDataFiltersState = ({
   return {
     open,
     setOpen,
+    defaultOpen,
     dataSource,
     chartConfig,
     loading,
@@ -136,11 +143,14 @@ export const useChartDataFiltersState = ({
   };
 };
 
-export const ChartDataFiltersToggle = (
-  props: ReturnType<typeof useChartDataFiltersState>
-) => {
-  const { open, setOpen, loading, error, componentIds } = props;
-
+export const ChartDataFiltersToggle = ({
+  open,
+  setOpen,
+  defaultOpen,
+  loading,
+  error,
+  componentIds,
+}: ReturnType<typeof useChartDataFiltersState>) => {
   return error ? (
     <Typography variant="body2" color="error">
       <Trans id="controls.section.data.filters.possible-filters-error">
@@ -148,7 +158,7 @@ export const ChartDataFiltersToggle = (
         reload the page.
       </Trans>
     </Typography>
-  ) : (
+  ) : defaultOpen ? null : (
     <Flex sx={{ flexDirection: "column", width: "100%" }}>
       <Flex
         sx={{

@@ -8,8 +8,8 @@ import Flex from "@/components/flex";
 import { Label, MinimalisticSelect } from "@/components/form";
 import {
   isDataSourceChangeable,
-  stringifyDataSource,
   parseDataSource,
+  stringifyDataSource,
 } from "@/domain/datasource";
 import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
 import { useDataSourceStore } from "@/stores/data-source";

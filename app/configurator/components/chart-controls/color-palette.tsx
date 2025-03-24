@@ -243,7 +243,7 @@ export const ColorPalette = ({
           return (
             <Grid
               container
-              spacing="0.5"
+              spacing={1}
               sx={{
                 alignItems: "center",
                 "& .MuiGrid-item": {

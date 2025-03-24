@@ -65,6 +65,7 @@ export const BrushTime = () => {
   const setTimeRange = useChartInteractiveFilters((d) => d.setTimeRange);
   const getInteractiveFiltersState = useInteractiveFiltersGetState();
   const setEnableTransition = useTransitionStore((d) => d.setEnable);
+  const setBrushing = useTransitionStore((d) => d.setBrushing);
   const [brushedIsEnded, updateBrushEndedStatus] = useState(true);
   const [selectionExtent, setSelectionExtent] = useState(0);
   const updateSelectionExtent = (selection: [number, number] | undefined) => {
@@ -108,9 +109,11 @@ export const BrushTime = () => {
     if (chartType === "bar") {
       return getYAsDate;
     }
-    if (chartType === "column") {
+
+    if (chartType === "column" || chartType === "comboLineColumn") {
       return getXAsDate;
     }
+
     return getX;
   })();
   const fullData = allData;
@@ -204,6 +207,7 @@ export const BrushTime = () => {
 
       if (e.sourceEvent instanceof MouseEvent) {
         setEnableTransition(false);
+        setBrushing(true);
       }
     })
     .on("brush", brushed)
@@ -218,6 +222,7 @@ export const BrushTime = () => {
         // we want to compute mx basing on MouseEvent.
         if (e.sourceEvent instanceof MouseEvent) {
           setEnableTransition(true);
+          setBrushing(false);
 
           if (!e.selection && ref.current) {
             const g = select(ref.current);

@@ -18,59 +18,62 @@ import { truthy } from "@/domain/types";
 import { useTransitionStore } from "@/stores/transition";
 
 export const HorizontalLimits = ({
-  relatedDimension,
+  axisDimension,
   limits,
 }: ReturnType<typeof useLimits>) => {
   const { yScale, getY, xScale, bounds } = useChartState() as BarsState;
-  const { margins, width, height } = bounds;
+  const { width, height, chartHeight, margins } = bounds;
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const renderData: RenderHorizontalLimitDatum[] = useMemo(() => {
-    const bandwidth = yScale.bandwidth();
-    const limitHeight = Math.min(yScale.bandwidth(), 15);
+    const limitHeight = yScale.bandwidth();
     const preparedLimits = limits
-      .map(({ configLimit, measureLimit }) => {
-        const relatedDimensionValue = relatedDimension?.values.find(
-          (v) => v.value === configLimit.dimensionValue
-        )?.label;
-
-        if (!relatedDimensionValue) {
-          return;
-        }
-
+      .map(({ configLimit, measureLimit, relatedAxisDimensionValueLabel }) => {
         return {
-          y1:
+          x1:
             measureLimit.type === "single"
               ? measureLimit.value
               : measureLimit.from,
-          y2:
+          x2:
             measureLimit.type === "single"
               ? measureLimit.value
               : measureLimit.to,
           ...configLimit,
-          relatedDimensionValue,
+          relatedAxisDimensionValueLabel,
         };
       })
       .filter(truthy);
 
     return preparedLimits
       .map((limit) => {
-        const fakeObservation: Observation = {
-          [relatedDimension?.id ?? ""]: limit.relatedDimensionValue,
-        };
-        const y = getY(fakeObservation);
-        const yScaled = yScale(y);
+        const key = limit.related
+          .map((d) => d.dimensionId + d.dimensionValue)
+          .join();
+        const x1 = xScale(limit.x1);
+        const x2 = xScale(limit.x2);
+        const fill = limit.color;
+        const lineType = limit.lineType;
 
-        return yScaled !== undefined
+        const axisObservation: Observation = {
+          [axisDimension?.id ?? ""]: limit.relatedAxisDimensionValueLabel ?? "",
+        };
+        const axisY = yScale(getY(axisObservation));
+        const y = axisY ?? 0;
+        const height = axisY !== undefined ? limitHeight : chartHeight;
+
+        const hasValidAxis = axisY !== undefined;
+        const hasNoAxis = limit.relatedAxisDimensionValueLabel === undefined;
+
+        return hasValidAxis || hasNoAxis
           ? ({
-              key: limit.relatedDimensionValue,
-              y: yScaled + bandwidth / 2 - limitHeight / 2,
-              x1: xScale(limit.y1),
-              x2: xScale(limit.y2),
-              height: limitHeight,
-              fill: limit.color,
-              lineType: limit.lineType,
+              key,
+              x1,
+              x2,
+              y,
+              height,
+              fill,
+              lineType,
             } as RenderHorizontalLimitDatum)
           : null;
       })
@@ -79,8 +82,8 @@ export const HorizontalLimits = ({
   }, [
     xScale,
     limits,
-    relatedDimension?.values,
-    relatedDimension?.id,
+    axisDimension?.values,
+    axisDimension?.id,
     getY,
     yScale,
     width,
@@ -108,14 +111,14 @@ export const HorizontalLimits = ({
 };
 
 export const VerticalLimits = ({
-  relatedDimension,
+  axisDimension,
   limits,
 }: ReturnType<typeof useLimits>) => {
   const { xScale, getX, yScale, bounds } = useChartState() as
     | AreasState
     | ColumnsState
     | LinesState;
-  const { margins, width, height } = bounds;
+  const { margins, chartWidth, width, height } = bounds;
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
@@ -124,7 +127,7 @@ export const VerticalLimits = ({
       "bandwidth" in xScale
         ? {
             bandwidth: xScale.bandwidth(),
-            limitWidth: Math.min(xScale.bandwidth(), 15),
+            limitWidth: xScale.bandwidth(),
           }
         : {
             bandwidth: 0,
@@ -132,15 +135,7 @@ export const VerticalLimits = ({
           };
 
     const preparedLimits = limits
-      .map(({ configLimit, measureLimit }) => {
-        const relatedDimensionValue = relatedDimension?.values.find(
-          (v) => v.value === configLimit.dimensionValue
-        )?.label;
-
-        if (!relatedDimensionValue) {
-          return;
-        }
-
+      .map(({ configLimit, measureLimit, relatedAxisDimensionValueLabel }) => {
         return {
           y1:
             measureLimit.type === "single"
@@ -151,28 +146,43 @@ export const VerticalLimits = ({
               ? measureLimit.value
               : measureLimit.to,
           ...configLimit,
-          relatedDimensionValue,
+          relatedAxisDimensionValueLabel,
         };
       })
       .filter(truthy);
 
     return preparedLimits
       .map((limit) => {
-        const fakeObservation: Observation = {
-          [relatedDimension?.id ?? ""]: limit.relatedDimensionValue,
-        };
-        const x = getX(fakeObservation) as $IntentionalAny;
-        const xScaled = xScale(x);
+        const key = limit.related
+          .map((d) => d.dimensionId + d.dimensionValue)
+          .join();
+        const y1 = yScale(limit.y1);
+        const y2 = yScale(limit.y2);
+        const fill = limit.color;
+        const lineType = limit.lineType;
+        const symbolType = limit.symbolType;
 
-        return xScaled !== undefined
+        const axisObservation: Observation = {
+          [axisDimension?.id ?? ""]: limit.relatedAxisDimensionValueLabel ?? "",
+        };
+        const axisX = xScale(getX(axisObservation) as $IntentionalAny);
+        const x =
+          axisX !== undefined ? axisX + (bandwidth - limitWidth) * 0.5 : 0;
+        const width = axisX !== undefined ? limitWidth : chartWidth;
+
+        const hasValidAxis = axisX !== undefined;
+        const hasNoAxis = limit.relatedAxisDimensionValueLabel === undefined;
+
+        return hasValidAxis || hasNoAxis
           ? ({
-              key: limit.relatedDimensionValue,
-              x: xScaled + bandwidth / 2 - limitWidth / 2,
-              y1: yScale(limit.y1),
-              y2: yScale(limit.y2),
-              width: limitWidth,
-              fill: limit.color,
-              lineType: limit.lineType,
+              key,
+              x,
+              y1,
+              y2,
+              width,
+              fill,
+              lineType,
+              symbolType,
             } as RenderVerticalLimitDatum)
           : null;
       })
@@ -181,8 +191,8 @@ export const VerticalLimits = ({
   }, [
     xScale,
     limits,
-    relatedDimension?.values,
-    relatedDimension?.id,
+    axisDimension?.values,
+    axisDimension?.id,
     getX,
     yScale,
     width,

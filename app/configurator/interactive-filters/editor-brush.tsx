@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { brushX } from "d3-brush";
 import { scaleTime } from "d3-scale";
-import { Selection, pointer, select } from "d3-selection";
+import { pointer, select, Selection } from "d3-selection";
 import { CountableTimeInterval } from "d3-time";
 import { useCallback, useEffect, useRef } from "react";
 

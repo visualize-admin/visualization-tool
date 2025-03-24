@@ -5,12 +5,16 @@ import {
   RenderColumnDatum,
   renderColumns,
 } from "@/charts/column/rendering-utils";
+import { useColumnValueLabelsData } from "@/charts/column/show-values-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import { renderTotalValueLabels } from "@/charts/shared/render-value-labels";
 import {
   renderContainer,
+  RenderContainerOptions,
   RenderVerticalWhiskerDatum,
   renderVerticalWhiskers,
 } from "@/charts/shared/rendering-utils";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ErrorWhiskers = () => {
@@ -28,16 +32,17 @@ export const ErrorWhiskers = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
+  const bandwidth = xScale.bandwidth();
   const renderData: RenderVerticalWhiskerDatum[] = useMemo(() => {
     if (!getYErrorRange || !showYUncertainty) {
       return [];
     }
 
-    const bandwidth = xScale.bandwidth();
     return chartData.filter(getYErrorPresent).map((d, i) => {
       const x0 = xScale(getX(d)) as number;
       const barWidth = Math.min(bandwidth, 15);
       const [y1, y2] = getYErrorRange(d);
+
       return {
         key: `${i}`,
         x: x0 + bandwidth / 2 - barWidth / 2,
@@ -48,12 +53,13 @@ export const ErrorWhiskers = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    chartData,
-    getX,
-    getYErrorPresent,
     getYErrorRange,
     showYUncertainty,
+    chartData,
+    getYErrorPresent,
     xScale,
+    getX,
+    bandwidth,
     yScale,
     width,
     height,
@@ -89,28 +95,31 @@ export const Columns = () => {
     yScale,
     getRenderingKey,
     colors,
+    rotateValues,
   } = useChartState() as ColumnsState;
   const { margins } = bounds;
+  const { labelFontSize, fontFamily } = useChartTheme();
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const bandwidth = xScale.bandwidth();
   const y0 = yScale(0);
-  const renderData: RenderColumnDatum[] = useMemo(() => {
+  const columnsData: RenderColumnDatum[] = useMemo(() => {
     return chartData.map((d) => {
       const key = getRenderingKey(d);
+      const valueRaw = getY(d);
       const xScaled = xScale(getX(d)) as number;
-      const yRaw = getY(d);
-      const y = yRaw === null || isNaN(yRaw) ? 0 : yRaw;
-      const yScaled = yScale(y);
-      const yRender = yScale(Math.max(y, 0));
-      const height = Math.max(0, Math.abs(yScaled - y0));
+      const value = valueRaw === null || isNaN(valueRaw) ? 0 : valueRaw;
+      const y = yScale(value);
+      const yRender = yScale(Math.max(value, 0));
+      const height = Math.max(0, Math.abs(y - y0));
       // Calling colors(key) directly results in every key being added to the domain,
       // which is not what we want.
       const color = colors.copy()(key);
 
       return {
         key,
+        value,
         x: xScaled,
         y: yRender,
         width: bandwidth,
@@ -130,22 +139,49 @@ export const Columns = () => {
     getRenderingKey,
   ]);
 
+  const valueLabelsData = useColumnValueLabelsData();
+
   useEffect(() => {
-    if (ref.current) {
-      renderContainer(ref.current, {
+    const g = ref.current;
+
+    if (g) {
+      const common: Pick<
+        RenderContainerOptions,
+        "id" | "transform" | "transition"
+      > = {
         id: "columns",
         transform: `translate(${margins.left} ${margins.top})`,
-        transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g, opts) => renderColumns(g, renderData, { ...opts, y0 }),
+        transition: {
+          enable: enableTransition,
+          duration: transitionDuration,
+        },
+      };
+      renderContainer(g, {
+        ...common,
+        render: (g, opts) => renderColumns(g, columnsData, { ...opts, y0 }),
+      });
+      renderContainer(g, {
+        ...common,
+        render: (g, opts) =>
+          renderTotalValueLabels(g, valueLabelsData, {
+            ...opts,
+            rotate: rotateValues,
+            fontFamily,
+            fontSize: labelFontSize,
+          }),
       });
     }
   }, [
     enableTransition,
     margins.left,
     margins.top,
-    renderData,
+    columnsData,
     transitionDuration,
     y0,
+    valueLabelsData,
+    labelFontSize,
+    rotateValues,
+    fontFamily,
   ]);
 
   return <g ref={ref} />;

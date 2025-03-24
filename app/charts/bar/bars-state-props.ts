@@ -7,6 +7,7 @@ import {
   BaseVariables,
   ChartStateData,
   InteractiveFiltersVariables,
+  LimitsVariables,
   NumericalXErrorVariables,
   NumericalXVariables,
   RenderingVariables,
@@ -16,12 +17,13 @@ import {
   useBaseVariables,
   useChartData,
   useInteractiveFiltersVariables,
+  useLimitsVariables,
   useNumericalXErrorVariables,
   useNumericalXVariables,
   useSegmentVariables,
 } from "@/charts/shared/chart-state";
 import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
-import { useChartConfigFilters } from "@/config-utils";
+import { useChartConfigFilters, useLimits } from "@/config-utils";
 import { BarConfig } from "@/configurator";
 import { isTemporalEntityDimension } from "@/domain/data";
 
@@ -34,10 +36,11 @@ export type BarsStateVariables = BaseVariables &
   NumericalXErrorVariables &
   SegmentVariables &
   RenderingVariables &
-  InteractiveFiltersVariables;
+  InteractiveFiltersVariables &
+  LimitsVariables;
 
 export const useBarsStateVariables = (
-  props: ChartProps<BarConfig>
+  props: ChartProps<BarConfig> & { limits: ReturnType<typeof useLimits> }
 ): BarsStateVariables => {
   const {
     chartConfig,
@@ -46,6 +49,7 @@ export const useBarsStateVariables = (
     dimensionsById,
     measures,
     measuresById,
+    limits,
   } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const { x, y, animation, segment } = fields;
@@ -69,6 +73,7 @@ export const useBarsStateVariables = (
     interactiveFiltersConfig,
     { dimensionsById }
   );
+  const limitsVariables = useLimitsVariables(limits);
 
   const { getY, getYAsDate } = bandYVariables;
   const { getX } = numericalXVariables;
@@ -114,6 +119,7 @@ export const useBarsStateVariables = (
     ...numericalXVariables,
     ...numericalXErrorVariables,
     ...interactiveFiltersVariables,
+    ...limitsVariables,
     getRenderingKey,
   };
 };

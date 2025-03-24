@@ -3,12 +3,16 @@ import { useEffect, useMemo, useRef } from "react";
 
 import { BarsState } from "@/charts/bar/bars-state";
 import { RenderBarDatum, renderBars } from "@/charts/bar/rendering-utils";
+import { useBarValueLabelsData } from "@/charts/bar/show-values-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import { renderTotalValueLabels } from "@/charts/shared/render-value-labels";
 import {
-  RenderHorizontalWhiskerDatum,
   renderContainer,
+  RenderContainerOptions,
   renderHorizontalWhisker,
+  RenderHorizontalWhiskerDatum,
 } from "@/charts/shared/rendering-utils";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useTransitionStore } from "@/stores/transition";
 import { useTheme } from "@/themes";
 
@@ -33,10 +37,12 @@ export const ErrorWhiskers = () => {
     }
 
     const bandwidth = yScale.bandwidth();
+
     return chartData.filter(getXErrorPresent).map((d, i) => {
       const y0 = yScale(getY(d)) as number;
       const barHeight = Math.min(bandwidth, 16);
       const [x1, x2] = getXErrorRange(d);
+
       return {
         key: `${i}`,
         y: y0 + bandwidth / 2 - barHeight / 2,
@@ -88,9 +94,11 @@ export const Bars = () => {
     yScale,
     getRenderingKey,
     colors,
+    rotateValues,
   } = useChartState() as BarsState;
   const theme = useTheme();
   const { margins } = bounds;
+  const { labelFontSize, fontFamily } = useChartTheme();
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
@@ -129,21 +137,51 @@ export const Bars = () => {
     getRenderingKey,
   ]);
 
+  const valueLabelsData = useBarValueLabelsData();
+
   useEffect(() => {
-    if (ref.current) {
-      renderContainer(ref.current, {
+    const g = ref.current;
+
+    if (g) {
+      const common: Pick<
+        RenderContainerOptions,
+        "id" | "transform" | "transition"
+      > = {
         id: "bars",
         transform: `translate(${margins.left} ${margins.top})`,
-        transition: { enable: enableTransition, duration: transitionDuration },
+        transition: {
+          enable: enableTransition,
+          duration: transitionDuration,
+        },
+      };
+      renderContainer(g, {
+        ...common,
         render: (g, opts) => renderBars(g, renderData, { ...opts, x0 }),
+      });
+      renderContainer(g, {
+        ...common,
+        render: (g, opts) =>
+          renderTotalValueLabels(g, valueLabelsData, {
+            ...opts,
+            rotate: rotateValues,
+            textAnchor: "start",
+            dx: 6,
+            dy: 4,
+            fontFamily,
+            fontSize: labelFontSize,
+          }),
       });
     }
   }, [
     enableTransition,
+    fontFamily,
+    labelFontSize,
     margins.left,
     margins.top,
     renderData,
+    rotateValues,
     transitionDuration,
+    valueLabelsData,
     x0,
   ]);
 

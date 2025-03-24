@@ -35,6 +35,7 @@ import {
   Observation,
 } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
+import { Icon } from "@/icons";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
@@ -43,7 +44,7 @@ import useEvent from "@/utils/use-event";
 
 import { DimensionsById } from "./ChartProps";
 
-export type LegendSymbol = "square" | "line" | "circle";
+export type LegendSymbol = "square" | "line" | "circle" | "cross";
 
 type LegendItemUsage = "legend" | "tooltip" | "colorPicker";
 
@@ -95,11 +96,12 @@ const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => {
           : theme.typography.caption.fontSize,
       fontWeight: theme.typography.fontWeightRegular,
       color: theme.palette.grey[700],
+      wordBreak: "break-word",
 
       "&::before": {
         content: "''",
         position: "relative",
-        display: "block",
+        display: ({ symbol }) => (symbol === "cross" ? "none" : "block"),
         width: `calc(0.5rem * var(--size-adjust, 1))`,
         height: ({ symbol }) =>
           `calc(${["square", "circle"].includes(symbol) ? "0.5rem" : "2px"} * var(--size-adjust, 1))`,
@@ -221,6 +223,7 @@ export const LegendColor = memo(function LegendColor({
               ? [measureLimit.value]
               : [measureLimit.from, measureLimit.to],
           color: configLimit.color,
+          symbol: !configLimit.symbolType ? "line" : configLimit.symbolType,
         }))}
         getColor={colors}
         getLabel={getColorLabel}
@@ -312,7 +315,12 @@ const LegendColorContent = ({
   numberOfOptions,
 }: {
   groups: ReturnType<typeof useLegendGroups>;
-  limits?: { label: string; values: number[]; color: string }[];
+  limits?: {
+    label: string;
+    values: number[];
+    color: string;
+    symbol: LegendSymbol;
+  }[];
   getColor: (d: string) => string;
   getLabel: (d: string) => string;
   getItemDimension?: (dimensionLabel: string) => Measure | undefined;
@@ -391,16 +399,17 @@ const LegendColorContent = ({
                       onToggle={handleToggle}
                       checked={interactive && active}
                       disabled={soleItemChecked && active}
+                      usage="legend"
                     />
                   );
                 })}
                 {isLastGroup && limits
-                  ? limits.map(({ label, values, color }, i) => (
+                  ? limits.map(({ label, values, color, symbol }, i) => (
                       <LegendItem
                         key={i}
                         item={`${label}: ${values.map(formatNumber).join("-")}`}
                         color={color}
-                        symbol="line"
+                        symbol={symbol}
                       />
                     ))
                   : null}
@@ -434,10 +443,12 @@ export const LegendItem = (props: LegendItemProps) => {
     onToggle,
     checked,
     disabled,
-    usage = "legend",
+    usage: _usage,
   } = props;
+  const usage = _usage ?? "legend";
   const classes = useItemStyles({ symbol, color, usage });
-  const shouldBeBigger = symbol === "circle" || usage === "colorPicker";
+  const shouldBeBigger =
+    (symbol === "circle" && _usage !== "legend") || usage === "colorPicker";
 
   return interactive && onToggle ? (
     <MaybeTooltip
@@ -472,7 +483,14 @@ export const LegendItem = (props: LegendItemProps) => {
     <Flex
       data-testid="legendItem"
       className={clsx(classes.legendItem, shouldBeBigger && classes.bigger)}
+      sx={{
+        alignItems: symbol === "cross" ? "center !important" : "flex-start",
+      }}
     >
+      {/* TODO: Use icons instead of ::before when migrating to new CI / CD */}
+      {symbol === "cross" ? (
+        <Icon size={16} name="close" color={color} />
+      ) : null}
       {dimension ? (
         <OpenMetadataPanelWrapper component={dimension}>
           {/* Account for the added space, to align the symbol and label. */}

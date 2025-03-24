@@ -713,6 +713,10 @@ msgid "controls.filter.select.none"
 msgstr "Alle abwählen"
 
 #: app/configurator/components/field.tsx
+msgid "controls.filter.show-values"
+msgstr "Werte anzeigen"
+
+#: app/configurator/components/field.tsx
 msgid "controls.filter.use-most-recent"
 msgstr "Letztes Datum verwenden"
 
@@ -1019,6 +1023,10 @@ msgid "controls.section.data.filters"
 msgstr "Filter"
 
 #: app/configurator/components/chart-configurator.tsx
+msgid "controls.section.data.filters.default-open"
+msgstr "Filterbereich anzeigen geöffnet"
+
+#: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.none"
 msgstr "Keine Filter"
 
@@ -1114,6 +1122,10 @@ msgid "controls.section.show-standard-error.explanation"
 msgstr "Zeigen Sie Unsicherheiten, die sich von Datenpunkten ausbreiten, um Standardfehler darzustellen."
 
 #: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-values"
+msgstr "Werte immer anzeigen"
+
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.sorting"
 msgstr "Sortieren"
 
@@ -1140,6 +1152,10 @@ msgstr "Linientyp auswählen"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.targets-and-limit-values.show-target"
 msgstr "Zielvorgabe anzeigen"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.targets-and-limit-values.symbol-type"
+msgstr "Symboltyp auswählen"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -1319,6 +1335,14 @@ msgstr "Sortieren nach"
 #: app/configurator/components/chart-type-selector.tsx
 msgid "controls.switch.chart.type"
 msgstr "Wechseln Sie zu einem anderen Diagrammtyp unter Beibehaltung der meisten Filtereinstellungen"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.symbol.cross"
+msgstr "Kreuz"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.symbol.dot"
+msgstr "Punkt"
 
 #: app/configurator/table/table-chart-options.tsx
 msgid "controls.table.column.group"
@@ -1548,6 +1572,10 @@ msgid "footer.information.title"
 msgstr "Weitere Informationen"
 
 #: app/components/footer.tsx
+msgid "footer.statistics"
+msgstr "Statistiken"
+
+#: app/components/footer.tsx
 msgid "footer.status"
 msgstr "Status"
 
@@ -1595,6 +1623,7 @@ msgstr "Sie können diese Visualisierung teilen oder sie einbetten. Zudem könne
 
 #: app/components/chart-filters-list.tsx
 #: app/components/form.tsx
+#: app/components/hint.tsx
 #: app/components/hint.tsx
 msgid "hint.loading.data"
 msgstr "Lade Daten …"
@@ -1836,6 +1865,10 @@ msgid "profile.chart.rename-dialog.title"
 msgstr "Benennen Sie die Visualisierung um"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.advanced-settings"
+msgstr "Erweiterte Einstellungen"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.external-application"
 msgstr "Embed-Code für «Externe Applikation»"
 
@@ -1852,12 +1885,32 @@ msgid "publication.embed.iframe.caption"
 msgstr "Verwenden Sie diesen Code, um das Diagramm auf einer Webseite einzubetten"
 
 #: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.optimize-space"
+msgstr "Optimieren Sie den Leerraum um und innerhalb des Diagramms"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-axis-labels-interactivity"
+msgstr "Interaktive Beschriftungen ausblenden"
+
+#: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border"
 msgstr "Rand entfernen"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-border.warn"
 msgstr "Zur Einbettung von Visualisierungen in Systeme ohne Rand."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-filters"
+msgstr "Filter ausblenden"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-legend"
+msgstr "Fussnoten ausblenden"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-more-options-button"
+msgstr "Optionen für Tabellenansicht, Kopieren und Bearbeiten, Teilen und Herunterladen entfernen"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"

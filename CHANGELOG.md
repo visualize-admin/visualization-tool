@@ -12,16 +12,67 @@ You can also check the
 # Unreleased
 
 - Features
+  - Added advanced embed options
+  - Interactive filters area is now open by default
+  - When interactive filters area is initialized open, it's no longer possible
+    to collapse it
+  - Valid cube iris in Statistics page (coming from the same data source as the
+    environment's default one) are now pointing to Visualize dataset previews
+- Fixes
+  - Changing segmentation dimension now correctly sets underlying chart
+    parameters, which prevents saving wrong chart configuration in a database
+  - Very long words in legend items and multi-filter panel now correctly break
+  - Showing segmented values was fixed for some cubes
+- Maintenance
+  - Extended maximum URL length in Node to 64KB
+
+# [5.4.1] - 2025-03-18
+
+- Features
+  - It's now possible to show segment value labels in column and bar charts
+  - Axes now adapt dynamically to always show appropriate limits, even when they
+    go beyond the data range
+  - Limits are now also rendered when the axis dimension is a single filter
+  - It's now possible to display limits in map charts
+  - Added a way to set different limit symbols for area and line charts
+  - Interactive filters can now be set to be opened by default
+  - Statistics page is now linked in the footer
+- Fixes
+  - Pie chart's `Measure` field is now correctly labeled (`Measure` instead of
+    `Vertical Axis`)
+  - Opening a multi filter field that shouldn't enable setting the colors
+    doesn't longer allow to and doesn't overwrite the colors anymore
+  - It's now again possible to update the symbol layer colors based on
+    categorical dimensions
+  - Color palette names are now correctly translated in user profile (instead of
+    always displaying in German)
+- Styles
+  - Optimized the custom map legends loading indicator appearance
+  - Line-based limits now take the full bar / column width
+
+# [5.4.0] - 2025-03-11
+
+- Features
+  - Added an option to show all values in area, bar, column, line and pie charts
+  - X axis titles are now always displayed
+
+# [5.3.1] - 2025-03-04
+
+- Features
   - It's now possible to preview charts by passing configurator state as a query
     parameter
   - It's now possible to add custom WMS layers coming from wms.geo.admin.ch to
     map charts
   - Statistics page was enhanced with `Charts` and `Cubes` sections, including
     some general improvements
-  - Application now collect data on chart previews, not only views
+  - Application now collects data on chart previews, not only views
 - Fixes
   - Limits that are connected to values that are filtered out do not render in
     the chart anymore
+  - Removed title & description in opendata.swiss dataset previews
+  - Persisting and showing colors on dimension changes
+- Maintenance
+  - Updated documentation
 
 # [5.3.0] - 2025-02-25
 

@@ -53,5 +53,9 @@ export const getTextSize = (
   const rect = node.getBoundingClientRect();
   root.remove();
 
-  return rect;
+  return {
+    ...rect,
+    width: rect.width + 1,
+    height: rect.height + 1,
+  };
 };

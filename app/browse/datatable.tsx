@@ -29,9 +29,9 @@ import {
 import {
   Component,
   Dimension,
+  isNumericalMeasure,
   Measure,
   Observation,
-  isNumericalMeasure,
 } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
 import {

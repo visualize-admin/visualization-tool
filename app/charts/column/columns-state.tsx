@@ -9,7 +9,7 @@ import {
   scaleTime,
 } from "d3-scale";
 import orderBy from "lodash/orderBy";
-import { useMemo } from "react";
+import { PropsWithChildren, useMemo } from "react";
 
 import {
   ColumnsStateVariables,
@@ -18,7 +18,9 @@ import {
 } from "@/charts/column/columns-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
-  useAxisLabelHeightOffset,
+  AxisLabelSizeVariables,
+  getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -34,9 +36,14 @@ import {
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
+import {
+  ShowBandValueLabelsVariables,
+  useShowBandValueLabelsVariables,
+} from "@/charts/shared/show-values-utils";
 import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
+import { useLimits } from "@/config-utils";
 import { ColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import {
@@ -55,7 +62,8 @@ import { ChartProps } from "../shared/ChartProps";
 
 export type ColumnsState = CommonChartState &
   ColumnsStateVariables &
-  InteractiveXTimeRangeState & {
+  InteractiveXTimeRangeState &
+  Omit<ShowBandValueLabelsVariables, "offset"> & {
     chartType: "column";
     xScale: ScaleBand<string>;
     xScaleInteraction: ScaleBand<string>;
@@ -63,6 +71,8 @@ export type ColumnsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useColumnsState = (
@@ -70,7 +80,7 @@ const useColumnsState = (
   variables: ColumnsStateVariables,
   data: ChartStateData
 ): ColumnsState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     xDimension,
     getX,
@@ -84,9 +94,14 @@ const useColumnsState = (
     getYErrorRange,
     getFormattedYUncertainty,
     getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
+    minLimitValue,
+    maxLimitValue,
   } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { y } = fields;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -165,7 +180,16 @@ const useColumnsState = (
       ) ?? 0,
       0
     );
-    const yScale = scaleLinear().domain([minValue, maxValue]).nice();
+    const yScale = scaleLinear()
+      .domain([
+        minLimitValue !== undefined
+          ? Math.min(minValue, minLimitValue)
+          : minValue,
+        maxLimitValue !== undefined
+          ? Math.max(maxValue, maxLimitValue)
+          : maxValue,
+      ])
+      .nice();
 
     const paddingMinValue = getMinY(paddingData, (d) =>
       getYErrorRange ? getYErrorRange(d)[0] : getY(d)
@@ -177,7 +201,14 @@ const useColumnsState = (
       0
     );
     const paddingYScale = scaleLinear()
-      .domain([paddingMinValue, paddingMaxValue])
+      .domain([
+        minLimitValue !== undefined
+          ? Math.min(paddingMinValue, minLimitValue)
+          : paddingMinValue,
+        maxLimitValue !== undefined
+          ? Math.max(paddingMaxValue, maxLimitValue)
+          : paddingMaxValue,
+      ])
       .nice();
 
     return {
@@ -191,55 +222,67 @@ const useColumnsState = (
     };
   }, [
     fields.color,
-    getX,
-    getXLabel,
-    getXAsDate,
-    getY,
-    getYErrorRange,
-    scalesData,
-    paddingData,
-    timeRangeData,
     fields.x.sorting,
     fields.x.useAbbreviations,
     xDimension,
-    chartConfig.cubes,
     sumsByX,
+    chartConfig.cubes,
+    scalesData,
+    getX,
+    timeRangeData,
+    getXLabel,
     getMinY,
+    minLimitValue,
+    maxLimitValue,
+    paddingData,
+    getXAsDate,
+    getYErrorRange,
+    getY,
   ]);
 
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
     bandDomain: xTimeRangeDomainLabels.every((d) => d === undefined)
       ? xScale.domain()
       : xTimeRangeDomainLabels,
   });
   const right = 40;
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: yMeasure.label,
+
+  const chartWidth = getChartWidth({ width, left, right });
+  xScale.range([0, chartWidth]);
+  xScaleInteraction.range([0, chartWidth]);
+  xScaleTimeRange.range([0, chartWidth]);
+
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
     width,
-    marginLeft: left,
-    marginRight: right,
   });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
+  });
+  const { offset: yValueLabelsOffset, ...showValuesVariables } =
+    useShowBandValueLabelsVariables(y, {
+      chartData,
+      dimensions,
+      measures,
+      getValue: getY,
+      bandwidth: xScale.bandwidth(),
+    });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset + yValueLabelsOffset,
     right,
     bottom,
     left,
   };
-
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
-
-  xScale.range([0, chartWidth]);
-  xScaleInteraction.range([0, chartWidth]);
-  xScaleTimeRange.range([0, chartWidth]);
+  const bounds = useChartBounds({ width, height, chartWidth, margins });
+  const { chartHeight } = bounds;
   yScale.range([chartHeight, 0]);
-
   const isMobile = useIsMobile();
 
   // Tooltip
@@ -255,16 +298,14 @@ const useColumnsState = (
           xAnchor,
           topAnchor: !fields.segment,
         });
-
     const xLabel = getXAbbreviationOrLabel(d);
-
-    const yValueFormatter = (value: number | null) =>
+    const y = getY(d);
+    const yValueUnitFormatter = (value: number | null) =>
       formatNumberWithUnit(
         value,
         formatters[yMeasure.id] ?? formatNumber,
         yMeasure.unit
       );
-    const y = getY(d);
 
     return {
       xAnchor,
@@ -273,7 +314,7 @@ const useColumnsState = (
       value: xTimeUnit ? timeFormatUnit(xLabel, xTimeUnit) : xLabel,
       datum: {
         label: undefined,
-        value: y !== null && isNaN(y) ? "-" : `${yValueFormatter(getY(d))}`,
+        value: y !== null && isNaN(y) ? "-" : `${yValueUnitFormatter(getY(d))}`,
         error: getFormattedYUncertainty(d),
         color: "",
       },
@@ -293,12 +334,17 @@ const useColumnsState = (
     xScaleInteraction,
     yScale,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
+    ...showValuesVariables,
     ...variables,
   };
 };
 
 const ColumnChartProvider = (
-  props: React.PropsWithChildren<ChartProps<ColumnConfig>>
+  props: PropsWithChildren<
+    ChartProps<ColumnConfig> & { limits: ReturnType<typeof useLimits> }
+  >
 ) => {
   const { children, ...chartProps } = props;
   const variables = useColumnsStateVariables(chartProps);
@@ -311,7 +357,9 @@ const ColumnChartProvider = (
 };
 
 export const ColumnChart = (
-  props: React.PropsWithChildren<ChartProps<ColumnConfig>>
+  props: PropsWithChildren<
+    ChartProps<ColumnConfig> & { limits: ReturnType<typeof useLimits> }
+  >
 ) => {
   return (
     <InteractionProvider>

@@ -36,6 +36,7 @@ const config: KnipConfig = {
     "@typescript-eslint/utils",
     // Used in eslint, without explicit import.
     "eslint-plugin-storybook",
+    "eslint-plugin-unused-imports",
     "@types/eslint",
     // Used in e2e tests.
     "@argos-ci/playwright",

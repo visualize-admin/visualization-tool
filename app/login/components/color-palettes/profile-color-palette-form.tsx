@@ -264,21 +264,6 @@ type ColorPaletteTypeSelectorProps = {
   selectedType: CustomPaletteType["type"];
 };
 
-const colorTypes: Record<CustomPaletteType["type"], string> = {
-  sequential: t({
-    id: "controls.custom-color-palettes.sequential",
-    message: "Sequential",
-  }),
-  diverging: t({
-    id: "controls.custom-color-palettes.diverging",
-    message: "Diverging",
-  }),
-  categorical: t({
-    id: "controls.custom-color-palettes.categorical",
-    message: "Categorical",
-  }),
-};
-
 const ColorPaletteTypeSelector = ({
   onChange,
   selectedType,
@@ -288,6 +273,17 @@ const ColorPaletteTypeSelector = ({
     "sequential",
     "diverging",
   ];
+  const colorTypes: Record<CustomPaletteType["type"], string> = {
+    sequential: t({
+      id: "controls.custom-color-palettes.sequential",
+    }),
+    diverging: t({
+      id: "controls.custom-color-palettes.diverging",
+    }),
+    categorical: t({
+      id: "controls.custom-color-palettes.categorical",
+    }),
+  };
 
   const handleChange = useEvent((e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value as CustomPaletteType["type"]);

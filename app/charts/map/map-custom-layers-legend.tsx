@@ -7,7 +7,7 @@ import {
   ParsedWMTSLayer,
   useWMTSLayers,
 } from "@/charts/map/wmts-utils";
-import { Error, Loading } from "@/components/hint";
+import { Error, InlineLoading } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { BaseLayer, MapConfig } from "@/config-types";
 import { truthy } from "@/domain/types";
@@ -27,7 +27,7 @@ export const MapCustomLayersLegend = ({
   return error ? (
     <Error>{error.message}</Error>
   ) : !legendsData ? (
-    <Loading />
+    <InlineLoading />
   ) : (
     <>
       {legendsData.map(({ layer, dataUrl, width, height }) => {

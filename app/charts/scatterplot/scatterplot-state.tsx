@@ -10,7 +10,9 @@ import {
   useScatterplotStateVariables,
 } from "@/charts/scatterplot//scatterplot-state-props";
 import {
-  useAxisLabelHeightOffset,
+  AxisLabelSizeVariables,
+  getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -46,6 +48,8 @@ export type ScatterplotState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useScatterplotState = (
@@ -162,30 +166,26 @@ const useScatterplotState = (
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
   });
   const right = 40;
-  const { offset: xAxisLabelMargin } = useAxisLabelHeightOffset({
-    label: xAxisLabel,
-    width,
-    marginLeft: left,
-    marginRight: right,
-  });
-  const { offset: yAxisLabelMargin } = useAxisLabelHeightOffset({
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
     label: yAxisLabel,
     width,
-    marginLeft: left,
-    marginRight: right,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
   });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + yAxisLabelMargin,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
     right,
-    bottom: bottom + xAxisLabelMargin,
+    bottom: bottom + bottomAxisLabelSize.offset,
     left,
   };
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const chartWidth = getChartWidth({ width, left, right });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
 
   xScale.range([0, chartWidth]);
   yScale.range([chartHeight, 0]);
@@ -249,6 +249,8 @@ const useScatterplotState = (
     colors,
     getColorLabel: getSegmentLabel,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
     ...variables,
   };
 };

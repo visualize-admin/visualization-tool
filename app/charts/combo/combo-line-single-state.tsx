@@ -15,6 +15,9 @@ import {
   useYScales,
 } from "@/charts/combo/combo-state";
 import {
+  AxisLabelSizeVariables,
+  getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -49,6 +52,8 @@ export type ComboLineSingleState = CommonChartState &
     getColorLabel: (label: string) => string;
     chartWideData: ArrayLike<Observation>;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
 const useComboLineSingleState = (
@@ -57,7 +62,7 @@ const useComboLineSingleState = (
   data: ChartStateData
 ): ComboLineSingleState => {
   const { chartConfig, measuresById } = chartProps;
-  const { xDimension, getX, getXAsString } = variables;
+  const { xDimension, getX, getXAsString, xAxisLabel } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
 
@@ -105,6 +110,7 @@ const useComboLineSingleState = (
 
   // Dimensions
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
     height,
@@ -112,8 +118,21 @@ const useComboLineSingleState = (
     formatNumber,
   });
   const margins = getMargins({ left, bottom });
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
+    width,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
+  });
+  const chartWidth = getChartWidth({
+    width,
+    left: margins.left,
+    right: margins.right,
+  });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
   const xScales = [xScale, xScaleTimeRange];
   const yScales = [yScale];
   adjustScales(xScales, yScales, { chartWidth, chartHeight });
@@ -174,6 +193,8 @@ const useComboLineSingleState = (
     getColorLabel: (label) => label,
     chartWideData,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
     ...variables,
   };
 };

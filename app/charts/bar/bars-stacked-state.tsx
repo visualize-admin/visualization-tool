@@ -10,6 +10,7 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import {
+  Series,
   stack,
   stackOffsetDiverging,
   stackOrderAscending,
@@ -31,6 +32,9 @@ import {
   PADDING_OUTER,
 } from "@/charts/bar/constants";
 import {
+  AxisLabelSizeVariables,
+  getChartWidth,
+  useAxisLabelSizeVariables,
   useChartBounds,
   useChartPadding,
 } from "@/charts/shared/chart-dimensions";
@@ -50,6 +54,10 @@ import {
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
+import {
+  useValueLabelFormatter,
+  ValueLabelFormatter,
+} from "@/charts/shared/show-values-utils";
 import {
   getStackedTooltipValueFormatter,
   getStackedXScale,
@@ -82,11 +90,14 @@ export type StackedBarsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
-    series: $FixMe[];
+    series: Series<{ [key: string]: number }, string>[];
     getAnnotationInfo: (
       d: Observation,
       orderedSegments: string[]
     ) => TooltipInfo;
+    leftAxisLabelSize: AxisLabelSizeVariables;
+    bottomAxisLabelSize: AxisLabelSizeVariables;
+    valueLabelFormatter: ValueLabelFormatter;
   };
 
 const useBarsStackedState = (
@@ -94,7 +105,7 @@ const useBarsStackedState = (
   variables: BarsStackedStateVariables,
   data: BarsStackedStateData
 ): StackedBarsState => {
-  const { chartConfig } = chartProps;
+  const { chartConfig, dimensions, measures } = chartProps;
   const {
     yDimension,
     getX,
@@ -108,6 +119,8 @@ const useBarsStackedState = (
     getSegment,
     getSegmentAbbreviationOrLabel,
     getSegmentLabel,
+    xAxisLabel,
+    yAxisLabel,
   } = variables;
   const getIdentityX = useGetIdentityX(xMeasure.id);
   const {
@@ -402,7 +415,6 @@ const useBarsStackedState = (
     width,
     height,
     interactiveFiltersConfig,
-    animationPresent: !!fields.animation,
     formatNumber,
     bandDomain: yTimeRangeDomainLabels.every((d) => d === undefined)
       ? yScale.domain()
@@ -411,17 +423,26 @@ const useBarsStackedState = (
     isFlipped: true,
   });
   const right = 40;
+  const leftAxisLabelSize = useAxisLabelSizeVariables({
+    label: yAxisLabel,
+    width,
+  });
+  const bottomAxisLabelSize = useAxisLabelSizeVariables({
+    label: xAxisLabel,
+    width,
+  });
   const margins = {
-    top: DEFAULT_MARGIN_TOP,
+    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
     right,
-    bottom: bottom + 10,
+    bottom: bottom + 45,
     left,
   };
 
   const barCount = yScale.domain().length;
 
-  const bounds = useChartBounds(width, margins, height);
-  const { chartWidth, chartHeight } = bounds;
+  const chartWidth = getChartWidth({ width, left, right });
+  const bounds = useChartBounds({ width, chartWidth, height, margins });
+  const { chartHeight } = bounds;
 
   // Here we adjust the height to make sure the bars have a minimum height and are legible
   const adjustedChartHeight =
@@ -512,6 +533,13 @@ const useBarsStackedState = (
     ]
   );
 
+  const valueLabelFormatter = useValueLabelFormatter({
+    measureId: xMeasure.id,
+    dimensions,
+    measures,
+    normalize,
+  });
+
   return {
     chartType: "bar",
     bounds: {
@@ -530,6 +558,9 @@ const useBarsStackedState = (
     chartWideData,
     series,
     getAnnotationInfo,
+    leftAxisLabelSize,
+    bottomAxisLabelSize,
+    valueLabelFormatter,
     ...variables,
   };
 };

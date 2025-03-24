@@ -12,7 +12,7 @@ const { IgnorePlugin } = require("webpack");
 
 const pkg = require("../package.json");
 
-const { locales, defaultLocale } = require("./locales/locales.json");
+const { defaultLocale, locales } = require("./locales/locales.json");
 
 // Populate build-time variables from package.json
 process.env.NEXT_PUBLIC_VERSION = `v${pkg.version}`;

@@ -3,13 +3,13 @@ import {
   Alert,
   AlertProps,
   AlertTitle,
+  alpha,
   Box,
   BoxProps,
+  keyframes,
   Link,
   Theme,
   Typography,
-  alpha,
-  keyframes,
   useTheme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -109,15 +109,15 @@ export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => {
       setVariant("long");
     }, 7500);
 
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+    };
   }, []);
 
   return (
     <Flex
       className={classes.root}
-      sx={{
-        animation: `0s linear ${delayMs}ms forwards ${delayedShow}`,
-      }}
+      sx={{ animation: `0s linear ${delayMs}ms forwards ${delayedShow}` }}
     >
       <Spinner />
 
@@ -136,6 +136,31 @@ export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => {
         )}
       </Box>
     </Flex>
+  );
+};
+
+const useInlineLoadingStyles = makeStyles({
+  root: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+
+export const InlineLoading = ({ delayMs = 1000 }: { delayMs?: number }) => {
+  const classes = useInlineLoadingStyles();
+
+  return (
+    <Box
+      className={classes.root}
+      sx={{ animation: `0s linear ${delayMs}ms forwards ${delayedShow}` }}
+    >
+      <Spinner />
+      <Typography>
+        <Trans id="hint.loading.data">Loading data…</Trans>
+      </Typography>
+    </Box>
   );
 };
 
