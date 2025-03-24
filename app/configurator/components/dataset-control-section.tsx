@@ -129,7 +129,7 @@ const DatasetRow = ({
             component="span"
             onClick={handleDatasetClick}
           >
-            Datasets
+            <Trans id="dataset.footnotes.dataset">Dataset</Trans>
           </MuiLink>
           <br />
           <Typography variant="caption">{cube.title}</Typography>
