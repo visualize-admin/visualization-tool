@@ -11,7 +11,7 @@ export const ComboLineSingle = () => {
 
   return (
     <g transform={`translate(${bounds.margins.left} ${bounds.margins.top})`}>
-      {y.lines.map(({ id, label, getY }) => {
+      {y.lines.map(({ id, getY }) => {
         const pathGenerator = line<Observation>()
           .defined((d) => {
             const y = getY(d);
@@ -24,7 +24,7 @@ export const ComboLineSingle = () => {
           <Line
             key={id}
             path={pathGenerator(chartData) as string}
-            color={colors(label)}
+            color={colors(id)}
           />
         );
       })}

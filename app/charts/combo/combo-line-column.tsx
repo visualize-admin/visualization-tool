@@ -41,7 +41,7 @@ const Columns = () => {
       const yScaled = yScale(y);
       const yRender = yScale(Math.max(y, 0));
       const height = Math.max(0, Math.abs(yScaled - y0));
-      const color = colors(yColumn.label);
+      const color = colors(yColumn.id);
 
       return {
         key,

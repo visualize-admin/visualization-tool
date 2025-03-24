@@ -144,7 +144,7 @@ const useComboLineSingleState = (
     const x = getX(d);
     const xScaled = xScale(x);
     const values = variables.y.lines
-      .map(({ getY, label }) => {
+      .map(({ getY, id, label }) => {
         const y = getY(d);
         if (!Number.isFinite(y) || y === null) {
           return null;
@@ -153,7 +153,7 @@ const useComboLineSingleState = (
         return {
           label,
           value: `${y}`,
-          color: colors(label),
+          color: colors(id),
           hide: y === null,
           yPos: yScale(y ?? 0),
           symbol: "line",

@@ -11,6 +11,11 @@ You can also check the
 
 # Unreleased
 
+- Styles
+  - Migrated header to the new CI / CD
+
+# [5.5.0] - 2025-03-24
+
 - Features
   - Added advanced embed options
   - Interactive filters area is now open by default
@@ -23,8 +28,12 @@ You can also check the
     parameters, which prevents saving wrong chart configuration in a database
   - Very long words in legend items and multi-filter panel now correctly break
   - Showing segmented values was fixed for some cubes
-- Styles
-  - Migrated Header component to the new CI / CD
+  - Changing filter values when using merged cubes with dimensions with the same
+    iris doesn't change both filters at the same time
+  - Interactive filters for merged cubes should now works correctly, as we scope
+    them per cube now
+  - Multi-line charts now correctly separate legend items by cube in case
+    working with merged cubes that have dimensions with the same iris
 - Maintenance
   - Extended maximum URL length in Node to 64KB
 
