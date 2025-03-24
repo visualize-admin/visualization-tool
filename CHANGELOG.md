@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Styles
+  - Migrated footer to the new CI / CD
 
 # [5.5.0] - 2025-03-24
 

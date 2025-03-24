@@ -1552,12 +1552,24 @@ msgid "flashes.couldnt-load-cube.view-cube-checker"
 msgstr "Ansicht im Cube Validator"
 
 #: app/components/footer.tsx
-msgid "footer.institution.name"
-msgstr "Bundesamt für Umwelt BAFU"
+msgid "footer.about_us.label"
+msgstr "Über dieses Portal"
 
 #: app/components/footer.tsx
-msgid "footer.institution.url"
-msgstr "https://www.bafu.admin.ch/bafu/de/home.html"
+msgid "footer.about_us.text"
+msgstr "Das Portal visualize.admin.ch ermöglicht die Visualisierung von Schweizer Open Government Data, die durch den LINDAS Linked Data Service bereitgestellt werden. Open Government Data (OGD) sind Daten, die der Öffentlichkeit kostenlos in computerlesbarem Format zur Verfügung gestellt werden."
+
+#: app/components/footer.tsx
+msgid "footer.button.lindas"
+msgstr "LINDAS Linked Data Dienste"
+
+#: app/components/footer.tsx
+msgid "footer.contact.title"
+msgstr "Informiert bleiben"
+
+#: app/components/footer.tsx
+msgid "footer.information.title"
+msgstr "Weitere Informationen"
 
 #: app/components/footer.tsx
 msgid "footer.statistics"
