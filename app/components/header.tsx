@@ -69,7 +69,7 @@ export const Header = ({
               if (alternate) {
                 push(alternate.path, undefined, { locale: false });
               } else {
-                push(`${pathname}?${query}`, undefined, { locale });
+                push({ pathname, query }, undefined, { locale });
               }
             }}
           />
