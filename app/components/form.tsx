@@ -614,7 +614,7 @@ const useMinimalisticSelectStyles = makeStyles<Theme>((theme) => ({
     lineHeight: "normal !important",
     backgroundColor: "transparent",
     // @ts-ignore
-    color: theme.palette.muted.colored, // FIXME: once the new colors are in place
+    // color: theme.palette.muted.colored, // FIXME: once the new colors are in place
     padding: 0,
     height: "auto",
     minHeight: "auto",

@@ -12,7 +12,7 @@ import { useRootStyles } from "@/login/utils";
 const useStyles = makeStyles<Theme>((theme) => ({
   section: {
     paddingTop: theme.spacing(6),
-    backgroundColor: theme.palette.muted.main,
+    // backgroundColor: theme.palette.muted.main, FIXME
   },
   topRow: {
     display: "flex",

@@ -19,7 +19,7 @@ export const useRootStyles = makeStyles<Theme>((theme) => ({
     display: "flex",
     flexDirection: "column",
     padding: `0 ${theme.spacing(6)}`,
-    backgroundColor: theme.palette.muted.main,
+    // backgroundColor: theme.palette.muted.main, FIXME
   },
   sectionContent: {
     width: "100%",
