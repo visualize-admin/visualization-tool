@@ -60,7 +60,8 @@ export const Header = ({
         <Box display="flex" alignItems="center" gap={3} marginLeft="auto">
           <LoginMenu />
           <BaseLocaleSwitcher
-            selectProps={{ id: "locale-switcher" }}
+            // @ts-ignore
+            selectProps={{ "data-testid": "locale-switcher" }}
             activeLocale={currentLocale}
             locales={localeConfig.locales}
             onLocaleChange={(locale: string) => {

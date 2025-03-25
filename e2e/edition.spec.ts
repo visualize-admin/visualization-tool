@@ -53,8 +53,7 @@ test("changing of locale shouldn't make the chart disappear", async ({
   });
   await selectors.chart.loaded();
   await actions.editor.changeRegularChartType("Lines");
-  const deLocaleButton = page.locator('a[rel="alternate"][hreflang="de"]');
-  await deLocaleButton.click();
+  page.getByTestId("locale-switcher").selectOption("it");
   await selectors.chart.loaded();
   // Make sure the chart had a chance to re-load.
   await sleep(6_000);
