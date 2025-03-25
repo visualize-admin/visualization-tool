@@ -71,7 +71,7 @@ const Spinner = ({ size = 48, ...props }: { size?: number } & BoxProps) => {
         ...props.sx,
       }}
     >
-      <Icon name="loading" size={size} />
+      <Icon name="refresh" size={size} />
     </Flex>
   );
 };
@@ -237,7 +237,7 @@ export const LoadingDataError = ({ message }: { message?: string }) => (
     >
       <Trans id="hint.dataloadingerror.status">
         Check our status page for more information.
-        <Icon name="linkExternal" size={14} />
+        <Icon name="legacyLinkExternal" size={14} />
       </Trans>
     </Link>
 

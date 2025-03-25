@@ -339,7 +339,7 @@ const SaveDraftButton = ({ chartId }: { chartId: string | undefined }) => {
           hasUpdated || debouncedHasUpdated ? (
             <Grow in={hasUpdated}>
               <span>
-                <Icon name="check" />
+                <Icon name="checkmark" />
               </span>
             </Grow>
           ) : null
@@ -381,7 +381,7 @@ const PublishChartButton = ({ chartId }: { chartId: string | undefined }) => {
             })}
           >
             <div>
-              <Icon name="hintWarning" />
+              <Icon name="warningCircle" />
             </div>
           </Tooltip>
           <Trans id="button.update">Update this visualization</Trans>

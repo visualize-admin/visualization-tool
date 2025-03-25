@@ -174,7 +174,7 @@ export const ChartDataFiltersToggle = ({
             size="small"
             endIcon={
               <Icon
-                name="add"
+                name="plus"
                 size={16}
                 style={{
                   transform: open ? "rotate(45deg)" : "rotate(0deg)",

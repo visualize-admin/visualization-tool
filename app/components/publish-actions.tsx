@@ -156,7 +156,7 @@ const EmbedRadio = ({
           }}
         >
           <Box sx={{ color: "secondary.active" }}>
-            <Icon name="infoOutline" size={16} />
+            <Icon name="infoCircle" size={16} />
           </Box>
         </Tooltip>
       )}
@@ -194,7 +194,7 @@ const EmbedToggleSwitch = ({
           }}
         >
           <Box sx={{ color: "secondary.active" }}>
-            <Icon name="infoOutline" size={16} />
+            <Icon name="infoCircle" size={16} />
           </Box>
         </Tooltip>
       )}
@@ -221,7 +221,7 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
             onClick={(ev) => {
               setAnchorEl(ev.target as HTMLElement);
             }}
-            startIcon={<Icon name="linkExternal" size={16} />}
+            startIcon={<Icon name="legacyLinkExternal" size={16} />}
           >
             <Trans id="button.share">Share</Trans>
           </Button>
@@ -470,7 +470,7 @@ export const ShareContent = ({
             href={`https://twitter.com/intent/tweet?url=${shareUrl}&via=bafuCH`}
           ></IconLink>
           <IconLink
-            iconName="mail"
+            iconName="envelope"
             title={i18n._(
               t({
                 id: "publication.share.linktitle.mail",

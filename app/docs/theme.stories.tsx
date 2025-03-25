@@ -233,8 +233,6 @@ export const PaletteStory = () => {
         <Palette name="warning" value={theme.palette.warning} />
         <Palette name="success" value={theme.palette.success} />
 
-        <Palette name="uclaGold" value={theme.palette.organization} />
-        <Palette name="tahitiGold" value={theme.palette.brand} />
         <div />
         <div />
         {/* <Palette name="info" value={theme.palette.info} /> */}

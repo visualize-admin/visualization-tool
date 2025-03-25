@@ -42,7 +42,7 @@ export const LoginMenu = () => {
             }}
           >
             <Typography noWrap>{user.name}</Typography>
-            <Icon name="chevronDown2" size={24} />
+            <Icon name="chevronDown" size={24} />
           </Button>
           <Menu
             anchorEl={anchorEl}

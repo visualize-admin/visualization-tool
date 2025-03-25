@@ -97,7 +97,6 @@ export const MenuActionItem = (
     if (props.as === "button") {
       return (
         <Button
-          size="xsmall"
           disabled={disabled}
           color={color}
           variant="contained"

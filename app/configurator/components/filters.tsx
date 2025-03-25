@@ -92,7 +92,7 @@ import {
 } from "@/domain/most-recent-value";
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { Icon } from "@/icons";
-import SvgIcCheck from "@/icons/components/IcCheck";
+import SvgIcCheckmark from "@/icons/components/IcCheckmark";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcRefresh from "@/icons/components/IcRefresh";
@@ -204,18 +204,10 @@ const FilterControls = ({
   const classes = useFootnotesStyles({ useMarginTop: false });
   return (
     <Box className={classes.actions}>
-      <Button
-        onClick={selectAll}
-        variant="inline"
-        disabled={activeKeysLength === allKeysLength}
-      >
+      <Button onClick={selectAll} disabled={activeKeysLength === allKeysLength}>
         <Trans id="controls.filter.select.all">Select all</Trans>
       </Button>
-      <Button
-        onClick={selectNone}
-        variant="inline"
-        disabled={activeKeysLength === 0}
-      >
+      <Button onClick={selectNone} disabled={activeKeysLength === 0}>
         <Trans id="controls.filter.select.none">Select none</Trans>
       </Button>
     </Box>
@@ -492,7 +484,7 @@ const MultiFilterContent = ({
                       {enableSettingShowValuesBySegment ? (
                         <ShowValuesMappingField value={value} />
                       ) : null}
-                      <SvgIcCheck />
+                      <SvgIcCheckmark />
                     </>
                   )}
                 </Flex>
@@ -697,10 +689,10 @@ const TreeAccordion = ({
         <Icon
           name={
             state === "SELECTED"
-              ? "check"
+              ? "checkmark"
               : state === "CHILDREN_SELECTED"
                 ? "indeterminate"
-                : "eye"
+                : "show"
           }
           className={classes.optionCheck}
           style={{
@@ -1236,7 +1228,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
               }
             >
               <Box sx={{ color: "primary.main" }}>
-                <Icon name="infoOutline" size={16} />
+                <Icon name="infoCircle" size={16} />
               </Box>
             </Tooltip>
           </Box>

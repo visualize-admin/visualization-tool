@@ -546,7 +546,6 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
     "& .buttons": {
       transition: "color 0.125s ease, opacity 0.125s ease-out",
       opacity: 0.25,
-      color: theme.palette.secondary.active,
     },
     "& .buttons:hover": {
       opacity: ({ fetching }) => (fetching ? undefined : 1),
@@ -839,7 +838,7 @@ const AddFilterButton = ({ dims }: { dims: Dimension[] }) => {
         className={classes.addDimensionButton}
         color="primary"
       >
-        <Icon name="add" size={24} />
+        <Icon name="plus" size={24} />
         <Trans>Add filter</Trans>
       </Button>
       <Menu anchorEl={ref.current} open={isMenuOpen} onClose={closeMenu}>

@@ -81,9 +81,6 @@ const ColorPickerBox = styled(Box)(({ theme }) => ({
     cursor: "pointer",
     opacity: 0.8,
   },
-  "& > button[aria-expanded]": {
-    borderColor: theme.palette.primary.active,
-  },
   "& > button[disabled]": {
     backgroundColor: "transparent",
   },

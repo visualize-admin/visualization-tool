@@ -585,17 +585,14 @@ export const useIconStyles = makeStyles<
     display: "flex",
     alignItems: "center",
     gap: spacing(2),
-    color: (d) => (d.active ? palette.primary.main : palette.secondary.active),
   },
   editIconWrapper: {
     padding: 0,
     minWidth: "fit-content",
-    color: palette.secondary.disabled,
     transition: "0.125s ease color",
 
     "&:hover": {
       background: "transparent",
-      color: palette.secondary.hover,
     },
   },
   dragIconWrapper: {
@@ -603,10 +600,6 @@ export const useIconStyles = makeStyles<
     height: 24,
     color: palette.grey[500],
     cursor: "grab",
-
-    "&:hover": {
-      color: palette.secondary.hover,
-    },
   },
 }));
 

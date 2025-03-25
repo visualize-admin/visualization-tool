@@ -221,20 +221,20 @@ const ProfileVisualizationsRow = (props: {
         label: isPublished
           ? t({ id: "login.chart.view", message: "View" })
           : t({ id: "login.chart.preview", message: "Preview" }),
-        leadingIconName: "eye",
+        leadingIconName: "show",
         priority: isPublished ? 0 : undefined,
       },
       {
         type: "link",
         href: `/${locale}/create/new?copy=${config.key}`,
         label: t({ id: "login.chart.duplicate", message: "Duplicate" }),
-        leadingIconName: "copy",
+        leadingIconName: "duplicate",
       },
       {
         type: "link",
         href: editLink,
         label: t({ id: "login.chart.edit", message: "Edit" }),
-        leadingIconName: "edit",
+        leadingIconName: "pen",
         priority: !isPublished ? 0 : undefined,
       },
       isPublished
@@ -268,7 +268,7 @@ const ProfileVisualizationsRow = (props: {
         type: "button",
         onClick: (e) => setShareEl(e?.currentTarget),
         label: t({ id: "login.chart.share", message: "Share" }),
-        leadingIconName: "linkExternal",
+        leadingIconName: "share",
         stayOpen: true,
       },
       {
@@ -291,7 +291,7 @@ const ProfileVisualizationsRow = (props: {
         label: t({ id: "login.chart.delete", message: "Delete" }),
         color: "error",
         leadingIconName:
-          removeConfigMut.status === "fetching" ? "loading" : "trash",
+          removeConfigMut.status === "fetching" ? "refresh" : "trash",
         requireConfirmation: true,
         confirmationTitle: isPublished
           ? t({

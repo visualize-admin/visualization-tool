@@ -67,7 +67,7 @@ export const DatasetMetadata = ({
             <Trans id="dataset.metadata.date.created">Date Created</Trans>
           </DatasetMetadataTitle>
           <DatasetMetadataBody>
-            {cube.datePublished ? formatDate(cube.datePublished) ?? "–" : "–"}
+            {cube.datePublished ? (formatDate(cube.datePublished) ?? "–") : "–"}
           </DatasetMetadataBody>
         </div>
         <div>
@@ -187,7 +187,7 @@ const DatasetMetadataLink = ({
     sx={{ display: "inline-flex", alignItems: "center", gap: 1 }}
     {...props}
   >
-    {external ? <Icon name="linkExternal" size={16} /> : null}
+    {external ? <Icon name="legacyLinkExternal" size={16} /> : null}
     {label}
   </Link>
 );
@@ -202,7 +202,7 @@ const DatasetSparqlQuery = ({ url }: { url: string }) => {
       rel="noopener noreferrer"
       sx={{ display: "inline-flex", alignItems: "center", gap: 1 }}
     >
-      <Icon name="linkExternal" size={16} />
+      <Icon name="legacyLinkExternal" size={16} />
       <Trans id="chart-controls.sparql-query">SPARQL query</Trans>
     </Link>
   );

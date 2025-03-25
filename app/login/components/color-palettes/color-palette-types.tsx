@@ -215,7 +215,7 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
         fullWidth
         className={classes.addColorButton}
         disabled={disabled}
-        startIcon={<Icon name="add" />}
+        startIcon={<Icon name="plus" />}
         onClick={() => onAdd()}
       >
         <Trans id="controls.custom-color-palettes.add-color">Add color</Trans>
@@ -253,7 +253,7 @@ const CategoricalColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
         fullWidth
         className={classes.addColorButton}
         disabled={disabled}
-        startIcon={<Icon name="add" />}
+        startIcon={<Icon name="plus" />}
         onClick={() => onAdd()}
       >
         <Trans id="controls.custom-color-palettes.add-color">Add color</Trans>

@@ -9,7 +9,7 @@ export const AddButton = (props: ButtonProps) => {
     <Button
       color="primary"
       variant="contained"
-      startIcon={<Icon name="add" />}
+      startIcon={<Icon name="plus" />}
       sx={{
         width: "fit-content",
         minWidth: "auto",

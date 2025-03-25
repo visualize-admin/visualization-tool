@@ -197,7 +197,7 @@ export const getIconName = (name: string): IconName => {
     case "segment":
       return "segments";
     case "table":
-      return "table";
+      return "tableChart";
     case "filter":
       return "filter";
     case "column":
@@ -205,23 +205,23 @@ export const getIconName = (name: string): IconName => {
     case "bar":
       return "chartBar";
     case "line":
-      return "chartLine";
+      return "lineChart";
     case "area":
-      return "chartArea";
+      return "areasChart";
     case "scatterplot":
-      return "chartScatterplot";
+      return "scatterplotChart";
     case "pie":
-      return "chartPie";
+      return "pieChart";
     case "map":
-      return "chartMap";
+      return "mapChart";
     case "comboLineSingle":
-      return "chartMultiLine";
+      return "multilineChart";
     case "comboLineDual":
-      return "chartDualAxisLine";
+      return "dualAxisChart";
     case "comboLineColumn":
-      return "chartColumnLine";
+      return "columnLineChart";
     case "baseLayer":
-      return "mapMaptype";
+      return "map";
     case "areaLayer":
       return "mapRegions";
     case "symbolLayer":
@@ -249,24 +249,24 @@ export const getIconName = (name: string): IconName => {
     case "tableColumnTemporalDimensionHidden":
       return "tableColumnTimeHidden";
     case "time":
-      return "time";
+      return "pointInTime";
     case "animation":
       return "animation";
     case "layoutSingleURLs":
-      return "layoutSingleURLs";
+      return "layoutSingle";
     case "layoutTab":
       return "layoutTab";
     case "layoutDashboard":
-      return "layoutDashboard";
+      return "dashboard";
     case "layoutTall":
       return "layoutTall";
     case "layoutVertical":
       return "layoutVertical";
     case "layoutCanvas":
-      return "layoutCanvas";
+      return "freeCanvas";
 
     default:
-      return "table";
+      return "tableChart";
   }
 };
 

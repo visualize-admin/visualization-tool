@@ -513,7 +513,7 @@ const LinkDialog = () => {
                     {maybeDelayedState.url}
                   </Typography>
                   {urlIsExternal ? (
-                    <Icon name="linkExternal" size={16} />
+                    <Icon name="legacyLinkExternal" size={16} />
                   ) : null}
                 </Link>
                 <ToolbarIconButton
@@ -521,7 +521,7 @@ const LinkDialog = () => {
                     switchFromPreviewToLinkEdit();
                   }}
                 >
-                  <Icon name="edit" />
+                  <Icon name="pen" />
                 </ToolbarIconButton>
               </>
             )}

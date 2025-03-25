@@ -36,8 +36,8 @@ import {
   executeDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
 } from "@/graphql/hooks";
-import SvgIcAdd from "@/icons/components/IcAdd";
-import SvgIcChecked from "@/icons/components/IcChecked";
+import SvgIcCheckmarkCircle from "@/icons/components/IcCheckmarkCircle";
+import SvgIcPlus from "@/icons/components/IcPlus";
 import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
@@ -96,7 +96,7 @@ const DatasetRow = ({
       title={
         <Box alignItems="center" display="flex" gap="0.75rem">
           <Box color="success.main">
-            <SvgIcChecked width={24} height={24} />
+            <SvgIcCheckmarkCircle width={24} height={24} />
           </Box>
           <TooltipTitle
             text={t({
@@ -253,7 +253,7 @@ export const DatasetsControlSection = () => {
           {cubes.length === 1 ? (
             <Button
               onClick={openDatasetDialog}
-              startIcon={<SvgIcAdd />}
+              startIcon={<SvgIcPlus />}
               variant="text"
               size="small"
             >

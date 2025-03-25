@@ -4,9 +4,9 @@ import {
   SnackbarProvider as NotistackSnackbarProvider,
 } from "notistack";
 
-import SvgIcChecked from "@/icons/components/IcChecked";
+import SvgIcCheckmarkCircle from "@/icons/components/IcCheckmarkCircle";
 import SvgIcClear from "@/icons/components/IcClear";
-import SvgIcInfo from "@/icons/components/IcInfo";
+import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(
   ({ theme }) => ({
@@ -38,9 +38,9 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(
 );
 
 const iconVariants = {
-  success: <SvgIcChecked width={24} height={24} className="icon" />,
-  warning: <SvgIcChecked width={24} height={24} className="icon" />,
-  info: <SvgIcInfo width={24} height={24} className="icon" />,
+  success: <SvgIcCheckmarkCircle width={24} height={24} className="icon" />,
+  warning: <SvgIcCheckmarkCircle width={24} height={24} className="icon" />,
+  info: <SvgIcInfoCircle width={24} height={24} className="icon" />,
   error: <SvgIcClear width={24} height={24} className="icon" />,
 };
 

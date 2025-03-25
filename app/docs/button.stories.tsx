@@ -16,7 +16,7 @@ export default meta;
 
 export const Primary: Story = {
   args: {
-    startIcon: <Icon name="linkExternal" />,
+    startIcon: <Icon name="share" />,
     variant: "contained",
     color: "primary",
     children: <span>Primary button</span>,
@@ -63,7 +63,7 @@ export const PublishButton = () => (
 );
 
 export const LearnMoreButton = () => (
-  <Button variant="inverted" color="primary" endIcon={<SvgIcChevronRight />}>
+  <Button color="primary" endIcon={<SvgIcChevronRight />}>
     Learn more
   </Button>
 );

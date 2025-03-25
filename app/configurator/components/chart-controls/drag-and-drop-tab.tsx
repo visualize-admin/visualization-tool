@@ -28,7 +28,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     "& .buttons": {
       transition: "color 0.125s ease, opacity 0.125s ease-out",
       opacity: 0.25,
-      color: theme.palette.secondary.active,
     },
     "& .buttons:hover": {
       opacity: 1,

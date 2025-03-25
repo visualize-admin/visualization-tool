@@ -126,7 +126,7 @@ import {
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 import { isJoinByCube } from "@/graphql/join";
-import SvgIcInfoOutline from "@/icons/components/IcInfoOutline";
+import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
 import { useLocale } from "@/locales/use-locale";
 import { getPalette } from "@/palettes";
 import { Limit } from "@/rdf/limits";
@@ -1030,7 +1030,7 @@ const ChartShowDots = ({
 
   return (
     <ControlSection collapse>
-      <SubsectionTitle iconName="chartLine">
+      <SubsectionTitle iconName="lineChart">
         <Trans id="controls.section.data-points">Data Points</Trans>
       </SubsectionTitle>
       <ControlSectionContent>
@@ -1724,7 +1724,7 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                       })}
                     >
                       <Typography sx={{ color: "primary.main" }}>
-                        <SvgIcInfoOutline width={16} height={16} />
+                        <SvgIcInfoCircle width={16} height={16} />
                       </Typography>
                     </Tooltip>
                   </Box>
@@ -1770,7 +1770,7 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                 })}
               >
                 <Typography color="primary.main">
-                  <SvgIcInfoOutline width={16} height={16} />
+                  <SvgIcInfoCircle width={16} height={16} />
                 </Typography>
               </Tooltip>
             </Box>
@@ -2441,7 +2441,7 @@ const ChartImputation = ({ chartConfig }: { chartConfig: ChartConfig }) => {
   return (
     <ControlSection collapse>
       <SubsectionTitle
-        iconName="info"
+        iconName="infoCircle"
         warnMessage={
           imputationType === "none"
             ? t({

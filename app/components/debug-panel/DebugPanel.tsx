@@ -120,7 +120,7 @@ const DebugConfigurator = () => {
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            startIcon={<Icon name="linkExternal" size={16} />}
+            startIcon={<Icon name="legacyLinkExternal" size={16} />}
           >
             <Typography variant="body2">Open in Cube Viewer</Typography>
           </Button>
@@ -136,7 +136,7 @@ const DebugConfigurator = () => {
             )}&requestMethod=POST`}
             target="_blank"
             rel="noopener noreferrer"
-            startIcon={<Icon name="linkExternal" size={16} />}
+            startIcon={<Icon name="legacyLinkExternal" size={16} />}
           >
             <Typography variant="body2">Cube Metadata Query</Typography>
           </Button>
