@@ -5,16 +5,14 @@ function SvgIcDragndrop(props: React.SVGProps<SVGSVGElement>) {
       width="1em"
       height="1em"
       viewBox="0 0 24 24"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g fill="none" fillRule="evenodd">
-        <path d="M0 0h24v24H0z" />
-        <path
-          d="M8 6h3v3H8V6zm5 0h3v3h-3V6zm-5 5h3v3H8v-3zm5 0h3v3h-3v-3zm-5 5h3v3H8v-3zm5 0h3v3h-3v-3z"
-          fill="currentColor"
-        />
-      </g>
+      <path
+        d="M8 6h2v2H8V6zm5 2h2V6h-2v2zm-5 5h2v-2H8v2zm5 0h2v-2h-2v2zm-5 5h2v-2H8v2zm5 0h2v-2h-2v2z"
+        fill="currentColor"
+      />
     </svg>
   );
 }

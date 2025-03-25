@@ -1,23 +1,21 @@
-import React from "react";
-
+import * as React from "react";
 function SvgIcReset(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g fill="none" fillRule="evenodd">
-        <path d="M0 0h24v24H0z" />
-        <path
-          fill="currentColor"
-          d="M21 15a1 1 0 01.117 1.993L21 17h-3a1 1 0 00-.993.883L17 18v3a1 1 0 01-1.993.117L15 21v-3a3 3 0 012.824-2.995L18 15h3zM6 15a3 3 0 012.995 2.824L9 18v3a1 1 0 01-1.993.117L7 21v-3a1 1 0 00-.883-.993L6 17H3a1 1 0 01-.117-1.993L3 15h3zM8 2a1 1 0 01.993.883L9 3v3a3 3 0 01-2.824 2.995L6 9H3a1 1 0 01-.117-1.993L3 7h3a1 1 0 00.993-.883L7 6V3a1 1 0 011-1zm8 0a1 1 0 01.993.883L17 3v3a1 1 0 00.883.993L18 7h3a1 1 0 01.117 1.993L21 9h-3a3 3 0 01-2.995-2.824L15 6V3a1 1 0 011-1z"
-        />
-      </g>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M14 2h1v7h7v1h-8V2zm-4 12H2v1h7v7h1v-8zm-1-4V2H8v7H2v1h7zm5 4v8h1v-7h7v-1h-8z"
+        fill="currentColor"
+      />
     </svg>
   );
 }
-
 export default SvgIcReset;

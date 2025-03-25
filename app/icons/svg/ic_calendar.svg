@@ -1,17 +1,7 @@
-<svg
-  width="24"
-  height="24"
-  viewBox="0 0 24 24"
-  fill="none"
-  xmlns="http://www.w3.org/2000/svg"
->
-  <g>
-    <path
-      id="icon"
-      fill-rule="evenodd"
-      clip-rule="evenodd"
-      d="M17 13V15H7V13H17ZM19 5C20.103 5 21 5.897 21 7V19C21 20.103 20.103 21 19 21H5C3.897 21 3 20.103 3 19V7C3 5.897 3.897 5 5 5H7V3H9V5H15V3H17V5H19ZM5 19H19.002L19.0006 11H5V19ZM5 9H19V7H5V9Z"
-      fill="#454545"
-    />
-  </g>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M16.4526 4.94336V4H15.7026V4.94336H7.29639V4H6.54639V4.94336H4V19.9951H19.0508V4.94336H16.4526ZM18.3008 5.69531V8.69631H4.75V5.69531H18.3008ZM4.75 9.44531V19.2461H18.3008V9.44531H4.75Z" fill="#1F2937"/>
+<path d="M6.54688 11.3359H7.29688V12.5332H6.54688V11.3359Z" fill="#1F2937"/>
+<path d="M9.60156 11.3359H10.3516V12.5332H9.60156V11.3359Z" fill="#1F2937"/>
+<path d="M12.6484 11.3359H13.3984V12.5332H12.6484V11.3359Z" fill="#1F2937"/>
+<path d="M15.7031 11.3359H16.4531V12.5332H15.7031V11.3359Z" fill="#1F2937"/>
 </svg>

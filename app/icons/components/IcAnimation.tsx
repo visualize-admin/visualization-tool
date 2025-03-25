@@ -1,22 +1,23 @@
 import * as React from "react";
-
 function SvgIcAnimation(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       width="1em"
       height="1em"
       viewBox="0 0 24 24"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g fill="none" fillRule="evenodd" transform="translate(3, 3)">
-        <path
-          fill="currentColor"
-          d="M16.2602209,6.01875664 L1.46463791,6.01875664 C1.05627982,6.01875664 0.724858763,6.35348262 0.724858763,6.76758435 L0.724858763,17.2511723 C0.724858763,17.665274 1.05627982,18 1.46463791,18 L16.2602209,18 C16.6685789,18 17,17.665274 17,17.2511723 L17,6.76758435 C17,6.35348262 16.6685789,6.01875664 16.2602209,6.01875664 Z M12.5613251,10.5117229 L5.16353365,10.5117229 L5.16353365,9.01406748 L12.5613251,9.01406748 L12.5613251,10.5117229 Z M12.5613251,13.9402943 L5.16353365,13.9402943 L5.16353365,12.4426389 L12.5613251,12.4426389 L12.5613251,13.9402943 Z M-2.75508782e-14,3.248437 L15.7296575,2.79776202e-14 L16.0254212,1.46740278 L0.295763703,4.71583978 L-2.75508782e-14,3.248437 Z"
-        />
-      </g>
+      <path d="M16 14H8v-1h8v1zM16 17H8v-1h8v1z" fill="currentColor" />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M4 6.891L19.799 3 20 4.109 4.201 8 4 6.891z"
+        fill="currentColor"
+      />
+      <path d="M20 21H4V9h16v12zM5 20h14V10H5v10z" fill="currentColor" />
     </svg>
   );
 }
-
 export default SvgIcAnimation;

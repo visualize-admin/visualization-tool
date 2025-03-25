@@ -2,19 +2,17 @@ import * as React from "react";
 function SvgIcXAxis(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g fill="none" fillRule="evenodd">
-        <path d="M0 0h24v24H0z" />
-        <path
-          fill="currentColor"
-          d="M6 4v13h9v-3l5 4-5 4v-3H4V4h2zm8.747 0l1.333 2.636L17.448 4h2.324l-2.324 3.794L20 12h-2.53l-1.538-2.946L14.405 12H12l2.576-4.206L12.274 4h2.473z"
-        />
-      </g>
+      <path
+        d="M14 9l2.28-3.056L14.076 3h1.453l1.503 2.108L18.51 3h1.414l-2.179 2.944C18.115 6.43 19.631 8.514 20 9h-1.44l-1.58-2.208L15.428 9H14zM4.956 3H4v13.63h14.42l-2.248 3.83.952.54 2.878-4.899-2.878-4.898-.952.54 2.319 3.948H4.956V3z"
+        fill="currentColor"
+      />
     </svg>
   );
 }

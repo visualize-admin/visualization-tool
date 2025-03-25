@@ -1,303 +1,317 @@
-import { default as Add } from "@/icons/components/IcAdd";
-import { default as Animation } from "@/icons/components/IcAnimation";
-import { default as AnnotationArea } from "@/icons/components/IcAnnotationArea";
-import { default as App } from "@/icons/components/IcApp";
-import { default as ArrowBottom } from "@/icons/components/IcArrowBottom";
-import { default as ArrowDown } from "@/icons/components/IcArrowDown";
-import { default as ArrowLeft } from "@/icons/components/IcArrowLeft";
-import { default as ArrowRight } from "@/icons/components/IcArrowRight";
-import { default as ArrowTop } from "@/icons/components/IcArrowTop";
-import { default as ArrowUp } from "@/icons/components/IcArrowUp";
-import { default as Bold } from "@/icons/components/IcBold";
-import { default as Calendar } from "@/icons/components/IcCalendar";
-import { default as CaretDown } from "@/icons/components/IcCaretDown";
-import { default as CaretLeft } from "@/icons/components/IcCaretLeft";
-import { default as CaretRight } from "@/icons/components/IcCaretRight";
-import { default as CaretUp } from "@/icons/components/IcCaretUp";
-import { default as Cart } from "@/icons/components/IcCart";
-import { default as Categories } from "@/icons/components/IcCategories";
-import { default as ChartArea } from "@/icons/components/IcChartArea";
-import { default as ChartBar } from "@/icons/components/IcChartBar";
-import { default as ChartColumn } from "@/icons/components/IcChartColumn";
-import { default as ChartColumnLine } from "@/icons/components/IcChartColumnLine";
-import { default as ChartDualAxisLine } from "@/icons/components/IcChartDualAxisLine";
-import { default as ChartLine } from "@/icons/components/IcChartLine";
-import { default as ChartMap } from "@/icons/components/IcChartMap";
-import { default as ChartMultiLine } from "@/icons/components/IcChartMultiLine";
-import { default as ChartPie } from "@/icons/components/IcChartPie";
-import { default as ChartScatterplot } from "@/icons/components/IcChartScatterplot";
-import { default as Check } from "@/icons/components/IcCheck";
-import { default as CheckboxActive } from "@/icons/components/IcCheckboxActive";
-import { default as CheckboxDefault } from "@/icons/components/IcCheckboxDefault";
-import { default as CheckboxIndeterminate } from "@/icons/components/IcCheckboxIndeterminate";
-import { default as Checked } from "@/icons/components/IcChecked";
-import { default as ChevronDown } from "@/icons/components/IcChevronDown";
-import { default as ChevronDown2 } from "@/icons/components/IcChevronDown2";
-import { default as ChevronLeft } from "@/icons/components/IcChevronLeft";
-import { default as ChevronRight } from "@/icons/components/IcChevronRight";
-import { default as ChevronUp } from "@/icons/components/IcChevronUp";
-import { default as Circle } from "@/icons/components/IcCircle";
-import { default as Clear } from "@/icons/components/IcClear";
-import { default as Close } from "@/icons/components/IcClose";
-import { default as Color } from "@/icons/components/IcColor";
-import { default as Column } from "@/icons/components/IcColumn";
-import { default as Copy } from "@/icons/components/IcCopy";
-import { default as Cursor } from "@/icons/components/IcCursor";
-import { default as Dataset } from "@/icons/components/IcDataset";
-import { default as DatasetError } from "@/icons/components/IcDatasetError";
-import { default as DatasetSuccess } from "@/icons/components/IcDatasetSuccess";
-import { default as Description } from "@/icons/components/IcDescription";
-import { default as Desktop } from "@/icons/components/IcDesktop";
-import { default as DoubleArrow } from "@/icons/components/IcDoubleArrow";
-import { default as Download } from "@/icons/components/IcDownload";
-import { default as Drag } from "@/icons/components/IcDrag";
-import { default as DragHandle } from "@/icons/components/IcDragHandle";
-import { default as Dragndrop } from "@/icons/components/IcDragndrop";
-import { default as Duplicate } from "@/icons/components/IcDuplicate";
-import { default as Edit } from "@/icons/components/IcEdit";
-import { default as Embed } from "@/icons/components/IcEmbed";
-import { default as Excel } from "@/icons/components/IcExcel";
-import { default as Exclamation } from "@/icons/components/IcExclamation";
-import { default as Eye } from "@/icons/components/IcEye";
-import { default as Facebook } from "@/icons/components/IcFacebook";
-import { default as Feed } from "@/icons/components/IcFeed";
-import { default as File } from "@/icons/components/IcFile";
-import { default as Filter } from "@/icons/components/IcFilter";
-import { default as Folder } from "@/icons/components/IcFolder";
-import { default as FontSize } from "@/icons/components/IcFontSize";
-import { default as Formatting } from "@/icons/components/IcFormatting";
-import { default as Forward } from "@/icons/components/IcForward";
-import { default as Geographical } from "@/icons/components/IcGeographical";
-import { default as Google } from "@/icons/components/IcGoogle";
-import { default as HintWarning } from "@/icons/components/IcHintWarning";
-import { default as Image } from "@/icons/components/IcImage";
-import { default as Indeterminate } from "@/icons/components/IcIndeterminate";
-import { default as Info } from "@/icons/components/IcInfo";
-import { default as InfoOutline } from "@/icons/components/IcInfoOutline";
-import { default as Italic } from "@/icons/components/IcItalic";
-import { default as Laptop } from "@/icons/components/IcLaptop";
-import { default as LayoutCanvas } from "@/icons/components/IcLayoutCanvas";
-import { default as LayoutDashboard } from "@/icons/components/IcLayoutDashboard";
-import { default as LayoutSingleURLs } from "@/icons/components/IcLayoutSingleURLs";
-import { default as LayoutTab } from "@/icons/components/IcLayoutTab";
-import { default as LayoutTall } from "@/icons/components/IcLayoutTall";
-import { default as LayoutTiles } from "@/icons/components/IcLayoutTiles";
-import { default as LayoutVertical } from "@/icons/components/IcLayoutVertical";
-import { default as LeftAligned } from "@/icons/components/IcLeftAligned";
-import { default as Link } from "@/icons/components/IcLink";
-import { default as LinkExternal } from "@/icons/components/IcLinkExternal";
-import { default as List } from "@/icons/components/IcList";
-import { default as ListBulleted } from "@/icons/components/IcListBulleted";
-import { default as ListNumbered } from "@/icons/components/IcListNumbered";
-import { default as Loading } from "@/icons/components/IcLoading";
-import { default as Mail } from "@/icons/components/IcMail";
-import { default as MapMaptype } from "@/icons/components/IcMapMaptype";
-import { default as MapRegions } from "@/icons/components/IcMapRegions";
-import { default as MapSymbols } from "@/icons/components/IcMapSymbols";
-import { default as Menu } from "@/icons/components/IcMenu";
-import { default as Message } from "@/icons/components/IcMessage";
-import { default as Minus } from "@/icons/components/IcMinus";
-import { default as MobileLandscape } from "@/icons/components/IcMobileLandscape";
-import { default as MobilePortrait } from "@/icons/components/IcMobilePortrait";
-import { default as More } from "@/icons/components/IcMore";
-import { default as Next } from "@/icons/components/IcNext";
-import { default as Normalize } from "@/icons/components/IcNormalize";
-import { default as Numerical } from "@/icons/components/IcNumerical";
-import { default as Organisations } from "@/icons/components/IcOrganisations";
-import { default as Origin } from "@/icons/components/IcOrigin";
-import { default as Pause } from "@/icons/components/IcPause";
-import { default as Pdf } from "@/icons/components/IcPdf";
-import { default as Play } from "@/icons/components/IcPlay";
-import { default as PointInTime } from "@/icons/components/IcPointInTime";
-import { default as Previous } from "@/icons/components/IcPrevious";
-import { default as Print } from "@/icons/components/IcPrint";
-import { default as Refresh } from "@/icons/components/IcRefresh";
-import { default as Remove } from "@/icons/components/IcRemove";
-import { default as Reset } from "@/icons/components/IcReset";
-import { default as Resize } from "@/icons/components/IcResize";
-import { default as Rewind } from "@/icons/components/IcRewind";
-import { default as RightAligned } from "@/icons/components/IcRightAligned";
-import { default as Search } from "@/icons/components/IcSearch";
-import { default as Segments } from "@/icons/components/IcSegments";
-import { default as Settings } from "@/icons/components/IcSettings";
-import { default as Share } from "@/icons/components/IcShare";
-import { default as Size } from "@/icons/components/IcSize";
-import { default as SkipNext } from "@/icons/components/IcSkipNext";
-import { default as SkipPrevious } from "@/icons/components/IcSkipPrevious";
-import { default as Sort } from "@/icons/components/IcSort";
-import { default as SortAscending } from "@/icons/components/IcSortAscending";
-import { default as SortDescending } from "@/icons/components/IcSortDescending";
-import { default as SortLabelAsc } from "@/icons/components/IcSortLabelAsc";
-import { default as SortLabelDesc } from "@/icons/components/IcSortLabelDesc";
-import { default as SortValueAsc } from "@/icons/components/IcSortValueAsc";
-import { default as SortValueDesc } from "@/icons/components/IcSortValueDesc";
-import { default as Square } from "@/icons/components/IcSquare";
-import { default as Star } from "@/icons/components/IcStar";
-import { default as Table } from "@/icons/components/IcTable";
-import { default as TableColumnCategorical } from "@/icons/components/IcTableColumnCategorical";
-import { default as TableColumnCategoricalHidden } from "@/icons/components/IcTableColumnCategoricalHidden";
-import { default as TableColumnLocations } from "@/icons/components/IcTableColumnLocations";
-import { default as TableColumnLocationsHidden } from "@/icons/components/IcTableColumnLocationsHidden";
-import { default as TableColumnNumerical } from "@/icons/components/IcTableColumnNumerical";
-import { default as TableColumnNumericalHidden } from "@/icons/components/IcTableColumnNumericalHidden";
-import { default as TableColumnTime } from "@/icons/components/IcTableColumnTime";
-import { default as TableColumnTimeHidden } from "@/icons/components/IcTableColumnTimeHidden";
-import { default as TabletLandscape } from "@/icons/components/IcTabletLandscape";
-import { default as TabletPortrait } from "@/icons/components/IcTabletPortrait";
-import { default as Target } from "@/icons/components/IcTarget";
-import { default as Template } from "@/icons/components/IcTemplate";
-import { default as Text } from "@/icons/components/IcText";
-import { default as Time } from "@/icons/components/IcTime";
-import { default as Tools } from "@/icons/components/IcTools";
-import { default as Trash } from "@/icons/components/IcTrash";
-import { default as Triangle } from "@/icons/components/IcTriangle";
-import { default as Twitter } from "@/icons/components/IcTwitter";
-import { default as Underlined } from "@/icons/components/IcUnderlined";
-import { default as Unfold } from "@/icons/components/IcUnfold";
-import { default as Unpublish } from "@/icons/components/IcUnpublish";
-import { default as Warning } from "@/icons/components/IcWarning";
-import { default as Word } from "@/icons/components/IcWord";
-import { default as XAxis } from "@/icons/components/IcXAxis";
-import { default as YAxis } from "@/icons/components/IcYAxis";
-import { default as ZoomIn } from "@/icons/components/IcZoomIn";
-
+import { default as Apps } from "./IcApps";
+import { default as ArrowDown } from "./IcArrowDown";
+import { default as ArrowLeft } from "./IcArrowLeft";
+import { default as ArrowRight } from "./IcArrowRight";
+import { default as ArrowUp } from "./IcArrowUp";
+import { default as ArrowUpRight } from "./IcArrowUpRight";
+import { default as Bookmark } from "./IcBookmark";
+import { default as Building } from "./IcBuilding";
+import { default as Calendar } from "./IcCalendar";
+import { default as Cancel } from "./IcCancel";
+import { default as ChartBar } from "./IcChartBar";
+import { default as ChartColumn } from "./IcChartColumn";
+import { default as Checkmark } from "./IcCheckmark";
+import { default as CheckmarkCircle } from "./IcCheckmarkCircle";
+import { default as ChevronDoubleLeft } from "./IcChevronDoubleLeft";
+import { default as ChevronDoubleRight } from "./IcChevronDoubleRight";
+import { default as ChevronDown } from "./IcChevronDown";
+import { default as ChevronLeft } from "./IcChevronLeft";
+import { default as ChevronLineLeft } from "./IcChevronLineLeft";
+import { default as ChevronLineRight } from "./IcChevronLineRight";
+import { default as ChevronRight } from "./IcChevronRight";
+import { default as ChevronSmallDown } from "./IcChevronSmallDown";
+import { default as ChevronSmallLeft } from "./IcChevronSmallLeft";
+import { default as ChevronSmallRight } from "./IcChevronSmallRight";
+import { default as ChevronSmallUp } from "./IcChevronSmallUp";
+import { default as ChevronUp } from "./IcChevronUp";
+import { default as Circle } from "./IcCircle";
+import { default as Close } from "./IcClose";
+import { default as Description } from "./IcDescription";
+import { default as Desktop } from "./IcDesktop";
+import { default as Dots } from "./IcDots";
+import { default as Download } from "./IcDownload";
+import { default as DragIndicator } from "./IcDragIndicator";
+import { default as Duplicate } from "./IcDuplicate";
+import { default as Embed } from "./IcEmbed";
+import { default as Envelope } from "./IcEnvelope";
+import { default as Expand } from "./IcExpand";
+import { default as Eyedropper } from "./IcEyedropper";
+import { default as Facebook } from "./IcFacebook";
+import { default as File } from "./IcFile";
+import { default as FileCode } from "./IcFileCode";
+import { default as Filter } from "./IcFilter";
+import { default as Folder } from "./IcFolder";
+import { default as Home } from "./IcHome";
+import { default as InfoCircle } from "./IcInfoCircle";
+import { default as InfoCircleFilled } from "./IcInfoCircleFilled";
+import { default as Instagram } from "./IcInstagram";
+import { default as Laptop } from "./IcLaptop";
+import { default as Link } from "./IcLink";
+import { default as LinkedIn } from "./IcLinkedIn";
+import { default as ListBullet } from "./IcListBullet";
+import { default as ListNumber } from "./IcListNumber";
+import { default as Login } from "./IcLogin";
+import { default as Logout } from "./IcLogout";
+import { default as MapMarker } from "./IcMapMarker";
+import { default as Menu } from "./IcMenu";
+import { default as Message } from "./IcMessage";
+import { default as Minus } from "./IcMinus";
+import { default as Mobile } from "./IcMobile";
+import { default as More } from "./IcMore";
+import { default as MoreFilled } from "./IcMoreFilled";
+import { default as Pen } from "./IcPen";
+import { default as Pin } from "./IcPin";
+import { default as Plus } from "./IcPlus";
+import { default as Printer } from "./IcPrinter";
+import { default as Repeat } from "./IcRepeat";
+import { default as Search } from "./IcSearch";
+import { default as Share } from "./IcShare";
+import { default as Star } from "./IcStar";
+import { default as StarFilled } from "./IcStarFilled";
+import { default as Tablet } from "./IcTablet";
+import { default as Trash } from "./IcTrash";
+import { default as Twitter } from "./IcTwitter";
+import { default as Unlink } from "./IcUnlink";
+import { default as Unpin } from "./IcUnpin";
+import { default as Upload } from "./IcUpload";
+import { default as WarningCircle } from "./IcWarningCircle";
+import { default as WarningCircleFilled } from "./IcWarningCircleFilled";
+import { default as WiFi } from "./IcWiFi";
+import { default as Youtube } from "./IcYoutube";
+import { default as Accessibility } from "./IcAccessibility";
+import { default as Animation } from "./IcAnimation";
+import { default as Area } from "./IcArea";
+import { default as AreasChart } from "./IcAreasChart";
+import { default as Bar } from "./IcBar";
+import { default as Bold } from "./IcBold";
+import { default as Cart } from "./IcCart";
+import { default as Categories } from "./IcCategories";
+import { default as ChartPivotTable } from "./IcChartPivotTable";
+import { default as CheckHalf } from "./IcCheckHalf";
+import { default as Clear } from "./IcClear";
+import { default as Color } from "./IcColor";
+import { default as ColumnLineChart } from "./IcColumnLineChart";
+import { default as Column } from "./IcColumn";
+import { default as Copy } from "./IcCopy";
+import { default as Dashboard } from "./IcDashboard";
+import { default as Dot } from "./IcDot";
+import { default as Doublearrow } from "./IcDoublearrow";
+import { default as Dragndrop } from "./IcDragndrop";
+import { default as DualAxisChart } from "./IcDualAxisChart";
+import { default as FontSize } from "./IcFontSize";
+import { default as Formatting } from "./IcFormatting";
+import { default as Forward } from "./IcForward";
+import { default as FreeCanvas } from "./IcFreeCanvas";
+import { default as Hide } from "./IcHide";
+import { default as Image } from "./IcImage";
+import { default as Indeterminate } from "./IcIndeterminate";
+import { default as Italic } from "./IcItalic";
+import { default as Joint } from "./IcJoint";
+import { default as LayoutOptions } from "./IcLayoutOptions";
+import { default as LayoutSingle } from "./IcLayoutSingle";
+import { default as LayoutTab } from "./IcLayoutTab";
+import { default as LayoutTall } from "./IcLayoutTall";
+import { default as LayoutVertical } from "./IcLayoutVertical";
+import { default as LegacyLinkExternal } from "./IcLegacyLinkExternal";
+import { default as Legal } from "./IcLegal";
+import { default as LineChart } from "./IcLineChart";
+import { default as MapChart } from "./IcMapChart";
+import { default as Map } from "./IcMap";
+import { default as MapRegions } from "./IcMapRegions";
+import { default as MapSymbols } from "./IcMapSymbols";
+import { default as MapThemes } from "./IcMapThemes";
+import { default as MultilineChart } from "./IcMultilineChart";
+import { default as Next } from "./IcNext";
+import { default as Normalize } from "./IcNormalize";
+import { default as Numerical } from "./IcNumerical";
+import { default as Organisations } from "./IcOrganisations";
+import { default as Pause } from "./IcPause";
+import { default as PieChart } from "./IcPieChart";
+import { default as Pie } from "./IcPie";
+import { default as Play } from "./IcPlay";
+import { default as PointInTime } from "./IcPointInTime";
+import { default as Previous } from "./IcPrevious";
+import { default as Refresh } from "./IcRefresh";
+import { default as Reset } from "./IcReset";
+import { default as Rewind } from "./IcRewind";
+import { default as ScatterplotChart } from "./IcScatterplotChart";
+import { default as Segments } from "./IcSegments";
+import { default as Settings } from "./IcSettings";
+import { default as SharedDimension } from "./IcSharedDimension";
+import { default as Show } from "./IcShow";
+import { default as Size } from "./IcSize";
+import { default as Sort } from "./IcSort";
+import { default as SortAscending } from "./IcSortAscending";
+import { default as SortDescending } from "./IcSortDescending";
+import { default as Sum } from "./IcSum";
+import { default as Swatch } from "./IcSwatch";
+import { default as TableChart } from "./IcTableChart";
+import { default as TableColumnCategorical } from "./IcTableColumnCategorical";
+import { default as TableColumnCategoricalHidden } from "./IcTableColumnCategoricalHidden";
+import { default as TableColumnLocations } from "./IcTableColumnLocations";
+import { default as TableColumnLocationsHidden } from "./IcTableColumnLocationsHidden";
+import { default as TableColumnNumerical } from "./IcTableColumnNumerical";
+import { default as TableColumnNumericalHidden } from "./IcTableColumnNumericalHidden";
+import { default as TableColumnTime } from "./IcTableColumnTime";
+import { default as TableColumnTimeHidden } from "./IcTableColumnTimeHidden";
+import { default as Target } from "./IcTarget";
+import { default as Text } from "./IcText";
+import { default as Underlined } from "./IcUnderlined";
+import { default as Unfold } from "./IcUnfold";
+import { default as Unpublish } from "./IcUnpublish";
+import { default as XAxis } from "./IcXAxis";
+import { default as YAxis } from "./IcYAxis";
+import { default as ZoomIn } from "./IcZoomIn";
+  
 export const Icons = {
-  add: Add,
-  animation: Animation,
-  annotationArea: AnnotationArea,
-  app: App,
-  arrowBottom: ArrowBottom,
+  apps: Apps,
   arrowDown: ArrowDown,
   arrowLeft: ArrowLeft,
   arrowRight: ArrowRight,
-  arrowTop: ArrowTop,
   arrowUp: ArrowUp,
-  bold: Bold,
+  arrowUpRight: ArrowUpRight,
+  bookmark: Bookmark,
+  building: Building,
   calendar: Calendar,
-  caretDown: CaretDown,
-  caretLeft: CaretLeft,
-  caretRight: CaretRight,
-  caretUp: CaretUp,
-  cart: Cart,
-  categories: Categories,
-  chartArea: ChartArea,
+  cancel: Cancel,
   chartBar: ChartBar,
-  chartColumnLine: ChartColumnLine,
   chartColumn: ChartColumn,
-  chartDualAxisLine: ChartDualAxisLine,
-  chartLine: ChartLine,
-  chartMap: ChartMap,
-  chartMultiLine: ChartMultiLine,
-  chartPie: ChartPie,
-  chartScatterplot: ChartScatterplot,
-  check: Check,
-  checked: Checked,
-  checkboxActive: CheckboxActive,
-  checkboxDefault: CheckboxDefault,
-  checkboxIndeterminate: CheckboxIndeterminate,
+  checkmark: Checkmark,
+  checkmarkCircle: CheckmarkCircle,
+  chevronDoubleLeft: ChevronDoubleLeft,
+  chevronDoubleRight: ChevronDoubleRight,
   chevronDown: ChevronDown,
-  chevronDown2: ChevronDown2,
   chevronLeft: ChevronLeft,
+  chevronLineLeft: ChevronLineLeft,
+  chevronLineRight: ChevronLineRight,
   chevronRight: ChevronRight,
+  chevronSmallDown: ChevronSmallDown,
+  chevronSmallLeft: ChevronSmallLeft,
+  chevronSmallRight: ChevronSmallRight,
+  chevronSmallUp: ChevronSmallUp,
   chevronUp: ChevronUp,
   circle: Circle,
-  clear: Clear,
   close: Close,
-  color: Color,
-  column: Column,
-  copy: Copy,
-  cursor: Cursor,
-  dataset: Dataset,
-  datasetError: DatasetError,
-  datasetSuccess: DatasetSuccess,
   description: Description,
   desktop: Desktop,
-  doubleArrow: DoubleArrow,
+  dots: Dots,
   download: Download,
-  dragHandle: DragHandle,
-  drag: Drag,
-  dragndrop: Dragndrop,
+  dragIndicator: DragIndicator,
   duplicate: Duplicate,
-  edit: Edit,
   embed: Embed,
-  excel: Excel,
-  exclamation: Exclamation,
-  eye: Eye,
+  envelope: Envelope,
+  expand: Expand,
+  eyedropper: Eyedropper,
   facebook: Facebook,
-  feed: Feed,
   file: File,
+  fileCode: FileCode,
   filter: Filter,
   folder: Folder,
-  fontSize: FontSize,
-  formatting: Formatting,
-  forward: Forward,
-  geographical: Geographical,
-  google: Google,
-  hintWarning: HintWarning,
-  image: Image,
-  indeterminate: Indeterminate,
-  info: Info,
-  infoOutline: InfoOutline,
-  italic: Italic,
+  home: Home,
+  infoCircle: InfoCircle,
+  infoCircleFilled: InfoCircleFilled,
+  instagram: Instagram,
   laptop: Laptop,
-  layoutCanvas: LayoutCanvas,
-  layoutDashboard: LayoutDashboard,
-  layoutSingleURLs: LayoutSingleURLs,
-  layoutTall: LayoutTall,
-  layoutTab: LayoutTab,
-  layoutTiles: LayoutTiles,
-  layoutVertical: LayoutVertical,
-  leftAligned: LeftAligned,
-  linkExternal: LinkExternal,
   link: Link,
-  list: List,
-  listBulleted: ListBulleted,
-  listNumbered: ListNumbered,
-  loading: Loading,
-  mail: Mail,
-  mapMaptype: MapMaptype,
-  mapRegions: MapRegions,
-  mapSymbols: MapSymbols,
+  linkedIn: LinkedIn,
+  listBullet: ListBullet,
+  listNumber: ListNumber,
+  login: Login,
+  logout: Logout,
+  mapMarker: MapMarker,
   menu: Menu,
   message: Message,
   minus: Minus,
-  mobileLandscape: MobileLandscape,
-  mobilePortrait: MobilePortrait,
+  mobile: Mobile,
   more: More,
+  moreFilled: MoreFilled,
+  pen: Pen,
+  pin: Pin,
+  plus: Plus,
+  printer: Printer,
+  repeat: Repeat,
+  search: Search,
+  share: Share,
+  star: Star,
+  starFilled: StarFilled,
+  tablet: Tablet,
+  trash: Trash,
+  twitter: Twitter,
+  unlink: Unlink,
+  unpin: Unpin,
+  upload: Upload,
+  warningCircle: WarningCircle,
+  warningCircleFilled: WarningCircleFilled,
+  wiFi: WiFi,
+  youtube: Youtube,
+  accessibility: Accessibility,
+  animation: Animation,
+  area: Area,
+  areasChart: AreasChart,
+  bar: Bar,
+  bold: Bold,
+  cart: Cart,
+  categories: Categories,
+  chartPivotTable: ChartPivotTable,
+  checkHalf: CheckHalf,
+  clear: Clear,
+  color: Color,
+  columnLineChart: ColumnLineChart,
+  column: Column,
+  copy: Copy,
+  dashboard: Dashboard,
+  dot: Dot,
+  doublearrow: Doublearrow,
+  dragndrop: Dragndrop,
+  dualAxisChart: DualAxisChart,
+  fontSize: FontSize,
+  formatting: Formatting,
+  forward: Forward,
+  freeCanvas: FreeCanvas,
+  hide: Hide,
+  image: Image,
+  indeterminate: Indeterminate,
+  italic: Italic,
+  joint: Joint,
+  layoutOptions: LayoutOptions,
+  layoutSingle: LayoutSingle,
+  layoutTab: LayoutTab,
+  layoutTall: LayoutTall,
+  layoutVertical: LayoutVertical,
+  legacyLinkExternal: LegacyLinkExternal,
+  legal: Legal,
+  lineChart: LineChart,
+  mapChart: MapChart,
+  map: Map,
+  mapRegions: MapRegions,
+  mapSymbols: MapSymbols,
+  mapThemes: MapThemes,
+  multilineChart: MultilineChart,
   next: Next,
   normalize: Normalize,
   numerical: Numerical,
   organisations: Organisations,
-  origin: Origin,
   pause: Pause,
-  pdf: Pdf,
+  pieChart: PieChart,
+  pie: Pie,
   play: Play,
   pointInTime: PointInTime,
   previous: Previous,
-  print: Print,
   refresh: Refresh,
-  remove: Remove,
   reset: Reset,
-  resize: Resize,
   rewind: Rewind,
-  rightAligned: RightAligned,
-  search: Search,
+  scatterplotChart: ScatterplotChart,
   segments: Segments,
   settings: Settings,
-  share: Share,
+  sharedDimension: SharedDimension,
+  show: Show,
   size: Size,
-  skipNext: SkipNext,
-  skipPrevious: SkipPrevious,
   sort: Sort,
   sortAscending: SortAscending,
   sortDescending: SortDescending,
-  sortLabelAsc: SortLabelAsc,
-  sortLabelDesc: SortLabelDesc,
-  sortValueAsc: SortValueAsc,
-  sortValueDesc: SortValueDesc,
-  square: Square,
-  star: Star,
-  table: Table,
+  sum: Sum,
+  swatch: Swatch,
+  tableChart: TableChart,
   tableColumnCategorical: TableColumnCategorical,
   tableColumnCategoricalHidden: TableColumnCategoricalHidden,
   tableColumnLocations: TableColumnLocations,
@@ -306,24 +320,15 @@ export const Icons = {
   tableColumnNumericalHidden: TableColumnNumericalHidden,
   tableColumnTime: TableColumnTime,
   tableColumnTimeHidden: TableColumnTimeHidden,
-  tabletLandscape: TabletLandscape,
-  tabletPortrait: TabletPortrait,
   target: Target,
-  template: Template,
   text: Text,
-  time: Time,
-  tools: Tools,
-  trash: Trash,
-  triangle: Triangle,
-  twitter: Twitter,
   underlined: Underlined,
   unfold: Unfold,
   unpublish: Unpublish,
-  warning: Warning,
-  word: Word,
   xAxis: XAxis,
   yAxis: YAxis,
   zoomIn: ZoomIn,
 };
 
 export type IconName = keyof typeof Icons;
+  

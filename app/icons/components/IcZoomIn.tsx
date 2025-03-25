@@ -2,19 +2,25 @@ import * as React from "react";
 function SvgIcZoomIn(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g fill="none" fillRule="evenodd">
-        <path d="M0 0h24v24H0z" />
-        <path
-          fill="currentColor"
-          d="M11 2a9 9 0 017.032 14.617l3.675 3.676-1.414 1.414-3.676-3.675A9 9 0 1111 2zm0 2a7 7 0 100 14 7 7 0 000-14zm1 4v2h2v2h-2v2h-2v-2H8v-2h2V8h2z"
-        />
-      </g>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M9.86 11v3h1v-3h3v-1h-3V7h-1v3h-3v1h3z"
+        fill="currentColor"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M15.743 10.485c0 3.03-2.41 5.486-5.382 5.486-2.973 0-5.382-2.456-5.382-5.486s2.41-5.487 5.382-5.487c2.972 0 5.382 2.456 5.382 5.487zm-1.092 4.787a6.27 6.27 0 01-4.29 1.697C6.848 16.969 4 14.066 4 10.484 4 6.905 6.848 4 10.36 4c3.514 0 6.361 2.903 6.361 6.485a6.536 6.536 0 01-1.4 4.059L19 18.294l-.692.706-3.657-3.728z"
+        fill="currentColor"
+      />
     </svg>
   );
 }

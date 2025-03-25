@@ -3,9 +3,7 @@ module.exports = {
   icon: true,
   typescript: true,
   replaceAttrValues: {
-    "#454545": "currentColor",
-    "#000": "currentColor",
-    "#000000": "currentColor",
+    "#1F2937": "currentColor",
   },
   filenameCase: "pascal",
 };

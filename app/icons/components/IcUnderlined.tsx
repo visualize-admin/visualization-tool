@@ -2,15 +2,15 @@ import * as React from "react";
 function SvgIcUnderlined(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
       <path
-        d="M12 17c3.31 0 6-2.69 6-6V3h-2.5v8c0 1.93-1.57 3.5-3.5 3.5S8.5 12.93 8.5 11V3H6v8c0 3.31 2.69 6 6 6zm-7 2v2h14v-2H5z"
+        d="M6 18.984h12V20H6v-1.016zM16.21 4h-1.214v8.21c0 2.12-1.092 3.336-2.996 3.336-1.887 0-3.014-1.247-3.014-3.336V4H7.789v8.264c0 2.694 1.653 4.434 4.21 4.434 2.559 0 4.211-1.74 4.211-4.434V4z"
         fill="currentColor"
       />
     </svg>

@@ -2,19 +2,23 @@ import * as React from "react";
 function SvgIcClear(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g fill="none" fillRule="evenodd">
-        <path d="M0 0h24v24H0z" />
-        <path
-          fill="currentColor"
-          d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12C23.98 5.38 18.62.02 12 0zm4.95 15.536l-1.414 1.414L12 13.414 8.464 16.95 7.05 15.536 10.586 12 7.05 8.464 8.464 7.05 12 10.586l3.536-3.536 1.414 1.414L13.414 12l3.536 3.536z"
-        />
-      </g>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M7.685 5.397A8.292 8.292 0 0112.292 4a8.301 8.301 0 018.291 8.291A8.292 8.292 0 117.685 5.397zm.417 13.165a7.541 7.541 0 004.19 1.271 7.55 7.55 0 007.541-7.542 7.542 7.542 0 10-11.731 6.271z"
+        fill="currentColor"
+      />
+      <path
+        d="M15.614 8.453l-3.315 3.315-3.3-3.3-.53.531 3.3 3.3-3.284 3.283.53.53 3.284-3.283 3.299 3.3.53-.532-3.3-3.299 3.316-3.315-.53-.53z"
+        fill="currentColor"
+      />
     </svg>
   );
 }

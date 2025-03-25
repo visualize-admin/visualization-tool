@@ -2,19 +2,17 @@ import * as React from "react";
 function SvgIcArrowRight(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g fill="none" fillRule="evenodd">
-        <path d="M0 0h24v24H0z" />
-        <path
-          fill="currentColor"
-          d="M4 10.707h11.585l-5.292-5.293L11.707 4l7.707 7.707-7.707 7.707L10.293 18l5.292-5.293H4v-2z"
-        />
-      </g>
+      <path
+        d="M16.002 19L20 12l-3.998-7-.64.373 3.573 6.254H4v.746h14.935l-3.573 6.254.64.373z"
+        fill="currentColor"
+      />
     </svg>
   );
 }

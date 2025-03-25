@@ -1,17 +1,19 @@
-import React from "react";
+import * as React from "react";
 function SvgIcEmbed(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
       <path
-        fill="currentColor"
         fillRule="evenodd"
-        d="M13.275 2.788l1.94.485-4.489 17.94-1.94-.485 4.489-17.94zM6 6.586L7.414 8l-4 4 4 4L6 17.414l-4.707-4.707a.999.999 0 010-1.414L6 6.586zm12 0l4.707 4.707a.999.999 0 010 1.414L18 17.414 16.586 16l4-4-4-4L18 6.586z"
+        clipRule="evenodd"
+        d="M10 18.5l3.002-13h1L11 18.5h-1zM19.002 12l-4-2V9l5 2.5v1l-5 2.5v-1l4-2zM5 11.999l4 2v1l-5-2.5v-1l5-2.5v1l-4 2z"
+        fill="currentColor"
       />
     </svg>
   );
