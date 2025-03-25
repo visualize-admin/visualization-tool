@@ -34,7 +34,7 @@ export const ChartLink = ({
       >
         {chartKey}
       </Typography>
-      <Icon name="linkExternal" size={16} />
+      <Icon name="legacyLinkExternal" size={16} />
     </Link>
   );
 };
@@ -72,7 +72,7 @@ export const CubeLink = ({
       >
         {title}
       </Typography>
-      <Icon name="linkExternal" size={16} />
+      <Icon name="legacyLinkExternal" size={16} />
     </Link>
   );
 };
