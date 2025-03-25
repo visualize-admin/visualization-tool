@@ -37,7 +37,7 @@ const useHintStyles = makeStyles((theme: Theme) => ({
   root: {
     width: "100%",
     height: "100%",
-    color: theme.palette.hint.main,
+    color: theme.palette.info.main,
     margin: "auto",
     textAlign: "center",
     flexDirection: "column",
@@ -172,7 +172,7 @@ export const LoadingOverlay = () => {
       className={classes.overlay}
       initial={{
         backgroundColor: alpha(theme.palette.grey[100], 0),
-        color: alpha(theme.palette.secondary.active!, 0),
+        color: alpha(theme.palette.secondary.main, 0),
       }}
       animate={{
         backgroundColor: alpha(theme.palette.grey[100], 0.3),
@@ -180,7 +180,7 @@ export const LoadingOverlay = () => {
       }}
       exit={{
         backgroundColor: alpha(theme.palette.grey[100], 0),
-        color: alpha(theme.palette.secondary.active!, 0),
+        color: alpha(theme.palette.secondary.main, 0),
       }}
       transition={{ duration: 0.2 }}
     >

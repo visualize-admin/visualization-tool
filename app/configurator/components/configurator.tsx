@@ -428,7 +428,10 @@ const ConfigureChartStep = () => {
 
   return (
     <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
-      <PanelLayout type="LM" sx={{ background: (t) => t.palette.muted.main }}>
+      <PanelLayout
+        type="LM"
+        sx={{ background: (t) => t.palette.secondary.main }}
+      >
         <PanelHeaderLayout type="LMR">
           <PanelHeaderWrapper type="L">
             <BackContainer>
@@ -565,7 +568,7 @@ const LayoutingStep = () => {
   return (
     <PanelLayout
       type={centerLayout ? "M" : "LM"}
-      sx={{ background: (t) => t.palette.muted.main }}
+      sx={{ background: (t) => t.palette.secondary.main }}
     >
       <PanelHeaderLayout type="LMR">
         <PanelHeaderWrapper type="L">

@@ -1,4 +1,6 @@
 import {
+  FederalBreakpointOverrides,
+  FederalColor,
   FederalTypographyPropsVariantOverrides,
   FederalTypographyVariants,
   FederalTypographyVariantsOptions,
@@ -18,52 +20,23 @@ declare module "@mui/material/Typography" {
     extends FederalTypographyPropsVariantOverrides {}
 }
 
-declare module "@mui/material" {
-  interface PaletteColorOptions {
-    light?: string;
-    main: string;
-    hover?: string;
-    active?: string;
-    disabled?: string;
-    colored?: string;
-    dark?: string;
+declare module "@mui/material/styles" {
+  interface BreakpointOverrides extends FederalBreakpointOverrides {}
+
+  interface Palette {
+    cobalt: FederalColor;
+    monochrome: FederalColor;
+    red: FederalColor;
+    blue: FederalColor;
+    green: FederalColor;
   }
 
   interface PaletteOptions {
-    muted: PaletteColorOptions;
-    alert: PaletteColorOptions;
-    organization: PaletteColorOptions;
-    category: PaletteColorOptions;
-    brand: PaletteColorOptions;
-    hint: PaletteColorOptions;
-  }
-
-  interface PaletteColor {
-    hover?: string;
-    disabled?: string;
-    active?: string;
-  }
-
-  interface Palette {
-    muted: PaletteColor;
-    alert: PaletteColor;
-    organization: PaletteColor;
-    category: PaletteColor;
-    brand: PaletteColor;
-    hint: PaletteColor;
-  }
-
-  interface ButtonPropsVariantOverrides {
-    inline: true;
-    inverted: true;
-  }
-
-  interface ButtonClasses {
-    sizeXsmall: true;
-  }
-
-  interface ButtonPropsSizeOverrides {
-    xsmall: true;
+    cobalt: FederalColor;
+    monochrome: FederalColor;
+    red: FederalColor;
+    blue: FederalColor;
+    green: FederalColor;
   }
 }
 
