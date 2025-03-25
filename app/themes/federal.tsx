@@ -1,10 +1,9 @@
 import { alertClasses, Fade, Grow, sliderClasses } from "@mui/material";
-import { Breakpoint, createTheme, Theme } from "@mui/material/styles";
-import merge from "lodash/merge";
-import omit from "lodash/omit";
+import { createTheme } from "@mui/material/styles";
 
 import { Icon } from "@/icons";
 import shadows from "@/themes/shadows";
+import { typography } from "@/themes/typography";
 
 const isSafari15 =
   typeof navigator !== "undefined" && navigator.vendor?.indexOf("Apple") >= 0
@@ -12,21 +11,6 @@ const isSafari15 =
         .match(/Version[/\s]([\d]+)/g)?.[0]
         ?.split("/")?.[1] === "15"
     : false;
-
-const breakpoints = ["xs", "md"] as Breakpoint[];
-
-const createTypographyVariant = (theme: Theme, spec: Record<string, any>) => {
-  const res = omit(spec, ["lineHeight", "fontSize"]);
-  for (let i = 0; i < spec.fontSize.length; i++) {
-    const lineHeight = `${spec.lineHeight[i]}px`;
-    const fontSize = `${spec.fontSize[i]}px`;
-    res[theme.breakpoints.up(breakpoints[i])] = {
-      fontSize,
-      lineHeight,
-    };
-  }
-  return res;
-};
 
 /**
  * Theme conforming to the Swiss Federal CD guidelines
@@ -113,71 +97,7 @@ export const theme = createTheme({
   },
   shadows: shadows,
 
-  typography: {
-    fontFamily: [
-      "FrutigerNeue",
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Helvetica",
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
-  },
-});
-
-theme.typography = merge(theme.typography, {
-  link: {
-    textDecoration: "none",
-  },
-  h1: createTypographyVariant(theme, {
-    fontSize: [24, 32],
-    lineHeight: [36, 48],
-    fontWeight: 700,
-  }),
-  h2: createTypographyVariant(theme, {
-    fontSize: [18, 24],
-    lineHeight: [28, 36],
-    fontWeight: 500,
-  }),
-  h3: createTypographyVariant(theme, {
-    fontSize: [16, 18],
-    lineHeight: [24, 28],
-    fontWeight: "bold",
-  }),
-  h4: createTypographyVariant(theme, {
-    fontSize: [14, 16],
-    lineHeight: [22, 24],
-    fontWeight: "bold",
-  }),
-  h5: createTypographyVariant(theme, {
-    fontSize: [14],
-    lineHeight: [20],
-    fontWeight: "bold",
-  }),
-  h6: createTypographyVariant(theme, {
-    fontSize: [12],
-    lineHeight: [18],
-    fontWeight: "bold",
-  }),
-  body1: createTypographyVariant(theme, {
-    fontSize: [14, 16],
-    lineHeight: [22, 24],
-    fontWeight: "normal",
-  }),
-  body2: createTypographyVariant(theme, {
-    fontSize: [12, 14],
-    lineHeight: [18, 20],
-    fontWeight: "normal",
-  }),
-  caption: createTypographyVariant(theme, {
-    fontSize: [12],
-    lineHeight: [18],
-    fontWeight: "normal",
-  }),
+  typography,
 });
 
 const makeStandardAlertVariant = ({
@@ -892,7 +812,9 @@ theme.components = {
           outline: 3px solid #333333;
         }
 
-        [tabindex="-1"]:focus { outline: 0; }
+        [tabindex="-1"]:focus {
+          outline: 0;
+        }
     
         fieldset {
           border: 0;
@@ -904,41 +826,57 @@ theme.components = {
         html {
           margin: 0;
           padding: 0;
-          font-family: ${theme.typography.fontFamily};
+          font-family: "NotoSans";
           -webkit-overflow-scrolling: touch;
           -ms-overflow-style: -ms-autohiding-scrollbar;
         }
-  
+
         @font-face {
-          font-family: "FrutigerNeue";
-          font-display: swap;
-          font-style: normal;
-          font-weight: 700;
-          src: url("/static/fonts/FrutigerNeueW02-Bd.woff2") format("woff2");
-        }
-  
-        @font-face {
-          font-family: "FrutigerNeue";
-          font-display: swap;
-          font-style: normal;
-          font-weight: 400;
-          src: url("/static/fonts/FrutigerNeueW02-Regular.woff2") format("woff2");
-        }
-  
-        @font-face {
-          font-family: "FrutigerNeue";
+          font-family: "NotoSans";
           font-display: swap;
           font-style: normal;
           font-weight: 300;
-          src: url("/static/fonts/FrutigerNeueW02-Light.woff2") format("woff2");
+          src: url("/static/fonts/NotoSans-Light.woff2") format("woff2");
         }
         
         @font-face {
-          font-family: "FrutigerNeue";
+          font-family: "NotoSans";
+          font-display: swap;
+          font-style: italic;
+          font-weight: 300;
+          src: url("/static/fonts/NotoSans-LightItalic.woff2") format("woff2");
+        }
+  
+        @font-face {
+          font-family: "NotoSans";
+          font-display: swap;
+          font-style: normal;
+          font-weight: 400;
+          src: url("/static/fonts/NotoSans-Regular.woff2") format("woff2");
+        }
+        
+        @font-face {
+          font-family: "NotoSans";
           font-display: swap;
           font-style: italic;
           font-weight: 400;
-          src: url("/static/fonts/FrutigerNeueW02-It.woff2") format("woff2");
+          src: url("/static/fonts/NotoSans-Italic.woff2") format("woff2");
+        }
+
+        @font-face {
+          font-family: "NotoSans";
+          font-display: swap;
+          font-style: normal;
+          font-weight: 700;
+          src: url("/static/fonts/NotoSans-Bold.woff2") format("woff2");
+        }
+
+        @font-face {
+          font-family: "NotoSans";
+          font-display: swap;
+          font-style: italic;
+          font-weight: 700;
+          src: url("/static/fonts/NotoSans-BoldItalic.woff2") format("woff2");
         }
         `,
   },
@@ -949,8 +887,10 @@ theme.components = {
  * Use WOFF2 fonts if possible!
  */
 export const preloadFonts = [
-  "/static/fonts/FrutigerNeueW02-Bd.woff2",
-  "/static/fonts/FrutigerNeueW02-Regular.woff2",
-  "/static/fonts/FrutigerNeueW02-Light.woff2",
-  "/static/fonts/FrutigerNeueW02-It.woff2",
+  "/static/fonts/NotoSans-Light.woff2",
+  "/static/fonts/NotoSans-LightItalic.woff2",
+  "/static/fonts/NotoSans-Regular.woff2",
+  "/static/fonts/NotoSans-Italic.woff2",
+  "/static/fonts/NotoSans-Bold.woff2",
+  "/static/fonts/NotoSans-BoldItalic.woff2",
 ];

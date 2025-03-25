@@ -1,10 +1,21 @@
+import {
+  FederalTypographyPropsVariantOverrides,
+  FederalTypographyVariants,
+  FederalTypographyVariantsOptions,
+} from "@interactivethings/swiss-federal-ci";
 import type {} from "@mui/lab/themeAugmentation";
 import { useTheme } from "@mui/material";
 
 declare module "@mui/material" {
-  interface Theme {
-    dashed: true;
-  }
+  interface TypographyVariants extends FederalTypographyVariants {}
+
+  interface TypographyVariantsOptions
+    extends FederalTypographyVariantsOptions {}
+}
+
+declare module "@mui/material/Typography" {
+  interface TypographyPropsVariantOverrides
+    extends FederalTypographyPropsVariantOverrides {}
 }
 
 declare module "@mui/material" {
@@ -40,10 +51,6 @@ declare module "@mui/material" {
     category: PaletteColor;
     brand: PaletteColor;
     hint: PaletteColor;
-  }
-
-  interface TypographyPropsVariantOverrides {
-    tag: true;
   }
 
   interface ButtonPropsVariantOverrides {

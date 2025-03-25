@@ -621,7 +621,7 @@
       "source-layer": "contour_line",
       "minzoom": 16.0,
       "layout": {
-        "text-font": ["Frutiger Neue Italic"],
+        "text-font": ["Noto Sans Italic"],
         "text-size": 12,
         "text-field": "{ele} ",
         "visibility": "visible",
@@ -684,7 +684,7 @@
       "source-layer": "contour_line",
       "minzoom": 16.0,
       "layout": {
-        "text-font": ["Frutiger Neue Italic"],
+        "text-font": ["Noto Sans Italic"],
         "text-size": 12,
         "text-field": "{ele} ",
         "visibility": "visible",
@@ -747,7 +747,7 @@
       "source-layer": "contour_line",
       "minzoom": 16.0,
       "layout": {
-        "text-font": ["Frutiger Neue Italic"],
+        "text-font": ["Noto Sans Italic"],
         "text-size": 12,
         "text-field": "{ele} ",
         "visibility": "visible",
@@ -810,7 +810,7 @@
       "source-layer": "contour_line",
       "minzoom": 14.0,
       "layout": {
-        "text-font": ["Frutiger Neue Italic"],
+        "text-font": ["Noto Sans Italic"],
         "text-size": [
           "interpolate",
           ["exponential", 2],
@@ -885,7 +885,7 @@
       "source-layer": "contour_line",
       "minzoom": 14.0,
       "layout": {
-        "text-font": ["Frutiger Neue Italic"],
+        "text-font": ["Noto Sans Italic"],
         "text-size": [
           "interpolate",
           ["exponential", 2],
@@ -960,7 +960,7 @@
       "source-layer": "contour_line",
       "minzoom": 14.0,
       "layout": {
-        "text-font": ["Frutiger Neue Italic"],
+        "text-font": ["Noto Sans Italic"],
         "text-size": [
           "interpolate",
           ["exponential", 2],
@@ -2630,7 +2630,7 @@
       "minzoom": 12.0,
       "layout": {
         "icon-size": 1,
-        "text-font": ["Frutiger Neue Italic"],
+        "text-font": ["Noto Sans Italic"],
         "text-size": ["interpolate", ["linear"], ["zoom"], 14, 10.5, 18, 13],
         "icon-image": [
           "case",
@@ -3817,7 +3817,7 @@
       "minzoom": 14.0,
       "layout": {
         "icon-size": 1,
-        "text-font": ["Frutiger Neue Regular"],
+        "text-font": ["Noto Sans Regular"],
         "text-size": ["interpolate", ["linear"], ["zoom"], 14, 10.5, 18, 13],
         "icon-image": [
           "match",
@@ -3874,7 +3874,7 @@
       "source": "swissmaptiles",
       "source-layer": "water_name",
       "layout": {
-        "text-font": ["Frutiger Neue Italic"],
+        "text-font": ["Noto Sans Italic"],
         "text-size": ["interpolate", ["linear"], ["zoom"], 10, 10.5, 16, 16],
         "text-field": "{name:latin}",
         "visibility": "visible",
@@ -3904,7 +3904,7 @@
       "source-layer": "waterway",
       "minzoom": 9.0,
       "layout": {
-        "text-font": ["Frutiger Neue Italic"],
+        "text-font": ["Noto Sans Italic"],
         "text-size": [
           "interpolate",
           ["exponential", 1.5],
@@ -3979,7 +3979,7 @@
       "source-layer": "transportation_name",
       "minzoom": 13.0,
       "layout": {
-        "text-font": ["Frutiger Neue Condensed Regular"],
+        "text-font": ["Noto Sans Condensed Regular"],
         "text-size": [
           "interpolate",
           ["exponential", 1.5],
@@ -4145,7 +4145,7 @@
       "minzoom": 11.0,
       "layout": {
         "icon-size": 1,
-        "text-font": ["Frutiger Neue Condensed Bold"],
+        "text-font": ["Noto Sans Condensed Bold"],
         "text-size": 10.5,
         "text-field": "{ref}",
         "visibility": "visible",
@@ -4193,7 +4193,7 @@
       "source-layer": "area_name",
       "minzoom": 14.0,
       "layout": {
-        "text-font": ["Frutiger Neue Italic"],
+        "text-font": ["Noto Sans Italic"],
         "text-size": ["interpolate", ["linear"], ["zoom"], 10, 11, 16, 20],
         "text-field": "{name:latin}",
         "visibility": "visible",
@@ -4229,7 +4229,7 @@
       "source-layer": "area_name",
       "minzoom": 12.0,
       "layout": {
-        "text-font": ["Frutiger Neue Italic"],
+        "text-font": ["Noto Sans Italic"],
         "text-size": ["interpolate", ["linear"], ["zoom"], 10, 11, 16, 20],
         "text-field": "{name:latin}",
         "visibility": "visible",
@@ -4275,7 +4275,7 @@
       "minzoom": 15.0,
       "layout": {
         "icon-size": 1,
-        "text-font": ["Frutiger Neue Condensed Regular"],
+        "text-font": ["Noto Sans Condensed Regular"],
         "text-size": ["interpolate", ["linear"], ["zoom"], 14, 12, 18, 18],
         "icon-image": [
           "match",
@@ -4410,7 +4410,7 @@
       "minzoom": 13.0,
       "layout": {
         "icon-size": 1,
-        "text-font": ["Frutiger Neue Condensed Regular"],
+        "text-font": ["Noto Sans Condensed Regular"],
         "text-size": ["interpolate", ["linear"], ["zoom"], 14, 12, 18, 18],
         "icon-image": [
           "step",
@@ -4677,7 +4677,7 @@
       "maxzoom": 24.0,
       "layout": {
         "icon-size": 1,
-        "text-font": ["Frutiger Neue Regular"],
+        "text-font": ["Noto Sans Regular"],
         "text-size": [
           "interpolate",
           ["linear"],
@@ -4763,7 +4763,7 @@
       "maxzoom": 24.0,
       "layout": {
         "icon-size": 1,
-        "text-font": ["Frutiger Neue Regular"],
+        "text-font": ["Noto Sans Regular"],
         "text-size": [
           "interpolate",
           ["linear"],
@@ -4853,7 +4853,7 @@
       "maxzoom": 24.0,
       "layout": {
         "icon-size": 1,
-        "text-font": ["Frutiger Neue Condensed Medium"],
+        "text-font": ["Noto Sans Condensed Medium"],
         "text-size": [
           "interpolate",
           ["cubic-bezier", 0.5, 0.1, 0.7, 1],
@@ -4934,7 +4934,7 @@
       "minzoom": 14.0,
       "layout": {
         "icon-size": 1,
-        "text-font": ["Frutiger Neue Condensed Regular"],
+        "text-font": ["Noto Sans Condensed Regular"],
         "text-size": ["interpolate", ["linear"], ["zoom"], 13, 13, 18, 20],
         "icon-image": [
           "match",
@@ -4997,7 +4997,7 @@
       "maxzoom": 18.0,
       "layout": {
         "icon-size": 1,
-        "text-font": ["Frutiger Neue Condensed Medium"],
+        "text-font": ["Noto Sans Condensed Medium"],
         "text-size": [
           "interpolate",
           ["cubic-bezier", 0.5, 0.1, 0.7, 1],
@@ -5060,7 +5060,7 @@
       "source": "swissmaptiles",
       "source-layer": "water_name",
       "layout": {
-        "text-font": ["Frutiger Neue Italic"],
+        "text-font": ["Noto Sans Italic"],
         "text-size": ["interpolate", ["linear"], ["zoom"], 10, 14, 16, 24],
         "text-field": "{name:latin}",
         "visibility": "visible",
@@ -5103,7 +5103,7 @@
       "maxzoom": 16.0,
       "layout": {
         "icon-size": 1,
-        "text-font": ["Frutiger Neue Condensed Bold"],
+        "text-font": ["Noto Sans Condensed Bold"],
         "text-size": [
           "interpolate",
           ["cubic-bezier", 0.5, 0.1, 0.7, 1],
@@ -5165,7 +5165,7 @@
       "source-layer": "park",
       "minzoom": 8.0,
       "layout": {
-        "text-font": ["Frutiger Neue Regular"],
+        "text-font": ["Noto Sans Regular"],
         "text-size": [
           "interpolate",
           ["cubic-bezier", 0.5, 0.1, 0.7, 1],
@@ -5201,7 +5201,7 @@
       "maxzoom": 14.0,
       "layout": {
         "icon-size": 1,
-        "text-font": ["Frutiger Neue Condensed Bold"],
+        "text-font": ["Noto Sans Condensed Bold"],
         "text-size": [
           "interpolate",
           ["cubic-bezier", 0.5, 0.1, 0.7, 1],
@@ -5265,7 +5265,7 @@
       "minzoom": 0.0,
       "maxzoom": 7.0,
       "layout": {
-        "text-font": ["Frutiger Neue Condensed Regular"],
+        "text-font": ["Noto Sans Condensed Regular"],
         "text-size": ["interpolate", ["linear"], ["zoom"], 1, 12, 6, 16],
         "text-field": "{name:latin}",
         "visibility": "visible",
