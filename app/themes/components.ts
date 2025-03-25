@@ -1,6 +1,18 @@
 import { Components } from "@mui/material";
 
 export const components: Components = {
+  MuiButtonBase: {
+    defaultProps: {
+      disableRipple: true,
+    },
+  },
+  MuiButton: {
+    styleOverrides: {
+      root: {
+        textTransform: "none",
+      },
+    },
+  },
   MuiCssBaseline: {
     styleOverrides: `
         html {
