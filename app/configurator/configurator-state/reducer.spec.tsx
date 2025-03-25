@@ -690,7 +690,7 @@ describe("CHART_FIELD_DELETED", () => {
     expect(newState.chartConfigs[0].fields.color).toStrictEqual({
       type: "single",
       paletteId: "category10",
-      color: "#006699",
+      color: "#1976d2",
     });
   });
 });
