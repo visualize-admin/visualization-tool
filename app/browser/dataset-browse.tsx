@@ -307,7 +307,7 @@ export const SearchDatasetSortControl = ({
   }, [disableScore]);
 
   return (
-    <Box style={{ display: "flex", alignItems: "center", gap: 1 }}>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
       <label htmlFor="datasetSort">
         <Typography variant="body2" fontWeight={700}>
           <Trans id="dataset.sortby">Sort by</Trans>
@@ -323,6 +323,7 @@ export const SearchDatasetSortControl = ({
         onChange={(e) => {
           onChange(e.target.value as SearchCubeResultOrder);
         }}
+        sx={{ color: (t) => `${t.palette.grey[800]} !important` }}
       />
     </Box>
   );

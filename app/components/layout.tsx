@@ -6,22 +6,26 @@ import { Header } from "@/components/header";
 
 export const AppLayout = ({
   children,
-  isOdsIframe,
+  hideHeader,
+  editing,
 }: {
   children?: ReactNode;
-  isOdsIframe?: boolean;
-}) => (
-  <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
-    {!isOdsIframe && <Header pageType="app" contentId={undefined} />}
-    <Flex
-      component="main"
-      role="main"
-      sx={{ flex: 1, flexDirection: "column" }}
-    >
-      {children}
+  hideHeader?: boolean;
+  editing?: boolean;
+}) => {
+  return (
+    <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
+      {hideHeader ? null : <Header hideLogo={editing} extendTopBar={editing} />}
+      <Flex
+        component="main"
+        role="main"
+        sx={{ flex: 1, flexDirection: "column" }}
+      >
+        {children}
+      </Flex>
     </Flex>
-  </Flex>
-);
+  );
+};
 
 export const ContentLayout = ({
   children,
@@ -38,7 +42,7 @@ export const ContentLayout = ({
         backgroundColor: contentId === "home" ? "grey.100" : "muted.main",
       }}
     >
-      <Header pageType="content" contentId={contentId} />
+      <Header contentId={contentId} />
       <Flex
         component="main"
         role="main"
@@ -70,7 +74,7 @@ export const StaticContentLayout = ({
         backgroundColor: "#F5F5F5",
       }}
     >
-      <Header pageType="content" contentId={contentId} />
+      <Header contentId={contentId} />
       <Flex
         component="main"
         role="main"

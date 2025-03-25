@@ -12,7 +12,7 @@ You can also check the
 # Unreleased
 
 - Styles
-  - Migrated footer to the new CI / CD
+  - Migrated header and footer to the new CI / CD
 
 # [5.5.0] - 2025-03-24
 

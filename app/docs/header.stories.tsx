@@ -1,6 +1,6 @@
 import { Meta } from "@storybook/react";
 
-import { Header, Logo } from "@/components/header";
+import { Header } from "@/components/header";
 
 const meta: Meta = {
   title: "organisms / Header",
@@ -9,14 +9,8 @@ const meta: Meta = {
 
 export default meta;
 
-const LogoStory = {
-  render: () => <Logo />,
-};
-
-export { LogoStory as Logo };
-
 const HeaderStory = {
-  render: () => <Header contentId={"12"} />,
+  render: () => <Header />,
 };
 
 export { HeaderStory as Header };

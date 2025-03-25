@@ -84,7 +84,7 @@ import { useEventEmitter } from "@/utils/eventEmitter";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
-const useDrawerStyles = makeStyles<Theme, { top: number }>((theme) => {
+const useDrawerStyles = makeStyles<Theme, { top: number | string }>((theme) => {
   return {
     root: {
       position: "static",
@@ -269,7 +269,7 @@ export const MetadataPanel = ({
   dataSource: DataSource;
   components: Component[];
   container?: HTMLDivElement | null;
-  top?: number;
+  top?: number | string;
   allowMultipleOpen?: boolean;
   renderToggle?: boolean;
   smallerToggle?: boolean;

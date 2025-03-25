@@ -2,12 +2,11 @@ import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useSession } from "next-auth/react";
 
-import { HEADER_HEIGHT } from "@/components/header-constants";
+import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 
 export const useRootStyles = makeStyles<Theme>((theme) => ({
   root: {
-    marginTop: `${HEADER_HEIGHT}px`,
-    minHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
+    minHeight: `calc(100vh - ${HEADER_HEIGHT_CSS_VAR})`,
     display: "flex",
     flexDirection: "column",
   },

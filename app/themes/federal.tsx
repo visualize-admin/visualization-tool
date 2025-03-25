@@ -230,7 +230,6 @@ theme.components = {
   },
   MuiLink: {
     defaultProps: {
-      underline: "hover",
       color: "inherit",
     },
     styleOverrides: {},
@@ -680,7 +679,6 @@ theme.components = {
         boxSizing: "border-box",
         height: "40px",
         padding: "8px 12px",
-        color: theme.palette.grey[700],
         textOverflow: "ellipsis",
         fontSize: theme.typography.body2.fontSize,
 

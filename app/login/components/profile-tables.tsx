@@ -53,6 +53,7 @@ export const SectionContent = ({
   title?: string;
 }) => {
   const rootClasses = useRootStyles();
+
   return (
     <Box className={rootClasses.sectionContent}>
       {title && (

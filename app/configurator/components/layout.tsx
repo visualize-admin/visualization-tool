@@ -2,7 +2,7 @@ import { Box, BoxProps, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 
-import { HEADER_HEIGHT } from "@/components/header-constants";
+import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 
 export const LAYOUT_HEADER_HEIGHT = 96;
@@ -10,9 +10,9 @@ export const LAYOUT_HEADER_HEIGHT = 96;
 const useStyles = makeStyles<Theme>((theme) => ({
   panelLayout: {
     position: "fixed",
-    top: HEADER_HEIGHT,
+    top: HEADER_HEIGHT_CSS_VAR,
     width: "100%",
-    height: `calc(100vh - ${HEADER_HEIGHT}px)`,
+    height: `calc(100vh - ${HEADER_HEIGHT_CSS_VAR})`,
     display: "grid",
     gridTemplateRows: "auto minmax(0, 1fr)",
     marginLeft: "auto",

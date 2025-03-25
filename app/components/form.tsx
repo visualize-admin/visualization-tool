@@ -57,13 +57,13 @@ import React, {
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
+import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BlockTypeMenu } from "@/components/mdx-editor/block-type-menu";
 import { BoldItalicUnderlineToggles } from "@/components/mdx-editor/bold-italic-underline-toggles";
 import { linkDialogPlugin } from "@/components/mdx-editor/link-dialog";
 import { LinkDialogToggle } from "@/components/mdx-editor/link-dialog-toggle";
 import { ListToggles } from "@/components/mdx-editor/list-toggles";
-import { BANNER_MARGIN_TOP } from "@/components/presence";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import VisuallyHidden from "@/components/visually-hidden";
 import {
@@ -77,7 +77,6 @@ import SvgIcExclamation from "@/icons/components/IcExclamation";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
-
 import "@mdxeditor/editor/style.css";
 
 export const Label = ({
@@ -296,7 +295,7 @@ const MenuPaper = styled(Paper, {
   // specZ: The maximum height of a simple menu should be one or more rows less than the view
   // height. This ensures a tapable area outside of the simple menu with which to dismiss
   // the menu.
-  maxHeight: `calc(100% - ${BANNER_MARGIN_TOP}px)`,
+  maxHeight: `calc(100% - ${HEADER_HEIGHT_CSS_VAR})`,
   // Add iOS momentum scrolling for iOS < 13.0
   WebkitOverflowScrolling: "touch",
 });
@@ -567,8 +566,10 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
     ...rest
   } = props;
 
+  const classes = useMinimalisticSelectStyles();
+
   return (
-    <Box sx={{ color: "grey.800" }}>
+    <Box display="flex" alignItems="center">
       {label && (
         <Label htmlFor={id} smaller>
           {label}
@@ -590,25 +591,11 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
               transition: "transform 0.1s",
             }}
           >
-            <Icon name="chevronDown" size={16} />
+            <Icon name="chevronDown2" size={24} />
           </span>
         )}
-        sx={{
-          borderColor: "transparent",
-          fontSize: smaller ? ["0.625rem", "0.75rem", "0.75rem"] : "inherit",
-          lineHeight: "normal !important",
-          backgroundColor: "transparent",
-          p: 0,
-          pl: 1,
-          ":focus": {
-            outline: "none",
-            borderColor: "primary.main",
-          },
-          "& .MuiInput-input": {
-            paddingRight: "1.25rem !important",
-          },
-          ...sx,
-        }}
+        className={classes.root}
+        sx={sx}
         {...rest}
       >
         {options.map((opt) => (
@@ -620,6 +607,41 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
     </Box>
   );
 };
+
+const useMinimalisticSelectStyles = makeStyles<Theme>((theme) => ({
+  root: {
+    borderColor: "transparent",
+    lineHeight: "normal !important",
+    backgroundColor: "transparent",
+    // @ts-ignore
+    color: theme.palette.muted.colored, // FIXME: once the new colors are in place
+    padding: 0,
+    height: "auto",
+    minHeight: "auto",
+    boxSizing: "border-box",
+    "&:focus": {
+      outline: "none",
+      borderColor: theme.palette.primary.main,
+    },
+    "& .MuiSelect-icon": {
+      right: -10,
+      top: -4,
+    },
+    "& .MuiInput-input": {
+      paddingRight: "1.25rem !important",
+      marginBottom: "1px",
+      height: "auto",
+      minHeight: "auto",
+      paddingTop: 0,
+      paddingBottom: 0,
+      fontSize: "1em",
+
+      [theme.breakpoints.down("md")]: {
+        fontSize: "0.875rem",
+      },
+    },
+  },
+}));
 
 export const Input = ({
   label,

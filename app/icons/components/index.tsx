@@ -32,6 +32,7 @@ import { default as CheckboxDefault } from "@/icons/components/IcCheckboxDefault
 import { default as CheckboxIndeterminate } from "@/icons/components/IcCheckboxIndeterminate";
 import { default as Checked } from "@/icons/components/IcChecked";
 import { default as ChevronDown } from "@/icons/components/IcChevronDown";
+import { default as ChevronDown2 } from "@/icons/components/IcChevronDown2";
 import { default as ChevronLeft } from "@/icons/components/IcChevronLeft";
 import { default as ChevronRight } from "@/icons/components/IcChevronRight";
 import { default as ChevronUp } from "@/icons/components/IcChevronUp";
@@ -195,6 +196,7 @@ export const Icons = {
   checkboxDefault: CheckboxDefault,
   checkboxIndeterminate: CheckboxIndeterminate,
   chevronDown: ChevronDown,
+  chevronDown2: ChevronDown2,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
   chevronUp: ChevronUp,

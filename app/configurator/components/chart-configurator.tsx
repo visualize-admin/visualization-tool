@@ -31,7 +31,7 @@ import {
   getPossibleFiltersQueryVariables,
   skipPossibleFiltersQuery,
 } from "@/charts/shared/possible-filters";
-import { HEADER_HEIGHT } from "@/components/header-constants";
+import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import {
   MetadataPanel,
   OpenMetadataPanelWrapper,
@@ -811,7 +811,7 @@ export const ChartConfigurator = ({
         chartConfig={chartConfig}
         dashboardFilters={state.dashboardFilters}
         components={components}
-        top={HEADER_HEIGHT}
+        top={HEADER_HEIGHT_CSS_VAR}
         renderToggle={false}
       />
     </InteractiveFiltersChartProvider>
