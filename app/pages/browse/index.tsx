@@ -23,14 +23,14 @@ export type BrowseParams = {
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   return {
     props: {
-      odsiframe: query.odsiframe === "true" ? true : false,
+      hideHeader: query.odsiframe === "true",
     },
   };
 };
 
-export function DatasetBrowser({ odsiframe }: { odsiframe: boolean }) {
+export function DatasetBrowser({ hideHeader }: { hideHeader: boolean }) {
   return (
-    <AppLayout isOdsIframe={odsiframe}>
+    <AppLayout hideHeader={hideHeader}>
       <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
         <SelectDatasetStep variant="page" />
       </ConfiguratorStateProvider>

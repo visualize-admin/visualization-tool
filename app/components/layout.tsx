@@ -6,14 +6,16 @@ import { Header } from "@/components/header";
 
 export const AppLayout = ({
   children,
-  isOdsIframe,
+  hideHeader,
+  editing,
 }: {
   children?: ReactNode;
-  isOdsIframe?: boolean;
+  hideHeader?: boolean;
+  editing?: boolean;
 }) => {
   return (
     <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
-      {isOdsIframe ? null : <Header contentId={undefined} />}
+      {hideHeader ? null : <Header hideLogo={editing} extendTopBar={editing} />}
       <Flex
         component="main"
         role="main"
