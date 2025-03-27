@@ -1,694 +1,745 @@
 import * as React from "react";
 
 export const Step1 = () => (
-  <svg width={288} height={200} viewBox="0 0 288 200">
-    <defs>
-      <rect id="bg_frame_dataset-b" width={64} height={166} x={0} y={0} />
-      <filter
-        id="bg_frame_dataset-a"
-        width="100%"
-        height="100%"
-        x="0%"
-        y="0%"
-        filterUnits="objectBoundingBox"
-      >
-        <feOffset in="SourceAlpha" result="shadowOffsetOuter1" />
-        <feColorMatrix
-          in="shadowOffsetOuter1"
-          values="0 0 0 0 0.898039216   0 0 0 0 0.898039216   0 0 0 0 0.898039216  0 0 0 1 0"
-        />
-      </filter>
-      <rect id="bg_frame_dataset-c" width={64} height={22} x={0} y={0} />
-      <filter
-        id="bg_frame_dataset-d"
-        width="101.6%"
-        height="104.5%"
-        x="-.8%"
-        y="-2.3%"
-        filterUnits="objectBoundingBox"
-      >
-        <feOffset dy={1} in="SourceAlpha" result="shadowOffsetInner1" />
-        <feComposite
-          in="shadowOffsetInner1"
-          in2="SourceAlpha"
-          k2={-1}
-          k3={1}
-          operator="arithmetic"
-          result="shadowInnerInner1"
-        />
-        <feColorMatrix
-          in="shadowInnerInner1"
-          values="0 0 0 0 0.898039216   0 0 0 0 0.898039216   0 0 0 0 0.898039216  0 0 0 1 0"
-        />
-      </filter>
-      <rect id="bg_frame_dataset-e" width={64} height={27} x={0} y={0} />
-      <filter
-        id="bg_frame_dataset-f"
-        width="101.6%"
-        height="103.7%"
-        x="-.8%"
-        y="-1.9%"
-        filterUnits="objectBoundingBox"
-      >
-        <feOffset dy={1} in="SourceAlpha" result="shadowOffsetInner1" />
-        <feComposite
-          in="shadowOffsetInner1"
-          in2="SourceAlpha"
-          k2={-1}
-          k3={1}
-          operator="arithmetic"
-          result="shadowInnerInner1"
-        />
-        <feColorMatrix
-          in="shadowInnerInner1"
-          values="0 0 0 0 0.898039216   0 0 0 0 0.898039216   0 0 0 0 0.898039216  0 0 0 1 0"
-        />
-      </filter>
-      <rect id="bg_frame_dataset-g" width={64} height={27} x={0} y={0} />
-      <filter
-        id="bg_frame_dataset-h"
-        width="101.6%"
-        height="103.7%"
-        x="-.8%"
-        y="-1.9%"
-        filterUnits="objectBoundingBox"
-      >
-        <feOffset dy={1} in="SourceAlpha" result="shadowOffsetInner1" />
-        <feComposite
-          in="shadowOffsetInner1"
-          in2="SourceAlpha"
-          k2={-1}
-          k3={1}
-          operator="arithmetic"
-          result="shadowInnerInner1"
-        />
-        <feColorMatrix
-          in="shadowInnerInner1"
-          values="0 0 0 0 0.898039216   0 0 0 0 0.898039216   0 0 0 0 0.898039216  0 0 0 1 0"
-        />
-      </filter>
-      <rect id="bg_frame_dataset-i" width={64} height={26} x={0} y={0} />
-      <filter
-        id="bg_frame_dataset-j"
-        width="100%"
-        height="100%"
-        x="0%"
-        y="0%"
-        filterUnits="objectBoundingBox"
-      >
-        <feOffset in="SourceAlpha" result="shadowOffsetInner1" />
-        <feComposite
-          in="shadowOffsetInner1"
-          in2="SourceAlpha"
-          k2={-1}
-          k3={1}
-          operator="arithmetic"
-          result="shadowInnerInner1"
-        />
-        <feColorMatrix
-          in="shadowInnerInner1"
-          result="shadowMatrixInner1"
-          values="0 0 0 0 0.898039216   0 0 0 0 0.898039216   0 0 0 0 0.898039216  0 0 0 1 0"
-        />
-        <feOffset in="SourceAlpha" result="shadowOffsetInner2" />
-        <feComposite
-          in="shadowOffsetInner2"
-          in2="SourceAlpha"
-          k2={-1}
-          k3={1}
-          operator="arithmetic"
-          result="shadowInnerInner2"
-        />
-        <feColorMatrix
-          in="shadowInnerInner2"
-          result="shadowMatrixInner2"
-          values="0 0 0 0 0.898039216   0 0 0 0 0.898039216   0 0 0 0 0.898039216  0 0 0 1 0"
-        />
-        <feMerge>
-          <feMergeNode in="shadowMatrixInner1" />
-          <feMergeNode in="shadowMatrixInner2" />
-        </feMerge>
-      </filter>
-      <rect id="bg_frame_dataset-k" width={64} height={12} x={0} y={0} />
-      <filter
-        id="bg_frame_dataset-l"
-        width="101.6%"
-        height="108.3%"
-        x="-.8%"
-        y="-4.2%"
-        filterUnits="objectBoundingBox"
-      >
-        <feOffset in="SourceAlpha" result="shadowOffsetInner1" />
-        <feComposite
-          in="shadowOffsetInner1"
-          in2="SourceAlpha"
-          k2={-1}
-          k3={1}
-          operator="arithmetic"
-          result="shadowInnerInner1"
-        />
-        <feColorMatrix
-          in="shadowInnerInner1"
-          result="shadowMatrixInner1"
-          values="0 0 0 0 0.898039216   0 0 0 0 0.898039216   0 0 0 0 0.898039216  0 0 0 1 0"
-        />
-        <feOffset dy={-1} in="SourceAlpha" result="shadowOffsetInner2" />
-        <feComposite
-          in="shadowOffsetInner2"
-          in2="SourceAlpha"
-          k2={-1}
-          k3={1}
-          operator="arithmetic"
-          result="shadowInnerInner2"
-        />
-        <feColorMatrix
-          in="shadowInnerInner2"
-          result="shadowMatrixInner2"
-          values="0 0 0 0 0.898039216   0 0 0 0 0.898039216   0 0 0 0 0.898039216  0 0 0 1 0"
-        />
-        <feMerge>
-          <feMergeNode in="shadowMatrixInner1" />
-          <feMergeNode in="shadowMatrixInner2" />
-        </feMerge>
-      </filter>
-      <rect id="bg_frame_dataset-m" width={136} height={10} x={0} y={0} />
-      <filter
-        id="bg_frame_dataset-n"
-        width="100.7%"
-        height="110%"
-        x="-.4%"
-        y="-5%"
-        filterUnits="objectBoundingBox"
-      >
-        <feOffset dy={-1} in="SourceAlpha" result="shadowOffsetInner1" />
-        <feComposite
-          in="shadowOffsetInner1"
-          in2="SourceAlpha"
-          k2={-1}
-          k3={1}
-          operator="arithmetic"
-          result="shadowInnerInner1"
-        />
-        <feColorMatrix
-          in="shadowInnerInner1"
-          values="0 0 0 0 0.898039216   0 0 0 0 0.898039216   0 0 0 0 0.898039216  0 0 0 1 0"
-        />
-      </filter>
-      <rect id="bg_frame_dataset-o" width={136} height={10} x={0} y={0} />
-      <filter
-        id="bg_frame_dataset-p"
-        width="100.7%"
-        height="110%"
-        x="-.4%"
-        y="-5%"
-        filterUnits="objectBoundingBox"
-      >
-        <feOffset dy={-1} in="SourceAlpha" result="shadowOffsetInner1" />
-        <feComposite
-          in="shadowOffsetInner1"
-          in2="SourceAlpha"
-          k2={-1}
-          k3={1}
-          operator="arithmetic"
-          result="shadowInnerInner1"
-        />
-        <feColorMatrix
-          in="shadowInnerInner1"
-          values="0 0 0 0 0.898039216   0 0 0 0 0.898039216   0 0 0 0 0.898039216  0 0 0 1 0"
-        />
-      </filter>
-      <rect id="bg_frame_dataset-q" width={136} height={10} x={0} y={0} />
-      <filter
-        id="bg_frame_dataset-r"
-        width="100.7%"
-        height="110%"
-        x="-.4%"
-        y="-5%"
-        filterUnits="objectBoundingBox"
-      >
-        <feOffset dy={-1} in="SourceAlpha" result="shadowOffsetInner1" />
-        <feComposite
-          in="shadowOffsetInner1"
-          in2="SourceAlpha"
-          k2={-1}
-          k3={1}
-          operator="arithmetic"
-          result="shadowInnerInner1"
-        />
-        <feColorMatrix
-          in="shadowInnerInner1"
-          values="0 0 0 0 0.898039216   0 0 0 0 0.898039216   0 0 0 0 0.898039216  0 0 0 1 0"
-        />
-      </filter>
-      <rect id="bg_frame_dataset-s" width={136} height={10} x={0} y={0} />
-      <filter
-        id="bg_frame_dataset-t"
-        width="100.7%"
-        height="110%"
-        x="-.4%"
-        y="-5%"
-        filterUnits="objectBoundingBox"
-      >
-        <feOffset dy={-1} in="SourceAlpha" result="shadowOffsetInner1" />
-        <feComposite
-          in="shadowOffsetInner1"
-          in2="SourceAlpha"
-          k2={-1}
-          k3={1}
-          operator="arithmetic"
-          result="shadowInnerInner1"
-        />
-        <feColorMatrix
-          in="shadowInnerInner1"
-          values="0 0 0 0 0.898039216   0 0 0 0 0.898039216   0 0 0 0 0.898039216  0 0 0 1 0"
-        />
-      </filter>
-      <rect id="bg_frame_dataset-u" width={136} height={10} x={0} y={0} />
-      <filter
-        id="bg_frame_dataset-v"
-        width="100.7%"
-        height="110%"
-        x="-.4%"
-        y="-5%"
-        filterUnits="objectBoundingBox"
-      >
-        <feOffset dy={-1} in="SourceAlpha" result="shadowOffsetInner1" />
-        <feComposite
-          in="shadowOffsetInner1"
-          in2="SourceAlpha"
-          k2={-1}
-          k3={1}
-          operator="arithmetic"
-          result="shadowInnerInner1"
-        />
-        <feColorMatrix
-          in="shadowInnerInner1"
-          values="0 0 0 0 0.898039216   0 0 0 0 0.898039216   0 0 0 0 0.898039216  0 0 0 1 0"
-        />
-      </filter>
-      <rect id="bg_frame_dataset-w" width={136} height={10} x={0} y={0} />
-      <filter
-        id="bg_frame_dataset-x"
-        width="100.7%"
-        height="110%"
-        x="-.4%"
-        y="-5%"
-        filterUnits="objectBoundingBox"
-      >
-        <feOffset dy={-1} in="SourceAlpha" result="shadowOffsetInner1" />
-        <feComposite
-          in="shadowOffsetInner1"
-          in2="SourceAlpha"
-          k2={-1}
-          k3={1}
-          operator="arithmetic"
-          result="shadowInnerInner1"
-        />
-        <feColorMatrix
-          in="shadowInnerInner1"
-          values="0 0 0 0 0.898039216   0 0 0 0 0.898039216   0 0 0 0 0.898039216  0 0 0 1 0"
-        />
-      </filter>
-      <rect id="bg_frame_dataset-y" width={286} height={20} x={0} y={0} />
-      <filter
-        id="bg_frame_dataset-z"
-        width="100.7%"
-        height="110%"
-        x="-.3%"
-        y="-5%"
-        filterUnits="objectBoundingBox"
-      >
-        <feOffset dy={-2} in="SourceAlpha" result="shadowOffsetInner1" />
-        <feComposite
-          in="shadowOffsetInner1"
-          in2="SourceAlpha"
-          k2={-1}
-          k3={1}
-          operator="arithmetic"
-          result="shadowInnerInner1"
-        />
-        <feColorMatrix
-          in="shadowInnerInner1"
-          values="0 0 0 0 0.862745098   0 0 0 0 0   0 0 0 0 0.0941176471  0 0 0 1 0"
-        />
-      </filter>
-    </defs>
-    <g fill="none" fillRule="evenodd">
-      <rect
-        width={287}
-        height={199}
-        x={0.5}
-        y={0.5}
-        fill="#F5F5F5"
-        stroke="#C9CCCF"
-        rx={2}
-      />
-      <g transform="translate(1 33)">
-        <use
-          fill="#000"
-          filter="url(#bg_frame_dataset-a)"
-          xlinkHref="#bg_frame_dataset-b"
-        />
-        <use fill="#FFF" xlinkHref="#bg_frame_dataset-b" />
-        <g transform="translate(0 144)">
-          <use fill="#FFF" xlinkHref="#bg_frame_dataset-c" />
-          <use
-            fill="#000"
-            filter="url(#bg_frame_dataset-d)"
-            xlinkHref="#bg_frame_dataset-c"
+  <svg
+    width="100%"
+    viewBox="0 0 416 266"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ aspectRatio: "416 / 266" }}
+  >
+    <g clip-path="url(#clip0_6751_159831)" filter="url(#filter0_i_6751_159831)">
+      <rect width="416" height="265.778" fill="white" />
+      <g clip-path="url(#clip1_6751_159831)">
+        <g filter="url(#filter1_d_6751_159831)">
+          <rect
+            x="124.223"
+            y="113.248"
+            width="269.822"
+            height="53.1556"
+            rx="2.88889"
+            fill="white"
           />
-          <g fill="#333" transform="translate(5 6)">
-            <path
-              d="M52.5,13 C53.3284271,13 54,13.6715729 54,14.5 C54,15.3284271 53.3284271,16 52.5,16 L1.5,16 C0.671572875,16 1.01453063e-16,15.3284271 0,14.5 C-1.01453063e-16,13.6715729 0.671572875,13 1.5,13 L52.5,13 Z M46.5,7 C47.3284271,7 48,7.67157288 48,8.5 C48,9.32842712 47.3284271,10 46.5,10 L1.5,10 C0.671572875,10 1.01453063e-16,9.32842712 0,8.5 C-1.01453063e-16,7.67157288 0.671572875,7 1.5,7 L46.5,7 Z"
-              opacity={0.1}
-            />
-            <rect width={54} height={3} opacity={0.2} rx={1.5} />
-          </g>
         </g>
-        <g transform="translate(0 117)">
-          <use fill="#FFF" xlinkHref="#bg_frame_dataset-e" />
-          <use
-            fill="#000"
-            filter="url(#bg_frame_dataset-f)"
-            xlinkHref="#bg_frame_dataset-e"
-          />
-          <g fill="#333" transform="translate(5 6)">
-            <path
-              d="M52.5,13 C53.3284271,13 54,13.6715729 54,14.5 C54,15.3284271 53.3284271,16 52.5,16 L1.5,16 C0.671572875,16 1.01453063e-16,15.3284271 0,14.5 C-1.01453063e-16,13.6715729 0.671572875,13 1.5,13 L52.5,13 Z M46.5,7 C47.3284271,7 48,7.67157288 48,8.5 C48,9.32842712 47.3284271,10 46.5,10 L1.5,10 C0.671572875,10 1.01453063e-16,9.32842712 0,8.5 C-1.01453063e-16,7.67157288 0.671572875,7 1.5,7 L46.5,7 Z"
-              opacity={0.1}
-            />
-            <rect width={54} height={3} opacity={0.2} rx={1.5} />
-          </g>
-        </g>
-        <g transform="translate(0 90)">
-          <use fill="#FFF" xlinkHref="#bg_frame_dataset-g" />
-          <use
-            fill="#000"
-            filter="url(#bg_frame_dataset-h)"
-            xlinkHref="#bg_frame_dataset-g"
-          />
-          <g fill="#333" transform="translate(5 6)">
-            <path
-              d="M52.5,13 C53.3284271,13 54,13.6715729 54,14.5 C54,15.3284271 53.3284271,16 52.5,16 L1.5,16 C0.671572875,16 1.01453063e-16,15.3284271 0,14.5 C-1.01453063e-16,13.6715729 0.671572875,13 1.5,13 L52.5,13 Z M46.5,7 C47.3284271,7 48,7.67157288 48,8.5 C48,9.32842712 47.3284271,10 46.5,10 L1.5,10 C0.671572875,10 1.01453063e-16,9.32842712 0,8.5 C-1.01453063e-16,7.67157288 0.671572875,7 1.5,7 L46.5,7 Z"
-              opacity={0.1}
-            />
-            <rect width={54} height={3} opacity={0.2} rx={1.5} />
-          </g>
-        </g>
-        <g transform="translate(0 64)">
-          <rect width={64} height={26} fill="#FFF" />
-          <g fill="#333" transform="translate(5 5)">
-            <path
-              d="M52.5,13 C53.3284271,13 54,13.6715729 54,14.5 C54,15.3284271 53.3284271,16 52.5,16 L1.5,16 C0.671572875,16 1.01453063e-16,15.3284271 0,14.5 C-1.01453063e-16,13.6715729 0.671572875,13 1.5,13 L52.5,13 Z M46.5,7 C47.3284271,7 48,7.67157288 48,8.5 C48,9.32842712 47.3284271,10 46.5,10 L1.5,10 C0.671572875,10 1.01453063e-16,9.32842712 0,8.5 C-1.01453063e-16,7.67157288 0.671572875,7 1.5,7 L46.5,7 Z"
-              opacity={0.1}
-            />
-            <rect width={54} height={3} opacity={0.2} rx={1.5} />
-          </g>
-        </g>
-        <g transform="translate(0 38)">
-          <use fill="#069" fillOpacity={0.1} xlinkHref="#bg_frame_dataset-i" />
-          <use
-            fill="#000"
-            filter="url(#bg_frame_dataset-j)"
-            xlinkHref="#bg_frame_dataset-i"
-          />
-          <rect width={2} height={26} fill="#069" />
-          <g fill="#069" transform="translate(5 5)">
-            <path
-              d="M52.5,13 C53.3284271,13 54,13.6715729 54,14.5 C54,15.3284271 53.3284271,16 52.5,16 L1.5,16 C0.671572875,16 1.01453063e-16,15.3284271 0,14.5 C-1.01453063e-16,13.6715729 0.671572875,13 1.5,13 L52.5,13 Z M46.5,7 C47.3284271,7 48,7.67157288 48,8.5 C48,9.32842712 47.3284271,10 46.5,10 L1.5,10 C0.671572875,10 1.01453063e-16,9.32842712 0,8.5 C-1.01453063e-16,7.67157288 0.671572875,7 1.5,7 L46.5,7 Z"
-              opacity={0.2}
-            />
-            <rect width={54} height={3} rx={1.5} />
-          </g>
-        </g>
-        <g transform="translate(0 12)">
-          <rect width={64} height={26} fill="#FFF" />
-          <g fill="#333" transform="translate(5 5)">
-            <path
-              d="M52.5,13 C53.3284271,13 54,13.6715729 54,14.5 C54,15.3284271 53.3284271,16 52.5,16 L1.5,16 C0.671572875,16 1.01453063e-16,15.3284271 0,14.5 C-1.01453063e-16,13.6715729 0.671572875,13 1.5,13 L52.5,13 Z M46.5,7 C47.3284271,7 48,7.67157288 48,8.5 C48,9.32842712 47.3284271,10 46.5,10 L1.5,10 C0.671572875,10 1.01453063e-16,9.32842712 0,8.5 C-1.01453063e-16,7.67157288 0.671572875,7 1.5,7 L46.5,7 Z"
-              opacity={0.1}
-            />
-            <rect width={53} height={3} opacity={0.2} rx={1.5} />
-          </g>
-        </g>
-        <use fill="#FFF" xlinkHref="#bg_frame_dataset-k" />
-        <use
-          fill="#000"
-          filter="url(#bg_frame_dataset-l)"
-          xlinkHref="#bg_frame_dataset-k"
+        <rect
+          x="132.6"
+          y="125.092"
+          width="134.333"
+          height="6.93333"
+          rx="0.577778"
+          fill="#ACB4BD"
         />
         <rect
-          width={24}
-          height={3}
-          x={5}
-          y={4}
-          fill="#333"
-          opacity={0.2}
-          rx={1.5}
+          x="132.6"
+          y="134.336"
+          width="253.644"
+          height="5.77778"
+          rx="0.577778"
+          fill="#DFE4E9"
         />
-      </g>
-      <g transform="translate(70 38)">
         <rect
-          width={147}
-          height={107}
-          x={0.5}
-          y={0.5}
-          fill="#FFF"
-          stroke="#E5E5E5"
+          x="132.6"
+          y="141.27"
+          width="142.133"
+          height="5.77778"
+          rx="0.577778"
+          fill="#DFE4E9"
         />
-        <g transform="translate(6 35)">
-          <g transform="translate(0 50)">
-            <use fill="#FFF" xlinkHref="#bg_frame_dataset-m" />
-            <use
-              fill="#000"
-              filter="url(#bg_frame_dataset-n)"
-              xlinkHref="#bg_frame_dataset-m"
-            />
-            <rect
-              width={32}
-              height={3}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-            <rect
-              width={32}
-              height={3}
-              x={52}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-            <rect
-              width={32}
-              height={3}
-              x={104}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-          </g>
-          <g transform="translate(0 40)">
-            <use fill="#FFF" xlinkHref="#bg_frame_dataset-o" />
-            <use
-              fill="#000"
-              filter="url(#bg_frame_dataset-p)"
-              xlinkHref="#bg_frame_dataset-o"
-            />
-            <rect
-              width={32}
-              height={3}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-            <rect
-              width={32}
-              height={3}
-              x={52}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-            <rect
-              width={32}
-              height={3}
-              x={104}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-          </g>
-          <g transform="translate(0 30)">
-            <use fill="#FFF" xlinkHref="#bg_frame_dataset-q" />
-            <use
-              fill="#000"
-              filter="url(#bg_frame_dataset-r)"
-              xlinkHref="#bg_frame_dataset-q"
-            />
-            <rect
-              width={32}
-              height={3}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-            <rect
-              width={32}
-              height={3}
-              x={52}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-            <rect
-              width={32}
-              height={3}
-              x={104}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-          </g>
-          <g transform="translate(0 20)">
-            <use fill="#FFF" xlinkHref="#bg_frame_dataset-s" />
-            <use
-              fill="#000"
-              filter="url(#bg_frame_dataset-t)"
-              xlinkHref="#bg_frame_dataset-s"
-            />
-            <rect
-              width={32}
-              height={3}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-            <rect
-              width={32}
-              height={3}
-              x={52}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-            <rect
-              width={32}
-              height={3}
-              x={104}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-          </g>
-          <g transform="translate(0 10)">
-            <use fill="#FFF" xlinkHref="#bg_frame_dataset-u" />
-            <use
-              fill="#000"
-              filter="url(#bg_frame_dataset-v)"
-              xlinkHref="#bg_frame_dataset-u"
-            />
-            <rect
-              width={32}
-              height={3}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-            <rect
-              width={32}
-              height={3}
-              x={52}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-            <rect
-              width={32}
-              height={3}
-              x={104}
-              y={3}
-              fill="#333"
-              opacity={0.1}
-              rx={1.5}
-            />
-          </g>
-          <use fill="#FFF" xlinkHref="#bg_frame_dataset-w" />
-          <use
-            fill="#000"
-            filter="url(#bg_frame_dataset-x)"
-            xlinkHref="#bg_frame_dataset-w"
-          />
+        <g filter="url(#filter2_d_6751_159831)">
           <rect
-            width={32}
-            height={3}
-            y={3}
-            fill="#333"
-            opacity={0.4}
-            rx={1.5}
-          />
-          <rect
-            width={32}
-            height={3}
-            x={52}
-            y={3}
-            fill="#333"
-            opacity={0.4}
-            rx={1.5}
-          />
-          <rect
-            width={32}
-            height={3}
-            x={104}
-            y={3}
-            fill="#333"
-            opacity={0.4}
-            rx={1.5}
+            x="124.223"
+            y="226.492"
+            width="269.822"
+            height="53.1556"
+            rx="2.88889"
+            fill="white"
           />
         </g>
-        <path
-          fill="#333"
-          d="M69.5,99 C70.3284271,99 71,99.6715729 71,100.5 C71,101.328427 70.3284271,102 69.5,102 C68.6715729,102 68,101.328427 68,100.5 C68,99.6715729 68.6715729,99 69.5,99 Z M74.5,99 C75.3284271,99 76,99.6715729 76,100.5 C76,101.328427 75.3284271,102 74.5,102 C73.6715729,102 73,101.328427 73,100.5 C73,99.6715729 73.6715729,99 74.5,99 Z M79.5,99 C80.3284271,99 81,99.6715729 81,100.5 C81,101.328427 80.3284271,102 79.5,102 C78.6715729,102 78,101.328427 78,100.5 C78,99.6715729 78.6715729,99 79.5,99 Z"
-          opacity={0.2}
+        <rect
+          x="132.6"
+          y="185.471"
+          width="253.933"
+          height="6.93333"
+          rx="0.577778"
+          fill="#828E9A"
         />
-        <g fill="#333" transform="translate(6 9)">
-          <path
-            d="M92.5,13 C93.3284271,13 94,13.6715729 94,14.5 C94,15.3284271 93.3284271,16 92.5,16 L1.5,16 C0.671572875,16 1.01453063e-16,15.3284271 0,14.5 C-5.45542273e-16,13.6715729 0.671572875,13 1.5,13 L92.5,13 Z M76.5,7 C77.3284271,7 78,7.67157288 78,8.5 C78,9.32842712 77.3284271,10 76.5,10 L1.5,10 C0.671572875,10 1.01453063e-16,9.32842712 0,8.5 C-1.01453063e-16,7.67157288 0.671572875,7 1.5,7 L76.5,7 Z"
-            opacity={0.2}
+        <rect
+          x="132.6"
+          y="194.715"
+          width="170.444"
+          height="5.77778"
+          rx="0.577778"
+          fill="#ACB4BD"
+        />
+        <rect
+          x="132.6"
+          y="201.648"
+          width="142.133"
+          height="5.77778"
+          rx="0.577778"
+          fill="#ACB4BD"
+        />
+        <g filter="url(#filter3_d_6751_159831)">
+          <rect
+            x="124.223"
+            y="169.871"
+            width="269.822"
+            height="53.1556"
+            rx="2.88889"
+            fill="white"
           />
-          <rect width={94} height={3} opacity={0.8} rx={1.5} />
         </g>
-      </g>
-      <g transform="translate(1 13)">
-        <use fill="#FFF" xlinkHref="#bg_frame_dataset-y" />
-        <use
-          fill="#000"
-          filter="url(#bg_frame_dataset-z)"
-          xlinkHref="#bg_frame_dataset-y"
+        <rect
+          x="132.6"
+          y="181.426"
+          width="134.333"
+          height="6.93333"
+          rx="0.577778"
+          fill="#ACB4BD"
+        />
+        <rect
+          x="132.6"
+          y="190.67"
+          width="253.644"
+          height="5.77778"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="132.6"
+          y="197.604"
+          width="142.133"
+          height="5.77778"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="132.6"
+          y="238.049"
+          width="134.333"
+          height="6.93333"
+          rx="0.577778"
+          fill="#ACB4BD"
+        />
+        <rect
+          x="132.6"
+          y="247.293"
+          width="253.644"
+          height="5.77778"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="132.6"
+          y="254.227"
+          width="142.133"
+          height="5.77778"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="124.223"
+          y="104.293"
+          width="28.3111"
+          height="5.77778"
+          rx="0.577778"
+          fill="#ACB4BD"
+        />
+        <rect
+          x="360.822"
+          y="104.293"
+          width="33.2222"
+          height="5.77778"
+          rx="0.577778"
+          fill="#ACB4BD"
+        />
+        <g clip-path="url(#clip2_6751_159831)">
+          <rect
+            x="124.367"
+            y="88.2616"
+            width="5.48889"
+            height="5.48889"
+            rx="0.722222"
+            fill="white"
+            stroke="#ACB4BD"
+            stroke-width="0.288889"
+          />
+          <rect
+            x="132.312"
+            y="88.1172"
+            width="45.0667"
+            height="5.77778"
+            rx="0.577778"
+            fill="#ACB4BD"
+          />
+        </g>
+        <rect
+          x="124.223"
+          y="71.3594"
+          width="269.822"
+          height="14.1556"
+          rx="1.15556"
+          fill="white"
+          stroke="#ACB4BD"
+          stroke-width="0.288889"
+        />
+        <rect
+          x="124.223"
+          y="50.8477"
+          width="172.467"
+          height="11.8444"
+          rx="0.577778"
+          fill="#828E9A"
+        />
+        <rect
+          x="11.8438"
+          y="68.7637"
+          width="68.1778"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="68.7637"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="78.0059"
+          width="60.6667"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="78.0059"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="87.2539"
+          width="68.1778"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="87.2539"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="96.4961"
+          width="60.6667"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="96.4961"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="105.738"
+          width="68.1778"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="105.738"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="114.986"
+          width="60.6667"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="114.986"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="124.229"
+          width="68.1778"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="124.229"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="133.475"
+          width="60.6667"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="133.475"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="142.717"
+          width="68.1778"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="142.717"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="151.961"
+          width="60.6667"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="151.961"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="6.93359"
+          y="50.8496"
+          width="96.4889"
+          height="13.8667"
+          rx="1.44444"
+          fill="#DBEAFE"
+        />
+        <rect
+          x="11.8438"
+          y="188.186"
+          width="68.1778"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="188.186"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="197.428"
+          width="60.6667"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="197.428"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="206.672"
+          width="68.1778"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="206.672"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="215.918"
+          width="60.6667"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="215.918"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="225.16"
+          width="68.1778"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="225.16"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="234.408"
+          width="60.6667"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="234.408"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="243.65"
+          width="68.1778"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="243.65"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="252.896"
+          width="60.6667"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="252.896"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="11.8438"
+          y="262.139"
+          width="68.1778"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="95.043"
+          y="262.139"
+          width="6.35556"
+          height="6.35556"
+          rx="0.577778"
+          fill="#DFE4E9"
+        />
+        <rect
+          x="6.93359"
+          y="170.271"
+          width="96.4889"
+          height="13.8667"
+          rx="1.44444"
+          fill="#D1FAE5"
         />
       </g>
-      <g transform="translate(1 1)">
-        <polygon fill="#C9CCCF" points="0 0 286 0 286 12 0 12" />
+      <g
+        clip-path="url(#clip3_6751_159831)"
+        filter="url(#filter4_i_6751_159831)"
+      >
+        <rect y="11.5586" width="416" height="27.7333" fill="white" />
+        <g clip-path="url(#clip4_6751_159831)">
+          <rect y="11.5586" width="416" height="27.7333" fill="white" />
+        </g>
         <path
-          fill="#91999F"
-          d="M5.5,4 C6.32842712,4 7,4.67157288 7,5.5 C7,6.32842712 6.32842712,7 5.5,7 C4.67157288,7 4,6.32842712 4,5.5 C4,4.67157288 4.67157288,4 5.5,4 Z M10.5,4 C11.3284271,4 12,4.67157288 12,5.5 C12,6.32842712 11.3284271,7 10.5,7 C9.67157288,7 9,6.32842712 9,5.5 C9,4.67157288 9.67157288,4 10.5,4 Z M15.5,4 C16.3284271,4 17,4.67157288 17,5.5 C17,6.32842712 16.3284271,7 15.5,7 C14.6715729,7 14,6.32842712 14,5.5 C14,4.67157288 14.6715729,4 15.5,4 Z"
+          d="M15.5853 20.6593C15.5853 20.6593 13.9707 19.9355 11.2676 19.9355H11.2667C8.56334 19.9355 6.94846 20.6593 6.94846 20.6593C6.94846 20.6593 6.80384 23.8642 7.41669 25.6764C8.4992 28.8628 11.2662 29.7578 11.2662 29.7578H11.267H11.2679C11.2679 29.7578 14.0343 28.8628 15.1174 25.6764C15.7302 23.8642 15.5853 20.6593 15.5853 20.6593Z"
+          fill="#D8232A"
+        />
+        <path
+          d="M14.1567 23.4027V25.1362H12.1345V27.1586H10.4011V25.1362H8.37891V23.4027H10.4011V21.3809H12.1342L12.1345 23.4027H14.1567Z"
+          fill="white"
         />
       </g>
-      <rect width={287} height={199} x={0.5} y={0.5} stroke="#C9CCCF" rx={2} />
+      <rect y="0.00390625" width="416" height="11.5556" fill="#2F4356" />
+      <circle cx="8.95582" cy="5.78199" r="2.02222" fill="#D8232A" />
+      <circle cx="15.3113" cy="5.78199" r="2.02222" fill="#F7B500" />
+      <circle cx="21.6668" cy="5.78199" r="2.02222" fill="#6DD400" />
     </g>
+    <defs>
+      <filter
+        id="filter0_i_6751_159831"
+        x="0"
+        y="0"
+        width="416"
+        height="265.777"
+        filterUnits="userSpaceOnUse"
+        color-interpolation-filters="sRGB"
+      >
+        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feBlend
+          mode="normal"
+          in="SourceGraphic"
+          in2="BackgroundImageFix"
+          result="shape"
+        />
+        <feColorMatrix
+          in="SourceAlpha"
+          type="matrix"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+          result="hardAlpha"
+        />
+        <feOffset dy="-1" />
+        <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
+        <feColorMatrix
+          type="matrix"
+          values="0 0 0 0 0.87451 0 0 0 0 0.894118 0 0 0 0 0.913725 0 0 0 1 0"
+        />
+        <feBlend
+          mode="normal"
+          in2="shape"
+          result="effect1_innerShadow_6751_159831"
+        />
+      </filter>
+      <filter
+        id="filter1_d_6751_159831"
+        x="121.912"
+        y="110.937"
+        width="274.444"
+        height="57.7785"
+        filterUnits="userSpaceOnUse"
+        color-interpolation-filters="sRGB"
+      >
+        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feColorMatrix
+          in="SourceAlpha"
+          type="matrix"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+          result="hardAlpha"
+        />
+        <feOffset />
+        <feGaussianBlur stdDeviation="1.15556" />
+        <feColorMatrix
+          type="matrix"
+          values="0 0 0 0 0.835294 0 0 0 0 0.835294 0 0 0 0 0.835294 0 0 0 1 0"
+        />
+        <feBlend
+          mode="normal"
+          in2="BackgroundImageFix"
+          result="effect1_dropShadow_6751_159831"
+        />
+        <feBlend
+          mode="normal"
+          in="SourceGraphic"
+          in2="effect1_dropShadow_6751_159831"
+          result="shape"
+        />
+      </filter>
+      <filter
+        id="filter2_d_6751_159831"
+        x="121.912"
+        y="224.181"
+        width="274.444"
+        height="57.7785"
+        filterUnits="userSpaceOnUse"
+        color-interpolation-filters="sRGB"
+      >
+        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feColorMatrix
+          in="SourceAlpha"
+          type="matrix"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+          result="hardAlpha"
+        />
+        <feOffset />
+        <feGaussianBlur stdDeviation="1.15556" />
+        <feColorMatrix
+          type="matrix"
+          values="0 0 0 0 0.835294 0 0 0 0 0.835294 0 0 0 0 0.835294 0 0 0 1 0"
+        />
+        <feBlend
+          mode="normal"
+          in2="BackgroundImageFix"
+          result="effect1_dropShadow_6751_159831"
+        />
+        <feBlend
+          mode="normal"
+          in="SourceGraphic"
+          in2="effect1_dropShadow_6751_159831"
+          result="shape"
+        />
+      </filter>
+      <filter
+        id="filter3_d_6751_159831"
+        x="121.912"
+        y="167.56"
+        width="274.444"
+        height="57.7785"
+        filterUnits="userSpaceOnUse"
+        color-interpolation-filters="sRGB"
+      >
+        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feColorMatrix
+          in="SourceAlpha"
+          type="matrix"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+          result="hardAlpha"
+        />
+        <feOffset />
+        <feGaussianBlur stdDeviation="1.15556" />
+        <feColorMatrix
+          type="matrix"
+          values="0 0 0 0 0.835294 0 0 0 0 0.835294 0 0 0 0 0.835294 0 0 0 1 0"
+        />
+        <feBlend
+          mode="normal"
+          in2="BackgroundImageFix"
+          result="effect1_dropShadow_6751_159831"
+        />
+        <feBlend
+          mode="normal"
+          in="SourceGraphic"
+          in2="effect1_dropShadow_6751_159831"
+          result="shape"
+        />
+      </filter>
+      <filter
+        id="filter4_i_6751_159831"
+        x="0"
+        y="11.5586"
+        width="416"
+        height="27.7324"
+        filterUnits="userSpaceOnUse"
+        color-interpolation-filters="sRGB"
+      >
+        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feBlend
+          mode="normal"
+          in="SourceGraphic"
+          in2="BackgroundImageFix"
+          result="shape"
+        />
+        <feColorMatrix
+          in="SourceAlpha"
+          type="matrix"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+          result="hardAlpha"
+        />
+        <feOffset dy="-1" />
+        <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
+        <feColorMatrix
+          type="matrix"
+          values="0 0 0 0 0.87451 0 0 0 0 0.894118 0 0 0 0 0.913725 0 0 0 1 0"
+        />
+        <feBlend
+          mode="normal"
+          in2="shape"
+          result="effect1_innerShadow_6751_159831"
+        />
+      </filter>
+      <clipPath id="clip0_6751_159831">
+        <rect width="416" height="265.778" fill="white" />
+      </clipPath>
+      <clipPath id="clip1_6751_159831">
+        <rect
+          width="387.111"
+          height="248.444"
+          fill="white"
+          transform="translate(6.93359 50.8477)"
+        />
+      </clipPath>
+      <clipPath id="clip2_6751_159831">
+        <rect
+          width="53.1556"
+          height="5.77778"
+          fill="white"
+          transform="translate(124.223 88.1152)"
+        />
+      </clipPath>
+      <clipPath id="clip3_6751_159831">
+        <rect
+          width="416"
+          height="27.7333"
+          fill="white"
+          transform="translate(0 11.5586)"
+        />
+      </clipPath>
+      <clipPath id="clip4_6751_159831">
+        <rect
+          width="416"
+          height="27.7333"
+          fill="white"
+          transform="translate(0 11.5586)"
+        />
+      </clipPath>
+    </defs>
   </svg>
 );
