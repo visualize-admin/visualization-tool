@@ -2,10 +2,20 @@ import { c as colors } from "@interactivethings/swiss-federal-ci";
 import { type ThemeOptions } from "@mui/material";
 
 export const palette = {
-  cobalt: colors.cobalt,
-  monochrome: colors.monochrome,
-  red: colors.red,
+  cobalt: {
+    main: colors.cobalt[400],
+    ...colors.cobalt,
+  },
+  monochrome: {
+    main: colors.monochrome[400],
+    ...colors.monochrome,
+  },
+  red: {
+    main: colors.red[400],
+    ...colors.red,
+  },
   green: {
+    main: "#34D399",
     50: "#ECFDF5",
     100: "#D1FAE5",
     200: "#A7F3D0",
@@ -18,6 +28,7 @@ export const palette = {
     900: "#064E3B",
   },
   blue: {
+    main: "#60A5FA",
     50: "#EFF6FF",
     100: "#DBEAFE",
     200: "#BFDBFE",

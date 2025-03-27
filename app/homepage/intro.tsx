@@ -1,9 +1,8 @@
 import { ContentWrapper } from "@interactivethings/swiss-federal-ci/dist/components";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { ReactNode } from "react";
 
-import { FederalButton } from "@/components/federal/federal-button";
 import { Icon } from "@/icons";
 
 export const Intro = ({
@@ -22,13 +21,9 @@ export const Intro = ({
           <Title>{title}</Title>
           <Teaser>{teaser}</Teaser>
           <NextLink href="/browse" passHref legacyBehavior>
-            <FederalButton
-              variant="outlined"
-              color="cobalt"
-              endIcon={<Icon name="arrowRight" />}
-            >
+            <Button variant="outlined" endIcon={<Icon name="arrowRight" />}>
               {buttonLabel}
-            </FederalButton>
+            </Button>
           </NextLink>
         </div>
       </ContentWrapper>
