@@ -28,66 +28,48 @@ export const contentId = "home";
   example2Headline="Use powerful customizations"
   example2Description="With the help of custom filters and data segmentation, even complex issues can be visualized."
 />
-<Section>
-  <Contribute
-    headline="Would you like to visualize your own data?"
-    description="Find out how you can integrate your data into the LINDAS Linked Data Service."
-    buttonLabel="Learn how"
-    buttonUrl="https://lindas.admin.ch/?lang=en"
-  />
-  <Divider
-    orientation="vertical"
-    flexItem
-    sx={{ display: ["hidden", "box"] }}
-  />
-  <Newsletter
-    headline="Subscribe to our Newsletter"
-    description="Stay up to date and subscribe to our newsletter."
-    buttonLabel="Subscribe"
-    buttonUrl={createMailtoLink("en", {
-      recipients: {
-        to: OWNER_ORGANIZATION_EMAIL,
-        bcc: SUPPORT_EMAIL,
-      },
-      template: newsletterTemplates,
-      subject: "Visualize Newsletter Subscribe",
-    })}
-  />
-</Section>
-<Section
-  sx={{
-    color: "grey.800",
-  }}
->
-  <BugReport
-    headline="Found a bug?"
-    description="Please report the bug, so can fix it as soon as possible"
-    buttonLabel="Report a bug"
-    buttonUrl={createMailtoLink("en", {
-      recipients: {
-        to: OWNER_ORGANIZATION_EMAIL,
-        bcc: SUPPORT_EMAIL,
-      },
-      template: bugReportTemplates,
-      subject: "Visualize Bug Report",
-    })}
-  />
-  <Divider
-    orientation="vertical"
-    flexItem
-    sx={{ display: ["hidden", "box"], color: "grey.500" }}
-  />
-  <FeatureRequest
-    headline="New feature request"
-    description="Submit your feature requests today and help shape the future of our platform!"
-    buttonLabel="Submit"
-    buttonUrl={createMailtoLink("en", {
-      recipients: {
-        to: OWNER_ORGANIZATION_EMAIL,
-        bcc: SUPPORT_EMAIL,
-      },
-      template: featureRequestTemplates,
-      subject: "Visualize Feature Request",
-    })}
-  />
-</Section>
+<Contribute
+  headline="Would you like to visualize your own data?"
+  description="Find out how you can integrate your data into the LINDAS Linked Data Service."
+  buttonLabel="Learn how"
+  buttonUrl="https://lindas.admin.ch/?lang=en"
+/>
+<Newsletter
+  headline="Subscribe to our Newsletter"
+  description="Stay up to date and subscribe to our newsletter."
+  buttonLabel="Subscribe"
+  buttonUrl={createMailtoLink("en", {
+    recipients: {
+      to: OWNER_ORGANIZATION_EMAIL,
+      bcc: SUPPORT_EMAIL,
+    },
+    template: newsletterTemplates,
+    subject: "Visualize Newsletter Subscribe",
+  })}
+/>
+<BugReport
+  headline="Found a bug?"
+  description="Please report the bug, so can fix it as soon as possible"
+  buttonLabel="Report a bug"
+  buttonUrl={createMailtoLink("en", {
+    recipients: {
+      to: OWNER_ORGANIZATION_EMAIL,
+      bcc: SUPPORT_EMAIL,
+    },
+    template: bugReportTemplates,
+    subject: "Visualize Bug Report",
+  })}
+/>
+<FeatureRequest
+  headline="New feature request"
+  description="Submit your feature requests today and help shape the future of our platform!"
+  buttonLabel="Submit"
+  buttonUrl={createMailtoLink("en", {
+    recipients: {
+      to: OWNER_ORGANIZATION_EMAIL,
+      bcc: SUPPORT_EMAIL,
+    },
+    template: featureRequestTemplates,
+    subject: "Visualize Feature Request",
+  })}
+/>

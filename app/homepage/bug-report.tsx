@@ -1,4 +1,4 @@
-import { Button, Link, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 
 import Flex from "@/components/flex";
 
@@ -50,18 +50,7 @@ export const BugReport = ({
           borderBottom: ["1px solid #e5e5e5", "none"],
         }}
       >
-        <Button
-          component={Link}
-          href={buttonUrl}
-          target="_blank"
-          variant="contained"
-          rel="noopener noreferrer"
-          color="primary"
-          sx={{
-            textDecoration: "none",
-            textAlign: "center",
-          }}
-        >
+        <Button href={buttonUrl} target="_blank" rel="noopener noreferrer">
           {buttonLabel}
         </Button>
       </Flex>
