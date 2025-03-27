@@ -13,6 +13,8 @@ You can also check the
 
 - Styles
   - Migrated header and footer to the new CI / CD
+- Maintenance
+  - Updated Next.js
 
 # [5.5.0] - 2025-03-24
 
