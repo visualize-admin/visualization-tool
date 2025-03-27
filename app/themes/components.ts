@@ -81,10 +81,10 @@ export const components: Components = {
               };
             case "text":
               return {
-                color: color[800],
+                color: color[700],
                 "&:hover": {
                   backgroundColor: "transparent",
-                  color: palette.red[600],
+                  color: color[900],
                 },
               };
             default:

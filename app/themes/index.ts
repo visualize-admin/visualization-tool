@@ -26,6 +26,7 @@ declare module "@mui/material/Button" {
 
     cobalt: true;
     monochrome: true;
+    blue: true;
     inherit: true;
   }
 
