@@ -241,7 +241,7 @@ const AccordionOperation = ({
           <Link
             fontSize="small"
             whiteSpace="break-spaces"
-            color="primary"
+            color="blue"
             href={`/api/graphql?query=${encodeURIComponent(
               print(operation.query)
             )}`}
@@ -255,7 +255,7 @@ const AccordionOperation = ({
           <span>
             <CopyLink
               fontSize="small"
-              color="primary"
+              color="blue"
               toCopy={JSON.stringify(operation.variables, null, 2)}
               onClick={(ev) => {
                 ev.stopPropagation();

@@ -63,7 +63,7 @@ export const Example = () => {
     <>
       <Stack gap="1rem" direction="row">
         <ToggleButtonGroup
-          color="primary"
+          color="blue"
           value={gridLayout}
           onChange={(ev) =>
             onChangeGridLayout(

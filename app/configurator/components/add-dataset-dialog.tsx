@@ -216,7 +216,7 @@ const CautionAlert = ({
       </Trans>
       <Box sx={{ mt: 1 }}>
         <Link
-          color="primary"
+          color="blue"
           onClick={(ev) => {
             ev.preventDefault();
             onConfirm();
@@ -866,7 +866,7 @@ export const DatasetDialog = ({
       <Box className={classes.dialogCloseArea}>
         {otherCube ? null : (
           <Grow in={!isOpen}>
-            <IconButton color="primary" onClick={() => open()}>
+            <IconButton color="blue" onClick={() => open()}>
               <SvgIcInfoCircle />
             </IconButton>
           </Grow>
@@ -989,7 +989,7 @@ export const DatasetDialog = ({
                 ))}
               </Select>
               <Button
-                color="primary"
+                color="blue"
                 type="submit"
                 variant="contained"
                 style={{ minWidth: "fit-content" }}

@@ -75,7 +75,7 @@ export const ProfileColorPaletteContent = ({ title }: ProfileContentProps) => {
             </Typography>
           )}
           <Button
-            color="primary"
+            color="blue"
             variant="contained"
             startIcon={<Icon name="plus" />}
             sx={{ width: "fit-content" }}
@@ -184,7 +184,7 @@ const ColorPaletteRow = ({
         <EditButton onClick={() => onEdit(paletteId)}>
           <Typography
             aria-hidden
-            color="primary"
+            color="blue"
             sx={{ backgroundColor: "transparent" }}
           >
             <VisuallyHidden>
@@ -206,7 +206,7 @@ const ColorPaletteRow = ({
           </VisuallyHidden>
           <Typography
             aria-hidden
-            color="primary"
+            color="blue"
             sx={{ backgroundColor: "transparent" }}
           >
             <Icon name="trash" size={24} />

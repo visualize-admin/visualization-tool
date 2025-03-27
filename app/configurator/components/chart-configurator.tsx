@@ -836,7 +836,7 @@ const AddFilterButton = ({ dims }: { dims: Dimension[] }) => {
         onClick={openMenu}
         variant="contained"
         className={classes.addDimensionButton}
-        color="primary"
+        color="blue"
       >
         <Icon name="plus" size={24} />
         <Trans>Add filter</Trans>

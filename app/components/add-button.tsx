@@ -7,7 +7,7 @@ export const AddButton = (props: ButtonProps) => {
 
   return (
     <Button
-      color="primary"
+      color="blue"
       variant="contained"
       startIcon={<Icon name="plus" />}
       sx={{

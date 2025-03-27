@@ -14,7 +14,7 @@ export const ChartLink = ({
     <Link
       href={`/${locale}/v/${chartKey}`}
       target="_blank"
-      color="primary"
+      color="blue"
       sx={{
         display: "flex",
         gap: 2,
@@ -52,7 +52,7 @@ export const CubeLink = ({
     <Link
       href={`/${locale}/browse?dataset=${iri}`}
       target="_blank"
-      color="primary"
+      color="blue"
       sx={{
         display: "flex",
         gap: 2,

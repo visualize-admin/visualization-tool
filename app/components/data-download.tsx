@@ -220,7 +220,7 @@ const DataDownloadInnerMenu = ({
     <>
       <Button
         variant="text"
-        color="primary"
+        color="blue"
         size="small"
         startIcon={
           state.isDownloading ? (

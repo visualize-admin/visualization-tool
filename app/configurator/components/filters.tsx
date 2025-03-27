@@ -408,7 +408,7 @@ const MultiFilterContent = ({
           <Button
             variant="contained"
             size="small"
-            color="primary"
+            color="blue"
             onClick={handleOpenAutocomplete}
             sx={{
               justifyContent: "center",

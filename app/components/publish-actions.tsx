@@ -117,7 +117,7 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
         <Button
           startIcon={<Icon name="embed" size={16} />}
           variant="contained"
-          color="primary"
+          color="blue"
           onClick={(e) => setAnchorEl(e.currentTarget)}
         >
           <Trans id="button.embed">Embed</Trans>
@@ -448,7 +448,7 @@ export const ShareContent = ({
         <Typography component="div" variant="body1" color="grey.700">
           <Trans id="publication.popup.share">Share</Trans>:
         </Typography>
-        <Flex color="primary">
+        <Flex color="blue">
           <IconLink
             iconName="facebook"
             title={i18n._(

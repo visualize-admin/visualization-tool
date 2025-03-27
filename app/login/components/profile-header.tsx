@@ -41,7 +41,7 @@ export const ProfileHeader = (props: { user: User }) => {
             component="a"
             href={ADFS_PROFILE_URL}
             variant="text"
-            color="primary"
+            color="blue"
             size="small"
             sx={{ marginRight: 2 }}
           >
@@ -51,7 +51,7 @@ export const ProfileHeader = (props: { user: User }) => {
         <Button
           className={classes.button}
           variant="text"
-          color="primary"
+          color="blue"
           size="small"
           onClick={async () => await signOut()}
         >

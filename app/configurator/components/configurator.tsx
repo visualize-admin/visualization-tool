@@ -114,7 +114,7 @@ export const BackButton = ({
   return (
     <Button
       variant="text"
-      color="primary"
+      color="blue"
       size="small"
       sx={{ fontWeight: "bold", ...sx }}
       startIcon={<SvgIcChevronLeft />}
@@ -206,7 +206,7 @@ const NextStepButton = (props: React.PropsWithChildren<{}>) => {
 
   return (
     <Button
-      color="primary"
+      color="blue"
       variant="contained"
       onClick={handleClick}
       sx={{ minWidth: "fit-content" }}

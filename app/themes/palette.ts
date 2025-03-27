@@ -7,19 +7,19 @@ export const palette = {
     main: "#FF86C8",
   },
   cobalt: {
-    main: colors.cobalt[400],
+    main: colors.cobalt[700],
     ...colors.cobalt,
   },
   monochrome: {
-    main: colors.monochrome[400],
+    main: colors.monochrome[700],
     ...colors.monochrome,
   },
   red: {
-    main: colors.red[400],
+    main: colors.red[700],
     ...colors.red,
   },
   green: {
-    main: "#34D399",
+    main: "#047857",
     50: "#ECFDF5",
     100: "#D1FAE5",
     200: "#A7F3D0",
@@ -32,7 +32,7 @@ export const palette = {
     900: "#064E3B",
   },
   blue: {
-    main: "#60A5FA",
+    main: "#1D4ED8",
     50: "#EFF6FF",
     100: "#DBEAFE",
     200: "#BFDBFE",

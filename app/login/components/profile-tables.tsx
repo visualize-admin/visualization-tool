@@ -150,7 +150,7 @@ export const ProfileVisualizationsTable = (
           {preview && (
             <Button
               variant="text"
-              color="primary"
+              color="blue"
               size="small"
               onClick={onShowAll}
               sx={{ ml: 1, mt: 2 }}
@@ -366,8 +366,8 @@ const ProfileVisualizationsRow = (props: {
           passHref
           legacyBehavior
         >
-          <Link color="primary">
-            <OverflowTooltip arrow title={chartTitle} color="primary">
+          <Link color="blue">
+            <OverflowTooltip arrow title={chartTitle} color="blue">
               <Typography
                 className={rootClasses.noTooltip}
                 variant="body2"
@@ -390,11 +390,11 @@ const ProfileVisualizationsRow = (props: {
             passHref
             legacyBehavior
           >
-            <Link color="primary">
+            <Link color="blue">
               <OverflowTooltip
                 arrow
                 title={data?.dataCubesMetadata[0]?.title ?? ""}
-                color="primary"
+                color="blue"
               >
                 <Typography
                   className={rootClasses.noTooltip}

@@ -54,7 +54,7 @@ export const BoldInlineButton = () => (
 export const PublishButton = () => (
   <Button
     variant="contained"
-    color="primary"
+    color="blue"
     size="small"
     endIcon={<SvgIcChevronRight />}
   >
@@ -63,7 +63,7 @@ export const PublishButton = () => (
 );
 
 export const LearnMoreButton = () => (
-  <Button color="primary" endIcon={<SvgIcChevronRight />}>
+  <Button color="blue" endIcon={<SvgIcChevronRight />}>
     Learn more
   </Button>
 );

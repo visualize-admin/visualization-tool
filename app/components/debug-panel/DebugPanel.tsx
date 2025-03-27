@@ -110,7 +110,7 @@ const DebugConfigurator = () => {
         <Stack key={cube.iri} spacing={2} sx={{ pl: 5, py: 3 }}>
           <Button
             component="a"
-            color="primary"
+            color="blue"
             variant="text"
             size="small"
             href={`https://cube-viewer.zazuko.com/?endpointUrl=${encodeURIComponent(
@@ -126,7 +126,7 @@ const DebugConfigurator = () => {
           </Button>
           <Button
             component="a"
-            color="primary"
+            color="blue"
             variant="text"
             size="small"
             href={`${sparqlEditorUrl}#query=${encodeURIComponent(
