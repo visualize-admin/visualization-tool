@@ -210,7 +210,7 @@ export const LegendColor = memo(function LegendColor({
             variant="caption"
             color="primary.main"
           >
-            {segmentComponent.label}
+            {segmentComponent?.label}
           </Typography>
         </OpenMetadataPanelWrapper>
       )}

@@ -140,6 +140,7 @@ You can also check the
   - Added color palettes to bar chart type
 - Maintenance
   - Added authentication method to e2e tests
+  - Added e2e tests for custom color palettes
   - Added authentication to Vercel previews for easier testing
 
 # [5.2.4] - 2025-02-06

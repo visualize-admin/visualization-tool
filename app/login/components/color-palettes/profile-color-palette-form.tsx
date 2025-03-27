@@ -237,6 +237,7 @@ const ProfileColorPaletteForm = ({
         <Box className={classes.saveButtonContainer}>
           <Button
             onClick={saveColorPalette}
+            data-testid="profile-save-color-palette"
             disabled={
               colorValues.length === 0 || titleInput === "" || noChanges
             }
@@ -302,12 +303,14 @@ const ColorPaletteTypeSelector = ({
               flexDirection={"column"}
               gap={2}
             >
-              <Radio
-                label={colorTypes[type]}
-                value={type}
-                checked={type === selectedType}
-                onChange={handleChange}
-              />
+              <Box data-testid={`profile-color-palette-${type}`}>
+                <Radio
+                  label={colorTypes[type]}
+                  value={type}
+                  checked={type === selectedType}
+                  onChange={handleChange}
+                />
+              </Box>
               <ColorPaletteExample type={type} />
             </Flex>
           );

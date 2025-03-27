@@ -82,6 +82,7 @@ export const ProfileColorPaletteContent = ({ title }: ProfileContentProps) => {
             startIcon={<Icon name="add" />}
             sx={{ width: "fit-content" }}
             onClick={showAddForm}
+            data-testid="add-profile-color-palette"
           >
             <Trans id="login.profile.my-color-palettes.add" />
           </Button>
@@ -153,6 +154,7 @@ const ColorPaletteRow = ({
 
   return (
     <ColorRowFlex
+      data-testid="profile-color-palette-row"
       sx={{
         paddingY: 3,
         paddingRight: 4,
@@ -161,7 +163,9 @@ const ColorPaletteRow = ({
       }}
     >
       <Box>
-        <Typography variant="caption">{name}</Typography>
+        <Typography data-testid="custom-color-palette-title" variant="caption">
+          {name}
+        </Typography>
         <Grid
           container
           spacing={0.5}
@@ -184,20 +188,21 @@ const ColorPaletteRow = ({
       </Box>
       <ColorRowFlex gap={3}>
         <EditButton onClick={() => onEdit(paletteId)}>
+          <VisuallyHidden>
+            <Trans id="login.profile.my-color-palettes.edit">
+              Edit Color Palette
+            </Trans>
+          </VisuallyHidden>
           <Typography
             aria-hidden
             color="primary"
             sx={{ backgroundColor: "transparent" }}
           >
-            <VisuallyHidden>
-              <Trans id="login.profile.my-color-palettes.edit">
-                Edit Color Palette
-              </Trans>
-            </VisuallyHidden>
             <Icon name="edit" size={24} />
           </Typography>
         </EditButton>
         <DeleteButton
+          data-testid="profile-delete-color-palette"
           disabled={deleteColorPalette.status === "fetching"}
           onClick={handleDelete}
         >
