@@ -112,6 +112,20 @@ export const components: Components = {
       },
     },
   },
+  MuiDivider: {
+    styleOverrides: {
+      root: {
+        borderColor: palette.monochrome[300],
+      },
+    },
+  },
+  MuiTypography: {
+    styleOverrides: {
+      root: {
+        fontWeight: 400,
+      },
+    },
+  },
   MuiCssBaseline: {
     styleOverrides: `
         html {

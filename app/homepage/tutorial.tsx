@@ -1,5 +1,5 @@
 import { ContentWrapper } from "@interactivethings/swiss-federal-ci/dist/components";
-import { Box, Card, Typography } from "@mui/material";
+import { Card, Typography } from "@mui/material";
 import { ReactNode } from "react";
 
 import Flex from "@/components/flex";
@@ -20,40 +20,38 @@ export const Tutorial = ({
   step3: string;
 }) => {
   return (
-    <Box sx={{ backgroundColor: "monochrome.100" }}>
-      <ContentWrapper sx={{ py: 20 }}>
-        <div style={{ width: "100%" }}>
-          <HomepageSectionTitle>{headline}</HomepageSectionTitle>
-          <Flex
-            sx={(t) => ({
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              alignItems: "flex-start",
-              gap: 12,
-              width: "100%",
-              [t.breakpoints.up("lg")]: {
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              },
-            })}
-          >
-            <Card>
-              <Step1 />
-              <HomepageTutorialStep>{step1}</HomepageTutorialStep>
-            </Card>
-            <Card>
-              <Step2 />
-              <HomepageTutorialStep>{step2}</HomepageTutorialStep>
-            </Card>
-            <Card>
-              <Step3 />
-              <HomepageTutorialStep>{step3}</HomepageTutorialStep>
-            </Card>
-          </Flex>
-        </div>
-      </ContentWrapper>
-    </Box>
+    <ContentWrapper sx={{ py: 20 }}>
+      <div style={{ width: "100%" }}>
+        <HomepageSectionTitle>{headline}</HomepageSectionTitle>
+        <Flex
+          sx={(t) => ({
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+            gap: 12,
+            width: "100%",
+            [t.breakpoints.up("lg")]: {
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            },
+          })}
+        >
+          <Card>
+            <Step1 />
+            <HomepageTutorialStep>{step1}</HomepageTutorialStep>
+          </Card>
+          <Card>
+            <Step2 />
+            <HomepageTutorialStep>{step2}</HomepageTutorialStep>
+          </Card>
+          <Card>
+            <Step3 />
+            <HomepageTutorialStep>{step3}</HomepageTutorialStep>
+          </Card>
+        </Flex>
+      </div>
+    </ContentWrapper>
   );
 };
 

@@ -35,7 +35,7 @@ const Title = ({ children }: { children: ReactNode }) => (
   <Typography
     variant="display2"
     component="h1"
-    sx={{ mb: 10, textWrap: "balance" }}
+    sx={{ mb: 10, fontWeight: 700, textWrap: "balance" }}
   >
     {children}
   </Typography>

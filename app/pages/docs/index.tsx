@@ -1,4 +1,5 @@
 /* eslint-disable import/no-anonymous-default-export */
+import { c } from "@interactivethings/swiss-federal-ci";
 import { MDXProvider } from "@mdx-js/react";
 import { CssBaseline } from "@mui/material";
 import {
@@ -199,7 +200,7 @@ export default () => {
             pageHeadingTextColor: "#fff",
             linkColor: "rgb(255,95,85)",
             sidebarColorTextActive: "rgb(255,95,85)",
-            background: "#F5F5F5",
+            background: c.monochrome[100],
             pageHeadingBackground: "#156896",
           }}
         />
