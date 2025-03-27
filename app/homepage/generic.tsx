@@ -1,15 +1,8 @@
 import { Typography } from "@mui/material";
 import { ReactNode } from "react";
 
-export const HomepageSection = ({ children }: { children: ReactNode }) => (
-  <Typography
-    variant="h2"
-    sx={{
-      color: "grey.800",
-      mb: 6,
-      textAlign: "center",
-    }}
-  >
+export const HomepageSectionTitle = ({ children }: { children: ReactNode }) => (
+  <Typography variant="h2" sx={{ mb: 8, fontWeight: "bold" }}>
     {children}
   </Typography>
 );

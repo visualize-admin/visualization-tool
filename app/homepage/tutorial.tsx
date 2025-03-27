@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import { ReactNode } from "react";
 
 import Flex from "@/components/flex";
-import { HomepageSection } from "@/homepage/generic";
+import { HomepageSectionTitle } from "@/homepage/generic";
 import { Step1 } from "@/homepage/step1";
 import { Step2 } from "@/homepage/step2";
 import { Step3 } from "@/homepage/step3";

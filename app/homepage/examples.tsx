@@ -8,7 +8,7 @@ import Flex from "@/components/flex";
 import { LoadingDataError } from "@/components/hint";
 import { ConfiguratorState } from "@/configurator";
 import { getExampleState1, getExampleState2 } from "@/homepage/constants";
-import { HomepageSection } from "@/homepage/generic";
+import { HomepageSectionTitle } from "@/homepage/generic";
 import { ConfiguratorStateProvider } from "@/src";
 import { upgradeConfiguratorState } from "@/utils/chart-config/upgrade-cube";
 import { useFetchData } from "@/utils/use-fetch-data";
@@ -56,7 +56,7 @@ export const Examples = (props: ExamplesProps) => {
         color: "grey.800",
       }}
     >
-      <HomepageSection>{headline}</HomepageSection>
+      <HomepageSectionTitle>{headline}</HomepageSectionTitle>
       <Example
         queryKey="example1"
         configuratorState={state1}
