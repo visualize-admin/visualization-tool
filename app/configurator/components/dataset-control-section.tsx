@@ -255,7 +255,7 @@ export const DatasetsControlSection = () => {
               onClick={openDatasetDialog}
               startIcon={<SvgIcPlus />}
               variant="text"
-              size="small"
+              size="sm"
             >
               {t({ id: "chart.datasets.add", message: "Add dataset" })}
             </Button>

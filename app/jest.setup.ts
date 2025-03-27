@@ -157,7 +157,11 @@ jest.mock("rdf-cube-view-query", () => ({
 jest.mock("@zazuko/cube-hierarchy-query/index", () => ({}));
 
 jest.mock("@interactivethings/swiss-federal-ci", () => ({
-  c: {},
+  c: {
+    cobalt: {},
+    monochrome: {},
+    red: {},
+  },
   t: {},
 }));
 jest.mock("@interactivethings/swiss-federal-ci/dist/components", () => {});

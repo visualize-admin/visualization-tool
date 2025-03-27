@@ -42,7 +42,7 @@ export const ProfileHeader = (props: { user: User }) => {
             href={ADFS_PROFILE_URL}
             variant="text"
             color="blue"
-            size="small"
+            size="sm"
             sx={{ marginRight: 2 }}
           >
             eIAM MyAccount
@@ -52,7 +52,7 @@ export const ProfileHeader = (props: { user: User }) => {
           className={classes.button}
           variant="text"
           color="blue"
-          size="small"
+          size="sm"
           onClick={async () => await signOut()}
         >
           <Trans id="login.sign-out">Sign out</Trans>

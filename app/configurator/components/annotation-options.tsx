@@ -103,7 +103,7 @@ const AnnotationOptions = (props: AnnotationOptionsProps) => {
             </Box>
           ))}
           <Button
-            size="small"
+            size="sm"
             onClick={handleClosePanel}
             sx={{ alignSelf: "flex-end", mt: 3, px: 5 }}
           >

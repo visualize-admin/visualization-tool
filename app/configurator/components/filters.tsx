@@ -407,7 +407,7 @@ const MultiFilterContent = ({
           ) : null}
           <Button
             variant="contained"
-            size="small"
+            size="sm"
             color="blue"
             onClick={handleOpenAutocomplete}
             sx={{
@@ -931,7 +931,7 @@ const DrawerContent = forwardRef<
 
       <Box className={classes.autocompleteApplyButtonContainer}>
         <Button
-          size="small"
+          size="sm"
           className={classes.autocompleteApplyButton}
           fullWidth
           onClick={onClose}

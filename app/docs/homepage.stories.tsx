@@ -1,19 +1,14 @@
 import { Box } from "@mui/material";
 import { Meta } from "@storybook/react";
 
-import {
-  BugReport,
-  Contribute,
-  Examples,
-  Intro,
-  Newsletter,
-  Tutorial,
-} from "@/homepage";
-import { FeatureRequest } from "@/homepage/feature-request";
-import { Section } from "@/homepage/section";
+import { Actions, Examples, Intro, Tutorial } from "@/homepage";
 import { bugReportTemplates } from "@/templates/email/bug-report";
-import { OWNER_ORGANIZATION_EMAIL } from "@/templates/email/config";
+import {
+  OWNER_ORGANIZATION_EMAIL,
+  SUPPORT_EMAIL,
+} from "@/templates/email/config";
 import { featureRequestTemplates } from "@/templates/email/feature-request";
+import { newsletterTemplates } from "@/templates/email/newsletter";
 
 import { createMailtoLink } from "../../app/templates/email";
 
@@ -47,55 +42,56 @@ const HomepageStory = {
           example2Headline="Use powerful customizations"
           example2Description="With the help of custom filters and data segmentation, even complex issues can be visualized."
         />
-        <Section>
-          <Contribute
-            headline="Would you like to visualize your own data?"
-            description="Find out how you can integrate your data into the LINDAS Linked Data Service."
-            buttonLabel="Learn how"
-            buttonUrl="https://lindas.admin.ch/?lang=en"
-          />
-          <div style={{ width: "1px", backgroundColor: "#e5e5e5" }}></div>
-          <Newsletter
-            headline="Subscribe to our Newsletter"
-            description="Stay up to date and subscribe to our newsletter by adding your email address below."
-            buttonLabel="Subscribe"
-            buttonUrl={`mailto:${OWNER_ORGANIZATION_EMAIL}`}
-          />
-        </Section>
-
-        <Section
-          sx={{
-            color: "grey.800",
+        <Actions
+          contribute={{
+            headline: "Would you like to visualize your own data?",
+            description:
+              "Find out how you can integrate your data into the LINDAS Linked Data Service.",
+            buttonLabel: "Learn how",
+            buttonUrl: "https://lindas.admin.ch/?lang=en",
           }}
-        >
-          <BugReport
-            headline="Found a bug?"
-            description="Please report the bug, so can fix it as soon as possible."
-            buttonLabel="Report a bug"
-            buttonUrl={createMailtoLink("en", {
+          newsletter={{
+            headline: "Subscribe to our Newsletter",
+            description: "Stay up to date and subscribe to our newsletter.",
+            buttonLabel: "Subscribe",
+            buttonUrl: createMailtoLink("en", {
               recipients: {
-                to: "visualize@bafu.admin.ch",
-                bcc: "supprt@interactivethings.com",
+                to: OWNER_ORGANIZATION_EMAIL,
+                bcc: SUPPORT_EMAIL,
+              },
+              template: newsletterTemplates,
+              subject: "Visualize Newsletter Subscribe",
+            }),
+          }}
+          bugReport={{
+            headline: "Found a bug?",
+            description:
+              "Please report the bug, so can fix it as soon as possible",
+            buttonLabel: "Report a bug",
+            buttonUrl: createMailtoLink("en", {
+              recipients: {
+                to: OWNER_ORGANIZATION_EMAIL,
+                bcc: SUPPORT_EMAIL,
               },
               template: bugReportTemplates,
               subject: "Visualize Bug Report",
-            })}
-          />
-          <div style={{ width: "1px", backgroundColor: "#cccccc" }}></div>
-          <FeatureRequest
-            headline="New feature request"
-            description="Submit your feature requests today and help shape the future of our platform!"
-            buttonLabel="Submit"
-            buttonUrl={createMailtoLink("en", {
+            }),
+          }}
+          featureRequest={{
+            headline: "New feature request",
+            description:
+              "Submit your feature requests today and help shape the future of our platform!",
+            buttonLabel: "Submit",
+            buttonUrl: createMailtoLink("en", {
               recipients: {
-                to: "visualize@bafu.admin.ch",
-                bcc: "supprt@interactivethings.com",
+                to: OWNER_ORGANIZATION_EMAIL,
+                bcc: SUPPORT_EMAIL,
               },
               template: featureRequestTemplates,
               subject: "Visualize Feature Request",
-            })}
-          />
-        </Section>
+            }),
+          }}
+        />
       </Box>
     </ReactSpecimen>
   ),

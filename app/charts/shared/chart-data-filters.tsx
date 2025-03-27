@@ -171,7 +171,7 @@ export const ChartDataFiltersToggle = ({
           <Button
             variant="text"
             color="blue"
-            size="small"
+            size="sm"
             endIcon={
               <Icon
                 name="plus"

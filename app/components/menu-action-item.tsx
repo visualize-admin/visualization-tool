@@ -11,7 +11,7 @@ const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
   alignItems: "flex-start",
   gap: theme.spacing(2),
   color:
-    color === "primary" || color === "error"
+    color === "blue" || color === "red"
       ? theme.palette[color].main
       : theme.palette.primary.main,
   whiteSpace: "normal",
@@ -23,7 +23,7 @@ export type MenuActionProps = {
   leadingIconName?: IconName;
   priority?: number;
   stayOpen?: boolean;
-  color?: "primary" | "error";
+  color?: "blue" | "red";
   onClick?: (e: MouseEvent<HTMLElement>) => Promise<unknown> | void;
 } & (
   | {
@@ -62,7 +62,7 @@ export const MenuActionItem = (
     leadingIcon,
     trailingIcon,
     label,
-    color = "primary",
+    color = "blue",
     ...rest
   }: {
     leadingIcon?: IconName;

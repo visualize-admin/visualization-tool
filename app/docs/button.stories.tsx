@@ -14,26 +14,13 @@ const meta: Meta<typeof Button> = {
 
 export default meta;
 
-export const Primary: Story = {
+export const Contained: Story = {
   args: {
     startIcon: <Icon name="share" />,
     variant: "contained",
-    color: "primary",
-    children: <span>Primary button</span>,
+    children: <span>Contained button</span>,
   },
 };
-
-export const SecondaryButton = () => (
-  <Button variant="contained" color="secondary">
-    Secondary button
-  </Button>
-);
-
-export const SuccessButton = () => (
-  <Button variant="contained" color="success">
-    Success button
-  </Button>
-);
 
 export const OutlineButton = () => (
   <Button variant="outlined">Outlined button</Button>
@@ -46,24 +33,17 @@ export const InlineButton = () => (
 );
 
 export const BoldInlineButton = () => (
-  <Button size="small" startIcon={<SvgIcChevronLeft />} variant="text">
+  <Button size="sm" startIcon={<SvgIcChevronLeft />} variant="text">
     Bold inline button
   </Button>
 );
 
 export const PublishButton = () => (
-  <Button
-    variant="contained"
-    color="blue"
-    size="small"
-    endIcon={<SvgIcChevronRight />}
-  >
+  <Button size="sm" endIcon={<SvgIcChevronRight />}>
     Publish this dataset
   </Button>
 );
 
 export const LearnMoreButton = () => (
-  <Button color="blue" endIcon={<SvgIcChevronRight />}>
-    Learn more
-  </Button>
+  <Button endIcon={<SvgIcChevronRight />}>Learn more</Button>
 );

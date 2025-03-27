@@ -866,7 +866,7 @@ export const DatasetDialog = ({
       <Box className={classes.dialogCloseArea}>
         {otherCube ? null : (
           <Grow in={!isOpen}>
-            <IconButton color="blue" onClick={() => open()}>
+            <IconButton onClick={() => open()}>
               <SvgIcInfoCircle />
             </IconButton>
           </Grow>
@@ -1034,7 +1034,7 @@ export const DatasetDialog = ({
                     return (
                       <Box display="flex" justifyContent="flex-end">
                         <LoadingButton
-                          size="small"
+                          size="sm"
                           variant="outlined"
                           className={classes.addButton}
                           onClick={() => handleClickOtherCube(cube)}

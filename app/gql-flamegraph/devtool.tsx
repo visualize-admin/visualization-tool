@@ -444,7 +444,7 @@ function GqlDebug({ controller }: { controller: GraphqlOperationsController }) {
   return (
     <div>
       <Box>
-        <Button variant="text" size="small" onClick={reset}>
+        <Button variant="text" size="sm" onClick={reset}>
           Empty operations
         </Button>
       </Box>

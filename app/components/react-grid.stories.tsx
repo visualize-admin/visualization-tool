@@ -5,7 +5,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { Layouts } from "react-grid-layout";
 
 import {
@@ -16,7 +16,7 @@ import {
 } from "@/components/react-grid";
 import useLocalState from "@/utils/use-local-state";
 
-const generateDOM = ({ count }: { count: number }): React.ReactNode => {
+const generateDOM = ({ count }: { count: number }): ReactNode => {
   return Array.from({ length: count }).map(function (_l, i) {
     return (
       <div key={i}>
@@ -63,7 +63,6 @@ export const Example = () => {
     <>
       <Stack gap="1rem" direction="row">
         <ToggleButtonGroup
-          color="blue"
           value={gridLayout}
           onChange={(ev) =>
             onChangeGridLayout(

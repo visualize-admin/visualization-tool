@@ -115,7 +115,7 @@ export const BackButton = ({
     <Button
       variant="text"
       color="blue"
-      size="small"
+      size="sm"
       sx={{ fontWeight: "bold", ...sx }}
       startIcon={<SvgIcChevronLeft />}
       onClick={onClick}
@@ -163,7 +163,7 @@ const BackToMainButton = (props: BackToMainButtonProps) => {
       <Button
         variant="text"
         color="inherit"
-        size="small"
+        size="sm"
         sx={{ fontWeight: "bold" }}
         startIcon={<SvgIcChevronLeft />}
         onClick={onClick}

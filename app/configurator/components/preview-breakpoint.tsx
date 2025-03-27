@@ -112,10 +112,10 @@ export const PreviewBreakpointToggleMenu = ({
       }),
     },
   ];
+
   return (
     <ToggleButtonGroup
       className={classes.toggleButtonGroup}
-      color="blue"
       value={value}
       exclusive
     >

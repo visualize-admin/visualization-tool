@@ -228,7 +228,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                       href={`/create/new?edit=${config.key}`}
                       variant="outlined"
                       color="inherit"
-                      size="small"
+                      size="sm"
                     >
                       <Trans id="login.chart.edit">Edit</Trans>
                     </Button>

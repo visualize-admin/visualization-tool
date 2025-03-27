@@ -112,7 +112,7 @@ const DebugConfigurator = () => {
             component="a"
             color="blue"
             variant="text"
-            size="small"
+            size="sm"
             href={`https://cube-viewer.zazuko.com/?endpointUrl=${encodeURIComponent(
               configuratorState.dataSource.url
             )}&user=&password=&sourceGraph=&cube=${encodeURIComponent(
@@ -128,7 +128,7 @@ const DebugConfigurator = () => {
             component="a"
             color="blue"
             variant="text"
-            size="small"
+            size="sm"
             href={`${sparqlEditorUrl}#query=${encodeURIComponent(
               `#pragma describe.strategy cbd
 
@@ -155,7 +155,7 @@ const DebugConfigurator = () => {
         <Button
           component="span"
           variant="text"
-          size="small"
+          size="sm"
           onClick={() => {
             console.log(configuratorState);
           }}
