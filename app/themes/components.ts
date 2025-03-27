@@ -100,6 +100,18 @@ export const components: Components = {
       },
     },
   },
+  MuiCard: {
+    defaultProps: {
+      elevation: 3,
+    },
+    styleOverrides: {
+      root: {
+        width: "100%",
+        borderRadius: 4,
+        lineHeight: 0,
+      },
+    },
+  },
   MuiCssBaseline: {
     styleOverrides: `
         html {
