@@ -1,5 +1,5 @@
 import { ContentWrapper } from "@interactivethings/swiss-federal-ci/dist/components";
-import { Box, Card, Typography } from "@mui/material";
+import { Box, Card, Skeleton, Typography } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
 import { useClient } from "urql";
 
@@ -41,7 +41,7 @@ export const Examples = ({
     run();
   }, []);
 
-  return state1 && state2 ? (
+  return (
     <Box sx={{ backgroundColor: "background.paper" }}>
       <ContentWrapper sx={{ py: 20 }}>
         <div style={{ width: "100%" }}>
@@ -73,7 +73,7 @@ export const Examples = ({
         </div>
       </ContentWrapper>
     </Box>
-  ) : null;
+  );
 };
 
 const Example = ({
@@ -83,19 +83,20 @@ const Example = ({
   description,
 }: {
   queryKey: string;
-  configuratorState: ConfiguratorState;
+  configuratorState?: ConfiguratorState;
   headline: string;
   description: string;
 }) => {
   const client = useClient();
   const { data, error } = useFetchData({
-    queryKey: [queryKey],
+    queryKey: [queryKey, configuratorState ? "A" : "B"],
     queryFn: () => {
-      return upgradeConfiguratorState(configuratorState, {
+      return upgradeConfiguratorState(configuratorState!, {
         client,
-        dataSource: configuratorState.dataSource,
+        dataSource: configuratorState!.dataSource,
       });
     },
+    options: { pause: !configuratorState },
   });
 
   return data ? (
@@ -110,7 +111,9 @@ const Example = ({
     <Box sx={{ mb: 6 }}>
       <LoadingDataError />
     </Box>
-  ) : null;
+  ) : (
+    <Skeleton variant="rectangular" height={400} />
+  );
 };
 
 const ExampleCard = ({
