@@ -28,48 +28,53 @@ export const contentId = "home";
   example2Headline="Exploitez les nombreuses options disponibles"
   example2Description="Grâce aux filtres et aux options d'affichage, même des problèmes complexes peuvent être visualisés."
 />
-<Contribute
-  headline="Voulez-vous visualiser vos propres données?"
-  description="Apprenez comment intégrer vos données au service LINDAS (Linked Data)."
-  buttonLabel="En savoir plus"
-  buttonUrl="https://lindas.admin.ch/?lang=fr"
-/>
-<Newsletter
-  headline="S'abonner à notre newsletter"
-  description="Restez informé et abonnez-vous à notre newsletter."
-  buttonLabel="S'abonner"
-  buttonUrl={createMailtoLink("fr", {
-    recipients: {
-      to: OWNER_ORGANIZATION_EMAIL,
-      bcc: SUPPORT_EMAIL,
-    },
-    template: newsletterTemplates,
-    subject: "Visualize Newsletter Abonnement",
-  })}
-/>
-<BugReport
-  headline="Un bug a été trouvé?"
-  description="Veuillez nous signaler le bug afin que nous puissions le corriger le plus rapidement possible."
-  buttonLabel="Signaler un bug"
-  buttonUrl={createMailtoLink("fr", {
-    recipients: {
-      to: OWNER_ORGANIZATION_EMAIL,
-      bcc: SUPPORT_EMAIL,
-    },
-    template: bugReportTemplates,
-    subject: "Visualize Bug Report",
-  })}
-/>
-<FeatureRequest
-  headline="Nouvelle demande de fonctionnalité"
-  description="Envoyez-nous vos demandes de fonctionnalités dès aujourd'hui et aidez à façonner l'avenir de notre plateforme!"
-  buttonLabel="Soumettre"
-  buttonUrl={createMailtoLink("fr", {
-    recipients: {
-      to: OWNER_ORGANIZATION_EMAIL,
-      bcc: SUPPORT_EMAIL,
-    },
-    template: featureRequestTemplates,
-    subject: "Visualize Feature Request",
-  })}
+<Actions
+  contribute={{
+    headline: "Voulez-vous visualiser vos propres données?",
+    description:
+      "Apprenez comment intégrer vos données au service LINDAS (Linked Data).",
+    buttonLabel: "En savoir plus",
+    buttonUrl: "https://lindas.admin.ch/?lang=fr",
+  }}
+  newsletter={{
+    headline: "S'abonner à notre newsletter",
+    description: "Restez informé et abonnez-vous à notre newsletter.",
+    buttonLabel: "S'abonner",
+    buttonUrl: createMailtoLink("fr", {
+      recipients: {
+        to: OWNER_ORGANIZATION_EMAIL,
+        bcc: SUPPORT_EMAIL,
+      },
+      template: newsletterTemplates,
+      subject: "Visualize Newsletter Abonnement",
+    }),
+  }}
+  bugReport={{
+    headline: "Un bug a été trouvé?",
+    description:
+      "Veuillez nous signaler le bug afin que nous puissions le corriger le plus rapidement possible.",
+    buttonLabel: "Signaler un bug",
+    buttonUrl: createMailtoLink("fr", {
+      recipients: {
+        to: OWNER_ORGANIZATION_EMAIL,
+        bcc: SUPPORT_EMAIL,
+      },
+      template: bugReportTemplates,
+      subject: "Visualize Bug Report",
+    }),
+  }}
+  featureRequest={{
+    headline: "Nouvelle demande de fonctionnalité",
+    description:
+      "Envoyez-nous vos demandes de fonctionnalités dès aujourd'hui et aidez à façonner l'avenir de notre plateforme!",
+    buttonLabel: "Soumettre",
+    buttonUrl: createMailtoLink("fr", {
+      recipients: {
+        to: OWNER_ORGANIZATION_EMAIL,
+        bcc: SUPPORT_EMAIL,
+      },
+      template: featureRequestTemplates,
+      subject: "Visualize Feature Request",
+    }),
+  }}
 />
