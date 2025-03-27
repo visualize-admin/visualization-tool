@@ -104,6 +104,7 @@ const Example = ({
       <ExampleCard headline={headline} description={description}>
         <ChartPublished
           embedParams={{ removeBorder: true } as EmbedQueryParams}
+          shouldShrink={false}
         />
       </ExampleCard>
     </ConfiguratorStateProvider>
