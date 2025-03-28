@@ -5,6 +5,4 @@ const Flex = forwardRef((props: BoxProps, ref) => {
   return <Box ref={ref} display="flex" {...props} />;
 });
 
-export type FlexProps = BoxProps;
-
 export default Flex;

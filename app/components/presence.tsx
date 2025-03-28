@@ -34,7 +34,7 @@ export const navPresenceProps = {
 };
 
 export const __BANNER_MARGIN_CSS_VAR = "--banner-margin";
-export const BANNER_MARGIN_CSS_VAR = `var(${__BANNER_MARGIN_CSS_VAR}, -420px)`;
+const BANNER_MARGIN_CSS_VAR = `var(${__BANNER_MARGIN_CSS_VAR}, -420px)`;
 
 export const bannerPresenceProps: Transition = {
   transition: {
