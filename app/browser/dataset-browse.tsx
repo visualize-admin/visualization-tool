@@ -421,8 +421,6 @@ const NavItem = ({
     ] as const;
   }, [includeDrafts, search, filters, next.iri]);
 
-  console.log(disableLink);
-
   const removeFilterButton = (
     <MaybeLink
       href={removeFilterPath}
