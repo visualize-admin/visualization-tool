@@ -120,6 +120,11 @@ export const components: Components = {
       },
     },
   },
+  MuiLink: {
+    defaultProps: {
+      underline: "none",
+    },
+  },
   MuiInput: {
     defaultProps: {
       size: "md",
