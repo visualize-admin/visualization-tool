@@ -178,7 +178,7 @@ export const Search = () => {
           labelPlacement="start"
           control={
             <Select
-              size="small"
+              size="sm"
               native
               onChange={handleChangeCube}
               value={optionId ?? "0"}

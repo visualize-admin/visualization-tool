@@ -38,7 +38,7 @@ export const Termsets = () => {
           control={
             <Stack gap={1} direction="row" alignItems="center">
               <Select
-                size="small"
+                size="sm"
                 native
                 onChange={(ev) => setCube(ev.target.value)}
                 value={cube}
