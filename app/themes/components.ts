@@ -183,6 +183,10 @@ export const components: Components = {
           -webkit-overflow-scrolling: touch;
           -ms-overflow-style: -ms-autohiding-scrollbar;
         }
+
+        fieldset {
+          border: none;
+        }
   
         @font-face {
           font-family: "NotoSans";
