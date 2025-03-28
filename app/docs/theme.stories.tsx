@@ -409,7 +409,7 @@ export const Components: React.FC = () => {
             </RadioGroup>
           </FormControl>
           <Box my={1}>
-            <Select size="small" defaultValue="Vanilla">
+            <Select size="sm" defaultValue="Vanilla">
               <MenuItem value="Vanilla">Vanilla</MenuItem>
               <MenuItem value="Chocolate">Chocolate</MenuItem>
               <MenuItem value="Raspberry">Raspberry</MenuItem>

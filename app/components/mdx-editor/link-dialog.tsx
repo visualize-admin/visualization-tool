@@ -379,7 +379,7 @@ const LinkEditForm = ({
         <Input
           id="link-text"
           className={classes.input}
-          size="small"
+          size="sm"
           {...register("text")}
           placeholder={t({
             id: "mdx-editor.link-dialog.label-placeholder",
@@ -390,7 +390,7 @@ const LinkEditForm = ({
         <Input
           id="link-url"
           className={classes.input}
-          size="small"
+          size="sm"
           type="url"
           {...register("url")}
           placeholder={t({
