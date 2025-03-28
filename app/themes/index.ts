@@ -80,5 +80,5 @@ declare module "@mui/material/styles" {
   }
 }
 
-export { theme as federal } from "./federal";
+export { theme } from "./theme";
 export { useTheme };

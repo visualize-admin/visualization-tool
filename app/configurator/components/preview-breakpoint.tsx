@@ -13,7 +13,7 @@ import { ReactNode, useMemo, useState } from "react";
 
 import { FREE_CANVAS_BREAKPOINTS } from "@/components/react-grid";
 import { Icon, IconName } from "@/icons";
-import { theme } from "@/themes/federal";
+import { theme } from "@/themes/theme";
 
 type PreviewBreakpoint = keyof typeof FREE_CANVAS_BREAKPOINTS;
 

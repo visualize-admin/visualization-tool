@@ -16,7 +16,7 @@ import {
   createDivergingInterpolator,
   createSequentialInterpolator,
 } from "@/palettes";
-import { theme } from "@/themes/federal";
+import { theme } from "@/themes/theme";
 import { assert } from "@/utils/assert";
 import { hasEnoughContrast } from "@/utils/color-palette-utils";
 

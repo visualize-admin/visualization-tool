@@ -9,7 +9,7 @@ import Flex from "@/components/flex";
 import { Input, Label, Radio } from "@/components/form";
 import { BackButton, CustomPaletteType } from "@/configurator";
 import { ColorItem, ColorsByType, getDefaultColorValues } from "@/palettes";
-import { theme } from "@/themes/federal";
+import { theme } from "@/themes/theme";
 import {
   createCustomColorPalette,
   updateCustomColorPalette,

@@ -19,7 +19,7 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { useTimeout } from "@/hooks/use-timeout";
-import { theme } from "@/themes/federal";
+import { theme } from "@/themes/theme";
 import { assert } from "@/utils/assert";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
