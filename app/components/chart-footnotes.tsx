@@ -373,7 +373,6 @@ export const VisualizeLink = ({
         href={`https://visualize.admin.ch/${locale}/v/${configKey}`}
         target="_blank"
         rel="noopener noreferrer"
-        color="blue"
         sx={{ "&:hover": { textDecoration: "none" } }}
       >
         {" "}

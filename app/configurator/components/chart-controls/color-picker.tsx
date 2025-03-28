@@ -139,7 +139,7 @@ export const ColorPickerMenu = ({
           </VisuallyHidden>
           <Typography
             aria-hidden
-            color="blue"
+            color="primary.main"
             sx={{ backgroundColor: "transparent" }}
           >
             <Icon name="color" size={16} />

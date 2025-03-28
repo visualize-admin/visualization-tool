@@ -122,7 +122,6 @@ const DatasetRow = ({
       >
         <div>
           <MuiLink
-            color="blue"
             underline="none"
             sx={{ cursor: "pointer" }}
             variant="caption"

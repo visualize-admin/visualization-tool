@@ -2,9 +2,10 @@ import { c as colors } from "@interactivethings/swiss-federal-ci";
 import { type ThemeOptions } from "@mui/material";
 
 export const palette = {
-  // Just for debugging purposes – will be removed
   primary: {
-    main: "#FF86C8",
+    main: "#1D4ED8",
+    light: "#60A5FA",
+    contrastText: "#FFFFFF",
   },
   cobalt: {
     main: colors.cobalt[700],

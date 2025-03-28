@@ -216,7 +216,6 @@ const CautionAlert = ({
       </Trans>
       <Box sx={{ mt: 1 }}>
         <Link
-          color="blue"
           onClick={(ev) => {
             ev.preventDefault();
             onConfirm();

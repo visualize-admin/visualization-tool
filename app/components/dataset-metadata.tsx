@@ -180,7 +180,6 @@ const DatasetMetadataLink = ({
 } & LinkProps) => (
   <Link
     underline="hover"
-    color="blue"
     href={href}
     target="_blank"
     rel="noopener noreferrer"
@@ -196,7 +195,6 @@ const DatasetSparqlQuery = ({ url }: { url: string }) => {
   return (
     <Link
       underline="hover"
-      color="blue"
       href={url}
       target="_blank"
       rel="noopener noreferrer"

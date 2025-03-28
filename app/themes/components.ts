@@ -1,3 +1,4 @@
+import { c } from "@interactivethings/swiss-federal-ci";
 import { Components } from "@mui/material";
 
 import { palette } from "@/themes/palette";
@@ -115,7 +116,7 @@ export const components: Components = {
   MuiDivider: {
     styleOverrides: {
       root: {
-        borderColor: palette.monochrome[300],
+        borderColor: c.monochrome[300],
       },
     },
   },

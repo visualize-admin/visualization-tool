@@ -99,8 +99,6 @@ const Example = ({
     options: { pause: !configuratorState },
   });
 
-  console.log("render");
-
   return data ? (
     <ConfiguratorStateProvider chartId="published" initialState={data}>
       <ExampleCard headline={headline} description={description}>

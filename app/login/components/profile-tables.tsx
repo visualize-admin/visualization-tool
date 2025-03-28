@@ -366,8 +366,8 @@ const ProfileVisualizationsRow = (props: {
           passHref
           legacyBehavior
         >
-          <Link color="blue">
-            <OverflowTooltip arrow title={chartTitle} color="blue">
+          <Link>
+            <OverflowTooltip arrow title={chartTitle} color="primary.main">
               <Typography
                 className={rootClasses.noTooltip}
                 variant="body2"
@@ -390,11 +390,11 @@ const ProfileVisualizationsRow = (props: {
             passHref
             legacyBehavior
           >
-            <Link color="blue">
+            <Link>
               <OverflowTooltip
                 arrow
                 title={data?.dataCubesMetadata[0]?.title ?? ""}
-                color="blue"
+                color="primary.main"
               >
                 <Typography
                   className={rootClasses.noTooltip}

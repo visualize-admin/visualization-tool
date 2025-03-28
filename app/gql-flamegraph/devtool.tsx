@@ -29,6 +29,7 @@ import uniqBy from "lodash/uniqBy";
 import mitt from "mitt";
 import React, {
   ChangeEvent,
+  MouseEvent,
   useEffect,
   useMemo,
   useRef,
@@ -155,14 +156,13 @@ const Flamegraph = ({
 const CopyLink = ({ toCopy, ...props }: { toCopy: string } & LinkProps) => {
   const { children, onClick, sx } = props;
   const [hasCopied, setHasCopied] = useState(false);
-  const enhancedOnClick = useEvent(
-    (ev: React.MouseEvent<HTMLAnchorElement>) => {
-      onClick?.(ev);
-      navigator.clipboard.writeText(toCopy);
-      setHasCopied(true);
-      setTimeout(() => setHasCopied(false), 1000);
-    }
-  );
+  const enhancedOnClick = useEvent((e: MouseEvent<HTMLAnchorElement>) => {
+    onClick?.(e);
+    navigator.clipboard.writeText(toCopy);
+    setHasCopied(true);
+    setTimeout(() => setHasCopied(false), 1000);
+  });
+
   return (
     <Link
       {...props}
@@ -241,7 +241,6 @@ const AccordionOperation = ({
           <Link
             fontSize="small"
             whiteSpace="break-spaces"
-            color="blue"
             href={`/api/graphql?query=${encodeURIComponent(
               print(operation.query)
             )}`}
@@ -255,7 +254,6 @@ const AccordionOperation = ({
           <span>
             <CopyLink
               fontSize="small"
-              color="blue"
               toCopy={JSON.stringify(operation.variables, null, 2)}
               onClick={(ev) => {
                 ev.stopPropagation();

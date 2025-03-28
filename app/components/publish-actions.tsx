@@ -448,7 +448,7 @@ export const ShareContent = ({
         <Typography component="div" variant="body1" color="grey.700">
           <Trans id="publication.popup.share">Share</Trans>:
         </Typography>
-        <Flex color="blue">
+        <Flex color="primary.main">
           <IconLink
             iconName="facebook"
             title={i18n._(

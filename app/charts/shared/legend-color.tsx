@@ -208,7 +208,6 @@ export const LegendColor = memo(function LegendColor({
             data-testid="legendTitle"
             component="div"
             variant="caption"
-            color="blue"
           >
             {segmentComponent.label}
           </Typography>

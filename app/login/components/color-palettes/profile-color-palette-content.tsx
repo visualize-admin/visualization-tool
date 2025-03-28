@@ -184,7 +184,7 @@ const ColorPaletteRow = ({
         <EditButton onClick={() => onEdit(paletteId)}>
           <Typography
             aria-hidden
-            color="blue"
+            color="primary.main"
             sx={{ backgroundColor: "transparent" }}
           >
             <VisuallyHidden>
@@ -206,7 +206,7 @@ const ColorPaletteRow = ({
           </VisuallyHidden>
           <Typography
             aria-hidden
-            color="blue"
+            color="primary.main"
             sx={{ backgroundColor: "transparent" }}
           >
             <Icon name="trash" size={24} />

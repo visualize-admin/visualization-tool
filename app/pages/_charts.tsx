@@ -124,7 +124,7 @@ const Page: NextPage<PageProps> = ({ serializedConfigs }) => {
                   >
                     Id: {config.key} -{" "}
                     <NextLink href={`/v/${config.key}`} passHref legacyBehavior>
-                      <Link color="blue">Open</Link>
+                      <Link>Open</Link>
                     </NextLink>{" "}
                   </Box>
                 </ConfiguratorStateProvider>

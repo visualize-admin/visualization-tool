@@ -1769,7 +1769,7 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                     "Enable dynamic scaling to adjust the chart's scale based on the data range, ensuring optimal visualization.",
                 })}
               >
-                <Typography color="blue">
+                <Typography color="primary.main">
                   <SvgIcInfoCircle width={16} height={16} />
                 </Typography>
               </Tooltip>
