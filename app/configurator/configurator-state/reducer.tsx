@@ -72,7 +72,7 @@ import { getOriginalDimension, isJoinByCube } from "@/graphql/join";
 import { PossibleFilterValue } from "@/graphql/query-hooks";
 import { DEFAULT_CATEGORICAL_PALETTE_ID } from "@/palettes";
 import { findInHierarchy } from "@/rdf/tree-utils";
-import { theme } from "@/themes/federal";
+import { theme } from "@/themes/theme";
 import { getCachedComponents } from "@/urql-cache";
 import { assert } from "@/utils/assert";
 import { unreachableError } from "@/utils/unreachable";

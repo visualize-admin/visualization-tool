@@ -1,5 +1,5 @@
-import { within } from "@playwright-testing-library/test";
 import { Locator, Page } from "@playwright/test";
+import { within } from "@playwright-testing-library/test";
 
 import { setup } from "./common";
 import { harReplayGraphqlEndpointQueryParam } from "./har-utils";
@@ -68,7 +68,9 @@ test("search results count coherence", async ({
 
     await within(panelLeft).findByText(t, undefined, { timeout: 10_000 });
 
-    const countChip = panelLeft.locator(`:text("${t}") + *`);
+    const countChip = panelLeft
+      .locator(`:text("${t}")`)
+      .locator('[data-testid="navChip"]');
 
     const count = await countChip.textContent();
     await panelLeft.locator(`:text("${t}")`).click();

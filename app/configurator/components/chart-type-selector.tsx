@@ -9,8 +9,8 @@ import {
 } from "@/charts";
 import Flex from "@/components/flex";
 import { Hint } from "@/components/hint";
+import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
-import { TooltipTitle } from "@/components/tooltip-utils";
 import { ChartType, ConfiguratorStatePublished } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import { ControlSectionSkeleton } from "@/configurator/components/chart-controls/section";
@@ -19,8 +19,6 @@ import { useAddOrEditChartType } from "@/configurator/config-form";
 import { ConfiguratorStateWithChartConfigs } from "@/configurator/configurator-state";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
-
-import { InfoIconTooltip } from "../../components/info-icon-tooltip";
 
 type ChartTypeSelectorProps = {
   state: Exclude<ConfiguratorStateWithChartConfigs, ConfiguratorStatePublished>;
@@ -206,11 +204,7 @@ const ChartTypeSelectorMenu = ({
           return (
             <MaybeTooltip
               key={chartType}
-              title={
-                !enabled && message ? (
-                  <TooltipTitle text={message} />
-                ) : undefined
-              }
+              title={!enabled && message ? message : undefined}
               tooltipProps={{ placement: "right" }}
             >
               <div>

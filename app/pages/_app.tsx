@@ -16,7 +16,7 @@ import { flag } from "@/flags/flag";
 import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { i18n, parseLocaleString } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
-import * as federalTheme from "@/themes/federal";
+import * as federalTheme from "@/themes/theme";
 import { EventEmitterProvider } from "@/utils/eventEmitter";
 import Flashes from "@/utils/flashes";
 import { analyticsPageView } from "@/utils/googleAnalytics";

@@ -15,7 +15,7 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { DISABLE_SCREENSHOT_COLOR_WIPE_ATTR } from "@/components/chart-shared";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
-import { theme } from "@/themes/federal";
+import { theme } from "@/themes/theme";
 
 type AxisHeightLinearDualProps = {
   orientation?: "left" | "right";

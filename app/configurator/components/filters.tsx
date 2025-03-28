@@ -44,7 +44,6 @@ import Flex from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
-import { TooltipTitle } from "@/components/tooltip-utils";
 import { ChartConfig, ColorMapping, isColorInConfig } from "@/config-types";
 import { getChartConfig, useChartConfigFilters } from "@/config-utils";
 import {
@@ -374,13 +373,9 @@ const MultiFilterContent = ({
                     <MaybeTooltip
                       tooltipProps={{ enterDelay: 600 }}
                       title={
-                        <TooltipTitle
-                          text={
-                            <Trans id="controls.filters.interactive.tooltip">
-                              Allow users to change filters
-                            </Trans>
-                          }
-                        />
+                        <Trans id="controls.filters.interactive.tooltip">
+                          Allow users to change filters
+                        </Trans>
                       }
                     >
                       <div>

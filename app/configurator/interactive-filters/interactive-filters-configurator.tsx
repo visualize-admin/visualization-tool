@@ -4,7 +4,6 @@ import { FormControlLabel, Switch, Typography } from "@mui/material";
 import { getFieldComponentId } from "@/charts";
 import { ANIMATION_FIELD_SPEC } from "@/charts/chart-config-ui-options";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
-import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ConfiguratorStateConfiguringChart,
   isAnimationInConfig,
@@ -125,13 +124,9 @@ export const InteractiveFilterToggle = (
         <MaybeTooltip
           tooltipProps={{ enterDelay: 600 }}
           title={
-            <TooltipTitle
-              text={
-                <Trans id="controls.filters.interactive.tooltip">
-                  Allow users to change filters
-                </Trans>
-              }
-            />
+            <Trans id="controls.filters.interactive.tooltip">
+              Allow users to change filters
+            </Trans>
           }
         >
           <Typography variant="body2">

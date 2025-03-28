@@ -11,7 +11,7 @@ import { CustomPaletteType } from "@/config-types";
 import SvgIcClose from "@/icons/components/IcClose";
 import { ColorPaletteCreator } from "@/login/components/color-palettes/color-palette-types";
 import { ColorItem, getDefaultColorValues } from "@/palettes";
-import { theme } from "@/themes/federal";
+import { theme } from "@/themes/theme";
 import { createCustomColorPalette } from "@/utils/chart-config/api";
 import { createColorId } from "@/utils/color-palette-utils";
 import { useMutate } from "@/utils/use-fetch-data";

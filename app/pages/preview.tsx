@@ -14,7 +14,7 @@ import { GraphqlProvider } from "@/graphql/GraphqlProvider";
 import { i18n } from "@/locales/locales";
 import { LocaleProvider, useLocale } from "@/locales/use-locale";
 import { ConfiguratorStateProvider } from "@/src";
-import * as federalTheme from "@/themes/federal";
+import * as federalTheme from "@/themes/theme";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 
 const isValidMessage = (e: MessageEvent) => {

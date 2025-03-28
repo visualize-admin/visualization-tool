@@ -162,6 +162,7 @@ jest.mock("@interactivethings/swiss-federal-ci", () => ({
     monochrome: {},
     red: {},
   },
+  e: {},
   t: {},
 }));
 jest.mock("@interactivethings/swiss-federal-ci/dist/components", () => {});

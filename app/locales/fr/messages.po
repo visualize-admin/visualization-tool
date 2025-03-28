@@ -1402,6 +1402,7 @@ msgid "dataset-result.shared-dimensions"
 msgstr "Dimensions partagées"
 
 #: app/components/chart-footnotes.tsx
+#: app/configurator/components/dataset-control-section.tsx
 msgid "dataset.footnotes.dataset"
 msgstr "Jeu de données"
 
@@ -1484,6 +1485,7 @@ msgid "dataset.search.caution.body"
 msgstr "La liaison de différents ensembles de données comporte des risques tels que des incohérences de données, des problèmes d'évolutivité et des corrélations inattendues. Assurez-vous d'utiliser pour fusionner des ensembles de données uniquement lorsque vous êtes sûr que les données doivent être fusionnées."
 
 #: app/browser/dataset-browse.tsx
+#: app/components/form.tsx
 #: app/configurator/components/add-dataset-dialog.tsx
 msgid "dataset.search.label"
 msgstr "Chercher"
@@ -1833,11 +1835,6 @@ msgstr "Se connecter"
 msgid "login.sign-out"
 msgstr "Se déconnecter"
 
-#: app/components/header.tsx
-#: app/components/header.tsx
-msgid "logo.swiss.confederation"
-msgstr "Logo de la Confédération Suisse"
-
 #: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.label-placeholder"
 msgstr "Étiquette..."
@@ -1956,7 +1953,6 @@ msgstr "Voici une visualisation que j'ai créée sur visualize.admin.ch"
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/browser/dataset-browse.tsx
 #: app/configurator/components/filters.tsx
 msgid "select.controls.filters.search"
 msgstr "Chercher"
@@ -1969,6 +1965,10 @@ msgstr "Sauter à..."
 #: app/login/components/profile-tables.tsx
 msgid "show.all"
 msgstr "Tout afficher"
+
+#: app/browser/dataset-browse.tsx
+msgid "show.less"
+msgstr "Afficher moins"
 
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "table.column.no"

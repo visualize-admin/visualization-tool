@@ -8,10 +8,9 @@ import { Decorator } from "@storybook/react";
 import { Client, Provider } from "urql";
 
 import { i18n } from "../app/locales/locales";
-import { theme } from "../app/themes/federal";
+import { theme } from "../app/themes/theme";
 import AsyncLocalizationProvider from "../app/utils/l10n-provider";
 import { SnackbarProvider } from "../app/components/snackbar";
-
 
 export const AppContextDecorator = (Story: NextPage) => (
   <SessionProvider refetchOnWindowFocus={false} refetchWhenOffline={false}>

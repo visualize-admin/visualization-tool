@@ -92,7 +92,7 @@ import {
   DEFAULT_CATEGORICAL_PALETTE_ID,
   getDefaultCategoricalPaletteId,
 } from "@/palettes";
-import { theme } from "@/themes/federal";
+import { theme } from "@/themes/theme";
 import { bfs } from "@/utils/bfs";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/constants";
 import { createId } from "@/utils/create-id";
