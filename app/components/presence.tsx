@@ -33,12 +33,20 @@ export const navPresenceProps = {
   },
 };
 
-export const BANNER_HEIGHT = 250;
+export const __BANNER_MARGIN_CSS_VAR = "--banner-margin";
+export const BANNER_MARGIN_CSS_VAR = `var(${__BANNER_MARGIN_CSS_VAR}, -420px)`;
+
 export const bannerPresenceProps: Transition = {
-  initial: { marginTop: -BANNER_HEIGHT },
-  animate: { marginTop: 0 },
-  exit: { marginTop: -BANNER_HEIGHT },
   transition: {
     duration: DURATION,
+  },
+  initial: {
+    marginTop: BANNER_MARGIN_CSS_VAR,
+  },
+  animate: {
+    marginTop: 0,
+  },
+  exit: {
+    marginTop: BANNER_MARGIN_CSS_VAR,
   },
 };

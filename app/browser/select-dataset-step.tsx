@@ -34,6 +34,7 @@ import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
+  __BANNER_MARGIN_CSS_VAR,
   bannerPresenceProps,
   DURATION,
   MotionBox,
@@ -316,6 +317,15 @@ const SelectDatasetStepContent = ({
       .join(", ");
   }, [orgs, queryFilters, termsets, themes]);
 
+  const [bannerRef] = useResizeObserver<HTMLDivElement>(({ height }) => {
+    if (height) {
+      document.documentElement.style.setProperty(
+        __BANNER_MARGIN_CSS_VAR,
+        `-${height}px`
+      );
+    }
+  });
+
   if (configState.state !== "SELECTING_DATASET") {
     return null;
   }
@@ -324,7 +334,7 @@ const SelectDatasetStepContent = ({
     <Box ref={odsIframe ? ref : null}>
       <AnimatePresence>
         {!dataset && variant === "page" && (
-          <MotionBox key="banner" {...bannerPresenceProps}>
+          <MotionBox key="banner" ref={bannerRef} {...bannerPresenceProps}>
             <section role="banner" className={classes.panelBannerOuterWrapper}>
               <ContentWrapper className={classes.panelBannerInnerWrapper}>
                 <Flex className={classes.panelBannerContent}>
