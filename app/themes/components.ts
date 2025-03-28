@@ -2,6 +2,7 @@ import { c } from "@interactivethings/swiss-federal-ci";
 import { Components } from "@mui/material";
 
 import { palette } from "@/themes/palette";
+import { shadows } from "@/themes/shadows";
 import { typography } from "@/themes/typography";
 
 export const components: Components = {
@@ -169,6 +170,23 @@ export const components: Components = {
         "&::placeholder": {
           opacity: 1,
         },
+      },
+    },
+  },
+  MuiTooltip: {
+    styleOverrides: {
+      // @ts-ignore
+      tooltip: {
+        width: "100%",
+        maxWidth: 280,
+        padding: "12px 16px",
+        backgroundColor: "#fff",
+        color: palette.text.primary,
+        boxShadow: shadows[3],
+        ...typography.caption,
+      },
+      arrow: {
+        color: "#fff",
       },
     },
   },
