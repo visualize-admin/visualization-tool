@@ -8,7 +8,7 @@ import uniqBy from "lodash/uniqBy";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
-import React, { useCallback, useMemo } from "react";
+import React, { ComponentProps, useCallback, useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
 import {
@@ -76,7 +76,6 @@ const useStyles = makeStyles<
   }
 >((theme) => ({
   panelLayout: {
-    maxWidth: ({ isOdsIframe }) => (isOdsIframe ? "auto" : 1400),
     margin: "auto",
     position: "static",
     height: "auto",
@@ -84,18 +83,14 @@ const useStyles = makeStyles<
   },
   panelLeft: {
     minHeight: "100vh",
-    backgroundColor: "transparent",
-    paddingTop: ({ datasetPresent }) =>
-      datasetPresent ? 48 : theme.spacing(5),
     boxShadow: "none",
-    borderRight: `1px solid ${theme.palette.grey[300]}`,
+    border: "none",
     transition: "padding-top 0.5s ease",
   },
   panelMiddle: {
-    paddingTop: ({ datasetPresent }) =>
-      datasetPresent ? 48 : theme.spacing(5),
     gridColumnStart: "middle",
     gridColumnEnd: "right",
+    marginLeft: theme.spacing(8),
     transition: "padding-top 0.5s ease",
   },
   panelBannerOuterWrapper: {
@@ -104,6 +99,7 @@ const useStyles = makeStyles<
   panelBannerInnerWrapper: {
     paddingTop: theme.spacing(25),
     paddingBottom: theme.spacing(25),
+    marginBottom: theme.spacing(12),
   },
   panelBannerContent: {
     flexDirection: "column",
@@ -125,7 +121,7 @@ const useStyles = makeStyles<
 
 const formatBackLink = (
   query: Router["query"]
-): React.ComponentProps<typeof NextLink>["href"] => {
+): ComponentProps<typeof NextLink>["href"] => {
   const backParameters = softJSONParse(query.previous as string);
   if (!backParameters) {
     return "/browse";
@@ -360,148 +356,145 @@ const SelectDatasetStepContent = ({
           </MotionBox>
         )}
       </AnimatePresence>
-      <PanelLayout
-        type={odsIframe ? "M" : "LM"}
-        className={classes.panelLayout}
-        key="panel"
-      >
-        {!odsIframe && (
-          <PanelBodyWrapper type="L" className={classes.panelLeft}>
-            <AnimatePresence mode="wait">
-              {dataset ? (
-                <MotionBox
-                  key="metadata"
-                  sx={{ mx: 4, px: 4 }}
-                  {...navPresenceProps}
-                >
-                  <NextLink href={backLink} passHref legacyBehavior>
-                    <Button
-                      variant="contained"
-                      startIcon={<Icon name="chevronLeft" size={12} />}
-                      onClick={onClickBackLink}
-                    >
-                      <Trans id="dataset-preview.back-to-results">
-                        Back to the list
-                      </Trans>
-                    </Button>
-                  </NextLink>
-                  <MotionBox sx={{ mt: 6 }} {...smoothPresenceProps}>
-                    <DatasetMetadataSingleCubeAdapter
-                      datasetIri={dataset}
-                      dataSource={configState.dataSource}
+      <ContentWrapper>
+        <PanelLayout
+          type={odsIframe ? "M" : "LM"}
+          className={classes.panelLayout}
+        >
+          {odsIframe ? null : (
+            <PanelBodyWrapper type="L" className={classes.panelLeft}>
+              <AnimatePresence mode="wait">
+                {dataset ? (
+                  <MotionBox
+                    key="metadata"
+                    sx={{ mx: 4, px: 4 }}
+                    {...navPresenceProps}
+                  >
+                    <NextLink href={backLink} passHref legacyBehavior>
+                      <Button
+                        variant="contained"
+                        startIcon={<Icon name="chevronLeft" size={12} />}
+                        onClick={onClickBackLink}
+                      >
+                        <Trans id="dataset-preview.back-to-results">
+                          Back to the list
+                        </Trans>
+                      </Button>
+                    </NextLink>
+                    <MotionBox sx={{ mt: 6 }} {...smoothPresenceProps}>
+                      <DatasetMetadataSingleCubeAdapter
+                        datasetIri={dataset}
+                        dataSource={configState.dataSource}
+                      />
+                    </MotionBox>
+                  </MotionBox>
+                ) : (
+                  <MotionBox key="search-filters" {...navPresenceProps}>
+                    <SearchFilters
+                      cubes={allCubes}
+                      themes={themes}
+                      orgs={orgs}
+                      termsets={termsets}
+                      disableNavLinks={variant === "drawer"}
                     />
                   </MotionBox>
+                )}
+              </AnimatePresence>
+            </PanelBodyWrapper>
+          )}
+          <PanelBodyWrapper type="M" className={classes.panelMiddle}>
+            <AnimatePresence mode="wait">
+              {dataset ? (
+                <MotionBox key="preview" {...navPresenceProps}>
+                  <DataSetPreview
+                    dataSetIri={dataset}
+                    dataSource={configState.dataSource}
+                    {...datasetPreviewProps}
+                  />
                 </MotionBox>
               ) : (
-                <MotionBox key="search-filters" {...navPresenceProps}>
-                  <SearchFilters
-                    cubes={allCubes}
-                    themes={themes}
-                    orgs={orgs}
-                    termsets={termsets}
-                    disableNavLinks
+                <MotionBox key="filters" {...navPresenceProps}>
+                  <AnimatePresence>
+                    {variant === "drawer" ? (
+                      <Box mb="2rem" mt="0.125rem" key="select-dataset">
+                        <Typography variant="h2">
+                          <Trans id="chart.datasets.add-dataset-drawer.title">
+                            Select dataset
+                          </Trans>
+                        </Typography>
+                        <SearchDatasetInput
+                          browseState={browseState}
+                          searchFieldProps={{
+                            sx: {
+                              "&&": {
+                                maxWidth: "unset",
+                              },
+                            },
+                          }}
+                        />
+                      </Box>
+                    ) : null}
+                    {queryFilters.length > 0 && (
+                      <MotionBox
+                        key="query-filters"
+                        {...{
+                          initial: {
+                            transform: "translateY(-16px)",
+                            height: 0,
+                            marginBottom: 0,
+                            opacity: 0,
+                          },
+                          animate: {
+                            transform: "translateY(0px)",
+                            height: "auto",
+                            marginBottom: 16,
+                            opacity: 1,
+                          },
+                          exit: {
+                            transform: "translateY(-16px)",
+                            height: 0,
+                            marginBottom: 0,
+                            opacity: 0,
+                          },
+                          transition: {
+                            duration: DURATION,
+                          },
+                        }}
+                      >
+                        <Head>
+                          <title key="title">
+                            {pageTitle}- visualize.admin.ch
+                          </title>
+                        </Head>
+                        <Typography
+                          key="filters"
+                          className={classes.filters}
+                          variant="h1"
+                        >
+                          {pageTitle}
+                        </Typography>
+                      </MotionBox>
+                    )}
+                  </AnimatePresence>
+                  <SearchDatasetControls
+                    browseState={browseState}
+                    cubes={cubes}
+                  />
+                  <DatasetResults
+                    fetching={fetching}
+                    error={error}
+                    cubes={cubes}
+                    datasetResultProps={() => ({
+                      showDimensions: true,
+                    })}
+                    {...datasetResultsProps}
                   />
                 </MotionBox>
               )}
             </AnimatePresence>
           </PanelBodyWrapper>
-        )}
-        <PanelBodyWrapper
-          type="M"
-          className={classes.panelMiddle}
-          sx={odsIframe ? { p: 6 } : { maxWidth: 1040, p: 6 }}
-        >
-          <AnimatePresence mode="wait">
-            {dataset ? (
-              <MotionBox key="preview" {...navPresenceProps}>
-                <DataSetPreview
-                  dataSetIri={dataset}
-                  dataSource={configState.dataSource}
-                  {...datasetPreviewProps}
-                />
-              </MotionBox>
-            ) : (
-              <MotionBox key="filters" {...navPresenceProps}>
-                <AnimatePresence>
-                  {variant === "drawer" ? (
-                    <Box mb="2rem" mt="0.125rem" key="select-dataset">
-                      <Typography variant="h2">
-                        <Trans id="chart.datasets.add-dataset-drawer.title">
-                          Select dataset
-                        </Trans>
-                      </Typography>
-                      <SearchDatasetInput
-                        browseState={browseState}
-                        searchFieldProps={{
-                          sx: {
-                            "&&": {
-                              maxWidth: "unset",
-                            },
-                          },
-                        }}
-                      />
-                    </Box>
-                  ) : null}
-                  {queryFilters.length > 0 && (
-                    <MotionBox
-                      key="query-filters"
-                      {...{
-                        initial: {
-                          transform: "translateY(-16px)",
-                          height: 0,
-                          marginBottom: 0,
-                          opacity: 0,
-                        },
-                        animate: {
-                          transform: "translateY(0px)",
-                          height: "auto",
-                          marginBottom: 16,
-                          opacity: 1,
-                        },
-                        exit: {
-                          transform: "translateY(-16px)",
-                          height: 0,
-                          marginBottom: 0,
-                          opacity: 0,
-                        },
-                        transition: {
-                          duration: DURATION,
-                        },
-                      }}
-                    >
-                      <Head>
-                        <title key="title">
-                          {pageTitle}- visualize.admin.ch
-                        </title>
-                      </Head>
-                      <Typography
-                        key="filters"
-                        className={classes.filters}
-                        variant="h1"
-                      >
-                        {pageTitle}
-                      </Typography>
-                    </MotionBox>
-                  )}
-                </AnimatePresence>
-                <SearchDatasetControls
-                  browseState={browseState}
-                  cubes={cubes}
-                />
-                <DatasetResults
-                  fetching={fetching}
-                  error={error}
-                  cubes={cubes}
-                  datasetResultProps={() => ({
-                    showDimensions: true,
-                  })}
-                  {...datasetResultsProps}
-                />
-              </MotionBox>
-            )}
-          </AnimatePresence>
-        </PanelBodyWrapper>
-      </PanelLayout>
+        </PanelLayout>
+      </ContentWrapper>
       {variant == "page" && !odsIframe ? (
         <Box
           sx={{

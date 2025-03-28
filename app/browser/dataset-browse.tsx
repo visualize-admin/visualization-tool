@@ -23,7 +23,7 @@ import { useRouter } from "next/router";
 import { stringify } from "qs";
 import React, { ComponentProps, ReactNode, useMemo, useState } from "react";
 
-import Flex, { FlexProps } from "@/components/flex";
+import Flex from "@/components/flex";
 import {
   Checkbox,
   MinimalisticSelect,
@@ -55,9 +55,8 @@ import {
   DataCubePublicationStatus,
   SearchCubeResult,
 } from "@/graphql/resolver-types";
-import SvgIcCategories from "@/icons/components/IcCategories";
+import { Icon } from "@/icons";
 import SvgIcClose from "@/icons/components/IcClose";
-import SvgIcOrganisations from "@/icons/components/IcOrganisations";
 import useEvent from "@/utils/use-event";
 
 import {
@@ -73,52 +72,44 @@ const useStyles = makeStyles<Theme>(() => ({
     height: 24,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 2,
+    borderRadius: 999,
   },
-
   searchInput: {
     width: "100%",
     maxWidth: 820,
   },
 }));
 
-const useNavItemStyles = makeStyles<
-  Theme,
-  { level: number; navItemTheme: NavItemTheme }
->((theme) => ({
+const useNavItemStyles = makeStyles<Theme, { level: number }>((theme) => ({
   navItem: {
+    display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: 6,
-    borderRadius: 2,
+    gap: theme.spacing(3),
     width: "100%",
+    padding: theme.spacing(2),
+    borderRadius: 2,
+    transition: "background-color 0.1s ease",
+    "&:hover": {
+      backgroundColor: theme.palette.cobalt[50],
+    },
+  },
+  removeFilterButton: ({ level }) => ({
     display: "flex",
-    transition: "background 0.1s ease",
-  },
-  link: {
-    cursor: "pointer",
-    flexGrow: 1,
-    padding: theme.spacing(1, 0),
-  },
-  removeFilterButton: ({ level, navItemTheme }) => ({
+    alignItems: "center",
+    width: "auto",
+    height: "auto",
     minWidth: 16,
     minHeight: 16,
-    height: "auto",
-    alignItems: "center",
-    display: "flex",
-    width: "auto",
+    marginRight: 2,
     padding: 0,
     borderRadius: 2,
-    marginRight: 2,
+    backgroundColor: level === 1 ? "cobalt.50" : "transparent",
+    color: level === 1 ? theme.palette.text.primary : "cobalt.50",
+    transition: "background-color 0.1s ease",
     "&:hover": {
-      background: "rgba(0, 0, 0, 0.25)",
+      backgroundColor: theme.palette.cobalt[100],
     },
-
-    backgroundColor: level === 1 ? navItemTheme.activeBg : "transparent",
-    color:
-      level === 1
-        ? (navItemTheme.closeColor ?? navItemTheme.activeTextColor)
-        : navItemTheme.activeBg,
   }),
 }));
 
@@ -320,67 +311,20 @@ export const SearchDatasetSortControl = ({
   );
 };
 
-type NavItemTheme = {
-  activeBg: string;
-  activeTextColor: string;
-  textColor: string;
-  countColor: string;
-  countBg: string;
-  closeColor?: string;
-  iconColor?: string;
-  showAllColor?: string;
-};
-
-const defaultNavItemTheme: NavItemTheme = {
-  activeTextColor: "white",
-  activeBg: "primary.main",
-  textColor: "text.primary",
-  countColor: "grey.800",
-  countBg: "grey.300",
-};
-
-const themeNavItemTheme: NavItemTheme = {
-  activeBg: "category.main",
-  activeTextColor: "white",
-  textColor: "text.primary",
-  countColor: "category.main",
-  countBg: "category.light",
-};
-
-const organizationNavItemTheme: NavItemTheme = {
-  activeBg: "organization.main",
-  activeTextColor: "white",
-  textColor: "text.primary",
-  countColor: "organization.main",
-  countBg: "organization.light",
-};
-
-const termsetNavItemTheme: NavItemTheme = {
-  activeBg: "grey.300",
-  activeTextColor: "grey.900",
-  textColor: "grey.700",
-  countColor: "grey.800",
-  countBg: "grey.300",
-  closeColor: "grey.700",
-  showAllColor: "grey.600",
-  iconColor: "grey.700",
-};
-
 const NavChip = ({
   children,
-  color,
   backgroundColor,
 }: {
-  children: React.ReactNode;
-  color: string;
+  children: ReactNode;
   backgroundColor: string;
 }) => {
   const classes = useStyles();
+
   return (
     <Flex
       data-testid="navChip"
       className={classes.navChip}
-      sx={{ typography: "caption", color, backgroundColor }}
+      sx={{ typography: "caption", backgroundColor }}
     >
       {children}
     </Flex>
@@ -413,24 +357,24 @@ const NavItem = ({
   next,
   count,
   active,
-  theme = defaultNavItemTheme,
   level = 1,
   disableLink,
+  countBg,
 }: {
   children: ReactNode;
   filters: BrowseFilter[];
   next: BrowseFilter;
   count?: number;
   active: boolean;
-  theme: typeof defaultNavItemTheme;
   /** Level is there to differentiate between organizations and organization subtopics */
   level?: number;
   disableLink?: boolean;
+  countBg: string;
 } & MUILinkProps) => {
   const { includeDrafts, search, setFilters } = useBrowseContext();
-  const classes = useNavItemStyles({ level, navItemTheme: theme });
+  const classes = useNavItemStyles({ level });
 
-  const [newFiltersAdd, path] = useMemo(() => {
+  const [newFiltersAdd, href] = useMemo(() => {
     const extraURLParams = stringify(
       pickBy(
         {
@@ -477,6 +421,8 @@ const NavItem = ({
     ] as const;
   }, [includeDrafts, search, filters, next.iri]);
 
+  console.log(disableLink);
+
   const removeFilterButton = (
     <MaybeLink
       href={removeFilterPath}
@@ -504,67 +450,46 @@ const NavItem = ({
 
   const countChip =
     count !== undefined ? (
-      <NavChip color={theme.countColor} backgroundColor={theme.countBg}>
-        {count}
-      </NavChip>
+      <NavChip backgroundColor={countBg}>{count}</NavChip>
     ) : null;
 
   return (
-    <MotionBox
-      {...accordionPresenceProps}
-      className={classes.navItem}
-      data-testid="navItem"
-      sx={{
-        mb: 1,
-        pl: 4,
-        backgroundColor: active && level === 1 ? theme.activeBg : "transparent",
-        "&:hover": {
-          background: active ? undefined : "rgba(0, 0, 0, 0.05)",
-        },
-        color: active
-          ? level === 1
-            ? theme.activeTextColor
-            : theme.activeBg
-          : theme.textColor,
-      }}
-    >
-      {active ? (
-        <>
-          <Typography variant="body2" sx={{ py: 1 }}>
-            {children}
-          </Typography>
-          {level === 1 ? removeFilterButton : countChip}
-        </>
-      ) : (
-        <>
-          <MaybeLink
-            href={path}
-            passHref
-            legacyBehavior
-            disabled={!!disableLink}
-            scroll={false}
-            shallow
-          >
-            <MUILink
-              className={classes.link}
-              href={disableLink ? undefined : path}
-              underline="none"
-              variant="body2"
-              onClick={
-                disableLink
-                  ? (e) => {
-                      e.preventDefault();
-                      setFilters(newFiltersAdd);
-                    }
-                  : undefined
-              }
-            >
-              {children}
-            </MUILink>
-          </MaybeLink>
-          {countChip}
-        </>
-      )}
+    <MotionBox {...accordionPresenceProps} data-testid="navItem">
+      <MaybeLink
+        href={href}
+        passHref
+        legacyBehavior
+        disabled={!!disableLink}
+        scroll={false}
+        shallow
+      >
+        <MUILink
+          className={clsx(classes.navItem)}
+          variant="body3"
+          onClick={
+            disableLink && !active
+              ? (e) => {
+                  e.preventDefault();
+                  setFilters(newFiltersAdd);
+                }
+              : undefined
+          }
+          sx={{
+            p: 2,
+            backgroundColor:
+              active && level === 1 ? "cobalt.50" : "transparent",
+            color: active
+              ? level === 1
+                ? "text.primary"
+                : "cobalt.50"
+              : "text.primary",
+            cursor: active ? "default" : "pointer",
+          }}
+        >
+          {children}
+          {active && level === 1 ? removeFilterButton : countChip}
+        </MUILink>
+      </MaybeLink>
     </MotionBox>
   );
 };
@@ -574,11 +499,13 @@ const Subthemes = ({
   filters,
   counts,
   disableLinks,
+  countBg,
 }: {
   subthemes: SearchCube["subthemes"];
   filters: BrowseFilter[];
   counts: Record<string, number>;
   disableLinks?: boolean;
+  countBg: string;
 }) => {
   return (
     <>
@@ -594,11 +521,11 @@ const Subthemes = ({
             key={d.iri}
             next={{ __typename: "DataCubeAbout", ...d }}
             filters={filters}
-            theme={organizationNavItemTheme}
             active={filters[filters.length - 1]?.iri === d.iri}
             level={2}
             count={count}
             disableLink={disableLinks}
+            countBg={countBg}
           >
             {d.label}
           </NavItem>
@@ -608,57 +535,47 @@ const Subthemes = ({
   );
 };
 
-type NavSectionTitleTheme = {
-  backgroundColor: string;
-  borderColor: string;
-};
-
 const NavSectionTitle = ({
-  children,
+  label,
   theme,
-  ...flexProps
 }: {
-  children: React.ReactNode;
-  theme: NavSectionTitleTheme;
-} & FlexProps) => {
+  label: ReactNode;
+  theme: { backgroundColor: string };
+}) => {
   return (
-    <Flex
-      {...flexProps}
+    <Box
       sx={{
-        alignItems: "center",
-        p: 3,
-        backgroundColor: theme.backgroundColor,
-        borderRadius: 2,
-        height: "2.5rem",
         mb: 2,
+        px: 2,
+        py: 3,
+        borderRadius: "6px",
+        backgroundColor: theme.backgroundColor,
       }}
     >
-      {children}
-    </Flex>
+      <Typography variant="h4" component="p" sx={{ fontWeight: 700 }}>
+        {label}
+      </Typography>
+    </Box>
   );
 };
 
 const NavSection = ({
   label,
-  icon,
   items,
   theme,
-  navItemTheme,
   currentFilter,
   filters,
   counts,
   extra,
   disableLinks,
 }: {
-  label: React.ReactNode;
-  icon: React.ReactNode;
+  label: ReactNode;
   items: (DataCubeTheme | DataCubeOrganization | DataCubeTermset)[];
-  theme: { backgroundColor: string; borderColor: string };
-  navItemTheme: NavItemTheme;
+  theme: { backgroundColor: string };
   currentFilter?: DataCubeTheme | DataCubeOrganization | DataCubeTermset;
   filters: BrowseFilter[];
   counts: Record<string, number>;
-  extra?: React.ReactNode;
+  extra?: ReactNode;
   disableLinks?: boolean;
 }) => {
   const topItems = useMemo(() => {
@@ -671,18 +588,7 @@ const NavSection = ({
 
   return (
     <div>
-      <NavSectionTitle theme={theme} sx={{ mb: "block" }}>
-        <Box
-          component="span"
-          color={navItemTheme.iconColor ?? navItemTheme.countColor}
-          mr={2}
-        >
-          {icon}
-        </Box>
-        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-          {label}
-        </Typography>
-      </NavSectionTitle>
+      <NavSectionTitle label={label} theme={theme} />
       <Reorder.Group
         axis="y"
         as="div"
@@ -697,8 +603,8 @@ const NavSection = ({
                 filters={filters}
                 next={item}
                 count={counts[item.iri]}
-                theme={navItemTheme}
                 disableLink={disableLinks}
+                countBg={theme.backgroundColor}
               >
                 {item.label}
               </NavItem>
@@ -706,37 +612,20 @@ const NavSection = ({
           );
         })}
         {topItems.length !== items.length ? (
-          <Box textAlign="center">
+          <Button
+            variant="text"
+            color="blue"
+            size="sm"
+            onClick={isOpen ? close : open}
+            endIcon={<Icon name={isOpen ? "arrowUp" : "arrowDown"} size={20} />}
+            sx={{ width: "100%" }}
+          >
             {isOpen ? (
-              <Button
-                variant="text"
-                sx={{
-                  color: navItemTheme.countColor,
-                  "&:hover": { color: navItemTheme.countColor },
-                  fontWeight: "bold",
-                }}
-                color="inherit"
-                onClick={close}
-              >
-                Show less
-              </Button>
+              <Trans id="show.less">Show less</Trans>
             ) : (
-              <Button
-                variant="text"
-                sx={{
-                  color: navItemTheme.showAllColor ?? navItemTheme.countColor,
-                  "&:hover": {
-                    color: navItemTheme.showAllColor ?? navItemTheme.countColor,
-                  },
-                  fontWeight: "bold",
-                }}
-                color="inherit"
-                onClick={open}
-              >
-                <Trans id="show.all">Show all</Trans>
-              </Button>
+              <Trans id="show.all">Show all</Trans>
             )}
-          </Box>
+          </Button>
         ) : null}
       </Reorder.Group>
       {extra}
@@ -857,15 +746,10 @@ export const SearchFilters = ({
       <NavSection
         key="themes"
         items={displayedThemes}
-        theme={{
-          backgroundColor: "category.light",
-          borderColor: "category.main",
-        }}
-        navItemTheme={themeNavItemTheme}
+        theme={{ backgroundColor: "green.100" }}
         currentFilter={themeFilter}
         counts={counts}
         filters={filters}
-        icon={<SvgIcCategories width={20} height={20} />}
         label={<Trans id="browse-panel.themes">Themes</Trans>}
         extra={null}
         disableLinks={disableNavLinks}
@@ -882,20 +766,16 @@ export const SearchFilters = ({
     );
   }, [cubes]);
 
+  const bg = "blue.100";
   const orgNav =
     displayedOrgs && displayedOrgs.length > 0 ? (
       <NavSection
         key="orgs"
         items={displayedOrgs}
-        theme={{
-          backgroundColor: "organization.light",
-          borderColor: "organization.main",
-        }}
-        navItemTheme={organizationNavItemTheme}
+        theme={{ backgroundColor: bg }}
         currentFilter={orgFilter}
         counts={counts}
         filters={filters}
-        icon={<SvgIcOrganisations width={20} height={20} />}
         label={<Trans id="browse-panel.organizations">Organizations</Trans>}
         extra={
           orgFilter && filters.map((d) => d.iri).includes(orgFilter.iri) ? (
@@ -904,6 +784,7 @@ export const SearchFilters = ({
               filters={filters}
               counts={counts}
               disableLinks={disableNavLinks}
+              countBg={bg}
             />
           ) : null
         }
@@ -916,21 +797,20 @@ export const SearchFilters = ({
       <NavSection
         key="termsets"
         items={displayedTermsets}
-        theme={{
-          backgroundColor: "grey.300",
-          borderColor: "grey.800",
-        }}
-        navItemTheme={termsetNavItemTheme}
+        theme={{ backgroundColor: "monochrome.200" }}
         currentFilter={termsetFilter}
         counts={counts}
         filters={filters}
-        icon={<SvgIcOrganisations width={20} height={20} />}
         label={
-          <Stack direction="row" gap={2} alignItems="center">
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            gap={2}
+            width="100%"
+          >
             <Trans id="browse-panel.termsets">Concepts</Trans>
             <InfoIconTooltip
-              variant="secondary"
-              placement="right"
               title={
                 <Trans id="browse-panel.termsets.explanation">
                   Concepts represent values that can be shared across different
@@ -962,20 +842,16 @@ export const SearchFilters = ({
   });
 
   return (
-    <Flex
-      key={filters.length}
-      role="search"
-      sx={{ height: "100%", px: 4, pt: "0.75rem" }}
-    >
+    <div key={filters.length} role="search">
       {/* Need to "catch" the Reorder items here, as otherwise there is an exiting
           bug as they get picked by parent AnimatePresence. Probably related to
           https://github.com/framer/motion/issues/1619. */}
       <AnimatePresence>
-        <Flex sx={{ flexDirection: "column", gap: 5, width: "100%" }}>
+        <Flex sx={{ flexDirection: "column", rowGap: 8, width: "100%" }}>
           {navs.map((x) => x.element)}
         </Flex>
       </AnimatePresence>
-    </Flex>
+    </div>
   );
 };
 
