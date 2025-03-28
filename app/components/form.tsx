@@ -64,7 +64,6 @@ import { BoldItalicUnderlineToggles } from "@/components/mdx-editor/bold-italic-
 import { linkDialogPlugin } from "@/components/mdx-editor/link-dialog";
 import { LinkDialogToggle } from "@/components/mdx-editor/link-dialog-toggle";
 import { ListToggles } from "@/components/mdx-editor/list-toggles";
-import { TooltipTitle } from "@/components/tooltip-utils";
 import VisuallyHidden from "@/components/visually-hidden";
 import {
   FieldProps,
@@ -126,9 +125,7 @@ export const Radio = ({
     : "grey.500";
 
   return (
-    <MaybeTooltip
-      title={warnMessage ? <TooltipTitle text={warnMessage} /> : undefined}
-    >
+    <MaybeTooltip title={warnMessage}>
       <FormControlLabel
         label={label || "-"}
         htmlFor={`${name}-${value}`}

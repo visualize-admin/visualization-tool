@@ -5,7 +5,6 @@ import React, { ReactNode } from "react";
 
 import Flex from "@/components/flex";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
-import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ChartConfig,
   FieldProps,
@@ -133,7 +132,7 @@ const WarnIconTooltip = (props: WarnIconTooltipProps) => {
   const iconStyles = useIconStyles({ isActive: false });
 
   return (
-    <MaybeTooltip title={<TooltipTitle text={title} />}>
+    <MaybeTooltip title={title}>
       <Typography>
         <SvgIcWarningCircle className={iconStyles.warn} />
       </Typography>

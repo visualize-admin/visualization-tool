@@ -20,7 +20,6 @@ import {
 import { Loading } from "@/components/hint";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
-import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   ChartConfig,
   DashboardFiltersConfig,
@@ -60,10 +59,7 @@ const ComponentLabel = (props: ComponentLabelProps) => {
       <span style={{ fontWeight: "bold" }}>{label}</span>
     </OpenMetadataPanelWrapper>
   ) : component.description ? (
-    <MaybeTooltip
-      title={<TooltipTitle text={component.description} />}
-      tooltipProps={tooltipProps}
-    >
+    <MaybeTooltip title={component.description} tooltipProps={tooltipProps}>
       <span style={{ fontWeight: "bold", textDecoration: "underline" }}>
         {label}
       </span>

@@ -21,13 +21,11 @@ import React, {
 } from "react";
 
 import { MaybeTooltip } from "@/components/maybe-tooltip";
-import { TooltipTitle } from "@/components/tooltip-utils";
+import useDisclosure from "@/components/use-disclosure";
 import { Icon, IconName } from "@/icons";
 import SvgIcMinus from "@/icons/components/IcMinus";
 import SvgIcPlus from "@/icons/components/IcPlus";
 import SvgIcWarningCircle from "@/icons/components/IcWarningCircle";
-
-import useDisclosure from "../../../components/use-disclosure";
 
 const useControlSectionStyles = makeStyles<
   Theme,
@@ -314,7 +312,7 @@ const Warning = (props: WarningProps) => {
   const { title } = props;
 
   return (
-    <MaybeTooltip title={<TooltipTitle text={title} />}>
+    <MaybeTooltip title={title}>
       <Typography color="warning.main" sx={{ mr: 2 }}>
         <SvgIcWarningCircle width={18} height={18} />
       </Typography>
