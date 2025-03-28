@@ -120,6 +120,53 @@ export const components: Components = {
       },
     },
   },
+  MuiInput: {
+    defaultProps: {
+      size: "md",
+      disableUnderline: true,
+    },
+    styleOverrides: {
+      // @ts-ignore
+      root: ({ ownerState }) => {
+        const size = ownerState.size ?? "md";
+        const sizeStyles = (() => {
+          switch (size) {
+            case "sm":
+              return { padding: "10px 16px", ...typography.h6 };
+            case "md":
+              return { padding: "10px 16px", ...typography.h5 };
+            case "lg":
+              return { padding: "10px 16px", ...typography.h4 };
+            case "xl":
+              return { padding: "12px 16px", ...typography.h4 };
+            default:
+              const _exhaustiveCheck: never = size;
+              return _exhaustiveCheck;
+          }
+        })();
+
+        return {
+          ...sizeStyles,
+          width: "100%",
+          borderRadius: 2,
+          border: `1px solid ${palette.monochrome[300]}`,
+          backgroundColor: "#fff",
+
+          "&.Mui-focused": {
+            border: `1px solid ${palette.monochrome[500]}`,
+          },
+        };
+      },
+      input: {
+        padding: 0,
+        paddingRight: 12,
+
+        "&::placeholder": {
+          opacity: 1,
+        },
+      },
+    },
+  },
   MuiTypography: {
     styleOverrides: {
       root: {

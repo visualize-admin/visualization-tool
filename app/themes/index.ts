@@ -35,6 +35,19 @@ declare module "@mui/material/Button" {
     small: false;
     medium: false;
     large: false;
+
+    sm: true;
+    md: true;
+    lg: true;
+    xl: true;
+  }
+}
+
+declare module "@mui/material/InputBase" {
+  interface InputBasePropsSizeOverrides {
+    small: false;
+    medium: false;
+
     sm: true;
     md: true;
     lg: true;
