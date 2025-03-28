@@ -1,18 +1,8 @@
 import { MDXProvider } from "@mdx-js/react";
-import { Box } from "@mui/material";
 import { ReactNode } from "react";
 
 import { ContentLayout, StaticContentLayout } from "@/components/layout";
-import {
-  BugReport,
-  Contribute,
-  Examples,
-  Intro,
-  Newsletter,
-  Tutorial,
-} from "@/homepage";
-import { FeatureRequest } from "@/homepage/feature-request";
-import { Section } from "@/homepage/section";
+import { Actions, Examples, Intro, Tutorial } from "@/homepage";
 
 const castContentId = (contentId: unknown) => {
   if (typeof contentId === "string") {
@@ -39,15 +29,10 @@ const Wrapper = ({
 
 const defaultMDXComponents = {
   wrapper: Wrapper,
-  Box,
+  Actions,
   Intro,
   Tutorial,
   Examples,
-  Contribute,
-  Newsletter,
-  BugReport,
-  Section,
-  FeatureRequest,
 };
 
 export const ContentMDXProvider = ({ children }: { children: ReactNode }) => {

@@ -9,6 +9,8 @@ import { CustomPaletteType } from "@/config-types";
 import { ColorSquare } from "@/configurator/components/chart-controls/color-palette";
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";
 import { Icon } from "@/icons";
+import { ProfileColorPaletteForm } from "@/login/components/color-palettes/profile-color-palette-form";
+import { SectionContent } from "@/login/components/profile-tables";
 import {
   createDivergingInterpolator,
   createSequentialInterpolator,
@@ -16,10 +18,6 @@ import {
 import { deleteCustomColorPalette } from "@/utils/chart-config/api";
 import { useMutate } from "@/utils/use-fetch-data";
 import { useUserPalettes } from "@/utils/use-user-palettes";
-
-import { SectionContent } from "../profile-tables";
-
-import { default as ProfileColorPaletteForm } from "./profile-color-palette-form";
 
 type ProfileContentProps = {
   title: string;
@@ -77,9 +75,9 @@ export const ProfileColorPaletteContent = ({ title }: ProfileContentProps) => {
             </Typography>
           )}
           <Button
-            color="primary"
+            color="blue"
             variant="contained"
-            startIcon={<Icon name="add" />}
+            startIcon={<Icon name="plus" />}
             sx={{ width: "fit-content" }}
             onClick={showAddForm}
           >
@@ -186,7 +184,7 @@ const ColorPaletteRow = ({
         <EditButton onClick={() => onEdit(paletteId)}>
           <Typography
             aria-hidden
-            color="primary"
+            color="primary.main"
             sx={{ backgroundColor: "transparent" }}
           >
             <VisuallyHidden>
@@ -194,7 +192,7 @@ const ColorPaletteRow = ({
                 Edit Color Palette
               </Trans>
             </VisuallyHidden>
-            <Icon name="edit" size={24} />
+            <Icon name="pen" size={24} />
           </Typography>
         </EditButton>
         <DeleteButton
@@ -208,7 +206,7 @@ const ColorPaletteRow = ({
           </VisuallyHidden>
           <Typography
             aria-hidden
-            color="primary"
+            color="primary.main"
             sx={{ backgroundColor: "transparent" }}
           >
             <Icon name="trash" size={24} />

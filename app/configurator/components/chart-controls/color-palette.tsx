@@ -504,12 +504,7 @@ const ColorPaletteControls = ({
 
     return (
       <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
-        <Button
-          disabled={same}
-          onClick={resetColorPalette}
-          variant="inline"
-          sx={{ px: 1 }}
-        >
+        <Button disabled={same} onClick={resetColorPalette} sx={{ px: 1 }}>
           <Trans id="controls.color.palette.reset">Reset color palette</Trans>
         </Button>
         <Typography color="secondary">•</Typography>
@@ -526,7 +521,6 @@ const ColorPaletteControls = ({
               },
             });
           }}
-          variant="inline"
           sx={{ px: 1 }}
         >
           <Trans id="controls.filters.select.refresh-colors">

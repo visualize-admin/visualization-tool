@@ -1,22 +1,21 @@
-import React from "react";
-
+import * as React from "react";
 function SvgIcPlay(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g fill="none" fillRule="evenodd">
-        <path
-          fill="currentColor"
-          d="M5.49999997,18.3507144 L5.49999997,5.64928553 C5.49999997,4.82085841 6.17157284,4.14928553 6.99999997,4.14928553 C7.27186589,4.14928553 7.5386205,4.22317228 7.7717436,4.36304614 L18.3562677,10.7137606 C19.0666381,11.1399828 19.2969856,12.0613732 18.8707634,12.7717436 C18.7440888,12.982868 18.5673921,13.1595647 18.3562677,13.2862394 L7.7717436,19.6369538 C7.0613732,20.063176 6.13998282,19.8328284 5.71376058,19.122458 C5.57388672,18.8893349 5.49999997,18.6225803 5.49999997,18.3507144 Z"
-        />
-      </g>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M5 20l14-8L5 4v16zm1-1.723L16.984 12 6 5.723v12.554z"
+        fill="currentColor"
+      />
     </svg>
   );
 }
-
 export default SvgIcPlay;

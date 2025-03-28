@@ -63,7 +63,9 @@ export const AxisHeightLinear = () => {
           style={{ display: "flex" }}
         >
           <OpenMetadataPanelWrapper component={rest.yMeasure}>
-            <span style={{ fontSize: axisLabelFontSize }}>{yAxisLabel}</span>
+            <span style={{ fontSize: axisLabelFontSize, lineHeight: 1.5 }}>
+              {yAxisLabel}
+            </span>
           </OpenMetadataPanelWrapper>
         </foreignObject>
       )}

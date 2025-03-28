@@ -605,9 +605,7 @@ const LayoutBlocksConfigurator = () => {
                 onClick={() => onClick(block.key)}
                 value={state.layout.activeField ?? ""}
                 icon="text"
-                rightIcon={
-                  <Icon className={classes.tabRightIcon} name="edit" />
-                }
+                rightIcon={<Icon className={classes.tabRightIcon} name="pen" />}
               />
             ))}
         </div>

@@ -2,19 +2,19 @@ import * as React from "react";
 function SvgIcRewind(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g fill="none" fillRule="evenodd">
-        <path d="M0 0h24v24H0z" />
-        <path
-          fill="currentColor"
-          d="M4 12l8.256-8.256v7.512l7.488-7.512v16.512l-7.488-7.512v7.512z"
-        />
-      </g>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12.39 4L4 12l8.39 8v-7.28L20 20V4l-7.61 7.28V4zm-1.066 2.443L5.496 12l5.828 5.557V6.443zM13.13 12l5.803-5.551v11.102L13.13 12z"
+        fill="currentColor"
+      />
     </svg>
   );
 }

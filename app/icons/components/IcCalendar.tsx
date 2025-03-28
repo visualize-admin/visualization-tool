@@ -2,18 +2,23 @@ import * as React from "react";
 function SvgIcCalendar(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g fill="none" fillRule="evenodd" clipRule="evenodd">
-        <path
-          fill="currentColor"
-          d="M17 13V15H7V13H17ZM19 5C20.103 5 21 5.897 21 7V19C21 20.103 20.103 21 19 21H5C3.897 21 3 20.103 3 19V7C3 5.897 3.897 5 5 5H7V3H9V5H15V3H17V5H19ZM5 19H19.002L19.0006 11H5V19ZM5 9H19V7H5V9Z"
-        />
-      </g>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M16.453 4.943V4h-.75v.943H7.296V4h-.75v.943H4v15.052h15.05V4.943h-2.597zm1.848.752v3.001H4.75v-3H18.3zM4.75 9.445v9.801H18.3v-9.8H4.75z"
+        fill="currentColor"
+      />
+      <path
+        d="M6.547 11.336h.75v1.197h-.75v-1.197zM9.602 11.336h.75v1.197h-.75v-1.197zM12.648 11.336h.75v1.197h-.75v-1.197zM15.703 11.336h.75v1.197h-.75v-1.197z"
+        fill="currentColor"
+      />
     </svg>
   );
 }

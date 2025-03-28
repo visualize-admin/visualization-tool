@@ -1,12 +1,12 @@
-import { Box, Typography } from "@mui/material";
+import { ContentWrapper } from "@interactivethings/swiss-federal-ci/dist/components";
+import { Card, Typography } from "@mui/material";
 import { ReactNode } from "react";
 
 import Flex from "@/components/flex";
-import { HomepageSection } from "@/homepage/generic";
+import { HomepageSectionTitle } from "@/homepage/generic";
 import { Step1 } from "@/homepage/step1";
 import { Step2 } from "@/homepage/step2";
 import { Step3 } from "@/homepage/step3";
-import { Icon } from "@/icons";
 
 export const Tutorial = ({
   headline,
@@ -20,72 +20,47 @@ export const Tutorial = ({
   step3: string;
 }) => {
   return (
-    <Box sx={{ maxWidth: 1024, m: "0 auto", color: "grey.800", px: 4, pb: 7 }}>
-      <HomepageSection>{headline}</HomepageSection>
-      <Flex
-        sx={{
-          flexDirection: ["column", "column", "row"],
-          justifyContent: ["flex-start", "flex-start", "space-around"],
-          alignItems: "center",
-        }}
-      >
-        <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
-          <Step1 />
-          <HomepageTutorialStep>{step1}</HomepageTutorialStep>
+    <ContentWrapper sx={{ py: 20 }}>
+      <div style={{ width: "100%" }}>
+        <HomepageSectionTitle>{headline}</HomepageSectionTitle>
+        <Flex
+          sx={(t) => ({
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+            gap: 12,
+            width: "100%",
+            [t.breakpoints.up("lg")]: {
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            },
+          })}
+        >
+          <Card>
+            <Step1 />
+            <HomepageTutorialStep>{step1}</HomepageTutorialStep>
+          </Card>
+          <Card>
+            <Step2 />
+            <HomepageTutorialStep>{step2}</HomepageTutorialStep>
+          </Card>
+          <Card>
+            <Step3 />
+            <HomepageTutorialStep>{step3}</HomepageTutorialStep>
+          </Card>
         </Flex>
-
-        <Arrow />
-
-        <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
-          <Step2 />
-          <HomepageTutorialStep>{step2}</HomepageTutorialStep>
-        </Flex>
-
-        <Arrow />
-
-        <Flex sx={{ flexDirection: "column", alignItems: "center" }}>
-          <Step3 />
-          <HomepageTutorialStep>{step3}</HomepageTutorialStep>
-        </Flex>
-      </Flex>
-    </Box>
+      </div>
+    </ContentWrapper>
   );
 };
 
 const HomepageTutorialStep = ({ children }: { children: ReactNode }) => (
   <Typography
-    component="div"
-    variant="body1"
-    sx={{
-      mt: 4,
-      mb: 2,
-    }}
+    variant="h3"
+    component="p"
+    sx={{ px: 7, py: 11, fontWeight: "bold" }}
   >
     {children}
   </Typography>
-);
-
-const Arrow = () => (
-  <>
-    <Box
-      sx={{
-        display: ["none", "none", "block"],
-        zIndex: 12,
-        mb: [4, 4, 6],
-        mx: [0, 0, "-8px"],
-      }}
-    >
-      <Icon size={32} name="arrowRight"></Icon>
-    </Box>
-    <Box
-      sx={{
-        display: ["block", "block", "none"],
-        zIndex: 12,
-        mb: [4, 4, 6],
-        mx: [0, 0, "-8px"],
-      }}
-    >
-      <Icon size={32} name="arrowDown"></Icon>
-    </Box>
-  </>
 );

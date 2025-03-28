@@ -1,34 +1,31 @@
-import { Box, Theme, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { ContentWrapper } from "@interactivethings/swiss-federal-ci/dist/components";
+import { Box, Card, Skeleton, Typography } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
 import { useClient } from "urql";
 
 import { ChartPublished } from "@/components/chart-published";
-import Flex from "@/components/flex";
+import { EmbedQueryParams } from "@/components/embed-params";
 import { LoadingDataError } from "@/components/hint";
 import { ConfiguratorState } from "@/configurator";
 import { getExampleState1, getExampleState2 } from "@/homepage/constants";
-import { HomepageSection } from "@/homepage/generic";
+import { HomepageSectionTitle } from "@/homepage/generic";
 import { ConfiguratorStateProvider } from "@/src";
 import { upgradeConfiguratorState } from "@/utils/chart-config/upgrade-cube";
 import { useFetchData } from "@/utils/use-fetch-data";
 
-type ExamplesProps = {
+export const Examples = ({
+  headline,
+  example1Headline,
+  example1Description,
+  example2Headline,
+  example2Description,
+}: {
   headline: string;
   example1Headline: string;
   example1Description: string;
   example2Headline: string;
   example2Description: string;
-};
-
-export const Examples = (props: ExamplesProps) => {
-  const {
-    headline,
-    example1Headline,
-    example1Description,
-    example2Headline,
-    example2Description,
-  } = props;
+}) => {
   const [state1, setState1] = useState<ConfiguratorState>();
   const [state2, setState2] = useState<ConfiguratorState>();
 
@@ -44,135 +41,108 @@ export const Examples = (props: ExamplesProps) => {
     run();
   }, []);
 
-  return state1 && state2 ? (
-    <Box
-      sx={{
-        maxWidth: 1024,
-        // To prevent "jumping" of the content when the cube iris are updated
-        // (which is super fast, but still noticeable)
-        minHeight: "50vh",
-        margin: [0, 0, "0 auto"],
-        p: 4,
-        color: "grey.800",
-      }}
-    >
-      <HomepageSection>{headline}</HomepageSection>
-      <Example
-        queryKey="example1"
-        configuratorState={state1}
-        headline={example1Headline}
-        description={example1Description}
-      />
-      <Example
-        queryKey="example2"
-        configuratorState={state2}
-        headline={example2Headline}
-        description={example2Description}
-        reverse
-      />
+  return (
+    <Box sx={{ backgroundColor: "background.paper" }}>
+      <ContentWrapper sx={{ py: 20 }}>
+        <div style={{ width: "100%" }}>
+          <HomepageSectionTitle>{headline}</HomepageSectionTitle>
+          <Box
+            sx={(t) => ({
+              display: "grid",
+              gridTemplateColumns: "1fr",
+              gridTemplateRows: "subgrid",
+              columnGap: 12,
+              [t.breakpoints.up("md")]: {
+                gridTemplateColumns: "1fr 1fr",
+              },
+            })}
+          >
+            <Example
+              queryKey="example1"
+              configuratorState={state1}
+              headline={example1Headline}
+              description={example1Description}
+            />
+            <Example
+              queryKey="example2"
+              configuratorState={state2}
+              headline={example2Headline}
+              description={example2Description}
+            />
+          </Box>
+        </div>
+      </ContentWrapper>
     </Box>
-  ) : null;
+  );
 };
 
-type ExampleProps = {
+const Example = ({
+  queryKey,
+  configuratorState,
+  headline,
+  description,
+}: {
   queryKey: string;
-  configuratorState: ConfiguratorState;
+  configuratorState?: ConfiguratorState;
   headline: string;
   description: string;
-  reverse?: boolean;
-};
-
-const Example = (props: ExampleProps) => {
-  const { queryKey, configuratorState, headline, description, reverse } = props;
+}) => {
   const client = useClient();
   const { data, error } = useFetchData({
-    queryKey: [queryKey],
+    queryKey: [queryKey, configuratorState ? "A" : "B"],
     queryFn: () => {
-      return upgradeConfiguratorState(configuratorState, {
+      return upgradeConfiguratorState(configuratorState!, {
         client,
-        dataSource: configuratorState.dataSource,
+        dataSource: configuratorState!.dataSource,
       });
     },
+    options: { pause: !configuratorState },
   });
 
   return data ? (
     <ConfiguratorStateProvider chartId="published" initialState={data}>
-      <ExampleCard
-        headline={headline}
-        description={description}
-        reverse={reverse}
-      >
-        <ChartPublished />
+      <ExampleCard headline={headline} description={description}>
+        <ChartPublished
+          embedParams={{ removeBorder: true } as EmbedQueryParams}
+          shouldShrink={false}
+        />
       </ExampleCard>
     </ConfiguratorStateProvider>
   ) : error ? (
     <Box sx={{ mb: 6 }}>
       <LoadingDataError />
     </Box>
-  ) : null;
+  ) : (
+    <Skeleton variant="rectangular" height={400} />
+  );
 };
 
-const useStyles = makeStyles((theme: Theme) => ({
-  children: {
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: theme.palette.grey[300],
-    boxShadow: theme.shadows[5],
-    marginTop: 2,
-    minWidth: 0,
-  },
-}));
-
-type ExampleCardProps = {
+const ExampleCard = ({
+  children,
+  headline,
+  description,
+}: {
+  children?: ReactNode;
   headline: string;
   description: string;
-  reverse?: boolean;
-  children?: ReactNode;
-};
-
-const ExampleCard = (props: ExampleCardProps) => {
-  const { headline, description, reverse, children } = props;
-  const classes = useStyles();
+}) => {
   return (
-    <Flex
+    <Card
       sx={{
-        flexDirection: ["column", "column", "row"],
-        justifyContent: ["flex-start", "flex-start", "space-between"],
-        alignItems: "center",
-        mb: 6,
+        display: "grid",
+        gridTemplateRows: "subgrid",
+        gridRow: "span 2",
       }}
     >
-      <Box
-        sx={{
-          order: reverse ? [1, 1, 2] : [2, 2, 1],
-          minWidth: 0,
-          width: ["100%", "100%", "50%"],
-          ml: reverse ? [0, 0, 8] : 0,
-          mr: reverse ? 0 : [0, 0, 8],
-        }}
-      >
-        <Typography variant="h3">{headline}</Typography>
-        <Typography
-          sx={{
-            fontSize: "1rem",
-            lineHeight: 1.5,
-            mt: 4,
-            mb: [2, 2, 0],
-          }}
-        >
+      <div>{children}</div>
+      <Box sx={{ px: 7, py: 11 }}>
+        <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+          {headline}
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 4 }}>
           {description}
         </Typography>
       </Box>
-      <Box
-        className={classes.children}
-        sx={{
-          order: reverse ? 1 : 2,
-          width: ["100%", "100%", "50%"],
-          maxWidth: ["unset", "unset", 512],
-        }}
-      >
-        {children}
-      </Box>
-    </Flex>
+    </Card>
   );
 };

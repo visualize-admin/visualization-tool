@@ -150,8 +150,8 @@ export const ProfileVisualizationsTable = (
           {preview && (
             <Button
               variant="text"
-              color="primary"
-              size="small"
+              color="blue"
+              size="sm"
               onClick={onShowAll}
               sx={{ ml: 1, mt: 2 }}
             >
@@ -221,20 +221,20 @@ const ProfileVisualizationsRow = (props: {
         label: isPublished
           ? t({ id: "login.chart.view", message: "View" })
           : t({ id: "login.chart.preview", message: "Preview" }),
-        leadingIconName: "eye",
+        leadingIconName: "show",
         priority: isPublished ? 0 : undefined,
       },
       {
         type: "link",
         href: `/${locale}/create/new?copy=${config.key}`,
         label: t({ id: "login.chart.duplicate", message: "Duplicate" }),
-        leadingIconName: "copy",
+        leadingIconName: "duplicate",
       },
       {
         type: "link",
         href: editLink,
         label: t({ id: "login.chart.edit", message: "Edit" }),
-        leadingIconName: "edit",
+        leadingIconName: "pen",
         priority: !isPublished ? 0 : undefined,
       },
       isPublished
@@ -268,7 +268,7 @@ const ProfileVisualizationsRow = (props: {
         type: "button",
         onClick: (e) => setShareEl(e?.currentTarget),
         label: t({ id: "login.chart.share", message: "Share" }),
-        leadingIconName: "linkExternal",
+        leadingIconName: "share",
         stayOpen: true,
       },
       {
@@ -289,9 +289,9 @@ const ProfileVisualizationsRow = (props: {
       {
         type: "button",
         label: t({ id: "login.chart.delete", message: "Delete" }),
-        color: "error",
+        color: "red",
         leadingIconName:
-          removeConfigMut.status === "fetching" ? "loading" : "trash",
+          removeConfigMut.status === "fetching" ? "refresh" : "trash",
         requireConfirmation: true,
         confirmationTitle: isPublished
           ? t({
@@ -366,8 +366,8 @@ const ProfileVisualizationsRow = (props: {
           passHref
           legacyBehavior
         >
-          <Link color="primary">
-            <OverflowTooltip arrow title={chartTitle} color="primary">
+          <Link>
+            <OverflowTooltip arrow title={chartTitle} color="primary.main">
               <Typography
                 className={rootClasses.noTooltip}
                 variant="body2"
@@ -390,11 +390,11 @@ const ProfileVisualizationsRow = (props: {
             passHref
             legacyBehavior
           >
-            <Link color="primary">
+            <Link>
               <OverflowTooltip
                 arrow
                 title={data?.dataCubesMetadata[0]?.title ?? ""}
-                color="primary"
+                color="primary.main"
               >
                 <Typography
                   className={rootClasses.noTooltip}

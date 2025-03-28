@@ -24,7 +24,7 @@ export const ShowDrawerButton = (props: ButtonProps) => {
   const classes = useStyles();
   return (
     <Button className={clsx(classes.root, className)} {...rest}>
-      <Icon name="doubleArrow" />
+      <Icon name="doublearrow" />
     </Button>
   );
 };

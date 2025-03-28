@@ -38,27 +38,27 @@ export const Icon = ({
 export const getChartIcon = (chartType: ChartType): IconName => {
   switch (chartType) {
     case "area":
-      return "chartArea";
+      return "areasChart";
     case "column":
       return "chartColumn";
     case "bar":
       return "chartBar";
     case "line":
-      return "chartLine";
+      return "lineChart";
     case "map":
-      return "chartMap";
+      return "mapChart";
     case "pie":
-      return "chartPie";
+      return "pieChart";
     case "scatterplot":
-      return "chartScatterplot";
+      return "scatterplotChart";
     case "table":
-      return "table";
+      return "tableChart";
     case "comboLineSingle":
-      return "chartMultiLine";
+      return "multilineChart";
     case "comboLineDual":
-      return "chartDualAxisLine";
+      return "dualAxisChart";
     case "comboLineColumn":
-      return "chartColumnLine";
+      return "columnLineChart";
     default:
       const _exhaustiveCheck: never = chartType;
       return _exhaustiveCheck;

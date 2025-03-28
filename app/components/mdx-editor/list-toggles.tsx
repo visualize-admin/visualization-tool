@@ -35,8 +35,8 @@ const ListTypeButton = ({
 export const ListToggles = () => {
   return (
     <>
-      <ListTypeButton listType="bullet" iconName="listBulleted" />
-      <ListTypeButton listType="number" iconName="listNumbered" />
+      <ListTypeButton listType="bullet" iconName="listBullet" />
+      <ListTypeButton listType="number" iconName="listNumber" />
     </>
   );
 };

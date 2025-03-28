@@ -1,24 +1,21 @@
 import * as React from "react";
-
 function SvgIcNormalize(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g fill="none" fillRule="evenodd">
-        <path d="M14 15L14 22L10 22L10 15L14 15Z" fill="currentColor" />
-        <path d="M7 10L7 22L3 22L3 10L7 10Z" fill="currentColor" />
-        <path d="M21 10L21 22L17 22L17 10L21 10Z" fill="currentColor" />
-        <path d="M7 2L7 8L3 8L3 2L7 2Z" fill="currentColor" />
-        <path d="M21 2L21 8L17 8L17 2L21 2Z" fill="currentColor" />
-        <path d="M14 2L14 13L10 13L10 2L14 2Z" fill="currentColor" />
-      </g>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M14.632 15v7H9.368v-7h5.264zm-1.053 1H10.42v5h3.158v-5zm-6.316-6v12H2V10h5.263zm-1.052 1H3.053v10H6.21V11zM22 10v12h-5.263V10H22zm-1.053 1H17.79v10h3.157V11zM7.263 3v6H2V3h5.263zM6.211 4H3.053v4H6.21V4zM22 3v6h-5.263V3H22zm-1.053 1H17.79v4h3.157V4zm-6.315-1v11H9.368V3h5.264zm-1.053 1H10.42v9h3.158V4z"
+        fill="currentColor"
+      />
     </svg>
   );
 }
-
 export default SvgIcNormalize;

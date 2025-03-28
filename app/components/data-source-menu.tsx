@@ -1,10 +1,9 @@
 import { Trans } from "@lingui/macro";
-import { Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 import Flex from "@/components/flex";
-import { Label, MinimalisticSelect } from "@/components/form";
+import { MinimalisticSelect } from "@/components/form";
 import {
   isDataSourceChangeable,
   parseDataSource,
@@ -24,6 +23,9 @@ export const DataSourceMenu = () => {
     <Flex
       alignItems="center"
       sx={{
+        "& label": {
+          color: "white",
+        },
         "& .MuiInput-input.Mui-disabled": {
           textFillColor: "#828E9A", //FIXME: switch this to a proper color once the new colors are in place
         },
@@ -44,13 +46,9 @@ export const DataSourceMenu = () => {
         },
       }}
     >
-      <Label htmlFor="dataSourceSelect">
-        <Typography color="muted.colored" noWrap>
-          <Trans id="data.source">Data source</Trans>:
-        </Typography>
-      </Label>
       <MinimalisticSelect
         sx={{ pl: 0, pt: 0, pb: 0 }}
+        label={<Trans id="data.source">Data source</Trans>}
         id="dataSourceSelect"
         options={SOURCE_OPTIONS}
         value={stringifyDataSource(dataSource)}

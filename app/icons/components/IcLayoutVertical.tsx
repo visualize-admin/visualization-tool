@@ -1,22 +1,21 @@
 import * as React from "react";
-
 function SvgIcLayoutVertical(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
-        d="M2 2H22V8H2V2ZM2 9H22V15H2V9ZM22 16H2V22H22V16Z"
+        d="M3 3h18v5H3V3zm1 1v3h16V4H4zM3 9h18v6H3V9zm1 1v4h16v-4H4zm-1 6h18v5H3v-5zm1 1v3h16v-3H4z"
         fill="currentColor"
       />
     </svg>
   );
 }
-
 export default SvgIcLayoutVertical;

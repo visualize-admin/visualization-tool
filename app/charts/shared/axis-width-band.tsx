@@ -118,7 +118,9 @@ export const AxisWidthBand = () => {
         style={{ display: "flex" }}
       >
         <OpenMetadataPanelWrapper component={xDimension}>
-          <span style={{ fontSize: axisLabelFontSize }}>{xAxisLabel}</span>
+          <span style={{ fontSize: axisLabelFontSize, lineHeight: 1.5 }}>
+            {xAxisLabel}
+          </span>
         </OpenMetadataPanelWrapper>
       </foreignObject>
       <g ref={ref} />

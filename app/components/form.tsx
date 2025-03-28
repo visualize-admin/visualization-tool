@@ -73,7 +73,7 @@ import {
   useChartOptionSliderField,
 } from "@/configurator";
 import { Icon } from "@/icons";
-import SvgIcExclamation from "@/icons/components/IcExclamation";
+import SvgIcWarningCircle from "@/icons/components/IcWarningCircle";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
@@ -539,7 +539,7 @@ export const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
       sx={{ opacity: 1, pointerEvents: "auto", ml: 1 }}
     >
       <Typography color="warning.main">
-        <SvgIcExclamation width={18} height={18} />
+        <SvgIcWarningCircle width={18} height={18} />
       </Typography>
     </Tooltip>
   );
@@ -591,7 +591,7 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
               transition: "transform 0.1s",
             }}
           >
-            <Icon name="chevronDown2" size={24} />
+            <Icon name="chevronDown" size={24} />
           </span>
         )}
         className={classes.root}
@@ -614,7 +614,7 @@ const useMinimalisticSelectStyles = makeStyles<Theme>((theme) => ({
     lineHeight: "normal !important",
     backgroundColor: "transparent",
     // @ts-ignore
-    color: theme.palette.muted.colored, // FIXME: once the new colors are in place
+    // color: theme.palette.muted.colored, // FIXME: once the new colors are in place
     padding: 0,
     height: "auto",
     minHeight: "auto",

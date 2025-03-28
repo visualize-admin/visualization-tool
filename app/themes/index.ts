@@ -1,4 +1,6 @@
 import {
+  FederalBreakpointOverrides,
+  FederalColor,
   FederalTypographyPropsVariantOverrides,
   FederalTypographyVariants,
   FederalTypographyVariantsOptions,
@@ -13,57 +15,55 @@ declare module "@mui/material" {
     extends FederalTypographyVariantsOptions {}
 }
 
+declare module "@mui/material/Button" {
+  interface ButtonPropsColorOverrides {
+    primary: false;
+    secondary: false;
+    success: false;
+    error: false;
+    info: false;
+    warning: false;
+
+    cobalt: true;
+    monochrome: true;
+    blue: true;
+    red: true;
+    inherit: true;
+  }
+
+  interface ButtonPropsSizeOverrides {
+    small: false;
+    medium: false;
+    large: false;
+    sm: true;
+    md: true;
+    lg: true;
+    xl: true;
+  }
+}
+
 declare module "@mui/material/Typography" {
   interface TypographyPropsVariantOverrides
     extends FederalTypographyPropsVariantOverrides {}
 }
 
-declare module "@mui/material" {
-  interface PaletteColorOptions {
-    light?: string;
-    main: string;
-    hover?: string;
-    active?: string;
-    disabled?: string;
-    colored?: string;
-    dark?: string;
+declare module "@mui/material/styles" {
+  interface BreakpointOverrides extends FederalBreakpointOverrides {}
+
+  interface Palette {
+    cobalt: FederalColor & { main: string };
+    monochrome: FederalColor & { main: string };
+    red: FederalColor & { main: string };
+    blue: FederalColor & { main: string };
+    green: FederalColor & { main: string };
   }
 
   interface PaletteOptions {
-    muted: PaletteColorOptions;
-    alert: PaletteColorOptions;
-    organization: PaletteColorOptions;
-    category: PaletteColorOptions;
-    brand: PaletteColorOptions;
-    hint: PaletteColorOptions;
-  }
-
-  interface PaletteColor {
-    hover?: string;
-    disabled?: string;
-    active?: string;
-  }
-
-  interface Palette {
-    muted: PaletteColor;
-    alert: PaletteColor;
-    organization: PaletteColor;
-    category: PaletteColor;
-    brand: PaletteColor;
-    hint: PaletteColor;
-  }
-
-  interface ButtonPropsVariantOverrides {
-    inline: true;
-    inverted: true;
-  }
-
-  interface ButtonClasses {
-    sizeXsmall: true;
-  }
-
-  interface ButtonPropsSizeOverrides {
-    xsmall: true;
+    cobalt: FederalColor & { main: string };
+    monochrome: FederalColor & { main: string };
+    red: FederalColor & { main: string };
+    blue: FederalColor & { main: string };
+    green: FederalColor & { main: string };
   }
 }
 

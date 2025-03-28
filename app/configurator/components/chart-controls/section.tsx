@@ -23,9 +23,9 @@ import React, {
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { TooltipTitle } from "@/components/tooltip-utils";
 import { Icon, IconName } from "@/icons";
-import SvgIcAdd from "@/icons/components/IcAdd";
-import SvgIcExclamation from "@/icons/components/IcExclamation";
 import SvgIcMinus from "@/icons/components/IcMinus";
+import SvgIcPlus from "@/icons/components/IcPlus";
+import SvgIcWarningCircle from "@/icons/components/IcWarningCircle";
 
 import useDisclosure from "../../../components/use-disclosure";
 
@@ -84,7 +84,7 @@ const useSectionTitleStyles = makeStyles<Theme, SectionTitleStylesProps>(
       display: "flex",
       alignItems: "center",
       color: ({ disabled, color }: SectionTitleStylesProps) =>
-        disabled ? "grey.600" : color ?? "grey.800",
+        disabled ? "grey.600" : (color ?? "grey.800"),
     },
     icon: {
       justifySelf: "flex-end",
@@ -264,7 +264,7 @@ const Title = (props: TitleProps) => {
           isOpen ? (
             <SvgIcMinus width={18} height={18} />
           ) : (
-            <SvgIcAdd width={18} height={18} />
+            <SvgIcPlus width={18} height={18} />
           )
         ) : null}
       </span>
@@ -316,7 +316,7 @@ const Warning = (props: WarningProps) => {
   return (
     <MaybeTooltip title={<TooltipTitle text={title} />}>
       <Typography color="warning.main" sx={{ mr: 2 }}>
-        <SvgIcExclamation width={18} height={18} />
+        <SvgIcWarningCircle width={18} height={18} />
       </Typography>
     </MaybeTooltip>
   );

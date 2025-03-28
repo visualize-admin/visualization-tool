@@ -233,8 +233,6 @@ export const PaletteStory = () => {
         <Palette name="warning" value={theme.palette.warning} />
         <Palette name="success" value={theme.palette.success} />
 
-        <Palette name="uclaGold" value={theme.palette.organization} />
-        <Palette name="tahitiGold" value={theme.palette.brand} />
         <div />
         <div />
         {/* <Palette name="info" value={theme.palette.info} /> */}
@@ -264,21 +262,13 @@ const ButtonsExample: React.FC = () => {
         <Button variant="contained" disabled>
           Disabled
         </Button>
-        <Button variant="contained" size="small">
+        <Button variant="contained" size="sm">
           Small
         </Button>
-        <Button
-          startIcon={<SvgIcChevronLeft />}
-          variant="contained"
-          size="small"
-        >
+        <Button startIcon={<SvgIcChevronLeft />} variant="contained" size="sm">
           Small
         </Button>
-        <Button
-          endIcon={<SvgIcChevronRight />}
-          variant="contained"
-          size="small"
-        >
+        <Button endIcon={<SvgIcChevronRight />} variant="contained" size="sm">
           Small
         </Button>
       </div>
@@ -290,17 +280,13 @@ const ButtonsExample: React.FC = () => {
         <Button variant="outlined" disabled>
           Disabled
         </Button>
-        <Button variant="outlined" size="small">
+        <Button variant="outlined" size="sm">
           Small
         </Button>
-        <Button
-          startIcon={<SvgIcChevronLeft />}
-          variant="outlined"
-          size="small"
-        >
+        <Button startIcon={<SvgIcChevronLeft />} variant="outlined" size="sm">
           Small
         </Button>
-        <Button endIcon={<SvgIcChevronRight />} variant="outlined" size="small">
+        <Button endIcon={<SvgIcChevronRight />} variant="outlined" size="sm">
           Small
         </Button>
       </div>
@@ -312,13 +298,13 @@ const ButtonsExample: React.FC = () => {
         <Button variant="text" disabled>
           Disabled
         </Button>
-        <Button variant="text" size="small">
+        <Button variant="text" size="sm">
           Small
         </Button>
-        <Button startIcon={<SvgIcChevronLeft />} variant="text" size="small">
+        <Button startIcon={<SvgIcChevronLeft />} variant="text" size="sm">
           Button
         </Button>
-        <Button endIcon={<SvgIcChevronRight />} variant="text" size="small">
+        <Button endIcon={<SvgIcChevronRight />} variant="text" size="sm">
           Button
         </Button>
       </div>
@@ -478,9 +464,9 @@ const SnackbarExample = () => {
   const { enqueueSnackbar } = useSnackbar();
   const renderButton = (variant: NonNullable<AlertProps["severity"]>) => {
     const formatted = `${variant[0].toUpperCase()}${variant?.substring(1)}`;
+
     return (
       <Button
-        color={variant}
         onClick={() =>
           enqueueSnackbar({
             variant: variant,
@@ -492,6 +478,7 @@ const SnackbarExample = () => {
       </Button>
     );
   };
+
   return (
     <Stack gap="1rem" direction="row">
       {renderButton("success")}

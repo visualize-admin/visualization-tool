@@ -386,7 +386,6 @@ const SelectDatasetStepContent = ({
                   <NextLink href={backLink} passHref legacyBehavior>
                     <Button
                       variant="contained"
-                      color="secondary"
                       startIcon={<Icon name="chevronLeft" size={12} />}
                       onClick={onClickBackLink}
                     >

@@ -220,8 +220,8 @@ const DataDownloadInnerMenu = ({
     <>
       <Button
         variant="text"
-        color="primary"
-        size="small"
+        color="blue"
+        size="sm"
         startIcon={
           state.isDownloading ? (
             <CircularProgress size={16} />
@@ -401,7 +401,7 @@ const DownloadMenuItem = ({
   return (
     <Button
       variant="text"
-      size="small"
+      size="sm"
       disabled={state.isDownloading}
       onClick={async () => {
         if (!filters) {

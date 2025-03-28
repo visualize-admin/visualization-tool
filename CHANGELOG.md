@@ -12,7 +12,7 @@ You can also check the
 # Unreleased
 
 - Styles
-  - Migrated header, footer and typography styles to the new CI / CD
+  - Migrated header, footer and home page to the new CI / CD
   - Visualize font was changed to Noto Sans
 - Maintenance
   - Updated Next.js

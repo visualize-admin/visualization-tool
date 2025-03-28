@@ -117,7 +117,7 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
         <Button
           startIcon={<Icon name="embed" size={16} />}
           variant="contained"
-          color="primary"
+          color="blue"
           onClick={(e) => setAnchorEl(e.currentTarget)}
         >
           <Trans id="button.embed">Embed</Trans>
@@ -156,7 +156,7 @@ const EmbedRadio = ({
           }}
         >
           <Box sx={{ color: "secondary.active" }}>
-            <Icon name="infoOutline" size={16} />
+            <Icon name="infoCircle" size={16} />
           </Box>
         </Tooltip>
       )}
@@ -194,7 +194,7 @@ const EmbedToggleSwitch = ({
           }}
         >
           <Box sx={{ color: "secondary.active" }}>
-            <Icon name="infoOutline" size={16} />
+            <Icon name="infoCircle" size={16} />
           </Box>
         </Tooltip>
       )}
@@ -221,7 +221,7 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
             onClick={(ev) => {
               setAnchorEl(ev.target as HTMLElement);
             }}
-            startIcon={<Icon name="linkExternal" size={16} />}
+            startIcon={<Icon name="legacyLinkExternal" size={16} />}
           >
             <Trans id="button.share">Share</Trans>
           </Button>
@@ -448,7 +448,7 @@ export const ShareContent = ({
         <Typography component="div" variant="body1" color="grey.700">
           <Trans id="publication.popup.share">Share</Trans>:
         </Typography>
-        <Flex color="primary">
+        <Flex color="primary.main">
           <IconLink
             iconName="facebook"
             title={i18n._(
@@ -470,7 +470,7 @@ export const ShareContent = ({
             href={`https://twitter.com/intent/tweet?url=${shareUrl}&via=bafuCH`}
           ></IconLink>
           <IconLink
-            iconName="mail"
+            iconName="envelope"
             title={i18n._(
               t({
                 id: "publication.share.linktitle.mail",

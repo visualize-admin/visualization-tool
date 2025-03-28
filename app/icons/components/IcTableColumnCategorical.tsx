@@ -2,19 +2,17 @@ import * as React from "react";
 function SvgIcTableColumnCategorical(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g fill="none" fillRule="evenodd">
-        <path d="M0 0h24v24H0z" />
-        <path
-          fill="currentColor"
-          d="M16.25 9a.68.68 0 01.525.225l6 6c.3.3.3.75 0 1.05l-4.5 4.5a.68.68 0 01-.525.225.68.68 0 01-.525-.225l-6-6A.68.68 0 0111 14.25v-4.5c0-.45.3-.75.75-.75zM9 17v3H2v-3h7zm0-4v3H2v-3h7zm5-2c-.6 0-1 .4-1 1s.4 1 1 1 1-.4 1-1-.4-1-1-1zM9 9v3H2V9h7zm13-5v4H2V4h20z"
-        />
-      </g>
+      <path
+        d="M18.046 19.817a.6.6 0 01-.066-.003l-.213-.067-.107-.08-5.738-4.842-.404-3.724a.628.628 0 01.106-.451.654.654 0 01.449-.238L15.852 10l.192.015.21.13 5.675 4.562.071.287a.62.62 0 01-.138.449l-3.486 4.302-.254.067a.536.536 0 01-.076.005zM12.9 14.56l5.102 4.098 2.84-3.543-5.097-4.097-3.193.346.348 3.196zm.613-1.56a1 1 0 102 0 1 1 0 00-2 0zM2 3h20v4H2V3zm1 1v2h18V4H3zM2 8h7v4H2V8zm1 1v2h5V9H3zm-1 4h7v4H2v-4zm1 1v2h5v-2H3zm-1 4h7v4H2v-4zm1 1v2h5v-2H3z"
+        fill="currentColor"
+      />
     </svg>
   );
 }

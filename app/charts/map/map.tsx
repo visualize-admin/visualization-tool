@@ -534,7 +534,7 @@ export const MapComponent = ({
       {locked ? null : (
         <div className={classes.controlButtons} {...DISABLE_SCREENSHOT_ATTR}>
           <ControlButton iconName="refresh" onClick={reset} />
-          <ControlButton iconName="add" onClick={zoomIn} />
+          <ControlButton iconName="plus" onClick={zoomIn} />
           <ControlButton iconName="minus" onClick={zoomOut} />
         </div>
       )}

@@ -139,7 +139,7 @@ export const RenameDialog = ({
             sx={{ minWidth: "auto" }}
             loading={updateConfigMut.status === "fetching"}
             variant="contained"
-            color="primary"
+            color="blue"
             type="submit"
           >
             OK

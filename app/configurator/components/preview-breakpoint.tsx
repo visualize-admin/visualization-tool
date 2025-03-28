@@ -97,7 +97,7 @@ export const PreviewBreakpointToggleMenu = ({
     },
     {
       breakpoint: "md",
-      iconName: "tabletPortrait",
+      iconName: "tablet",
       title: t({
         id: "controls.layout.preview-md",
         message: "Preview using medium width",
@@ -105,17 +105,17 @@ export const PreviewBreakpointToggleMenu = ({
     },
     {
       breakpoint: "sm",
-      iconName: "mobilePortrait",
+      iconName: "mobile",
       title: t({
         id: "controls.layout.preview-sm",
         message: "Preview using small width",
       }),
     },
   ];
+
   return (
     <ToggleButtonGroup
       className={classes.toggleButtonGroup}
-      color="primary"
       value={value}
       exclusive
     >

@@ -2,19 +2,19 @@ import * as React from "react";
 function SvgIcPrevious(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g fill="none" fillRule="evenodd">
-        <path d="M0 0h24v24H0z" />
-        <path
-          fill="currentColor"
-          d="M6.5 21V3h3v8.256l7.512-7.512v16.512L9.5 12.744V21z"
-        />
-      </g>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M18 20.256V3.744l-7.83 7.512V3H6v18h4.17v-8.256L18 20.256zM9 20V4H7v16h2zm1.838-8L17 17.91V6.09L10.838 12z"
+        fill="currentColor"
+      />
     </svg>
   );
 }

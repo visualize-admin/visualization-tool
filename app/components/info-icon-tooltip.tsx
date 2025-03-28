@@ -38,7 +38,7 @@ export const InfoIconTooltip = (
       {...rest}
     >
       <Typography>
-        <Icon name="infoOutline" size={16} className={classes.icon} />
+        <Icon name="warningCircle" size={16} className={classes.icon} />
       </Typography>
     </Tooltip>
   );

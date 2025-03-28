@@ -28,66 +28,54 @@ export const contentId = "home";
   example2Headline="Entdecken Sie die umfangreichen Möglichkeiten"
   example2Description="Mit Hilfe von benutzerdefinierten Filtern und Darstellungsoptionen, können selbst komplexe Sachverhalte visualisiert werden."
 />
-<Section>
-  <Contribute
-    headline="Möchten Sie Ihre eigenen Daten visualisieren?"
-    description="Erfahren Sie, wie Ihre Daten in den Linked-Data Dienst (LINDAS) des Bundesarchivs integriert werden können."
-    buttonLabel="Mehr erfahren"
-    buttonUrl="https://lindas.admin.ch/?lang=de"
-  />
-  <Divider
-    orientation="vertical"
-    flexItem
-    sx={{ display: ["hidden", "box"] }}
-  />
-  <Newsletter
-    headline="Newsletter abonnieren"
-    description="Bleiben Sie auf dem Laufenden und abonnieren Sie unseren Newsletter"
-    buttonLabel="Abonnieren"
-    buttonUrl={createMailtoLink("de", {
+<Actions
+  contribute={{
+    headline: "Möchten Sie Ihre eigenen Daten visualisieren?",
+    description:
+      "Erfahren Sie, wie Ihre Daten in den Linked-Data Dienst (LINDAS) des Bundesarchivs integriert werden können.",
+    buttonLabel: "Mehr erfahren",
+    buttonUrl: "https://lindas.admin.ch/?lang=de",
+  }}
+  newsletter={{
+    headline: "Newsletter abonnieren",
+    description:
+      "Bleiben Sie auf dem Laufenden und abonnieren Sie unseren Newsletter",
+    buttonLabel: "Abonnieren",
+    buttonUrl: createMailtoLink("de", {
       recipients: {
         to: OWNER_ORGANIZATION_EMAIL,
         bcc: SUPPORT_EMAIL,
       },
       template: newsletterTemplates,
       subject: "Visualize Newsletter Abonnieren",
-    })}
-  />
-</Section>
-<Section
-  sx={{
-    color: "grey.800",
+    }),
   }}
->
-  <BugReport
-    headline="Fehler melden"
-    description="Bitte melden Sie uns den Fehler, damit wir ihn so schnell wie möglich beheben können."
-    buttonLabel="Fehler melden"
-    buttonUrl={createMailtoLink("de", {
+  bugReport={{
+    headline: "Fehler melden",
+    description:
+      "Bitte melden Sie uns den Fehler, damit wir ihn so schnell wie möglich beheben können.",
+    buttonLabel: "Fehler melden",
+    buttonUrl: createMailtoLink("de", {
       recipients: {
         to: OWNER_ORGANIZATION_EMAIL,
         bcc: SUPPORT_EMAIL,
       },
       template: bugReportTemplates,
       subject: "Visualize Bug Report",
-    })}
-  />
-  <Divider
-    orientation="vertical"
-    flexItem
-    sx={{ display: ["hidden", "box"], color: "grey.500" }}
-  />
-  <FeatureRequest
-    headline="Neue Funktion wünschen"
-    description="Senden Sie uns Ihre Funktionsanfragen und helfen Sie, die Zukunft unserer Plattform zu gestalten!"
-    buttonLabel="Einreichen"
-    buttonUrl={createMailtoLink("de", {
+    }),
+  }}
+  featureRequest={{
+    headline: "Neue Funktion wünschen",
+    description:
+      "Senden Sie uns Ihre Funktionsanfragen und helfen Sie, die Zukunft unserer Plattform zu gestalten!",
+    buttonLabel: "Einreichen",
+    buttonUrl: createMailtoLink("de", {
       recipients: {
         to: OWNER_ORGANIZATION_EMAIL,
         bcc: SUPPORT_EMAIL,
       },
       template: featureRequestTemplates,
       subject: "Visualize Feature Request",
-    })}
-  />
-</Section>
+    }),
+  }}
+/>

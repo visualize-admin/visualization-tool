@@ -68,6 +68,7 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
             style={{
               width: "100%",
               fontSize: axisLabelFontSize,
+              lineHeight: 1.5,
               backgroundColor: color,
               color: theme.palette.getContrastText(color),
               padding: `${TITLE_V_PADDING}px ${TITLE_H_PADDING}px`,

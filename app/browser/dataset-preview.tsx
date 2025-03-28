@@ -20,7 +20,7 @@ import {
   useDataCubePreviewQuery,
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
-import SvgIcLinkExternal from "@/icons/components/IcLinkExternal";
+import SvgIcLegacyLinkExternal from "@/icons/components/IcLegacyLinkExternal";
 import { useLocale } from "@/locales/use-locale";
 
 export const isOdsIframe = (query: ParsedUrlQuery) => {
@@ -180,7 +180,9 @@ export const DataSetPreview = ({
               onClick={(ev) => onCreateChartFromDataset?.(ev, dataSetIri)}
               className={classes.createChartButton}
               component="a"
-              endIcon={isOdsIframe(router.query) ? <SvgIcLinkExternal /> : null}
+              endIcon={
+                isOdsIframe(router.query) ? <SvgIcLegacyLinkExternal /> : null
+              }
               target={isOdsIframe(router.query) ? "_blank" : undefined}
             >
               {!isOdsIframe(router.query) ? (
@@ -204,7 +206,7 @@ export const DataSetPreview = ({
             >
               <Button
                 endIcon={
-                  isOdsIframe(router.query) ? <SvgIcLinkExternal /> : null
+                  isOdsIframe(router.query) ? <SvgIcLegacyLinkExternal /> : null
                 }
                 className={classes.createChartButton}
                 component="a"

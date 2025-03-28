@@ -42,7 +42,7 @@ export const LoginMenu = () => {
             }}
           >
             <Typography noWrap>{user.name}</Typography>
-            <Icon name="chevronDown2" size={24} />
+            <Icon name="chevronDown" size={24} />
           </Button>
           <Menu
             anchorEl={anchorEl}
@@ -109,7 +109,7 @@ export const LoginMenu = () => {
               color: "#d1d5db", // FIXME: once the new colors are in place
             },
           }}
-          size="small"
+          size="sm"
           onClick={() =>
             isVercelPreviewHost(window.location.host) ||
             process.env.E2E_ENV === "true"

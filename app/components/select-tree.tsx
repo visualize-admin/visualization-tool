@@ -241,7 +241,7 @@ const TreeItemContent = forwardRef<
       </div>
       {selected ? (
         <div className={ownClasses.checkIcon}>
-          <Icon name="check" />
+          <Icon name="checkmark" />
         </div>
       ) : null}
     </div>

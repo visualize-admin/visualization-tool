@@ -228,7 +228,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                       href={`/create/new?edit=${config.key}`}
                       variant="outlined"
                       color="inherit"
-                      size="small"
+                      size="sm"
                     >
                       <Trans id="login.chart.edit">Edit</Trans>
                     </Button>
@@ -271,7 +271,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
               sx={{ mb: 5 }}
             >
               <NextLink href="/create/new" passHref legacyBehavior>
-                <Button component="a" variant="outlined" color="primary">
+                <Button component="a" variant="outlined" color="blue">
                   <Trans id="button.new.visualization">
                     Create a new visualization
                   </Trans>
@@ -282,7 +282,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 passHref
                 legacyBehavior
               >
-                <Button component="a" variant="outlined" color="primary">
+                <Button component="a" variant="outlined" color="blue">
                   <Trans id="button.copy.visualization">
                     Copy and edit this visualization
                   </Trans>

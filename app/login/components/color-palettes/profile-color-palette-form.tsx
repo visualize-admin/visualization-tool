@@ -52,7 +52,7 @@ type ProfileColorPaletteProps = {
   customColorPalettes?: CustomPaletteType[];
 };
 
-const ProfileColorPaletteForm = ({
+export const ProfileColorPaletteForm = ({
   onBack,
   palette,
   formMode,
@@ -256,8 +256,6 @@ const ProfileColorPaletteForm = ({
     </Flex>
   );
 };
-
-export default ProfileColorPaletteForm;
 
 type ColorPaletteTypeSelectorProps = {
   onChange: (type: CustomPaletteType["type"]) => void;

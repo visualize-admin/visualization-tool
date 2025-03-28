@@ -78,6 +78,7 @@ const ChartPublishedIndividualChart = forwardRef<
       configKey,
       children,
       embedParams,
+      shouldShrink,
       ...rest
     },
     ref
@@ -101,6 +102,7 @@ const ChartPublishedIndividualChart = forwardRef<
               configKey={configKey}
               metadataPanelStore={metadataPanelStore}
               embedParams={embedParams}
+              shouldShrink={shouldShrink}
             >
               {children}
             </ChartPublishedInner>
@@ -114,9 +116,11 @@ const ChartPublishedIndividualChart = forwardRef<
 export const ChartPublished = ({
   configKey,
   embedParams,
+  shouldShrink,
 }: {
   configKey?: string;
   embedParams?: EmbedQueryParams;
+  shouldShrink?: boolean;
 }) => {
   const [state] = useConfiguratorState(isPublished);
   const { dataSource } = state;
@@ -227,6 +231,7 @@ export const ChartPublished = ({
                     configKey={configKey}
                     metadataPanelStore={metadataPanelStore}
                     embedParams={embedParams}
+                    shouldShrink={shouldShrink}
                   />
                 </ChartWrapper>
               </ChartTablePreviewProvider>
@@ -277,6 +282,7 @@ type ChartPublishInnerProps = {
   children?: React.ReactNode;
   metadataPanelStore: ReturnType<typeof createMetadataPanelStore>;
   embedParams?: EmbedQueryParams;
+  shouldShrink?: boolean;
 };
 
 const ChartPublishedInnerImpl = ({
@@ -288,6 +294,7 @@ const ChartPublishedInnerImpl = ({
   children,
   metadataPanelStore,
   embedParams,
+  shouldShrink: _shouldShrink,
 }: ChartPublishInnerProps) => {
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
@@ -300,8 +307,8 @@ const ChartPublishedInnerImpl = ({
       return false;
     }
 
-    return metadataPanelOpen && rootWidth > DRAWER_WIDTH * 2;
-  }, [metadataPanelOpen]);
+    return _shouldShrink ?? (metadataPanelOpen && rootWidth > DRAWER_WIDTH * 2);
+  }, [_shouldShrink, metadataPanelOpen]);
 
   useEffect(() => {
     const unsubscribe = metadataPanelStore.subscribe(() => {

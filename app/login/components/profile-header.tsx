@@ -12,7 +12,7 @@ import { useRootStyles } from "@/login/utils";
 const useStyles = makeStyles<Theme>((theme) => ({
   section: {
     paddingTop: theme.spacing(6),
-    backgroundColor: theme.palette.muted.main,
+    // backgroundColor: theme.palette.muted.main, FIXME
   },
   topRow: {
     display: "flex",
@@ -41,8 +41,8 @@ export const ProfileHeader = (props: { user: User }) => {
             component="a"
             href={ADFS_PROFILE_URL}
             variant="text"
-            color="primary"
-            size="small"
+            color="blue"
+            size="sm"
             sx={{ marginRight: 2 }}
           >
             eIAM MyAccount
@@ -51,8 +51,8 @@ export const ProfileHeader = (props: { user: User }) => {
         <Button
           className={classes.button}
           variant="text"
-          color="primary"
-          size="small"
+          color="blue"
+          size="sm"
           onClick={async () => await signOut()}
         >
           <Trans id="login.sign-out">Sign out</Trans>

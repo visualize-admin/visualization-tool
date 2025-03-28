@@ -170,11 +170,11 @@ export const ChartDataFiltersToggle = ({
         {componentIds && componentIds.length > 0 && (
           <Button
             variant="text"
-            color="primary"
-            size="small"
+            color="blue"
+            size="sm"
             endIcon={
               <Icon
-                name="add"
+                name="plus"
                 size={16}
                 style={{
                   transform: open ? "rotate(45deg)" : "rotate(0deg)",

@@ -110,9 +110,9 @@ const DebugConfigurator = () => {
         <Stack key={cube.iri} spacing={2} sx={{ pl: 5, py: 3 }}>
           <Button
             component="a"
-            color="primary"
+            color="blue"
             variant="text"
-            size="small"
+            size="sm"
             href={`https://cube-viewer.zazuko.com/?endpointUrl=${encodeURIComponent(
               configuratorState.dataSource.url
             )}&user=&password=&sourceGraph=&cube=${encodeURIComponent(
@@ -120,15 +120,15 @@ const DebugConfigurator = () => {
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            startIcon={<Icon name="linkExternal" size={16} />}
+            startIcon={<Icon name="legacyLinkExternal" size={16} />}
           >
             <Typography variant="body2">Open in Cube Viewer</Typography>
           </Button>
           <Button
             component="a"
-            color="primary"
+            color="blue"
             variant="text"
-            size="small"
+            size="sm"
             href={`${sparqlEditorUrl}#query=${encodeURIComponent(
               `#pragma describe.strategy cbd
 
@@ -136,7 +136,7 @@ const DebugConfigurator = () => {
             )}&requestMethod=POST`}
             target="_blank"
             rel="noopener noreferrer"
-            startIcon={<Icon name="linkExternal" size={16} />}
+            startIcon={<Icon name="legacyLinkExternal" size={16} />}
           >
             <Typography variant="body2">Cube Metadata Query</Typography>
           </Button>
@@ -155,7 +155,7 @@ const DebugConfigurator = () => {
         <Button
           component="span"
           variant="text"
-          size="small"
+          size="sm"
           onClick={() => {
             console.log(configuratorState);
           }}

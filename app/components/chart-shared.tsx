@@ -246,7 +246,7 @@ export const ChartMoreButton = ({
                   dispatch({ type: "CONFIGURE_CHART", value: { chartKey } });
                   handleClose();
                 }}
-                leadingIconName="edit"
+                leadingIconName="pen"
                 label={<Trans id="chart-controls.edit">Edit</Trans>}
               />
             )}
@@ -273,7 +273,7 @@ export const ChartMoreButton = ({
               <MenuActionItem
                 type="button"
                 as="menuitem"
-                color="error"
+                color="red"
                 requireConfirmation
                 confirmationTitle={t({
                   id: "chart-controls.delete.title",
@@ -317,7 +317,7 @@ const CopyChartMenuActionItem = ({ configKey }: { configKey: string }) => {
       href={copyUrl}
       target="_blank"
       rel="noopener noreferrer"
-      leadingIconName="edit"
+      leadingIconName="pen"
       label={<Trans id="chart-controls.copy-and-edit">Copy and edit</Trans>}
     />
   );
@@ -390,7 +390,7 @@ const TableViewChartMenuActionItem = ({
         setIsTable(!isTable);
         onSuccess();
       }}
-      leadingIconName={isTable ? getChartIcon(chartType) : "table"}
+      leadingIconName={isTable ? getChartIcon(chartType) : "tableChart"}
       label={
         isTable ? (
           <Trans id="chart-controls.chart-view">Chart view</Trans>

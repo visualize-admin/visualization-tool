@@ -96,9 +96,9 @@ import {
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
 import SvgIcFilter from "@/icons/components/IcFilter";
-import SvgIcInfo from "@/icons/components/IcInfo";
-import SvgIcRemove from "@/icons/components/IcRemove";
+import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
 import SvgIcSearch from "@/icons/components/IcSearch";
+import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
 import useEvent from "@/utils/use-event";
@@ -115,7 +115,7 @@ const DialogCloseButton = (props: IconButtonProps) => {
         ...props.sx,
       }}
     >
-      <SvgIcRemove width={24} height={24} fontSize={24} />
+      <SvgIcTrash width={24} height={24} fontSize={24} />
     </IconButton>
   );
 };
@@ -204,7 +204,7 @@ const CautionAlert = ({
   return (
     <Alert
       {...props}
-      icon={<SvgIcInfo />}
+      icon={<SvgIcInfoCircle />}
       severity="info"
       sx={{ ...props.sx, typography: "body3", color: "text.primary" }}
     >
@@ -216,7 +216,6 @@ const CautionAlert = ({
       </Trans>
       <Box sx={{ mt: 1 }}>
         <Link
-          color="primary"
           onClick={(ev) => {
             ev.preventDefault();
             onConfirm();
@@ -866,8 +865,8 @@ export const DatasetDialog = ({
       <Box className={classes.dialogCloseArea}>
         {otherCube ? null : (
           <Grow in={!isOpen}>
-            <IconButton color="primary" onClick={() => open()}>
-              <SvgIcInfo />
+            <IconButton onClick={() => open()}>
+              <SvgIcInfoCircle />
             </IconButton>
           </Grow>
         )}
@@ -989,7 +988,7 @@ export const DatasetDialog = ({
                 ))}
               </Select>
               <Button
-                color="primary"
+                color="blue"
                 type="submit"
                 variant="contained"
                 style={{ minWidth: "fit-content" }}
@@ -1034,7 +1033,7 @@ export const DatasetDialog = ({
                     return (
                       <Box display="flex" justifyContent="flex-end">
                         <LoadingButton
-                          size="small"
+                          size="sm"
                           variant="outlined"
                           className={classes.addButton}
                           onClick={() => handleClickOtherCube(cube)}

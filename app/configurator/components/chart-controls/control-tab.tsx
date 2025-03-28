@@ -19,8 +19,8 @@ import {
 } from "@/configurator/components/ui-helpers";
 import { Component } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
-import SvgIcEdit from "@/icons/components/IcEdit";
-import SvgIcExclamation from "@/icons/components/IcExclamation";
+import SvgIcPen from "@/icons/components/IcPen";
+import SvgIcWarningCircle from "@/icons/components/IcWarningCircle";
 import useEvent from "@/utils/use-event";
 
 export const ControlTabFieldInner = ({
@@ -135,7 +135,7 @@ const WarnIconTooltip = (props: WarnIconTooltipProps) => {
   return (
     <MaybeTooltip title={<TooltipTitle text={title} />}>
       <Typography>
-        <SvgIcExclamation className={iconStyles.warn} />
+        <SvgIcWarningCircle className={iconStyles.warn} />
       </Typography>
     </MaybeTooltip>
   );
@@ -149,7 +149,7 @@ const FieldEditIcon = (props: FieldEditIconProps) => {
   const { isActive } = props;
   const classes = useIconStyles({ isActive });
 
-  return <SvgIcEdit className={classes.edit} />;
+  return <SvgIcPen className={classes.edit} />;
 };
 
 export const OnOffControlTab = ({

@@ -2,19 +2,19 @@ import * as React from "react";
 function SvgIcTableColumnTimeHidden(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
       width="1em"
       height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g fill="none" fillRule="evenodd">
-        <path d="M0 0h24v24H0z" />
-        <path
-          fill="currentColor"
-          d="M2.052 1.586l19.383 19.382.657-1.583L21 18.293V14h-4.294L13 10.294V9h2v2h4V9h2v2h1a1 1 0 01.993.883L23 12v8a1 1 0 01-.883.993L22 21h-.533l1.119 1.12-1.467 1.466L18.533 21H12a1 1 0 01-.993-.883L11 20v-6.533l-2-2.001V12H2V9h4.534l-1-1H2V4.466L.586 3.052l1.466-1.466zM9 17v3H2v-3h7zm7.533 2L13 15.467V19h3.533zM9 13v3H2v-3h7zm13-9v4H10.706L6.705 4H22z"
-        />
-      </g>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M3.572 3.758L2.625 3H22v3.79H7.36l-.947-.758h14.633V3.758H3.572zM22.3 18.74v-8.167h-1.677V10h-1.072v.573h-4.836V10h-1.072v.573H12.09l1.31 1.048h7.825v1.234h-6.283l1.289 1.03h4.994v3.996l1.074.859zM2.187 3.648l20.457 16.366-.625.78-.618-.494H12v-7.521l-3-2.4v1.145H2v-3.79h3.694L4.513 6.79H2V4.78l-.438-.35m2.003 1.603l-.613-.491v.49h.613zm4.56 3.647l-1.247-.997H2.875v1.894h5.25V9.68zm11.962 9.57l-6.704-5.363h-.313v5.363h7.017zM2 17h7v-4H2v4zm6-3v2H3v-2h5zm-6 8h7v-4H2v4zm6-3v2H3v-2h5z"
+        fill="currentColor"
+      />
     </svg>
   );
 }

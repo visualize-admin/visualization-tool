@@ -114,8 +114,8 @@ export const BackButton = ({
   return (
     <Button
       variant="text"
-      color="primary"
-      size="small"
+      color="blue"
+      size="sm"
       sx={{ fontWeight: "bold", ...sx }}
       startIcon={<SvgIcChevronLeft />}
       onClick={onClick}
@@ -163,7 +163,7 @@ const BackToMainButton = (props: BackToMainButtonProps) => {
       <Button
         variant="text"
         color="inherit"
-        size="small"
+        size="sm"
         sx={{ fontWeight: "bold" }}
         startIcon={<SvgIcChevronLeft />}
         onClick={onClick}
@@ -206,7 +206,7 @@ const NextStepButton = (props: React.PropsWithChildren<{}>) => {
 
   return (
     <Button
-      color="primary"
+      color="blue"
       variant="contained"
       onClick={handleClick}
       sx={{ minWidth: "fit-content" }}
@@ -339,7 +339,7 @@ const SaveDraftButton = ({ chartId }: { chartId: string | undefined }) => {
           hasUpdated || debouncedHasUpdated ? (
             <Grow in={hasUpdated}>
               <span>
-                <Icon name="check" />
+                <Icon name="checkmark" />
               </span>
             </Grow>
           ) : null
@@ -381,7 +381,7 @@ const PublishChartButton = ({ chartId }: { chartId: string | undefined }) => {
             })}
           >
             <div>
-              <Icon name="hintWarning" />
+              <Icon name="warningCircle" />
             </div>
           </Tooltip>
           <Trans id="button.update">Update this visualization</Trans>
@@ -428,7 +428,10 @@ const ConfigureChartStep = () => {
 
   return (
     <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
-      <PanelLayout type="LM" sx={{ background: (t) => t.palette.muted.main }}>
+      <PanelLayout
+        type="LM"
+        sx={{ background: (t) => t.palette.secondary.main }}
+      >
         <PanelHeaderLayout type="LMR">
           <PanelHeaderWrapper type="L">
             <BackContainer>
@@ -565,7 +568,7 @@ const LayoutingStep = () => {
   return (
     <PanelLayout
       type={centerLayout ? "M" : "LM"}
-      sx={{ background: (t) => t.palette.muted.main }}
+      sx={{ background: (t) => t.palette.secondary.main }}
     >
       <PanelHeaderLayout type="LMR">
         <PanelHeaderWrapper type="L">

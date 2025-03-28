@@ -1,6 +1,6 @@
 import { Chip, chipClasses, ChipProps } from "@mui/material";
 
-import SvgIcMergeddimension from "@/icons/components/IcMergedDimension";
+import SvgIcJoint from "@/icons/components/IcJoint";
 
 export const JoinByChip = ({ children, ...props }: ChipProps) => {
   return (
@@ -8,7 +8,7 @@ export const JoinByChip = ({ children, ...props }: ChipProps) => {
       {...props}
       label={
         <>
-          <SvgIcMergeddimension />
+          <SvgIcJoint />
           {props.label}
         </>
       }
