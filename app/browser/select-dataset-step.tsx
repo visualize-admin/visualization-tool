@@ -1,3 +1,4 @@
+import { ContentWrapper } from "@interactivethings/swiss-federal-ci/dist/components";
 import { Trans } from "@lingui/macro";
 import { Box, Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -33,7 +34,6 @@ import { DatasetMetadata } from "@/components/dataset-metadata";
 import Flex from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
-  BANNER_HEIGHT,
   bannerPresenceProps,
   DURATION,
   MotionBox,
@@ -97,37 +97,24 @@ const useStyles = makeStyles<
     gridColumnEnd: "right",
     transition: "padding-top 0.5s ease",
   },
-  panelBannerWrapper: {
-    position: "static",
-    [theme.breakpoints.up("sm")]: {
-      display: "grid",
-      gridTemplateColumns:
-        "minmax(12rem, 20rem) minmax(22rem, 1fr) minmax(12rem, 20rem)",
-      gridTemplateAreas: `". banner ."`,
-    },
-    minHeight: BANNER_HEIGHT,
-    backgroundColor: theme.palette.primary.light,
+  panelBannerOuterWrapper: {
+    backgroundColor: theme.palette.monochrome[100],
   },
-  panelBanner: {
-    maxWidth: 1400,
-    margin: "auto",
-    padding: theme.spacing(4),
-    [theme.breakpoints.up("sm")]: {
-      gridArea: "banner",
-    },
+  panelBannerInnerWrapper: {
+    paddingTop: theme.spacing(25),
+    paddingBottom: theme.spacing(25),
   },
   panelBannerContent: {
     flexDirection: "column",
     justifyContent: "center",
-    maxWidth: 720,
+    maxWidth: 940,
   },
   panelBannerTitle: {
-    color: theme.palette.grey[700],
     marginBottom: theme.spacing(4),
+    fontWeight: 700,
   },
   panelBannerDescription: {
-    color: theme.palette.grey[600],
-    marginBottom: theme.spacing(3),
+    marginBottom: theme.spacing(10),
   },
   filters: {
     display: "block",
@@ -164,21 +151,19 @@ const prepareSearchQueryFilters = (filters: BrowseFilter[]) => {
   );
 };
 
-type SelectDatasetStepContentProps = {
-  datasetPreviewProps?: Partial<DataSetPreviewProps>;
-  datasetResultsProps?: Partial<DatasetResultsProps>;
-  onClickBackLink?: (ev: React.MouseEvent<HTMLButtonElement>) => void;
-  dataset?: string | undefined;
-  variant?: "page" | "drawer";
-};
-
 const SelectDatasetStepContent = ({
   datasetPreviewProps,
   datasetResultsProps,
   dataset: propsDataset,
   onClickBackLink,
   variant = "page",
-}: SelectDatasetStepContentProps) => {
+}: {
+  datasetPreviewProps?: Partial<DataSetPreviewProps>;
+  datasetResultsProps?: Partial<DatasetResultsProps>;
+  onClickBackLink?: (ev: React.MouseEvent<HTMLButtonElement>) => void;
+  dataset?: string | undefined;
+  variant?: "page" | "drawer";
+}) => {
   const locale = useLocale();
   const [configState] = useConfiguratorState();
   const router = useRouter();
@@ -340,12 +325,8 @@ const SelectDatasetStepContent = ({
       <AnimatePresence>
         {!dataset && variant === "page" && (
           <MotionBox key="banner" {...bannerPresenceProps}>
-            <Box
-              component="section"
-              role="banner"
-              className={classes.panelBannerWrapper}
-            >
-              <div className={classes.panelBanner}>
+            <section role="banner" className={classes.panelBannerOuterWrapper}>
+              <ContentWrapper className={classes.panelBannerInnerWrapper}>
                 <Flex className={classes.panelBannerContent}>
                   <Typography variant="h1" className={classes.panelBannerTitle}>
                     Swiss Open Government Data
@@ -364,8 +345,8 @@ const SelectDatasetStepContent = ({
                   </Typography>
                   <SearchDatasetInput browseState={browseState} />
                 </Flex>
-              </div>
-            </Box>
+              </ContentWrapper>
+            </section>
           </MotionBox>
         )}
       </AnimatePresence>

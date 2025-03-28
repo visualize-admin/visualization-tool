@@ -78,7 +78,7 @@ const useStyles = makeStyles<Theme>(() => ({
 
   searchInput: {
     width: "100%",
-    maxWidth: 350,
+    maxWidth: 820,
   },
 }));
 
@@ -149,12 +149,6 @@ export const SearchDatasetInput = ({
     }
   };
 
-  const handleClick = () => {
-    if (inputRef.current) {
-      onSubmitSearch(inputRef.current.value);
-    }
-  };
-
   return (
     <Flex sx={{ alignItems: "center", gap: 2, pt: 4 }}>
       <SearchField
@@ -175,9 +169,6 @@ export const SearchDatasetInput = ({
         {...searchFieldProps}
         className={clsx(classes.searchInput, searchFieldProps?.className)}
       />
-      <Button sx={{ px: 6 }} onClick={handleClick}>
-        <Trans id="select.controls.filters.search">Search</Trans>
-      </Button>
     </Flex>
   );
 };

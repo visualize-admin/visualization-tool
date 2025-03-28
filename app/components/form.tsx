@@ -196,7 +196,7 @@ export const Slider = ({
         />
         {renderTextInput && (
           <MUIInput
-            size="small"
+            size="sm"
             value={`${value}`}
             disabled={disabled}
             onChange={onChange}
@@ -576,7 +576,7 @@ export const MinimalisticSelect = (props: MinimalisticSelectProps) => {
         </Label>
       )}
       <MUISelect
-        size={smaller ? "small" : "medium"}
+        size={smaller ? "sm" : "md"}
         variant="standard"
         id={id}
         name={id}
@@ -663,7 +663,7 @@ export const Input = ({
     )}
     <MUIInput
       id={name}
-      size="small"
+      size="sm"
       color="secondary"
       name={name}
       value={value}
@@ -789,56 +789,60 @@ export const SearchField = ({
   className?: BoxProps["className"];
   sx?: BoxProps["sx"];
 } & FieldProps) => {
-  const { search } = useBrowseContext();
+  const { search, onSubmitSearch } = useBrowseContext();
   const onReset = InputProps?.onReset;
   const handleReset = useCallback(
-    (ev) => {
+    (e) => {
       if (inputRef?.current) {
         inputRef.current.value = "";
       }
-      onReset?.(ev);
+
+      onReset?.(e);
     },
     [inputRef, onReset]
   );
+  const handleSubmit = useCallback(() => {
+    const newSearch = inputRef?.current?.value;
+
+    if (!newSearch) {
+      return;
+    }
+
+    onSubmitSearch(newSearch);
+  }, [inputRef, onSubmitSearch]);
 
   return (
-    <Box
-      sx={{ color: "grey.700", fontSize: "1rem", position: "relative", ...sx }}
-      className={className}
-    >
+    <Box className={className} sx={sx}>
       {label && id && (
         <label htmlFor={id}>
           <VisuallyHidden>{label}</VisuallyHidden>
         </label>
       )}
       <MUIInput
-        startAdornment={<Icon name="search" size={16} />}
         id={id}
         value={value}
         defaultValue={defaultValue}
         {...InputProps}
+        inputRef={inputRef}
         placeholder={placeholder}
         autoComplete="off"
-        inputRef={inputRef}
-        sx={{ width: "100%", minHeight: 40, input: { borderRadius: 2 } }}
+        size="xl"
         endAdornment={
           onReset && search && search !== "" ? (
-            <ButtonBase
-              sx={{ p: 0, cursor: "pointer" }}
-              onClick={handleReset}
-              data-testid="clearSearch"
-            >
+            <ButtonBase data-testid="clearSearch" onClick={handleReset}>
               <VisuallyHidden>
                 <Trans id="controls.search.clear">Clear search field</Trans>
               </VisuallyHidden>
-              <Box
-                aria-hidden="true"
-                sx={{ borderRadius: "50%", mr: "0.25rem" }}
-              >
-                <Icon name="close" size={16} color="secondary" />
-              </Box>
+              <Icon name="close" />
             </ButtonBase>
-          ) : null
+          ) : (
+            <ButtonBase data-testid="submitSearch" onClick={handleSubmit}>
+              <VisuallyHidden>
+                <Trans id="dataset.search.label">Search</Trans>
+              </VisuallyHidden>
+              <Icon name="search" />
+            </ButtonBase>
+          )
         }
       />
     </Box>
