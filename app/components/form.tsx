@@ -240,12 +240,6 @@ export const Checkbox = ({
     htmlFor={`${name}`}
     disabled={disabled}
     className={className}
-    componentsProps={{
-      typography: {
-        variant: smaller ? "caption" : "body2",
-        color: "grey.800",
-      },
-    }}
     control={
       <MUICheckbox
         data-name="checkbox-component"
