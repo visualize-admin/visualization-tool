@@ -218,11 +218,10 @@ export const SearchDatasetResultsCount = ({
 }) => {
   return (
     <Typography
-      variant="body2"
-      fontWeight={700}
+      variant="h5"
+      component="p"
       aria-live="polite"
       data-testid="search-results-count"
-      color="secondary.main"
     >
       {cubes.length > 0 && (
         <Plural
@@ -918,14 +917,8 @@ const useResultStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.grey[700],
     textAlign: "left",
     padding: `${theme.spacing(4)} 0`,
+    borderTop: `1px solid ${theme.palette.monochrome[400]}`,
     boxShadow: "none",
-
-    "&:first-child": {
-      borderTop: `1px solid ${theme.palette.grey[300]}`,
-    },
-    "&:not(:first-child)": {
-      borderTop: `2px solid ${theme.palette.grey[300]}`,
-    },
   },
 
   titleClickable: {
