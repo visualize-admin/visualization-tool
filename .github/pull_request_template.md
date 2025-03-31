@@ -20,6 +20,7 @@ This PR...
 
 ---
 
+- [ ] I added a CHANGELOG entry
 - [ ] I made a self-review of my own code
 - [ ] I wrote tests for the changes (if applicable)
-- [ ] I added a CHANGELOG entry
+- [ ] I wrote configurator and chart config migrations (if applicable)
