@@ -1,13 +1,12 @@
 import {
   b as breakpoints,
-  e as shadows,
   s as spacing,
 } from "@interactivethings/swiss-federal-ci";
 import { createTheme } from "@mui/material/styles";
-import { Shadows } from "@mui/material/styles/shadows";
 
 import { components } from "@/themes/components";
 import { palette } from "@/themes/palette";
+import { shadows } from "@/themes/shadows";
 import { typography } from "@/themes/typography";
 
 export const theme = createTheme({
@@ -17,9 +16,7 @@ export const theme = createTheme({
   shape: {
     borderRadius: 2,
   },
-  // swiss-federal-ci's design system only defines 7 shadows, while MUI expects 25.
-  // As we won't be using all 25 shadows, we can simply pass the shadows from swiss-federal-ci.
-  shadows: shadows as Shadows,
+  shadows,
   typography,
   components,
 });

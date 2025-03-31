@@ -1,4 +1,4 @@
-import { theme } from "@/themes/federal";
+import { theme } from "@/themes/theme";
 
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D;

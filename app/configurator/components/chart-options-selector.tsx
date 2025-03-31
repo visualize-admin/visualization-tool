@@ -39,7 +39,6 @@ import {
 } from "@/components/form";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
-import { TooltipTitle } from "@/components/tooltip-utils";
 import {
   AnimationField,
   ChartConfig,
@@ -511,14 +510,10 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                   enterDelay={600}
                   PopperProps={{ sx: { maxWidth: 160 } }}
                   title={
-                    <TooltipTitle
-                      text={
-                        <Trans id="controls.section.show-standard-error.explanation">
-                          Show uncertainties extending from data points to
-                          represent standard errors
-                        </Trans>
-                      }
-                    />
+                    <Trans id="controls.section.show-standard-error.explanation">
+                      Show uncertainties extending from data points to represent
+                      standard errors
+                    </Trans>
                   }
                 />
               </SwitchWrapper>
@@ -546,14 +541,10 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                     enterDelay={600}
                     PopperProps={{ sx: { maxWidth: 160 } }}
                     title={
-                      <TooltipTitle
-                        text={
-                          <Trans id="controls.section.show-confidence-interval.explanation">
-                            Show uncertainties extending from data points to
-                            represent confidence intervals
-                          </Trans>
-                        }
-                      />
+                      <Trans id="controls.section.show-confidence-interval.explanation">
+                        Show uncertainties extending from data points to
+                        represent confidence intervals
+                      </Trans>
                     }
                   />
                 </Box>
@@ -1925,13 +1916,9 @@ const ChartFieldCalculation = ({
             <MaybeTooltip
               tooltipProps={{ enterDelay: 600 }}
               title={
-                <TooltipTitle
-                  text={
-                    <Trans id="controls.filters.interactive.calculation">
-                      Allow users to change chart mode
-                    </Trans>
-                  }
-                />
+                <Trans id="controls.filters.interactive.calculation">
+                  Allow users to change chart mode
+                </Trans>
               }
             >
               <div>

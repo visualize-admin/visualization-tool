@@ -25,20 +25,28 @@ export const accordionPresenceProps = {
 };
 
 export const navPresenceProps = {
-  initial: { opacity: 0, x: 20 },
-  animate: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: 20 },
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
   transition: {
     duration: DURATION,
   },
 };
 
-export const BANNER_HEIGHT = 250;
+export const __BANNER_MARGIN_CSS_VAR = "--banner-margin";
+const BANNER_MARGIN_CSS_VAR = `var(${__BANNER_MARGIN_CSS_VAR}, -420px)`;
+
 export const bannerPresenceProps: Transition = {
-  initial: { marginTop: -BANNER_HEIGHT },
-  animate: { marginTop: 0 },
-  exit: { marginTop: -BANNER_HEIGHT },
   transition: {
     duration: DURATION,
+  },
+  initial: {
+    marginTop: BANNER_MARGIN_CSS_VAR,
+  },
+  animate: {
+    marginTop: 0,
+  },
+  exit: {
+    marginTop: BANNER_MARGIN_CSS_VAR,
   },
 };

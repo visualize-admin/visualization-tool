@@ -509,7 +509,7 @@ function SelectTree({
           value={value ? labelsByValue[value] : undefined}
           disabled={disabled}
           ref={inputRef}
-          size="small"
+          size="sm"
           className={classes.input}
           onClick={disabled ? undefined : handleOpen}
           onKeyDown={handleKeyDown}

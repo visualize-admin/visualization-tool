@@ -2,6 +2,9 @@ import { c as colors } from "@interactivethings/swiss-federal-ci";
 import { type ThemeOptions } from "@mui/material";
 
 export const palette = {
+  text: {
+    primary: colors.monochrome[800],
+  },
   primary: {
     main: "#1D4ED8",
     light: "#60A5FA",

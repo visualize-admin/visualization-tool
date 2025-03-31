@@ -44,7 +44,6 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
   panelHeaderLayout: {
     gridArea: "header",
-    background: theme.palette.background.paper,
     height: LAYOUT_HEADER_HEIGHT,
   },
   LMRPanelHeaderLayout: {
@@ -73,7 +72,6 @@ const useStyles = makeStyles<Theme>((theme) => ({
   LPanelBodyWrapper: {
     overflowX: "hidden",
     overflowY: "auto",
-    backgroundColor: theme.palette.grey[100],
     boxShadow: "none",
     borderRightColor: theme.palette.divider,
     borderRightWidth: "1px",
@@ -84,7 +82,6 @@ const useStyles = makeStyles<Theme>((theme) => ({
     gridArea: "middle",
   },
   RPanelBodyWrapper: {
-    backgroundColor: "white",
     overflowX: "hidden",
     overflowY: "auto",
     boxShadow: theme.shadows[5],
