@@ -57,6 +57,7 @@ export const Header = ({
         <Box display="flex" alignItems="center" gap={3} marginLeft="auto">
           <LoginMenu />
           <NativeSelect
+            data-testid="locale-switcher"
             value={currentLocale}
             onChange={(e) => {
               const locale = e.currentTarget.value;
