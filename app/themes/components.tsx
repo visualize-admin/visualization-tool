@@ -96,6 +96,7 @@ export const components: Components = {
         })();
 
         return {
+          whiteSpace: "nowrap",
           ...sizeStyles,
           ...variantColorStyles,
         };
@@ -227,11 +228,14 @@ export const components: Components = {
       },
     },
     styleOverrides: {
+      select: {
+        transition: "color 0.2s ease",
+      },
       icon: {
         top: "calc(50% - 12px)",
         right: 0,
         color: "inherit !important",
-        transition: "color 0.2s ease",
+        transition: "color 0.2s ease !important",
       },
     },
   },
@@ -370,7 +374,7 @@ export const components: Components = {
           top: "calc(50% - 12px)",
           right: variant === "standard" ? 0 : 12,
           color: "inherit !important",
-          transition: "color 0.2s ease",
+          transition: "color 0.2s ease, transform 0.2s ease !important",
         };
       },
     },

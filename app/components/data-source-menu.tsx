@@ -33,7 +33,11 @@ export const DataSourceMenu = () => {
         }}
         disabled={isDisabled}
         sx={{
-          color: "white !important",
+          color: "white",
+
+          "&:hover": {
+            color: "cobalt.100",
+          },
 
           "& .MuiSelect-select": {
             "&:hover, &[aria-expanded='true']": {

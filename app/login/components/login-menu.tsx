@@ -30,18 +30,18 @@ export const LoginMenu = () => {
             variant="text"
             onClick={(e) => setAnchorEl(e.currentTarget)}
             sx={{
+              gap: 0.25,
               minWidth: 0,
               minHeight: 0,
               padding: 0,
-              gap: 1,
-              color: "muted.colored",
+              color: "white",
+
               "&:hover": {
-                color: "#d1d5db", // FIXME: once the new colors are in place
-                backgroundColor: "transparent !important",
+                color: "cobalt.100",
               },
             }}
           >
-            <Typography noWrap>{user.name}</Typography>
+            {user.name}
             <Icon name="chevronDown" size={24} />
           </Button>
           <Menu
@@ -101,14 +101,6 @@ export const LoginMenu = () => {
         <Button
           data-testid="test-sign-in"
           variant="text"
-          sx={{
-            color: "muted.colored",
-            fontSize: "16px",
-            whiteSpace: "nowrap",
-            ":hover": {
-              color: "#d1d5db", // FIXME: once the new colors are in place
-            },
-          }}
           size="sm"
           onClick={() =>
             isVercelPreviewHost(window.location.host) ||
@@ -116,8 +108,11 @@ export const LoginMenu = () => {
               ? signIn("credentials")
               : signIn("adfs")
           }
+          sx={{ color: "white", "&:hover": { color: "cobalt.100" } }}
         >
-          <Trans id="login.sign-in">Sign in</Trans>
+          <Typography variant="h5" component="p">
+            <Trans id="login.sign-in">Sign in</Trans>
+          </Typography>
         </Button>
       )}
     </div>
