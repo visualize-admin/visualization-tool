@@ -205,6 +205,9 @@ export const components: Components = {
         padding: 0,
         paddingRight: 12,
 
+        "&.Mui-disabled": {
+          "-webkit-text-fill-color": palette.monochrome[300],
+        },
         "&::placeholder": {
           opacity: 1,
         },
@@ -315,6 +318,10 @@ export const components: Components = {
 
           "& .MuiSelect-select": {
             ...sizeStyles,
+          },
+
+          "&.Mui-disabled": {
+            color: `${palette.monochrome[300]} !important`,
           },
 
           "& .MuiList-root": {

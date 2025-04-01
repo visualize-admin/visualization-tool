@@ -33,7 +33,7 @@ export const DataSourceMenu = () => {
         }}
         disabled={isDisabled}
         sx={{
-          color: "white",
+          color: "white !important",
 
           "&:hover": {
             color: "cobalt.100",
