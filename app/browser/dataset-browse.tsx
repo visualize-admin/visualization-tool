@@ -287,15 +287,16 @@ export const SearchDatasetSortControl = ({
   }, [disableScore]);
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+    <Box sx={{ display: "flex", alignItems: "center", ml: 4 }}>
       <label htmlFor="datasetSort">
-        <Typography variant="body2" fontWeight={700}>
+        <Typography variant="h5" component="p">
           <Trans id="dataset.sortby">Sort by</Trans>
         </Typography>
       </label>
       <Select
         id="datasetSort"
         data-testId="datasetSort"
+        variant="standard"
         onChange={(e) => {
           onChange(e.target.value as SearchCubeResultOrder);
         }}
@@ -307,18 +308,6 @@ export const SearchDatasetSortControl = ({
           </MenuItem>
         ))}
       </Select>
-      {/* <MinimalisticSelect
-        id="datasetSort"
-        data-testid="datasetSort"
-        smaller
-        autoWidth
-        value={value}
-        options={options}
-        onChange={(e) => {
-          onChange(e.target.value as SearchCubeResultOrder);
-        }}
-        sx={{ color: (t) => `${t.palette.grey[800]} !important` }}
-      /> */}
     </Box>
   );
 };

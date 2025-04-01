@@ -6,7 +6,8 @@ import { ReactSpecimen } from "./catalog";
 
 import * as FormStories from "./form.stories";
 
-> Form elements are used throughout the _Visualization Tool_ whenever user input is needed.
+> Form elements are used throughout the _Visualization Tool_ whenever user input
+> is needed.
 
 <Meta of={FormStories} />
 
@@ -25,12 +26,6 @@ import * as FormStories from "./form.stories";
 ## Select
 
 <Canvas of={FormStories.Select} />
-
-## MinimalisticSelect
-
-Can take a smaller prop to make it smaller.
-
-<Canvas of={FormStories.MinimalisticSelect} />
 
 ## Input
 
@@ -52,7 +47,9 @@ Can take a smaller prop to make it smaller.
 
 ### \<Field />
 
-Internally, all form elements rely on the component \<Field />. The html element to render can be defined with the \`type\` props and must be one of \`text\`, \`checkbox\`, \`radio\`, \`input\`, \`select\`.
+Internally, all form elements rely on the component \<Field />. The html element
+to render can be defined with the \`type\` props and must be one of \`text\`,
+\`checkbox\`, \`radio\`, \`input\`, \`select\`.
 
 ```jsx
 import { Field } from "../components/field";
@@ -68,4 +65,5 @@ import { Field } from "../components/field";
 
 ### useField()
 
-This hook handles form events and dispatches an action to update the application state stored in local storage.
+This hook handles form events and dispatches an action to update the application
+state stored in local storage.

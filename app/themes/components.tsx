@@ -1,6 +1,7 @@
 import { c } from "@interactivethings/swiss-federal-ci";
 import { Components } from "@mui/material";
 
+import { Icon } from "@/icons";
 import { palette } from "@/themes/palette";
 import { shadows } from "@/themes/shadows";
 import { typography } from "@/themes/typography";
@@ -27,7 +28,6 @@ export const components: Components = {
       size: "md",
     },
     styleOverrides: {
-      // @ts-ignore
       root: ({ ownerState }) => {
         const size = ownerState.size ?? "md";
         const sizeStyles = (() => {
@@ -114,10 +114,44 @@ export const components: Components = {
       },
     },
   },
+  MuiCheckbox: {
+    styleOverrides: {
+      root: {
+        padding: 0,
+        borderRadius: 0,
+        color: palette.monochrome[500],
+        "&.Mui-checked": {
+          color: palette.monochrome[800],
+        },
+        "&:hover": {
+          backgroundColor: `${palette.cobalt[50]}`,
+        },
+      },
+    },
+  },
   MuiDivider: {
     styleOverrides: {
       root: {
-        borderColor: c.monochrome[300],
+        borderColor: c.monochrome[400],
+      },
+    },
+  },
+  MuiFormControlLabel: {
+    styleOverrides: {
+      root: {
+        display: "flex",
+        gap: 12,
+        margin: 0,
+        padding: 12,
+        paddingLeft: 16,
+        transition: "background-color 0.2s ease",
+        "&:hover": {
+          backgroundColor: palette.cobalt[50],
+        },
+      },
+      label: {
+        ...typography.h5,
+        lineHeight: "1 !important",
       },
     },
   },
@@ -132,7 +166,6 @@ export const components: Components = {
       disableUnderline: true,
     },
     styleOverrides: {
-      // @ts-ignore
       root: ({ ownerState }) => {
         const size = ownerState.size ?? "md";
         const sizeStyles = (() => {
@@ -157,7 +190,11 @@ export const components: Components = {
           borderRadius: 2,
           border: `1px solid ${palette.monochrome[300]}`,
           backgroundColor: "#fff",
+          color: "inherit",
 
+          "&:hover": {
+            color: "inherit",
+          },
           "&.Mui-focused": {
             border: `1px solid ${palette.monochrome[500]}`,
           },
@@ -173,9 +210,173 @@ export const components: Components = {
       },
     },
   },
+  MuiNativeSelect: {
+    defaultProps: {
+      IconComponent: ({ style, ...rest }: any) => {
+        return (
+          <Icon
+            name="chevronDown"
+            style={{
+              ...style,
+              cursor: "pointer",
+              color: "white",
+            }}
+            {...rest}
+          />
+        );
+      },
+    },
+    styleOverrides: {
+      icon: {
+        top: "calc(50% - 12px)",
+        right: 0,
+        color: "inherit !important",
+        transition: "color 0.2s ease",
+      },
+    },
+  },
+  MuiSelect: {
+    defaultProps: {
+      size: "md",
+      notched: false,
+      MenuProps: {
+        disablePortal: true,
+      },
+      IconComponent: ({ style, ...rest }: any) => {
+        return (
+          <Icon
+            name="chevronDown"
+            style={{
+              ...style,
+              cursor: "pointer",
+              color: palette.monochrome[800],
+              transition: "transform 0.2s ease",
+            }}
+            {...rest}
+          />
+        );
+      },
+    },
+    styleOverrides: {
+      root: ({ ownerState }) => {
+        const variant = ownerState.variant ?? "outlined";
+        const variantStyles = (() => {
+          switch (variant) {
+            case "outlined":
+              return {};
+            case "filled":
+              return {};
+            case "standard": {
+              return {
+                backgroundColor: "transparent",
+
+                "&.Mui-focused": {
+                  backgroundColor: `none !important`,
+                },
+              };
+            }
+            default:
+              const _exhaustiveCheck: never = variant;
+              return _exhaustiveCheck;
+          }
+        })();
+
+        const size = ownerState.size ?? "md";
+        const sizeStyles = (() => {
+          switch (size) {
+            case "sm":
+              return { ...typography.h6 };
+            case "md":
+              return { ...typography.h5 };
+            case "lg":
+              return { ...typography.h4 };
+            case "xl":
+              return { ...typography.h4 };
+            default:
+              const _exhaustiveCheck: never = size;
+              return _exhaustiveCheck;
+          }
+        })();
+
+        return {
+          cursor: "pointer",
+          width: "fit-content",
+          padding: 0,
+          border: "none !important",
+          ...variantStyles,
+
+          "& fieldset": {
+            display: "none",
+          },
+
+          "& .MuiSelect-select": {
+            ...sizeStyles,
+          },
+
+          "& .MuiList-root": {
+            padding: "4px 0",
+            boxShadow: shadows[3],
+
+            "& .MuiMenuItem-root": {
+              ...sizeStyles,
+            },
+          },
+        };
+      },
+      select: ({ ownerState }) => {
+        const variant = ownerState.variant ?? "outlined";
+        const variantStyles = (() => {
+          switch (variant) {
+            case "outlined":
+              return {
+                padding: "10px 40px 10px 20px !important",
+                border: `1px solid ${palette.monochrome[300]}`,
+
+                "&:hover, &[aria-expanded='true']": {
+                  border: `1px solid ${palette.monochrome[500]}`,
+                  backgroundColor: palette.cobalt[50],
+                },
+              };
+            case "filled":
+              return {
+                padding: "10px 40px 10px 20px !important",
+              };
+            case "standard": {
+              return {
+                padding: "4px 24px 4px 4px !important",
+
+                "&:hover, &[aria-expanded='true']": {
+                  backgroundColor: palette.cobalt[50],
+                },
+              };
+            }
+            default:
+              const _exhaustiveCheck: never = variant;
+              return _exhaustiveCheck;
+          }
+        })();
+
+        return {
+          ...variantStyles,
+          backgroundColor: "transparent",
+          transition:
+            "border 0.2s ease, background-color 0.2s ease, color 0.2s ease",
+        };
+      },
+      icon: ({ ownerState }) => {
+        const variant = ownerState.variant ?? "outlined";
+
+        return {
+          top: "calc(50% - 12px)",
+          right: variant === "standard" ? 0 : 12,
+          color: "inherit !important",
+          transition: "color 0.2s ease",
+        };
+      },
+    },
+  },
   MuiTooltip: {
     styleOverrides: {
-      // @ts-ignore
       tooltip: {
         width: "100%",
         maxWidth: 280,
