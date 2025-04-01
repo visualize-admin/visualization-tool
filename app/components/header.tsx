@@ -1,9 +1,6 @@
-import {
-  BaseLocaleSwitcher,
-  TopBar,
-} from "@interactivethings/swiss-federal-ci/dist/components";
+import { TopBar } from "@interactivethings/swiss-federal-ci/dist/components";
 import { Header as SwissFederalCiHeader } from "@interactivethings/swiss-federal-ci/dist/components/pages-router";
-import { Box } from "@mui/material";
+import { Box, NativeSelect } from "@mui/material";
 import { useRouter } from "next/router";
 
 import { DataSourceMenu } from "@/components/data-source-menu";
@@ -59,12 +56,10 @@ export const Header = ({
         {SOURCE_OPTIONS.length > 1 && <DataSourceMenu />}
         <Box display="flex" alignItems="center" gap={3} marginLeft="auto">
           <LoginMenu />
-          <BaseLocaleSwitcher
-            // @ts-ignore
-            selectProps={{ "data-testid": "locale-switcher" }}
-            activeLocale={currentLocale}
-            locales={localeConfig.locales}
-            onLocaleChange={(locale: string) => {
+          <NativeSelect
+            value={currentLocale}
+            onChange={(e) => {
+              const locale = e.currentTarget.value;
               const alternate = alternates?.[locale];
 
               if (alternate) {
@@ -73,7 +68,24 @@ export const Header = ({
                 push({ pathname, query }, undefined, { locale });
               }
             }}
-          />
+            sx={{
+              padding: 0,
+              border: "none !important",
+              backgroundColor: "transparent",
+              color: "white !important",
+
+              "&:hover": {
+                backgroundColor: "transparent",
+                color: (t) => `${t.palette.cobalt[100]} !important`,
+              },
+            }}
+          >
+            {localeConfig.locales.map((locale) => (
+              <option key={locale} value={locale}>
+                {locale.toUpperCase()}
+              </option>
+            ))}
+          </NativeSelect>
         </Box>
       </TopBar>
       {hideLogo ? null : (
