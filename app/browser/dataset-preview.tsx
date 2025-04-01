@@ -1,12 +1,12 @@
 import { ParsedUrlQuery } from "querystring";
 
 import { Trans } from "@lingui/macro";
-import { Box, Button, Paper, Theme, Typography } from "@mui/material";
+import { Box, Paper, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { ComponentProps, useEffect } from "react";
+import { UseQueryResponse } from "urql";
 
 import { DataSetPreviewTable } from "@/browse/datatable";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
@@ -14,13 +14,11 @@ import { DataDownloadMenu } from "@/components/data-download";
 import Flex from "@/components/flex";
 import { HintRed, Loading, LoadingDataError } from "@/components/hint";
 import { DataSource } from "@/config-types";
-import { sourceToLabel } from "@/domain/datasource";
 import {
-  useDataCubeMetadataQuery,
+  DataCubeMetadataQuery,
   useDataCubePreviewQuery,
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
-import SvgIcLegacyLinkExternal from "@/icons/components/IcLegacyLinkExternal";
 import { useLocale } from "@/locales/use-locale";
 
 export const isOdsIframe = (query: ParsedUrlQuery) => {
@@ -49,16 +47,6 @@ const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
     },
     title: {
       color: theme.palette.grey[800],
-    },
-    createChartButton: {
-      [theme.breakpoints.up("md")]: {
-        marginLeft: theme.spacing(6),
-      },
-      [theme.breakpoints.down("md")]: {
-        marginLeft: 0,
-      },
-      whiteSpace: "nowrap",
-      flexShrink: 0,
     },
     paper: {
       borderRadius: theme.spacing(4),
@@ -104,14 +92,11 @@ const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
 export const DataSetPreview = ({
   dataSetIri,
   dataSource,
-  onCreateChartFromDataset,
+  dataCubeMetadataQuery,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
-  onCreateChartFromDataset?: (
-    ev: React.MouseEvent<HTMLAnchorElement>,
-    datasetIri: string
-  ) => void;
+  dataCubeMetadataQuery: UseQueryResponse<DataCubeMetadataQuery, object>;
 }) => {
   const footnotesClasses = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
@@ -123,7 +108,7 @@ export const DataSetPreview = ({
     cubeFilter: { iri: dataSetIri },
   };
   const [{ data: metadata, fetching: fetchingMetadata, error: metadataError }] =
-    useDataCubeMetadataQuery({ variables });
+    dataCubeMetadataQuery;
   const [
     { data: previewData, fetching: fetchingPreview, error: previewError },
   ] = useDataCubePreviewQuery({ variables });
@@ -175,54 +160,6 @@ export const DataSetPreview = ({
               {dataCubeMetadata.title}
             </Typography>
           )}
-          {onCreateChartFromDataset ? (
-            <Button
-              onClick={(ev) => onCreateChartFromDataset?.(ev, dataSetIri)}
-              className={classes.createChartButton}
-              component="a"
-              endIcon={
-                isOdsIframe(router.query) ? <SvgIcLegacyLinkExternal /> : null
-              }
-              target={isOdsIframe(router.query) ? "_blank" : undefined}
-            >
-              {!isOdsIframe(router.query) ? (
-                <Trans id="browse.dataset.create-visualization">
-                  Create visualization from dataset
-                </Trans>
-              ) : (
-                <Trans id="browse.dataset.create-visualization-visualize">
-                  Create with visualize.admin
-                </Trans>
-              )}
-            </Button>
-          ) : (
-            <Link
-              href={`/create/new?cube=${
-                dataCubeMetadata.iri
-              }&dataSource=${sourceToLabel(dataSource)}`}
-              passHref
-              legacyBehavior={!isOdsIframe(router.query)}
-              target={isOdsIframe(router.query) ? "_blank" : undefined}
-            >
-              <Button
-                endIcon={
-                  isOdsIframe(router.query) ? <SvgIcLegacyLinkExternal /> : null
-                }
-                className={classes.createChartButton}
-                component="a"
-              >
-                {!isOdsIframe(router.query) ? (
-                  <Trans id="browse.dataset.create-visualization">
-                    Create visualization from dataset
-                  </Trans>
-                ) : (
-                  <Trans id="browse.dataset.create-visualization-visualize">
-                    Create with visualize.admin
-                  </Trans>
-                )}
-              </Button>
-            </Link>
-          )}
         </Flex>
         <Paper className={classes.paper} elevation={5}>
           {dataCubeMetadata.description && !isOdsIframe(router.query) && (
@@ -268,7 +205,7 @@ export const DataSetPreview = ({
   }
 };
 
-export type DataSetPreviewProps = React.ComponentProps<typeof DataSetPreview>;
+export type DataSetPreviewProps = ComponentProps<typeof DataSetPreview>;
 
 export const FirstTenRowsCaption = () => {
   return (

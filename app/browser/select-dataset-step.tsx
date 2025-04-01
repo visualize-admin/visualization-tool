@@ -8,7 +8,12 @@ import uniqBy from "lodash/uniqBy";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
-import React, { ComponentProps, useCallback, useMemo } from "react";
+import React, {
+  ComponentProps,
+  type MouseEvent,
+  useCallback,
+  useMemo,
+} from "react";
 import { useDebounce } from "use-debounce";
 
 import {
@@ -47,6 +52,7 @@ import {
   PanelBodyWrapper,
   PanelLayout,
 } from "@/configurator/components/layout";
+import { sourceToLabel } from "@/domain/datasource";
 import { truthy } from "@/domain/types";
 import {
   DataCubeOrganization,
@@ -76,9 +82,10 @@ const useStyles = makeStyles<
   }
 >((theme) => ({
   panelLayout: {
-    margin: "auto",
     position: "static",
     height: "auto",
+    margin: "auto",
+    marginTop: theme.spacing(12),
     transition: "margin-top 0.5s ease",
   },
   panelLeft: {
@@ -99,7 +106,6 @@ const useStyles = makeStyles<
   panelBannerInnerWrapper: {
     paddingTop: theme.spacing(25),
     paddingBottom: theme.spacing(25),
-    marginBottom: theme.spacing(12),
   },
   panelBannerContent: {
     flexDirection: "column",
@@ -153,11 +159,16 @@ const SelectDatasetStepContent = ({
   datasetResultsProps,
   dataset: propsDataset,
   onClickBackLink,
+  onCreateChartFromDataset,
   variant = "page",
 }: {
   datasetPreviewProps?: Partial<DataSetPreviewProps>;
   datasetResultsProps?: Partial<DatasetResultsProps>;
-  onClickBackLink?: (ev: React.MouseEvent<HTMLButtonElement>) => void;
+  onClickBackLink?: (e: MouseEvent<HTMLButtonElement>) => void;
+  onCreateChartFromDataset?: (
+    e: MouseEvent<HTMLAnchorElement>,
+    datasetIri: string
+  ) => void;
   dataset?: string | undefined;
   variant?: "page" | "drawer";
 }) => {
@@ -322,6 +333,19 @@ const SelectDatasetStepContent = ({
     }
   });
 
+  const dataCubeMetadataQuery = useDataCubeMetadataQuery({
+    variables: {
+      sourceType: configState.dataSource.type,
+      sourceUrl: configState.dataSource.url,
+      locale,
+      cubeFilter: {
+        iri: dataset!,
+      },
+    },
+    pause: !dataset,
+  });
+  const [{ data: dataCubeMetadata }] = dataCubeMetadataQuery;
+
   if (configState.state !== "SELECTING_DATASET") {
     return null;
   }
@@ -356,6 +380,98 @@ const SelectDatasetStepContent = ({
           </MotionBox>
         )}
       </AnimatePresence>
+      <Box sx={{ borderBottom: (t) => `1px solid ${t.palette.cobalt[100]}` }}>
+        <ContentWrapper>
+          <AnimatePresence mode="wait">
+            {dataset ? (
+              <MotionBox
+                key="navigation"
+                initial={{ opacity: 0, height: 0, overflow: "hidden" }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: DURATION }}
+                style={{ width: "100%" }}
+              >
+                <Flex
+                  sx={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    py: 6,
+                  }}
+                >
+                  <NextLink href={backLink} passHref legacyBehavior>
+                    <Button
+                      variant="outlined"
+                      size="sm"
+                      startIcon={<Icon name="arrowLeft" size={20} />}
+                      onClick={onClickBackLink}
+                    >
+                      <Trans id="dataset-preview.back-to-results">
+                        Back to the datasets
+                      </Trans>
+                    </Button>
+                  </NextLink>
+                  {onCreateChartFromDataset ? (
+                    <Button
+                      component="a"
+                      size="sm"
+                      target={isOdsIframe(router.query) ? "_blank" : undefined}
+                      endIcon={
+                        isOdsIframe(router.query) ? (
+                          <Icon name="legacyLinkExternal" size={20} />
+                        ) : (
+                          <Icon name="arrowRight" size={20} />
+                        )
+                      }
+                      onClick={(e) => onCreateChartFromDataset?.(e, dataset)}
+                    >
+                      {!isOdsIframe(router.query) ? (
+                        <Trans id="browse.dataset.create-visualization">
+                          Create visualization from dataset
+                        </Trans>
+                      ) : (
+                        <Trans id="browse.dataset.create-visualization-visualize">
+                          Create with visualize.admin
+                        </Trans>
+                      )}
+                    </Button>
+                  ) : (
+                    <NextLink
+                      href={`/create/new?cube=${
+                        dataCubeMetadata?.dataCubeMetadata.iri
+                      }&dataSource=${sourceToLabel(configState.dataSource)}`}
+                      passHref
+                      legacyBehavior={!isOdsIframe(router.query)}
+                      target={isOdsIframe(router.query) ? "_blank" : undefined}
+                    >
+                      <Button
+                        size="sm"
+                        endIcon={
+                          isOdsIframe(router.query) ? (
+                            <Icon name="legacyLinkExternal" size={20} />
+                          ) : (
+                            <Icon name="arrowRight" size={20} />
+                          )
+                        }
+                      >
+                        {!isOdsIframe(router.query) ? (
+                          <Trans id="browse.dataset.create-visualization">
+                            Create visualization from dataset
+                          </Trans>
+                        ) : (
+                          <Trans id="browse.dataset.create-visualization-visualize">
+                            Create with visualize.admin
+                          </Trans>
+                        )}
+                      </Button>
+                    </NextLink>
+                  )}
+                </Flex>
+              </MotionBox>
+            ) : null}
+          </AnimatePresence>
+        </ContentWrapper>
+      </Box>
       <ContentWrapper>
         <PanelLayout
           type={odsIframe ? "M" : "LM"}
@@ -365,23 +481,8 @@ const SelectDatasetStepContent = ({
             <PanelBodyWrapper type="L" className={classes.panelLeft}>
               <AnimatePresence mode="wait">
                 {dataset ? (
-                  <MotionBox
-                    key="metadata"
-                    sx={{ mx: 4, px: 4 }}
-                    {...navPresenceProps}
-                  >
-                    <NextLink href={backLink} passHref legacyBehavior>
-                      <Button
-                        variant="contained"
-                        startIcon={<Icon name="chevronLeft" size={12} />}
-                        onClick={onClickBackLink}
-                      >
-                        <Trans id="dataset-preview.back-to-results">
-                          Back to the list
-                        </Trans>
-                      </Button>
-                    </NextLink>
-                    <MotionBox sx={{ mt: 6 }} {...smoothPresenceProps}>
+                  <MotionBox key="metadata" {...navPresenceProps}>
+                    <MotionBox {...smoothPresenceProps}>
                       <DatasetMetadataSingleCubeAdapter
                         datasetIri={dataset}
                         dataSource={configState.dataSource}
@@ -409,6 +510,7 @@ const SelectDatasetStepContent = ({
                   <DataSetPreview
                     dataSetIri={dataset}
                     dataSource={configState.dataSource}
+                    dataCubeMetadataQuery={dataCubeMetadataQuery}
                     {...datasetPreviewProps}
                   />
                 </MotionBox>

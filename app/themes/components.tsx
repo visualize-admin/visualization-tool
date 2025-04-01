@@ -15,6 +15,11 @@ export const components: Components = {
       // @ts-ignore
       root: {
         textTransform: "none !important",
+
+        "& .MuiButton-startIcon": {
+          marginRight: 4,
+        },
+
         "& .MuiButton-endIcon": {
           marginLeft: 4,
         },
