@@ -35,7 +35,7 @@ test("Segment sorting", async ({
     // Switch color on the first chart
     if (chartType === "Columns") {
       await within(selectors.edition.controlSectionByTitle("Segmentation"))
-        .getByText("None")
+        .getByLabelText("None")
         .click();
 
       await actions.mui.selectOption("Kanton");
@@ -100,7 +100,7 @@ test("Segment sorting with hierarchy", async ({
   await sleep(3_000);
 
   const colorSection = selectors.edition.controlSectionByTitle("Segmentation");
-  await within(colorSection).getByText("None").click();
+  await within(colorSection).getByLabelText("None").click();
 
   await actions.mui.selectOption("Region");
   await selectors.chart.loaded();
