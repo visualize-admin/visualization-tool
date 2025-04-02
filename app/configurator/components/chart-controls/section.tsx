@@ -130,6 +130,7 @@ type ControlSectionContentProps = {
   role?: string;
   ariaLabelledBy?: string;
   children: ReactNode;
+  px?: "default" | "none";
   // large for specific purposes, e.g. base layer map options
   // default for right panel options
   // none for left panel options
@@ -139,7 +140,7 @@ type ControlSectionContentProps = {
 
 const useControlSectionContentStyles = makeStyles<
   Theme,
-  Pick<ControlSectionContentProps, "gap">
+  Pick<ControlSectionContentProps, "gap" | "px">
 >((theme) => ({
   controlSectionContent: {
     display: "flex",
@@ -147,8 +148,10 @@ const useControlSectionContentStyles = makeStyles<
     gap: ({ gap }) =>
       theme.spacing(gap === "large" ? 3 : gap === "default" ? 2 : 0),
     minWidth: 0,
-    padding: theme.spacing(4),
+    paddingLeft: ({ px }) => (px === "none" ? 0 : theme.spacing(4)),
     paddingTop: theme.spacing(2),
+    paddingRight: ({ px }) => (px === "none" ? 0 : theme.spacing(4)),
+    paddingBottom: theme.spacing(4),
   },
 }));
 
@@ -157,11 +160,12 @@ export const ControlSectionContent = ({
   role,
   ariaLabelledBy,
   children,
+  px = "default",
   gap = "default",
   sx,
   ...props
 }: ControlSectionContentProps) => {
-  const classes = useControlSectionContentStyles({ gap });
+  const classes = useControlSectionContentStyles({ gap, px });
   const disclosure = useControlSectionContext();
 
   return (

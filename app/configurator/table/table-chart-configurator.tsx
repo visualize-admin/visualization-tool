@@ -80,7 +80,6 @@ export const ChartConfiguratorTable = ({
             showHelp={false}
             state={state}
             chartKey={chartConfig.key}
-            sx={{ mt: 2 }}
           />
         </ControlSectionContent>
       </ControlSection>

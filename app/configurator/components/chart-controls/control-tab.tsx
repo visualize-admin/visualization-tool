@@ -56,31 +56,27 @@ export const ControlTabFieldInner = ({
   );
 
   return (
-    <Box sx={{ width: "100%", borderRadius: 1.5, my: "2px" }}>
-      <ControlTabButton
-        disabled={disabled}
+    <ControlTabButton
+      disabled={disabled}
+      checked={checked}
+      value={value}
+      onClick={handleClick}
+    >
+      <ControlTabButtonInner
+        iconName={getIconName(value)}
+        upperLabel={upperLabel}
+        mainLabel={mainLabel}
+        isActive={isActive}
         checked={checked}
-        value={value}
-        onClick={handleClick}
-      >
-        <ControlTabButtonInner
-          iconName={getIconName(value)}
-          upperLabel={upperLabel}
-          mainLabel={mainLabel}
-          isActive={isActive}
-          checked={checked}
-          optional={
-            overrideChecked(chartConfig, value) ? false : !firstComponent
-          }
-          rightIcon={
-            <Flex gap={2}>
-              {warnMessage && <WarnIconTooltip title={warnMessage} />}{" "}
-              <FieldEditIcon isActive={isActive} />
-            </Flex>
-          }
-        />
-      </ControlTabButton>
-    </Box>
+        optional={overrideChecked(chartConfig, value) ? false : !firstComponent}
+        rightIcon={
+          <Flex gap={2}>
+            {warnMessage && <WarnIconTooltip title={warnMessage} />}{" "}
+            <FieldEditIcon isActive={isActive} />
+          </Flex>
+        }
+      />
+    </ControlTabButton>
   );
 };
 
@@ -111,7 +107,7 @@ const getLabels = (
 const useIconStyles = makeStyles<Theme, { isActive: boolean }>((theme) => ({
   edit: {
     color: ({ isActive }) =>
-      isActive ? theme.palette.primary.main : theme.palette.grey[500],
+      isActive ? theme.palette.monochrome[800] : theme.palette.monochrome[300],
     width: 18,
     height: 18,
   },
@@ -280,22 +276,23 @@ export const DraggableTab = ({
 
 const useStyles = makeStyles((theme: Theme) => ({
   controlTabButton: {
-    color: theme.palette.grey[700],
-    borderColor: theme.palette.primary.main,
-    borderRadius: 1.5,
     width: "100%",
     minWidth: 160,
-    padding: `${theme.spacing(3)} ${theme.spacing(2)}`,
+    padding: `${theme.spacing(2)} ${theme.spacing(4)}`,
+    borderColor: theme.palette.primary.main,
+    borderRadius: 1.5,
     fontWeight: "normal",
     fontSize: "0.875rem",
-    transition: "background-color .2s",
+    transition: "background-color 0.2s ease",
+    backgroundColor: "white",
     cursor: "pointer",
+    boxShadow: "none",
+
     "&:hover": {
-      backgroundColor: theme.palette.action.hover,
+      backgroundColor: theme.palette.cobalt[50],
+      boxShadow: "none",
     },
-    "&:active": {
-      backgroundColor: theme.palette.action.hover,
-    },
+
     "&.Mui-disabled": {
       cursor: "initial",
       backgroundColor: "transparent",
@@ -308,7 +305,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     minWidth: 32,
     height: 32,
     borderRadius: 2,
-    color: theme.palette.grey[700],
+    transition: "color 0.2s ease",
   },
 }));
 
@@ -335,7 +332,11 @@ const ControlTabButton = ({
       disabled={disabled}
       aria-selected={checked}
       onClick={() => onClick(value)}
-      sx={{ backgroundColor: checked ? "action.hover" : "grey.100" }}
+      sx={{
+        backgroundColor: checked
+          ? (t) => `${t.palette.cobalt[50]} !important`
+          : "transparent",
+      }}
     >
       {children}
     </Button>
@@ -362,7 +363,7 @@ const ControlTabButtonInner = ({
   // On / Off indicator
   isActive?: boolean;
   showIsActive?: boolean;
-  rightIcon?: React.ReactNode;
+  rightIcon?: ReactNode;
 }) => {
   const classes = useStyles();
 
@@ -377,16 +378,25 @@ const ControlTabButtonInner = ({
       <Flex sx={{ justifyContent: "flex-start", alignItems: "center" }}>
         <Flex
           className={classes.controlTabButtonInnerIcon}
-          sx={{ backgroundColor: checked ? "primary.main" : "grey.100" }}
+          sx={{
+            backgroundColor: checked ? "monochrome.800" : "white",
+
+            "& svg": {
+              color: checked
+                ? "white"
+                : optional
+                  ? "monochrome.300"
+                  : "monochrome.800",
+            },
+          }}
         >
           <Icon size={24} name={iconName} />
         </Flex>
-
         <Flex
           sx={{
             flexDirection: "column",
             alignItems: "flex-start",
-            mx: 3,
+            mx: 1,
             flexGrow: 1,
           }}
         >
@@ -394,15 +404,16 @@ const ControlTabButtonInner = ({
             <Typography
               variant="caption"
               sx={{
-                color: isActive ? "grey.600" : "grey.500",
-                lineHeight: ["1rem", "1rem", "1rem"],
+                color:
+                  optional && !checked ? "monochrome.300" : "monochrome.500",
               }}
             >
               {upperLabel}
             </Typography>
           )}
           <Typography
-            variant="h5"
+            variant="h6"
+            component="p"
             sx={{
               // --- Puts ellipsis on the second line.
               display: "-webkit-box",
@@ -411,17 +422,15 @@ const ControlTabButtonInner = ({
               "-webkit-box-orient": "vertical",
               "-webkit-line-clamp": "2",
               // ---
-              color: optional && !checked ? "grey.500" : "grey.800",
+              color: optional && !checked ? "monochrome.300" : "monochrome.800",
               textAlign: "left",
+              fontWeight: 700,
             }}
           >
             {mainLabel}
           </Typography>
           {lowerLabel && (
-            <Typography
-              variant="caption"
-              sx={{ color: "grey.600", lineHeight: ["1rem", "1rem", "1rem"] }}
-            >
+            <Typography variant="caption" sx={{ color: "grey.600" }}>
               {lowerLabel}
             </Typography>
           )}

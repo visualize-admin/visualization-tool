@@ -658,6 +658,7 @@ export const ChartConfigurator = ({
         </SectionTitle>
         <ControlSectionContent
           gap="none"
+          px="none"
           role="tablist"
           aria-labelledby="controls-design"
         >
@@ -850,17 +851,19 @@ const AddFilterButton = ({ dims }: { dims: Dimension[] }) => {
   );
 };
 
-type ChartFieldsProps = {
+const ChartFields = ({
+  dataSource,
+  chartConfig,
+  dashboardFilters,
+  dimensions,
+  measures,
+}: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
   dimensions?: Dimension[];
   measures?: Measure[];
-};
-
-const ChartFields = (props: ChartFieldsProps) => {
-  const { dataSource, chartConfig, dashboardFilters, dimensions, measures } =
-    props;
+}) => {
   const components = [...(dimensions ?? []), ...(measures ?? [])];
   const queryFilters = useQueryFilters({ chartConfig, dashboardFilters });
   const locale = useLocale();
@@ -878,15 +881,14 @@ const ChartFields = (props: ChartFieldsProps) => {
     <>
       {getChartSpec(chartConfig)
         .encodings.filter((d) => !d.hide)
-        .map((encoding) => {
-          const { field, getDisabledState, idAttributes } = encoding;
+        .map(({ field, getDisabledState, idAttributes }) => {
           const componentIds = idAttributes
             .flatMap(
               (x) =>
                 // componentId or componentIds
                 (chartConfig.fields as any)[field]?.[x] as string | string[]
             )
-            .filter(truthy) as string[];
+            .filter(truthy);
           const fieldComponents = componentIds
             .map((cId) => components.find((d) => cId === d.id))
             .filter(truthy);
