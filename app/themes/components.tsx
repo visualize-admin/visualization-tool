@@ -73,6 +73,7 @@ export const components: Components = {
               return {
                 backgroundColor: color[400],
                 color: "#fff",
+
                 "&:hover": {
                   backgroundColor: color[600],
                 },
@@ -81,6 +82,7 @@ export const components: Components = {
               return {
                 color: color[500],
                 borderColor: color[500],
+
                 "&:hover": {
                   borderColor: color[500],
                   backgroundColor: color[50],
@@ -89,6 +91,8 @@ export const components: Components = {
             case "text":
               return {
                 color: color[700],
+                padding: 0,
+
                 "&:hover": {
                   backgroundColor: "transparent",
                   color: color[900],

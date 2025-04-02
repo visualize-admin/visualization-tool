@@ -207,12 +207,7 @@ const TabsEditable = (props: TabsEditableProps) => {
             direction="column"
           >
             <Stack direction="column" gap="0.5rem" m="1rem">
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                textAlign="center"
-                gutterBottom
-              >
+              <Typography variant="body3" textAlign="center" gutterBottom>
                 <Trans id="chart-selection-tabs.add-chart-same-dataset.caption">
                   Add chart based on the same dataset
                 </Trans>
@@ -227,12 +222,7 @@ const TabsEditable = (props: TabsEditableProps) => {
               />
             </Stack>
             <Stack direction="column" gap="0.5rem" mx="1.5rem" my="1rem">
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                textAlign="center"
-                gutterBottom
-              >
+              <Typography variant="body3" textAlign="center" gutterBottom>
                 <Trans id="chart-selection-tabs.add-chart-different-dataset.caption">
                   Add chart based on a different dataset
                 </Trans>

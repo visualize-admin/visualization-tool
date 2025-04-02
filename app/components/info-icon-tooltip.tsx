@@ -6,9 +6,16 @@ import { Icon } from "@/icons";
 export const InfoIconTooltip = (
   props: {
     title: NonNullable<ReactNode>;
+    size?: number;
   } & Omit<TooltipProps, "children" | "title">
 ) => {
-  const { title, componentsProps, placement = "top", ...rest } = props;
+  const {
+    title,
+    size = 24,
+    componentsProps,
+    placement = "top",
+    ...rest
+  } = props;
 
   return (
     <Tooltip
@@ -18,8 +25,8 @@ export const InfoIconTooltip = (
       disableInteractive
       {...rest}
     >
-      <div>
-        <Icon name="warningCircle" />
+      <div style={{ lineHeight: 0 }}>
+        <Icon name="warningCircle" size={size} />
       </div>
     </Tooltip>
   );

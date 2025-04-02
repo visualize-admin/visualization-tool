@@ -617,7 +617,7 @@ const NavSection = ({
             size="sm"
             onClick={isOpen ? close : open}
             endIcon={<Icon name={isOpen ? "arrowUp" : "arrowDown"} size={20} />}
-            sx={{ width: "100%" }}
+            sx={{ width: "100%", mt: 2 }}
           >
             {isOpen ? (
               <Trans id="show.less">Show less</Trans>
