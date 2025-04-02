@@ -101,7 +101,6 @@ export const components: Components = {
         })();
 
         return {
-          whiteSpace: "nowrap",
           ...sizeStyles,
           ...variantColorStyles,
         };

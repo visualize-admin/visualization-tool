@@ -34,6 +34,7 @@ export const LoginMenu = () => {
               minWidth: 0,
               minHeight: 0,
               padding: 0,
+              whiteSpace: "nowrap",
               color: "white",
 
               "&:hover": {
@@ -108,7 +109,14 @@ export const LoginMenu = () => {
               ? signIn("credentials")
               : signIn("adfs")
           }
-          sx={{ color: "white", "&:hover": { color: "cobalt.100" } }}
+          sx={{
+            whiteSpace: "nowrap",
+            color: "white",
+
+            "&:hover": {
+              color: "cobalt.100",
+            },
+          }}
         >
           <Typography variant="h5" component="p">
             <Trans id="login.sign-in">Sign in</Trans>
