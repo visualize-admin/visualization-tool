@@ -75,13 +75,13 @@ msgstr "Catégories"
 msgid "browse.dataset.all"
 msgstr "Parcourir tous les ensembles de données"
 
-#: app/browser/dataset-preview.tsx
-#: app/browser/dataset-preview.tsx
+#: app/browser/select-dataset-step.tsx
+#: app/browser/select-dataset-step.tsx
 msgid "browse.dataset.create-visualization"
 msgstr "Démarrer une visualisation"
 
-#: app/browser/dataset-preview.tsx
-#: app/browser/dataset-preview.tsx
+#: app/browser/select-dataset-step.tsx
+#: app/browser/select-dataset-step.tsx
 msgid "browse.dataset.create-visualization-visualize"
 msgstr "Créer une visualisation"
 
@@ -101,10 +101,6 @@ msgstr "Confirmer"
 #: app/pages/v/[chartId].tsx
 msgid "button.copy.visualization"
 msgstr "Copier et éditer cette visualisation"
-
-#: app/components/data-download.tsx
-msgid "button.download"
-msgstr "Télécharger"
 
 #: app/components/data-download.tsx
 msgid "button.download.data"
