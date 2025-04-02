@@ -105,6 +105,7 @@ export const components: Components = {
         })();
 
         return {
+          minWidth: 0,
           ...sizeStyles,
           ...variantColorStyles,
         };
@@ -129,11 +130,13 @@ export const components: Components = {
         padding: 0,
         borderRadius: 0,
         color: palette.monochrome[500],
+
         "&.Mui-checked": {
           color: palette.monochrome[800],
         },
-        "&:hover": {
-          backgroundColor: `${palette.cobalt[50]}`,
+
+        "&.Mui-disabled": {
+          opacity: 0.25,
         },
       },
     },
@@ -154,13 +157,18 @@ export const components: Components = {
         padding: 12,
         paddingLeft: 16,
         transition: "background-color 0.2s ease",
-        "&:hover": {
+
+        "&:not(.Mui-disabled):hover": {
           backgroundColor: palette.cobalt[50],
         },
       },
       label: {
         ...typography.h5,
         lineHeight: "1 !important",
+
+        "&.Mui-disabled": {
+          color: palette.monochrome[400],
+        },
       },
     },
   },
@@ -216,6 +224,7 @@ export const components: Components = {
         "&.Mui-disabled": {
           "-webkit-text-fill-color": palette.monochrome[300],
         },
+
         "&::placeholder": {
           opacity: 1,
         },
