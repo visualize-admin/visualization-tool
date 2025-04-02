@@ -373,6 +373,7 @@ export const components: Components = {
           },
 
           "& .MuiList-root": {
+            width: "auto",
             padding: "4px 0",
             boxShadow: shadows[3],
 
