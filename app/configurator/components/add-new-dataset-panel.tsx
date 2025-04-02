@@ -113,6 +113,11 @@ export const AddNewDatasetPanel = () => {
               ev.preventDefault();
               setDataSetIri("");
             }}
+            onCreateChartFromDataset={async (ev, datasetIri) => {
+              ev.preventDefault();
+              await addNewDataset(datasetIri);
+              close();
+            }}
             datasetResultsProps={{
               datasetResultProps: () => ({
                 showDimensions: true,
@@ -124,11 +129,6 @@ export const AddNewDatasetPanel = () => {
             }}
             datasetPreviewProps={{
               dataSetIri,
-              onCreateChartFromDataset: async (ev, datasetIri) => {
-                ev.preventDefault();
-                await addNewDataset(datasetIri);
-                close();
-              },
             }}
           />
         </ConfiguratorStateProvider>
