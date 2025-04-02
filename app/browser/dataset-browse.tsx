@@ -4,8 +4,11 @@ import {
   Button,
   ButtonBase,
   CardProps,
+  Divider,
   Link as MUILink,
   LinkProps as MUILinkProps,
+  MenuItem,
+  Select,
   Stack,
   Theme,
   Typography,
@@ -24,12 +27,7 @@ import { stringify } from "qs";
 import React, { ComponentProps, ReactNode, useMemo, useState } from "react";
 
 import Flex from "@/components/flex";
-import {
-  Checkbox,
-  MinimalisticSelect,
-  SearchField,
-  SearchFieldProps,
-} from "@/components/form";
+import { Checkbox, SearchField, SearchFieldProps } from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import MaybeLink from "@/components/maybe-link";
@@ -196,11 +194,12 @@ export const SearchDatasetControls = ({
   return (
     <Flex sx={{ justifyContent: "space-between", alignItems: "center", mb: 2 }}>
       <SearchDatasetResultsCount cubes={cubes} />
-      <Flex sx={{ alignItems: "center" }}>
+      <Flex sx={{ alignItems: "center", gap: 1 }}>
         <SearchDatasetDraftsControl
           checked={includeDrafts}
           onChange={onToggleIncludeDrafts}
         />
+        <Divider flexItem orientation="vertical" />
         <SearchDatasetSortControl
           value={order}
           onChange={onSetOrder}
@@ -218,11 +217,10 @@ export const SearchDatasetResultsCount = ({
 }) => {
   return (
     <Typography
-      variant="body2"
-      fontWeight={700}
+      variant="h5"
+      component="p"
       aria-live="polite"
       data-testid="search-results-count"
-      color="secondary.main"
     >
       {cubes.length > 0 && (
         <Plural
@@ -289,24 +287,27 @@ export const SearchDatasetSortControl = ({
   }, [disableScore]);
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+    <Box sx={{ display: "flex", alignItems: "center", ml: 4 }}>
       <label htmlFor="datasetSort">
-        <Typography variant="body2" fontWeight={700}>
+        <Typography variant="h5" component="p">
           <Trans id="dataset.sortby">Sort by</Trans>
         </Typography>
       </label>
-      <MinimalisticSelect
+      <Select
         id="datasetSort"
-        data-testid="datasetSort"
-        smaller
-        autoWidth
-        value={value}
-        options={options}
+        data-testId="datasetSort"
+        variant="standard"
         onChange={(e) => {
           onChange(e.target.value as SearchCubeResultOrder);
         }}
-        sx={{ color: (t) => `${t.palette.grey[800]} !important` }}
-      />
+        value={value}
+      >
+        {options.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </Select>
     </Box>
   );
 };
@@ -915,25 +916,22 @@ export type DatasetResultsProps = React.ComponentProps<typeof DatasetResults>;
 const useResultStyles = makeStyles((theme: Theme) => ({
   root: {
     position: "relative",
-    color: theme.palette.grey[700],
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing(4),
+    padding: `${theme.spacing(8)} 0`,
+    borderRadius: 0,
+    borderTop: `1px solid ${theme.palette.monochrome[400]}`,
     textAlign: "left",
-    padding: `${theme.spacing(4)} 0`,
     boxShadow: "none",
-
-    "&:first-child": {
-      borderTop: `1px solid ${theme.palette.grey[300]}`,
-    },
-    "&:not(:first-child)": {
-      borderTop: `2px solid ${theme.palette.grey[300]}`,
-    },
   },
-
   titleClickable: {
     display: "inline-block",
     cursor: "pointer",
     "&:hover": {
-      textDecoration: "underline",
+      color: theme.palette.primary.main,
     },
+    transition: "color 0.2s ease",
   },
 }));
 
@@ -1019,7 +1017,7 @@ export const DatasetResult = ({
       {...cardProps}
       className={`${classes.root} ${cardProps.className ?? ""}`}
     >
-      <Stack spacing={2} sx={{ mb: 6, alignItems: "flex-start" }}>
+      <Stack spacing={2} sx={{ alignItems: "flex-start" }}>
         <Flex
           sx={{
             justifyContent: "space-between",
@@ -1028,7 +1026,7 @@ export const DatasetResult = ({
             minHeight: 24,
           }}
         >
-          <Typography variant="body2" fontWeight={700} gutterBottom={false}>
+          <Typography variant="body2" color="monochrome.500">
             {datePublished && <DateFormat date={datePublished} />}
           </Typography>
           {isDraft && (
@@ -1038,17 +1036,20 @@ export const DatasetResult = ({
           )}
         </Flex>
         <Typography
-          component="div"
-          variant="body1"
-          onClick={disableTitleLink ? undefined : handleTitleClick}
-          color={disableTitleLink ? "text.primary" : "primary.main"}
           className={disableTitleLink ? "" : `${classes.titleClickable}`}
+          fontWeight={700}
+          onClick={disableTitleLink ? undefined : handleTitleClick}
         >
           {highlightedTitle ? (
             <Box
               component="span"
-              sx={{ "& > strong": { backgroundColor: "primary.light" } }}
               dangerouslySetInnerHTML={{ __html: highlightedTitle }}
+              sx={{
+                fontWeight: highlightedTitle === title ? 700 : 400,
+                "& > b": {
+                  fontWeight: 700,
+                },
+              }}
             />
           ) : (
             title
@@ -1056,30 +1057,31 @@ export const DatasetResult = ({
         </Typography>
         <Typography
           variant="body2"
-          color="grey.600"
-          sx={
-            {
-              WebkitLineClamp: 2,
-              lineHeight: 1.57,
-              WebkitBoxOrient: "vertical",
-              display: "-webkit-box",
-              overflow: "hidden",
-            } as $IntentionalAny
-          }
+          sx={{
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            display: "-webkit-box",
+            overflow: "hidden",
+          }}
           title={description ?? ""}
         >
           {highlightedDescription ? (
             <Box
               component="span"
-              sx={{ "& > b": { backgroundColor: "primary.light" } }}
               dangerouslySetInnerHTML={{ __html: highlightedDescription }}
+              sx={{
+                fontWeight: 400,
+                "& > b": {
+                  fontWeight: 700,
+                },
+              }}
             />
           ) : (
             description
           )}
         </Typography>
       </Stack>
-      <Flex sx={{ flexWrap: "wrap", gap: "6px" }}>
+      <Flex sx={{ flexWrap: "wrap", gap: 2 }}>
         {themes && showTags
           ? sortBy(themes, (t) => t.label).map(
               (t) =>
@@ -1090,35 +1092,22 @@ export const DatasetResult = ({
                     href={`/browse/theme/${encodeURIComponent(t.iri)}`}
                     passHref
                     legacyBehavior
+                    scroll={false}
                   >
-                    <MUILink
-                      color="inherit"
-                      // The whole card is a link too, so we have to stop propagating the
-                      // event, otherwise we go first to <tag> page then to <result> page
-                      onClick={(ev) => ev.stopPropagation()}
-                    >
-                      <Tag type="theme">{t.label}</Tag>
-                    </MUILink>
+                    <Tag type="theme">{t.label}</Tag>
                   </Link>
                 )
             )
           : null}
-
         {creator?.label ? (
           <Link
             key={creator.iri}
             href={`/browse/organization/${encodeURIComponent(creator.iri)}`}
             passHref
             legacyBehavior
+            scroll={false}
           >
-            <MUILink
-              color="inherit"
-              // The whole card is a link too, so we have to stop propagating the
-              // event, otherwise we go first to <tag> page then to <result> page
-              onClick={(ev) => ev.stopPropagation()}
-            >
-              <Tag type="organization">{creator.label}</Tag>
-            </MUILink>
+            <Tag type="organization">{creator.label}</Tag>
           </Link>
         ) : null}
       </Flex>

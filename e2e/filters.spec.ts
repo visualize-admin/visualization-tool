@@ -98,7 +98,9 @@ describe("Filters", () => {
 
     await selectors.edition.drawerLoaded();
 
-    await (await selectors.panels.drawer().within().findByText("None")).click();
+    await (
+      await selectors.panels.drawer().within().getByLabelText("None")
+    ).click();
 
     await actions.mui.selectOption("Kanton");
 

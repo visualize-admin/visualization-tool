@@ -7,7 +7,6 @@ import { BrowseStateProvider } from "@/browser/context";
 import {
   Checkbox,
   Input,
-  MinimalisticSelect,
   Radio,
   SearchField,
   Select,
@@ -139,23 +138,6 @@ const SelectStory = {
 };
 
 export { SelectStory as Select };
-
-const MinimalistSelectStory = {
-  render: () => {
-    return (
-      <MinimalisticSelect
-        id="dim"
-        label="Dimension wählen"
-        options={[
-          { label: "Nadelholz", value: "Nadelholz" },
-          { label: "Laubholz", value: "Laubholz" },
-        ]}
-      />
-    );
-  },
-};
-
-export { MinimalistSelectStory as MinimalisticSelect };
 
 const SearchFieldStory = {
   render: () => {

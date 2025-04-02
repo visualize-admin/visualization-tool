@@ -1,9 +1,9 @@
 import { Trans } from "@lingui/macro";
+import { MenuItem, Select, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 import Flex from "@/components/flex";
-import { MinimalisticSelect } from "@/components/form";
 import {
   isDataSourceChangeable,
   parseDataSource,
@@ -20,43 +20,38 @@ export const DataSourceMenu = () => {
   }, [router.pathname]);
 
   return (
-    <Flex
-      alignItems="center"
-      sx={{
-        "& label": {
-          color: "white",
-        },
-        "& .MuiInput-input.Mui-disabled": {
-          textFillColor: "#828E9A", //FIXME: switch this to a proper color once the new colors are in place
-        },
-        "& .MuiSelect-icon": {
-          color: "#F9FAFB", //FIXME: switch this to a proper color once the new colors are in place
-        },
-        "& .MuiSelect-icon.Mui-disabled": {
-          color: "#828E9A", //FIXME: switch this to a proper color once the new colors are in place
-        },
-        "&:hover": {
-          color: "#d1d5db", //FIXME: switch this to a proper color once the new colors are in place
-          "& .MuiSelect-icon": {
-            color: "#d1d5db", //FIXME: switch this to a proper color once the new colors are in place
-          },
-          "& .MuiInput-input": {
-            color: "#d1d5db", //FIXME: switch this to a proper color once the new colors are in place
-          },
-        },
-      }}
-    >
-      <MinimalisticSelect
-        sx={{ pl: 0, pt: 0, pb: 0 }}
-        label={<Trans id="data.source">Data source</Trans>}
+    <Flex alignItems="center" gap={1}>
+      <Typography variant="h5" component="p" sx={{ color: "white" }}>
+        <Trans id="data.source">Data source</Trans>:{" "}
+      </Typography>
+      <Select
         id="dataSourceSelect"
-        options={SOURCE_OPTIONS}
+        variant="standard"
         value={stringifyDataSource(dataSource)}
         onChange={(e) => {
           setDataSource(parseDataSource(e.target.value as string));
         }}
         disabled={isDisabled}
-      />
+        sx={{
+          color: "white !important",
+
+          "&:hover": {
+            color: "cobalt.100",
+          },
+
+          "& .MuiSelect-select": {
+            "&:hover, &[aria-expanded='true']": {
+              backgroundColor: "transparent !important",
+            },
+          },
+        }}
+      >
+        {SOURCE_OPTIONS.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </Select>
     </Flex>
   );
 };

@@ -15,7 +15,7 @@ test("Filters should be sorted by position", async ({ selectors, actions }) => {
   const selectorLocator = await selectors.panels
     .drawer()
     .within()
-    .findByText("None");
+    .getByLabelText("None");
   await selectorLocator.click();
 
   await actions.mui.selectOption("Status");
