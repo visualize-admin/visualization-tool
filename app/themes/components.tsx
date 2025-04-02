@@ -440,6 +440,8 @@ export const components: Components = {
       root: {
         padding: "16px 24px",
         color: palette.monochrome[600],
+        whiteSpace: "nowrap",
+        maxWidth: "unset !important",
         ...typography.body3,
       },
     },
