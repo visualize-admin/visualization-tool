@@ -218,6 +218,50 @@ export const components: Components = {
       },
     },
   },
+  MuiList: {
+    styleOverrides: {
+      root: {
+        padding: 0,
+      },
+    },
+  },
+  MuiMenuItem: {
+    styleOverrides: {
+      // @ts-ignore
+      root: {
+        padding: "10px 16px",
+        color: palette.monochrome[500],
+        ...typography.body3,
+        transition: "background-color 0.2s ease",
+
+        "&:hover": {
+          backgroundColor: palette.cobalt[50],
+        },
+      },
+    },
+  },
+  MuiListSubheader: {
+    defaultProps: {
+      disableGutters: true,
+    },
+    styleOverrides: {
+      root: {
+        padding: 12,
+        color: palette.text.primary,
+        lineHeight: 1,
+        fontWeight: 700,
+        ...typography.h6,
+      },
+    },
+  },
+  MuiMenu: {
+    styleOverrides: {
+      paper: {
+        borderRadius: 4,
+        boxShadow: shadows[4],
+      },
+    },
+  },
   MuiNativeSelect: {
     defaultProps: {
       IconComponent: ({ style, ...rest }: any) => {

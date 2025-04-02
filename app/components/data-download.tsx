@@ -25,7 +25,6 @@ import { useClient } from "urql";
 
 import { getSortedColumns } from "@/browse/datatable";
 import { ArrowMenuBottomTop } from "@/components/arrow-menu";
-import Flex from "@/components/flex";
 import { DataSource, SortingField } from "@/config-types";
 import {
   Component,
@@ -44,7 +43,7 @@ import {
   executeDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
-import SvgIcDownload from "@/icons/components/IcDownload";
+import { Icon } from "@/icons";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
@@ -173,8 +172,12 @@ const RawMenuItem = ({ children }: PropsWithChildren<{}>) => {
   return (
     <MenuItem
       sx={{
-        "&:hover": { backgroundColor: "transparent", cursor: "default" },
         whiteSpace: "normal",
+
+        "&:hover": {
+          backgroundColor: "transparent",
+          cursor: "default",
+        },
       }}
     >
       {children}
@@ -216,6 +219,7 @@ const DataDownloadInnerMenu = ({
   const [state] = useDataDownloadState();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const handleClose = useEventCallback(() => setAnchor(null));
+
   return (
     <>
       <Button
@@ -224,9 +228,9 @@ const DataDownloadInnerMenu = ({
         size="sm"
         startIcon={
           state.isDownloading ? (
-            <CircularProgress size={16} />
+            <CircularProgress size={20} />
           ) : (
-            <SvgIcDownload width={16} />
+            <Icon name="download" size={20} />
           )
         }
         onClick={(e) => setAnchor(e.currentTarget)}
@@ -244,17 +248,16 @@ const DataDownloadInnerMenu = ({
         open={!!anchor}
         anchorEl={anchor}
         onClose={handleClose}
-        anchorOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "center", vertical: "top" }}
         transformOrigin={{ horizontal: "center", vertical: "bottom" }}
         MenuListProps={{
-          subheader: (
-            <ListSubheader>
-              <Trans id="button.download">Download</Trans>
-            </ListSubheader>
-          ),
-          sx: { width: 200, pt: 1, pb: 2 },
+          sx: {
+            width: 200,
+          },
         }}
-        sx={{ transform: "translateY(-12px)" }}
+        sx={{
+          transform: "translateY(-12px)",
+        }}
       >
         {filters.filters && (
           <DataDownloadMenuSection
@@ -306,22 +309,16 @@ const DataDownloadMenuSection = ({
 }) => {
   return (
     <>
-      <ListSubheader sx={{ mt: 3, lineHeight: 1.2, borderBottom: "none" }}>
-        {subheader}
-      </ListSubheader>
-      <RawMenuItem>
-        <Flex sx={{ gap: 3 }}>
-          {FILE_FORMATS.map((fileFormat) => (
-            <DownloadMenuItem
-              key={fileFormat}
-              dataSource={dataSource}
-              fileName={fileName}
-              fileFormat={fileFormat}
-              filters={filters}
-            />
-          ))}
-        </Flex>
-      </RawMenuItem>
+      <ListSubheader>{subheader}</ListSubheader>
+      {FILE_FORMATS.map((fileFormat) => (
+        <DownloadMenuItem
+          key={fileFormat}
+          dataSource={dataSource}
+          fileName={fileName}
+          fileFormat={fileFormat}
+          filters={filters}
+        />
+      ))}
     </>
   );
 };
@@ -399,9 +396,7 @@ const DownloadMenuItem = ({
   );
 
   return (
-    <Button
-      variant="text"
-      size="sm"
+    <MenuItem
       disabled={state.isDownloading}
       onClick={async () => {
         if (!filters) {
@@ -453,10 +448,9 @@ const DownloadMenuItem = ({
           dispatch({ ...state, isDownloading: false });
         }
       }}
-      sx={{ minWidth: 0, p: 0 }}
     >
       {fileFormat.toUpperCase()}
-    </Button>
+    </MenuItem>
   );
 };
 
