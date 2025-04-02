@@ -391,6 +391,34 @@ export const components: Components = {
       },
     },
   },
+  MuiTableCell: {
+    styleOverrides: {
+      // @ts-ignore
+      root: {
+        padding: "16px 24px",
+        color: palette.monochrome[600],
+        ...typography.body3,
+      },
+    },
+  },
+  MuiTableHead: {
+    styleOverrides: {
+      root: {
+        display: "contents",
+
+        "& .MuiTableCell-root": {
+          backgroundColor: palette.cobalt[50],
+        },
+      },
+    },
+  },
+  MuiTableRow: {
+    styleOverrides: {
+      root: {
+        border: `1px solid ${palette.monochrome[300]}`,
+      },
+    },
+  },
   MuiTooltip: {
     styleOverrides: {
       tooltip: {

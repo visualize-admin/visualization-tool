@@ -9,6 +9,7 @@ import {
   TableSortLabel,
   Theme,
   TooltipProps,
+  Typography,
 } from "@mui/material";
 import { ascending, descending } from "d3-array";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -42,30 +43,38 @@ import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import { useLocale } from "@/locales/use-locale";
 import { uniqueMapBy } from "@/utils/uniqueMapBy";
 
-type ComponentLabelProps = {
+const ComponentLabel = ({
+  component,
+  tooltipProps,
+  linkToMetadataPanel,
+}: {
   component: Component;
   tooltipProps?: Omit<TooltipProps, "title" | "children">;
   linkToMetadataPanel: boolean;
-};
-
-const ComponentLabel = (props: ComponentLabelProps) => {
-  const { component, tooltipProps, linkToMetadataPanel } = props;
+}) => {
   const label = `${component.label}${
     component.unit ? ` (${component.unit})` : ""
   }`;
+  const labelNode = (
+    <Typography
+      variant="h6"
+      component="span"
+      sx={{ color: "monochrome.500", textTransform: "uppercase" }}
+    >
+      {label}
+    </Typography>
+  );
 
   return linkToMetadataPanel ? (
     <OpenMetadataPanelWrapper component={component}>
-      <span style={{ fontWeight: "bold" }}>{label}</span>
+      {labelNode}
     </OpenMetadataPanelWrapper>
   ) : component.description ? (
     <MaybeTooltip title={component.description} tooltipProps={tooltipProps}>
-      <span style={{ fontWeight: "bold", textDecoration: "underline" }}>
-        {label}
-      </span>
+      {labelNode}
     </MaybeTooltip>
   ) : (
-    <span style={{ fontWeight: "bold" }}>{label}</span>
+    labelNode
   );
 };
 
@@ -127,9 +136,12 @@ export const PreviewTable = ({
       <Table>
         <caption style={{ display: "none" }}>{title}</caption>
         <TableHead
-          sx={{ position: "sticky", top: 0, background: "background.paper" }}
+          sx={{
+            position: "sticky",
+            top: 0,
+          }}
         >
-          <TableRow sx={{ borderBottom: "none" }}>
+          <TableRow>
             {headers.map((header) => {
               return (
                 <TableCell
@@ -139,7 +151,6 @@ export const PreviewTable = ({
                   onClick={() => handleSort(header)}
                   sx={{
                     textAlign: isNumericalMeasure(header) ? "right" : "left",
-                    borderBottom: "none",
                     whiteSpace: "nowrap",
                   }}
                 >
@@ -163,7 +174,6 @@ export const PreviewTable = ({
               );
             })}
           </TableRow>
-          <BackgroundRow nCells={headers.length} />
         </TableHead>
         <TableBody>
           {sortedObservations.map((obs, i) => {
@@ -192,17 +202,6 @@ export const PreviewTable = ({
         </TableBody>
       </Table>
     </div>
-  );
-};
-
-const BackgroundRow = ({ nCells }: { nCells: number }) => {
-  return (
-    <TableRow sx={{ padding: 0, background: "black" }}>
-      <TableCell
-        colSpan={nCells}
-        sx={{ height: "1px", padding: 0, borderBottom: "none" }}
-      />
-    </TableRow>
   );
 };
 

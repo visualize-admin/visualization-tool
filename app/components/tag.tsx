@@ -4,7 +4,13 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React, { forwardRef, ReactNode } from "react";
 
-type TagType = "draft" | "theme" | "organization" | "termset" | "dimension";
+type TagType =
+  | "draft"
+  | "theme"
+  | "organization"
+  | "termset"
+  | "dimension"
+  | "unknown";
 
 const TagTypography = styled(Typography)(({ theme }) => ({
   display: "inline-flex",
@@ -26,6 +32,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   termsetType: {
     backgroundColor: theme.palette.cobalt[50],
   },
+  unknownType: {
+    backgroundColor: theme.palette.cobalt[50],
+  },
   dimensionType: {
     backgroundColor: theme.palette.warning.light,
   },
@@ -42,11 +51,11 @@ const Tag = forwardRef<
   HTMLParagraphElement,
   {
     children: ReactNode;
-    type: TagType;
+    type?: TagType;
   } & TypographyProps & {
       component?: BoxProps["component"];
     }
->(({ children, type, ...props }, ref) => {
+>(({ children, type = "unknown", ...props }, ref) => {
   const classes = useStyles();
 
   return (
