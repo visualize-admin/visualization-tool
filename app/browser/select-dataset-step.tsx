@@ -85,7 +85,7 @@ const useStyles = makeStyles<
     position: "static",
     height: "auto",
     margin: "auto",
-    marginTop: theme.spacing(12),
+    marginTop: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(12)),
     transition: "margin-top 0.5s ease",
   },
   panelLeft: {
@@ -97,7 +97,7 @@ const useStyles = makeStyles<
   panelMiddle: {
     gridColumnStart: "middle",
     gridColumnEnd: "right",
-    marginLeft: theme.spacing(8),
+    marginLeft: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(8)),
     transition: "padding-top 0.5s ease",
   },
   panelBannerOuterWrapper: {
@@ -380,7 +380,13 @@ const SelectDatasetStepContent = ({
           </MotionBox>
         )}
       </AnimatePresence>
-      <Box sx={{ borderBottom: (t) => `1px solid ${t.palette.cobalt[100]}` }}>
+      <Box
+        sx={{
+          borderBottom: odsIframe
+            ? "none"
+            : (t) => `1px solid ${t.palette.cobalt[100]}`,
+        }}
+      >
         <ContentWrapper>
           <AnimatePresence mode="wait">
             {dataset ? (
@@ -389,35 +395,38 @@ const SelectDatasetStepContent = ({
                 initial={{ opacity: 0, height: 0, overflow: "hidden" }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: DURATION * 2 }}
+                transition={{ duration: odsIframe ? 0 : DURATION * 2 }}
                 style={{ width: "100%" }}
               >
                 <Flex
                   sx={{
-                    justifyContent: "space-between",
+                    justifyContent: odsIframe ? "flex-end" : "space-between",
                     alignItems: "center",
-                    py: 6,
+                    pt: odsIframe ? 12 : 6,
+                    pb: 6,
                   }}
                 >
-                  <NextLink href={backLink} passHref legacyBehavior>
-                    <Button
-                      variant="outlined"
-                      size="sm"
-                      startIcon={<Icon name="arrowLeft" size={20} />}
-                      onClick={onClickBackLink}
-                    >
-                      <Trans id="dataset-preview.back-to-results">
-                        Back to the datasets
-                      </Trans>
-                    </Button>
-                  </NextLink>
+                  {odsIframe ? null : (
+                    <NextLink href={backLink} passHref legacyBehavior>
+                      <Button
+                        variant="outlined"
+                        size="sm"
+                        startIcon={<Icon name="arrowLeft" size={20} />}
+                        onClick={onClickBackLink}
+                      >
+                        <Trans id="dataset-preview.back-to-results">
+                          Back to the datasets
+                        </Trans>
+                      </Button>
+                    </NextLink>
+                  )}
                   {onCreateChartFromDataset ? (
                     <Button
                       component="a"
                       size="sm"
-                      target={isOdsIframe(router.query) ? "_blank" : undefined}
+                      target={odsIframe ? "_blank" : undefined}
                       endIcon={
-                        isOdsIframe(router.query) ? (
+                        odsIframe ? (
                           <Icon name="legacyLinkExternal" size={20} />
                         ) : (
                           <Icon name="arrowRight" size={20} />
@@ -425,9 +434,9 @@ const SelectDatasetStepContent = ({
                       }
                       onClick={(e) => onCreateChartFromDataset?.(e, dataset)}
                     >
-                      {!isOdsIframe(router.query) ? (
+                      {!odsIframe ? (
                         <Trans id="browse.dataset.create-visualization">
-                          Create visualization from dataset
+                          Create a visualization
                         </Trans>
                       ) : (
                         <Trans id="browse.dataset.create-visualization-visualize">
@@ -441,22 +450,22 @@ const SelectDatasetStepContent = ({
                         dataCubeMetadata?.dataCubeMetadata.iri
                       }&dataSource=${sourceToLabel(configState.dataSource)}`}
                       passHref
-                      legacyBehavior={!isOdsIframe(router.query)}
-                      target={isOdsIframe(router.query) ? "_blank" : undefined}
+                      legacyBehavior={!odsIframe}
+                      target={odsIframe ? "_blank" : undefined}
                     >
                       <Button
                         size="sm"
                         endIcon={
-                          isOdsIframe(router.query) ? (
+                          odsIframe ? (
                             <Icon name="legacyLinkExternal" size={20} />
                           ) : (
                             <Icon name="arrowRight" size={20} />
                           )
                         }
                       >
-                        {!isOdsIframe(router.query) ? (
+                        {!odsIframe ? (
                           <Trans id="browse.dataset.create-visualization">
-                            Create visualization from dataset
+                            Create a visualization
                           </Trans>
                         ) : (
                           <Trans id="browse.dataset.create-visualization-visualize">
@@ -506,7 +515,16 @@ const SelectDatasetStepContent = ({
           <PanelBodyWrapper type="M" className={classes.panelMiddle}>
             <AnimatePresence mode="wait">
               {dataset ? (
-                <MotionBox key="preview" {...navPresenceProps}>
+                <MotionBox
+                  key="preview"
+                  {...navPresenceProps}
+                  transition={{
+                    ...navPresenceProps.transition,
+                    duration: odsIframe
+                      ? 0
+                      : navPresenceProps.transition.duration,
+                  }}
+                >
                   <DataSetPreview
                     dataSetIri={dataset}
                     dataSource={configState.dataSource}

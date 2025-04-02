@@ -518,7 +518,15 @@ const PreviewDataTable = ({
                   gap: 2,
                 }}
               >
-                <Box sx={{ overflowX: "scroll", width: "100%", mt: 6 }}>
+                <Box
+                  sx={{
+                    overflowX: "scroll",
+                    width: "100%",
+                    mt: 6,
+                    mb: 4,
+                    boxShadow: 4,
+                  }}
+                >
                   <Table>
                     <TableHead>
                       <TableRow>
@@ -572,6 +580,7 @@ const PreviewDataTable = ({
                     </TableBody>
                   </Table>
                 </Box>
+                <FirstTenRowsCaption />
               </Box>
             ) : null}
           </>
@@ -588,7 +597,6 @@ const PreviewDataTable = ({
           pb: "2rem !important",
         }}
       >
-        <FirstTenRowsCaption />
         <Box sx={{ display: "flex", gap: 2 }}>
           <Button variant="outlined" onClick={onClickBack}>
             <Trans id="button.back">Back</Trans>

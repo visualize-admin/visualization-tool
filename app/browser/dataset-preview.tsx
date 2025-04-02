@@ -25,48 +25,47 @@ export const isOdsIframe = (query: ParsedUrlQuery) => {
   return query["odsiframe"] === "true";
 };
 
-const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
-  (theme) => ({
-    root: {
-      flexGrow: 1,
-      flexDirection: "column",
-      justifyContent: "space-between",
-    },
-    header: {
-      marginBottom: theme.spacing(4),
-    },
-    paper: {
-      borderRadius: theme.spacing(4),
-      paddingRight: theme.spacing(5),
-      paddingBottom: theme.spacing(6),
-      boxShadow: "none",
-    },
-    description: {
-      marginBottom: theme.spacing(6),
-    },
-    tableOuterWrapper: {
-      boxShadow: theme.shadows[4],
-    },
-    tableInnerWrapper: {
-      flexGrow: 1,
-      width: "100%",
-      position: "relative",
-      overflowX: "auto",
-      marginTop: ({ descriptionPresent }) =>
-        descriptionPresent ? theme.spacing(6) : 0,
-    },
-    footnotesWrapper: {
-      marginTop: theme.spacing(4),
-      justifyContent: "space-between",
-    },
-    loadingWrapper: {
-      flexDirection: "column",
-      justifyContent: "space-between",
-      flexGrow: 1,
-      padding: theme.spacing(5),
-    },
-  })
-);
+const useStyles = makeStyles<
+  Theme,
+  { isOdsIframe: boolean; descriptionPresent: boolean }
+>((theme) => ({
+  root: {
+    flexGrow: 1,
+    flexDirection: "column",
+    justifyContent: "space-between",
+  },
+  header: {
+    marginBottom: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(4)),
+  },
+  paper: {
+    borderRadius: theme.spacing(4),
+    boxShadow: "none",
+  },
+  description: {
+    marginBottom: theme.spacing(6),
+  },
+  tableOuterWrapper: {
+    boxShadow: theme.shadows[4],
+  },
+  tableInnerWrapper: {
+    flexGrow: 1,
+    width: "100%",
+    position: "relative",
+    overflowX: "auto",
+    marginTop: ({ descriptionPresent }) =>
+      descriptionPresent ? theme.spacing(6) : 0,
+  },
+  footnotesWrapper: {
+    marginTop: theme.spacing(4),
+    justifyContent: "space-between",
+  },
+  loadingWrapper: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    flexGrow: 1,
+    padding: theme.spacing(5),
+  },
+}));
 
 export const DataSetPreview = ({
   dataSetIri,
@@ -80,6 +79,7 @@ export const DataSetPreview = ({
   const footnotesClasses = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
   const router = useRouter();
+  const odsIframe = isOdsIframe(router.query);
   const variables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -93,6 +93,7 @@ export const DataSetPreview = ({
   ] = useDataCubePreviewQuery({ variables });
   const classes = useStyles({
     descriptionPresent: !!metadata?.dataCubeMetadata.description,
+    isOdsIframe: odsIframe,
   });
 
   useEffect(() => {
@@ -126,7 +127,7 @@ export const DataSetPreview = ({
         <Flex
           className={classes.header}
           sx={{
-            justifyContent: isOdsIframe(router.query) ? "end" : "space-between",
+            justifyContent: odsIframe ? "end" : "space-between",
           }}
         >
           <Head>
@@ -134,14 +135,14 @@ export const DataSetPreview = ({
               {dataCubeMetadata.title} - visualize.admin.ch
             </title>
           </Head>
-          {!isOdsIframe(router.query) && (
+          {!odsIframe && (
             <Typography variant="h1" fontWeight={700}>
               {dataCubeMetadata.title}
             </Typography>
           )}
         </Flex>
         <Paper className={classes.paper}>
-          {dataCubeMetadata.description && !isOdsIframe(router.query) && (
+          {dataCubeMetadata.description && !odsIframe && (
             <Typography className={classes.description} variant="body2">
               {dataCubeMetadata.description}
             </Typography>
