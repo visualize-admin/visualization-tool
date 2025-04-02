@@ -389,7 +389,7 @@ const SelectDatasetStepContent = ({
                 initial={{ opacity: 0, height: 0, overflow: "hidden" }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: DURATION }}
+                transition={{ duration: DURATION * 2 }}
                 style={{ width: "100%" }}
               >
                 <Flex
