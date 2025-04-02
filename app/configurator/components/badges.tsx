@@ -35,8 +35,15 @@ export const DatasetsBadge = ({ sx }: { sx?: BadgeProps["sx"] }) => {
     <Badge
       invisible={ctx.isOpen}
       badgeContent={datasetsCount}
-      color="secondary"
-      sx={{ display: "block", ...sx }}
+      sx={{
+        display: "block",
+        color: "white",
+
+        "& > .MuiBadge-badge": {
+          backgroundColor: "cobalt.400",
+        },
+        ...sx,
+      }}
     />
   );
 };

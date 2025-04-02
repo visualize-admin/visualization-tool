@@ -53,7 +53,7 @@ import {
   ControlSection,
   ControlSectionContent,
   ControlSectionSkeleton,
-  SubsectionTitle,
+  SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import {
@@ -641,24 +641,22 @@ export const ChartConfigurator = ({
     <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
       <DatasetsControlSection />
       <ControlSection collapse>
-        <SubsectionTitle titleId="controls-design" gutterBottom={false}>
+        <SectionTitle id="controls-design">
           <Trans id="controls.select.chart.type">Chart Type</Trans>
-        </SubsectionTitle>
-        <ControlSectionContent px="small">
+        </SectionTitle>
+        <ControlSectionContent>
           <ChartTypeSelector
             showHelp={false}
             chartKey={chartConfig.key}
             state={state}
-            sx={{ mt: 2 }}
           />
         </ControlSectionContent>
       </ControlSection>
       <ControlSection collapse>
-        <SubsectionTitle titleId="controls-design" gutterBottom={false}>
+        <SectionTitle id="controls-design">
           <Trans id="controls.section.chart.options">Chart Options</Trans>
-        </SubsectionTitle>
+        </SectionTitle>
         <ControlSectionContent
-          px="small"
           gap="none"
           role="tablist"
           aria-labelledby="controls-design"
@@ -675,8 +673,8 @@ export const ChartConfigurator = ({
       {filterDimensions.length === 0 &&
       addableDimensions &&
       addableDimensions.length === 0 ? null : (
-        <ControlSection className={classes.filterSection} collapse>
-          <SubsectionTitle titleId="controls-data" gutterBottom={false}>
+        <ControlSection collapse>
+          <SectionTitle id="controls-data">
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
             {fetching ? (
               <CircularProgress
@@ -685,7 +683,7 @@ export const ChartConfigurator = ({
               />
             ) : null}
             <FiltersBadge sx={{ ml: "auto", mr: 4 }} />
-          </SubsectionTitle>
+          </SectionTitle>
           <ControlSectionContent
             aria-labelledby="controls-data"
             data-testid="configurator-filters"

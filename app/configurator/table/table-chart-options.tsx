@@ -17,7 +17,6 @@ import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
-  SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import {
   ChartOptionCheckboxField,
@@ -263,9 +262,9 @@ export const TableColumnOptions = ({
       </ControlSection>
       {(isGroup || !isHidden) && (
         <ControlSection collapse>
-          <SubsectionTitle iconName="formatting">
+          <SectionTitle iconName="formatting">
             <Trans id="controls.section.columnstyle">Column Style</Trans>
-          </SubsectionTitle>
+          </SectionTitle>
           <ControlSectionContent sx={{ mt: 2 }}>
             <ChartOptionSelectField<ColumnStyle>
               id="columnStyle"
@@ -330,15 +329,16 @@ export const TableColumnOptions = ({
       )}
       {isTemporalDimension(component) ? (
         <ControlSection collapse>
-          <SubsectionTitle disabled={!component} iconName="filter">
+          <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
-          </SubsectionTitle>
+          </SectionTitle>
           <ControlSectionContent component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
             {component.isKeyDimension && isHidden && !isGroup ? (
               <DataFilterSelectTime
+                id="select-single-filter-time"
                 dimension={component}
                 label={component.label}
                 from={`${component.values[0].value}`}
@@ -348,8 +348,6 @@ export const TableColumnOptions = ({
                 }`}
                 timeUnit={component.timeUnit}
                 timeFormat={component.timeFormat}
-                disabled={false}
-                id={`select-single-filter-time`}
               />
             ) : (
               <TimeFilter
@@ -362,9 +360,9 @@ export const TableColumnOptions = ({
         </ControlSection>
       ) : isDimension(component) ? (
         <ControlSection collapse>
-          <SubsectionTitle disabled={!component} iconName="filter">
+          <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
-          </SubsectionTitle>
+          </SectionTitle>
           <ControlSectionContent component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>

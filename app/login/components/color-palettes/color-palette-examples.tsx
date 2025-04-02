@@ -49,11 +49,7 @@ export const ColorPaletteExample = ({ type }: ColorPaletteExampleProps) => {
       example = (
         <Flex gap={"1px"}>
           {categoricalExamplePalette.map((color) => (
-            <ColorSquare
-              key={`option-${color}`}
-              color={color}
-              disabled={false}
-            />
+            <ColorSquare key={`option-${color}`} color={color} />
           ))}
         </Flex>
       );

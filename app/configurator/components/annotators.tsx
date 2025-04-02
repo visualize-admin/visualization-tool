@@ -8,7 +8,7 @@ import { getChartConfig } from "@/config-utils";
 import {
   ControlSection,
   ControlSectionContent,
-  SubsectionTitle,
+  SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import {
   ChartAnnotatorTabField,
@@ -128,10 +128,9 @@ export const ChartAnnotator = () => {
       aria-labelledby="controls-design"
       collapse
       defaultExpanded={false}
-      hideTopBorder
     >
-      <SubsectionTitle
-        titleId="controls-design"
+      <SectionTitle
+        id="controls-design"
         disabled={disabled}
         warnMessage={
           disabled ? (
@@ -140,11 +139,10 @@ export const ChartAnnotator = () => {
             </Trans>
           ) : undefined
         }
-        gutterBottom={false}
       >
         <Trans id="controls.section.description">Title & Description</Trans>
-      </SubsectionTitle>
-      <ControlSectionContent px="small" gap="none">
+      </SectionTitle>
+      <ControlSectionContent gap="none">
         <ChartAnnotatorTabField
           value="title"
           icon="text"
@@ -194,8 +192,8 @@ export const LayoutAnnotator = () => {
       defaultExpanded
       hideTopBorder
     >
-      <SubsectionTitle
-        titleId="controls-design"
+      <SectionTitle
+        id="controls-design"
         disabled={disabled}
         warnMessage={
           disabled ? (
@@ -204,11 +202,10 @@ export const LayoutAnnotator = () => {
             </Trans>
           ) : undefined
         }
-        gutterBottom={false}
       >
         <Trans id="controls.section.description">Title & Description</Trans>
-      </SubsectionTitle>
-      <ControlSectionContent px="small" gap="none">
+      </SectionTitle>
+      <ControlSectionContent gap="none">
         <LayoutAnnotatorTabField
           value="title"
           icon="text"

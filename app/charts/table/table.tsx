@@ -320,7 +320,6 @@ export const Table = () => {
           }
           name={"Compact view"}
           checked={compactMobileViewEnabled}
-          disabled={false}
           onChange={() => setCompactMobileView(!compactMobileViewEnabled)}
         />
       </Box>

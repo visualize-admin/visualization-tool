@@ -57,10 +57,12 @@ export const IconButton = ({
   checked,
   disabled,
   onClick,
+  iconSize = 24,
 }: {
   label: string;
   disabled?: boolean;
   onClick: (e: React.SyntheticEvent<HTMLButtonElement>) => void;
+  iconSize?: number;
 } & FieldProps) => {
   const classes = useStyles();
 
@@ -76,7 +78,7 @@ export const IconButton = ({
         checked ? classes.checked : null
       )}
     >
-      <Icon name={getIconName(label)} />
+      <Icon name={getIconName(label)} size={iconSize} />
       <Typography variant="caption" sx={{ mt: 2 }}>
         {getFieldLabel(label)}
       </Typography>

@@ -76,7 +76,6 @@ import {
   ControlSectionContent,
   ControlSectionSkeleton,
   SectionTitle,
-  SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { CustomLayersSelector } from "@/configurator/components/custom-layers-selector";
 import {
@@ -550,12 +549,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                 </Box>
               )}
             {encoding.options?.useAbbreviations && (
-              <ControlSectionContent
-                component="fieldset"
-                gap="none"
-                mt={3}
-                px="small"
-              >
+              <ControlSectionContent component="fieldset" gap="none" mt={3}>
                 <ChartFieldAbbreviations
                   field={field}
                   component={fieldComponent}
@@ -714,9 +708,9 @@ const ChartLayoutOptions = ({
 
   return encoding.options || hasColorPalette ? (
     <ControlSection collapse>
-      <SubsectionTitle iconName="color">
+      <SectionTitle iconName="color">
         <Trans id="controls.section.layout-options">Layout options</Trans>
-      </SubsectionTitle>
+      </SectionTitle>
       <ControlSectionContent component="fieldset">
         {hasSubOptions && (
           <ChartFieldOptions
@@ -832,11 +826,11 @@ const ChartLimits = ({
 
   return availableLimitOptions.length > 0 ? (
     <ControlSection collapse>
-      <SubsectionTitle iconName="target">
+      <SectionTitle iconName="target">
         <Trans id="controls.section.targets-and-limit-values">
           Targets & limit values
         </Trans>
-      </SubsectionTitle>
+      </SectionTitle>
       <ControlSectionContent component="fieldset">
         {availableLimitOptions.map(
           ({ maybeLimit, limit, color, lineType, symbolType }, i) => {
@@ -1021,9 +1015,9 @@ const ChartShowDots = ({
 
   return (
     <ControlSection collapse>
-      <SubsectionTitle iconName="lineChart">
+      <SectionTitle iconName="lineChart">
         <Trans id="controls.section.data-points">Data Points</Trans>
-      </SubsectionTitle>
+      </SectionTitle>
       <ControlSectionContent>
         <Stack direction="column" gap={4}>
           <ChartOptionSwitchField
@@ -1281,7 +1275,7 @@ const ChartComboLineSingleYField = ({
   return (
     <>
       <ControlSection collapse>
-        <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
+        <SectionTitle iconName="numerical">Measures</SectionTitle>
         <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
           <Typography variant="caption" sx={{ mb: 2 }}>
             <Trans id="controls.chart.combo.y.combine-same-unit">
@@ -1424,7 +1418,7 @@ const ChartComboLineDualYField = ({
   return (
     <>
       <ControlSection collapse>
-        <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
+        <SectionTitle iconName="numerical">Measures</SectionTitle>
         <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
           <Typography variant="caption" sx={{ mb: 4 }}>
             <Trans id="controls.chart.combo.y.combine-different-unit">
@@ -1539,7 +1533,7 @@ const ChartComboLineColumnYField = ({
   return (
     <>
       <ControlSection collapse>
-        <SubsectionTitle iconName="numerical">Measures</SubsectionTitle>
+        <SectionTitle iconName="numerical">Measures</SectionTitle>
         <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
           <Typography variant="caption" sx={{ mb: 4 }}>
             <Trans id="controls.chart.combo.y.combine-different-unit">
@@ -1625,9 +1619,9 @@ const ColorSelection = ({
 }) => {
   return (
     <ControlSection collapse>
-      <SubsectionTitle iconName="color">
+      <SectionTitle iconName="color">
         <Trans id="controls.section.layout-options">Layout options</Trans>
-      </SubsectionTitle>
+      </SectionTitle>
       <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
         <ColorPalette
           field="y"
@@ -1663,11 +1657,11 @@ const ColorSelection = ({
 const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
   return (
     <ControlSection collapse>
-      <SubsectionTitle iconName="animation">
+      <SectionTitle iconName="animation">
         <Trans id="controls.section.animation.settings">
           Animation Settings
         </Trans>
-      </SubsectionTitle>
+      </SectionTitle>
       <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
         <ChartOptionSwitchField
           label={t({
@@ -1796,15 +1790,12 @@ const ChartFieldMultiFilter = ({
   const colorComponent = [...dimensions, ...measures].find(
     (d) => d.id === colorComponentId
   );
+
   return encoding.filters && component ? (
     <ControlSection data-testid="chart-edition-multi-filters" collapse>
-      <SubsectionTitle
-        disabled={!component}
-        iconName="filter"
-        gutterBottom={false}
-      >
+      <SectionTitle disabled={!component} iconName="filter">
         <Trans id="controls.section.filter">Filter</Trans>
-      </SubsectionTitle>
+      </SectionTitle>
       <ControlSectionContent component="fieldset" gap="none">
         <legend style={{ display: "none" }}>
           <Trans id="controls.section.filter">Filter</Trans>
@@ -1887,13 +1878,13 @@ const ChartFieldCalculation = ({
 }) => {
   return (
     <ControlSection collapse>
-      <SubsectionTitle
+      <SectionTitle
         iconName="normalize"
         disabled={disabled}
         warnMessage={warnMessage}
       >
         <Trans id="controls.select.calculation.mode">Chart mode</Trans>
-      </SubsectionTitle>
+      </SectionTitle>
       <ControlSectionContent component="fieldset">
         <Flex sx={{ justifyContent: "flex-start", my: 2 }}>
           <ChartOptionRadioField
@@ -2006,9 +1997,9 @@ const ChartFieldSorting = ({
 
   return (
     <ControlSection collapse>
-      <SubsectionTitle disabled={disabled} iconName="sort">
+      <SectionTitle disabled={disabled} iconName="sort">
         <Trans id="controls.section.sorting">Sort</Trans>
-      </SubsectionTitle>
+      </SectionTitle>
       <ControlSectionContent component="fieldset">
         <Box>
           <Select
@@ -2114,12 +2105,12 @@ const ChartFieldSize = ({
 
   return (
     <ControlSection collapse>
-      <SubsectionTitle iconName="size">
+      <SectionTitle iconName="size">
         {t({
           id: "controls.size",
           message: "Size",
         })}
-      </SubsectionTitle>
+      </SectionTitle>
       <ControlSectionContent>
         <ChartOptionSelectField
           id="size-measure"
@@ -2221,9 +2212,9 @@ const ChartFieldColorComponent = ({
 
   return (
     <ControlSection collapse>
-      <SubsectionTitle iconName="color">
+      <SectionTitle iconName="color">
         <Trans id="controls.color">Color</Trans>
-      </SubsectionTitle>
+      </SectionTitle>
       <ControlSectionContent>
         <ChartOptionSelectField
           id="color-component"
@@ -2427,7 +2418,7 @@ const ChartImputation = ({ chartConfig }: { chartConfig: ChartConfig }) => {
 
   return (
     <ControlSection collapse>
-      <SubsectionTitle
+      <SectionTitle
         iconName="infoCircle"
         warnMessage={
           imputationType === "none"
@@ -2440,7 +2431,7 @@ const ChartImputation = ({ chartConfig }: { chartConfig: ChartConfig }) => {
         }
       >
         <Trans id="controls.section.imputation">Missing values</Trans>
-      </SubsectionTitle>
+      </SectionTitle>
       <ControlSectionContent component="fieldset" gap="none">
         <Select
           id="imputation-type"

@@ -10,7 +10,7 @@ import { DraggableTab } from "@/configurator/components/chart-controls/control-t
 import {
   ControlSection,
   ControlSectionContent,
-  SubsectionTitle,
+  SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { useActiveChartField } from "@/configurator/config-form";
@@ -25,13 +25,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     gridColumnGap: theme.spacing(2),
     gridTemplateRows: "min-content min-content",
     gridTemplateAreas: '"description drag-button" "select drag-button"',
+
     "& .buttons": {
       transition: "color 0.125s ease, opacity 0.125s ease-out",
       opacity: 0.25,
     },
+
     "& .buttons:hover": {
       opacity: 1,
     },
+
     "& > *": {
       overflow: "hidden",
     },
@@ -48,7 +51,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-type TabDropZoneProps = {
+export const TabDropZone = ({
+  id,
+  title,
+  items,
+  dimensions,
+  measures,
+  isDropDisabled,
+  emptyComponent,
+}: {
   id: string;
   title: ReactNode;
   items: TableColumn[];
@@ -56,35 +67,23 @@ type TabDropZoneProps = {
   measures: Measure[];
   isDropDisabled?: boolean;
   emptyComponent?: React.ReactNode;
-};
-
-export const TabDropZone = (props: TabDropZoneProps) => {
-  const {
-    id,
-    title,
-    items,
-    dimensions,
-    measures,
-    isDropDisabled,
-    emptyComponent,
-  } = props;
+}) => {
   const classes = useStyles();
   const components = [...dimensions, ...measures];
 
   return (
     <Droppable droppableId={id} isDropDisabled={isDropDisabled}>
-      {({ innerRef, placeholder }, { isDraggingOver }) => {
+      {({ innerRef, placeholder }) => {
         return (
-          <ControlSection isHighlighted={isDraggingOver} collapse>
-            <SubsectionTitle gutterBottom={false}>{title}</SubsectionTitle>
+          <ControlSection collapse>
+            <SectionTitle>{title}</SectionTitle>
             <ControlSectionContent
-              px="small"
               role="tablist"
               aria-labelledby={`controls-${id}`}
             >
-              <Box
-                sx={{ p: 0, minHeight: 60, position: "relative" }}
+              <div
                 ref={innerRef}
+                style={{ position: "relative", minHeight: 60, padding: 0 }}
               >
                 {items.length === 0 && emptyComponent ? emptyComponent : null}
                 {items.map(({ componentId, index, isHidden }, i) => {
@@ -129,7 +128,7 @@ export const TabDropZone = (props: TabDropZoneProps) => {
                   );
                 })}
                 {placeholder}
-              </Box>
+              </div>
             </ControlSectionContent>
           </ControlSection>
         );
