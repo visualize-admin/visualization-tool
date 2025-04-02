@@ -53,7 +53,7 @@ test("changing of locale shouldn't make the chart disappear", async ({
   });
   await selectors.chart.loaded();
   await actions.editor.changeRegularChartType("Lines");
-  page.getByTestId("locale-switcher").selectOption("it");
+  page.locator('select:has(option[value="it"])').selectOption("it");
   await selectors.chart.loaded();
   // Make sure the chart had a chance to re-load.
   await sleep(6_000);
