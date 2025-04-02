@@ -216,7 +216,7 @@ export const DatasetsControlSection = () => {
   };
 
   return (
-    <ControlSection collapse defaultExpanded={true}>
+    <ControlSection collapse defaultExpanded hideTopBorder>
       <SubsectionTitle titleId="controls-data" gutterBottom={false}>
         <Trans id="controls.section.datasets.title">Datasets</Trans>{" "}
         <DatasetsBadge sx={{ ml: "auto", mr: 4 }} />

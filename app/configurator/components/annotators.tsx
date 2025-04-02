@@ -128,6 +128,7 @@ export const ChartAnnotator = () => {
       aria-labelledby="controls-design"
       collapse
       defaultExpanded={false}
+      hideTopBorder
     >
       <SubsectionTitle
         titleId="controls-design"
@@ -191,6 +192,7 @@ export const LayoutAnnotator = () => {
       aria-labelledby="controls-design"
       collapse
       defaultExpanded
+      hideTopBorder
     >
       <SubsectionTitle
         titleId="controls-design"
