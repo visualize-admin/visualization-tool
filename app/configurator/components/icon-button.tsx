@@ -15,47 +15,53 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: "center",
     width: 91,
     height: 64,
-    borderRadius: 8,
+    borderRadius: 2,
     transition: theme.transitions.create(["background-color", "color"], {
       duration: theme.transitions.duration.shorter,
     }),
     cursor: "pointer",
 
     "&:hover": {
-      backgroundColor: theme.palette.action.hover,
+      backgroundColor: theme.palette.monochrome[100],
     },
+
     "& svg": {
-      color: theme.palette.primary.main,
+      color: theme.palette.monochrome[800],
     },
   },
   checked: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.monochrome[800],
     color: "white",
 
     "&:hover": {
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: theme.palette.monochrome[800],
     },
+
     "& svg": {
       color: "white",
     },
   },
   disabled: {
     cursor: "initial",
+    color: theme.palette.monochrome[500],
 
     "& svg": {
-      color: theme.palette.grey[500],
+      color: theme.palette.monochrome[500],
     },
   },
 }));
 
-type IconButtonProps = {
+export const IconButton = ({
+  label,
+  value,
+  checked,
+  disabled,
+  onClick,
+}: {
   label: string;
   disabled?: boolean;
   onClick: (e: React.SyntheticEvent<HTMLButtonElement>) => void;
-} & FieldProps;
-
-export const IconButton = (props: IconButtonProps) => {
-  const { label, value, checked, disabled, onClick } = props;
+} & FieldProps) => {
   const classes = useStyles();
 
   return (
@@ -70,11 +76,8 @@ export const IconButton = (props: IconButtonProps) => {
         checked ? classes.checked : null
       )}
     >
-      <Icon size={24} name={getIconName(label)} />
-      <Typography
-        variant="caption"
-        sx={{ color: disabled ? "text.primary" : "inherit", mt: 1 }}
-      >
+      <Icon name={getIconName(label)} />
+      <Typography variant="caption" sx={{ mt: 2 }}>
         {getFieldLabel(label)}
       </Typography>
     </ButtonBase>
