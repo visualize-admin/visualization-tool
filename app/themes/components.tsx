@@ -185,6 +185,15 @@ export const components: Components = {
       underline: "none",
     },
   },
+  MuiIconButton: {
+    styleOverrides: {
+      root: {
+        "&:hover": {
+          backgroundColor: palette.cobalt[50],
+        },
+      },
+    },
+  },
   MuiInput: {
     defaultProps: {
       size: "md",
