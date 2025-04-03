@@ -318,7 +318,7 @@ export const Table = () => {
           label={
             <Trans id="chart.published.toggle.mobile.view">Compact view</Trans>
           }
-          name={"Compact view"}
+          name="Compact view"
           checked={compactMobileViewEnabled}
           onChange={() => setCompactMobileView(!compactMobileViewEnabled)}
         />

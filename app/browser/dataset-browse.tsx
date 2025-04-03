@@ -289,7 +289,7 @@ export const SearchDatasetSortControl = ({
   return (
     <Box sx={{ display: "flex", alignItems: "center" }}>
       <label htmlFor="datasetSort">
-        <Typography variant="h5" component="p">
+        <Typography variant="body3">
           <Trans id="dataset.sortby">Sort by</Trans>
         </Typography>
       </label>
@@ -297,6 +297,7 @@ export const SearchDatasetSortControl = ({
         id="datasetSort"
         data-testId="datasetSort"
         variant="standard"
+        size="sm"
         onChange={(e) => {
           onChange(e.target.value as SearchCubeResultOrder);
         }}

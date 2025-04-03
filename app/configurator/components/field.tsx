@@ -3,8 +3,6 @@ import {
   Box,
   CircularProgress,
   FormControlLabel,
-  FormGroup,
-  Switch as MUISwitch,
   Theme,
   Typography,
 } from "@mui/material";
@@ -283,7 +281,7 @@ export const DataFilterSelect = ({
   return (
     <div>
       {canUseMostRecentValue ? (
-        <MostRecentDateSwitch
+        <Switch
           label={label}
           checked={usesMostRecentValue}
           onChange={() =>
@@ -314,35 +312,6 @@ export const DataFilterSelect = ({
         value={usesMostRecentValue ? maxValue : fieldProps.value}
       />
     </div>
-  );
-};
-
-type MostRecentDateSwitchProps = {
-  label?: React.ReactNode;
-  checked: boolean;
-  onChange: () => void;
-  noGutter?: boolean;
-};
-
-export const MostRecentDateSwitch = (props: MostRecentDateSwitchProps) => {
-  const { label, checked, onChange, noGutter } = props;
-  return (
-    <Box sx={{ mt: noGutter ? 0 : "0.75rem" }}>
-      {label && <FieldLabel label={label} />}
-      <FormGroup>
-        <FormControlLabel
-          control={<MUISwitch checked={checked} onChange={onChange} />}
-          label={
-            <Typography variant="body2">
-              <Trans id="controls.filter.use-most-recent">
-                Use most recent
-              </Trans>
-            </Typography>
-          }
-          sx={{ mr: 0 }}
-        />
-      </FormGroup>
-    </Box>
   );
 };
 
@@ -434,7 +403,11 @@ export const DataFilterTemporal = ({
         sideControls={sideControls}
         parseDate={parseDate}
       />
-      <MostRecentDateSwitch
+      <Switch
+        label={t({
+          id: "controls.filter.use-most-recent",
+          message: "Use most recent",
+        })}
         checked={usesMostRecentDate}
         onChange={() =>
           fieldProps.onChange({
@@ -1217,13 +1190,15 @@ export const ChartOptionSelectField = <V extends {} = string>(
 
 export const ChartOptionSwitchField = ({
   label,
+  size,
   field,
   path,
   defaultValue = false,
   disabled = false,
   ...props
 }: {
-  label: React.ComponentProps<typeof FormControlLabel>["label"];
+  label: ComponentProps<typeof FormControlLabel>["label"];
+  size?: ComponentProps<typeof FormControlLabel>["size"];
   field: EncodingFieldType | null;
   path: string;
   defaultValue?: boolean;
@@ -1239,6 +1214,7 @@ export const ChartOptionSwitchField = ({
     <Switch
       disabled={disabled}
       label={label}
+      size={size}
       {...fieldProps}
       {...props}
       checked={fieldProps.checked ?? defaultValue}

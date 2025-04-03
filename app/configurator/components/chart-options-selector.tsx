@@ -503,7 +503,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                   field={encoding.field}
                   defaultValue
                   label={t({ id: "controls.section.show-standard-error" })}
-                  sx={{ marginRight: 0 }}
                 />
                 <InfoIconTooltip
                   enterDelay={600}
@@ -534,7 +533,6 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                     label={t({
                       id: "controls.section.show-confidence-interval",
                     })}
-                    sx={{ marginRight: 0 }}
                   />
                   <InfoIconTooltip
                     enterDelay={600}
@@ -1047,7 +1045,6 @@ const ChartShowDots = ({
               });
             }}
             label={t({ id: "controls.section.show-dots" })}
-            sx={{ mt: 2 }}
           />
           <Typography variant="caption" sx={{ mt: 2 }}>
             <Trans id="controls.section.dots-size">Select a Size</Trans>
@@ -1738,7 +1735,6 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
             </Box>
             <Box display="flex" alignItems="center" mt={5} gap="0.5rem">
               <ChartOptionSwitchField
-                sx={{ mr: 0 }}
                 label={t({
                   id: "controls.section.animation.dynamic-scaling",
                   message: "Dynamic Scaling",

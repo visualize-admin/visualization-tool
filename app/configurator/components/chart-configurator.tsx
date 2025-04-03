@@ -31,6 +31,7 @@ import {
   getPossibleFiltersQueryVariables,
   skipPossibleFiltersQuery,
 } from "@/charts/shared/possible-filters";
+import { Switch } from "@/components/form";
 import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import {
   MetadataPanel,
@@ -72,10 +73,7 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { useInteractiveDataFilterToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
-import {
-  InteractiveFiltersConfigurator,
-  InteractiveFilterToggle,
-} from "@/configurator/interactive-filters/interactive-filters-configurator";
+import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   Dimension,
   isStandardErrorDimension,
@@ -579,7 +577,17 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
 
 const InteractiveDataFilterToggle = ({ id }: { id: string }) => {
   const { checked, toggle } = useInteractiveDataFilterToggle(id);
-  return <InteractiveFilterToggle checked={checked} toggle={toggle} />;
+
+  return (
+    <Switch
+      label={t({
+        id: "controls.filters.interactive.toggle",
+        message: "Interactive",
+      })}
+      checked={checked}
+      onChange={toggle}
+    />
+  );
 };
 
 export const ChartConfigurator = ({

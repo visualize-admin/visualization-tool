@@ -90,12 +90,12 @@ const useFormControlStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const FormControlLabel = (
+export const FormControlLabel = (
   props: Omit<FormControlLabelProps, "componentsProps"> & {
     size?: "sm" | "md" | "lg";
   }
 ) => {
-  const { size = "sm", ...rest } = props;
+  const { size = "md", ...rest } = props;
   const classes = useFormControlStyles();
 
   return (
@@ -247,7 +247,8 @@ export const Slider = ({
 };
 
 export type CheckboxProps = {
-  label: FormControlLabelProps["label"];
+  label: ComponentProps<typeof FormControlLabel>["label"];
+  size?: ComponentProps<typeof FormControlLabel>["size"];
   disabled?: boolean;
   color?: string;
   indeterminate?: boolean;
@@ -256,6 +257,7 @@ export type CheckboxProps = {
 
 export const Checkbox = ({
   label,
+  size,
   name,
   value,
   checked,
@@ -267,6 +269,7 @@ export const Checkbox = ({
 }: CheckboxProps) => (
   <FormControlLabel
     label={label}
+    size={size}
     htmlFor={`${name}`}
     disabled={disabled}
     className={className}
