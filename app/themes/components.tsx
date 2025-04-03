@@ -456,6 +456,45 @@ export const components: Components = {
       },
     },
   },
+  MuiSwitch: {
+    styleOverrides: {
+      root: {
+        display: "flex",
+        width: 32,
+        height: 16,
+        padding: 0,
+
+        "&:hover": {
+          "& .MuiSwitch-switchBase": {
+            backgroundColor: "transparent",
+          },
+        },
+      },
+      switchBase: {
+        padding: 2,
+
+        "&.Mui-checked": {
+          transform: "translateX(16px)",
+
+          "& + .MuiSwitch-track": {
+            backgroundColor: palette.monochrome[800],
+            opacity: 1,
+          },
+        },
+      },
+      thumb: {
+        width: 12,
+        height: 12,
+        padding: 0,
+        backgroundColor: "white",
+        boxShadow: shadows[2],
+      },
+      track: {
+        borderRadius: 12,
+        backgroundColor: palette.monochrome[300],
+      },
+    },
+  },
   MuiTableCell: {
     styleOverrides: {
       // @ts-ignore
