@@ -38,6 +38,7 @@ import {
   getPossibleFiltersQueryVariables,
   skipPossibleFiltersQuery,
 } from "@/charts/shared/possible-filters";
+import Flex from "@/components/flex";
 import { Switch } from "@/components/form";
 import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import {
@@ -106,7 +107,6 @@ import useEvent from "@/utils/use-event";
 
 import { FiltersBadge } from "./badges";
 import { DatasetsControlSection } from "./dataset-control-section";
-import Flex from "@/components/flex";
 
 export const DataFilterSelectGeneric = ({
   rawDimension,
