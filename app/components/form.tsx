@@ -495,7 +495,7 @@ export const Select = ({
   );
 };
 
-const selectSizeToTypography: Record<
+export const selectSizeToTypography: Record<
   NonNullable<ComponentProps<typeof Select>["size"]>,
   TypographyVariant
 > = {

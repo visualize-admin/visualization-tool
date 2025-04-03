@@ -220,6 +220,8 @@ export const components: Components = {
 
         return {
           ...sizeStyles,
+          display: "flex",
+          alignItems: "center",
           width: "100%",
           borderRadius: 2,
           border: `1px solid ${palette.monochrome[300]}`,
@@ -229,6 +231,7 @@ export const components: Components = {
           "&:hover": {
             color: "inherit",
           },
+
           "&.Mui-focused": {
             border: `1px solid ${palette.monochrome[500]}`,
           },
@@ -522,6 +525,76 @@ export const components: Components = {
     styleOverrides: {
       root: {
         border: `1px solid ${palette.monochrome[300]}`,
+      },
+    },
+  },
+  MuiTreeItem: {
+    styleOverrides: {
+      content: {
+        color: palette.monochrome[600],
+        transition: "background-color 0.2s ease",
+
+        "&:hover": {
+          backgroundColor: palette.cobalt[50],
+          color: palette.monochrome[800],
+        },
+
+        "&.Mui-expanded, &.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused":
+          {
+            backgroundColor: "transparent",
+            color: palette.monochrome[800],
+
+            "&:hover": {
+              backgroundColor: palette.cobalt[50],
+            },
+          },
+
+        "&.Mui-expanded .MuiTreeItem-iconContainer": {
+          transform: "rotate(90deg)",
+        },
+      },
+      label: {
+        display: "flex",
+        alignItems: "center",
+        padding: "10px 16px",
+        paddingLeft: 4,
+      },
+      iconContainer: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: 24,
+        height: 24,
+        margin: 0,
+        transition: "transform 0.2s ease, opacity 0.2s ease",
+      },
+    },
+  },
+  MuiTreeView: {
+    defaultProps: {
+      defaultCollapseIcon: (
+        <Icon
+          name="chevronRight"
+          style={{
+            fontSize: 24,
+          }}
+        />
+      ),
+      defaultExpandIcon: (
+        <Icon
+          name="chevronRight"
+          style={{
+            fontSize: 24,
+          }}
+        />
+      ),
+    },
+    styleOverrides: {
+      root: {
+        overflowY: "auto",
+        flexGrow: 1,
+        padding: "4px 0",
+        userSelect: "none",
       },
     },
   },
