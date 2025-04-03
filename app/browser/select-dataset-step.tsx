@@ -397,6 +397,7 @@ const SelectDatasetStepContent = ({
                 initial={{ opacity: 0, height: 0, overflow: "hidden" }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
+                // To match mode="wait" enter / exit animation duration
                 transition={{ duration: odsIframe ? 0 : DURATION * 2 }}
                 style={{ width: "100%" }}
               >
