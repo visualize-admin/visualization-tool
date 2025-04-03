@@ -9,9 +9,9 @@ import {
   Box,
   Collapse,
   IconButton,
-  OutlinedInput,
   Popover,
   PopoverActions,
+  Select,
   TextField,
   TextFieldProps,
   Theme,
@@ -21,7 +21,9 @@ import {
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React, {
+  ForwardedRef,
   forwardRef,
+  type MouseEvent,
   ReactNode,
   useCallback,
   useEffect,
@@ -37,32 +39,6 @@ import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { flattenTree, pruneTree } from "@/rdf/tree-utils";
 import useEvent from "@/utils/use-event";
-
-const useStyles = makeStyles<Theme, { disabled?: boolean; open?: boolean }>(
-  (theme) => ({
-    input: {
-      width: "100%",
-      cursor: "pointer",
-      borderRadius: 4,
-      fontSize: theme.typography.body2.fontSize,
-      minHeight: 40,
-
-      "& input": {
-        cursor: "pointer",
-      },
-    },
-    icon: {
-      flexShrink: 0,
-      marginRight: -6,
-      width: 20,
-      height: 20,
-      color: ({ disabled }) =>
-        disabled ? theme.palette.grey[500] : theme.palette.grey[600],
-      transition: "transform 0.150s ease",
-      transform: ({ open }) => (open ? "rotate(180deg)" : "rotate(0deg)"),
-    },
-  })
-);
 
 const useTreeItemStyles = makeStyles<Theme>((theme) => ({
   label: {
@@ -196,27 +172,28 @@ const TreeItemContent = forwardRef<
     selectable,
   });
 
-  const handleClickLabel = useEvent((event: React.MouseEvent) => {
-    if (!event.defaultPrevented) {
-      handleExpansion(event);
+  const handleClickLabel = useEvent((e: MouseEvent) => {
+    if (!e.defaultPrevented) {
+      handleExpansion(e);
     }
   });
 
-  const handleSelect = useEvent((event: React.MouseEvent) => {
-    event.preventDefault();
+  const handleSelect = useEvent((e: MouseEvent) => {
+    e.preventDefault();
+
     if (selectable === false) {
       return;
     }
-    preventSelection(event);
-    handleSelection(event);
+
+    preventSelection(e);
+    handleSelection(e);
 
     if (onClick) {
-      onClick(event);
+      onClick(e);
     }
   });
 
   return (
-    /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions -- Key event is handled by the TreeView */
     <div
       className={clsx(className, classes.root, ownClasses.root, {
         [classes.expanded]: expanded,
@@ -226,7 +203,7 @@ const TreeItemContent = forwardRef<
       })}
       onMouseDown={handleMouseDown}
       onClick={selectable && !hasChildren ? handleSelect : handleClickLabel}
-      ref={ref as React.ForwardedRef<HTMLDivElement>}
+      ref={ref as ForwardedRef<HTMLDivElement>}
       {...other}
     >
       <div className={clsx(classes.iconContainer)}>{icon}</div>
@@ -280,6 +257,7 @@ export type SelectTreeProps = {
 
 const getFilteredOptions = (options: Tree, value: string) => {
   const rx = new RegExp(`^${value}|\\s${value}`, "i");
+
   return value === ""
     ? options
     : (pruneTree(
@@ -288,7 +266,7 @@ const getFilteredOptions = (options: Tree, value: string) => {
       ) as Tree);
 };
 
-function SelectTree({
+const SelectTree = ({
   label,
   options,
   value,
@@ -299,11 +277,10 @@ function SelectTree({
   onClose,
   open,
   id,
-}: SelectTreeProps) {
+}: SelectTreeProps) => {
   const [openState, setOpenState] = useState(false);
   const [minMenuWidth, setMinMenuWidth] = useState<number>();
   const [inputValue, setInputValue] = useState("");
-  const classes = useStyles({ disabled, open });
   const [filteredOptions, setFilteredOptions] = useState<Tree>([]);
 
   useEffect(() => {
@@ -494,10 +471,9 @@ function SelectTree({
         </Label>
       )}
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <OutlinedInput
+        <Select
           ref={inputRef}
           id={id}
-          className={classes.input}
           name={id}
           size="sm"
           disabled={disabled}
@@ -505,7 +481,16 @@ function SelectTree({
           value={value ? labelsByValue[value] : undefined}
           onClick={disabled ? undefined : handleOpen}
           onKeyDown={handleKeyDown}
-          endAdornment={<Icon className={classes.icon} name="chevronDown" />}
+          renderValue={(value) => {
+            return <>{value}</>;
+          }}
+          sx={{
+            "& svg": {
+              // Force icon rotation, as the Select is read only to keep the styling,
+              // but allow of rendering custom tree menu.
+              transform: open ? "rotate(180deg)" : "rotate(0deg)",
+            },
+          }}
         />
         {sideControls}
       </Box>
@@ -563,6 +548,6 @@ function SelectTree({
       </Popover>
     </div>
   );
-}
+};
 
 export default SelectTree;
