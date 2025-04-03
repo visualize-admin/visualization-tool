@@ -7,8 +7,6 @@ import {
   Divider,
   Link as MUILink,
   LinkProps as MUILinkProps,
-  MenuItem,
-  Select,
   Stack,
   Theme,
   Typography,
@@ -27,7 +25,12 @@ import { stringify } from "qs";
 import React, { ComponentProps, ReactNode, useMemo, useState } from "react";
 
 import Flex from "@/components/flex";
-import { Checkbox, SearchField, SearchFieldProps } from "@/components/form";
+import {
+  Checkbox,
+  SearchField,
+  SearchFieldProps,
+  Select,
+} from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import MaybeLink from "@/components/maybe-link";
@@ -302,14 +305,9 @@ export const SearchDatasetSortControl = ({
           onChange(e.target.value as SearchCubeResultOrder);
         }}
         value={value}
+        options={options}
         sx={{ width: "fit-content" }}
-      >
-        {options.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
-            {option.label}
-          </MenuItem>
-        ))}
-      </Select>
+      />
     </Box>
   );
 };
