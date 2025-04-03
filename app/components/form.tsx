@@ -16,7 +16,7 @@ import {
   Checkbox as MUICheckbox,
   CircularProgress,
   Divider,
-  FormControlLabel,
+  FormControlLabel as MUIFormControlLabel,
   FormControlLabelProps,
   Input as MUIInput,
   InputLabel,
@@ -34,7 +34,6 @@ import {
   Stack,
   styled,
   Switch as MUISwitch,
-  SxProps,
   Theme,
   Tooltip,
   Typography,
@@ -77,6 +76,39 @@ import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 import "@mdxeditor/editor/style.css";
+
+// @ts-ignore
+const useFormControlStyles = makeStyles((theme: Theme) => ({
+  sm: {
+    ...theme.typography.caption,
+  },
+  md: {
+    ...theme.typography.body3,
+  },
+  lg: {
+    ...theme.typography.h5,
+  },
+}));
+
+const FormControlLabel = (
+  props: Omit<FormControlLabelProps, "componentsProps"> & {
+    size?: "sm" | "md" | "lg";
+  }
+) => {
+  const { size = "sm", ...rest } = props;
+  const classes = useFormControlStyles();
+
+  return (
+    <MUIFormControlLabel
+      {...rest}
+      componentsProps={{
+        typography: {
+          className: classes[size],
+        },
+      }}
+    />
+  );
+};
 
 export const Label = ({
   htmlFor,
@@ -255,7 +287,6 @@ export const Checkbox = ({
         }}
       />
     }
-    sx={{ display: "flex" }}
   />
 );
 
@@ -768,32 +799,25 @@ export const FieldSetLegend = ({
 
 export const Switch = ({
   id,
+  size,
   label,
   name,
   checked,
   disabled,
   onChange,
-  smaller,
-  sx,
 }: {
   id?: string;
-  label: React.ComponentProps<typeof FormControlLabel>["label"];
+  size?: ComponentProps<typeof FormControlLabel>["size"];
+  label: ComponentProps<typeof FormControlLabel>["label"];
   disabled?: boolean;
-  smaller?: boolean;
-  sx?: SxProps;
 } & FieldProps) => {
   const genId = `switch-${useId(id)}`;
 
   return (
     <FormControlLabel
+      size={size}
       htmlFor={genId}
       label={label}
-      componentsProps={{
-        typography: {
-          variant: smaller ? "caption" : "body2",
-          color: "grey.800",
-        },
-      }}
       control={
         <MUISwitch
           id={genId}
@@ -803,11 +827,6 @@ export const Switch = ({
           onChange={onChange}
         />
       }
-      sx={{
-        width: "fit-content",
-        fontSize: "0.875rem",
-        ...sx,
-      }}
     />
   );
 };

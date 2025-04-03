@@ -167,11 +167,11 @@ export const components: Components = {
       root: {
         display: "flex",
         gap: 12,
+        width: "fit-content",
         margin: 0,
       },
       // @ts-ignore
       label: {
-        ...typography.body3,
         lineHeight: "1 !important",
 
         "&.Mui-disabled": {
