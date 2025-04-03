@@ -19,7 +19,7 @@ test.skip("Selecting SymbolLayer colors > should be possible to select geo dimen
   await selectors.chart.loaded();
 
   await within(selectors.edition.controlSectionBySubtitle("Color"))
-    .getByText("None")
+    .getByLabelText("None")
     .click();
 
   await actions.mui.selectOption("Region");

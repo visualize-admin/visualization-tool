@@ -70,7 +70,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     await selectors.chart.loaded();
 
     await within(selectors.edition.controlSectionByTitle("Symbols"))
-      .getByText("None")
+      .getByLabelText("None")
       .click();
 
     // Select options open in portal
@@ -83,7 +83,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     await selectors.chart.loaded();
 
     await within(selectors.edition.controlSectionBySubtitle("Color"))
-      .getByText("None")
+      .getByLabelText("None")
       .click();
 
     const options = await selectors.mui.options();

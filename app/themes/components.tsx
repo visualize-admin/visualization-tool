@@ -15,6 +15,11 @@ export const components: Components = {
       // @ts-ignore
       root: {
         textTransform: "none !important",
+
+        "& .MuiButton-startIcon": {
+          marginRight: 4,
+        },
+
         "& .MuiButton-endIcon": {
           marginLeft: 4,
         },
@@ -96,7 +101,6 @@ export const components: Components = {
         })();
 
         return {
-          whiteSpace: "nowrap",
           ...sizeStyles,
           ...variantColorStyles,
         };
@@ -214,6 +218,50 @@ export const components: Components = {
       },
     },
   },
+  MuiList: {
+    styleOverrides: {
+      root: {
+        padding: 0,
+      },
+    },
+  },
+  MuiMenuItem: {
+    styleOverrides: {
+      // @ts-ignore
+      root: {
+        padding: "10px 16px",
+        color: palette.monochrome[500],
+        ...typography.body3,
+        transition: "background-color 0.2s ease",
+
+        "&:hover": {
+          backgroundColor: palette.cobalt[50],
+        },
+      },
+    },
+  },
+  MuiListSubheader: {
+    defaultProps: {
+      disableGutters: true,
+    },
+    styleOverrides: {
+      root: {
+        padding: 12,
+        color: palette.text.primary,
+        lineHeight: 1,
+        fontWeight: 700,
+        ...typography.h6,
+      },
+    },
+  },
+  MuiMenu: {
+    styleOverrides: {
+      paper: {
+        borderRadius: 4,
+        boxShadow: shadows[4],
+      },
+    },
+  },
   MuiNativeSelect: {
     defaultProps: {
       IconComponent: ({ style, ...rest }: any) => {
@@ -325,6 +373,7 @@ export const components: Components = {
           },
 
           "& .MuiList-root": {
+            width: "auto",
             padding: "4px 0",
             boxShadow: shadows[3],
 
@@ -383,6 +432,36 @@ export const components: Components = {
           color: "inherit !important",
           transition: "color 0.2s ease, transform 0.2s ease !important",
         };
+      },
+    },
+  },
+  MuiTableCell: {
+    styleOverrides: {
+      // @ts-ignore
+      root: {
+        padding: "16px 24px",
+        color: palette.monochrome[600],
+        whiteSpace: "nowrap",
+        maxWidth: "unset !important",
+        ...typography.body3,
+      },
+    },
+  },
+  MuiTableHead: {
+    styleOverrides: {
+      root: {
+        display: "contents",
+
+        "& .MuiTableCell-root": {
+          backgroundColor: palette.cobalt[50],
+        },
+      },
+    },
+  },
+  MuiTableRow: {
+    styleOverrides: {
+      root: {
+        border: `1px solid ${palette.monochrome[300]}`,
       },
     },
   },

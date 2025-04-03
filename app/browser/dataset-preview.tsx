@@ -1,12 +1,12 @@
 import { ParsedUrlQuery } from "querystring";
 
 import { Trans } from "@lingui/macro";
-import { Box, Button, Paper, Theme, Typography } from "@mui/material";
+import { Box, Paper, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { ComponentProps, useEffect } from "react";
+import { UseQueryResponse } from "urql";
 
 import { DataSetPreviewTable } from "@/browse/datatable";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
@@ -14,108 +14,72 @@ import { DataDownloadMenu } from "@/components/data-download";
 import Flex from "@/components/flex";
 import { HintRed, Loading, LoadingDataError } from "@/components/hint";
 import { DataSource } from "@/config-types";
-import { sourceToLabel } from "@/domain/datasource";
 import {
-  useDataCubeMetadataQuery,
+  DataCubeMetadataQuery,
   useDataCubePreviewQuery,
 } from "@/graphql/query-hooks";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
-import SvgIcLegacyLinkExternal from "@/icons/components/IcLegacyLinkExternal";
 import { useLocale } from "@/locales/use-locale";
 
 export const isOdsIframe = (query: ParsedUrlQuery) => {
   return query["odsiframe"] === "true";
 };
 
-const useStyles = makeStyles<Theme, { descriptionPresent: boolean }>(
-  (theme) => ({
-    root: {
-      flexGrow: 1,
-      flexDirection: "column",
-      justifyContent: "space-between",
-      paddingLeft: theme.spacing(4),
-    },
-    header: {
-      marginBottom: theme.spacing(5),
-      [theme.breakpoints.up("md")]: {
-        flexDirection: "row",
-        alignItems: "center",
-      },
-      [theme.breakpoints.down("md")]: {
-        flexDirection: "column",
-        gap: theme.spacing(4),
-        alignItems: "start",
-      },
-    },
-    title: {
-      color: theme.palette.grey[800],
-    },
-    createChartButton: {
-      [theme.breakpoints.up("md")]: {
-        marginLeft: theme.spacing(6),
-      },
-      [theme.breakpoints.down("md")]: {
-        marginLeft: 0,
-      },
-      whiteSpace: "nowrap",
-      flexShrink: 0,
-    },
-    paper: {
-      borderRadius: theme.spacing(4),
-      paddingRight: theme.spacing(5),
-      paddingBottom: theme.spacing(6),
-      boxShadow: "none",
-    },
-    description: {
-      marginBottom: theme.spacing(4),
-      color: theme.palette.grey[600],
-    },
-    tableWrapper: {
-      flexGrow: 1,
-      width: "100%",
-      position: "relative",
-      overflowX: "auto",
-      marginTop: ({ descriptionPresent }) =>
-        descriptionPresent ? theme.spacing(6) : 0,
-      WebkitMaskImage:
-        "linear-gradient(to right, #FFF calc(100% - 3rem), transparent)",
-
-      "&:after": {
-        content: "''",
-        paddingLeft: "1.5rem",
-      },
-    },
-    footnotesWrapper: {
-      marginTop: theme.spacing(4),
-      justifyContent: "space-between",
-    },
-    numberOfRows: {
-      color: theme.palette.grey[600],
-    },
-    loadingWrapper: {
-      flexDirection: "column",
-      justifyContent: "space-between",
-      flexGrow: 1,
-      padding: theme.spacing(5),
-    },
-  })
-);
+const useStyles = makeStyles<
+  Theme,
+  { isOdsIframe: boolean; descriptionPresent: boolean }
+>((theme) => ({
+  root: {
+    flexGrow: 1,
+    flexDirection: "column",
+    justifyContent: "space-between",
+  },
+  header: {
+    marginBottom: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(4)),
+  },
+  paper: {
+    borderRadius: theme.spacing(4),
+    boxShadow: "none",
+  },
+  description: {
+    marginBottom: theme.spacing(6),
+  },
+  tableOuterWrapper: {
+    boxShadow: theme.shadows[4],
+  },
+  tableInnerWrapper: {
+    flexGrow: 1,
+    width: "100%",
+    position: "relative",
+    overflowX: "auto",
+    marginTop: ({ descriptionPresent }) =>
+      descriptionPresent ? theme.spacing(6) : 0,
+  },
+  footnotesWrapper: {
+    marginTop: theme.spacing(4),
+    justifyContent: "space-between",
+  },
+  loadingWrapper: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    flexGrow: 1,
+    padding: theme.spacing(5),
+  },
+}));
 
 export const DataSetPreview = ({
   dataSetIri,
   dataSource,
-  onCreateChartFromDataset,
+  dataCubeMetadataQuery,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
-  onCreateChartFromDataset?: (
-    ev: React.MouseEvent<HTMLAnchorElement>,
-    datasetIri: string
-  ) => void;
+  dataCubeMetadataQuery: UseQueryResponse<DataCubeMetadataQuery, object>;
 }) => {
   const footnotesClasses = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
   const router = useRouter();
+  const odsIframe = isOdsIframe(router.query);
   const variables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -123,12 +87,13 @@ export const DataSetPreview = ({
     cubeFilter: { iri: dataSetIri },
   };
   const [{ data: metadata, fetching: fetchingMetadata, error: metadataError }] =
-    useDataCubeMetadataQuery({ variables });
+    dataCubeMetadataQuery;
   const [
     { data: previewData, fetching: fetchingPreview, error: previewError },
   ] = useDataCubePreviewQuery({ variables });
   const classes = useStyles({
     descriptionPresent: !!metadata?.dataCubeMetadata.description,
+    isOdsIframe: odsIframe,
   });
 
   useEffect(() => {
@@ -162,7 +127,7 @@ export const DataSetPreview = ({
         <Flex
           className={classes.header}
           sx={{
-            justifyContent: isOdsIframe(router.query) ? "end" : "space-between",
+            justifyContent: odsIframe ? "end" : "space-between",
           }}
         >
           <Head>
@@ -170,78 +135,28 @@ export const DataSetPreview = ({
               {dataCubeMetadata.title} - visualize.admin.ch
             </title>
           </Head>
-          {!isOdsIframe(router.query) && (
-            <Typography className={classes.title} component="div" variant="h1">
+          {!odsIframe && (
+            <Typography variant="h1" fontWeight={700}>
               {dataCubeMetadata.title}
             </Typography>
           )}
-          {onCreateChartFromDataset ? (
-            <Button
-              onClick={(ev) => onCreateChartFromDataset?.(ev, dataSetIri)}
-              className={classes.createChartButton}
-              component="a"
-              endIcon={
-                isOdsIframe(router.query) ? <SvgIcLegacyLinkExternal /> : null
-              }
-              target={isOdsIframe(router.query) ? "_blank" : undefined}
-            >
-              {!isOdsIframe(router.query) ? (
-                <Trans id="browse.dataset.create-visualization">
-                  Create visualization from dataset
-                </Trans>
-              ) : (
-                <Trans id="browse.dataset.create-visualization-visualize">
-                  Create with visualize.admin
-                </Trans>
-              )}
-            </Button>
-          ) : (
-            <Link
-              href={`/create/new?cube=${
-                dataCubeMetadata.iri
-              }&dataSource=${sourceToLabel(dataSource)}`}
-              passHref
-              legacyBehavior={!isOdsIframe(router.query)}
-              target={isOdsIframe(router.query) ? "_blank" : undefined}
-            >
-              <Button
-                endIcon={
-                  isOdsIframe(router.query) ? <SvgIcLegacyLinkExternal /> : null
-                }
-                className={classes.createChartButton}
-                component="a"
-              >
-                {!isOdsIframe(router.query) ? (
-                  <Trans id="browse.dataset.create-visualization">
-                    Create visualization from dataset
-                  </Trans>
-                ) : (
-                  <Trans id="browse.dataset.create-visualization-visualize">
-                    Create with visualize.admin
-                  </Trans>
-                )}
-              </Button>
-            </Link>
-          )}
         </Flex>
-        <Paper className={classes.paper} elevation={5}>
-          {dataCubeMetadata.description && !isOdsIframe(router.query) && (
-            <Typography
-              className={classes.description}
-              component="div"
-              variant="body2"
-            >
+        <Paper className={classes.paper}>
+          {dataCubeMetadata.description && !odsIframe && (
+            <Typography className={classes.description} variant="body2">
               {dataCubeMetadata.description}
             </Typography>
           )}
-          <Flex className={classes.tableWrapper}>
-            <DataSetPreviewTable
-              title={dataCubeMetadata.title}
-              dimensions={dataCubePreview.dimensions}
-              measures={dataCubePreview.measures}
-              observations={dataCubePreview.observations}
-            />
-          </Flex>
+          <div className={classes.tableOuterWrapper}>
+            <Flex className={classes.tableInnerWrapper}>
+              <DataSetPreviewTable
+                title={dataCubeMetadata.title}
+                dimensions={dataCubePreview.dimensions}
+                measures={dataCubePreview.measures}
+                observations={dataCubePreview.observations}
+              />
+            </Flex>
+          </div>
           <Flex className={classes.footnotesWrapper}>
             <Flex className={footnotesClasses.actions}>
               {!isOdsIframe(router.query) && (
@@ -268,11 +183,11 @@ export const DataSetPreview = ({
   }
 };
 
-export type DataSetPreviewProps = React.ComponentProps<typeof DataSetPreview>;
+export type DataSetPreviewProps = ComponentProps<typeof DataSetPreview>;
 
 export const FirstTenRowsCaption = () => {
   return (
-    <Typography variant="caption" sx={{ fontWeight: "light" }}>
+    <Typography variant="h6" component="span" color="monochrome.500">
       <Trans id="datatable.showing.first.rows">Showing first 10 rows</Trans>
     </Typography>
   );

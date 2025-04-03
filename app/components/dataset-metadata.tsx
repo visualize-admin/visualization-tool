@@ -38,14 +38,15 @@ export const DatasetMetadata = ({
   const locale = useLocale();
   const formatDate = useFormatDate();
   const openDataLink = cube ? makeOpenDataLink(locale, cube) : null;
+
   return (
     <div>
       {showTitle ? (
-        <Typography variant="h4" sx={{ mb: 3 }} color="grey.700">
+        <Typography variant="h5" fontWeight={700} sx={{ mb: 4 }}>
           {cube.title}
         </Typography>
       ) : null}
-      <Stack spacing={2}>
+      <Stack spacing={6}>
         {cube.publisher && (
           <div>
             <DatasetMetadataTitle>
@@ -97,7 +98,7 @@ export const DatasetMetadata = ({
               Further information
             </Trans>
           </DatasetMetadataTitle>
-          <DatasetMetadataBody sx={{ mt: 2 }}>
+          <DatasetMetadataBody sx={{ mt: "1px" }}>
             {cube.landingPage ? (
               <DatasetMetadataLink
                 href={cube.landingPage}
@@ -130,7 +131,7 @@ export const DatasetMetadata = ({
             ) : null}
           </DatasetMetadataBody>
         </div>
-        <Stack spacing={2}>
+        <Stack spacing={2.5}>
           <DatasetMetadataTitle>
             <Trans id="dataset-preview.keywords">Keywords</Trans>
           </DatasetMetadataTitle>
@@ -142,7 +143,7 @@ export const DatasetMetadata = ({
 };
 
 const DatasetMetadataTitle = ({ children }: { children: ReactNode }) => (
-  <Typography variant="body2" fontWeight={700} sx={{ color: "grey.700" }}>
+  <Typography variant="h6" component="p" fontWeight={700}>
     {children}
   </Typography>
 );
@@ -155,12 +156,12 @@ const DatasetMetadataBody = ({
   sx?: TypographyProps["sx"];
 }) => (
   <Typography
-    variant="body2"
+    variant="body3"
     sx={{
       display: "flex",
       flexDirection: "column",
-      gap: 2,
-      color: "grey.900",
+      gap: "1px",
+      mt: "1px",
       ...sx,
     }}
   >
@@ -186,7 +187,7 @@ const DatasetMetadataLink = ({
     sx={{ display: "inline-flex", alignItems: "center", gap: 1 }}
     {...props}
   >
-    {external ? <Icon name="legacyLinkExternal" size={16} /> : null}
+    {external ? <Icon name="link" size={20} /> : null}
     {label}
   </Link>
 );
@@ -253,14 +254,13 @@ const DatasetMetadataTag = (props: DatasetMetadataTagProps) => {
         component={MUILink}
         // @ts-ignore
         underline="none"
-        type={type}
         title={label ?? undefined}
         sx={{
           maxWidth: "100%",
-          display: "flex",
           whiteSpace: "nowrap",
           textOverflow: "ellipsis",
           overflow: "hidden",
+          color: "text.primary",
         }}
       >
         {label}
