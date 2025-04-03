@@ -173,6 +173,7 @@ export const components: Components = {
       // @ts-ignore
       label: {
         lineHeight: "1 !important",
+        color: palette.text.primary,
 
         "&.Mui-disabled": {
           color: palette.monochrome[400],
@@ -376,8 +377,10 @@ export const components: Components = {
 
         return {
           cursor: "pointer",
+          flex: 1,
           display: "flex",
           alignItems: "center",
+          maxWidth: "100%",
           gap: 4,
           padding: 0,
           border: "none !important",

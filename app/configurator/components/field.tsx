@@ -108,19 +108,16 @@ const useStyles = makeStyles<Theme>((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: "0.25rem",
-    textAlign: "left",
-    paddingRight: theme.spacing(1),
-    WebkitLineClamp: 2,
-    WebkitBoxOrient: "vertical",
-    overflow: "hidden",
-    fontSize: "0.75rem",
+    width: "100%",
+    gap: theme.spacing(1),
     marginBottom: theme.spacing(2),
-    color: theme.palette.text.secondary,
     marginTop: theme.spacing(2),
+    textAlign: "left",
+    WebkitBoxOrient: "vertical",
+    WebkitLineClamp: 2,
+    overflow: "hidden",
   },
   loadingIndicator: {
-    color: theme.palette.grey[700],
     display: "inline-block",
     marginTop: theme.spacing(1),
     marginLeft: theme.spacing(2),
@@ -188,7 +185,6 @@ export const DataFilterSelect = ({
   id,
   disabled,
   optional,
-  topControls,
   sideControls,
   hierarchy,
   onOpen,
@@ -199,7 +195,6 @@ export const DataFilterSelect = ({
   id: string;
   disabled?: boolean;
   optional?: boolean;
-  topControls?: ReactNode;
   sideControls?: ReactNode;
   hierarchy?: HierarchyValue[] | null;
   onOpen?: () => void;
@@ -262,7 +257,6 @@ export const DataFilterSelect = ({
         onOpen={handleOpen}
         open={isOpen}
         disabled={disabled}
-        topControls={topControls}
         sideControls={sideControls}
         {...fieldProps}
       />
@@ -296,10 +290,10 @@ export const DataFilterSelect = ({
       )}
       <Select
         id={id}
+        size="sm"
         disabled={disabled || usesMostRecentValue}
         options={allValues}
         sortOptions={false}
-        topControls={topControls}
         sideControls={sideControls}
         open={isOpen}
         onClose={handleClose}
@@ -324,16 +318,14 @@ export const DataFilterTemporal = ({
   timeUnit,
   disabled,
   isOptional,
-  topControls,
   sideControls,
 }: {
-  label: React.ReactNode;
+  label: ReactNode;
   dimension: TemporalDimension;
   timeUnit: DatePickerTimeUnit;
   disabled?: boolean;
   isOptional?: boolean;
-  topControls?: React.ReactNode;
-  sideControls?: React.ReactNode;
+  sideControls?: ReactNode;
 }) => {
   const { values, timeFormat } = dimension;
   const formatLocale = useTimeFormatLocale();
@@ -396,7 +388,6 @@ export const DataFilterTemporal = ({
         minDate={minDate}
         maxDate={maxDate}
         disabled={disabled || usesMostRecentDate}
-        topControls={topControls}
         sideControls={sideControls}
         parseDate={parseDate}
       />
@@ -430,7 +421,6 @@ export const DataFilterSelectTime = ({
   id,
   disabled,
   isOptional,
-  topControls,
 }: {
   dimension: Dimension;
   label: React.ReactNode;
@@ -441,7 +431,6 @@ export const DataFilterSelectTime = ({
   id: string;
   disabled?: boolean;
   isOptional?: boolean;
-  topControls?: React.ReactNode;
 }) => {
   const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
   const formatLocale = useTimeFormatLocale();
@@ -498,7 +487,6 @@ export const DataFilterSelectTime = ({
         disabled={disabled}
         options={allOptions}
         sortOptions={false}
-        topControls={topControls}
         {...fieldProps}
       />
     );

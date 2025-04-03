@@ -26,15 +26,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     gridTemplateRows: "min-content min-content",
     gridTemplateAreas: '"description drag-button" "select drag-button"',
 
-    "& .buttons": {
-      transition: "color 0.125s ease, opacity 0.125s ease-out",
-      opacity: 0.25,
-    },
-
-    "& .buttons:hover": {
-      opacity: 1,
-    },
-
     "& > *": {
       overflow: "hidden",
     },

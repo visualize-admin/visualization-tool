@@ -364,7 +364,6 @@ export const Select = ({
   optionGroups,
   onChange,
   sortOptions = true,
-  topControls,
   sideControls,
   open,
   onClose,
@@ -379,7 +378,6 @@ export const Select = ({
   label?: ReactNode;
   disabled?: boolean;
   sortOptions?: boolean;
-  topControls?: ReactNode;
   sideControls?: ReactNode;
   loading?: boolean;
   hint?: string;
@@ -417,7 +415,6 @@ export const Select = ({
             sx={{ display: "flex", alignItems: "center" }}
           >
             {label}
-            {topControls}
             {loading && (
               <CircularProgress
                 size={12}
@@ -426,16 +423,7 @@ export const Select = ({
             )}
           </Label>
         )}
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: sideControls
-              ? "calc(100% - 2rem) 2rem"
-              : "100%",
-            alignItems: "center",
-            columnGap: 2,
-          }}
-        >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <MUISelect
             id={id}
             name={id}
@@ -467,6 +455,7 @@ export const Select = ({
                 </>
               );
             }}
+            sx={{ maxWidth: sideControls ? "calc(100% - 28px)" : "100%" }}
           >
             {sortedOptions.map((opt) => {
               if (!opt.value && opt.type !== "group") {
@@ -648,19 +637,23 @@ const useMarkdownInputStyles = makeStyles<Theme>((theme) => ({
   root: {
     "& [data-lexical-editor='true']": {
       padding: "0.5rem 0.75rem",
-      border: `1px solid ${theme.palette.grey[300]}`,
+      border: `1px solid ${theme.palette.monochrome[300]}`,
       borderRadius: 3,
-      backgroundColor: theme.palette.grey[100],
+      backgroundColor: theme.palette.monochrome[100],
+
       "&:focus": {
-        border: `1px solid ${theme.palette.secondary.main}`,
+        border: `1px solid ${theme.palette.monochrome[500]}`,
       },
+
       "& *": {
         margin: "1em 0",
         lineHeight: 1.2,
       },
+
       "& :first-child": {
         marginTop: 0,
       },
+
       "& :last-child": {
         marginBottom: 0,
       },

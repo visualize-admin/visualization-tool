@@ -22,6 +22,7 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React, {
   forwardRef,
+  ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -267,11 +268,10 @@ type NodeId = string;
 export type SelectTreeProps = {
   options: Tree;
   value: NodeId | undefined;
-  topControls?: React.ReactNode;
-  sideControls?: React.ReactNode;
+  sideControls?: ReactNode;
   onChange: (e: { target: { value: NodeId } }) => void;
   disabled?: boolean;
-  label?: React.ReactNode;
+  label?: ReactNode;
   onOpen?: () => void;
   onClose?: () => void;
   open?: boolean;
@@ -294,7 +294,6 @@ function SelectTree({
   value,
   onChange,
   disabled,
-  topControls,
   sideControls,
   onOpen,
   onClose,
@@ -491,26 +490,19 @@ function SelectTree({
     <div>
       {label && (
         <Label htmlFor={id!} smaller>
-          {label} {topControls}
+          {label}
         </Label>
       )}
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: sideControls ? "calc(100% - 2rem) 2rem" : "100%",
-          alignItems: "center",
-          columnGap: 2,
-        }}
-      >
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <OutlinedInput
+          ref={inputRef}
           id={id}
+          className={classes.input}
           name={id}
+          size="sm"
+          disabled={disabled}
           readOnly
           value={value ? labelsByValue[value] : undefined}
-          disabled={disabled}
-          ref={inputRef}
-          size="sm"
-          className={classes.input}
           onClick={disabled ? undefined : handleOpen}
           onKeyDown={handleKeyDown}
           endAdornment={<Icon className={classes.icon} name="chevronDown" />}

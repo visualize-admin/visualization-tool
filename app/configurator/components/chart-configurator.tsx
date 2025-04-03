@@ -16,7 +16,14 @@ import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  Fragment,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   DragDropContext,
   Draggable,
@@ -99,6 +106,7 @@ import useEvent from "@/utils/use-event";
 
 import { FiltersBadge } from "./badges";
 import { DatasetsControlSection } from "./dataset-control-section";
+import Flex from "@/components/flex";
 
 export const DataFilterSelectGeneric = ({
   rawDimension,
@@ -114,7 +122,7 @@ export const DataFilterSelectGeneric = ({
   index: number;
   disabled?: boolean;
   onRemove?: () => void;
-  sideControls?: React.ReactNode;
+  sideControls?: ReactNode;
   disableLabel?: boolean;
 }) => {
   const locale = useLocale();
@@ -146,30 +154,33 @@ export const DataFilterSelectGeneric = ({
     data?.dataCubesComponents?.dimensions.find(
       (d) => d.cubeIri === rawDimension.cubeIri
     ) ?? rawDimension;
-  const controls = dimension.isKeyDimension ? null : (
-    <Box sx={{ display: "flex", flexGrow: 1 }}>
-      <IconButton
-        disabled={disabled}
-        sx={{ ml: 2, p: 0 }}
-        onClick={onRemove}
-        size="small"
-      >
-        <Icon name="trash" size="16" />
-      </IconButton>
-    </Box>
-  );
 
   const sharedProps = {
     dimension,
     label: disableLabel ? null : (
       <>
         <OpenMetadataPanelWrapper component={dimension}>
-          {`${index + 1}. ${dimension.label}`}
+          <Typography variant="caption">
+            {`${index + 1}. ${dimension.label}`}
+          </Typography>
         </OpenMetadataPanelWrapper>
-        <InteractiveDataFilterToggle id={dimension.id} />
+        <Flex
+          sx={{
+            alignSelf: "flex-end",
+            alignItems: "center",
+            gap: 1,
+            marginRight: sideControls && dimension.isKeyDimension ? 7 : 0,
+          }}
+        >
+          <InteractiveDataFilterToggle id={dimension.id} />
+          {dimension.isKeyDimension ? null : (
+            <IconButton disabled={disabled} size="small" onClick={onRemove}>
+              <Icon name="trash" size={16} />
+            </IconButton>
+          )}
+        </Flex>
       </>
     ),
-    controls,
     sideControls,
     id: `select-single-filter-${index}`,
     disabled: fetching || disabled,
@@ -544,22 +555,18 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
     overflow: "hidden",
     width: "100%",
     marginBottom: theme.spacing(5),
-    "& .buttons": {
-      transition: "color 0.125s ease, opacity 0.125s ease-out",
-      opacity: 0.25,
-    },
-    "& .buttons:hover": {
-      opacity: ({ fetching }) => (fetching ? undefined : 1),
-    },
+
     "& > *": {
       overflow: "hidden",
     },
+
     "&:last-child": {
       marginBottom: 0,
     },
   },
   addDimensionContainer: {
     marginTop: theme.spacing(5),
+
     "& .menu-button": {
       background: "transparent",
       border: 0,
@@ -742,7 +749,7 @@ export const ChartConfigurator = ({
                 const cubeAddableDims = addableDimensionsByCubeIri[cubeIri];
 
                 return (
-                  <React.Fragment key={cubeIri}>
+                  <Fragment key={cubeIri}>
                     <div>
                       {cubeTitle ? (
                         <Typography variant="caption" component="p" mb={3}>
@@ -800,7 +807,7 @@ export const ChartConfigurator = ({
                     {cubes && i < cubes.length - 1 ? (
                       <Divider sx={{ my: 4, mr: 6 }} />
                     ) : null}
-                  </React.Fragment>
+                  </Fragment>
                 );
               }
             )}
