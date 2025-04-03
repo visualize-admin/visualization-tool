@@ -120,7 +120,7 @@ export const ChartAnnotator = () => {
   const [state] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const { title, description } = chartConfig.meta;
-  const disabled = !(title[locale] && description[locale]);
+  const labelsMissing = !(title[locale] && description[locale]);
 
   return (
     <ControlSection
@@ -131,9 +131,8 @@ export const ChartAnnotator = () => {
     >
       <SectionTitle
         id="controls-design"
-        disabled={disabled}
         warnMessage={
-          disabled ? (
+          labelsMissing ? (
             <Trans id="controls.section.title.warning">
               Please add a title or description.
             </Trans>
@@ -142,7 +141,7 @@ export const ChartAnnotator = () => {
       >
         <Trans id="controls.section.description">Title & Description</Trans>
       </SectionTitle>
-      <ControlSectionContent gap="none">
+      <ControlSectionContent gap="none" px="none">
         <ChartAnnotatorTabField
           value="title"
           icon="text"
@@ -182,7 +181,7 @@ export const LayoutAnnotator = () => {
   const locale = useLocale();
   const [state] = useConfiguratorState(isLayouting);
   const { title, description } = state.layout.meta;
-  const disabled = !(title[locale] && description[locale]);
+  const labelsMissing = !(title[locale] && description[locale]);
 
   return (
     <ControlSection
@@ -194,9 +193,8 @@ export const LayoutAnnotator = () => {
     >
       <SectionTitle
         id="controls-design"
-        disabled={disabled}
         warnMessage={
-          disabled ? (
+          labelsMissing ? (
             <Trans id="controls.section.title.warning">
               Please add a title or description.
             </Trans>
@@ -205,7 +203,7 @@ export const LayoutAnnotator = () => {
       >
         <Trans id="controls.section.description">Title & Description</Trans>
       </SectionTitle>
-      <ControlSectionContent gap="none">
+      <ControlSectionContent gap="none" px="none">
         <LayoutAnnotatorTabField
           value="title"
           icon="text"
