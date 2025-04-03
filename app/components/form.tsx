@@ -49,6 +49,7 @@ import React, {
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
+import Flex from "@/components/flex";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BlockTypeMenu } from "@/components/mdx-editor/block-type-menu";
 import { BoldItalicUnderlineToggles } from "@/components/mdx-editor/bold-italic-underline-toggles";
@@ -302,7 +303,8 @@ export type SelectOptionGroup = [OptionGroupKey, SelectOption[]];
 export const Select = ({
   label,
   id,
-  size,
+  variant,
+  size = "md",
   value,
   disabled,
   options,
@@ -369,9 +371,10 @@ export const Select = ({
       )}
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <MUISelect
+          variant={variant}
+          size={size}
           id={id}
           name={id}
-          size={size}
           onChange={onChange}
           value={value}
           disabled={disabled}
@@ -394,12 +397,46 @@ export const Select = ({
               </>
             );
           }}
+          MenuProps={{
+            disablePortal: true,
+            slotProps: {
+              paper: {
+                sx: {
+                  "& .MuiList-root": {
+                    width: "auto",
+                    padding: "4px 0",
+                    boxShadow: 3,
+
+                    "& .MuiMenuItem-root": {
+                      color: "monochrome.600",
+
+                      "&:hover": {
+                        backgroundColor: "cobalt.50",
+                        color: "palette.monochrome.800",
+                      },
+
+                      "&.Mui-selected": {
+                        backgroundColor: "transparent",
+                        color: "monochrome.800",
+
+                        "&:hover": {
+                          backgroundColor: "cobalt.50",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          }}
           sx={{ maxWidth: sideControls ? "calc(100% - 28px)" : "100%" }}
         >
           {sortedOptions.map((opt) => {
             if (!opt.value && opt.type !== "group") {
               return null;
             }
+
+            const isSelected = value === opt.value;
 
             return opt.type === "group" ? (
               opt.label && (
@@ -420,7 +457,11 @@ export const Select = ({
                 value={opt.value ?? undefined}
                 sx={{
                   display: "flex",
+                  justifyContent: "space-between",
                   alignItems: "center",
+                  gap: 1,
+                  typography: selectSizeToTypography[size],
+
                   "&.Mui-disabled": {
                     opacity: 1,
 
@@ -430,12 +471,20 @@ export const Select = ({
                   },
                 }}
               >
-                <span style={{ opacity: opt.disabled ? 0.38 : 1 }}>
-                  {opt.label}
-                </span>
-                {opt.disabledMessage && (
-                  <DisabledMessageIcon message={opt.disabledMessage} />
-                )}
+                {opt.label}
+                <Flex
+                  sx={{
+                    alignItems: "center",
+                    gap: 1,
+                    minWidth: 24,
+                    minHeight: 20,
+                  }}
+                >
+                  {opt.disabledMessage ? (
+                    <DisabledMessageIcon message={opt.disabledMessage} />
+                  ) : null}
+                  {isSelected ? <Icon name="checkmark" size={20} /> : null}
+                </Flex>
               </MenuItem>
             );
           })}
@@ -444,6 +493,16 @@ export const Select = ({
       </Box>
     </Box>
   );
+};
+
+const selectSizeToTypography: Record<
+  NonNullable<ComponentProps<typeof Select>["size"]>,
+  TypographyVariant
+> = {
+  sm: "h6",
+  md: "h5",
+  lg: "h4",
+  xl: "h4",
 };
 
 type DisabledMessageIconProps = {

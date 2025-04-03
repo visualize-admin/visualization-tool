@@ -315,9 +315,6 @@ export const components: Components = {
     defaultProps: {
       size: "md",
       notched: false,
-      MenuProps: {
-        disablePortal: true,
-      },
       IconComponent: ({ style, ...rest }: any) => {
         return (
           <Icon
@@ -395,16 +392,6 @@ export const components: Components = {
 
           "&.Mui-disabled": {
             color: `${palette.monochrome[300]} !important`,
-          },
-
-          "& .MuiList-root": {
-            width: "auto",
-            padding: "4px 0",
-            boxShadow: shadows[3],
-
-            "& .MuiMenuItem-root": {
-              ...sizeStyles,
-            },
           },
         };
       },
