@@ -37,6 +37,7 @@ import {
   Tooltip,
   Typography,
   TypographyProps,
+  TypographyVariant,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useId } from "@reach/auto-id";
@@ -76,18 +77,12 @@ import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 import "@mdxeditor/editor/style.css";
 
-// @ts-ignore
-const useFormControlStyles = makeStyles((theme: Theme) => ({
-  sm: {
-    ...theme.typography.caption,
-  },
-  md: {
-    ...theme.typography.body3,
-  },
-  lg: {
-    ...theme.typography.h5,
-  },
-}));
+type FormControlLabelSize = "sm" | "md" | "lg";
+const sizeToVariant: Record<FormControlLabelSize, TypographyVariant> = {
+  sm: "caption" as TypographyVariant,
+  md: "body3" as TypographyVariant,
+  lg: "h5" as TypographyVariant,
+};
 
 export const FormControlLabel = (
   props: Omit<FormControlLabelProps, "componentsProps"> & {
@@ -95,14 +90,13 @@ export const FormControlLabel = (
   }
 ) => {
   const { size = "md", ...rest } = props;
-  const classes = useFormControlStyles();
 
   return (
     <MUIFormControlLabel
       {...rest}
       componentsProps={{
         typography: {
-          className: classes[size],
+          variant: sizeToVariant[size],
         },
       }}
     />

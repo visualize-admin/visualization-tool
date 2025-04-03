@@ -170,7 +170,6 @@ export const components: Components = {
         width: "fit-content",
         margin: 0,
       },
-      // @ts-ignore
       label: {
         lineHeight: "1 !important",
         color: palette.text.primary,
