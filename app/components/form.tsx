@@ -22,16 +22,12 @@ import {
   InputProps,
   ListSubheader,
   MenuItem,
-  Paper,
-  PaperProps,
   Radio as MUIRadio,
   Select as MUISelect,
   SelectProps,
-  Skeleton,
   Slider as MUISlider,
   SliderProps,
   Stack,
-  styled,
   Switch as MUISwitch,
   Theme,
   Tooltip,
@@ -44,19 +40,15 @@ import { useId } from "@reach/auto-id";
 import flatten from "lodash/flatten";
 import React, {
   ComponentProps,
-  createContext,
-  forwardRef,
   ReactNode,
   SyntheticEvent,
   useCallback,
-  useContext,
   useMemo,
   useRef,
   useState,
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
-import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BlockTypeMenu } from "@/components/mdx-editor/block-type-menu";
 import { BoldItalicUnderlineToggles } from "@/components/mdx-editor/bold-italic-underline-toggles";
@@ -301,47 +293,6 @@ const getSelectOptions = (
   return [...noneOptions, ...restOptions];
 };
 
-// Copied over from https://github.com/mui/material-ui/blob/master/packages/mui-material/src/Menu/Menu.js
-const MenuPaper = styled(Paper, {
-  name: "MuiMenu",
-  slot: "Paper",
-  overridesResolver: (_props: PaperProps, styles) => styles.paper,
-})({
-  // specZ: The maximum height of a simple menu should be one or more rows less than the view
-  // height. This ensures a tapable area outside of the simple menu with which to dismiss
-  // the menu.
-  maxHeight: `calc(100% - ${HEADER_HEIGHT_CSS_VAR})`,
-  // Add iOS momentum scrolling for iOS < 13.0
-  WebkitOverflowScrolling: "touch",
-});
-
-const LoadingMenuPaperContext = createContext(false as boolean | undefined);
-
-/**
- * Shows a loading indicator when hierarchy is loading
- */
-const LoadingMenuPaper = forwardRef<HTMLDivElement>(
-  (props: PaperProps, ref) => {
-    const loading = useContext(LoadingMenuPaperContext);
-
-    return (
-      <MenuPaper {...props} ref={ref}>
-        {loading ? (
-          <Box px={4} py={5}>
-            <Typography variant="body2" sx={{ mb: 2 }} color="text.secondary">
-              <Trans id="hint.loading.data" />
-            </Typography>
-            <Skeleton sx={{ bgcolor: "grey.300" }} />
-            <Skeleton sx={{ bgcolor: "grey.300" }} />
-          </Box>
-        ) : (
-          props.children
-        )}
-      </MenuPaper>
-    );
-  }
-);
-
 export type SelectOption = Option & {
   disabledMessage?: string;
 };
@@ -400,105 +351,98 @@ export const Select = ({
   });
 
   return (
-    <LoadingMenuPaperContext.Provider value={loading}>
-      <Box ref={ref} sx={{ width: "100%", ...sx }}>
-        {label && (
-          <Label
-            htmlFor={id}
-            smaller
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            {label}
-            {loading && (
-              <CircularProgress
-                size={12}
-                sx={{ display: "inline-block", marginLeft: 2 }}
-              />
-            )}
-          </Label>
-        )}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <MUISelect
-            id={id}
-            name={id}
-            size={size}
-            onChange={onChange}
-            value={value}
-            disabled={disabled}
-            open={open}
-            onOpen={handleOpen}
-            onClose={onClose}
-            MenuProps={{
-              PaperProps: {
-                component: LoadingMenuPaper,
-              },
-            }}
-            renderValue={(value) => {
-              const selectedOption = sortedOptions.find(
-                (opt) => opt.value === value
-              );
+    <Box ref={ref} sx={{ width: "100%", ...sx }}>
+      {label && (
+        <Label
+          htmlFor={id}
+          smaller
+          sx={{ display: "flex", alignItems: "center" }}
+        >
+          {label}
+          {loading && (
+            <CircularProgress
+              size={12}
+              sx={{ display: "inline-block", marginLeft: 2 }}
+            />
+          )}
+        </Label>
+      )}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <MUISelect
+          id={id}
+          name={id}
+          size={size}
+          onChange={onChange}
+          value={value}
+          disabled={disabled}
+          open={open}
+          onOpen={handleOpen}
+          onClose={onClose}
+          renderValue={(value) => {
+            const selectedOption = sortedOptions.find(
+              (opt) => opt.value === value
+            );
 
-              if (!selectedOption) {
-                return "";
-              }
+            if (!selectedOption) {
+              return "";
+            }
 
-              return (
-                <>
-                  {selectedOption.label}
-                  {hint && <DisabledMessageIcon message={hint} />}
-                </>
-              );
-            }}
-            sx={{ maxWidth: sideControls ? "calc(100% - 28px)" : "100%" }}
-          >
-            {sortedOptions.map((opt) => {
-              if (!opt.value && opt.type !== "group") {
-                return null;
-              }
+            return (
+              <>
+                {selectedOption.label}
+                {hint && <DisabledMessageIcon message={hint} />}
+              </>
+            );
+          }}
+          sx={{ maxWidth: sideControls ? "calc(100% - 28px)" : "100%" }}
+        >
+          {sortedOptions.map((opt) => {
+            if (!opt.value && opt.type !== "group") {
+              return null;
+            }
 
-              return opt.type === "group" ? (
-                opt.label && (
-                  <ListSubheader key={opt.label}>
-                    <Typography
-                      variant="caption"
-                      component="p"
-                      style={{ maxWidth: width }}
-                    >
-                      {opt.label}
-                    </Typography>
-                  </ListSubheader>
-                )
-              ) : (
-                <MenuItem
-                  key={opt.value}
-                  disabled={opt.disabled}
-                  value={opt.value ?? undefined}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    "&.Mui-disabled": {
-                      opacity: 1,
-
-                      "&:hover": {
-                        backgroundColor: "transparent",
-                      },
-                    },
-                  }}
-                >
-                  <span style={{ opacity: opt.disabled ? 0.38 : 1 }}>
+            return opt.type === "group" ? (
+              opt.label && (
+                <ListSubheader key={opt.label}>
+                  <Typography
+                    variant="caption"
+                    component="p"
+                    style={{ maxWidth: width }}
+                  >
                     {opt.label}
-                  </span>
-                  {opt.disabledMessage && (
-                    <DisabledMessageIcon message={opt.disabledMessage} />
-                  )}
-                </MenuItem>
-              );
-            })}
-          </MUISelect>
-          {sideControls}
-        </Box>
+                  </Typography>
+                </ListSubheader>
+              )
+            ) : (
+              <MenuItem
+                key={opt.value}
+                disabled={opt.disabled}
+                value={opt.value ?? undefined}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  "&.Mui-disabled": {
+                    opacity: 1,
+
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                    },
+                  },
+                }}
+              >
+                <span style={{ opacity: opt.disabled ? 0.38 : 1 }}>
+                  {opt.label}
+                </span>
+                {opt.disabledMessage && (
+                  <DisabledMessageIcon message={opt.disabledMessage} />
+                )}
+              </MenuItem>
+            );
+          })}
+        </MUISelect>
+        {sideControls}
       </Box>
-    </LoadingMenuPaperContext.Provider>
+    </Box>
   );
 };
 
