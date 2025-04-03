@@ -10,6 +10,10 @@ export const palette = {
     light: "#60A5FA",
     contrastText: "#FFFFFF",
   },
+  warning: {
+    main: "#9A3412",
+    light: "#FFF7ED",
+  },
   cobalt: {
     main: colors.cobalt[700],
     ...colors.cobalt,
