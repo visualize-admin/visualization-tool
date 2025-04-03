@@ -302,6 +302,7 @@ export const SearchDatasetSortControl = ({
           onChange(e.target.value as SearchCubeResultOrder);
         }}
         value={value}
+        sx={{ width: "fit-content" }}
       >
         {options.map((option) => (
           <MenuItem key={option.value} value={option.value}>

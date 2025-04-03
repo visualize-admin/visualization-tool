@@ -19,7 +19,6 @@ import {
   FormControlLabel as MUIFormControlLabel,
   FormControlLabelProps,
   Input as MUIInput,
-  InputLabel,
   InputProps,
   ListSubheader,
   MenuItem,
@@ -358,6 +357,7 @@ export type SelectOptionGroup = [OptionGroupKey, SelectOption[]];
 export const Select = ({
   label,
   id,
+  size,
   value,
   disabled,
   options,
@@ -421,11 +421,7 @@ export const Select = ({
             {loading && (
               <CircularProgress
                 size={12}
-                sx={{
-                  color: "grey.700",
-                  display: "inline-block",
-                  marginLeft: 2,
-                }}
+                sx={{ display: "inline-block", marginLeft: 2 }}
               />
             )}
           </Label>
@@ -443,6 +439,7 @@ export const Select = ({
           <MUISelect
             id={id}
             name={id}
+            size={size}
             onChange={onChange}
             value={value}
             disabled={disabled}
@@ -451,7 +448,6 @@ export const Select = ({
             onClose={onClose}
             MenuProps={{
               PaperProps: {
-                // @ts-ignore - It works
                 component: LoadingMenuPaper,
               },
             }}
@@ -465,25 +461,10 @@ export const Select = ({
               }
 
               return (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    width: "100%",
-                  }}
-                >
-                  <InputLabel
-                    sx={{
-                      typography: "body2",
-                      color: "secondary.active",
-                      pointerEvents: "none",
-                    }}
-                  >
-                    {selectedOption.label}
-                  </InputLabel>
+                <>
+                  {selectedOption.label}
                   {hint && <DisabledMessageIcon message={hint} />}
-                </Box>
+                </>
               );
             }}
           >
@@ -498,7 +479,6 @@ export const Select = ({
                     <Typography
                       variant="caption"
                       component="p"
-                      color="secondary.hover"
                       style={{ maxWidth: width }}
                     >
                       {opt.label}

@@ -376,7 +376,9 @@ export const components: Components = {
 
         return {
           cursor: "pointer",
-          width: "fit-content",
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
           padding: 0,
           border: "none !important",
           ...variantStyles,
