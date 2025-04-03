@@ -165,7 +165,7 @@ export const DataFilterSelectGeneric = ({
     dimension,
     label: disableLabel ? null : (
       <OpenMetadataPanelWrapper component={dimension}>
-        <span>{`${index + 1}. ${dimension.label}`}</span>
+        {`${index + 1}. ${dimension.label}`}
       </OpenMetadataPanelWrapper>
     ),
     controls,

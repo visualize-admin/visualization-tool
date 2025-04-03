@@ -89,6 +89,7 @@ export const ChartConfiguratorTable = ({
         </SectionTitle>
         <ControlSectionContent
           gap="none"
+          px="none"
           role="tablist"
           aria-labelledby="controls-settings"
         >

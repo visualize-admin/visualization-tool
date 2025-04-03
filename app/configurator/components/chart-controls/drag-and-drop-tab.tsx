@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: "center",
     flexGrow: 0,
     flexShrink: 0,
-    paddingBottom: 0,
+    marginRight: theme.spacing(4),
   },
 }));
 
@@ -66,7 +66,7 @@ export const TabDropZone = ({
   dimensions: Dimension[];
   measures: Measure[];
   isDropDisabled?: boolean;
-  emptyComponent?: React.ReactNode;
+  emptyComponent?: ReactNode;
 }) => {
   const classes = useStyles();
   const components = [...dimensions, ...measures];
@@ -80,6 +80,7 @@ export const TabDropZone = ({
             <ControlSectionContent
               role="tablist"
               aria-labelledby={`controls-${id}`}
+              px="none"
             >
               <div
                 ref={innerRef}

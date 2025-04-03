@@ -64,7 +64,7 @@ export const InteractiveFiltersConfigurator = ({
         <SectionTitle id="controls-interactive-filters">
           <Trans id="controls.section.interactive.filters">Animations</Trans>
         </SectionTitle>
-        <ControlSectionContent gap="none">
+        <ControlSectionContent gap="none" px="none">
           {/* Animation is technically a field, so we need to use an appropriate component. */}
           <ControlTabField
             chartConfig={chartConfig}
