@@ -573,16 +573,6 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
       padding: 0,
     },
   },
-  addDimensionButton: {
-    display: "flex",
-    minWidth: "auto",
-    minHeight: 32,
-    justifyContent: "center",
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(3),
-  },
 }));
 
 const InteractiveDataFilterToggle = ({ id }: { id: string }) => {
@@ -845,13 +835,12 @@ const AddFilterButton = ({ dims }: { dims: Dimension[] }) => {
   return (
     <Box className={classes.addDimensionContainer}>
       <Button
+        variant="outlined"
+        size="sm"
         ref={ref}
         onClick={openMenu}
-        variant="contained"
-        className={classes.addDimensionButton}
-        color="blue"
+        startIcon={<Icon name="plus" size={20} />}
       >
-        <Icon name="plus" size={24} />
         <Trans>Add filter</Trans>
       </Button>
       <Menu anchorEl={ref.current} open={isMenuOpen} onClose={closeMenu}>
