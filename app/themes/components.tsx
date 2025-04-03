@@ -2,6 +2,11 @@ import { c } from "@interactivethings/swiss-federal-ci";
 import { Components } from "@mui/material";
 
 import { Icon } from "@/icons";
+import {
+  CheckboxCheckedIcon,
+  CheckboxIcon,
+  CheckboxIndeterminateIcon,
+} from "@/themes/custom-icons";
 import { palette } from "@/themes/palette";
 import { shadows } from "@/themes/shadows";
 import { typography } from "@/themes/typography";
@@ -125,11 +130,20 @@ export const components: Components = {
     },
   },
   MuiCheckbox: {
+    defaultProps: {
+      icon: <CheckboxIcon />,
+      indeterminateIcon: <CheckboxIndeterminateIcon />,
+      checkedIcon: <CheckboxCheckedIcon />,
+    },
     styleOverrides: {
       root: {
         padding: 0,
         borderRadius: 0,
         color: palette.monochrome[500],
+
+        "&:hover": {
+          backgroundColor: "transparent",
+        },
 
         "&.Mui-checked": {
           color: palette.monochrome[800],
@@ -154,16 +168,10 @@ export const components: Components = {
         display: "flex",
         gap: 12,
         margin: 0,
-        padding: 12,
-        paddingLeft: 16,
-        transition: "background-color 0.2s ease",
-
-        "&:not(.Mui-disabled):hover": {
-          backgroundColor: palette.cobalt[50],
-        },
       },
+      // @ts-ignore
       label: {
-        ...typography.h5,
+        ...typography.body3,
         lineHeight: "1 !important",
 
         "&.Mui-disabled": {

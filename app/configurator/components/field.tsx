@@ -852,7 +852,6 @@ export const ShowValuesMappingField = ({ value }: { value: string }) => {
       label={t({ id: "controls.filter.show-values", message: "Show values" })}
       field="segment"
       path={`showValuesMapping["${value}"]`}
-      smaller
     />
   );
 };
@@ -1135,14 +1134,12 @@ export const ChartOptionCheckboxField = ({
   path,
   defaultValue = false,
   disabled = false,
-  smaller,
 }: {
   label: string;
   field: EncodingFieldType | null;
   path: string;
   defaultValue?: boolean;
   disabled?: boolean;
-  smaller?: boolean;
 }) => {
   const fieldProps = useChartOptionBooleanField({
     field,
@@ -1156,7 +1153,6 @@ export const ChartOptionCheckboxField = ({
       label={label}
       {...fieldProps}
       checked={fieldProps.checked ?? defaultValue}
-      smaller={smaller}
     />
   );
 };

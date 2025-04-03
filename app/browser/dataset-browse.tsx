@@ -194,7 +194,7 @@ export const SearchDatasetControls = ({
   return (
     <Flex sx={{ justifyContent: "space-between", alignItems: "center", mb: 2 }}>
       <SearchDatasetResultsCount cubes={cubes} />
-      <Flex sx={{ alignItems: "center", gap: 1 }}>
+      <Flex sx={{ alignItems: "center", gap: 5 }}>
         <SearchDatasetDraftsControl
           checked={includeDrafts}
           onChange={onToggleIncludeDrafts}
@@ -287,7 +287,7 @@ export const SearchDatasetSortControl = ({
   }, [disableScore]);
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", ml: 4 }}>
+    <Box sx={{ display: "flex", alignItems: "center" }}>
       <label htmlFor="datasetSort">
         <Typography variant="h5" component="p">
           <Trans id="dataset.sortby">Sort by</Trans>

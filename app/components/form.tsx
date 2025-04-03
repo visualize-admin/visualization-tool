@@ -218,7 +218,6 @@ export type CheckboxProps = {
   label: FormControlLabelProps["label"];
   disabled?: boolean;
   color?: string;
-  smaller?: boolean;
   indeterminate?: boolean;
   className?: string;
 } & FieldProps;
@@ -231,7 +230,6 @@ export const Checkbox = ({
   disabled,
   onChange,
   color,
-  smaller,
   indeterminate,
   className,
 }: CheckboxProps) => (
@@ -243,7 +241,6 @@ export const Checkbox = ({
     control={
       <MUICheckbox
         data-name="checkbox-component"
-        size={smaller ? "small" : "medium"}
         id={name}
         name={name}
         value={value}
