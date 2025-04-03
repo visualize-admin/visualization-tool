@@ -1,11 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import {
-  Box,
-  CircularProgress,
-  FormControlLabel,
-  Theme,
-  Typography,
-} from "@mui/material";
+import { Box, CircularProgress, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { TimeLocaleObject } from "d3-time-format";
 import get from "lodash/get";
@@ -26,6 +20,7 @@ import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
 import {
   Checkbox,
+  FormControlLabel,
   Input,
   MarkdownInput,
   Radio,
@@ -111,6 +106,8 @@ const ColorPickerMenu = dynamic(
 const useStyles = makeStyles<Theme>((theme) => ({
   root: {
     display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     gap: "0.25rem",
     textAlign: "left",
     paddingRight: theme.spacing(1),
@@ -921,7 +918,7 @@ export const FieldLabel = ({
   optional,
   isFetching,
 }: {
-  label: React.ReactNode;
+  label: ReactNode;
   optional?: boolean;
   isFetching?: boolean;
 }) => {

@@ -162,9 +162,12 @@ export const DataFilterSelectGeneric = ({
   const sharedProps = {
     dimension,
     label: disableLabel ? null : (
-      <OpenMetadataPanelWrapper component={dimension}>
-        {`${index + 1}. ${dimension.label}`}
-      </OpenMetadataPanelWrapper>
+      <>
+        <OpenMetadataPanelWrapper component={dimension}>
+          {`${index + 1}. ${dimension.label}`}
+        </OpenMetadataPanelWrapper>
+        <InteractiveDataFilterToggle id={dimension.id} />
+      </>
     ),
     controls,
     sideControls,
@@ -580,6 +583,7 @@ const InteractiveDataFilterToggle = ({ id }: { id: string }) => {
 
   return (
     <Switch
+      size="sm"
       label={t({
         id: "controls.filters.interactive.toggle",
         message: "Interactive",
@@ -766,11 +770,6 @@ export const ChartConfigurator = ({
                                       {...provided.dragHandleProps}
                                       {...provided.draggableProps}
                                     >
-                                      <div>
-                                        <InteractiveDataFilterToggle
-                                          id={dim.id}
-                                        />
-                                      </div>
                                       <DataFilterSelectGeneric
                                         key={dim.id}
                                         rawDimension={dim}
