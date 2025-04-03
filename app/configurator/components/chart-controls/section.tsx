@@ -22,7 +22,6 @@ import React, {
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import useDisclosure from "@/components/use-disclosure";
 import { Icon, IconName } from "@/icons";
-import SvgIcWarningCircle from "@/icons/components/IcWarningCircle";
 
 const useControlSectionStyles = makeStyles<Theme, { hideTopBorder: boolean }>(
   (theme) => ({
@@ -39,7 +38,12 @@ const useControlSectionStyles = makeStyles<Theme, { hideTopBorder: boolean }>(
 
 const useSectionTitleStyles = makeStyles<
   Theme,
-  { disabled?: boolean; sectionOpen: boolean; collapse?: boolean }
+  {
+    disabled?: boolean;
+    sectionOpen: boolean;
+    collapse?: boolean;
+    warn?: boolean;
+  }
 >((theme) => ({
   root: {
     display: "flex",
@@ -48,13 +52,38 @@ const useSectionTitleStyles = makeStyles<
     width: "100%",
     padding: theme.spacing(4),
     border: "none",
+    backgroundColor: ({ warn }) =>
+      warn ? theme.palette.warning.light : "transparent",
+    color: ({ disabled, warn }) => {
+      if (disabled) {
+        return theme.palette.monochrome[300];
+      }
+
+      if (warn) {
+        return theme.palette.warning.main;
+      }
+
+      return theme.palette.monochrome[800];
+    },
     WebkitUserSelect: "none",
     transition: "background-color 0.2s ease",
 
     "&:hover": {
       cursor: ({ collapse }) => (collapse ? "pointer" : "initial"),
-      backgroundColor: ({ collapse }) =>
-        collapse ? theme.palette.cobalt[50] : "transparent",
+      backgroundColor: ({ collapse }) => {
+        if (collapse) {
+          return theme.palette.cobalt[50];
+        }
+
+        return "transparent";
+      },
+
+      "& $text": {
+        color: ({ disabled }) =>
+          disabled
+            ? theme.palette.monochrome[300]
+            : theme.palette.monochrome[800],
+      },
     },
   },
   text: {
@@ -62,7 +91,6 @@ const useSectionTitleStyles = makeStyles<
     display: "flex",
     alignItems: "center",
     fontWeight: 700,
-    color: ({ disabled }) => (disabled ? "monochrome.300" : "monochrome.800"),
 
     "& > svg:first-of-type": {
       marginRight: theme.spacing(2),
@@ -206,6 +234,7 @@ export const SectionTitle = ({
     disabled,
     sectionOpen: isOpen,
     collapse,
+    warn: !!warnMessage,
   });
 
   return (
@@ -252,17 +281,11 @@ export const ControlSectionSkeleton = ({
   </ControlSection>
 );
 
-type WarningProps = {
-  title: string | React.ReactNode;
-};
-
-const Warning = (props: WarningProps) => {
-  const { title } = props;
-
+const Warning = ({ title }: { title: string | ReactNode }) => {
   return (
     <MaybeTooltip title={title}>
-      <Typography color="warning.main" sx={{ mr: 2 }}>
-        <SvgIcWarningCircle width={18} height={18} />
+      <Typography sx={{ mr: 2, lineHeight: "100% !important" }}>
+        <Icon name="warningCircle" />
       </Typography>
     </MaybeTooltip>
   );
