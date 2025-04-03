@@ -412,7 +412,7 @@ export const Select = ({
 
                       "&:hover": {
                         backgroundColor: "cobalt.50",
-                        color: "palette.monochrome.800",
+                        color: "monochrome.800",
                       },
 
                       "&.Mui-selected": {
