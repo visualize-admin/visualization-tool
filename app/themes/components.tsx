@@ -211,7 +211,7 @@ export const components: Components = {
   MuiDivider: {
     styleOverrides: {
       root: {
-        borderColor: c.monochrome[400],
+        borderColor: c.monochrome[300],
       },
     },
   },

@@ -1201,6 +1201,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
                 id: "controls.filter.use-most-recent",
                 message: "Use most recent",
               })}
+              size="sm"
               checked={usesMostRecentValue}
               onChange={() => {
                 setFilterRange([

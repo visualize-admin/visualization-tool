@@ -229,11 +229,11 @@ const TabsEditable = (props: TabsEditableProps) => {
               </Typography>
               <Button
                 fullWidth
-                sx={{ justifyContent: "center" }}
                 onClick={() => {
                   setTabsState({ ...tabsState, popoverOpen: false });
                   openAddDatasetPanel();
                 }}
+                sx={{ justifyContent: "center" }}
               >
                 <Trans id="chart-selection-tabs.add-chart-different-dataset.button">
                   Select dataset
