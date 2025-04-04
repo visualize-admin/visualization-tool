@@ -24,9 +24,7 @@ test("should have correct tooltip content", async ({
     selectors.edition.controlSectionByTitle("Filters")
   );
 
-  await filterLocator
-    .getByRole("textbox", { name: "2. Greenhouse gas" })
-    .click();
+  await filterLocator.getByLabelText("All greenhouse gas").click();
 
   await selectors.mui
     .popover()
