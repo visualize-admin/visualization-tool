@@ -1101,9 +1101,9 @@ export const TimeFilter = (props: TimeFilterProps) => {
     return (
       <Box>
         {!disableInteractiveFilters && (
-          <div style={{ marginBottom: "12px" }}>
+          <Flex sx={{ justifyContent: "flex-end", mb: 3 }}>
             <InteractiveTimeRangeToggle />
-          </div>
+          </Flex>
         )}
         <Box sx={{ display: "flex", gap: 1 }}>
           {rangeActiveFilter ? (
@@ -1195,7 +1195,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
           }}
         />
         {rangeActiveFilter && (
-          <Box sx={{ display: "flex", gap: 3, alignItems: "center", mt: 3 }}>
+          <Flex sx={{ display: "flex", alignItems: "center", gap: 1, mt: 3 }}>
             <Switch
               label={t({
                 id: "controls.filter.use-most-recent",
@@ -1213,7 +1213,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
               }}
             />
             <Tooltip
-              enterDelay={600}
+              arrow
               PopperProps={{ sx: { maxWidth: 160 } }}
               title={
                 <Trans id="controls.filter.use-most-recent-explanation">
@@ -1226,7 +1226,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
                 <Icon name="infoCircle" />
               </Box>
             </Tooltip>
-          </Box>
+          </Flex>
         )}
       </Box>
     );
@@ -1273,6 +1273,7 @@ const InteractiveTimeRangeToggle = () => {
         id: "controls.filters.interactive.toggle",
         message: "Interactive",
       })}
+      size="sm"
       checked={checked}
       onChange={toggle}
     />

@@ -110,8 +110,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     alignItems: "center",
     width: "100%",
     gap: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
     textAlign: "left",
     WebkitBoxOrient: "vertical",
     WebkitLineClamp: 2,
@@ -1003,10 +1002,12 @@ export const ChartFieldField = ({
       key={`select-${field}-dimension`}
       id={field}
       label={<FieldLabel optional={optional} label={label} />}
+      size="sm"
       disabled={disabled}
       options={allOptions}
       optionGroups={allOptionGroups}
       {...props}
+      sx={{ mb: 3 }}
     />
   );
 };

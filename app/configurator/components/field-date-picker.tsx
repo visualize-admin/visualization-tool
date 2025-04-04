@@ -44,13 +44,13 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
         return;
       }
 
-      const ev = {
+      const e = {
         target: {
           value: dateFormat(date),
         },
-      } as React.ChangeEvent<HTMLSelectElement>;
+      } as ChangeEvent<HTMLSelectElement>;
 
-      onChange(ev);
+      onChange(e);
     },
     [isDateDisabled, onChange, dateFormat]
   );
@@ -98,8 +98,12 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
                 ...params.sx,
 
                 "& input": {
-                  minHeight: "23px",
-                  typography: "body2",
+                  height: 40,
+                  typography: "h6",
+                },
+
+                "& svg": {
+                  color: "text.primary",
                 },
               }}
             />

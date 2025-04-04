@@ -460,6 +460,7 @@ export const Select = ({
                 {opt.label}
                 <Flex
                   sx={{
+                    justifyContent: "flex-end",
                     alignItems: "center",
                     gap: 1,
                     minWidth: 24,
