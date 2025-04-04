@@ -188,7 +188,7 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
 
   return (
     <Box pb={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
-      <Label smaller sx={{ mb: 1 }} htmlFor="color-palette">
+      <Label sx={{ mb: 1 }} htmlFor="color-palette">
         <Trans id="controls.color.palette">Color palette</Trans>
       </Label>
       <Select

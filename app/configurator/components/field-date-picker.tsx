@@ -44,13 +44,13 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
         return;
       }
 
-      const ev = {
+      const e = {
         target: {
           value: dateFormat(date),
         },
-      } as React.ChangeEvent<HTMLSelectElement>;
+      } as ChangeEvent<HTMLSelectElement>;
 
-      onChange(ev);
+      onChange(e);
     },
     [isDateDisabled, onChange, dateFormat]
   );
@@ -58,75 +58,61 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
   const dateLimitProps = getDateRenderProps(timeUnit, isDateDisabled);
 
   return (
-    <Box
-      sx={{
-        color: disabled ? "grey.300" : "grey.700",
-        fontSize: "1rem",
-      }}
-    >
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateAreas: `"topControls ." "datePicker sideControls"`,
-          gridTemplateColumns: "1fr auto",
-          columnGap: sideControls ? 2 : 0,
-        }}
-      >
-        {label && name && (
-          <Label htmlFor={name} smaller sx={{ gridArea: "topControls" }}>
-            {label}
-          </Label>
-        )}
-        <Box sx={{ gridArea: "datePicker" }}>
-          <DatePicker<Date>
-            {...rest}
-            {...dateLimitProps}
-            components={{
-              OpenPickerIcon: (props) => <Icon name="calendar" {...props} />,
-            }}
-            inputFormat={getInputFormat(timeUnit)}
-            views={getViews(timeUnit)}
-            value={value}
-            onAccept={handleChange}
-            onChange={(date, keyboardInputValue) => {
-              if (keyboardInputValue) {
-                handleChange(date);
-              }
-            }}
-            // We need to render the day picker ourselves to correctly highlight
-            // the selected day. It's broken in the MUI date picker.
-            renderDay={(day, _, dayPickerProps) => {
-              return (
-                <PickersDay
-                  {...dayPickerProps}
-                  selected={value.getTime() === day.getTime()}
-                />
-              );
-            }}
-            renderInput={(params) => (
-              <TextField
-                hiddenLabel
-                size="small"
-                {...params}
-                onChange={(e) => {
-                  handleChange(parseDate(e.target.value));
-                }}
-                sx={{
-                  ...params.sx,
-
-                  "& input": {
-                    minHeight: "23px",
-                    typography: "body2",
-                  },
-                }}
+    <div>
+      {label && name && <Label htmlFor={name}>{label}</Label>}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <DatePicker<Date>
+          {...rest}
+          {...dateLimitProps}
+          components={{
+            OpenPickerIcon: (props) => <Icon name="calendar" {...props} />,
+          }}
+          inputFormat={getInputFormat(timeUnit)}
+          views={getViews(timeUnit)}
+          value={value}
+          onAccept={handleChange}
+          onChange={(date, keyboardInputValue) => {
+            if (keyboardInputValue) {
+              handleChange(date);
+            }
+          }}
+          // We need to render the day picker ourselves to correctly highlight
+          // the selected day. It's broken in the MUI date picker.
+          renderDay={(day, _, dayPickerProps) => {
+            return (
+              <PickersDay
+                {...dayPickerProps}
+                selected={value.getTime() === day.getTime()}
               />
-            )}
-            disabled={disabled}
-          />
-        </Box>
-        <Box sx={{ gridArea: "sideControls", m: "auto" }}>{sideControls}</Box>
+            );
+          }}
+          renderInput={(params) => (
+            <TextField
+              hiddenLabel
+              size="small"
+              {...params}
+              onChange={(e) => {
+                handleChange(parseDate(e.target.value));
+              }}
+              sx={{
+                ...params.sx,
+
+                "& input": {
+                  height: 40,
+                  typography: "h6",
+                },
+
+                "& svg": {
+                  color: "text.primary",
+                },
+              }}
+            />
+          )}
+          disabled={disabled}
+        />
+        {sideControls}
       </Box>
-    </Box>
+    </div>
   );
 };
 

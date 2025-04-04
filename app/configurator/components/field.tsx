@@ -110,8 +110,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     alignItems: "center",
     width: "100%",
     gap: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
     textAlign: "left",
     WebkitBoxOrient: "vertical",
     WebkitLineClamp: 2,
@@ -391,22 +390,25 @@ export const DataFilterTemporal = ({
         sideControls={sideControls}
         parseDate={parseDate}
       />
-      <Switch
-        label={t({
-          id: "controls.filter.use-most-recent",
-          message: "Use most recent",
-        })}
-        checked={usesMostRecentDate}
-        onChange={() =>
-          fieldProps.onChange({
-            target: {
-              value: usesMostRecentDate
-                ? formatDate(maxDate)
-                : VISUALIZE_MOST_RECENT_VALUE,
-            },
-          })
-        }
-      />
+      <Box sx={{ mt: 3 }}>
+        <Switch
+          label={t({
+            id: "controls.filter.use-most-recent",
+            message: "Use most recent",
+          })}
+          size="sm"
+          checked={usesMostRecentDate}
+          onChange={() =>
+            fieldProps.onChange({
+              target: {
+                value: usesMostRecentDate
+                  ? formatDate(maxDate)
+                  : VISUALIZE_MOST_RECENT_VALUE,
+              },
+            })
+          }
+        />
+      </Box>
     </>
   );
 };
@@ -1000,10 +1002,12 @@ export const ChartFieldField = ({
       key={`select-${field}-dimension`}
       id={field}
       label={<FieldLabel optional={optional} label={label} />}
+      size="sm"
       disabled={disabled}
       options={allOptions}
       optionGroups={allOptionGroups}
       {...props}
+      sx={{ mb: 3 }}
     />
   );
 };

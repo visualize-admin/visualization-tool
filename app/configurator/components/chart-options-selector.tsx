@@ -468,8 +468,8 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
     >
       {/* Only show component select if necessary */}
       {encoding.componentTypes.length > 0 && (
-        <ControlSection hideTopBorder>
-          <SectionTitle>
+        <ControlSection>
+          <SectionTitle closable>
             {getFieldLabel(`${chartConfig.chartType}.${encoding.field}`)}
           </SectionTitle>
           <ControlSectionContent gap="none">
@@ -547,12 +547,10 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                 </Box>
               )}
             {encoding.options?.useAbbreviations && (
-              <ControlSectionContent component="fieldset" gap="none" mt={3}>
-                <ChartFieldAbbreviations
-                  field={field}
-                  component={fieldComponent}
-                />
-              </ControlSectionContent>
+              <ChartFieldAbbreviations
+                field={field}
+                component={fieldComponent}
+              />
             )}
           </ControlSectionContent>
         </ControlSection>
@@ -650,18 +648,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 };
 
 const SwitchWrapper = ({ children }: { children: ReactNode }) => {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        gap: 1,
-        alignItems: "center",
-        mt: 3,
-      }}
-    >
-      {children}
-    </Box>
-  );
+  return <Flex sx={{ alignItems: "center", gap: 1 }}>{children}</Flex>;
 };
 
 const ChartLayoutOptions = ({
@@ -706,7 +693,7 @@ const ChartLayoutOptions = ({
 
   return encoding.options || hasColorPalette ? (
     <ControlSection collapse>
-      <SectionTitle iconName="color">
+      <SectionTitle iconName="swatch">
         <Trans id="controls.section.layout-options">Layout options</Trans>
       </SectionTitle>
       <ControlSectionContent component="fieldset">
