@@ -12,6 +12,18 @@ import { shadows } from "@/themes/shadows";
 import { typography } from "@/themes/typography";
 
 export const components: Components = {
+  MuiAlert: {
+    styleOverrides: {
+      root: ({ ownerState }) => {
+        const color = ownerState.color ?? "blue";
+
+        return {
+          backgroundColor: palette[color][50],
+          color: palette[color].main,
+        };
+      },
+    },
+  },
   MuiButtonBase: {
     defaultProps: {
       disableRipple: true,
