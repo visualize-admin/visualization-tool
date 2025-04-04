@@ -43,6 +43,27 @@ export const components: Components = {
       },
     },
   },
+  MuiBadge: {
+    styleOverrides: {
+      root: {
+        position: "unset",
+        padding: 2,
+        transform: "none",
+      },
+      badge: {
+        position: "unset",
+        backgroundColor: palette.cobalt[50],
+        color: palette.text.primary,
+        transform: "none",
+        transition: "opacity 0.2s ease",
+
+        "&.MuiBadge-invisible": {
+          transform: "none",
+          opacity: 0,
+        },
+      },
+    },
+  },
   MuiButtonBase: {
     defaultProps: {
       disableRipple: true,

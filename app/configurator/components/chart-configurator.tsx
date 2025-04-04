@@ -692,7 +692,7 @@ export const ChartConfigurator = ({
                 className={classes.loadingIndicator}
               />
             ) : null}
-            <FiltersBadge sx={{ ml: "auto", mr: 4 }} />
+            <FiltersBadge sx={{ ml: "auto", mr: 2 }} />
           </SectionTitle>
           <ControlSectionContent
             aria-labelledby="controls-data"

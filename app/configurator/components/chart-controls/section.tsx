@@ -284,7 +284,7 @@ export const ControlSectionSkeleton = ({
 const Warning = ({ title }: { title: string | ReactNode }) => {
   return (
     <MaybeTooltip title={title}>
-      <Typography sx={{ mr: 2, lineHeight: "100% !important" }}>
+      <Typography sx={{ mr: 2, lineHeight: "0 !important" }}>
         <Icon name="warningCircle" />
       </Typography>
     </MaybeTooltip>

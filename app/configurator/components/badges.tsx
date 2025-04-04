@@ -31,19 +31,5 @@ export const DatasetsBadge = ({ sx }: { sx?: BadgeProps["sx"] }) => {
   const chartConfig = getChartConfig(state);
   const datasetsCount = chartConfig.cubes.length;
 
-  return (
-    <Badge
-      invisible={ctx.isOpen}
-      badgeContent={datasetsCount}
-      sx={{
-        display: "block",
-        color: "white",
-
-        "& > .MuiBadge-badge": {
-          backgroundColor: "cobalt.400",
-        },
-        ...sx,
-      }}
-    />
-  );
+  return <Badge invisible={ctx.isOpen} badgeContent={datasetsCount} sx={sx} />;
 };

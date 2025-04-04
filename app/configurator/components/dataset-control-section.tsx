@@ -219,7 +219,7 @@ export const DatasetsControlSection = () => {
     <ControlSection collapse defaultExpanded hideTopBorder>
       <SectionTitle id="controls-data">
         <Trans id="controls.section.datasets.title">Datasets</Trans>{" "}
-        <DatasetsBadge sx={{ ml: "auto", mr: 4 }} />
+        <DatasetsBadge sx={{ ml: "auto", mr: 2 }} />
       </SectionTitle>
       <ControlSectionContent
         aria-labelledby="controls-data"
