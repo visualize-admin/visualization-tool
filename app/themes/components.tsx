@@ -247,6 +247,31 @@ export const components: Components = {
       },
     },
   },
+  MuiInputBase: {
+    styleOverrides: {
+      root: {
+        display: "flex",
+        alignItems: "center",
+        width: "100%",
+        borderRadius: 2,
+        border: `1px solid ${palette.monochrome[300]}`,
+        backgroundColor: "#fff",
+        color: "inherit",
+
+        "&:hover": {
+          color: "inherit",
+        },
+
+        "&.Mui-focused": {
+          border: `1px solid ${palette.monochrome[500]}`,
+        },
+
+        "& fieldset": {
+          display: "none",
+        },
+      },
+    },
+  },
   MuiInput: {
     defaultProps: {
       size: "md",
@@ -271,24 +296,7 @@ export const components: Components = {
           }
         })();
 
-        return {
-          ...sizeStyles,
-          display: "flex",
-          alignItems: "center",
-          width: "100%",
-          borderRadius: 2,
-          border: `1px solid ${palette.monochrome[300]}`,
-          backgroundColor: "#fff",
-          color: "inherit",
-
-          "&:hover": {
-            color: "inherit",
-          },
-
-          "&.Mui-focused": {
-            border: `1px solid ${palette.monochrome[500]}`,
-          },
-        };
+        return sizeStyles;
       },
       input: {
         padding: 0,
@@ -447,10 +455,6 @@ export const components: Components = {
           border: "none !important",
           ...variantStyles,
 
-          "& fieldset": {
-            display: "none",
-          },
-
           "& .MuiSelect-select": {
             ...sizeStyles,
           },
@@ -505,7 +509,7 @@ export const components: Components = {
 
         return {
           top: "calc(50% - 12px)",
-          right: variant === "standard" ? 0 : 12,
+          right: variant === "standard" ? 0 : 14,
           color: "inherit !important",
           transition: "color 0.2s ease, transform 0.2s ease !important",
         };
@@ -578,6 +582,15 @@ export const components: Components = {
     styleOverrides: {
       root: {
         border: `1px solid ${palette.monochrome[300]}`,
+      },
+    },
+  },
+  MuiTextField: {
+    styleOverrides: {
+      root: {
+        "& .MuiInputBase-root": {
+          transition: "border-color 0.2s ease",
+        },
       },
     },
   },
