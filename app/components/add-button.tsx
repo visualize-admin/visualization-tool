@@ -6,19 +6,6 @@ export const AddButton = (props: ButtonProps) => {
   const { sx, ...rest } = props;
 
   return (
-    <Button
-      color="blue"
-      variant="contained"
-      startIcon={<Icon name="plus" />}
-      sx={{
-        width: "fit-content",
-        minWidth: "auto",
-        ml: "0.5rem",
-        px: 3,
-        whiteSpace: "nowrap",
-        ...sx,
-      }}
-      {...rest}
-    />
+    <Button size="sm" startIcon={<Icon name="plus" size={20} />} {...rest} />
   );
 };

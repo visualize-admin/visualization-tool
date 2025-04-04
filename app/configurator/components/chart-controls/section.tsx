@@ -100,6 +100,7 @@ const useSectionTitleStyles = makeStyles<
     },
   },
   icon: {
+    lineHeight: 0,
     justifySelf: "flex-end",
   },
 }));

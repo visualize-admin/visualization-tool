@@ -76,9 +76,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     overflowX: "hidden",
     overflowY: "auto",
     boxShadow: "none",
-    borderRightColor: theme.palette.divider,
-    borderRightWidth: "1px",
-    borderRightStyle: "solid",
+    outline: `1px solid ${theme.palette.cobalt[100]}`,
     gridArea: "left",
   },
   MPanelBodyWrapper: {

@@ -533,7 +533,7 @@ export const useIconStyles = makeStyles<
     "--bg": palette.background.paper,
     backgroundColor: "var(--bg)",
     alignItems: "center",
-    padding: spacing(2),
+    padding: spacing(4),
     borderTopLeftRadius: spacing(1),
     borderTopRightRadius: spacing(1),
     cursor: "default",

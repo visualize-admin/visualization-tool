@@ -468,7 +468,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
     >
       {/* Only show component select if necessary */}
       {encoding.componentTypes.length > 0 && (
-        <ControlSection hideTopBorder>
+        <ControlSection>
           <SectionTitle closable>
             {getFieldLabel(`${chartConfig.chartType}.${encoding.field}`)}
           </SectionTitle>
