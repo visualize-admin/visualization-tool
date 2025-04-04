@@ -7,7 +7,7 @@ const selectActiveEditorField =
   ({ selectors, within }: ActionTestContext) =>
   async (field: string) => {
     const chartOptions =
-      selectors.edition.controlSectionBySubtitle("Chart Options");
+      selectors.edition.controlSectionByTitle("Chart Options");
     await chartOptions.scrollIntoViewIfNeeded();
     const fieldLocator = await within(chartOptions).findByText(
       field,

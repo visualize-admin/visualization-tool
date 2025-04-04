@@ -14,7 +14,7 @@ describe("Filters", () => {
     await selectors.chart.loaded();
     await selectors.edition.drawerLoaded();
 
-    const filters = selectors.edition.controlSectionBySubtitle("Filters");
+    const filters = selectors.edition.controlSectionByTitle("Filters");
 
     await filters.locator("label").first().waitFor({ timeout: 30_000 });
 
