@@ -391,22 +391,25 @@ export const DataFilterTemporal = ({
         sideControls={sideControls}
         parseDate={parseDate}
       />
-      <Switch
-        label={t({
-          id: "controls.filter.use-most-recent",
-          message: "Use most recent",
-        })}
-        checked={usesMostRecentDate}
-        onChange={() =>
-          fieldProps.onChange({
-            target: {
-              value: usesMostRecentDate
-                ? formatDate(maxDate)
-                : VISUALIZE_MOST_RECENT_VALUE,
-            },
-          })
-        }
-      />
+      <Box sx={{ mt: 3 }}>
+        <Switch
+          label={t({
+            id: "controls.filter.use-most-recent",
+            message: "Use most recent",
+          })}
+          size="sm"
+          checked={usesMostRecentDate}
+          onChange={() =>
+            fieldProps.onChange({
+              target: {
+                value: usesMostRecentDate
+                  ? formatDate(maxDate)
+                  : VISUALIZE_MOST_RECENT_VALUE,
+              },
+            })
+          }
+        />
+      </Box>
     </>
   );
 };
