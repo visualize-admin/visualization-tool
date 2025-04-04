@@ -320,18 +320,28 @@ const mkHint = (
     ...rest
   }: {
     smaller?: boolean;
-  } & Omit<AlertProps, "color" | "icon">) => (
-    <Alert
-      color={color}
-      icon={smaller ? false : <Icon name={colorToIcon[color]} />}
-      sx={
-        smaller
-          ? { p: 0, backgroundColor: "transparent", boxShadow: 0, ...sx }
-          : sx
-      }
-      {...rest}
-    />
-  );
+  } & Omit<AlertProps, "color" | "icon">) => {
+    return (
+      <Alert
+        color={color}
+        icon={smaller ? false : <Icon name={colorToIcon[color]} />}
+        sx={{
+          px: [5, 7, 9, 9, 10, 12, 12, 12],
+          py: 4,
+          mx: "auto",
+          ...(smaller
+            ? {
+                p: "0 !important",
+                backgroundColor: "transparent",
+                boxShadow: 0,
+                ...sx,
+              }
+            : sx),
+        }}
+        {...rest}
+      />
+    );
+  };
   Component.displayName = displayName;
 
   return Component;

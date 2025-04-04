@@ -23,7 +23,7 @@ export const components: Components = {
         return {
           display: "flex",
           alignItems: "center",
-          padding: "16px 40px",
+          padding: 0,
           backgroundColor: palette[color][50],
           color: palette[color].main,
           boxShadow: shadows[2],
@@ -36,6 +36,7 @@ export const components: Components = {
       // @ts-ignore
       message: {
         width: "100%",
+        padding: 0,
         ...typography.body3,
       },
       icon: {
