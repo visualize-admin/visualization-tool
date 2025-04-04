@@ -62,31 +62,43 @@ const spin = keyframes`
   100% { transform: rotate(0deg) }
 `;
 
-const Spinner = ({ size = 48, ...props }: { size?: number } & BoxProps) => {
+const Spinner = ({ size = 40, ...props }: { size?: number } & BoxProps) => {
   return (
     <Flex
       {...props}
       sx={{
+        display: "flex",
+        alignItems: "center",
+        width: size,
+        height: size,
         animation: `1s linear infinite ${spin}`,
         ...props.sx,
       }}
     >
-      <Icon name="refresh" size={size} />
+      <svg width={43} height={44} viewBox="0 0 43 44" fill="none">
+        <circle cx={21.5} cy={22} r={20} stroke="#E5E7EB" stroke-width={3} />
+        <path
+          d="M41.5 22C41.5 25.2891 40.6889 28.5273 39.1384 31.428C37.588 34.3286 35.3461 36.8022 32.6114 38.6294C29.8767 40.4567 26.7335 41.5814 23.4603 41.9037C20.1872 42.2261 16.885 41.7363 13.8463 40.4776C10.8077 39.219 8.12633 37.2304 6.03979 34.6879C3.95326 32.1455 2.52595 29.1277 1.8843 25.9019C1.24264 22.676 1.40644 19.3417 2.36119 16.1944C3.31595 13.047 5.03218 10.1836 7.35786 7.85791"
+          stroke="#1F2937"
+          stroke-width={3}
+        />
+      </svg>
     </Flex>
   );
 };
 
 const useLoadingStyles = makeStyles((theme: Theme) => ({
   root: {
-    width: "100%",
-    height: "100%",
-    margin: "auto",
-    textAlign: "center",
+    flexGrow: 1,
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    flexGrow: 1,
+    gap: theme.spacing(6),
+    width: "100%",
+    height: "100%",
+    margin: "auto",
     padding: theme.spacing(2),
+    textAlign: "center",
     opacity: 0,
   },
   overlay: {
@@ -98,10 +110,8 @@ const useLoadingStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-type LoadingHintVariant = "regular" | "long";
-
 export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => {
-  const [variant, setVariant] = useState<LoadingHintVariant>("regular");
+  const [variant, setVariant] = useState<"regular" | "long">("regular");
   const classes = useLoadingStyles();
 
   useEffect(() => {
@@ -120,32 +130,33 @@ export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => {
       sx={{ animation: `0s linear ${delayMs}ms forwards ${delayedShow}` }}
     >
       <Spinner />
-
-      <Box>
-        <Typography>
+      <div>
+        <Typography variant="h3" component="p">
           <Trans id="hint.loading.data">Loading data…</Trans>
         </Typography>
-
-        {variant === "long" && (
-          <Typography>
+        {variant === "long" ? (
+          <Typography variant="h3" component="p">
             <Trans id="hint.loading.data.large.datasets">
               While we are continuously optimizing performance, processing large
               data sets may currently require additional time.
             </Trans>
           </Typography>
-        )}
-      </Box>
+        ) : null}
+      </div>
     </Flex>
   );
 };
 
-const useInlineLoadingStyles = makeStyles({
-  root: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+const useInlineLoadingStyles = makeStyles((theme: Theme) => {
+  return {
+    root: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      gap: theme.spacing(6),
+    },
+  };
 });
 
 export const InlineLoading = ({ delayMs = 1000 }: { delayMs?: number }) => {
@@ -167,20 +178,18 @@ export const InlineLoading = ({ delayMs = 1000 }: { delayMs?: number }) => {
 export const LoadingOverlay = () => {
   const classes = useLoadingStyles();
   const theme = useTheme();
+
   return (
     <MotionBox
       className={classes.overlay}
       initial={{
-        backgroundColor: alpha(theme.palette.grey[100], 0),
-        color: alpha(theme.palette.secondary.main, 0),
+        backgroundColor: alpha(theme.palette.cobalt[50], 0),
       }}
       animate={{
-        backgroundColor: alpha(theme.palette.grey[100], 0.3),
-        color: theme.palette.text.primary,
+        backgroundColor: alpha(theme.palette.cobalt[50], 0.3),
       }}
       exit={{
-        backgroundColor: alpha(theme.palette.grey[100], 0),
-        color: alpha(theme.palette.secondary.main, 0),
+        backgroundColor: alpha(theme.palette.cobalt[50], 0),
       }}
       transition={{ duration: 0.2 }}
     >
