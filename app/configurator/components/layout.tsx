@@ -4,6 +4,7 @@ import clsx from "clsx";
 
 import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
+import { useResizeObserver } from "@/utils/use-resize-observer";
 
 export const LAYOUT_HEADER_HEIGHT = 88;
 
@@ -94,17 +95,29 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
 }));
 
-type PanelHeaderLayoutProps = BoxProps & {
-  type: "LMR";
-};
+const __PANEL_HEADER_CSS_VAR = "--panel-header";
+export const PANEL_HEADER_CSS_VAR = `var(${__PANEL_HEADER_CSS_VAR})`;
 
-export const PanelHeaderLayout = (props: PanelHeaderLayoutProps) => {
+export const PanelHeaderLayout = (
+  props: BoxProps & {
+    type: "LMR";
+  }
+) => {
   const { children, type, ...rest } = props;
   const classes = useStyles();
+  const [ref] = useResizeObserver<HTMLDivElement>(({ height }) => {
+    if (height) {
+      document.documentElement.style.setProperty(
+        __PANEL_HEADER_CSS_VAR,
+        `${height}px`
+      );
+    }
+  });
 
   return (
     <Box
       {...rest}
+      ref={ref}
       component="section"
       data-testid="panel-header"
       className={clsx(
