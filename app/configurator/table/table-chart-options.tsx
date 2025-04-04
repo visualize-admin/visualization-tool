@@ -231,7 +231,7 @@ export const TableColumnOptions = ({
       tabIndex={-1}
     >
       <ControlSection hideTopBorder>
-        <SectionTitle>{component.label}</SectionTitle>
+        <SectionTitle closable>{component.label}</SectionTitle>
         <ControlSectionContent>
           {component.__typename !== "NumericalMeasure" && (
             <ChartOptionGroupHiddenField
@@ -493,7 +493,7 @@ const ColumnStyleSubOptions = ({
 const TableSettings = () => {
   return (
     <ControlSection hideTopBorder>
-      <SectionTitle>
+      <SectionTitle closable>
         <Trans id="controls.section.tableSettings">Table Settings</Trans>
       </SectionTitle>
       <ControlSectionContent>

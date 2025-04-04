@@ -85,7 +85,7 @@ const AnnotationOptions = (props: AnnotationOptionsProps) => {
       sx={{ overflowX: "hidden", overflowY: "auto" }}
     >
       <ControlSection hideTopBorder>
-        <SectionTitle>{getFieldLabel(activeField)}</SectionTitle>
+        <SectionTitle closable>{getFieldLabel(activeField)}</SectionTitle>
         <ControlSectionContent gap="none">
           {orderedLocales.map((locale) => (
             <Box

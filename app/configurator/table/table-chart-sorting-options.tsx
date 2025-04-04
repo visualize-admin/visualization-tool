@@ -387,7 +387,7 @@ export const TableSortingOptions = ({
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <ControlSection hideTopBorder>
-        <SectionTitle>
+        <SectionTitle closable>
           <Trans id="controls.section.tableSorting">Table Sorting</Trans>
         </SectionTitle>
         <Droppable droppableId="table-sorting" type="table-sorting">

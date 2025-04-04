@@ -39,7 +39,7 @@ export const LayoutBlocksSelector = () => {
       tabIndex={-1}
     >
       <ControlSection hideTopBorder>
-        <SectionTitle>
+        <SectionTitle closable>
           <Trans id="controls.section.block-options.block.text">
             Text object
           </Trans>
