@@ -334,13 +334,13 @@ export const Components: React.FC = () => {
         </StorybookSection>
         <StorybookSection>
           <StorybookSectionTitle>Alerts</StorybookSectionTitle>
-          {(
-            ["info", "success", "warning", "error"] as AlertProps["severity"][]
-          ).map((severity) => (
-            <Alert key={severity} severity={severity} sx={{ mb: 1 }}>
-              Here is an Alert of severity {severity}.
-            </Alert>
-          ))}
+          {(["red", "green", "blue", "orange"] as AlertProps["color"][]).map(
+            (color) => (
+              <Alert key={color} color={color} sx={{ mb: 1 }}>
+                Here is an Alert of color {color}.
+              </Alert>
+            )
+          )}
         </StorybookSection>
         <StorybookSection>
           <StorybookSectionTitle>Cards</StorybookSectionTitle>
@@ -481,10 +481,10 @@ const SnackbarExample = () => {
 
   return (
     <Stack gap="1rem" direction="row">
-      {renderButton("success")}
-      {renderButton("info")}
-      {renderButton("warning")}
-      {renderButton("error")}
+      {renderButton("red")}
+      {renderButton("green")}
+      {renderButton("blue")}
+      {renderButton("orange")}
     </Stack>
   );
 };

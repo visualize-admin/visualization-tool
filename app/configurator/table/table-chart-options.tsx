@@ -1,10 +1,11 @@
 import { t, Trans } from "@lingui/macro";
-import { Alert, Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import get from "lodash/get";
 import { ChangeEvent, useCallback } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { Checkbox } from "@/components/form";
+import { HintRed } from "@/components/hint";
 import {
   ColumnStyle,
   ConfiguratorStateConfiguringChart,
@@ -183,11 +184,7 @@ export const TableColumnOptions = ({
   const component = allComponents.find((d) => d.id === activeField);
 
   if (!component) {
-    return (
-      <Alert icon={false} severity="error">
-        <Typography variant="body2">No component {activeField}</Typography>
-      </Alert>
-    );
+    return <HintRed smaller>No component {activeField}</HintRed>;
   }
 
   const { isGroup, isHidden } = chartConfig.fields[activeField];

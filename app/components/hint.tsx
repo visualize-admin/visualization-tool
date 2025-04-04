@@ -19,37 +19,20 @@ import Flex from "@/components/flex";
 import { MotionBox } from "@/components/presence";
 import { Icon, IconName } from "@/icons";
 
-export const Error = ({ children }: { children: ReactNode }) => (
-  <Flex
-    sx={{
-      justifyContent: "center",
-      alignItems: "center",
-      color: "error.main",
-      width: "100%",
-      flexWrap: "wrap",
-    }}
-  >
-    {children}
-  </Flex>
-);
-
-const useHintStyles = makeStyles((theme: Theme) => ({
-  root: {
-    width: "100%",
-    height: "100%",
-    color: theme.palette.info.main,
-    margin: "auto",
-    textAlign: "center",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    flexGrow: 1,
-  },
-}));
-
-export const Hint = ({ children }: { children: ReactNode }) => {
-  const classes = useHintStyles();
-  return <Flex className={classes.root}>{children}</Flex>;
+export const Error = ({ children }: { children: ReactNode }) => {
+  return (
+    <Flex
+      sx={{
+        justifyContent: "center",
+        alignItems: "center",
+        flexWrap: "wrap",
+        width: "100%",
+        color: "red.main",
+      }}
+    >
+      {children}
+    </Flex>
+  );
 };
 
 const delayedShow = keyframes`
@@ -198,91 +181,89 @@ export const LoadingOverlay = () => {
   );
 };
 
-export const NoDataHint = () => (
-  <Alert severity="info">
-    <AlertTitle>
-      <Trans id="hint.nodata.title">
-        No data available for current filter selection
+export const NoDataHint = () => {
+  return (
+    <HintBlue>
+      <AlertTitle>
+        <Trans id="hint.nodata.title">
+          No data available for current filter selection
+        </Trans>
+      </AlertTitle>
+      <Trans id="hint.nodata.message">
+        Please try with another geographical dimension.
       </Trans>
-    </AlertTitle>
-    <Trans id="hint.nodata.message">
-      Please try with another geographical dimension.
-    </Trans>
-  </Alert>
-);
+    </HintBlue>
+  );
+};
 
-export const NoGeometriesHint = () => (
-  <Alert severity="info">
-    <AlertTitle>
-      <Trans id="hint.nogeometries.title">No geometries available</Trans>
-    </AlertTitle>
-    <Trans id="hint.nogeometries.message">
-      Please try with another geographical dimension.
-    </Trans>
-  </Alert>
-);
-
-export const LoadingDataError = ({ message }: { message?: string }) => (
-  <Alert
-    severity="error"
-    sx={{
-      "& > .MuiAlert-icon": {
-        ml: "2rem",
-        mr: "1.5rem",
-      },
-    }}
-  >
-    <AlertTitle>
-      <Trans id="hint.dataloadingerror.title">Data loading error</Trans>
-    </AlertTitle>
-    <Trans id="hint.dataloadingerror.message">
-      The data could not be loaded.
-    </Trans>
-    <Link
-      typography="body2"
-      target="_blank"
-      href="https://visualization-tool.status.interactivethings.io/"
-      sx={{ mt: "0.5em" }}
-    >
-      <Trans id="hint.dataloadingerror.status">
-        Check our status page for more information.
-        <Icon name="legacyLinkExternal" size={14} />
+export const NoGeometriesHint = () => {
+  return (
+    <HintBlue>
+      <AlertTitle>
+        <Trans id="hint.nogeometries.title">No geometries available</Trans>
+      </AlertTitle>
+      <Trans id="hint.nogeometries.message">
+        Please try with another geographical dimension.
       </Trans>
-    </Link>
+    </HintBlue>
+  );
+};
 
-    {message ? (
-      <pre
-        style={{
-          marginTop: "0.5rem",
-          marginLeft: "1rem",
-          marginBottom: 0,
-          whiteSpace: "pre-wrap",
-        }}
+export const LoadingDataError = ({ message }: { message?: string }) => {
+  return (
+    <HintRed>
+      <AlertTitle>
+        <Trans id="hint.dataloadingerror.title">Data loading error</Trans>
+      </AlertTitle>
+      <Trans id="hint.dataloadingerror.message">
+        The data could not be loaded.
+      </Trans>
+      <Link
+        typography="body2"
+        target="_blank"
+        href="https://visualization-tool.status.interactivethings.io/"
+        sx={{ mt: "0.5em" }}
       >
-        {message}
-      </pre>
-    ) : null}
-  </Alert>
-);
+        <Trans id="hint.dataloadingerror.status">
+          Check our status page for more information.
+          <Icon name="legacyLinkExternal" size={14} />
+        </Trans>
+      </Link>
+      {message ? (
+        <pre
+          style={{
+            marginTop: "0.5rem",
+            marginLeft: "1rem",
+            marginBottom: 0,
+            whiteSpace: "pre-wrap",
+          }}
+        >
+          {message}
+        </pre>
+      ) : null}
+    </HintRed>
+  );
+};
 
-export const LoadingGeoDimensionsError = () => (
-  <Alert severity="error">
-    <AlertTitle>
-      <Trans id="hint.coordinatesloadingerror.title">
-        Coordinates loading error
+export const LoadingGeoDimensionsError = () => {
+  return (
+    <HintRed>
+      <AlertTitle>
+        <Trans id="hint.coordinatesloadingerror.title">
+          Coordinates loading error
+        </Trans>
+      </AlertTitle>
+      <Trans id="hint.coordinatesloadingerror.message">
+        There was a problem with loading the coordinates from geographical
+        dimensions.
       </Trans>
-    </AlertTitle>
-    <Trans id="hint.coordinatesloadingerror.message">
-      There was a problem with loading the coordinates from geographical
-      dimensions.
-    </Trans>
-  </Alert>
-);
+    </HintRed>
+  );
+};
 
 export const ChartUnexpectedError = ({ error }: { error?: Error }) => {
-  const theme = useTheme();
   return (
-    <Alert severity="error">
+    <HintRed>
       <AlertTitle>
         <Trans id="hint.chartunexpected.title">Unexpected error</Trans>
       </AlertTitle>
@@ -290,60 +271,73 @@ export const ChartUnexpectedError = ({ error }: { error?: Error }) => {
         An unexpected error occurred while displaying this chart.
       </Trans>
       {error ? (
-        <Box
-          component="pre"
-          my={2}
-          mx={2}
-          fontSize={theme.typography.body2.fontSize}
-        >
+        <Typography variant="body3" component="div" mt={2}>
           {error.message}
-        </Box>
+        </Typography>
       ) : null}
-    </Alert>
+    </HintRed>
   );
 };
 
-export const OnlyNegativeDataHint = () => (
-  <Alert severity="warning">
-    <AlertTitle>
-      <Trans id="hint.only.negative.data.title">Negative Values</Trans>
-    </AlertTitle>
-    <Trans id="hint.only.negative.data.message">
-      Negative data values cannot be displayed with this chart type.
-    </Trans>
-  </Alert>
-);
+export const OnlyNegativeDataHint = () => {
+  return (
+    <HintOrange>
+      <AlertTitle>
+        <Trans id="hint.only.negative.data.title">Negative Values</Trans>
+      </AlertTitle>
+      <Trans id="hint.only.negative.data.message">
+        Negative data values cannot be displayed with this chart type.
+      </Trans>
+    </HintOrange>
+  );
+};
 
-export const PublishSuccess = () => (
-  <Alert severity="success">
-    <Trans id="hint.publication.success">
-      Your visualization is now published. You can share and embed it using the
-      URL or the options below.
-    </Trans>
-  </Alert>
-);
+export const PublishSuccess = () => {
+  return (
+    <HintGreen>
+      <Trans id="hint.publication.success">
+        Your visualization is now published. You can share and embed it using
+        the URL or the options below.
+      </Trans>
+    </HintGreen>
+  );
+};
 
-const mkHint = (severity: AlertProps["severity"], displayName: string) => {
+const colorToIcon: Record<NonNullable<AlertProps["color"]>, IconName> = {
+  red: "infoCircle",
+  green: "checkmarkCircle",
+  blue: "infoCircle",
+  orange: "infoCircle",
+};
+
+const mkHint = (
+  color: NonNullable<AlertProps["color"]>,
+  displayName: string
+) => {
   const Component = ({
-    iconName,
-    children,
-    iconSize = 24,
+    smaller,
+    sx,
+    ...rest
   }: {
-    iconName?: IconName;
-    children: ReactNode;
-    iconSize?: number;
-  }) => (
+    smaller?: boolean;
+  } & Omit<AlertProps, "color" | "icon">) => (
     <Alert
-      severity={severity}
-      icon={iconName ? <Icon name={iconName} size={iconSize} /> : false}
-    >
-      {children}
-    </Alert>
+      color={color}
+      icon={smaller ? false : <Icon name={colorToIcon[color]} />}
+      sx={
+        smaller
+          ? { p: 0, backgroundColor: "transparent", boxShadow: 0, ...sx }
+          : sx
+      }
+      {...rest}
+    />
   );
   Component.displayName = displayName;
+
   return Component;
 };
 
-export const HintRed = mkHint("error", "HintRed");
-export const HintYellow = mkHint("warning", "HintYellow");
-export const HintBlue = mkHint("info", "HintBlue");
+export const HintRed = mkHint("red", "HintRed");
+export const HintGreen = mkHint("green", "HintGreen");
+export const HintBlue = mkHint("blue", "HintBlue");
+export const HintOrange = mkHint("orange", "HintOrange");

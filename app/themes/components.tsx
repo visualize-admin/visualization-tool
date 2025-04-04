@@ -13,14 +13,33 @@ import { typography } from "@/themes/typography";
 
 export const components: Components = {
   MuiAlert: {
+    defaultProps: {
+      icon: false,
+    },
     styleOverrides: {
       root: ({ ownerState }) => {
         const color = ownerState.color ?? "blue";
 
         return {
+          display: "flex",
+          alignItems: "center",
+          padding: "16px 40px",
           backgroundColor: palette[color][50],
           color: palette[color].main,
+          boxShadow: shadows[2],
+
+          "& .MuiIconButton-root:hover": {
+            backgroundColor: palette[color][100],
+          },
         };
+      },
+      // @ts-ignore
+      message: {
+        width: "100%",
+        ...typography.body3,
+      },
+      icon: {
+        padding: 0,
       },
     },
   },

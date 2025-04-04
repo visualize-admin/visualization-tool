@@ -53,14 +53,14 @@ const useSectionTitleStyles = makeStyles<
     padding: theme.spacing(4),
     border: "none",
     backgroundColor: ({ warn }) =>
-      warn ? theme.palette.warning.light : "transparent",
+      warn ? theme.palette.orange[50] : "transparent",
     color: ({ disabled, warn }) => {
       if (disabled) {
         return theme.palette.monochrome[300];
       }
 
       if (warn) {
-        return theme.palette.warning.main;
+        return theme.palette.orange.main;
       }
 
       return theme.palette.monochrome[800];

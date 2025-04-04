@@ -24,7 +24,6 @@ declare module "@mui/material/Alert" {
 
     red: true;
     orange: true;
-    yellow: true;
     blue: true;
     green: true;
   }

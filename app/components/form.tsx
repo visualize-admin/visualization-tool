@@ -64,7 +64,6 @@ import {
   useChartOptionSliderField,
 } from "@/configurator";
 import { Icon } from "@/icons";
-import SvgIcWarningCircle from "@/icons/components/IcWarningCircle";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
@@ -522,12 +521,12 @@ export const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
       }
       placement="top"
       componentsProps={{
-        tooltip: { sx: { width: 140, px: 2, py: 1, lineHeight: 1.2 } },
+        tooltip: { sx: { width: 140, px: 2, py: 1 } },
       }}
       sx={{ opacity: 1, pointerEvents: "auto", ml: 1 }}
     >
-      <Typography color="warning.main">
-        <SvgIcWarningCircle width={18} height={18} />
+      <Typography color="orange.main" style={{ lineHeight: 0 }}>
+        <Icon name="warningCircle" size={20} />
       </Typography>
     </Tooltip>
   );

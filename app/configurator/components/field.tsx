@@ -581,7 +581,7 @@ export const ChartAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
       {...tabProps}
       lowerLabel={
         (chartConfig.meta as any)[value]?.[locale] ? null : (
-          <Typography variant="caption" color="warning.main">
+          <Typography variant="caption" color="orange.main">
             {emptyValueWarning}
           </Typography>
         )

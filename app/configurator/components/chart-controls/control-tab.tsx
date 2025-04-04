@@ -112,7 +112,7 @@ const useIconStyles = makeStyles<Theme, { isActive: boolean }>((theme) => ({
     height: 18,
   },
   warn: {
-    color: theme.palette.warning.main,
+    color: theme.palette.orange.main,
     width: 18,
     height: 18,
     pointerEvents: "auto",
