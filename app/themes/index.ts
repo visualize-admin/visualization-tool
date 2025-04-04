@@ -64,19 +64,51 @@ declare module "@mui/material/styles" {
   interface BreakpointOverrides extends FederalBreakpointOverrides {}
 
   interface Palette {
-    cobalt: FederalColor & { main: string };
-    monochrome: FederalColor & { main: string };
-    red: FederalColor & { main: string };
-    blue: FederalColor & { main: string };
-    green: FederalColor & { main: string };
+    cobalt: FederalColor & {
+      main: string;
+    };
+    monochrome: FederalColor & {
+      main: string;
+    };
+    red: FederalColor & {
+      main: string;
+    };
+    orange: FederalColor & {
+      main: string;
+    };
+    yellow: FederalColor & {
+      main: string;
+    };
+    blue: FederalColor & {
+      main: string;
+    };
+    green: FederalColor & {
+      main: string;
+    };
   }
 
   interface PaletteOptions {
-    cobalt: FederalColor & { main: string };
-    monochrome: FederalColor & { main: string };
-    red: FederalColor & { main: string };
-    blue: FederalColor & { main: string };
-    green: FederalColor & { main: string };
+    cobalt: FederalColor & {
+      main: string;
+    };
+    monochrome: FederalColor & {
+      main: string;
+    };
+    red: FederalColor & {
+      main: string;
+    };
+    orange: FederalColor & {
+      main: string;
+    };
+    yellow: FederalColor & {
+      main: string;
+    };
+    blue: FederalColor & {
+      main: string;
+    };
+    green: FederalColor & {
+      main: string;
+    };
   }
 }
 
