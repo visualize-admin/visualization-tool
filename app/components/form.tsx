@@ -97,24 +97,15 @@ export const FormControlLabel = (
 
 export const Label = ({
   htmlFor,
-  smaller = false,
   children,
   sx,
 }: {
   htmlFor: string;
-  smaller?: boolean;
   children: ReactNode;
   sx?: TypographyProps["sx"];
 }) => {
   return (
-    <Typography
-      component="label"
-      htmlFor={htmlFor}
-      variant={smaller ? "caption" : "body2"}
-      color="secondary.active"
-      display="flex"
-      sx={sx}
-    >
+    <Typography variant="caption" component="label" htmlFor={htmlFor} sx={sx}>
       {children}
     </Typography>
   );
@@ -188,7 +179,7 @@ export const Slider = ({
   return (
     <Box sx={sx}>
       {label && (
-        <Label htmlFor={`${name}-${value}`} smaller sx={{ mb: 1 }}>
+        <Label htmlFor={`${name}-${value}`} sx={{ mb: 1 }}>
           {label}
         </Label>
       )}
@@ -354,11 +345,7 @@ export const Select = ({
   return (
     <Box ref={ref} sx={{ width: "100%", ...sx }}>
       {label && (
-        <Label
-          htmlFor={id}
-          smaller
-          sx={{ display: "flex", alignItems: "center" }}
-        >
+        <Label htmlFor={id} sx={{ display: "flex", alignItems: "center" }}>
           {label}
           {loading && (
             <CircularProgress
@@ -546,7 +533,7 @@ export const Input = ({
 } & FieldProps) => (
   <Box sx={{ fontSize: "1rem", pb: 2 }}>
     {label && name && (
-      <Label htmlFor={name} smaller sx={{ mb: 1 }}>
+      <Label htmlFor={name} sx={{ mb: 1 }}>
         {label}
       </Label>
     )}
@@ -597,7 +584,7 @@ export const MarkdownInput = ({
                   <LinkDialogToggle />
                 </Box>
                 {label && name ? (
-                  <Label htmlFor={name} smaller sx={{ my: 1 }}>
+                  <Label htmlFor={name} sx={{ my: 1 }}>
                     {label}
                   </Label>
                 ) : null}

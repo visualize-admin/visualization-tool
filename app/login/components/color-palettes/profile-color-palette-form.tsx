@@ -289,7 +289,7 @@ const ColorPaletteTypeSelector = ({
 
   return (
     <Box sx={{ fontSize: "1rem", pb: 2 }}>
-      <Label htmlFor="custom-color-palette-type" smaller sx={{ mb: 1 }}>
+      <Label htmlFor="custom-color-palette-type" sx={{ mb: 1 }}>
         <Trans id="controls.custom-color-palettes.type" />
       </Label>
       <Flex gap={6}>

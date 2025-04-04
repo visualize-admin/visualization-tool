@@ -463,11 +463,7 @@ const SelectTree = ({
 
   return (
     <div>
-      {label && (
-        <Label htmlFor={id!} smaller>
-          {label}
-        </Label>
-      )}
+      {label && <Label htmlFor={id!}>{label}</Label>}
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <Select
           ref={inputRef}
