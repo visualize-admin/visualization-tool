@@ -454,8 +454,6 @@ const SelectTree = ({
     }
   );
 
-  console.log(selectSizeToTypography[size]);
-
   useEffect(() => {
     const inputNode = inputRef.current;
     if (inputNode) {
