@@ -24,7 +24,7 @@ import { DatasetsBadge } from "@/configurator/components/badges";
 import {
   ControlSection,
   ControlSectionContent,
-  SubsectionTitle,
+  SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import {
   isConfiguring,
@@ -35,8 +35,8 @@ import {
   executeDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
 } from "@/graphql/hooks";
+import { Icon } from "@/icons";
 import SvgIcCheckmarkCircle from "@/icons/components/IcCheckmarkCircle";
-import SvgIcPlus from "@/icons/components/IcPlus";
 import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
@@ -216,23 +216,16 @@ export const DatasetsControlSection = () => {
   };
 
   return (
-    <ControlSection collapse defaultExpanded={true}>
-      <SubsectionTitle titleId="controls-data" gutterBottom={false}>
+    <ControlSection collapse defaultExpanded hideTopBorder>
+      <SectionTitle id="controls-data">
         <Trans id="controls.section.datasets.title">Datasets</Trans>{" "}
-        <DatasetsBadge sx={{ ml: "auto", mr: 4 }} />
-      </SubsectionTitle>
+        <DatasetsBadge sx={{ ml: "auto", mr: 2 }} />
+      </SectionTitle>
       <ControlSectionContent
         aria-labelledby="controls-data"
         data-testid="configurator-datasets"
       >
-        <Box
-          sx={{
-            gap: "0.5rem",
-            mb: "1rem",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
+        <Flex sx={{ flexDirection: "column", gap: 1, mb: 2 }}>
           {metadataQuery.data?.dataCubesMetadata.map((x) => {
             return (
               <DatasetRow
@@ -244,14 +237,15 @@ export const DatasetsControlSection = () => {
               />
             );
           })}
-        </Box>
+        </Flex>
         <Flex sx={{ justifyContent: "end" }}>
           {cubes.length === 1 ? (
             <Button
-              onClick={openDatasetDialog}
-              startIcon={<SvgIcPlus />}
               variant="text"
               size="sm"
+              color="blue"
+              startIcon={<Icon name="plus" size={20} />}
+              onClick={openDatasetDialog}
             >
               {t({ id: "chart.datasets.add", message: "Add dataset" })}
             </Button>

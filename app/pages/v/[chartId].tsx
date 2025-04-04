@@ -1,6 +1,5 @@
 import { Trans } from "@lingui/macro";
 import {
-  Alert,
   alertClasses,
   Box,
   Button,
@@ -20,7 +19,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
 import { useEmbedQueryParams } from "@/components/embed-params";
-import { PublishSuccess } from "@/components/hint";
+import { HintOrange, PublishSuccess } from "@/components/hint";
 import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
 import { ConfiguratorStatePublished } from "@/config-types";
@@ -202,26 +201,22 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
 
             {config.published_state === PUBLISHED_STATE.DRAFT && (
               <Box mt={2} mb={5}>
-                <Alert
-                  severity="warning"
+                <HintOrange
                   sx={{
-                    margin: "auto",
                     flexDirection: "row",
                     alignItems: "center",
+                    m: "auto",
+
                     [`& .${alertClasses.message}`]: {
-                      alignItems: "center",
-                      flexGrow: 1,
-                      flexDirection: "row",
+                      display: "flex",
                       justifyContent: "space-between",
+                      alignItems: "center",
                     },
                   }}
                 >
-                  <div>
-                    <Trans id="hint.publication.draft">
-                      This chart is still a draft.
-                    </Trans>
-                  </div>
-
+                  <Trans id="hint.publication.draft">
+                    This chart is still a draft.
+                  </Trans>
                   {canEdit ? (
                     <Button
                       component={NextLink}
@@ -233,7 +228,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                       <Trans id="login.chart.edit">Edit</Trans>
                     </Button>
                   ) : null}
-                </Alert>
+                </HintOrange>
               </Box>
             )}
 

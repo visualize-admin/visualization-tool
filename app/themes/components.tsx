@@ -2,11 +2,69 @@ import { c } from "@interactivethings/swiss-federal-ci";
 import { Components } from "@mui/material";
 
 import { Icon } from "@/icons";
+import {
+  CheckboxCheckedIcon,
+  CheckboxIcon,
+  CheckboxIndeterminateIcon,
+} from "@/themes/custom-icons";
 import { palette } from "@/themes/palette";
 import { shadows } from "@/themes/shadows";
 import { typography } from "@/themes/typography";
 
 export const components: Components = {
+  MuiAlert: {
+    defaultProps: {
+      icon: false,
+    },
+    styleOverrides: {
+      root: ({ ownerState }) => {
+        const color = ownerState.color ?? "blue";
+
+        return {
+          display: "flex",
+          alignItems: "center",
+          padding: 0,
+          backgroundColor: palette[color][50],
+          color: palette[color].main,
+          boxShadow: shadows[2],
+
+          "& .MuiIconButton-root:hover": {
+            backgroundColor: palette[color][100],
+          },
+        };
+      },
+      // @ts-ignore
+      message: {
+        width: "100%",
+        padding: 0,
+        ...typography.body3,
+      },
+      icon: {
+        padding: 0,
+      },
+    },
+  },
+  MuiBadge: {
+    styleOverrides: {
+      root: {
+        position: "unset",
+        padding: 2,
+        transform: "none",
+      },
+      badge: {
+        position: "unset",
+        backgroundColor: palette.cobalt[50],
+        color: palette.text.primary,
+        transform: "none",
+        transition: "opacity 0.2s ease",
+
+        "&.MuiBadge-invisible": {
+          transform: "none",
+          opacity: 0,
+        },
+      },
+    },
+  },
   MuiButtonBase: {
     defaultProps: {
       disableRipple: true,
@@ -73,6 +131,7 @@ export const components: Components = {
               return {
                 backgroundColor: color[400],
                 color: "#fff",
+
                 "&:hover": {
                   backgroundColor: color[600],
                 },
@@ -81,6 +140,7 @@ export const components: Components = {
               return {
                 color: color[500],
                 borderColor: color[500],
+
                 "&:hover": {
                   borderColor: color[500],
                   backgroundColor: color[50],
@@ -89,6 +149,8 @@ export const components: Components = {
             case "text":
               return {
                 color: color[700],
+                padding: 0,
+
                 "&:hover": {
                   backgroundColor: "transparent",
                   color: color[900],
@@ -101,6 +163,7 @@ export const components: Components = {
         })();
 
         return {
+          minWidth: 0,
           ...sizeStyles,
           ...variantColorStyles,
         };
@@ -120,16 +183,27 @@ export const components: Components = {
     },
   },
   MuiCheckbox: {
+    defaultProps: {
+      icon: <CheckboxIcon />,
+      indeterminateIcon: <CheckboxIndeterminateIcon />,
+      checkedIcon: <CheckboxCheckedIcon />,
+    },
     styleOverrides: {
       root: {
         padding: 0,
         borderRadius: 0,
         color: palette.monochrome[500],
+
+        "&:hover": {
+          backgroundColor: "transparent",
+        },
+
         "&.Mui-checked": {
           color: palette.monochrome[800],
         },
-        "&:hover": {
-          backgroundColor: `${palette.cobalt[50]}`,
+
+        "&.Mui-disabled": {
+          opacity: 0.25,
         },
       },
     },
@@ -146,23 +220,31 @@ export const components: Components = {
       root: {
         display: "flex",
         gap: 12,
+        width: "fit-content",
         margin: 0,
-        padding: 12,
-        paddingLeft: 16,
-        transition: "background-color 0.2s ease",
-        "&:hover": {
-          backgroundColor: palette.cobalt[50],
-        },
       },
       label: {
-        ...typography.h5,
         lineHeight: "1 !important",
+        color: palette.text.primary,
+
+        "&.Mui-disabled": {
+          color: palette.monochrome[400],
+        },
       },
     },
   },
   MuiLink: {
     defaultProps: {
       underline: "none",
+    },
+  },
+  MuiIconButton: {
+    styleOverrides: {
+      root: {
+        "&:hover": {
+          backgroundColor: palette.cobalt[50],
+        },
+      },
     },
   },
   MuiInput: {
@@ -191,6 +273,8 @@ export const components: Components = {
 
         return {
           ...sizeStyles,
+          display: "flex",
+          alignItems: "center",
           width: "100%",
           borderRadius: 2,
           border: `1px solid ${palette.monochrome[300]}`,
@@ -200,6 +284,7 @@ export const components: Components = {
           "&:hover": {
             color: "inherit",
           },
+
           "&.Mui-focused": {
             border: `1px solid ${palette.monochrome[500]}`,
           },
@@ -212,6 +297,7 @@ export const components: Components = {
         "&.Mui-disabled": {
           "-webkit-text-fill-color": palette.monochrome[300],
         },
+
         "&::placeholder": {
           opacity: 1,
         },
@@ -294,9 +380,6 @@ export const components: Components = {
     defaultProps: {
       size: "md",
       notched: false,
-      MenuProps: {
-        disablePortal: true,
-      },
       IconComponent: ({ style, ...rest }: any) => {
         return (
           <Icon
@@ -355,7 +438,11 @@ export const components: Components = {
 
         return {
           cursor: "pointer",
-          width: "fit-content",
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          maxWidth: "100%",
+          gap: 4,
           padding: 0,
           border: "none !important",
           ...variantStyles,
@@ -370,16 +457,6 @@ export const components: Components = {
 
           "&.Mui-disabled": {
             color: `${palette.monochrome[300]} !important`,
-          },
-
-          "& .MuiList-root": {
-            width: "auto",
-            padding: "4px 0",
-            boxShadow: shadows[3],
-
-            "& .MuiMenuItem-root": {
-              ...sizeStyles,
-            },
           },
         };
       },
@@ -435,6 +512,45 @@ export const components: Components = {
       },
     },
   },
+  MuiSwitch: {
+    styleOverrides: {
+      root: {
+        display: "flex",
+        width: 32,
+        height: 16,
+        padding: 0,
+
+        "&:hover": {
+          "& .MuiSwitch-switchBase": {
+            backgroundColor: "transparent",
+          },
+        },
+      },
+      switchBase: {
+        padding: 2,
+
+        "&.Mui-checked": {
+          transform: "translateX(16px)",
+
+          "& + .MuiSwitch-track": {
+            backgroundColor: palette.monochrome[800],
+            opacity: 1,
+          },
+        },
+      },
+      thumb: {
+        width: 12,
+        height: 12,
+        padding: 0,
+        backgroundColor: "white",
+        boxShadow: shadows[2],
+      },
+      track: {
+        borderRadius: 12,
+        backgroundColor: palette.monochrome[300],
+      },
+    },
+  },
   MuiTableCell: {
     styleOverrides: {
       // @ts-ignore
@@ -462,6 +578,76 @@ export const components: Components = {
     styleOverrides: {
       root: {
         border: `1px solid ${palette.monochrome[300]}`,
+      },
+    },
+  },
+  MuiTreeItem: {
+    styleOverrides: {
+      content: {
+        color: palette.monochrome[600],
+        transition: "background-color 0.2s ease",
+
+        "&:hover": {
+          backgroundColor: palette.cobalt[50],
+          color: palette.monochrome[800],
+        },
+
+        "&.Mui-expanded, &.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused":
+          {
+            backgroundColor: "transparent",
+            color: palette.monochrome[800],
+
+            "&:hover": {
+              backgroundColor: palette.cobalt[50],
+            },
+          },
+
+        "&.Mui-expanded .MuiTreeItem-iconContainer": {
+          transform: "rotate(90deg)",
+        },
+      },
+      label: {
+        display: "flex",
+        alignItems: "center",
+        padding: "10px 16px",
+        paddingLeft: 4,
+      },
+      iconContainer: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: 24,
+        height: 24,
+        margin: 0,
+        transition: "transform 0.2s ease, opacity 0.2s ease",
+      },
+    },
+  },
+  MuiTreeView: {
+    defaultProps: {
+      defaultCollapseIcon: (
+        <Icon
+          name="chevronRight"
+          style={{
+            fontSize: 24,
+          }}
+        />
+      ),
+      defaultExpandIcon: (
+        <Icon
+          name="chevronRight"
+          style={{
+            fontSize: 24,
+          }}
+        />
+      ),
+    },
+    styleOverrides: {
+      root: {
+        overflowY: "auto",
+        flexGrow: 1,
+        padding: "4px 0",
+        userSelect: "none",
       },
     },
   },

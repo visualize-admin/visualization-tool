@@ -3,7 +3,6 @@ import {
   Box,
   Grow,
   Link,
-  SxProps,
   Tooltip,
   Typography,
   useEventCallback,
@@ -13,7 +12,14 @@ import { PUBLISHED_STATE } from "@prisma/client";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, {
+  PropsWithChildren,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
@@ -86,39 +92,18 @@ import { replaceLinks } from "@/utils/ui-strings";
 import useEvent from "@/utils/use-event";
 import { useMutate } from "@/utils/use-fetch-data";
 
-const BackContainer = (props: React.PropsWithChildren<{ sx?: SxProps }>) => {
-  const { children, sx } = props;
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        height: LAYOUT_HEADER_HEIGHT,
-        flexGrow: 1,
-        px: 2,
-        ...sx,
-      }}
-    >
-      {children}
-    </Box>
-  );
-};
-
 export const BackButton = ({
   children,
   onClick,
   ...props
-}: { children: React.ReactNode } & ButtonProps) => {
-  const { sx } = props;
-
+}: { children: ReactNode } & ButtonProps) => {
   return (
     <Button
-      variant="text"
-      color="blue"
+      variant="outlined"
       size="sm"
-      sx={{ fontWeight: "bold", ...sx }}
-      startIcon={<SvgIcChevronLeft />}
+      startIcon={<Icon name="arrowLeft" size={20} />}
       onClick={onClick}
+      {...props}
     >
       {children}
     </Button>
@@ -152,30 +137,22 @@ const useAssureCorrectDataSource = (stateGuard: ConfiguratorState["state"]) => {
   ]);
 };
 
-type BackToMainButtonProps = {
-  onClick: () => void;
-};
-
-const BackToMainButton = (props: BackToMainButtonProps) => {
-  const { onClick } = props;
+const BackToMainButton = ({ onClick }: { onClick: () => void }) => {
   return (
-    <BackContainer>
-      <Button
-        variant="text"
-        color="inherit"
-        size="sm"
-        sx={{ fontWeight: "bold" }}
-        startIcon={<SvgIcChevronLeft />}
-        onClick={onClick}
-      >
-        <Trans id="controls.nav.back-to-main">Back to main</Trans>
-      </Button>
-    </BackContainer>
+    <Button
+      variant="text"
+      color="inherit"
+      size="sm"
+      sx={{ fontWeight: "bold" }}
+      startIcon={<SvgIcChevronLeft />}
+      onClick={onClick}
+    >
+      <Trans id="controls.nav.back-to-main">Back to main</Trans>
+    </Button>
   );
 };
 
-const NextStepButton = (props: React.PropsWithChildren<{}>) => {
-  const { children } = props;
+const NextStepButton = ({ children }: PropsWithChildren<{}>) => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
   const chartConfig = getChartConfig(state);
@@ -206,10 +183,10 @@ const NextStepButton = (props: React.PropsWithChildren<{}>) => {
 
   return (
     <Button
-      color="blue"
       variant="contained"
+      size="sm"
+      endIcon={<Icon name="arrowRight" size={20} />}
       onClick={handleClick}
-      sx={{ minWidth: "fit-content" }}
     >
       {children}
     </Button>
@@ -335,6 +312,8 @@ const SaveDraftButton = ({ chartId }: { chartId: string | undefined }) => {
       onClose={() => dismissSnack()}
     >
       <Button
+        variant="outlined"
+        size="sm"
         endIcon={
           hasUpdated || debouncedHasUpdated ? (
             <Grow in={hasUpdated}>
@@ -344,7 +323,6 @@ const SaveDraftButton = ({ chartId }: { chartId: string | undefined }) => {
             </Grow>
           ) : null
         }
-        variant="outlined"
         onClick={handleClick}
       >
         <Trans id="button.save-draft">Save draft</Trans>
@@ -428,17 +406,12 @@ const ConfigureChartStep = () => {
 
   return (
     <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
-      <PanelLayout
-        type="LM"
-        sx={{ background: (t) => t.palette.secondary.main }}
-      >
+      <PanelLayout type="LM">
         <PanelHeaderLayout type="LMR">
           <PanelHeaderWrapper type="L">
-            <BackContainer>
-              <BackButton onClick={handlePrevious}>
-                <Trans id="controls.nav.back-to-preview">Back to preview</Trans>
-              </BackButton>
-            </BackContainer>
+            <BackButton onClick={handlePrevious}>
+              <Trans id="controls.nav.back-to-preview">Back to preview</Trans>
+            </BackButton>
           </PanelHeaderWrapper>
           <PanelHeaderWrapper
             type="R"
@@ -566,29 +539,18 @@ const LayoutingStep = () => {
   const centerLayout = !!(isSingleURLs || previewBreakpoint);
 
   return (
-    <PanelLayout
-      type={centerLayout ? "M" : "LM"}
-      sx={{ background: (t) => t.palette.secondary.main }}
-    >
+    <PanelLayout type={centerLayout ? "M" : "LM"}>
       <PanelHeaderLayout type="LMR">
         <PanelHeaderWrapper type="L">
-          <BackContainer>
-            <BackButton onClick={handlePrevious}>
-              <Trans id="controls.nav.back-to-configurator">
-                Back to editing
-              </Trans>
-            </BackButton>
-          </BackContainer>
+          <BackButton onClick={handlePrevious}>
+            <Trans id="controls.nav.back-to-configurator">
+              Back to editing
+            </Trans>
+          </BackButton>
         </PanelHeaderWrapper>
         <PanelHeaderWrapper
           type="M"
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 3,
-            mx: "auto",
-          }}
+          sx={{ display: "flex", gap: 4, mx: "auto" }}
         >
           <IconButton
             label="layoutTab"

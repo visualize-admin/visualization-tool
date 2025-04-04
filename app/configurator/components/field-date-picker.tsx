@@ -2,7 +2,7 @@ import { DatePicker, DatePickerProps, PickersDay } from "@mui/lab";
 import { DatePickerView } from "@mui/lab/DatePicker/shared";
 import { Box, TextField } from "@mui/material";
 import { timeFormat } from "d3-time-format";
-import React, { useCallback } from "react";
+import React, { ChangeEvent, ReactNode, useCallback } from "react";
 
 import { Label } from "@/components/form";
 import { TimeUnit } from "@/graphql/resolver-types";
@@ -10,13 +10,12 @@ import { Icon } from "@/icons";
 
 export type DatePickerFieldProps = {
   name: string;
-  label?: React.ReactNode;
+  label?: ReactNode;
   value: Date;
-  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
   disabled?: boolean;
   isDateDisabled: (date: Date) => boolean;
-  topControls?: React.ReactNode;
-  sideControls?: React.ReactNode;
+  sideControls?: ReactNode;
   timeUnit?: DatePickerTimeUnit;
   dateFormat?: (d: Date) => string;
   parseDate: (s: string) => Date | null;
@@ -33,7 +32,6 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
     onChange,
     disabled,
     isDateDisabled,
-    topControls,
     sideControls,
     timeUnit = TimeUnit.Day,
     dateFormat = timeFormat("%Y-%m-%d"),
@@ -77,7 +75,6 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
         {label && name && (
           <Label htmlFor={name} smaller sx={{ gridArea: "topControls" }}>
             {label}
-            {topControls}
           </Label>
         )}
         <Box sx={{ gridArea: "datePicker" }}>

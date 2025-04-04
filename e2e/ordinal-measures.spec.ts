@@ -82,7 +82,7 @@ describe("viewing a dataset with only ordinal measures", () => {
     // Chart needs to re-load when symbol layer is selected
     await selectors.chart.loaded();
 
-    await within(selectors.edition.controlSectionBySubtitle("Color"))
+    await within(selectors.edition.controlSectionByTitle("Color"))
       .getByLabelText("None")
       .click();
 

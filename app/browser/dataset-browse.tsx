@@ -7,8 +7,6 @@ import {
   Divider,
   Link as MUILink,
   LinkProps as MUILinkProps,
-  MenuItem,
-  Select,
   Stack,
   Theme,
   Typography,
@@ -27,7 +25,12 @@ import { stringify } from "qs";
 import React, { ComponentProps, ReactNode, useMemo, useState } from "react";
 
 import Flex from "@/components/flex";
-import { Checkbox, SearchField, SearchFieldProps } from "@/components/form";
+import {
+  Checkbox,
+  SearchField,
+  SearchFieldProps,
+  Select,
+} from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import MaybeLink from "@/components/maybe-link";
@@ -194,7 +197,7 @@ export const SearchDatasetControls = ({
   return (
     <Flex sx={{ justifyContent: "space-between", alignItems: "center", mb: 2 }}>
       <SearchDatasetResultsCount cubes={cubes} />
-      <Flex sx={{ alignItems: "center", gap: 1 }}>
+      <Flex sx={{ alignItems: "center", gap: 5 }}>
         <SearchDatasetDraftsControl
           checked={includeDrafts}
           onChange={onToggleIncludeDrafts}
@@ -287,9 +290,9 @@ export const SearchDatasetSortControl = ({
   }, [disableScore]);
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", ml: 4 }}>
+    <Box sx={{ display: "flex", alignItems: "center" }}>
       <label htmlFor="datasetSort">
-        <Typography variant="h5" component="p">
+        <Typography variant="body3">
           <Trans id="dataset.sortby">Sort by</Trans>
         </Typography>
       </label>
@@ -297,17 +300,14 @@ export const SearchDatasetSortControl = ({
         id="datasetSort"
         data-testId="datasetSort"
         variant="standard"
+        size="sm"
         onChange={(e) => {
           onChange(e.target.value as SearchCubeResultOrder);
         }}
         value={value}
-      >
-        {options.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
-            {option.label}
-          </MenuItem>
-        ))}
-      </Select>
+        options={options}
+        sx={{ width: "fit-content" }}
+      />
     </Box>
   );
 };
@@ -617,7 +617,7 @@ const NavSection = ({
             size="sm"
             onClick={isOpen ? close : open}
             endIcon={<Icon name={isOpen ? "arrowUp" : "arrowDown"} size={20} />}
-            sx={{ width: "100%" }}
+            sx={{ width: "100%", mt: 2 }}
           >
             {isOpen ? (
               <Trans id="show.less">Show less</Trans>

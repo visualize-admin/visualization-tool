@@ -1,9 +1,10 @@
 import { Trans } from "@lingui/macro";
-import { MenuItem, Select, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 import Flex from "@/components/flex";
+import { Select } from "@/components/form";
 import {
   isDataSourceChangeable,
   parseDataSource,
@@ -32,7 +33,9 @@ export const DataSourceMenu = () => {
           setDataSource(parseDataSource(e.target.value as string));
         }}
         disabled={isDisabled}
+        options={SOURCE_OPTIONS}
         sx={{
+          width: "fit-content",
           color: "white !important",
 
           "&:hover": {
@@ -45,13 +48,7 @@ export const DataSourceMenu = () => {
             },
           },
         }}
-      >
-        {SOURCE_OPTIONS.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
-            {option.label}
-          </MenuItem>
-        ))}
-      </Select>
+      />
     </Flex>
   );
 };

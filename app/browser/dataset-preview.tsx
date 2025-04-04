@@ -45,6 +45,8 @@ const useStyles = makeStyles<
     marginBottom: theme.spacing(6),
   },
   tableOuterWrapper: {
+    width: "fit-content",
+    maxWidth: "100%",
     boxShadow: theme.shadows[4],
   },
   tableInnerWrapper: {

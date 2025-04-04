@@ -48,7 +48,7 @@ export const Header = ({
           sx: {
             justifyContent: "space-between",
             ...(extendTopBar
-              ? { maxWidth: "100% !important", px: "16px !important" }
+              ? { maxWidth: "unset !important", px: "48px !important" }
               : {}),
           },
         }}

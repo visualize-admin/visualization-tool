@@ -8,7 +8,7 @@ import { getChartConfig } from "@/config-utils";
 import {
   ControlSection,
   ControlSectionContent,
-  SubsectionTitle,
+  SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import {
   ChartAnnotatorTabField,
@@ -120,7 +120,7 @@ export const ChartAnnotator = () => {
   const [state] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const { title, description } = chartConfig.meta;
-  const disabled = !(title[locale] && description[locale]);
+  const labelsMissing = !(title[locale] && description[locale]);
 
   return (
     <ControlSection
@@ -129,21 +129,19 @@ export const ChartAnnotator = () => {
       collapse
       defaultExpanded={false}
     >
-      <SubsectionTitle
-        titleId="controls-design"
-        disabled={disabled}
+      <SectionTitle
+        id="controls-design"
         warnMessage={
-          disabled ? (
+          labelsMissing ? (
             <Trans id="controls.section.title.warning">
               Please add a title or description.
             </Trans>
           ) : undefined
         }
-        gutterBottom={false}
       >
         <Trans id="controls.section.description">Title & Description</Trans>
-      </SubsectionTitle>
-      <ControlSectionContent px="small" gap="none">
+      </SectionTitle>
+      <ControlSectionContent gap="none" px="none">
         <ChartAnnotatorTabField
           value="title"
           icon="text"
@@ -183,7 +181,7 @@ export const LayoutAnnotator = () => {
   const locale = useLocale();
   const [state] = useConfiguratorState(isLayouting);
   const { title, description } = state.layout.meta;
-  const disabled = !(title[locale] && description[locale]);
+  const labelsMissing = !(title[locale] && description[locale]);
 
   return (
     <ControlSection
@@ -191,22 +189,21 @@ export const LayoutAnnotator = () => {
       aria-labelledby="controls-design"
       collapse
       defaultExpanded
+      hideTopBorder
     >
-      <SubsectionTitle
-        titleId="controls-design"
-        disabled={disabled}
+      <SectionTitle
+        id="controls-design"
         warnMessage={
-          disabled ? (
+          labelsMissing ? (
             <Trans id="controls.section.title.warning">
               Please add a title or description.
             </Trans>
           ) : undefined
         }
-        gutterBottom={false}
       >
         <Trans id="controls.section.description">Title & Description</Trans>
-      </SubsectionTitle>
-      <ControlSectionContent px="small" gap="none">
+      </SectionTitle>
+      <ControlSectionContent gap="none" px="none">
         <LayoutAnnotatorTabField
           value="title"
           icon="text"

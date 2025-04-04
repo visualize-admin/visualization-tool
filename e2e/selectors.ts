@@ -59,7 +59,7 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
       drawerLoaded: () =>
         screen.findByText(
           "Chart Type",
-          { selector: "h5" },
+          { selector: "h6" },
           { timeout: 10_000 }
         ),
       chartFilters: () => screen.findByTestId("chart-filters-list"),
@@ -76,13 +76,9 @@ export const createSelectors = ({ screen, page, within }: Ctx) => {
         }),
       filtersLoaded: () =>
         screen.findByText("Selected filters", undefined, { timeout: 10_000 }),
-      controlSectionBySubtitle: (title: string) =>
-        page.locator("[data-testid=controlSection]", {
-          has: page.locator(`h5:text-is("${title}")`),
-        }),
       controlSectionByTitle: (title: string) =>
         page.locator("[data-testid=controlSection]", {
-          has: page.locator(`h4:text-is("${title}")`),
+          has: page.locator(`h6:text-is("${title}")`),
         }),
       dataFilterInput: (label: string) =>
         page.locator(`div[role="button"]:has-text("${label}")`),

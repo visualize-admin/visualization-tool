@@ -49,7 +49,7 @@ test("Segment sorting", async ({
     const legendTexts = await legendItems.allInnerTexts();
     expect(legendTexts[0]).toEqual("Zurich");
 
-    await within(selectors.edition.controlSectionBySubtitle("Sort"))
+    await within(selectors.edition.controlSectionByTitle("Sort"))
       .getByLabelText("Automatic")
       .click();
 
@@ -68,7 +68,7 @@ test("Segment sorting", async ({
     // Re-initialize for future tests
     await screen.getByText("A → Z").click();
 
-    await within(selectors.edition.controlSectionBySubtitle("Sort"))
+    await within(selectors.edition.controlSectionByTitle("Sort"))
       .getByLabelText("Name")
       .click();
 

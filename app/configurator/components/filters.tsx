@@ -12,7 +12,7 @@ import {
   Input,
   InputAdornment,
   SelectChangeEvent,
-  Switch,
+  Switch as MUISwitch,
   Theme,
   Tooltip,
   Typography,
@@ -41,7 +41,7 @@ import { getChartSymbol } from "@/charts";
 import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import Flex from "@/components/flex";
-import { Select } from "@/components/form";
+import { Select, Switch } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { ChartConfig, ColorMapping, isColorInConfig } from "@/config-types";
@@ -61,7 +61,6 @@ import {
 } from "@/configurator/components/drawer";
 import {
   dimensionToFieldProps,
-  MostRecentDateSwitch,
   MultiFilterField,
   ShowValuesMappingField,
   SingleFilterField,
@@ -76,7 +75,6 @@ import {
   useInteractiveFiltersToggle,
   useInteractiveTimeRangeToggle,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
-import { InteractiveFilterToggle } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   Component,
   Dimension,
@@ -368,7 +366,7 @@ const MultiFilterContent = ({
               <Flex sx={{ py: 1, alignItems: "center", width: "100%" }}>
                 <FormControlLabel
                   componentsProps={{ typography: { variant: "body2" } }}
-                  control={<Switch {...interactiveFilterProps} />}
+                  control={<MUISwitch {...interactiveFilterProps} />}
                   label={
                     <MaybeTooltip
                       tooltipProps={{ enterDelay: 600 }}
@@ -390,7 +388,7 @@ const MultiFilterContent = ({
               <Flex sx={{ py: 1, alignItems: "center", width: "100%" }}>
                 <FormControlLabel
                   componentsProps={{ typography: { variant: "body2" } }}
-                  control={<Switch {...visibleLegendProps} />}
+                  control={<MUISwitch {...visibleLegendProps} />}
                   label={
                     <Trans id="controls.filters.show-legend.toggle">
                       Show legend titles
@@ -1197,10 +1195,12 @@ export const TimeFilter = (props: TimeFilterProps) => {
           }}
         />
         {rangeActiveFilter && (
-          <Box
-            sx={{ display: "flex", gap: 1, alignItems: "center", mt: "12px" }}
-          >
-            <MostRecentDateSwitch
+          <Box sx={{ display: "flex", gap: 3, alignItems: "center", mt: 3 }}>
+            <Switch
+              label={t({
+                id: "controls.filter.use-most-recent",
+                message: "Use most recent",
+              })}
               checked={usesMostRecentValue}
               onChange={() => {
                 setFilterRange([
@@ -1210,7 +1210,6 @@ export const TimeFilter = (props: TimeFilterProps) => {
                     : VISUALIZE_MOST_RECENT_VALUE,
                 ]);
               }}
-              noGutter
             />
             <Tooltip
               enterDelay={600}
@@ -1222,8 +1221,8 @@ export const TimeFilter = (props: TimeFilterProps) => {
                 </Trans>
               }
             >
-              <Box sx={{ color: "primary.main" }}>
-                <Icon name="infoCircle" size={16} />
+              <Box sx={{ color: "primary.main", lineHeight: 0 }}>
+                <Icon name="infoCircle" />
               </Box>
             </Tooltip>
           </Box>
@@ -1266,7 +1265,17 @@ const LeftRightFormContainer = ({
 
 const InteractiveTimeRangeToggle = () => {
   const { checked, toggle } = useInteractiveTimeRangeToggle();
-  return <InteractiveFilterToggle checked={checked} toggle={toggle} />;
+
+  return (
+    <Switch
+      label={t({
+        id: "controls.filters.interactive.toggle",
+        message: "Interactive",
+      })}
+      checked={checked}
+      onChange={toggle}
+    />
+  );
 };
 
 // This component is now only used in the Table Chart options.

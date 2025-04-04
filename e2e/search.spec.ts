@@ -96,9 +96,7 @@ test("sort order", async ({
   );
   const resultCount = await selectors.search.resultsCount();
   const text = await resultCount.textContent();
-  // Custom MUI select element; uses an input element under the hood
-  const select = selectors.search.datasetSort().locator("input");
-
+  const select = screen.locator("input[name='datasetSort']");
   expect(await getSelectValue(select)).toBe("CREATED_DESC");
 
   const searchInput = screen.getAllByPlaceholderText(

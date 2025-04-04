@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import { DRAWER_WIDTH } from "@/configurator/components/drawer";
 
-export const LAYOUT_HEADER_HEIGHT = 96;
+export const LAYOUT_HEADER_HEIGHT = 88;
 
 const useStyles = makeStyles<Theme>((theme) => ({
   panelLayout: {
@@ -45,6 +45,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
   panelHeaderLayout: {
     gridArea: "header",
     height: LAYOUT_HEADER_HEIGHT,
+    borderBottom: `1px solid ${theme.palette.cobalt[100]}`,
   },
   LMRPanelHeaderLayout: {
     width: "100%",
@@ -53,21 +54,22 @@ const useStyles = makeStyles<Theme>((theme) => ({
     gridTemplateAreas: `
     "left middle right"
     `,
+    alignItems: "center",
     marginLeft: "auto",
     marginRight: "auto",
+    paddingLeft: theme.spacing(12),
+    paddingRight: theme.spacing(12),
   },
   LPanelHeaderWrapper: {
     gridArea: "left",
   },
   MPanelHeaderWrapper: {
     gridArea: "middle",
-    padding: theme.spacing(4),
   },
   RPanelHeaderWrapper: {
     gridArea: "right",
     display: "flex",
     alignItems: "center",
-    padding: theme.spacing(5),
   },
   LPanelBodyWrapper: {
     overflowX: "hidden",

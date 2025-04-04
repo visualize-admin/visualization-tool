@@ -336,11 +336,7 @@ export const ColorPalette = ({
                   </Typography>
                   <Flex>
                     {palette.colors.map((color) => (
-                      <ColorSquare
-                        key={`option-${color}`}
-                        color={color}
-                        disabled={false}
-                      />
+                      <ColorSquare key={`option-${color}`} color={color} />
                     ))}
                   </Flex>
                 </Flex>
@@ -375,11 +371,7 @@ export const ColorPalette = ({
               </Typography>
               <Flex>
                 {palette.colors.map((color) => (
-                  <ColorSquare
-                    key={`option-${color}`}
-                    color={color}
-                    disabled={false}
-                  />
+                  <ColorSquare key={`option-${color}`} color={color} />
                 ))}
               </Flex>
             </Flex>

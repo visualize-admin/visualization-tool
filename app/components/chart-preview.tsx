@@ -47,7 +47,7 @@ import { DragHandle, useDragOverClasses } from "@/components/drag-handle";
 import Flex from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
-import { HintYellow } from "@/components/hint";
+import { HintOrange } from "@/components/hint";
 import {
   createMetadataPanelStore,
   MetadataPanelStoreContext,
@@ -571,13 +571,13 @@ const ChartPreviewInner = ({
                       d.publicationStatus === DataCubePublicationStatus.Draft
                   ) && (
                     <Box sx={{ mb: 4 }}>
-                      <HintYellow>
+                      <HintOrange>
                         <Trans id="dataset.publicationStatus.draft.warning">
                           Careful, this dataset is only a draft.
                           <br />
                           <strong>Don&apos;t use for reporting!</strong>
                         </Trans>
-                      </HintYellow>
+                      </HintOrange>
                     </Box>
                   )}
                 </Box>

@@ -31,12 +31,5 @@ export const DatasetsBadge = ({ sx }: { sx?: BadgeProps["sx"] }) => {
   const chartConfig = getChartConfig(state);
   const datasetsCount = chartConfig.cubes.length;
 
-  return (
-    <Badge
-      invisible={ctx.isOpen}
-      badgeContent={datasetsCount}
-      color="secondary"
-      sx={{ display: "block", ...sx }}
-    />
-  );
+  return <Badge invisible={ctx.isOpen} badgeContent={datasetsCount} sx={sx} />;
 };

@@ -9,7 +9,7 @@ import { TabDropZone } from "@/configurator/components/chart-controls/drag-and-d
 import {
   ControlSection,
   ControlSectionContent,
-  SubsectionTitle,
+  SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { DatasetsControlSection } from "@/configurator/components/dataset-control-section";
@@ -72,25 +72,24 @@ export const ChartConfiguratorTable = ({
     <>
       <DatasetsControlSection />
       <ControlSection collapse>
-        <SubsectionTitle titleId="controls-design" gutterBottom={false}>
+        <SectionTitle id="controls-design">
           <Trans id="controls.select.chart.type">Chart Type</Trans>
-        </SubsectionTitle>
-        <ControlSectionContent px="small" gap="none">
+        </SectionTitle>
+        <ControlSectionContent gap="none">
           <ChartTypeSelector
             showHelp={false}
             state={state}
             chartKey={chartConfig.key}
-            sx={{ mt: 2 }}
           />
         </ControlSectionContent>
       </ControlSection>
       <ControlSection collapse>
-        <SubsectionTitle gutterBottom={false}>
+        <SectionTitle>
           <Trans id="controls.section.tableoptions">Table Options</Trans>
-        </SubsectionTitle>
+        </SectionTitle>
         <ControlSectionContent
-          px="small"
           gap="none"
+          px="none"
           role="tablist"
           aria-labelledby="controls-settings"
         >

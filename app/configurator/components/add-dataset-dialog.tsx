@@ -1,8 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { LoadingButton } from "@mui/lab";
 import {
-  Alert,
-  AlertProps,
   Box,
   Button,
   Checkbox,
@@ -60,7 +58,7 @@ import {
 import { FirstTenRowsCaption } from "@/browser/dataset-preview";
 import { getEnabledChartTypes } from "@/charts";
 import Flex from "@/components/flex";
-import { Error as ErrorHint, Loading } from "@/components/hint";
+import { Error as ErrorHint, HintOrange, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
 import { ConfiguratorStateConfiguringChart, DataSource } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
@@ -197,17 +195,9 @@ const useCautionAlert = () => {
   };
 };
 
-const CautionAlert = ({
-  onConfirm,
-  ...props
-}: { onConfirm: () => void } & AlertProps) => {
+const CautionAlert = ({ onConfirm }: { onConfirm: () => void }) => {
   return (
-    <Alert
-      {...props}
-      icon={<SvgIcInfoCircle />}
-      severity="info"
-      sx={{ ...props.sx, typography: "body3", color: "text.primary" }}
-    >
+    <HintOrange>
       <Trans id="dataset.search.caution.body">
         The linking of different datasets carries risks such as data
         inconsistencies, scalability issues, and unexpected correlations. Be
@@ -227,7 +217,7 @@ const CautionAlert = ({
           </Trans>
         </Link>
       </Box>
-    </Alert>
+    </HintOrange>
   );
 };
 
@@ -893,9 +883,10 @@ export const DatasetDialog = ({
           </DialogTitle>
           <DialogContent>
             <Collapse in={isOpen}>
-              <CautionAlert sx={{ mb: 4 }} onConfirm={() => close()} />
+              <Box sx={{ mb: 4 }}>
+                <CautionAlert onConfirm={close} />
+              </Box>
             </Collapse>
-
             <Typography variant="body1" mb="2rem">
               <Trans id="chart.datasets.add-dataset-dialog.description">
                 You can only combine datasets that share dimensions with the

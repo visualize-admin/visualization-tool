@@ -14,7 +14,7 @@ describe("Filters", () => {
     await selectors.chart.loaded();
     await selectors.edition.drawerLoaded();
 
-    const filters = selectors.edition.controlSectionBySubtitle("Filters");
+    const filters = selectors.edition.controlSectionByTitle("Filters");
 
     await filters.locator("label").first().waitFor({ timeout: 30_000 });
 
@@ -32,11 +32,11 @@ describe("Filters", () => {
     const texts = await labels.allTextContents();
 
     // Hierarchical dimensions should come first.
-    expect(texts[0]).toEqual("1. Region ");
-    expect(texts[1]).toEqual("2. tree condition ");
+    expect(texts[0]).toContain("1. Region");
+    expect(texts[1]).toContain("2. tree condition");
 
     const productionRegionFilter =
-      selectors.edition.dataFilterInput("1. Region ");
+      selectors.edition.dataFilterInput("1. Region");
 
     const productionRegionFilterValue = await productionRegionFilter
       .locator("input[name^=select-single-filter]")
@@ -44,7 +44,7 @@ describe("Filters", () => {
     expect(productionRegionFilterValue).toEqual("Switzerland");
 
     const treeStatusFilter =
-      selectors.edition.dataFilterInput("2. tree condition ");
+      selectors.edition.dataFilterInput("2. tree condition");
     const treeStatusFilterValue = await treeStatusFilter
       .locator("input[name^=select-single-filter]")
       .inputValue();

@@ -1,10 +1,11 @@
 import { t, Trans } from "@lingui/macro";
-import { Alert, Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import get from "lodash/get";
 import { ChangeEvent, useCallback } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { Checkbox } from "@/components/form";
+import { HintRed } from "@/components/hint";
 import {
   ColumnStyle,
   ConfiguratorStateConfiguringChart,
@@ -17,7 +18,6 @@ import {
   ControlSection,
   ControlSectionContent,
   SectionTitle,
-  SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import {
   ChartOptionCheckboxField,
@@ -184,11 +184,7 @@ export const TableColumnOptions = ({
   const component = allComponents.find((d) => d.id === activeField);
 
   if (!component) {
-    return (
-      <Alert icon={false} severity="error">
-        <Typography variant="body2">No component {activeField}</Typography>
-      </Alert>
-    );
+    return <HintRed smaller>No component {activeField}</HintRed>;
   }
 
   const { isGroup, isHidden } = chartConfig.fields[activeField];
@@ -263,9 +259,9 @@ export const TableColumnOptions = ({
       </ControlSection>
       {(isGroup || !isHidden) && (
         <ControlSection collapse>
-          <SubsectionTitle iconName="formatting">
+          <SectionTitle iconName="formatting">
             <Trans id="controls.section.columnstyle">Column Style</Trans>
-          </SubsectionTitle>
+          </SectionTitle>
           <ControlSectionContent sx={{ mt: 2 }}>
             <ChartOptionSelectField<ColumnStyle>
               id="columnStyle"
@@ -330,15 +326,16 @@ export const TableColumnOptions = ({
       )}
       {isTemporalDimension(component) ? (
         <ControlSection collapse>
-          <SubsectionTitle disabled={!component} iconName="filter">
+          <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
-          </SubsectionTitle>
+          </SectionTitle>
           <ControlSectionContent component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
             {component.isKeyDimension && isHidden && !isGroup ? (
               <DataFilterSelectTime
+                id="select-single-filter-time"
                 dimension={component}
                 label={component.label}
                 from={`${component.values[0].value}`}
@@ -348,8 +345,6 @@ export const TableColumnOptions = ({
                 }`}
                 timeUnit={component.timeUnit}
                 timeFormat={component.timeFormat}
-                disabled={false}
-                id={`select-single-filter-time`}
               />
             ) : (
               <TimeFilter
@@ -362,9 +357,9 @@ export const TableColumnOptions = ({
         </ControlSection>
       ) : isDimension(component) ? (
         <ControlSection collapse>
-          <SubsectionTitle disabled={!component} iconName="filter">
+          <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
-          </SubsectionTitle>
+          </SectionTitle>
           <ControlSectionContent component="fieldset">
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>

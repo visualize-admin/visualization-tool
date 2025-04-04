@@ -8,7 +8,7 @@ import {
   regularChartTypes,
 } from "@/charts";
 import Flex from "@/components/flex";
-import { Hint } from "@/components/hint";
+import { HintRed } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { ChartType, ConfiguratorStatePublished } from "@/config-types";
@@ -20,23 +20,20 @@ import { ConfiguratorStateWithChartConfigs } from "@/configurator/configurator-s
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
 
-type ChartTypeSelectorProps = {
+export const ChartTypeSelector = ({
+  state,
+  type = "edit",
+  showHelp,
+  showComparisonCharts = true,
+  chartKey,
+  ...rest
+}: {
   state: Exclude<ConfiguratorStateWithChartConfigs, ConfiguratorStatePublished>;
   type?: "add" | "edit";
   showHelp?: boolean;
   showComparisonCharts?: boolean;
   chartKey: string;
-} & BoxProps;
-
-export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
-  const {
-    state,
-    type = "edit",
-    showHelp,
-    showComparisonCharts = true,
-    chartKey,
-    ...rest
-  } = props;
+} & BoxProps) => {
   const locale = useLocale();
   const chartConfig = getChartConfig(state);
   const [{ data }] = useDataCubesComponentsQuery({
@@ -105,13 +102,13 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
       )}
       <div>
         {enabledChartTypes.length === 0 ? (
-          <Hint>
+          <HintRed smaller>
             <Trans id="hint.no.visualization.with.dataset">
               No visualization can be created with the selected dataset.
             </Trans>
-          </Hint>
+          </HintRed>
         ) : (
-          <Flex sx={{ flexDirection: "column", gap: 3 }}>
+          <Flex sx={{ flexDirection: "column", gap: 4 }}>
             <ChartTypeSelectorMenu
               type={type}
               title={t({
@@ -126,7 +123,7 @@ export const ChartTypeSelector = (props: ChartTypeSelectorProps) => {
             />
             {showComparisonCharts ? (
               <>
-                <Divider sx={{ borderColor: "muted.main", mx: 2 }} />
+                <Divider sx={{ borderColor: "cobalt.100" }} />
                 <ChartTypeSelectorMenu
                   type={type}
                   title={t({
@@ -183,11 +180,10 @@ const ChartTypeSelectorMenu = ({
           alignItems: "center",
           gap: 1,
           mx: "auto",
-          color: "grey.800",
         }}
       >
         {title}
-        {titleHint && <InfoIconTooltip title={titleHint} />}
+        {titleHint && <InfoIconTooltip title={titleHint} size={16} />}
       </Typography>
       <Box
         data-testid={testId}
@@ -195,12 +191,12 @@ const ChartTypeSelectorMenu = ({
           display: "grid",
           gridTemplateColumns: ["1fr 1fr", "1fr 1fr", "1fr 1fr 1fr"],
           justifyItems: "center",
-          gridGap: "0.75rem",
-          mx: 2,
+          gap: 4,
         }}
       >
         {chartTypes.map((chartType) => {
           const { enabled, message } = possibleChartTypesDict[chartType];
+
           return (
             <MaybeTooltip
               key={chartType}

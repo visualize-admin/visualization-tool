@@ -16,7 +16,14 @@ import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  Fragment,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   DragDropContext,
   Draggable,
@@ -31,6 +38,8 @@ import {
   getPossibleFiltersQueryVariables,
   skipPossibleFiltersQuery,
 } from "@/charts/shared/possible-filters";
+import Flex from "@/components/flex";
+import { Switch } from "@/components/form";
 import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import {
   MetadataPanel,
@@ -53,7 +62,7 @@ import {
   ControlSection,
   ControlSectionContent,
   ControlSectionSkeleton,
-  SubsectionTitle,
+  SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import {
@@ -72,10 +81,7 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { useInteractiveDataFilterToggle } from "@/configurator/interactive-filters/interactive-filters-config-state";
-import {
-  InteractiveFiltersConfigurator,
-  InteractiveFilterToggle,
-} from "@/configurator/interactive-filters/interactive-filters-configurator";
+import { InteractiveFiltersConfigurator } from "@/configurator/interactive-filters/interactive-filters-configurator";
 import {
   Dimension,
   isStandardErrorDimension,
@@ -116,7 +122,7 @@ export const DataFilterSelectGeneric = ({
   index: number;
   disabled?: boolean;
   onRemove?: () => void;
-  sideControls?: React.ReactNode;
+  sideControls?: ReactNode;
   disableLabel?: boolean;
 }) => {
   const locale = useLocale();
@@ -148,27 +154,33 @@ export const DataFilterSelectGeneric = ({
     data?.dataCubesComponents?.dimensions.find(
       (d) => d.cubeIri === rawDimension.cubeIri
     ) ?? rawDimension;
-  const controls = dimension.isKeyDimension ? null : (
-    <Box sx={{ display: "flex", flexGrow: 1 }}>
-      <IconButton
-        disabled={disabled}
-        sx={{ ml: 2, p: 0 }}
-        onClick={onRemove}
-        size="small"
-      >
-        <Icon name="trash" size="16" />
-      </IconButton>
-    </Box>
-  );
 
   const sharedProps = {
     dimension,
     label: disableLabel ? null : (
-      <OpenMetadataPanelWrapper component={dimension}>
-        <span>{`${index + 1}. ${dimension.label}`}</span>
-      </OpenMetadataPanelWrapper>
+      <>
+        <OpenMetadataPanelWrapper component={dimension}>
+          <Typography variant="caption">
+            {`${index + 1}. ${dimension.label}`}
+          </Typography>
+        </OpenMetadataPanelWrapper>
+        <Flex
+          sx={{
+            alignSelf: "flex-end",
+            alignItems: "center",
+            gap: 1,
+            marginRight: sideControls && dimension.isKeyDimension ? 7 : 0,
+          }}
+        >
+          <InteractiveDataFilterToggle id={dimension.id} />
+          {dimension.isKeyDimension ? null : (
+            <IconButton disabled={disabled} size="small" onClick={onRemove}>
+              <Icon name="trash" size={16} />
+            </IconButton>
+          )}
+        </Flex>
+      </>
     ),
-    controls,
     sideControls,
     id: `select-single-filter-${index}`,
     disabled: fetching || disabled,
@@ -543,43 +555,40 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
     overflow: "hidden",
     width: "100%",
     marginBottom: theme.spacing(5),
-    "& .buttons": {
-      transition: "color 0.125s ease, opacity 0.125s ease-out",
-      opacity: 0.25,
-    },
-    "& .buttons:hover": {
-      opacity: ({ fetching }) => (fetching ? undefined : 1),
-    },
+
     "& > *": {
       overflow: "hidden",
     },
+
     "&:last-child": {
       marginBottom: 0,
     },
   },
   addDimensionContainer: {
     marginTop: theme.spacing(5),
+
     "& .menu-button": {
       background: "transparent",
       border: 0,
       padding: 0,
     },
   },
-  addDimensionButton: {
-    display: "flex",
-    minWidth: "auto",
-    minHeight: 32,
-    justifyContent: "center",
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(3),
-  },
 }));
 
 const InteractiveDataFilterToggle = ({ id }: { id: string }) => {
   const { checked, toggle } = useInteractiveDataFilterToggle(id);
-  return <InteractiveFilterToggle checked={checked} toggle={toggle} />;
+
+  return (
+    <Switch
+      size="sm"
+      label={t({
+        id: "controls.filters.interactive.toggle",
+        message: "Interactive",
+      })}
+      checked={checked}
+      onChange={toggle}
+    />
+  );
 };
 
 export const ChartConfigurator = ({
@@ -641,25 +650,24 @@ export const ChartConfigurator = ({
     <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
       <DatasetsControlSection />
       <ControlSection collapse>
-        <SubsectionTitle titleId="controls-design" gutterBottom={false}>
+        <SectionTitle id="controls-design">
           <Trans id="controls.select.chart.type">Chart Type</Trans>
-        </SubsectionTitle>
-        <ControlSectionContent px="small">
+        </SectionTitle>
+        <ControlSectionContent>
           <ChartTypeSelector
             showHelp={false}
             chartKey={chartConfig.key}
             state={state}
-            sx={{ mt: 2 }}
           />
         </ControlSectionContent>
       </ControlSection>
       <ControlSection collapse>
-        <SubsectionTitle titleId="controls-design" gutterBottom={false}>
+        <SectionTitle id="controls-design">
           <Trans id="controls.section.chart.options">Chart Options</Trans>
-        </SubsectionTitle>
+        </SectionTitle>
         <ControlSectionContent
-          px="small"
           gap="none"
+          px="none"
           role="tablist"
           aria-labelledby="controls-design"
         >
@@ -675,8 +683,8 @@ export const ChartConfigurator = ({
       {filterDimensions.length === 0 &&
       addableDimensions &&
       addableDimensions.length === 0 ? null : (
-        <ControlSection className={classes.filterSection} collapse>
-          <SubsectionTitle titleId="controls-data" gutterBottom={false}>
+        <ControlSection collapse>
+          <SectionTitle id="controls-data">
             <Trans id="controls.section.data.filters">Filters</Trans>{" "}
             {fetching ? (
               <CircularProgress
@@ -684,8 +692,8 @@ export const ChartConfigurator = ({
                 className={classes.loadingIndicator}
               />
             ) : null}
-            <FiltersBadge sx={{ ml: "auto", mr: 4 }} />
-          </SubsectionTitle>
+            <FiltersBadge sx={{ ml: "auto", mr: 2 }} />
+          </SectionTitle>
           <ControlSectionContent
             aria-labelledby="controls-data"
             data-testid="configurator-filters"
@@ -731,7 +739,7 @@ export const ChartConfigurator = ({
                 const cubeAddableDims = addableDimensionsByCubeIri[cubeIri];
 
                 return (
-                  <React.Fragment key={cubeIri}>
+                  <Fragment key={cubeIri}>
                     <div>
                       {cubeTitle ? (
                         <Typography variant="caption" component="p" mb={3}>
@@ -759,11 +767,6 @@ export const ChartConfigurator = ({
                                       {...provided.dragHandleProps}
                                       {...provided.draggableProps}
                                     >
-                                      <div>
-                                        <InteractiveDataFilterToggle
-                                          id={dim.id}
-                                        />
-                                      </div>
                                       <DataFilterSelectGeneric
                                         key={dim.id}
                                         rawDimension={dim}
@@ -794,7 +797,7 @@ export const ChartConfigurator = ({
                     {cubes && i < cubes.length - 1 ? (
                       <Divider sx={{ my: 4, mr: 6 }} />
                     ) : null}
-                  </React.Fragment>
+                  </Fragment>
                 );
               }
             )}
@@ -832,13 +835,12 @@ const AddFilterButton = ({ dims }: { dims: Dimension[] }) => {
   return (
     <Box className={classes.addDimensionContainer}>
       <Button
+        variant="outlined"
+        size="sm"
         ref={ref}
         onClick={openMenu}
-        variant="contained"
-        className={classes.addDimensionButton}
-        color="blue"
+        startIcon={<Icon name="plus" size={20} />}
       >
-        <Icon name="plus" size={24} />
         <Trans>Add filter</Trans>
       </Button>
       <Menu anchorEl={ref.current} open={isMenuOpen} onClose={closeMenu}>
@@ -852,17 +854,19 @@ const AddFilterButton = ({ dims }: { dims: Dimension[] }) => {
   );
 };
 
-type ChartFieldsProps = {
+const ChartFields = ({
+  dataSource,
+  chartConfig,
+  dashboardFilters,
+  dimensions,
+  measures,
+}: {
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
   dimensions?: Dimension[];
   measures?: Measure[];
-};
-
-const ChartFields = (props: ChartFieldsProps) => {
-  const { dataSource, chartConfig, dashboardFilters, dimensions, measures } =
-    props;
+}) => {
   const components = [...(dimensions ?? []), ...(measures ?? [])];
   const queryFilters = useQueryFilters({ chartConfig, dashboardFilters });
   const locale = useLocale();
@@ -880,15 +884,14 @@ const ChartFields = (props: ChartFieldsProps) => {
     <>
       {getChartSpec(chartConfig)
         .encodings.filter((d) => !d.hide)
-        .map((encoding) => {
-          const { field, getDisabledState, idAttributes } = encoding;
+        .map(({ field, getDisabledState, idAttributes }) => {
           const componentIds = idAttributes
             .flatMap(
               (x) =>
                 // componentId or componentIds
                 (chartConfig.fields as any)[field]?.[x] as string | string[]
             )
-            .filter(truthy) as string[];
+            .filter(truthy);
           const fieldComponents = componentIds
             .map((cId) => components.find((d) => cId === d.id))
             .filter(truthy);

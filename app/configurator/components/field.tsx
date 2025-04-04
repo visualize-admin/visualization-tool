@@ -1,13 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import {
-  Box,
-  CircularProgress,
-  FormControlLabel,
-  FormGroup,
-  Switch as MUISwitch,
-  Theme,
-  Typography,
-} from "@mui/material";
+import { Box, CircularProgress, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { TimeLocaleObject } from "d3-time-format";
 import get from "lodash/get";
@@ -28,6 +20,7 @@ import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
 import {
   Checkbox,
+  FormControlLabel,
   Input,
   MarkdownInput,
   Radio,
@@ -113,19 +106,18 @@ const ColorPickerMenu = dynamic(
 const useStyles = makeStyles<Theme>((theme) => ({
   root: {
     display: "flex",
-    gap: "0.25rem",
-    textAlign: "left",
-    paddingRight: theme.spacing(1),
-    WebkitLineClamp: 2,
-    WebkitBoxOrient: "vertical",
-    overflow: "hidden",
-    fontSize: "0.75rem",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    gap: theme.spacing(1),
     marginBottom: theme.spacing(2),
-    color: theme.palette.text.secondary,
     marginTop: theme.spacing(2),
+    textAlign: "left",
+    WebkitBoxOrient: "vertical",
+    WebkitLineClamp: 2,
+    overflow: "hidden",
   },
   loadingIndicator: {
-    color: theme.palette.grey[700],
     display: "inline-block",
     marginTop: theme.spacing(1),
     marginLeft: theme.spacing(2),
@@ -193,7 +185,6 @@ export const DataFilterSelect = ({
   id,
   disabled,
   optional,
-  topControls,
   sideControls,
   hierarchy,
   onOpen,
@@ -204,7 +195,6 @@ export const DataFilterSelect = ({
   id: string;
   disabled?: boolean;
   optional?: boolean;
-  topControls?: ReactNode;
   sideControls?: ReactNode;
   hierarchy?: HierarchyValue[] | null;
   onOpen?: () => void;
@@ -267,7 +257,6 @@ export const DataFilterSelect = ({
         onOpen={handleOpen}
         open={isOpen}
         disabled={disabled}
-        topControls={topControls}
         sideControls={sideControls}
         {...fieldProps}
       />
@@ -283,7 +272,7 @@ export const DataFilterSelect = ({
   return (
     <div>
       {canUseMostRecentValue ? (
-        <MostRecentDateSwitch
+        <Switch
           label={label}
           checked={usesMostRecentValue}
           onChange={() =>
@@ -301,10 +290,10 @@ export const DataFilterSelect = ({
       )}
       <Select
         id={id}
+        size="sm"
         disabled={disabled || usesMostRecentValue}
         options={allValues}
         sortOptions={false}
-        topControls={topControls}
         sideControls={sideControls}
         open={isOpen}
         onClose={handleClose}
@@ -314,35 +303,6 @@ export const DataFilterSelect = ({
         value={usesMostRecentValue ? maxValue : fieldProps.value}
       />
     </div>
-  );
-};
-
-type MostRecentDateSwitchProps = {
-  label?: React.ReactNode;
-  checked: boolean;
-  onChange: () => void;
-  noGutter?: boolean;
-};
-
-export const MostRecentDateSwitch = (props: MostRecentDateSwitchProps) => {
-  const { label, checked, onChange, noGutter } = props;
-  return (
-    <Box sx={{ mt: noGutter ? 0 : "0.75rem" }}>
-      {label && <FieldLabel label={label} />}
-      <FormGroup>
-        <FormControlLabel
-          control={<MUISwitch checked={checked} onChange={onChange} />}
-          label={
-            <Typography variant="body2">
-              <Trans id="controls.filter.use-most-recent">
-                Use most recent
-              </Trans>
-            </Typography>
-          }
-          sx={{ mr: 0 }}
-        />
-      </FormGroup>
-    </Box>
   );
 };
 
@@ -358,16 +318,14 @@ export const DataFilterTemporal = ({
   timeUnit,
   disabled,
   isOptional,
-  topControls,
   sideControls,
 }: {
-  label: React.ReactNode;
+  label: ReactNode;
   dimension: TemporalDimension;
   timeUnit: DatePickerTimeUnit;
   disabled?: boolean;
   isOptional?: boolean;
-  topControls?: React.ReactNode;
-  sideControls?: React.ReactNode;
+  sideControls?: ReactNode;
 }) => {
   const { values, timeFormat } = dimension;
   const formatLocale = useTimeFormatLocale();
@@ -430,11 +388,14 @@ export const DataFilterTemporal = ({
         minDate={minDate}
         maxDate={maxDate}
         disabled={disabled || usesMostRecentDate}
-        topControls={topControls}
         sideControls={sideControls}
         parseDate={parseDate}
       />
-      <MostRecentDateSwitch
+      <Switch
+        label={t({
+          id: "controls.filter.use-most-recent",
+          message: "Use most recent",
+        })}
         checked={usesMostRecentDate}
         onChange={() =>
           fieldProps.onChange({
@@ -460,7 +421,6 @@ export const DataFilterSelectTime = ({
   id,
   disabled,
   isOptional,
-  topControls,
 }: {
   dimension: Dimension;
   label: React.ReactNode;
@@ -471,7 +431,6 @@ export const DataFilterSelectTime = ({
   id: string;
   disabled?: boolean;
   isOptional?: boolean;
-  topControls?: React.ReactNode;
 }) => {
   const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
   const formatLocale = useTimeFormatLocale();
@@ -528,7 +487,6 @@ export const DataFilterSelectTime = ({
         disabled={disabled}
         options={allOptions}
         sortOptions={false}
-        topControls={topControls}
         {...fieldProps}
       />
     );
@@ -623,7 +581,7 @@ export const ChartAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
       {...tabProps}
       lowerLabel={
         (chartConfig.meta as any)[value]?.[locale] ? null : (
-          <Typography variant="caption" color="warning.main">
+          <Typography variant="caption" color="orange.main">
             {emptyValueWarning}
           </Typography>
         )
@@ -852,7 +810,6 @@ export const ShowValuesMappingField = ({ value }: { value: string }) => {
       label={t({ id: "controls.filter.show-values", message: "Show values" })}
       field="segment"
       path={`showValuesMapping["${value}"]`}
-      smaller
     />
   );
 };
@@ -949,7 +906,7 @@ export const FieldLabel = ({
   optional,
   isFetching,
 }: {
-  label: React.ReactNode;
+  label: ReactNode;
   optional?: boolean;
   isFetching?: boolean;
 }) => {
@@ -1135,14 +1092,12 @@ export const ChartOptionCheckboxField = ({
   path,
   defaultValue = false,
   disabled = false,
-  smaller,
 }: {
   label: string;
   field: EncodingFieldType | null;
   path: string;
   defaultValue?: boolean;
   disabled?: boolean;
-  smaller?: boolean;
 }) => {
   const fieldProps = useChartOptionBooleanField({
     field,
@@ -1156,7 +1111,6 @@ export const ChartOptionCheckboxField = ({
       label={label}
       {...fieldProps}
       checked={fieldProps.checked ?? defaultValue}
-      smaller={smaller}
     />
   );
 };
@@ -1221,13 +1175,15 @@ export const ChartOptionSelectField = <V extends {} = string>(
 
 export const ChartOptionSwitchField = ({
   label,
+  size,
   field,
   path,
   defaultValue = false,
   disabled = false,
   ...props
 }: {
-  label: React.ComponentProps<typeof FormControlLabel>["label"];
+  label: ComponentProps<typeof FormControlLabel>["label"];
+  size?: ComponentProps<typeof FormControlLabel>["size"];
   field: EncodingFieldType | null;
   path: string;
   defaultValue?: boolean;
@@ -1243,6 +1199,7 @@ export const ChartOptionSwitchField = ({
     <Switch
       disabled={disabled}
       label={label}
+      size={size}
       {...fieldProps}
       {...props}
       checked={fieldProps.checked ?? defaultValue}

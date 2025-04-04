@@ -1,9 +1,7 @@
 import { Trans } from "@lingui/macro";
-import { FormControlLabel, Switch, Typography } from "@mui/material";
 
 import { getFieldComponentId } from "@/charts";
 import { ANIMATION_FIELD_SPEC } from "@/charts/chart-config-ui-options";
-import { MaybeTooltip } from "@/components/maybe-tooltip";
 import {
   ConfiguratorStateConfiguringChart,
   isAnimationInConfig,
@@ -14,7 +12,6 @@ import {
   ControlSectionContent,
   ControlSectionSkeleton,
   SectionTitle,
-  SubsectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { ControlTabField } from "@/configurator/components/field";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
@@ -62,13 +59,10 @@ export const InteractiveFiltersConfigurator = ({
         collapse
         defaultExpanded={false}
       >
-        <SubsectionTitle
-          titleId="controls-interactive-filters"
-          gutterBottom={false}
-        >
+        <SectionTitle id="controls-interactive-filters">
           <Trans id="controls.section.interactive.filters">Animations</Trans>
-        </SubsectionTitle>
-        <ControlSectionContent px="small" gap="none">
+        </SectionTitle>
+        <ControlSectionContent gap="none" px="none">
           {/* Animation is technically a field, so we need to use an appropriate component. */}
           <ControlTabField
             chartConfig={chartConfig}
@@ -92,10 +86,7 @@ export const InteractiveFiltersConfigurator = ({
         collapse
         defaultExpanded={false}
       >
-        <SectionTitle
-          titleId="controls-interactive-filters"
-          gutterBottom={false}
-        >
+        <SectionTitle id="controls-interactive-filters">
           <Trans id="controls.section.interactive.filters">Animations</Trans>
         </SectionTitle>
 
@@ -103,37 +94,4 @@ export const InteractiveFiltersConfigurator = ({
       </ControlSection>
     );
   }
-};
-
-type InteractiveFilterToggleProps = {
-  checked: boolean | undefined;
-  toggle: () => void;
-};
-
-export const InteractiveFilterToggle = (
-  props: InteractiveFilterToggleProps
-) => {
-  const { checked, toggle } = props;
-  return (
-    <FormControlLabel
-      componentsProps={{
-        typography: { variant: "caption", color: "text.secondary" },
-      }}
-      control={<Switch checked={checked} onChange={() => toggle()} />}
-      label={
-        <MaybeTooltip
-          tooltipProps={{ enterDelay: 600 }}
-          title={
-            <Trans id="controls.filters.interactive.tooltip">
-              Allow users to change filters
-            </Trans>
-          }
-        >
-          <Typography variant="body2">
-            <Trans id="controls.filters.interactive.toggle">Interactive</Trans>
-          </Typography>
-        </MaybeTooltip>
-      }
-    />
-  );
 };
