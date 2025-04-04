@@ -338,6 +338,6 @@ const mkHint = (
 };
 
 export const HintRed = mkHint("red", "HintRed");
-export const HintGreen = mkHint("green", "HintGreen");
+const HintGreen = mkHint("green", "HintGreen");
 export const HintBlue = mkHint("blue", "HintBlue");
 export const HintOrange = mkHint("orange", "HintOrange");
