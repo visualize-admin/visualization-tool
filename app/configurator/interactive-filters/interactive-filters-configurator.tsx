@@ -1,9 +1,7 @@
 import { Trans } from "@lingui/macro";
-import { FormControlLabel, Switch, Typography } from "@mui/material";
 
 import { getFieldComponentId } from "@/charts";
 import { ANIMATION_FIELD_SPEC } from "@/charts/chart-config-ui-options";
-import { MaybeTooltip } from "@/components/maybe-tooltip";
 import {
   ConfiguratorStateConfiguringChart,
   isAnimationInConfig,
@@ -96,37 +94,4 @@ export const InteractiveFiltersConfigurator = ({
       </ControlSection>
     );
   }
-};
-
-type InteractiveFilterToggleProps = {
-  checked: boolean | undefined;
-  toggle: () => void;
-};
-
-export const InteractiveFilterToggle = (
-  props: InteractiveFilterToggleProps
-) => {
-  const { checked, toggle } = props;
-  return (
-    <FormControlLabel
-      componentsProps={{
-        typography: { variant: "caption", color: "text.secondary" },
-      }}
-      control={<Switch checked={checked} onChange={() => toggle()} />}
-      label={
-        <MaybeTooltip
-          tooltipProps={{ enterDelay: 600 }}
-          title={
-            <Trans id="controls.filters.interactive.tooltip">
-              Allow users to change filters
-            </Trans>
-          }
-        >
-          <Typography variant="body2">
-            <Trans id="controls.filters.interactive.toggle">Interactive</Trans>
-          </Typography>
-        </MaybeTooltip>
-      }
-    />
-  );
 };
