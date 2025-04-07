@@ -237,17 +237,15 @@ export const DatasetsControlSection = () => {
           })}
         </Flex>
         <Flex sx={{ justifyContent: "end" }}>
-          {cubes.length === 1 ? (
-            <Button
-              variant="text"
-              size="sm"
-              color="blue"
-              startIcon={<Icon name="plus" size={20} />}
-              onClick={openDatasetDialog}
-            >
-              {t({ id: "chart.datasets.add", message: "Add dataset" })}
-            </Button>
-          ) : null}
+          <Button
+            variant="text"
+            size="sm"
+            color="blue"
+            startIcon={<Icon name="plus" size={20} />}
+            onClick={openDatasetDialog}
+          >
+            {t({ id: "chart.datasets.add", message: "Add dataset" })}
+          </Button>
         </Flex>
         <AddDatasetDrawer
           state={state}

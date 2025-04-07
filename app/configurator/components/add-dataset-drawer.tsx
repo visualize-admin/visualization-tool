@@ -652,7 +652,7 @@ export const DatasetDialog = ({
     throw Error("Could not find active chart config");
   }
 
-  const currentCubes = activeChartConfig.cubes.slice(0, 1);
+  const currentCubes = activeChartConfig.cubes;
 
   // Getting cube dimensions, to find temporal dimensions
   const [cubesComponentQuery] = useDataCubesComponentsQuery({
@@ -667,6 +667,7 @@ export const DatasetDialog = ({
   });
 
   // Getting cube termsets, to then search for cubes with at least one matching termset
+  // TODO The cube filters should use all of the cubes and not just the first one
   const [cubeComponentTermsets] = useDataCubeComponentTermsetsQuery({
     pause: !props.open,
     variables: {
@@ -815,6 +816,7 @@ export const DatasetDialog = ({
     },
     pause: !otherCube,
   });
+
   // We need to check for this otherwise otherCubeComponents will hold the previous data, even if
   // we change otherCube
   const otherCubeQueryCubeIri = (
