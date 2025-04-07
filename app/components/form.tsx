@@ -383,38 +383,7 @@ export const Select = ({
               </>
             );
           }}
-          MenuProps={{
-            disablePortal: true,
-            slotProps: {
-              paper: {
-                sx: {
-                  "& .MuiList-root": {
-                    width: "auto",
-                    padding: "4px 0",
-                    boxShadow: 3,
-
-                    "& .MuiMenuItem-root": {
-                      color: "monochrome.600",
-
-                      "&:hover": {
-                        backgroundColor: "cobalt.50",
-                        color: "monochrome.800",
-                      },
-
-                      "&.Mui-selected": {
-                        backgroundColor: "transparent",
-                        color: "monochrome.800",
-
-                        "&:hover": {
-                          backgroundColor: "cobalt.50",
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          }}
+          MenuProps={selectMenuProps}
           sx={{ maxWidth: sideControls ? "calc(100% - 28px)" : "100%" }}
         >
           {sortedOptions.map((opt) => {
@@ -480,6 +449,40 @@ export const Select = ({
       </Box>
     </Box>
   );
+};
+
+export const selectMenuProps: SelectProps["MenuProps"] = {
+  disablePortal: true,
+  slotProps: {
+    paper: {
+      sx: {
+        "& .MuiList-root": {
+          width: "auto",
+          padding: "4px 0",
+          boxShadow: 3,
+          cursor: "default",
+
+          "& .MuiMenuItem-root": {
+            color: "monochrome.600",
+
+            "&:hover": {
+              backgroundColor: "cobalt.50",
+              color: "monochrome.800",
+            },
+
+            "&.Mui-selected": {
+              backgroundColor: "transparent",
+              color: "monochrome.800",
+
+              "&:hover": {
+                backgroundColor: "cobalt.50",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };
 
 export const selectSizeToTypography: Record<
