@@ -455,7 +455,9 @@ const PreviewDataTable = ({
             </Typography>
             <Stack direction="column" spacing={1}>
               <Typography variant="caption">
-                {currentCubes.data?.dataCubesMetadata[0].title}
+                {currentCubes.data?.dataCubesMetadata
+                  .map((metadata) => metadata.title)
+                  .join(", ")}
               </Typography>
               <div>
                 <NewAnnotation />
