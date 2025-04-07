@@ -324,6 +324,7 @@ const ChangeTableSortingOption = ({
 
     return component ? [{ value: component.id, label: component.label }] : [];
   });
+
   return (
     <Select
       id={`change-sorting-option-${index}`}

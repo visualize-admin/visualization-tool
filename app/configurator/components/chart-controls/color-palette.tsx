@@ -226,114 +226,116 @@ export const ColorPalette = ({
         gap: 1,
       }}
     >
-      <Label htmlFor="color-palette-toggle">
-        <Trans id="controls.color.palette">Color palette</Trans>
-      </Label>
-      <Select
-        size="sm"
-        MenuProps={selectMenuProps}
-        renderValue={(selected) => {
-          if (!selected || !isValidValue(selected)) {
-            return (
-              <Trans id="controls.color.palette.select">
-                Select a color palette
-              </Trans>
-            );
-          }
+      <div>
+        <Label htmlFor="color-palette-toggle">
+          <Trans id="controls.color.palette">Color palette</Trans>
+        </Label>
+        <Select
+          size="sm"
+          MenuProps={selectMenuProps}
+          renderValue={(selected) => {
+            if (!selected || !isValidValue(selected)) {
+              return (
+                <Trans id="controls.color.palette.select">
+                  Select a color palette
+                </Trans>
+              );
+            }
 
-          return (
-            <Flex gap={0.5} flexWrap="wrap">
-              {currentPalette
-                ? currentPalette.colors.map((color) => (
-                    <ColorSquare
-                      key={color}
-                      color={color}
-                      disabled={disabled}
-                    />
-                  ))
-                : customColorPalettes
-                    ?.find(
-                      (palette) => palette.paletteId === currentPaletteName
-                    )
-                    ?.colors.map((color) => (
+            return (
+              <Flex gap={0.5} flexWrap="wrap">
+                {currentPalette
+                  ? currentPalette.colors.map((color) => (
                       <ColorSquare
                         key={color}
                         color={color}
                         disabled={disabled}
                       />
-                    ))}
+                    ))
+                  : customColorPalettes
+                      ?.find(
+                        (palette) => palette.paletteId === currentPaletteName
+                      )
+                      ?.colors.map((color) => (
+                        <ColorSquare
+                          key={color}
+                          color={color}
+                          disabled={disabled}
+                        />
+                      ))}
+              </Flex>
+            );
+          }}
+          value={value}
+          displayEmpty
+          onChange={handleChangePalette}
+        >
+          {user && (
+            <MenuItem onClick={handleOpenCreateColorPalette}>
+              <Button
+                variant="text"
+                size="sm"
+                color="blue"
+                sx={{
+                  "&:hover": {
+                    color: "blue.main",
+                  },
+                }}
+              >
+                <Trans id="login.profile.my-color-palettes.add">
+                  Add color palette
+                </Trans>
+              </Button>
+            </MenuItem>
+          )}
+          {customColorPalettes && customColorPalettes.length > 0 && (
+            <Flex sx={{ flexDirection: "column", gap: 2, pt: 3 }}>
+              <Typography
+                variant="caption"
+                sx={{ px: 4, color: "text.secondary", fontWeight: 700 }}
+              >
+                <Trans id="controls.custom-color-palettes">
+                  Custom color palettes
+                </Trans>
+              </Typography>
+              <Divider sx={{ width: "100%", height: 2 }} />
             </Flex>
-          );
-        }}
-        value={value}
-        displayEmpty
-        onChange={handleChangePalette}
-      >
-        {user && (
-          <MenuItem onClick={handleOpenCreateColorPalette}>
-            <Button
-              variant="text"
-              size="sm"
-              color="blue"
-              sx={{
-                "&:hover": {
-                  color: "blue.main",
-                },
-              }}
-            >
-              <Trans id="login.profile.my-color-palettes.add">
-                Add color palette
-              </Trans>
-            </Button>
-          </MenuItem>
-        )}
-        {customColorPalettes && customColorPalettes.length > 0 && (
+          )}
+          {customColorPalettes &&
+            customColorPalettes?.length > 0 &&
+            customColorPalettes
+              .filter((palette) => palette.type === "categorical")
+              .map((palette) => (
+                <ColorPaletteMenuItem
+                  key={palette.paletteId}
+                  value={palette.paletteId}
+                  label={palette.name}
+                  colors={palette.colors}
+                  selected={palette.paletteId === value}
+                />
+              ))}
           <Flex sx={{ flexDirection: "column", gap: 2, pt: 3 }}>
             <Typography
               variant="caption"
               sx={{ px: 4, color: "text.secondary", fontWeight: 700 }}
             >
-              <Trans id="controls.custom-color-palettes">
-                Custom color palettes
+              <Trans id="controls.visualize-color-palette">
+                Visualize color palettes
               </Trans>
             </Typography>
             <Divider sx={{ width: "100%", height: 2 }} />
           </Flex>
-        )}
-        {customColorPalettes &&
-          customColorPalettes?.length > 0 &&
-          customColorPalettes
-            .filter((palette) => palette.type === "categorical")
-            .map((palette) => (
-              <ColorPaletteMenuItem
-                key={palette.paletteId}
-                value={palette.paletteId}
-                label={palette.name}
-                colors={palette.colors}
-                selected={palette.paletteId === value}
-              />
-            ))}
-        <Flex sx={{ flexDirection: "column", gap: 2, pt: 3 }}>
-          <Typography
-            variant="caption"
-            sx={{ px: 4, color: "text.secondary", fontWeight: 700 }}
-          >
-            <Trans id="controls.visualize-color-palette">
-              Visualize color palettes
-            </Trans>
-          </Typography>
-          <Divider sx={{ width: "100%", height: 2 }} />
-        </Flex>
-        {palettes.map((palette) => (
-          <ColorPaletteMenuItem
-            key={palette.value}
-            value={palette.value}
-            label={palette.label}
-            colors={palette.colors}
-            selected={palette.value === value}
-          />
-        ))}
-      </Select>
+          {palettes.map((palette) => (
+            <ColorPaletteMenuItem
+              key={palette.value}
+              value={palette.value}
+              label={palette.label}
+              colors={palette.colors}
+              selected={palette.value === value}
+            />
+          ))}
+        </Select>
+      </div>
       {component && (
         <ColorPaletteControls
           field={field}

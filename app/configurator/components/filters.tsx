@@ -7,12 +7,10 @@ import {
   Button,
   ClickAwayListener,
   Divider,
-  FormControlLabel,
   IconButton,
   Input,
   InputAdornment,
   SelectChangeEvent,
-  Switch as MUISwitch,
   Theme,
   Tooltip,
   Typography,
@@ -354,68 +352,46 @@ const MultiFilterContent = ({
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
-        <Box
-          sx={{
-            justifyContent: "space-between",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {chartConfig.activeField === "segment" ? (
-            <>
-              <Flex sx={{ py: 1, alignItems: "center", width: "100%" }}>
-                <FormControlLabel
-                  componentsProps={{ typography: { variant: "body2" } }}
-                  control={<MUISwitch {...interactiveFilterProps} />}
-                  label={
-                    <MaybeTooltip
-                      tooltipProps={{ enterDelay: 600 }}
-                      title={
-                        <Trans id="controls.filters.interactive.tooltip">
-                          Allow users to change filters
-                        </Trans>
-                      }
-                    >
-                      <div>
-                        <Trans id="controls.filters.interactive.toggle">
-                          Interactive
-                        </Trans>
-                      </div>
-                    </MaybeTooltip>
-                  }
-                />
-              </Flex>
-              <Flex sx={{ py: 1, alignItems: "center", width: "100%" }}>
-                <FormControlLabel
-                  componentsProps={{ typography: { variant: "body2" } }}
-                  control={<MUISwitch {...visibleLegendProps} />}
-                  label={
-                    <Trans id="controls.filters.show-legend.toggle">
-                      Show legend titles
+        {chartConfig.activeField === "segment" ? (
+          <Flex sx={{ flexDirection: "column", gap: 3 }}>
+            <Switch
+              label={
+                <MaybeTooltip
+                  tooltipProps={{ enterDelay: 600 }}
+                  title={
+                    <Trans id="controls.filters.interactive.tooltip">
+                      Allow users to change filters
                     </Trans>
                   }
-                />
-              </Flex>
-            </>
-          ) : null}
-          <Button
-            variant="contained"
-            size="sm"
-            color="blue"
-            onClick={handleOpenAutocomplete}
-            sx={{
-              justifyContent: "center",
-              mt: 4,
-              mb: 2,
-              width: "fit-content",
-            }}
-          >
-            <Trans id="controls.set-filters">Edit filters</Trans>
-          </Button>
-        </Box>
-        <Divider sx={{ mt: "0.5rem", mb: "0.7rem" }} />
-        <Flex justifyContent="space-between">
-          <Typography variant="h5">
+                >
+                  <div>
+                    <Trans id="controls.filters.interactive.toggle">
+                      Interactive
+                    </Trans>
+                  </div>
+                </MaybeTooltip>
+              }
+              {...interactiveFilterProps}
+            />
+            <Switch
+              label={t({
+                id: "controls.filters.show-legend.toggle",
+                message: "Show legend titles",
+              })}
+              {...visibleLegendProps}
+            />
+            <Button
+              variant="outlined"
+              size="sm"
+              onClick={handleOpenAutocomplete}
+              sx={{ width: "fit-content" }}
+            >
+              <Trans id="controls.set-filters">Edit filters</Trans>
+            </Button>
+          </Flex>
+        ) : null}
+        <Flex sx={{ justifyContent: "space-between", mt: 4 }}>
+          <Typography variant="h6" component="p" sx={{ fontWeight: 700 }}>
             <Trans id="controls.filters.select.selected-filters">
               Selected filters
             </Trans>
@@ -437,7 +413,7 @@ const MultiFilterContent = ({
               </Tooltip>
             )}
           </Typography>
-          <Typography variant="body2" component="span">
+          <Typography variant="caption" color="text.secondary">
             <Trans id="controls.filter.nb-elements">
               {activeKeys.size} of {allValues.length}
             </Trans>
@@ -471,7 +447,7 @@ const MultiFilterContent = ({
                     />
                   ) : (
                     <>
-                      <Typography variant="body2" style={{ flexGrow: 1 }}>
+                      <Typography variant="body3" style={{ flexGrow: 1 }}>
                         {label}
                       </Typography>
                       {enableSettingShowValuesBySegment ? (

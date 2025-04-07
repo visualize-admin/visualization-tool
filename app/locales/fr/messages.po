@@ -710,9 +710,10 @@ msgstr "Tout déselectionner"
 
 #: app/configurator/components/field.tsx
 msgid "controls.filter.show-values"
-msgstr "Afficher les valeurs"
+msgstr "Afficher la valeur"
 
 #: app/configurator/components/field.tsx
+#: app/configurator/components/filters.tsx
 msgid "controls.filter.use-most-recent"
 msgstr "Utiliser le plus récent"
 
@@ -728,14 +729,14 @@ msgstr "Permettre aux utilisateurs de changer de mode graphique"
 msgid "controls.filters.interactive.color.min-1-filter"
 msgstr "Au moins un filtre doit être sélectionné."
 
+#: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/filters.tsx
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx
+#: app/configurator/components/filters.tsx
 msgid "controls.filters.interactive.toggle"
 msgstr "Interactif"
 
 #: app/configurator/components/filters.tsx
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx
 msgid "controls.filters.interactive.tooltip"
 msgstr "Permettre aux utilisateurs de changer le filtre"
 
@@ -1616,7 +1617,6 @@ msgid "hint.how.to.share"
 msgstr "Vous pouvez partager cette visualisation en copiant l'URL ou en l'intégrant sur votre site Web. Vous pouvez également créer une toute nouvelle visualisation, ou bien copier et modifier la visualisation ci-dessus."
 
 #: app/components/chart-filters-list.tsx
-#: app/components/form.tsx
 #: app/components/hint.tsx
 #: app/components/hint.tsx
 msgid "hint.loading.data"

@@ -106,10 +106,10 @@ const ColorPickerMenu = dynamic(
 const useStyles = makeStyles<Theme>((theme) => ({
   root: {
     display: "flex",
+    justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
     gap: theme.spacing(1),
-    marginBottom: theme.spacing(1),
     textAlign: "left",
     WebkitBoxOrient: "vertical",
     WebkitLineClamp: 2,
@@ -165,6 +165,7 @@ export const OnOffControlTabField = ({
   active?: boolean;
 }) => {
   const { checked, onClick } = useActiveChartField({ value });
+
   return (
     <OnOffControlTab
       value={value}
@@ -268,39 +269,39 @@ export const DataFilterSelect = ({
   const maxValue = sortedValues[sortedValues.length - 1]?.value;
 
   return (
-    <div>
-      {canUseMostRecentValue ? (
-        <Switch
-          label={label}
-          checked={usesMostRecentValue}
-          onChange={() =>
-            fieldProps.onChange({
-              target: {
-                value: usesMostRecentValue
-                  ? `${maxValue}`
-                  : VISUALIZE_MOST_RECENT_VALUE,
-              },
-            })
-          }
-        />
-      ) : (
-        <FieldLabel label={label} optional={optional} />
-      )}
-      <Select
-        id={id}
-        size="sm"
-        disabled={disabled || usesMostRecentValue}
-        options={allValues}
-        sortOptions={false}
-        sideControls={sideControls}
-        open={isOpen}
-        onClose={handleClose}
-        onOpen={handleOpen}
-        loading={loading}
-        {...fieldProps}
-        value={usesMostRecentValue ? maxValue : fieldProps.value}
-      />
-    </div>
+    <Select
+      id={id}
+      size="sm"
+      label={
+        canUseMostRecentValue ? (
+          <Switch
+            label={label}
+            checked={usesMostRecentValue}
+            onChange={() =>
+              fieldProps.onChange({
+                target: {
+                  value: usesMostRecentValue
+                    ? `${maxValue}`
+                    : VISUALIZE_MOST_RECENT_VALUE,
+                },
+              })
+            }
+          />
+        ) : (
+          <FieldLabel label={label} optional={optional} />
+        )
+      }
+      disabled={disabled || usesMostRecentValue}
+      options={allValues}
+      sortOptions={false}
+      sideControls={sideControls}
+      open={isOpen}
+      onClose={handleClose}
+      onOpen={handleOpen}
+      loading={loading}
+      {...fieldProps}
+      value={usesMostRecentValue ? maxValue : fieldProps.value}
+    />
   );
 };
 
@@ -445,7 +446,7 @@ export const DataFilterSelectTime = ({
   });
   const fullLabel = isOptional ? (
     <span>
-      {label} <span style={{ marginLeft: "0.25rem" }}>({optionalLabel})</span>
+      {label} ({optionalLabel})
     </span>
   ) : (
     label
@@ -808,7 +809,8 @@ export const MultiFilterField = ({
 export const ShowValuesMappingField = ({ value }: { value: string }) => {
   return (
     <ChartOptionCheckboxField
-      label={t({ id: "controls.filter.show-values", message: "Show values" })}
+      label={t({ id: "controls.filter.show-values", message: "Show value" })}
+      size="sm"
       field="segment"
       path={`showValuesMapping["${value}"]`}
     />
@@ -918,11 +920,11 @@ export const FieldLabel = ({
   });
 
   return (
-    <div className={classes.root}>
+    <Typography className={classes.root} variant="caption">
       {label}
-      {optional ? <span> ({optionalLabel})</span> : null}
+      {optional ? ` (${optionalLabel})` : null}
       {isFetching ? <LoadingIndicator /> : null}
-    </div>
+    </Typography>
   );
 };
 
@@ -1006,7 +1008,6 @@ export const ChartFieldField = ({
       options={allOptions}
       optionGroups={allOptionGroups}
       {...props}
-      sx={{ mb: 2 }}
     />
   );
 };
@@ -1086,12 +1087,14 @@ export const ChartOptionSliderField = ({
 
 export const ChartOptionCheckboxField = ({
   label,
+  size,
   field,
   path,
   defaultValue = false,
   disabled = false,
 }: {
   label: string;
+  size?: ComponentProps<typeof Checkbox>["size"];
   field: EncodingFieldType | null;
   path: string;
   defaultValue?: boolean;
@@ -1107,6 +1110,7 @@ export const ChartOptionCheckboxField = ({
     <Checkbox
       disabled={disabled}
       label={label}
+      size={size}
       {...fieldProps}
       checked={fieldProps.checked ?? defaultValue}
     />

@@ -472,7 +472,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           <SectionTitle closable>
             {getFieldLabel(`${chartConfig.chartType}.${encoding.field}`)}
           </SectionTitle>
-          <ControlSectionContent gap="none">
+          <ControlSectionContent>
             {!encoding.customComponent && (
               <ChartFieldField
                 field={encoding.field}
@@ -484,17 +484,15 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
               />
             )}
             {encoding.options?.showValues ? (
-              <SwitchWrapper>
-                <ChartOptionCheckboxField
-                  path="showValues"
-                  field={encoding.field}
-                  label={t({ id: "controls.section.show-values" })}
-                  disabled={
-                    encoding.options.showValues.getDisabledState?.(chartConfig)
-                      .disabled
-                  }
-                />
-              </SwitchWrapper>
+              <ChartOptionCheckboxField
+                path="showValues"
+                field={encoding.field}
+                label={t({ id: "controls.section.show-values" })}
+                disabled={
+                  encoding.options.showValues.getDisabledState?.(chartConfig)
+                    .disabled
+                }
+              />
             ) : null}
             {encoding.options?.showStandardError && hasStandardError && (
               <SwitchWrapper>
@@ -696,7 +694,7 @@ const ChartLayoutOptions = ({
       <SectionTitle iconName="swatch">
         <Trans id="controls.section.layout-options">Layout options</Trans>
       </SectionTitle>
-      <ControlSectionContent component="fieldset">
+      <ControlSectionContent gap="large">
         {hasSubOptions && (
           <ChartFieldOptions
             encoding={encoding}
@@ -1830,7 +1828,7 @@ const ChartFieldOptions = ({
   const values = chartSubType.getValues(chartConfig, components);
 
   return (
-    <div>
+    <Flex sx={{ flexDirection: "column", gap: 1 }}>
       <Typography variant="caption">
         <Trans id="controls.select.column.layout">Column layout</Trans>
       </Typography>
@@ -1860,14 +1858,10 @@ const ChartFieldCalculation = ({
 }) => {
   return (
     <ControlSection collapse>
-      <SectionTitle
-        iconName="normalize"
-        disabled={disabled}
-        warnMessage={warnMessage}
-      >
+      <SectionTitle iconName="normalize" warnMessage={warnMessage}>
         <Trans id="controls.select.calculation.mode">Chart mode</Trans>
       </SectionTitle>
-      <ControlSectionContent component="fieldset">
+      <ControlSectionContent>
         <RadioGroup>
           <ChartOptionRadioField
             label={getFieldLabel("identity")}

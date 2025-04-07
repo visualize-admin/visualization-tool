@@ -169,11 +169,7 @@ export const Slider = ({
   Omit<SliderProps, "onChange">) => {
   return (
     <Box sx={sx}>
-      {label && (
-        <Label htmlFor={`${name}-${value}`} sx={{ mb: 1 }}>
-          {label}
-        </Label>
-      )}
+      {label && <Label htmlFor={`${name}-${value}`}>{label}</Label>}
       <Stack
         direction="row"
         gap={4}
@@ -333,7 +329,10 @@ export const Select = ({
   return (
     <Box ref={ref} sx={{ width: "100%", ...sx }}>
       {label && (
-        <Label htmlFor={id} sx={{ display: "flex", alignItems: "center" }}>
+        <Label
+          htmlFor={id}
+          sx={{ display: "flex", alignItems: "center", mb: 1 }}
+        >
           {label}
           {loading && (
             <CircularProgress
@@ -516,11 +515,7 @@ export const Input = ({
   error?: boolean;
 } & FieldProps) => (
   <Box sx={{ fontSize: "1rem", pb: 2 }}>
-    {label && name && (
-      <Label htmlFor={name} sx={{ mb: 1 }}>
-        {label}
-      </Label>
-    )}
+    {label && name && <Label htmlFor={name}>{label}</Label>}
     <MUIInput
       id={name}
       size="sm"
@@ -567,11 +562,7 @@ export const MarkdownInput = ({
                   <Divider flexItem orientation="vertical" />
                   <LinkDialogToggle />
                 </Box>
-                {label && name ? (
-                  <Label htmlFor={name} sx={{ my: 1 }}>
-                    {label}
-                  </Label>
-                ) : null}
+                {label && name ? <Label htmlFor={name}>{label}</Label> : null}
               </div>
             ),
           }),
