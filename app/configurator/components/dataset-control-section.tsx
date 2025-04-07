@@ -18,7 +18,7 @@ import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
 import useDisclosure from "@/components/use-disclosure";
 import { getChartConfig } from "@/config-utils";
-import { AddDatasetDrawer } from "@/configurator/components/add-dataset-drawer";
+import { DatasetDialog as AddDatasetDrawer } from "@/configurator/components/add-dataset-drawer";
 import { DatasetsBadge } from "@/configurator/components/badges";
 import {
   ControlSection,

@@ -65,6 +65,7 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import {
+  ComponentTermsets,
   Dimension,
   isJoinByComponent,
   isStandardErrorDimension,
@@ -588,7 +589,41 @@ const PreviewDataTable = ({
   );
 };
 
-export const AddDatasetDrawer = ({
+const extractSearchDimensions = (
+  dimensions: Dimension[],
+  termsets: ComponentTermsets[]
+) => {
+  const temporalDimensions =
+    dimensions.filter(isTemporalDimensionWithTimeUnit) ?? [];
+  const sharedDimensions = termsets ?? [];
+  const sharedDimensionIds = sharedDimensions.map((dim) => dim.iri);
+
+  return [
+    ...temporalDimensions
+      // There are cases, e.g. for AMDP cubes, that a temporal dimension contains
+      // termsets (TemporalEntityDimension). When this happens, we prefer to show
+      // the dimension as a shared dimension.
+      .filter((dim) => !sharedDimensionIds.includes(dim.id))
+      .map((x) => {
+        return {
+          type: "temporal" as const,
+          id: x.id as ComponentId,
+          label: x.label,
+          timeUnit: x.timeUnit,
+        };
+      }),
+    ...sharedDimensions.map((x) => {
+      return {
+        type: "shared" as const,
+        id: x.iri,
+        label: x.label,
+        termsets: x.termsets,
+      };
+    }),
+  ];
+};
+
+export const DatasetDialog = ({
   state,
   ...props
 }: {
@@ -644,44 +679,20 @@ export const AddDatasetDrawer = ({
     },
   });
 
-  const searchDimensionOptions: SearchOptions[] = useMemo(() => {
-    const temporalDimensions =
-      cubesComponentQuery.data?.dataCubesComponents.dimensions.filter(
-        isTemporalDimensionWithTimeUnit
-      ) ?? [];
-    const sharedDimensions =
+  const { searchDimensionOptions, searchDimensionOptionsById } = useMemo(() => {
+    const allDimensions =
+      cubesComponentQuery.data?.dataCubesComponents.dimensions ?? [];
+    const allTermsets =
       cubeComponentTermsets.data?.dataCubeComponentTermsets ?? [];
-    const sharedDimensionIds = sharedDimensions.map((dim) => dim.iri);
-
-    return [
-      ...temporalDimensions
-        // There are cases, e.g. for AMDP cubes, that a temporal dimension contains
-        // termsets (TemporalEntityDimension). When this happens, we prefer to show
-        // the dimension as a shared dimension.
-        .filter((dim) => !sharedDimensionIds.includes(dim.id))
-        .map((x) => {
-          return {
-            type: "temporal" as const,
-            id: x.id as ComponentId,
-            label: x.label,
-            timeUnit: x.timeUnit,
-          };
-        }),
-      ...sharedDimensions.map((x) => {
-        return {
-          type: "shared" as const,
-          id: x.iri,
-          label: x.label,
-          termsets: x.termsets,
-        };
-      }),
-    ];
+    const options = extractSearchDimensions(allDimensions, allTermsets);
+    return {
+      searchDimensionOptions: options,
+      searchDimensionOptionsById: keyBy(options, (x) => x.id),
+    };
   }, [
     cubeComponentTermsets.data?.dataCubeComponentTermsets,
     cubesComponentQuery.data?.dataCubesComponents.dimensions,
   ]);
-
-  const searchDimensionOptionsById = keyBy(searchDimensionOptions, (x) => x.id);
 
   const [selectedSearchDimensions, setSelectedSearchDimensions] = useState<
     typeof searchDimensionOptions | undefined
@@ -788,6 +799,8 @@ export const AddDatasetDrawer = ({
   ]);
 
   const [otherCube, setOtherCube] = useState<PartialSearchCube>();
+
+  // When a cube is selected, contains the inferred joinBy
   const inferredJoinBy = useMemo(() => {
     if (!otherCube) {
       return undefined;
