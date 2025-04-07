@@ -1927,17 +1927,16 @@ const ChartFieldSorting = ({
   const getSortingTypeLabel = (type: SortingType): string => {
     switch (type) {
       case "byDimensionLabel":
-        return t({ id: "controls.sorting.byDimensionLabel", message: `Name` });
+        return t({ id: "controls.sorting.byDimensionLabel", message: "Name" });
       case "byMeasure":
-        return t({ id: "controls.sorting.byMeasure", message: `Measure` });
+        return t({ id: "controls.sorting.byMeasure", message: "Measure" });
       case "byTotalSize":
-        return t({ id: "controls.sorting.byTotalSize", message: `Total size` });
+        return t({ id: "controls.sorting.byTotalSize", message: "Total size" });
       case "byAuto":
-        return t({ id: "controls.sorting.byAuto", message: `Automatic` });
+        return t({ id: "controls.sorting.byAuto", message: "Automatic" });
       default:
-        const _sanityCheck: never = type;
-        console.warn(`Sorting type label is ${_sanityCheck}`);
-        return getSortingTypeLabel(DEFAULT_SORTING["sortingType"]);
+        const _exhaustiveCheck: never = type;
+        return _exhaustiveCheck;
     }
   };
 
@@ -1982,31 +1981,30 @@ const ChartFieldSorting = ({
       <SectionTitle disabled={disabled} iconName="sort">
         <Trans id="controls.section.sorting">Sort</Trans>
       </SectionTitle>
-      <ControlSectionContent component="fieldset">
-        <Box>
-          <Select
-            id="sort-by"
-            label={getFieldLabel("sortBy")}
-            options={encodingSortingOptions?.map((d) => {
-              const disabledState = d.getDisabledState?.(chartConfig);
+      <ControlSectionContent>
+        <Select
+          id="sort-by"
+          size="sm"
+          label={getFieldLabel("sortBy")}
+          options={encodingSortingOptions?.map((d) => {
+            const disabledState = d.getDisabledState?.(chartConfig);
 
-              return {
-                value: d.sortingType,
-                label: getSortingTypeLabel(d.sortingType),
-                ...disabledState,
-              };
-            })}
-            value={activeSortingType}
-            disabled={disabled}
-            onChange={(e) => {
-              updateSortingOption({
-                sortingType: e.target
-                  .value as EncodingSortingOption["sortingType"],
-                sortingOrder: activeSortingOrder,
-              });
-            }}
-          />
-        </Box>
+            return {
+              value: d.sortingType,
+              label: getSortingTypeLabel(d.sortingType),
+              ...disabledState,
+            };
+          })}
+          value={activeSortingType}
+          disabled={disabled}
+          onChange={(e) => {
+            updateSortingOption({
+              sortingType: e.target
+                .value as EncodingSortingOption["sortingType"],
+              sortingOrder: activeSortingOrder,
+            });
+          }}
+        />
         <RadioGroup>
           {sortingOrderOptions &&
             sortingOrderOptions.map((sortingOrder) => {
