@@ -469,7 +469,10 @@ const PreviewDataTable = ({
           {isFetching ? <Loading delayMs={0} /> : null}
           {observations.error ? (
             <ErrorHint>
-              <Box component="details" sx={{ width: "100%" }}>
+              <Box
+                component="details"
+                sx={{ width: "100%", cursor: "pointer" }}
+              >
                 <summary>{observations.error.name}</summary>
                 {observations.error.message}
               </Box>
