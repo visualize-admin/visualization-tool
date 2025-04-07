@@ -29,6 +29,7 @@ import { getMap } from "@/charts/map/ref";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
+import { RadioGroup } from "@/components/form";
 import {
   Label,
   Radio,
@@ -881,47 +882,49 @@ const ChartLimits = ({
                         Select symbol type
                       </Trans>
                     </Typography>
-                    <Radio
-                      name={`limit-${i}-symbol-type-dot`}
-                      label={t({ id: "controls.symbol.dot", message: "Dot" })}
-                      value="dot"
-                      checked={symbolType === "circle"}
-                      onChange={() => {
-                        dispatch({
-                          type: "LIMIT_SET",
-                          value: {
-                            measureId: measure.id,
-                            related: limit.related,
-                            color,
-                            lineType,
-                            symbolType: "circle",
-                          },
-                        });
-                      }}
-                      disabled={!maybeLimit}
-                    />
-                    <Radio
-                      name={`limit-${i}-symbol-type-cross`}
-                      label={t({
-                        id: "controls.symbol.cross",
-                        message: "Cross",
-                      })}
-                      value="cross"
-                      checked={symbolType === "cross"}
-                      onChange={() => {
-                        dispatch({
-                          type: "LIMIT_SET",
-                          value: {
-                            measureId: measure.id,
-                            related: limit.related,
-                            color,
-                            lineType,
-                            symbolType: "cross",
-                          },
-                        });
-                      }}
-                      disabled={!maybeLimit}
-                    />
+                    <RadioGroup>
+                      <Radio
+                        name={`limit-${i}-symbol-type-dot`}
+                        label={t({ id: "controls.symbol.dot", message: "Dot" })}
+                        value="dot"
+                        checked={symbolType === "circle"}
+                        onChange={() => {
+                          dispatch({
+                            type: "LIMIT_SET",
+                            value: {
+                              measureId: measure.id,
+                              related: limit.related,
+                              color,
+                              lineType,
+                              symbolType: "circle",
+                            },
+                          });
+                        }}
+                        disabled={!maybeLimit}
+                      />
+                      <Radio
+                        name={`limit-${i}-symbol-type-cross`}
+                        label={t({
+                          id: "controls.symbol.cross",
+                          message: "Cross",
+                        })}
+                        value="cross"
+                        checked={symbolType === "cross"}
+                        onChange={() => {
+                          dispatch({
+                            type: "LIMIT_SET",
+                            value: {
+                              measureId: measure.id,
+                              related: limit.related,
+                              color,
+                              lineType,
+                              symbolType: "cross",
+                            },
+                          });
+                        }}
+                        disabled={!maybeLimit}
+                      />
+                    </RadioGroup>
                   </div>
                 ) : null}
                 {limit.type === "range" ? (
@@ -931,47 +934,52 @@ const ChartLimits = ({
                         Select line type
                       </Trans>
                     </Typography>
-                    <Radio
-                      name={`limit-${i}-line-type-solid`}
-                      label={t({ id: "controls.line.solid", message: "Solid" })}
-                      value="solid"
-                      checked={lineType === "solid"}
-                      onChange={() => {
-                        dispatch({
-                          type: "LIMIT_SET",
-                          value: {
-                            measureId: measure.id,
-                            related: limit.related,
-                            color,
-                            lineType: "solid",
-                            symbolType,
-                          },
-                        });
-                      }}
-                      disabled={!maybeLimit}
-                    />
-                    <Radio
-                      name={`limit-${i}-line-type-dashed`}
-                      label={t({
-                        id: "controls.line.dashed",
-                        message: "Dashed",
-                      })}
-                      value="dashed"
-                      checked={lineType === "dashed"}
-                      onChange={() => {
-                        dispatch({
-                          type: "LIMIT_SET",
-                          value: {
-                            measureId: measure.id,
-                            related: limit.related,
-                            color,
-                            lineType: "dashed",
-                            symbolType,
-                          },
-                        });
-                      }}
-                      disabled={!maybeLimit}
-                    />
+                    <RadioGroup>
+                      <Radio
+                        name={`limit-${i}-line-type-solid`}
+                        label={t({
+                          id: "controls.line.solid",
+                          message: "Solid",
+                        })}
+                        value="solid"
+                        checked={lineType === "solid"}
+                        onChange={() => {
+                          dispatch({
+                            type: "LIMIT_SET",
+                            value: {
+                              measureId: measure.id,
+                              related: limit.related,
+                              color,
+                              lineType: "solid",
+                              symbolType,
+                            },
+                          });
+                        }}
+                        disabled={!maybeLimit}
+                      />
+                      <Radio
+                        name={`limit-${i}-line-type-dashed`}
+                        label={t({
+                          id: "controls.line.dashed",
+                          message: "Dashed",
+                        })}
+                        value="dashed"
+                        checked={lineType === "dashed"}
+                        onChange={() => {
+                          dispatch({
+                            type: "LIMIT_SET",
+                            value: {
+                              measureId: measure.id,
+                              related: limit.related,
+                              color,
+                              lineType: "dashed",
+                              symbolType,
+                            },
+                          });
+                        }}
+                        disabled={!maybeLimit}
+                      />
+                    </RadioGroup>
                   </div>
                 ) : null}
               </Box>
@@ -1662,7 +1670,7 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                   Animation Duration
                 </Trans>
               </Typography>
-              <Flex sx={{ justifyContent: "flex-start" }}>
+              <RadioGroup>
                 {[10, 30, 60].map((d) => (
                   <ChartOptionRadioField
                     key={d}
@@ -1672,7 +1680,7 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                     value={d}
                   />
                 ))}
-              </Flex>
+              </RadioGroup>
             </Box>
             <Box component="fieldset" mt={4}>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -1694,7 +1702,7 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                   </Typography>
                 </Tooltip>
               </Box>
-              <Flex justifyContent="flex-start">
+              <RadioGroup>
                 <ChartOptionRadioField
                   label={t({
                     id: "controls.section.animation.type.continuous",
@@ -1713,7 +1721,7 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                   path="type"
                   value="stepped"
                 />
-              </Flex>
+              </RadioGroup>
             </Box>
             <Box display="flex" alignItems="center" mt={5} gap="0.5rem">
               <ChartOptionSwitchField
@@ -1826,7 +1834,7 @@ const ChartFieldOptions = ({
       <Typography variant="caption">
         <Trans id="controls.select.column.layout">Column layout</Trans>
       </Typography>
-      <Flex>
+      <RadioGroup>
         {values.map((d) => (
           <ChartOptionRadioField
             key={d.value}
@@ -1838,8 +1846,8 @@ const ChartFieldOptions = ({
             warnMessage={d.warnMessage}
           />
         ))}
-      </Flex>
-    </div>
+      </RadioGroup>
+    </Flex>
   );
 };
 
@@ -1860,7 +1868,7 @@ const ChartFieldCalculation = ({
         <Trans id="controls.select.calculation.mode">Chart mode</Trans>
       </SectionTitle>
       <ControlSectionContent component="fieldset">
-        <Flex sx={{ justifyContent: "flex-start", my: 2 }}>
+        <RadioGroup>
           <ChartOptionRadioField
             label={getFieldLabel("identity")}
             field={null}
@@ -1875,7 +1883,7 @@ const ChartFieldCalculation = ({
             value="percent"
             disabled={disabled}
           />
-        </Flex>
+        </RadioGroup>
         <ChartOptionSwitchField
           label={
             <MaybeTooltip
@@ -1999,7 +2007,7 @@ const ChartFieldSorting = ({
             }}
           />
         </Box>
-        <Flex sx={{ justifyContent: "flex-start", flexWrap: "wrap" }} mt={1}>
+        <RadioGroup>
           {sortingOrderOptions &&
             sortingOrderOptions.map((sortingOrder) => {
               const subType = get(
@@ -2029,7 +2037,7 @@ const ChartFieldSorting = ({
                 />
               );
             })}
-        </Flex>
+        </RadioGroup>
       </ControlSectionContent>
     </ControlSection>
   );
@@ -2267,7 +2275,7 @@ const ChartFieldColorComponent = ({
             <Typography variant="caption">
               <Trans id="controls.scale.type">Scale type</Trans>
             </Typography>
-            <Flex sx={{ justifyContent: "flex-start" }}>
+            <RadioGroup>
               <ChartOptionRadioField
                 label={t({
                   id: "controls.color.scale.type.continuous",
@@ -2277,7 +2285,6 @@ const ChartFieldColorComponent = ({
                 path="color.scaleType"
                 value="continuous"
               />
-
               {nbOptions >= 3 && (
                 <ChartOptionRadioField
                   label={t({
@@ -2289,7 +2296,7 @@ const ChartFieldColorComponent = ({
                   value="discrete"
                 />
               )}
-            </Flex>
+            </RadioGroup>
           </div>
         ) : null}
 

@@ -6,6 +6,7 @@ import { makeStyles } from "@mui/styles";
 import { useCallback, useRef, useState } from "react";
 
 import Flex from "@/components/flex";
+import { RadioGroup } from "@/components/form";
 import { Input, Label, Radio } from "@/components/form";
 import { BackButton, CustomPaletteType } from "@/configurator";
 import { ColorItem, ColorsByType, getDefaultColorValues } from "@/palettes";
@@ -292,7 +293,7 @@ const ColorPaletteTypeSelector = ({
       <Label htmlFor="custom-color-palette-type" sx={{ mb: 1 }}>
         <Trans id="controls.custom-color-palettes.type" />
       </Label>
-      <Flex gap={6}>
+      <RadioGroup>
         {types.map((type) => {
           return (
             <Flex
@@ -310,7 +311,7 @@ const ColorPaletteTypeSelector = ({
             </Flex>
           );
         })}
-      </Flex>
+      </RadioGroup>
     </Box>
   );
 };

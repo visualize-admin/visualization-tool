@@ -16,8 +16,7 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 
-import Flex from "@/components/flex";
-import { Radio, Select } from "@/components/form";
+import { Radio, RadioGroup, Select } from "@/components/form";
 import VisuallyHidden from "@/components/visually-hidden";
 import {
   ConfiguratorStateConfiguringChart,
@@ -65,11 +64,6 @@ const useStyles = makeStyles<Theme>((theme) => ({
     lineHeight: "1rem",
     textAlign: "left",
     marginBottom: theme.spacing(4),
-  },
-  metaOptionsContainer: {
-    marginBottom: -theme.spacing(1),
-    width: "100%",
-    alignItems: "flex-start",
   },
   removeButton: {
     padding: 0,
@@ -151,7 +145,7 @@ const TableSortingOptionItem = ({
 
   return component ? (
     <Box className={classes.sortingItemContainer}>
-      <Typography variant="body1" className={classes.selectWrapper}>
+      <Typography className={classes.selectWrapper}>
         <ChangeTableSortingOption
           index={index}
           dimensions={dimensions}
@@ -159,7 +153,7 @@ const TableSortingOptionItem = ({
           chartConfig={chartConfig}
         />
       </Typography>
-      <Flex className={classes.metaOptionsContainer}>
+      <RadioGroup>
         <Radio
           name={`${componentId}-sortingOrder`}
           value="asc"
@@ -188,7 +182,7 @@ const TableSortingOptionItem = ({
             <Icon name="trash" size={20} />
           </Box>
         </Button>
-      </Flex>
+      </RadioGroup>
     </Box>
   ) : null;
 };

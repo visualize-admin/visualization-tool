@@ -111,6 +111,10 @@ export const Label = ({
   );
 };
 
+export const RadioGroup = ({ children }: { children: ReactNode }) => {
+  return <Flex sx={{ gap: 6, wrap: "wrap" }}>{children}</Flex>;
+};
+
 export const Radio = ({
   label,
   size,
@@ -236,7 +240,6 @@ export const Checkbox = ({
     className={className}
     control={
       <MUICheckbox
-        data-name="checkbox-component"
         id={name}
         name={name}
         value={value}
