@@ -341,9 +341,11 @@ export const components: Components = {
     styleOverrides: {
       root: {
         padding: 12,
+        paddingRight: 40,
         color: palette.text.primary,
         lineHeight: 1,
         fontWeight: 700,
+        cursor: "auto",
         ...typography.h6,
       },
     },

@@ -1007,7 +1007,7 @@ export const ChartFieldField = ({
       options={allOptions}
       optionGroups={allOptionGroups}
       {...props}
-      sx={{ mb: 3 }}
+      sx={{ mb: 2 }}
     />
   );
 };
