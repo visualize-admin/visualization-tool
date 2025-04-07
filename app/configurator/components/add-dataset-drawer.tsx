@@ -80,7 +80,7 @@ import {
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
-import { joinDimensions } from "@/graphql/join";
+import { isJoinById, joinDimensions } from "@/graphql/join";
 import { ComponentId } from "@/graphql/make-component-id";
 import {
   DataCubeComponentsQuery,
@@ -202,21 +202,6 @@ const CautionAlert = ({ onConfirm }: { onConfirm: () => void }) => {
   );
 };
 
-type SearchOptions =
-  | {
-      type: "temporal";
-      id: ComponentId;
-      label: string;
-      timeUnit: string;
-    }
-  | {
-      type: "shared";
-      /** Technically it's an iri, but we keep the id name for the sake of type consistency. */
-      id: string;
-      label: string;
-      termsets: Termset[];
-    };
-
 const inferJoinBy = (
   leftOptions: SearchOptions[],
   rightCube: PartialSearchCube
@@ -228,7 +213,11 @@ const inferJoinBy = (
       switch (type) {
         case "temporal":
           return {
-            left: leftOption.id,
+            // TODO Do not only use the first originalIds
+            left:
+              isJoinById(leftOption.id) && leftOption.originalIds
+                ? leftOption.originalIds?.[0].dimensionId
+                : leftOption.id,
             right: rightCube?.dimensions?.find(
               (d) =>
                 // TODO Find out why this is necessary
@@ -238,7 +227,7 @@ const inferJoinBy = (
           };
         case "shared":
           return {
-            left: leftOption.id,
+            left: [leftOption.id],
             right: rightCube?.dimensions?.find((d) =>
               d.termsets.some((t) =>
                 leftOption.termsets.map((t) => t.iri).includes(t.iri)
@@ -313,6 +302,8 @@ const PreviewDataTable = ({
       joinBy: inferredJoinBy.right,
     },
   ];
+
+  console.log(cubeFilters);
   const [observations] = useDataCubesObservationsQuery({
     pause: isQueryPaused,
     variables: {
@@ -590,10 +581,28 @@ const PreviewDataTable = ({
   );
 };
 
+type SearchOptions =
+  | {
+      type: "temporal";
+
+      /** Contains for now the join by id */
+      id: ComponentId;
+      label: string;
+      timeUnit: string;
+      originalIds: Dimension["originalIds"];
+    }
+  | {
+      type: "shared";
+      /** Technically it's an iri, but we keep the id name for the sake of type consistency. */
+      id: string;
+      label: string;
+      termsets: Termset[];
+    };
+
 const extractSearchDimensions = (
   dimensions: Dimension[],
   termsets: ComponentTermsets[]
-) => {
+): SearchOptions[] => {
   const temporalDimensions =
     dimensions.filter(isTemporalDimensionWithTimeUnit) ?? [];
   const sharedDimensions = termsets ?? [];
@@ -609,6 +618,7 @@ const extractSearchDimensions = (
         return {
           type: "temporal" as const,
           id: x.id as ComponentId,
+          originalIds: x.originalIds ?? [],
           label: x.label,
           timeUnit: x.timeUnit,
         };
@@ -829,6 +839,7 @@ export const DatasetDialog = ({
     setOtherCube(undefined);
   });
 
+  // Initial setting of the selected search dimensions
   useEffect(() => {
     if (selectedSearchDimensions === undefined && termsets && components) {
       setSelectedSearchDimensions(searchDimensionOptions);
