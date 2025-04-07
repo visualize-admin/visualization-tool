@@ -1011,7 +1011,15 @@ export const ChartFieldField = ({
   );
 };
 
-type ChartOptionRadioFieldProps<V extends string | number> = {
+export const ChartOptionRadioField = <V extends string | number>({
+  label,
+  field,
+  path,
+  value,
+  defaultChecked,
+  disabled = false,
+  warnMessage,
+}: {
   label: string;
   field: EncodingFieldType | null;
   path: string;
@@ -1019,20 +1027,7 @@ type ChartOptionRadioFieldProps<V extends string | number> = {
   defaultChecked?: boolean;
   disabled?: boolean;
   warnMessage?: string;
-};
-
-export const ChartOptionRadioField = <V extends string | number>(
-  props: ChartOptionRadioFieldProps<V>
-) => {
-  const {
-    label,
-    field,
-    path,
-    value,
-    defaultChecked,
-    disabled = false,
-    warnMessage,
-  } = props;
+}) => {
   const fieldProps = useChartOptionRadioField({
     path,
     field,

@@ -46,3 +46,27 @@ export const CheckboxCheckedIcon = (props: SvgIconProps) => (
     />
   </SvgIcon>
 );
+
+export const RadioIcon = (props: SvgIconProps) => (
+  <SvgIcon {...props} viewBox="0 0 16 16" style={{ fontSize: "1rem" }}>
+    <path
+      d="M0.5 8C0.5 3.85786 3.85786 0.5 8 0.5C12.1421 0.5 15.5 3.85786 15.5 8C15.5 12.1421 12.1421 15.5 8 15.5C3.85786 15.5 0.5 12.1421 0.5 8Z"
+      fill="white"
+      stroke="#6B7280"
+    />
+  </SvgIcon>
+);
+
+export const RadioCheckedIcon = (props: SvgIconProps) => (
+  <SvgIcon {...props} viewBox="0 0 16 16" style={{ fontSize: "1rem" }}>
+    <path
+      d="M0.5 8C0.5 3.85786 3.85786 0.5 8 0.5C12.1421 0.5 15.5 3.85786 15.5 8C15.5 12.1421 12.1421 15.5 8 15.5C3.85786 15.5 0.5 12.1421 0.5 8Z"
+      fill="#1F2937"
+      stroke="#6B7280"
+    />
+    <path
+      d="M5 8C5 6.34315 6.34315 5 8 5C9.65685 5 11 6.34315 11 8C11 9.65685 9.65685 11 8 11C6.34315 11 5 9.65685 5 8Z"
+      fill="white"
+    />
+  </SvgIcon>
+);

@@ -6,6 +6,8 @@ import {
   CheckboxCheckedIcon,
   CheckboxIcon,
   CheckboxIndeterminateIcon,
+  RadioCheckedIcon,
+  RadioIcon,
 } from "@/themes/custom-icons";
 import { palette } from "@/themes/palette";
 import { shadows } from "@/themes/shadows";
@@ -387,6 +389,31 @@ export const components: Components = {
         right: 0,
         color: "inherit !important",
         transition: "color 0.2s ease !important",
+      },
+    },
+  },
+  MuiRadio: {
+    defaultProps: {
+      icon: <RadioIcon />,
+      checkedIcon: <RadioCheckedIcon />,
+    },
+    styleOverrides: {
+      root: {
+        padding: 0,
+        borderRadius: 0,
+        color: palette.monochrome[500],
+
+        "&:hover": {
+          backgroundColor: "transparent",
+        },
+
+        "&.Mui-checked": {
+          color: palette.monochrome[800],
+        },
+
+        "&.Mui-disabled": {
+          opacity: 0.25,
+        },
       },
     },
   },

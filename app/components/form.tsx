@@ -113,35 +113,26 @@ export const Label = ({
 
 export const Radio = ({
   label,
+  size,
   name,
   value,
   checked,
   disabled,
   onChange,
   warnMessage,
-  formLabelProps,
 }: {
   label: string;
+  size?: ComponentProps<typeof FormControlLabel>["size"];
   disabled?: boolean;
   warnMessage?: string;
-  formLabelProps?: Partial<FormControlLabelProps>;
 } & FieldProps) => {
-  const color = checked
-    ? disabled
-      ? "primary.disabled"
-      : "primary"
-    : "grey.500";
-
   return (
     <MaybeTooltip title={warnMessage}>
       <FormControlLabel
-        label={label || "-"}
+        label={label}
+        size={size}
         htmlFor={`${name}-${value}`}
-        componentsProps={{
-          typography: {
-            variant: "body2",
-          },
-        }}
+        disabled={disabled}
         control={
           <MUIRadio
             name={name}
@@ -150,12 +141,8 @@ export const Radio = ({
             onChange={onChange}
             checked={!!checked}
             disabled={disabled}
-            size="small"
-            sx={{ color, "> *": { fill: color } }}
           />
         }
-        disabled={disabled}
-        {...formLabelProps}
       />
     </MaybeTooltip>
   );
