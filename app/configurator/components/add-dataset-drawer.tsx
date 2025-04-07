@@ -90,10 +90,10 @@ import {
   useDataCubeComponentTermsetsQuery,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
+import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcFilter from "@/icons/components/IcFilter";
 import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
 import SvgIcSearch from "@/icons/components/IcSearch";
-import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
 import useEvent from "@/utils/use-event";
@@ -110,7 +110,7 @@ const DialogCloseButton = (props: IconButtonProps) => {
         ...props.sx,
       }}
     >
-      <SvgIcTrash width={24} height={24} fontSize={24} />
+      <SvgIcClose width={24} height={24} fontSize={24} />
     </IconButton>
   );
 };
