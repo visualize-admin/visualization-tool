@@ -95,6 +95,7 @@ import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcFilter from "@/icons/components/IcFilter";
 import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
 import SvgIcSearch from "@/icons/components/IcSearch";
+import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
 import useEvent from "@/utils/use-event";
@@ -623,6 +624,77 @@ const extractSearchDimensions = (
   ];
 };
 
+const useMergeDatasetsData = ({
+  state,
+  locale,
+  pause,
+}: {
+  state: ConfiguratorStateConfiguringChart;
+  locale: Locale;
+  pause: boolean;
+}) => {
+  const commonQueryVariables = {
+    sourceType: state.dataSource.type,
+    sourceUrl: state.dataSource.url,
+    locale,
+  };
+
+  const activeChartConfig = state.chartConfigs.find(
+    (chartConfig) => chartConfig.key === state.activeChartKey
+  );
+
+  if (!activeChartConfig) {
+    throw Error("Could not find active chart config");
+  }
+
+  const currentCubes = activeChartConfig.cubes;
+
+  // Getting cube dimensions, to find temporal dimensions
+  const [cubesComponentQuery] = useDataCubesComponentsQuery({
+    pause: pause,
+    variables: {
+      ...commonQueryVariables,
+      cubeFilters: currentCubes.map((cube) => ({
+        iri: cube.iri,
+        joinBy: cube.joinBy,
+      })),
+    },
+  });
+
+  // Getting cube termsets, to then search for cubes with at least one matching termset
+  // TODO The cube filters should use all of the cubes and not just the first one
+  const [cubeComponentTermsets] = useDataCubeComponentTermsetsQuery({
+    pause: pause,
+    variables: {
+      locale,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      cubeFilter: {
+        iri: currentCubes[0].iri,
+      },
+    },
+  });
+
+  return {
+    components: cubesComponentQuery.data?.dataCubesComponents,
+    dimensions: cubesComponentQuery.data?.dataCubesComponents.dimensions ?? [],
+    termsets: cubeComponentTermsets.data?.dataCubeComponentTermsets ?? [],
+    fetching: cubesComponentQuery.fetching || cubeComponentTermsets.fetching,
+    ready:
+      cubesComponentQuery.data !== undefined &&
+      cubeComponentTermsets.data !== undefined,
+  };
+};
+
+type SearchDimension = ReturnType<typeof extractSearchDimensions>[number];
+const isTemporalDimension = (
+  x: SearchDimension
+): x is Extract<SearchDimension, { type: "temporal" }> => x.type === "temporal";
+
+const isSharedDimension = (
+  x: SearchDimension
+): x is Extract<SearchDimension, { type: "shared" }> => x.type === "shared";
+
 export const DatasetDialog = ({
   state,
   ...props
@@ -655,45 +727,24 @@ export const DatasetDialog = ({
   const currentCubes = activeChartConfig.cubes;
 
   // Getting cube dimensions, to find temporal dimensions
-  const [cubesComponentQuery] = useDataCubesComponentsQuery({
+  const {
+    dimensions,
+    termsets,
+    components,
+    ready: isMergeDatasetDataReady,
+    fetching: isMergeDatasetsDataFetching,
+  } = useMergeDatasetsData({
+    state,
+    locale,
     pause: !props.open,
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: currentCubes.map((cube) => ({
-        iri: cube.iri,
-        joinBy: cube.joinBy,
-      })),
-    },
   });
-
-  // Getting cube termsets, to then search for cubes with at least one matching termset
-  // TODO The cube filters should use all of the cubes and not just the first one
-  const [cubeComponentTermsets] = useDataCubeComponentTermsetsQuery({
-    pause: !props.open,
-    variables: {
-      locale,
-      sourceType: state.dataSource.type,
-      sourceUrl: state.dataSource.url,
-      cubeFilter: {
-        iri: currentCubes[0].iri,
-      },
-    },
-  });
-
   const { searchDimensionOptions, searchDimensionOptionsById } = useMemo(() => {
-    const allDimensions =
-      cubesComponentQuery.data?.dataCubesComponents.dimensions ?? [];
-    const allTermsets =
-      cubeComponentTermsets.data?.dataCubeComponentTermsets ?? [];
-    const options = extractSearchDimensions(allDimensions, allTermsets);
+    const options = extractSearchDimensions(dimensions, termsets);
     return {
       searchDimensionOptions: options,
       searchDimensionOptionsById: keyBy(options, (x) => x.id),
     };
-  }, [
-    cubeComponentTermsets.data?.dataCubeComponentTermsets,
-    cubesComponentQuery.data?.dataCubesComponents.dimensions,
-  ]);
+  }, [dimensions, termsets]);
 
   const [selectedSearchDimensions, setSelectedSearchDimensions] = useState<
     typeof searchDimensionOptions | undefined
@@ -713,20 +764,16 @@ export const DatasetDialog = ({
     );
   };
 
-  const selectedSharedDimensions = selectedSearchDimensions?.filter(
-    (x): x is Extract<(typeof searchDimensionOptions)[0], { type: "shared" }> =>
-      x.type === "shared"
-  );
+  const selectedSharedDimensions =
+    selectedSearchDimensions?.filter(isSharedDimension);
 
   const selectedTemporalDimension = (selectedSearchDimensions ?? []).find(
-    (
-      x
-    ): x is Extract<(typeof searchDimensionOptions)[0], { type: "temporal" }> =>
-      x.type === "temporal"
+    isTemporalDimension
   );
 
   const isSearchQueryPaused =
-    !cubesComponentQuery.data || !selectedSearchDimensions?.length;
+    !isMergeDatasetDataReady || !selectedSearchDimensions?.length;
+
   const [searchQuery] = useSearchCubesQuery({
     variables: {
       sourceType: state.dataSource.type,
@@ -767,8 +814,6 @@ export const DatasetDialog = ({
     );
   }, [currentCubes, searchQuery.data?.searchCubes]);
 
-  const currentComponents = cubesComponentQuery.data?.dataCubesComponents;
-
   const handleSubmit = useEvent((e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = Object.fromEntries(
@@ -785,19 +830,10 @@ export const DatasetDialog = ({
   });
 
   useEffect(() => {
-    if (
-      selectedSearchDimensions === undefined &&
-      cubeComponentTermsets.data &&
-      cubesComponentQuery.data
-    ) {
+    if (selectedSearchDimensions === undefined && termsets && components) {
       setSelectedSearchDimensions(searchDimensionOptions);
     }
-  }, [
-    cubeComponentTermsets,
-    cubesComponentQuery.data,
-    searchDimensionOptions,
-    selectedSearchDimensions,
-  ]);
+  }, [components, searchDimensionOptions, selectedSearchDimensions, termsets]);
 
   const [otherCube, setOtherCube] = useState<PartialSearchCube>();
 
@@ -838,7 +874,7 @@ export const DatasetDialog = ({
 
   const ee = useEventEmitter();
   const handleConfirm = useEventCallback(async () => {
-    if (!currentComponents || !otherCube || !inferredJoinBy) {
+    if (!components || !otherCube || !inferredJoinBy) {
       return null;
     }
 
@@ -936,8 +972,7 @@ export const DatasetDialog = ({
                   />
                 }
                 renderValue={(selected) =>
-                  cubeComponentTermsets.fetching ||
-                  cubesComponentQuery.fetching ? (
+                  isMergeDatasetsDataFetching ? (
                     <CircularProgress size={12} />
                   ) : selected.length === 0 ? (
                     <Typography variant="body2">
@@ -1013,11 +1048,7 @@ export const DatasetDialog = ({
             ) : (
               <DatasetResults
                 cubes={searchCubes}
-                fetching={
-                  searchQuery.fetching ||
-                  cubeComponentTermsets.fetching ||
-                  cubesComponentQuery.fetching
-                }
+                fetching={searchQuery.fetching || isMergeDatasetsDataFetching}
                 error={searchQuery.error}
                 datasetResultProps={({ cube }) => ({
                   disableTitleLink: true,
@@ -1050,7 +1081,7 @@ export const DatasetDialog = ({
         <PreviewDataTable
           key={otherCube.iri}
           dataSource={state.dataSource}
-          currentComponents={currentComponents}
+          currentComponents={components}
           inferredJoinBy={inferredJoinBy}
           existingCubes={currentCubes}
           otherCube={otherCube}
