@@ -612,14 +612,14 @@ export const AddDatasetDrawer = ({
     throw Error("Could not find active chart config");
   }
 
-  const relevantCubes = activeChartConfig.cubes.slice(0, 1);
+  const currentCubes = activeChartConfig.cubes.slice(0, 1);
 
   // Getting cube dimensions, to find temporal dimensions
   const [cubesComponentQuery] = useDataCubesComponentsQuery({
     pause: !props.open,
     variables: {
       ...commonQueryVariables,
-      cubeFilters: relevantCubes.map((cube) => ({
+      cubeFilters: currentCubes.map((cube) => ({
         iri: cube.iri,
         joinBy: cube.joinBy,
       })),
@@ -634,7 +634,7 @@ export const AddDatasetDrawer = ({
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
       cubeFilter: {
-        iri: relevantCubes[0].iri,
+        iri: currentCubes[0].iri,
       },
     },
   });
@@ -741,6 +741,15 @@ export const AddDatasetDrawer = ({
     pause: isSearchQueryPaused,
   });
 
+  const searchCubes = useMemo(() => {
+    const relevantCubeIris = currentCubes.map((d) => d.iri);
+    return (
+      searchQuery.data?.searchCubes.filter(
+        (d) => !relevantCubeIris.includes(d.cube.iri)
+      ) ?? []
+    );
+  }, [currentCubes, searchQuery.data?.searchCubes]);
+
   const currentComponents = cubesComponentQuery.data?.dataCubesComponents;
 
   const handleSubmit = useEvent((e: FormEvent<HTMLFormElement>) => {
@@ -772,15 +781,6 @@ export const AddDatasetDrawer = ({
     searchDimensionOptions,
     selectedSearchDimensions,
   ]);
-
-  const searchCubes = useMemo(() => {
-    const relevantCubeIris = relevantCubes.map((d) => d.iri);
-    return (
-      searchQuery.data?.searchCubes.filter(
-        (d) => !relevantCubeIris.includes(d.cube.iri)
-      ) ?? []
-    );
-  }, [relevantCubes, searchQuery.data?.searchCubes]);
 
   const [otherCube, setOtherCube] = useState<PartialSearchCube>();
   const inferredJoinBy = useMemo(() => {
@@ -1032,7 +1032,7 @@ export const AddDatasetDrawer = ({
           dataSource={state.dataSource}
           currentComponents={currentComponents}
           inferredJoinBy={inferredJoinBy}
-          existingCubes={relevantCubes}
+          existingCubes={currentCubes}
           otherCube={otherCube}
           otherCubeComponents={otherCubeComponents}
           fetchingComponents={!!otherCubeComponentsQuery?.fetching}
