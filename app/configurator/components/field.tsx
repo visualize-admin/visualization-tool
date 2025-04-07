@@ -106,7 +106,6 @@ const ColorPickerMenu = dynamic(
 const useStyles = makeStyles<Theme>((theme) => ({
   root: {
     display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
     gap: theme.spacing(1),
@@ -333,12 +332,12 @@ export const DataFilterTemporal = ({
   const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
   const usesMostRecentDate = isMostRecentValue(fieldProps.value);
   const label = isOptional ? (
-    <>
+    <span>
       {_label}{" "}
       <span style={{ marginLeft: "0.25rem" }}>
         (<Trans id="controls.select.optional">optional</Trans>)
       </span>
-    </>
+    </span>
   ) : (
     _label
   );
@@ -445,9 +444,9 @@ export const DataFilterSelectTime = ({
     message: `optional`,
   });
   const fullLabel = isOptional ? (
-    <>
-      {label} <div style={{ marginLeft: "0.25rem" }}>({optionalLabel})</div>
-    </>
+    <span>
+      {label} <span style={{ marginLeft: "0.25rem" }}>({optionalLabel})</span>
+    </span>
   ) : (
     label
   );
@@ -915,13 +914,13 @@ export const FieldLabel = ({
   const classes = useStyles();
   const optionalLabel = t({
     id: "controls.select.optional",
-    message: `optional`,
+    message: "optional",
   });
 
   return (
     <div className={classes.root}>
       {label}
-      {optional ? <span>({optionalLabel})</span> : null}
+      {optional ? <span> ({optionalLabel})</span> : null}
       {isFetching ? <LoadingIndicator /> : null}
     </div>
   );
