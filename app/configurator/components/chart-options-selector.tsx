@@ -30,7 +30,6 @@ import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
 import {
-  FieldSetLegend,
   Label,
   Radio,
   Select,
@@ -1657,14 +1656,12 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
         />
         {field.showPlayButton && (
           <>
-            <Box component="fieldset" mt={4}>
-              <FieldSetLegend
-                legendTitle={
-                  <Trans id="controls.section.animation.duration">
-                    Animation Duration
-                  </Trans>
-                }
-              />
+            <Box mt={4}>
+              <Typography variant="caption" component="legend">
+                <Trans id="controls.section.animation.duration">
+                  Animation Duration
+                </Trans>
+              </Typography>
               <Flex sx={{ justifyContent: "flex-start" }}>
                 {[10, 30, 60].map((d) => (
                   <ChartOptionRadioField
@@ -1678,27 +1675,25 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
               </Flex>
             </Box>
             <Box component="fieldset" mt={4}>
-              <FieldSetLegend
-                legendTitle={
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Trans id="controls.section.animation.type">
-                      Animation Type
-                    </Trans>
-                    <Tooltip
-                      arrow
-                      title={t({
-                        id: "controls.section.animation.type.explanation",
-                        message:
-                          "Use the Stepped type to make the animation jump between data points at fixed intervals. This mode is useful when you want to animate data using a time dimension with a non-uniform distribution of dates.",
-                      })}
-                    >
-                      <Typography sx={{ color: "primary.main" }}>
-                        <SvgIcInfoCircle width={16} height={16} />
-                      </Typography>
-                    </Tooltip>
-                  </Box>
-                }
-              />
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography variant="caption">
+                  <Trans id="controls.section.animation.type">
+                    Animation Type
+                  </Trans>
+                </Typography>
+                <Tooltip
+                  arrow
+                  title={t({
+                    id: "controls.section.animation.type.explanation",
+                    message:
+                      "Use the Stepped type to make the animation jump between data points at fixed intervals. This mode is useful when you want to animate data using a time dimension with a non-uniform distribution of dates.",
+                  })}
+                >
+                  <Typography sx={{ color: "blue.main" }}>
+                    <SvgIcInfoCircle width={16} height={16} />
+                  </Typography>
+                </Tooltip>
+              </Box>
               <Flex justifyContent="flex-start">
                 <ChartOptionRadioField
                   label={t({
@@ -1828,26 +1823,22 @@ const ChartFieldOptions = ({
 
   return (
     <div>
-      <Box component="fieldset" mt={2}>
-        <FieldSetLegend
-          legendTitle={
-            <Trans id="controls.select.column.layout">Column layout</Trans>
-          }
-        />
-        <Flex sx={{ justifyContent: "flex-start" }}>
-          {values.map((d) => (
-            <ChartOptionRadioField
-              key={d.value}
-              label={getFieldLabel(d.value)}
-              field={encoding.field}
-              path="type"
-              value={d.value}
-              disabled={disabled || d.disabled}
-              warnMessage={d.warnMessage}
-            />
-          ))}
-        </Flex>
-      </Box>
+      <Typography variant="caption">
+        <Trans id="controls.select.column.layout">Column layout</Trans>
+      </Typography>
+      <Flex>
+        {values.map((d) => (
+          <ChartOptionRadioField
+            key={d.value}
+            label={getFieldLabel(d.value)}
+            field={encoding.field}
+            path="type"
+            value={d.value}
+            disabled={disabled || d.disabled}
+            warnMessage={d.warnMessage}
+          />
+        ))}
+      </Flex>
     </div>
   );
 };
@@ -2273,12 +2264,9 @@ const ChartFieldColorComponent = ({
         ) : colorType === "numerical" ? (
           <div>
             <ColorRampField field={field} path="color" nSteps={nbClass} />
-            <FieldSetLegend
-              legendTitle={t({
-                id: "controls.scale.type",
-                message: "Scale type",
-              })}
-            />
+            <Typography variant="caption">
+              <Trans id="controls.scale.type">Scale type</Trans>
+            </Typography>
             <Flex sx={{ justifyContent: "flex-start" }}>
               <ChartOptionRadioField
                 label={t({

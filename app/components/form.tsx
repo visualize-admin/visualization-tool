@@ -727,31 +727,6 @@ export const SearchField = ({
 
 export type SearchFieldProps = ComponentProps<typeof SearchField>;
 
-export const FieldSetLegend = ({
-  legendTitle,
-  sx,
-}: {
-  legendTitle: string | ReactNode;
-  sx?: TypographyProps["sx"];
-}) => (
-  <Typography
-    variant="caption"
-    color="secondary"
-    component="legend"
-    sx={{
-      lineHeight: ["1rem", "1.125rem", "1.125rem"],
-      fontWeight: "normal",
-      fontSize: ["0.625rem", "0.75rem", "0.75rem"],
-      pl: 0,
-      mb: 1,
-      paddingBlock: 0,
-      ...sx,
-    }}
-  >
-    {legendTitle}
-  </Typography>
-);
-
 export const Switch = ({
   id,
   size,
