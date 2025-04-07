@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -732,7 +731,7 @@ export const ChartConfigurator = ({
               </Box>
             )}
             {Object.entries(filterDimensionsByCubeIri).map(
-              ([cubeIri, dims], i) => {
+              ([cubeIri, dims]) => {
                 const cubeTitle = cubes?.find(
                   (cube) => cube.iri === cubeIri
                 )?.title;
@@ -740,9 +739,13 @@ export const ChartConfigurator = ({
 
                 return (
                   <Fragment key={cubeIri}>
-                    <div>
+                    <Box sx={{ py: 2 }}>
                       {cubeTitle ? (
-                        <Typography variant="caption" component="p" mb={3}>
+                        <Typography
+                          variant="caption"
+                          component="p"
+                          sx={{ mb: 3, color: "text.secondary" }}
+                        >
                           {cubeTitle}
                         </Typography>
                       ) : null}
@@ -790,12 +793,9 @@ export const ChartConfigurator = ({
                           )}
                         </Droppable>
                       </DragDropContext>
-                    </div>
+                    </Box>
                     {cubeAddableDims && cubeAddableDims.length > 0 ? (
                       <AddFilterButton dims={cubeAddableDims} />
-                    ) : null}
-                    {cubes && i < cubes.length - 1 ? (
-                      <Divider sx={{ my: 4, mr: 6 }} />
                     ) : null}
                   </Fragment>
                 );
