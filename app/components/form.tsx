@@ -480,6 +480,7 @@ export const selectSizeToTypography: Record<
   NonNullable<ComponentProps<typeof Select>["size"]>,
   TypographyVariant
 > = {
+  xs: "caption",
   sm: "h6",
   md: "h5",
   lg: "h4",

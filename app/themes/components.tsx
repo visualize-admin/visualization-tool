@@ -95,6 +95,8 @@ export const components: Components = {
         const size = ownerState.size ?? "md";
         const sizeStyles = (() => {
           switch (size) {
+            case "xs":
+              return { padding: "10px 16px ", ...typography.caption };
             case "sm":
               return { padding: "10px 16px", ...typography.h6 };
             case "md":
@@ -282,6 +284,8 @@ export const components: Components = {
         const size = ownerState.size ?? "md";
         const sizeStyles = (() => {
           switch (size) {
+            case "xs":
+              return { padding: "10px 16px ", ...typography.caption };
             case "sm":
               return { padding: "10px 16px", ...typography.h6 };
             case "md":
@@ -432,6 +436,8 @@ export const components: Components = {
         const size = ownerState.size ?? "md";
         const sizeStyles = (() => {
           switch (size) {
+            case "xs":
+              return { ...typography.caption };
             case "sm":
               return { ...typography.h6 };
             case "md":
