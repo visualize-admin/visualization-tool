@@ -295,6 +295,8 @@ export const executeDataCubesObservationsQuery = async (
   const queries = await Promise.all(
     cubeFilters.map((cubeFilter) => {
       const cubeVariables = { locale, sourceType, sourceUrl, cubeFilter };
+
+      // Try to read from cache first
       const cached = client.readQuery<
         DataCubeObservationsQuery,
         DataCubeObservationsQueryVariables
@@ -306,6 +308,7 @@ export const executeDataCubesObservationsQuery = async (
 
       onFetching?.();
 
+      // If not in cache, execute the query
       return client
         .query<
           DataCubeObservationsQuery,
