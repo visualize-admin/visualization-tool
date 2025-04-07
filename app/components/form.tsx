@@ -416,14 +416,6 @@ export const Select = ({
                   alignItems: "center",
                   gap: 1,
                   typography: selectSizeToTypography[size],
-
-                  "&.Mui-disabled": {
-                    opacity: 1,
-
-                    "&:hover": {
-                      backgroundColor: "transparent",
-                    },
-                  },
                 }}
               >
                 {opt.label}
@@ -452,7 +444,6 @@ export const Select = ({
 };
 
 export const selectMenuProps: SelectProps["MenuProps"] = {
-  disablePortal: true,
   slotProps: {
     paper: {
       sx: {
