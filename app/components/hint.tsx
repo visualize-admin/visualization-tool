@@ -347,7 +347,11 @@ const mkHint = (
   return Component;
 };
 
+/** Use to highlight errors. */
 export const HintRed = mkHint("red", "HintRed");
+/** Use to highlight successes. */
 const HintGreen = mkHint("green", "HintGreen");
+/** Use to highlight information. */
 export const HintBlue = mkHint("blue", "HintBlue");
+/** Use to highlight warnings. */
 export const HintOrange = mkHint("orange", "HintOrange");
