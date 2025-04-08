@@ -43,7 +43,7 @@ import { ControlTab } from "@/configurator/components/chart-controls/control-tab
 import {
   ControlSection,
   ControlSectionContent,
-  SubsectionTitle,
+  SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import {
   canRenderDatePickerField,
@@ -93,20 +93,11 @@ const LayoutLayoutConfigurator = () => {
           aria-labelledby="controls-layout-options"
           collapse
         >
-          <SubsectionTitle
-            titleId="controls-layout-options"
-            gutterBottom={false}
-          >
+          <SectionTitle id="controls-layout-options">
             <Trans id="controls.section.layout-options">Layout Options</Trans>
-          </SubsectionTitle>
-          <ControlSectionContent px="small" gap="none">
-            <Box
-              sx={{
-                display: "flex",
-                gap: "0.75rem",
-                m: 2,
-              }}
-            >
+          </SectionTitle>
+          <ControlSectionContent gap="none">
+            <Box sx={{ display: "flex", gap: "0.75rem", m: 2 }}>
               <DashboardLayoutButton type="tall" layout={layout} />
               <DashboardLayoutButton type="vertical" layout={layout} />
               <DashboardLayoutButton type="canvas" layout={layout} />
@@ -244,13 +235,9 @@ const LayoutSharedFiltersConfigurator = () => {
           aria-labelledby="controls-shared-filters"
           collapse
         >
-          <SubsectionTitle
-            titleId="controls-shared-filters"
-            disabled={false}
-            gutterBottom={false}
-          >
+          <SectionTitle id="controls-shared-filters">
             <Trans id="controls.section.shared-filters">Shared filters</Trans>
-          </SubsectionTitle>
+          </SectionTitle>
           <ControlSectionContent>
             <Stack gap="0.5rem">
               {timeRange && combinedTemporalDimension.values.length ? (
@@ -582,10 +569,10 @@ const LayoutBlocksConfigurator = () => {
 
   return layout.type === "dashboard" ? (
     <ControlSection role="tablist" aria-labelledby="controls-blocks" collapse>
-      <SubsectionTitle titleId="controls-blocks" gutterBottom={false}>
+      <SectionTitle id="controls-blocks">
         <Trans id="controls.section.block-options">Objects</Trans>
-      </SubsectionTitle>
-      <ControlSectionContent px="small" gap="none">
+      </SectionTitle>
+      <ControlSectionContent gap="none">
         <div className={classes.root}>
           {blocks
             .filter(

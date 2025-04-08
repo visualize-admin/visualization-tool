@@ -16,48 +16,40 @@ import {
   Checkbox as MUICheckbox,
   CircularProgress,
   Divider,
-  FormControlLabel,
+  FormControlLabel as MUIFormControlLabel,
   FormControlLabelProps,
   Input as MUIInput,
-  InputLabel,
   InputProps,
   ListSubheader,
   MenuItem,
-  Paper,
-  PaperProps,
   Radio as MUIRadio,
   Select as MUISelect,
   SelectProps,
-  Skeleton,
   Slider as MUISlider,
   SliderProps,
   Stack,
-  styled,
   Switch as MUISwitch,
-  SxProps,
   Theme,
   Tooltip,
   Typography,
   TypographyProps,
+  TypographyVariant,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useId } from "@reach/auto-id";
 import flatten from "lodash/flatten";
 import React, {
   ComponentProps,
-  createContext,
-  forwardRef,
   ReactNode,
   SyntheticEvent,
   useCallback,
-  useContext,
   useMemo,
   useRef,
   useState,
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
-import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
+import Flex from "@/components/flex";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BlockTypeMenu } from "@/components/mdx-editor/block-type-menu";
 import { BoldItalicUnderlineToggles } from "@/components/mdx-editor/bold-italic-underline-toggles";
@@ -72,11 +64,36 @@ import {
   useChartOptionSliderField,
 } from "@/configurator";
 import { Icon } from "@/icons";
-import SvgIcWarningCircle from "@/icons/components/IcWarningCircle";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 import "@mdxeditor/editor/style.css";
+
+type FormControlLabelSize = "sm" | "md" | "lg";
+const sizeToVariant: Record<FormControlLabelSize, TypographyVariant> = {
+  sm: "caption" as TypographyVariant,
+  md: "body3" as TypographyVariant,
+  lg: "h5" as TypographyVariant,
+};
+
+export const FormControlLabel = (
+  props: Omit<FormControlLabelProps, "componentsProps"> & {
+    size?: "sm" | "md" | "lg";
+  }
+) => {
+  const { size = "md", ...rest } = props;
+
+  return (
+    <MUIFormControlLabel
+      {...rest}
+      componentsProps={{
+        typography: {
+          variant: sizeToVariant[size],
+        },
+      }}
+    />
+  );
+};
 
 export const Label = ({
   htmlFor,
@@ -215,35 +232,35 @@ export const Slider = ({
 };
 
 export type CheckboxProps = {
-  label: FormControlLabelProps["label"];
+  label: ComponentProps<typeof FormControlLabel>["label"];
+  size?: ComponentProps<typeof FormControlLabel>["size"];
   disabled?: boolean;
   color?: string;
-  smaller?: boolean;
   indeterminate?: boolean;
   className?: string;
 } & FieldProps;
 
 export const Checkbox = ({
   label,
+  size,
   name,
   value,
   checked,
   disabled,
   onChange,
   color,
-  smaller,
   indeterminate,
   className,
 }: CheckboxProps) => (
   <FormControlLabel
     label={label}
+    size={size}
     htmlFor={`${name}`}
     disabled={disabled}
     className={className}
     control={
       <MUICheckbox
         data-name="checkbox-component"
-        size={smaller ? "small" : "medium"}
         id={name}
         name={name}
         value={value}
@@ -258,7 +275,6 @@ export const Checkbox = ({
         }}
       />
     }
-    sx={{ display: "flex" }}
   />
 );
 
@@ -277,47 +293,6 @@ const getSelectOptions = (
   return [...noneOptions, ...restOptions];
 };
 
-// Copied over from https://github.com/mui/material-ui/blob/master/packages/mui-material/src/Menu/Menu.js
-const MenuPaper = styled(Paper, {
-  name: "MuiMenu",
-  slot: "Paper",
-  overridesResolver: (_props: PaperProps, styles) => styles.paper,
-})({
-  // specZ: The maximum height of a simple menu should be one or more rows less than the view
-  // height. This ensures a tapable area outside of the simple menu with which to dismiss
-  // the menu.
-  maxHeight: `calc(100% - ${HEADER_HEIGHT_CSS_VAR})`,
-  // Add iOS momentum scrolling for iOS < 13.0
-  WebkitOverflowScrolling: "touch",
-});
-
-const LoadingMenuPaperContext = createContext(false as boolean | undefined);
-
-/**
- * Shows a loading indicator when hierarchy is loading
- */
-const LoadingMenuPaper = forwardRef<HTMLDivElement>(
-  (props: PaperProps, ref) => {
-    const loading = useContext(LoadingMenuPaperContext);
-
-    return (
-      <MenuPaper {...props} ref={ref}>
-        {loading ? (
-          <Box px={4} py={5}>
-            <Typography variant="body2" sx={{ mb: 2 }} color="text.secondary">
-              <Trans id="hint.loading.data" />
-            </Typography>
-            <Skeleton sx={{ bgcolor: "grey.300" }} />
-            <Skeleton sx={{ bgcolor: "grey.300" }} />
-          </Box>
-        ) : (
-          props.children
-        )}
-      </MenuPaper>
-    );
-  }
-);
-
 export type SelectOption = Option & {
   disabledMessage?: string;
 };
@@ -327,13 +302,14 @@ export type SelectOptionGroup = [OptionGroupKey, SelectOption[]];
 export const Select = ({
   label,
   id,
+  variant,
+  size = "md",
   value,
   disabled,
   options,
   optionGroups,
   onChange,
   sortOptions = true,
-  topControls,
   sideControls,
   open,
   onClose,
@@ -348,7 +324,6 @@ export const Select = ({
   label?: ReactNode;
   disabled?: boolean;
   sortOptions?: boolean;
-  topControls?: ReactNode;
   sideControls?: ReactNode;
   loading?: boolean;
   hint?: string;
@@ -377,135 +352,156 @@ export const Select = ({
   });
 
   return (
-    <LoadingMenuPaperContext.Provider value={loading}>
-      <Box ref={ref} sx={{ width: "100%", ...sx }}>
-        {label && (
-          <Label
-            htmlFor={id}
-            smaller
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            {label}
-            {topControls}
-            {loading && (
-              <CircularProgress
-                size={12}
-                sx={{
-                  color: "grey.700",
-                  display: "inline-block",
-                  marginLeft: 2,
-                }}
-              />
-            )}
-          </Label>
-        )}
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: sideControls
-              ? "calc(100% - 2rem) 2rem"
-              : "100%",
-            alignItems: "center",
-            columnGap: 2,
-          }}
+    <Box ref={ref} sx={{ width: "100%", ...sx }}>
+      {label && (
+        <Label
+          htmlFor={id}
+          smaller
+          sx={{ display: "flex", alignItems: "center" }}
         >
-          <MUISelect
-            id={id}
-            name={id}
-            onChange={onChange}
-            value={value}
-            disabled={disabled}
-            open={open}
-            onOpen={handleOpen}
-            onClose={onClose}
-            MenuProps={{
-              PaperProps: {
-                // @ts-ignore - It works
-                component: LoadingMenuPaper,
-              },
-            }}
-            renderValue={(value) => {
-              const selectedOption = sortedOptions.find(
-                (opt) => opt.value === value
-              );
+          {label}
+          {loading && (
+            <CircularProgress
+              size={12}
+              sx={{ display: "inline-block", marginLeft: 2 }}
+            />
+          )}
+        </Label>
+      )}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <MUISelect
+          variant={variant}
+          size={size}
+          id={id}
+          name={id}
+          onChange={onChange}
+          value={value}
+          disabled={disabled}
+          open={open}
+          onOpen={handleOpen}
+          onClose={onClose}
+          renderValue={(value) => {
+            const selectedOption = sortedOptions.find(
+              (opt) => opt.value === value
+            );
 
-              if (!selectedOption) {
-                return "";
-              }
+            if (!selectedOption) {
+              return "";
+            }
 
-              return (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    width: "100%",
-                  }}
-                >
-                  <InputLabel
-                    sx={{
-                      typography: "body2",
-                      color: "secondary.active",
-                      pointerEvents: "none",
-                    }}
-                  >
-                    {selectedOption.label}
-                  </InputLabel>
-                  {hint && <DisabledMessageIcon message={hint} />}
-                </Box>
-              );
-            }}
-          >
-            {sortedOptions.map((opt) => {
-              if (!opt.value && opt.type !== "group") {
-                return null;
-              }
+            return (
+              <>
+                {selectedOption.label}
+                {hint && <DisabledMessageIcon message={hint} />}
+              </>
+            );
+          }}
+          MenuProps={{
+            disablePortal: true,
+            slotProps: {
+              paper: {
+                sx: {
+                  "& .MuiList-root": {
+                    width: "auto",
+                    padding: "4px 0",
+                    boxShadow: 3,
 
-              return opt.type === "group" ? (
-                opt.label && (
-                  <ListSubheader key={opt.label}>
-                    <Typography
-                      variant="caption"
-                      component="p"
-                      color="secondary.hover"
-                      style={{ maxWidth: width }}
-                    >
-                      {opt.label}
-                    </Typography>
-                  </ListSubheader>
-                )
-              ) : (
-                <MenuItem
-                  key={opt.value}
-                  disabled={opt.disabled}
-                  value={opt.value ?? undefined}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    "&.Mui-disabled": {
-                      opacity: 1,
+                    "& .MuiMenuItem-root": {
+                      color: "monochrome.600",
 
                       "&:hover": {
+                        backgroundColor: "cobalt.50",
+                        color: "monochrome.800",
+                      },
+
+                      "&.Mui-selected": {
                         backgroundColor: "transparent",
+                        color: "monochrome.800",
+
+                        "&:hover": {
+                          backgroundColor: "cobalt.50",
+                        },
                       },
                     },
+                  },
+                },
+              },
+            },
+          }}
+          sx={{ maxWidth: sideControls ? "calc(100% - 28px)" : "100%" }}
+        >
+          {sortedOptions.map((opt) => {
+            if (!opt.value && opt.type !== "group") {
+              return null;
+            }
+
+            const isSelected = value === opt.value;
+
+            return opt.type === "group" ? (
+              opt.label && (
+                <ListSubheader key={opt.label}>
+                  <Typography
+                    variant="caption"
+                    component="p"
+                    style={{ maxWidth: width }}
+                  >
+                    {opt.label}
+                  </Typography>
+                </ListSubheader>
+              )
+            ) : (
+              <MenuItem
+                key={opt.value}
+                disabled={opt.disabled}
+                value={opt.value ?? undefined}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 1,
+                  typography: selectSizeToTypography[size],
+
+                  "&.Mui-disabled": {
+                    opacity: 1,
+
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                    },
+                  },
+                }}
+              >
+                {opt.label}
+                <Flex
+                  sx={{
+                    alignItems: "center",
+                    gap: 1,
+                    minWidth: 24,
+                    minHeight: 20,
                   }}
                 >
-                  <span style={{ opacity: opt.disabled ? 0.38 : 1 }}>
-                    {opt.label}
-                  </span>
-                  {opt.disabledMessage && (
+                  {opt.disabledMessage ? (
                     <DisabledMessageIcon message={opt.disabledMessage} />
-                  )}
-                </MenuItem>
-              );
-            })}
-          </MUISelect>
-          {sideControls}
-        </Box>
+                  ) : null}
+                  {isSelected ? <Icon name="checkmark" size={20} /> : null}
+                </Flex>
+              </MenuItem>
+            );
+          })}
+        </MUISelect>
+        {sideControls}
       </Box>
-    </LoadingMenuPaperContext.Provider>
+    </Box>
   );
+};
+
+export const selectSizeToTypography: Record<
+  NonNullable<ComponentProps<typeof Select>["size"]>,
+  TypographyVariant
+> = {
+  sm: "h6",
+  md: "h5",
+  lg: "h4",
+  xl: "h4",
 };
 
 type DisabledMessageIconProps = {
@@ -525,12 +521,12 @@ export const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
       }
       placement="top"
       componentsProps={{
-        tooltip: { sx: { width: 140, px: 2, py: 1, lineHeight: 1.2 } },
+        tooltip: { sx: { width: 140, px: 2, py: 1 } },
       }}
       sx={{ opacity: 1, pointerEvents: "auto", ml: 1 }}
     >
-      <Typography color="warning.main">
-        <SvgIcWarningCircle width={18} height={18} />
+      <Typography color="orange.main" style={{ lineHeight: 0 }}>
+        <Icon name="warningCircle" size={20} />
       </Typography>
     </Tooltip>
   );
@@ -637,19 +633,23 @@ const useMarkdownInputStyles = makeStyles<Theme>((theme) => ({
   root: {
     "& [data-lexical-editor='true']": {
       padding: "0.5rem 0.75rem",
-      border: `1px solid ${theme.palette.grey[300]}`,
+      border: `1px solid ${theme.palette.monochrome[300]}`,
       borderRadius: 3,
-      backgroundColor: theme.palette.grey[100],
+      backgroundColor: theme.palette.monochrome[100],
+
       "&:focus": {
-        border: `1px solid ${theme.palette.secondary.main}`,
+        border: `1px solid ${theme.palette.monochrome[500]}`,
       },
+
       "& *": {
         margin: "1em 0",
         lineHeight: 1.2,
       },
+
       "& :first-child": {
         marginTop: 0,
       },
+
       "& :last-child": {
         marginBottom: 0,
       },
@@ -771,32 +771,25 @@ export const FieldSetLegend = ({
 
 export const Switch = ({
   id,
+  size,
   label,
   name,
   checked,
   disabled,
   onChange,
-  smaller,
-  sx,
 }: {
   id?: string;
-  label: React.ComponentProps<typeof FormControlLabel>["label"];
+  size?: ComponentProps<typeof FormControlLabel>["size"];
+  label: ComponentProps<typeof FormControlLabel>["label"];
   disabled?: boolean;
-  smaller?: boolean;
-  sx?: SxProps;
 } & FieldProps) => {
   const genId = `switch-${useId(id)}`;
 
   return (
     <FormControlLabel
+      size={size}
       htmlFor={genId}
       label={label}
-      componentsProps={{
-        typography: {
-          variant: smaller ? "caption" : "body2",
-          color: "grey.800",
-        },
-      }}
       control={
         <MUISwitch
           id={genId}
@@ -806,11 +799,6 @@ export const Switch = ({
           onChange={onChange}
         />
       }
-      sx={{
-        width: "fit-content",
-        fontSize: "0.875rem",
-        ...sx,
-      }}
     />
   );
 };

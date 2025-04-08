@@ -247,6 +247,7 @@ export const OpenMetadataPanelWrapper = ({
       className={classes.openComponentInteractive}
       variant="text"
       size="sm"
+      color="blue"
       onClick={handleClick}
     >
       {children}

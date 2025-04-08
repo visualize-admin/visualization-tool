@@ -9,10 +9,11 @@ import {
   Box,
   Collapse,
   IconButton,
-  OutlinedInput,
+  Input,
   Popover,
   PopoverActions,
-  TextField,
+  Select,
+  SelectProps,
   TextFieldProps,
   Theme,
   Typography,
@@ -21,7 +22,11 @@ import {
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import React, {
+  ForwardedRef,
   forwardRef,
+  HTMLAttributes,
+  type MouseEvent,
+  ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -29,51 +34,14 @@ import React, {
   useState,
 } from "react";
 
-import { Label } from "@/components/form";
+import { Label, selectSizeToTypography } from "@/components/form";
 import { HierarchyValue } from "@/domain/data";
 import { Icon } from "@/icons";
-import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { flattenTree, pruneTree } from "@/rdf/tree-utils";
 import useEvent from "@/utils/use-event";
 
-const useStyles = makeStyles<Theme, { disabled?: boolean; open?: boolean }>(
-  (theme) => ({
-    input: {
-      width: "100%",
-      cursor: "pointer",
-      borderRadius: 4,
-      fontSize: theme.typography.body2.fontSize,
-      minHeight: 40,
-
-      "& input": {
-        cursor: "pointer",
-      },
-    },
-    icon: {
-      flexShrink: 0,
-      marginRight: -6,
-      width: 20,
-      height: 20,
-      color: ({ disabled }) =>
-        disabled ? theme.palette.grey[500] : theme.palette.grey[600],
-      transition: "transform 0.150s ease",
-      transform: ({ open }) => (open ? "rotate(180deg)" : "rotate(0deg)"),
-    },
-  })
-);
-
-const useTreeItemStyles = makeStyles<Theme>((theme) => ({
-  label: {
-    display: "flex",
-    fontSize: theme.typography.body2.fontSize,
-
-    [theme.breakpoints.up("xs")]: {
-      "&": {
-        fontSize: theme.typography.body2.fontSize,
-      },
-    },
-  },
+const useTreeItemStyles = makeStyles({
   // Necessary to use $content below
   content: {},
   root: {
@@ -105,37 +73,36 @@ const useTreeItemStyles = makeStyles<Theme>((theme) => ({
     // effect to extend until the edge of the popover
     marginLeft: 0,
   },
-}));
+});
 
-const useCustomTreeItemStyles = makeStyles<
-  Theme,
-  {
-    selectable?: boolean;
-  }
->((theme) => ({
-  action: {
-    color: theme.palette.text.primary,
-    opacity: 0.5,
-    marginLeft: "1rem",
-    "&:hover": {
-      opacity: 1,
-      color: theme.palette.primary.main,
-    },
-    transform: "translateX(0)",
-    transition: "transform 0.3s ease, opacity 0.3s ease",
-  },
-  root: {
-    "&:hover": {
-      "& $action": {
-        transform: "translateX(0)",
+const useCustomTreeItemStyles = makeStyles<Theme, { selectable?: boolean }>(
+  (theme) => ({
+    action: {
+      marginLeft: theme.spacing(2),
+      color: theme.palette.text.primary,
+      lineHeight: 0,
+      transform: "translateX(0)",
+      opacity: 0.5,
+      transition: "transform 0.3s ease, opacity 0.3s ease",
+
+      "&:hover": {
+        opacity: 1,
+        color: theme.palette.primary.main,
       },
     },
-  },
-  checkIcon: {
-    marginLeft: theme.spacing(2),
-    color: theme.palette.text.secondary,
-  },
-}));
+    root: {
+      "&:hover": {
+        "& $action": {
+          transform: "translateX(0)",
+        },
+      },
+    },
+    checkIcon: {
+      marginLeft: theme.spacing(2),
+      marginRight: theme.spacing(1),
+    },
+  })
+);
 
 const TreeItemContent = forwardRef<
   unknown,
@@ -144,6 +111,7 @@ const TreeItemContent = forwardRef<
     className?: string;
     displayIcon?: React.ReactNode;
     expansionIcon?: React.ReactNode;
+    size?: SelectProps["size"];
     icon?: React.ReactNode;
     label?: React.ReactNode;
     onClick?: React.MouseEventHandler;
@@ -158,13 +126,13 @@ const TreeItemContent = forwardRef<
     className,
     displayIcon,
     expansionIcon,
+    size = "sm",
     icon: iconProp,
     label,
     nodeId,
     onClick,
     children,
     onMouseDown,
-
     ...other
   } = props;
 
@@ -195,27 +163,28 @@ const TreeItemContent = forwardRef<
     selectable,
   });
 
-  const handleClickLabel = useEvent((event: React.MouseEvent) => {
-    if (!event.defaultPrevented) {
-      handleExpansion(event);
+  const handleClickLabel = useEvent((e: MouseEvent) => {
+    if (!e.defaultPrevented) {
+      handleExpansion(e);
     }
   });
 
-  const handleSelect = useEvent((event: React.MouseEvent) => {
-    event.preventDefault();
+  const handleSelect = useEvent((e: MouseEvent) => {
+    e.preventDefault();
+
     if (selectable === false) {
       return;
     }
-    preventSelection(event);
-    handleSelection(event);
+
+    preventSelection(e);
+    handleSelection(e);
 
     if (onClick) {
-      onClick(event);
+      onClick(e);
     }
   });
 
   return (
-    /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions -- Key event is handled by the TreeView */
     <div
       className={clsx(className, classes.root, ownClasses.root, {
         [classes.expanded]: expanded,
@@ -225,15 +194,17 @@ const TreeItemContent = forwardRef<
       })}
       onMouseDown={handleMouseDown}
       onClick={selectable && !hasChildren ? handleSelect : handleClickLabel}
-      ref={ref as React.ForwardedRef<HTMLDivElement>}
+      ref={ref as ForwardedRef<HTMLDivElement>}
       {...other}
     >
       <div className={clsx(classes.iconContainer)}>{icon}</div>
       <div className={classes.label}>
-        {label}
+        <Typography variant={selectSizeToTypography[size]} component="span">
+          {label}
+        </Typography>
         {selectable && hasChildren ? (
           <div className={ownClasses.action} onClick={handleSelect}>
-            <Typography variant="caption">
+            <Typography variant={selectSizeToTypography[size]} component="span">
               <Trans id="controls.tree.select-value">Select</Trans>
             </Typography>
           </div>
@@ -241,7 +212,7 @@ const TreeItemContent = forwardRef<
       </div>
       {selected ? (
         <div className={ownClasses.checkIcon}>
-          <Icon name="checkmark" />
+          <Icon name="checkmark" size={20} />
         </div>
       ) : null}
     </div>
@@ -265,13 +236,13 @@ export type Tree = TreeHierarchyValue[];
 type NodeId = string;
 
 export type SelectTreeProps = {
+  size?: SelectProps["size"];
   options: Tree;
   value: NodeId | undefined;
-  topControls?: React.ReactNode;
-  sideControls?: React.ReactNode;
+  sideControls?: ReactNode;
   onChange: (e: { target: { value: NodeId } }) => void;
   disabled?: boolean;
-  label?: React.ReactNode;
+  label?: ReactNode;
   onOpen?: () => void;
   onClose?: () => void;
   open?: boolean;
@@ -280,6 +251,7 @@ export type SelectTreeProps = {
 
 const getFilteredOptions = (options: Tree, value: string) => {
   const rx = new RegExp(`^${value}|\\s${value}`, "i");
+
   return value === ""
     ? options
     : (pruneTree(
@@ -288,23 +260,22 @@ const getFilteredOptions = (options: Tree, value: string) => {
       ) as Tree);
 };
 
-function SelectTree({
+const SelectTree = ({
+  size = "sm",
   label,
   options,
   value,
   onChange,
   disabled,
-  topControls,
   sideControls,
   onOpen,
   onClose,
   open,
   id,
-}: SelectTreeProps) {
+}: SelectTreeProps) => {
   const [openState, setOpenState] = useState(false);
   const [minMenuWidth, setMinMenuWidth] = useState<number>();
   const [inputValue, setInputValue] = useState("");
-  const classes = useStyles({ disabled, open });
   const [filteredOptions, setFilteredOptions] = useState<Tree>([]);
 
   useEffect(() => {
@@ -423,6 +394,7 @@ function SelectTree({
                 nodeId={value}
                 defaultExpanded={defaultExpanded}
                 label={label}
+                size={size}
                 expandIcon={
                   children && children.length > 0 ? <SvgIcChevronRight /> : null
                 }
@@ -443,13 +415,14 @@ function SelectTree({
         </>
       );
     },
-    [defaultExpanded, treeItemClasses, treeItemTransitionProps]
+    [defaultExpanded, size, treeItemClasses, treeItemTransitionProps]
   );
 
   const paperProps = useMemo(
     () => ({
-      style: {
+      sx: {
         minWidth: minMenuWidth ?? 0,
+        boxShadow: 3,
       },
     }),
     [minMenuWidth]
@@ -472,13 +445,14 @@ function SelectTree({
   );
 
   const treeRef = useRef();
-  const handleKeyDown: React.HTMLAttributes<HTMLInputElement>["onKeyDown"] =
-    useEvent((ev) => {
-      if (ev.key === "Enter" || ev.key == " ") {
+  const handleKeyDown: HTMLAttributes<HTMLInputElement>["onKeyDown"] = useEvent(
+    (e) => {
+      if (e.key === "Enter" || e.key == " ") {
         handleOpen();
-        ev.preventDefault();
+        e.preventDefault();
       }
-    });
+    }
+  );
 
   useEffect(() => {
     const inputNode = inputRef.current;
@@ -491,62 +465,71 @@ function SelectTree({
     <div>
       {label && (
         <Label htmlFor={id!} smaller>
-          {label} {topControls}
+          {label}
         </Label>
       )}
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: sideControls ? "calc(100% - 2rem) 2rem" : "100%",
-          alignItems: "center",
-          columnGap: 2,
-        }}
-      >
-        <OutlinedInput
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Select
+          ref={inputRef}
           id={id}
           name={id}
+          size="sm"
+          disabled={disabled}
           readOnly
           value={value ? labelsByValue[value] : undefined}
-          disabled={disabled}
-          ref={inputRef}
-          size="sm"
-          className={classes.input}
           onClick={disabled ? undefined : handleOpen}
           onKeyDown={handleKeyDown}
-          endAdornment={<Icon className={classes.icon} name="chevronDown" />}
+          renderValue={(value) => {
+            return <>{value}</>;
+          }}
+          sx={{
+            "& svg": {
+              // Force icon rotation, as the Select is read only to keep the styling,
+              // but allow of rendering custom tree menu.
+              transform: open ? "rotate(180deg)" : "rotate(0deg)",
+            },
+          }}
         />
         {sideControls}
       </Box>
       <Popover
+        anchorEl={inputRef.current}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
         }}
-        anchorEl={inputRef.current}
         open={open !== undefined ? open : !!openState}
         onClose={handleClose}
         action={menuRef}
-        PaperProps={paperProps}
+        slotProps={{ paper: paperProps }}
         TransitionProps={menuTransitionProps}
       >
-        <TextField
-          size="small"
+        <Input
+          size="sm"
           value={inputValue}
-          sx={{ p: 1, width: "100%" }}
-          InputProps={{
-            autoFocus: true,
-            startAdornment: <Icon name="search" size={16} color="#555" />,
-            endAdornment: (
-              <IconButton size="small" onClick={handleClickResetInput}>
-                <Icon name="close" size={16} />
-              </IconButton>
-            ),
-            sx: { "& input": { fontSize: "12px" }, pl: 1, pr: 1 },
-          }}
+          autoFocus
+          startAdornment={<Icon name="search" size={18} />}
+          endAdornment={
+            <IconButton size="small" onClick={handleClickResetInput}>
+              <Icon name="close" size={16} />
+            </IconButton>
+          }
           onChange={handleInputChange}
+          sx={{
+            px: 2,
+            py: 1,
+
+            "& .MuiInput-input": {
+              px: 1,
+            },
+          }}
         />
         {filteredOptions.length === 0 ? (
-          <Typography variant="body2" sx={{ px: 2, py: 4 }}>
+          <Typography
+            variant={selectSizeToTypography[size]}
+            component="p"
+            sx={{ py: 2, textAlign: "center" }}
+          >
             <Trans id="No results" />
           </Typography>
         ) : (
@@ -556,14 +539,6 @@ function SelectTree({
             expanded={expanded}
             onNodeToggle={handleNodeToggle}
             onNodeSelect={handleNodeSelect}
-            defaultCollapseIcon={<SvgIcChevronDown />}
-            defaultExpandIcon={<SvgIcChevronRight />}
-            sx={{
-              flexGrow: 1,
-              overflowY: "auto",
-              pb: 2,
-              "user-select": "none",
-            }}
           >
             {renderTreeContent(filteredOptions)}
           </TreeView>
@@ -571,6 +546,6 @@ function SelectTree({
       </Popover>
     </div>
   );
-}
+};
 
 export default SelectTree;

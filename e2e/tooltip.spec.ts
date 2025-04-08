@@ -21,12 +21,10 @@ test("should have correct tooltip content", async ({
   await selectors.edition.drawerLoaded();
 
   const filterLocator = await within(
-    selectors.edition.controlSectionBySubtitle("Filters")
+    selectors.edition.controlSectionByTitle("Filters")
   );
 
-  await filterLocator
-    .getByRole("textbox", { name: "2. Greenhouse gas" })
-    .click();
+  await filterLocator.getByLabelText("All greenhouse gas").click();
 
   await selectors.mui
     .popover()

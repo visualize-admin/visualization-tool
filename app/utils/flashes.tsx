@@ -1,9 +1,10 @@
 import { Trans } from "@lingui/macro";
-import { Alert, AlertTitle, Box, Link } from "@mui/material";
+import { Box, Link } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import React, { useMemo, useState } from "react";
 
+import { HintRed } from "@/components/hint";
 import { Icon } from "@/icons";
 
 const flashes = {
@@ -28,11 +29,10 @@ const CannotFindCubeContent = () => {
       return {};
     }
   }, [query]);
+
   return (
     <>
-      <AlertTitle>
-        <Trans id="flashes.couldnt-load-cube.title">Could not load cube</Trans>
-      </AlertTitle>
+      <Trans id="flashes.couldnt-load-cube.title">Could not load cube</Trans>
       <Link
         href={`https://cube-validator.lindas.admin.ch/validate/${encodeURIComponent(errorOptions.endpointUrl)}/${encodeURIComponent(errorOptions.iri)}?profile=https:%2F%2Fcube.link%2Fref%2Fmain%2Fshape%2Fprofile-visualize`}
         sx={{ display: "flex", alignItems: "center", gap: 1 }}
@@ -59,6 +59,7 @@ const Flashes = () => {
   const [dismissed, setDismissed] = useState<Record<string, boolean>>({});
   const errorId = query.errorId as keyof typeof flashes;
   const ErrorComponent = renderErrorContent[errorId];
+
   return (
     <Box sx={{ position: "fixed", bottom: "1rem", right: "1rem", zIndex: 1 }}>
       <AnimatePresence>
@@ -68,21 +69,22 @@ const Flashes = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "1rem" }}
           >
-            <Alert
-              severity="error"
+            <HintRed
+              smaller
               onClose={() =>
                 setDismissed((dismissed) => ({
                   ...dismissed,
                   [errorId]: true,
                 }))
               }
+              sx={{ px: 4, py: 1, backgroundColor: "red", boxShadow: 2 }}
             >
               {ErrorComponent ? (
                 <ErrorComponent />
               ) : (
                 <Trans id={`flashes.error.${errorId}`} />
               )}
-            </Alert>
+            </HintRed>
           </motion.div>
         ) : null}
       </AnimatePresence>

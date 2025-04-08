@@ -28,7 +28,7 @@ import { ChartWithFilters } from "@/components/chart-with-filters";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import { EmbedQueryParams } from "@/components/embed-params";
 import Flex from "@/components/flex";
-import { HintBlue, HintRed, HintYellow } from "@/components/hint";
+import { HintBlue, HintOrange, HintRed } from "@/components/hint";
 import {
   createMetadataPanelStore,
   MetadataPanelStoreContext,
@@ -402,11 +402,11 @@ const ChartPublishedInnerImpl = ({
           )}
           {!isTrustedDataSource && (
             <Box sx={{ mb: 4 }}>
-              <HintYellow>
+              <HintOrange>
                 <Trans id="data.source.notTrusted">
                   This chart is not using a trusted data source.
                 </Trans>
-              </HintYellow>
+              </HintOrange>
             </Box>
           )}
           {isUsingImputation(chartConfig) && (

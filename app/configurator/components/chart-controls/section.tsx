@@ -16,80 +16,90 @@ import React, {
   HTMLProps,
   ReactNode,
   useContext,
-  useEffect,
   useMemo,
 } from "react";
 
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import useDisclosure from "@/components/use-disclosure";
 import { Icon, IconName } from "@/icons";
-import SvgIcMinus from "@/icons/components/IcMinus";
-import SvgIcPlus from "@/icons/components/IcPlus";
-import SvgIcWarningCircle from "@/icons/components/IcWarningCircle";
 
-const useControlSectionStyles = makeStyles<
-  Theme,
-  { isHighlighted?: boolean; hideTopBorder: boolean }
->((theme) => ({
-  controlSection: {
-    borderTopColor: theme.palette.divider,
-    borderTopWidth: ({ hideTopBorder }) => (hideTopBorder ? 0 : "1px"),
-    borderTopStyle: "solid",
-    overflowX: "hidden",
-    overflowY: "auto",
-    flexShrink: 0,
-    backgroundColor: ({ isHighlighted }) =>
-      isHighlighted ? "primaryLight" : "grey.100",
-  },
-}));
-
-type SectionTitleStylesProps = {
-  disabled?: boolean;
-  color?: string;
-  sectionOpen: boolean;
-  gutterBottom: boolean;
-  collapse?: boolean;
-};
-
-const useSectionTitleStyles = makeStyles<Theme, SectionTitleStylesProps>(
+const useControlSectionStyles = makeStyles<Theme, { hideTopBorder: boolean }>(
   (theme) => ({
-    root: {
-      display: "flex",
-      alignItems: "center",
-      width: "100%",
-      padding: theme.spacing(4),
-      paddingBottom: theme.spacing(4),
-      marginBottom: ({ gutterBottom }: SectionTitleStylesProps) =>
-        gutterBottom ? 0 : -theme.spacing(2),
-      border: "none",
-      justifyContent: "flex-start",
-      "&:hover": {
-        cursor: ({ collapse }: SectionTitleStylesProps) =>
-          collapse ? "pointer" : "initial",
-        backgroundColor: ({ collapse }: SectionTitleStylesProps) =>
-          collapse ? theme.palette.grey[200] : "transparent",
-
-        "& $icon": {
-          color: theme.palette.grey[600],
-        },
-      },
-    },
-    text: {
-      "& > svg:first-of-type": {
-        marginRight: theme.spacing(2),
-      },
-      flexGrow: 1,
-      display: "flex",
-      alignItems: "center",
-      color: ({ disabled, color }: SectionTitleStylesProps) =>
-        disabled ? "grey.600" : (color ?? "grey.800"),
-    },
-    icon: {
-      justifySelf: "flex-end",
-      color: theme.palette.grey[500],
+    controlSection: {
+      borderTopColor: theme.palette.divider,
+      borderTopWidth: ({ hideTopBorder }) => (hideTopBorder ? 0 : "1px"),
+      borderTopStyle: "solid",
+      overflowX: "hidden",
+      overflowY: "auto",
+      flexShrink: 0,
     },
   })
 );
+
+const useSectionTitleStyles = makeStyles<
+  Theme,
+  {
+    disabled?: boolean;
+    sectionOpen: boolean;
+    collapse?: boolean;
+    warn?: boolean;
+  }
+>((theme) => ({
+  root: {
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    width: "100%",
+    padding: theme.spacing(4),
+    border: "none",
+    backgroundColor: ({ warn }) =>
+      warn ? theme.palette.orange[50] : "transparent",
+    color: ({ disabled, warn }) => {
+      if (disabled) {
+        return theme.palette.monochrome[300];
+      }
+
+      if (warn) {
+        return theme.palette.orange.main;
+      }
+
+      return theme.palette.monochrome[800];
+    },
+    WebkitUserSelect: "none",
+    transition: "background-color 0.2s ease",
+
+    "&:hover": {
+      cursor: ({ collapse }) => (collapse ? "pointer" : "initial"),
+      backgroundColor: ({ collapse }) => {
+        if (collapse) {
+          return theme.palette.cobalt[50];
+        }
+
+        return "transparent";
+      },
+
+      "& $text": {
+        color: ({ disabled }) =>
+          disabled
+            ? theme.palette.monochrome[300]
+            : theme.palette.monochrome[800],
+      },
+    },
+  },
+  text: {
+    flexGrow: 1,
+    display: "flex",
+    alignItems: "center",
+    fontWeight: 700,
+
+    "& > svg:first-of-type": {
+      marginRight: theme.spacing(2),
+    },
+  },
+  icon: {
+    justifySelf: "flex-end",
+  },
+}));
 
 const ControlSectionContext = createContext({
   open: () => {},
@@ -103,7 +113,6 @@ export const ControlSection = forwardRef<
   HTMLDivElement,
   {
     children: ReactNode;
-    isHighlighted?: boolean;
     sx?: BoxProps["sx"];
     collapse?: boolean;
     defaultExpanded?: boolean;
@@ -113,7 +122,6 @@ export const ControlSection = forwardRef<
   {
     role,
     children,
-    isHighlighted,
     sx,
     collapse = false,
     defaultExpanded = true,
@@ -122,17 +130,13 @@ export const ControlSection = forwardRef<
   },
   ref
 ) {
-  const classes = useControlSectionStyles({ isHighlighted, hideTopBorder });
+  const classes = useControlSectionStyles({ hideTopBorder });
   const disclosure = useDisclosure(defaultExpanded);
   const ctx = useMemo(
     () => ({ ...disclosure, collapse }),
     [collapse, disclosure]
   );
-  useEffect(() => {
-    if (isHighlighted) {
-      disclosure.setOpen(true);
-    }
-  }, [disclosure, isHighlighted]);
+
   return (
     <ControlSectionContext.Provider value={ctx}>
       <Box
@@ -154,11 +158,11 @@ type ControlSectionContentProps = {
   role?: string;
   ariaLabelledBy?: string;
   children: ReactNode;
+  px?: "default" | "none";
   // large for specific purposes, e.g. base layer map options
   // default for right panel options
   // none for left panel options
   gap?: "large" | "default" | "none";
-  px?: "small" | "default";
   sx?: BoxProps["sx"];
 } & BoxProps;
 
@@ -171,9 +175,11 @@ const useControlSectionContentStyles = makeStyles<
     flexDirection: "column",
     gap: ({ gap }) =>
       theme.spacing(gap === "large" ? 3 : gap === "default" ? 2 : 0),
-    padding: ({ px }) =>
-      `0 ${theme.spacing(px === "small" ? 2 : 4)} ${theme.spacing(4)}`,
     minWidth: 0,
+    paddingLeft: ({ px }) => (px === "none" ? 0 : theme.spacing(4)),
+    paddingTop: theme.spacing(2),
+    paddingRight: ({ px }) => (px === "none" ? 0 : theme.spacing(4)),
+    paddingBottom: theme.spacing(4),
   },
 }));
 
@@ -182,8 +188,8 @@ export const ControlSectionContent = ({
   role,
   ariaLabelledBy,
   children,
+  px = "default",
   gap = "default",
-  px,
   sx,
   ...props
 }: ControlSectionContentProps) => {
@@ -208,76 +214,44 @@ export const ControlSectionContent = ({
 
 export const useControlSectionContext = () => useContext(ControlSectionContext);
 
-type TitleProps = {
-  variant: "section" | "subsection";
-  color?: string;
-  iconName?: IconName;
-  titleId?: string;
-  disabled?: boolean;
-  warnMessage?: string | React.ReactNode;
+export const SectionTitle = ({
+  children,
+  id,
+  disabled,
+  iconName,
+  warnMessage,
+  sx,
+}: {
   children: ReactNode;
-  gutterBottom?: boolean;
+  id?: string;
+  disabled?: boolean;
+  iconName?: IconName;
+  warnMessage?: string | ReactNode;
   sx?: TypographyProps["sx"];
-};
-
-const Title = (props: TitleProps) => {
-  const {
-    variant,
-    color,
-    iconName,
-    titleId,
-    disabled,
-    warnMessage,
-    children,
-    gutterBottom = true,
-    sx,
-  } = props;
+}) => {
   const { setOpen, isOpen, collapse } = useControlSectionContext();
   const classes = useSectionTitleStyles({
     disabled,
-    color,
     sectionOpen: isOpen,
-    gutterBottom,
     collapse,
+    warn: !!warnMessage,
   });
-  const isSection = variant === "section";
 
   return (
-    <div
+    <Box
       className={classes.root}
       onClick={collapse ? () => setOpen((v) => !v) : undefined}
     >
-      <Typography
-        variant={isSection ? "h4" : "h5"}
-        id={titleId}
-        className={classes.text}
-        sx={sx}
-      >
-        {isSection ? null : iconName ? <Icon name={iconName} /> : null}
+      <Typography variant="h6" id={id} className={classes.text} sx={sx}>
+        {iconName ? <Icon name={iconName} /> : null}
         {children}
       </Typography>
       {warnMessage && <Warning title={warnMessage} />}
       <span className={classes.icon}>
-        {collapse ? (
-          isOpen ? (
-            <SvgIcMinus width={18} height={18} />
-          ) : (
-            <SvgIcPlus width={18} height={18} />
-          )
-        ) : null}
+        {collapse ? <Icon name={isOpen ? "minus" : "plus"} /> : null}
       </span>
-    </div>
+    </Box>
   );
-};
-
-export const SectionTitle = (
-  props: Omit<TitleProps, "variant" | "iconName">
-) => {
-  return <Title variant="section" {...props} />;
-};
-
-export const SubsectionTitle = (props: Omit<TitleProps, "variant">) => {
-  return <Title variant="subsection" {...props} />;
 };
 
 export const ControlSectionSkeleton = ({
@@ -288,33 +262,30 @@ export const ControlSectionSkeleton = ({
   showTitle?: boolean;
 }) => (
   <ControlSection sx={{ mt: 2, ...sx }}>
-    <ControlSectionContent px="small" gap="none">
+    <ControlSectionContent gap="none">
       {showTitle ? (
         <Typography variant="h1">
-          <Skeleton sx={{ bgcolor: "grey.300" }} />
+          <Skeleton sx={{ bgcolor: "cobalt.50" }} />
         </Typography>
       ) : null}
       <Skeleton
-        sx={{ bgcolor: "grey.300", mt: showTitle ? 0 : 2 }}
         variant="rectangular"
-        width="100%"
-        height={118}
+        sx={{
+          width: "100%",
+          height: 120,
+          mt: showTitle ? 0 : 2,
+          bgcolor: "cobalt.50",
+        }}
       />
     </ControlSectionContent>
   </ControlSection>
 );
 
-type WarningProps = {
-  title: string | React.ReactNode;
-};
-
-const Warning = (props: WarningProps) => {
-  const { title } = props;
-
+const Warning = ({ title }: { title: string | ReactNode }) => {
   return (
     <MaybeTooltip title={title}>
-      <Typography color="warning.main" sx={{ mr: 2 }}>
-        <SvgIcWarningCircle width={18} height={18} />
+      <Typography sx={{ mr: 2, lineHeight: "0 !important" }}>
+        <Icon name="warningCircle" />
       </Typography>
     </MaybeTooltip>
   );
