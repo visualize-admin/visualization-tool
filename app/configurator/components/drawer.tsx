@@ -6,7 +6,7 @@ import { PANEL_HEADER_CSS_VAR } from "@/configurator/components/layout";
 
 export const DRAWER_WIDTH = 340;
 
-export const ConfiguratorDrawer = styled(MuiDrawer)({
+export const ConfiguratorDrawer = styled(MuiDrawer)(({ theme }) => ({
   "&": {
     position: "static",
   },
@@ -16,6 +16,7 @@ export const ConfiguratorDrawer = styled(MuiDrawer)({
     bottom: 0,
     width: DRAWER_WIDTH,
     height: "auto",
+    borderTop: `1px solid ${theme.palette.divider}`,
     boxShadow: "none",
   },
-});
+}));

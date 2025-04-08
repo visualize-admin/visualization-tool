@@ -38,7 +38,7 @@ export const LayoutBlocksSelector = () => {
       aria-labelledby={`tab-block-${activeBlock.key}`}
       tabIndex={-1}
     >
-      <ControlSection>
+      <ControlSection hideTopBorder>
         <SectionTitle closable>
           <Trans id="controls.section.block-options.block.text">
             Text object

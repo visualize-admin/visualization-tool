@@ -468,7 +468,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
     >
       {/* Only show component select if necessary */}
       {encoding.componentTypes.length > 0 && (
-        <ControlSection>
+        <ControlSection hideTopBorder>
           <SectionTitle closable>
             {getFieldLabel(`${chartConfig.chartType}.${encoding.field}`)}
           </SectionTitle>
@@ -2457,7 +2457,7 @@ const ChartMapBaseLayerSettings = ({
   }, [chartConfig.baseLayer.locked, dispatch, locale]);
 
   return (
-    <ControlSection>
+    <ControlSection hideTopBorder>
       <SectionTitle closable>
         <Trans id="chart.map.layers.base">Base Layers</Trans>
       </SectionTitle>
