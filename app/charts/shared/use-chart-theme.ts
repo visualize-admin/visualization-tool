@@ -14,10 +14,10 @@ export const useChartTheme = () => {
   const axisLabelFontWeight = 500;
   const axisLabelColor = theme.palette.grey[800];
   const markBorderColor = theme.palette.grey[100];
-  const brushOverlayColor = theme.palette.grey[300];
-  const brushSelectionColor = theme.palette.grey[600];
-  const brushHandleStrokeColor = theme.palette.grey[600];
-  const brushHandleFillColor = theme.palette.grey[100];
+  const brushOverlayColor = theme.palette.monochrome[300];
+  const brushSelectionColor = theme.palette.monochrome[500];
+  const brushHandleStrokeColor = theme.palette.monochrome[500];
+  const brushHandleFillColor = theme.palette.background.paper;
 
   return {
     axisLabelFontSize,
