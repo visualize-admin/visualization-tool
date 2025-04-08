@@ -246,6 +246,7 @@ export const Checkbox = ({
         sx={{ svg: { color } }}
       />
     }
+    sx={{ whiteSpace: "nowrap" }}
   />
 );
 
