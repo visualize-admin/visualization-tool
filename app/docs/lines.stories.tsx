@@ -8,6 +8,7 @@ import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { LegendColor } from "@/charts/shared/legend-color";
+import { Observer } from "@/charts/shared/use-size";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import {
   InteractiveFiltersChartProvider,
@@ -22,7 +23,6 @@ import {
   measures,
   observations,
 } from "./lines.mock";
-import { Observer } from "@/charts/shared/use-size";
 
 const meta: Meta = {
   title: "Charts / Charts / Line",

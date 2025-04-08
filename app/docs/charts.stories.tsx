@@ -1,7 +1,6 @@
 import { Meta } from "@storybook/react";
 import keyBy from "lodash/keyBy";
 
-import { Observer } from "@/charts/shared/use-size";
 import { Columns, ErrorWhiskers } from "@/charts/column/columns";
 import { ColumnChart } from "@/charts/column/columns-state";
 import { Scatterplot } from "@/charts/scatterplot/scatterplot";
@@ -22,6 +21,7 @@ import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
+import { Observer } from "@/charts/shared/use-size";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { Dimension, Measure } from "@/domain/data";
 import {

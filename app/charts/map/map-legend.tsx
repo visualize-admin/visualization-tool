@@ -557,7 +557,7 @@ const JenksColorLegend = ({
         scale,
         thresholds: tickValues,
       }),
-    [fontFamily, formatNumber, labelColor, scale, tickValues]
+    [axisLabelFontSize, fontFamily, formatNumber, labelColor, scale, tickValues]
   );
 
   const height = useLegendWithRotatedAxisLabelsHeight(thresholdsScale.range(), {
@@ -631,7 +631,7 @@ const QuantileColorLegend = ({
         scale,
         thresholds,
       }),
-    [fontFamily, formatNumber, labelColor, scale, thresholds]
+    [axisLabelFontSize, fontFamily, formatNumber, labelColor, scale, thresholds]
   );
 
   const height = useLegendWithRotatedAxisLabelsHeight(thresholdsScale.range(), {
@@ -701,7 +701,7 @@ const QuantizeColorLegend = ({
         scale,
         thresholds,
       }),
-    [fontFamily, formatNumber, labelColor, scale, thresholds]
+    [axisLabelFontSize, fontFamily, formatNumber, labelColor, scale, thresholds]
   );
 
   const height = useLegendWithRotatedAxisLabelsHeight(thresholds, {
