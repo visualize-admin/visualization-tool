@@ -34,6 +34,7 @@ export const DataSourceMenu = () => {
         }}
         disabled={isDisabled}
         options={SOURCE_OPTIONS}
+        sortOptions={false}
         sx={{
           width: "fit-content",
           color: "white !important",
