@@ -35,7 +35,7 @@ test("Filters should be sorted by position", async ({ selectors, actions }) => {
 
   const rawTexts = await filtersValueLocator.allTextContents();
   const texts = rawTexts.map((x) =>
-    x.replace("Open Color Picker", "").replace("Show values", "")
+    x.replace("Open Color Picker", "").replace("Show value", "")
   );
   expect(texts).toEqual([
     "Data deficient",
