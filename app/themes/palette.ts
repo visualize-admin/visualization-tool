@@ -11,6 +11,7 @@ export const palette = {
     light: "#60A5FA",
     contrastText: "#FFFFFF",
   },
+  divider: colors.cobalt[100],
   cobalt: {
     main: colors.cobalt[700],
     ...colors.cobalt,
