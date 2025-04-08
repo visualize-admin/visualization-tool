@@ -25,7 +25,6 @@ const useStyles = makeStyles(() => ({
     borderWidth: 1,
     borderStyle: "solid",
     borderColor: "transparent",
-    borderRadius: 1.5,
     padding: 0,
     cursor: "pointer",
   },
@@ -50,8 +49,11 @@ export const Swatch = ({
       sx={{
         borderColor: selected ? borderColor : undefined,
         boxShadow: selected ? `0 0 0.5rem 0 ${color}` : undefined,
-        ":hover": { borderColor },
         backgroundColor: color,
+
+        "&:hover": {
+          borderColor,
+        },
       }}
       role="button"
       onClick={onClick}
@@ -61,10 +63,9 @@ export const Swatch = ({
 
 const ColorPickerButton = styled(Button)({
   padding: 0,
-  minWidth: "auto",
-  minHeight: "auto",
-  lineHeight: "16px",
-  backgroundColor: "transparent",
+  minWidth: 16,
+  minHeight: 16,
+  backgroundColor: "transparent !important",
 });
 
 const ColorPickerBox = styled(Box)(({ theme }) => ({
@@ -126,24 +127,17 @@ export const ColorPickerMenu = ({
         pointerEvents: disabled ? "none" : "auto",
       }}
     >
-      <ColorPickerBox
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-        }}
-      >
-        <ColorPickerButton ref={buttonRef} disabled={disabled} onClick={open}>
+      <ColorPickerBox sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <ColorPickerButton
+          ref={buttonRef}
+          variant="text"
+          disabled={disabled}
+          onClick={open}
+        >
           <VisuallyHidden>
             <Trans id="controls.colorpicker.open">Open Color Picker</Trans>
           </VisuallyHidden>
-          <Typography
-            aria-hidden
-            color="primary.main"
-            sx={{ backgroundColor: "transparent" }}
-          >
-            <Icon name="color" size={16} />
-          </Typography>
+          <Icon name="swatch" size={16} />
         </ColorPickerButton>
         {colorId && onRemove && (
           <ColorPickerButton onClick={() => onRemove(colorId)}>
@@ -168,6 +162,7 @@ export const ColorPickerMenu = ({
         }}
         open={isOpen}
         onClose={close}
+        slotProps={{ paper: { sx: { boxShadow: 4 } } }}
       >
         <Box ref={popoverRef}>
           <CustomColorPicker
