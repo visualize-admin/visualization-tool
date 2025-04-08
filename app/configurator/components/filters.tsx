@@ -427,7 +427,7 @@ const MultiFilterContent = ({
       {valueGroups.map(([parentLabel, children]) => {
         return (
           <Box sx={{ mb: 4 }} key={parentLabel}>
-            <Typography variant="h5" sx={{ mb: 3 }}>
+            <Typography variant="h6" sx={{ mb: 4, fontWeight: 700 }}>
               {interlace(explodeParents(parentLabel), (i) => (
                 <BreadcrumbChevron key={i} />
               ))}
