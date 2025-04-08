@@ -34,7 +34,6 @@ import {
   Observation,
 } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
-import { Icon } from "@/icons";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
@@ -43,9 +42,7 @@ import useEvent from "@/utils/use-event";
 
 import { DimensionsById } from "./ChartProps";
 
-export type LegendSymbol = "square" | "line" | "circle" | "cross";
-
-type LegendItemUsage = "legend" | "tooltip" | "colorPicker";
+export type LegendSymbol = "square" | "line" | "circle" | "cross" | "triangle";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   legendContainer: {
@@ -68,7 +65,8 @@ const useStyles = makeStyles<Theme>((theme) => ({
   legendGroup: {
     display: "flex",
     flexWrap: "wrap",
-    columnGap: "1rem",
+    columnGap: theme.spacing(3),
+    rowGap: theme.spacing(2),
     flexDirection: "column",
   },
   groupHeader: {
@@ -76,60 +74,6 @@ const useStyles = makeStyles<Theme>((theme) => ({
     flexWrap: "wrap",
   },
 }));
-
-type ItemStyleProps = {
-  symbol: LegendSymbol;
-  color: string;
-  usage: LegendItemUsage;
-};
-
-const useItemStyles = makeStyles<Theme, ItemStyleProps>((theme) => {
-  return {
-    legendItem: {
-      position: "relative",
-      justifyContent: "flex-start",
-      alignItems: "flex-start",
-      fontSize: ({ usage }) =>
-        ["legend", "colorPicker"].includes(usage)
-          ? theme.typography.body2.fontSize
-          : theme.typography.caption.fontSize,
-      fontWeight: theme.typography.fontWeightRegular,
-      color: theme.palette.grey[700],
-      wordBreak: "break-word",
-
-      "&::before": {
-        content: "''",
-        position: "relative",
-        display: ({ symbol }) => (symbol === "cross" ? "none" : "block"),
-        width: `calc(0.5rem * var(--size-adjust, 1))`,
-        height: ({ symbol }) =>
-          `calc(${["square", "circle"].includes(symbol) ? "0.5rem" : "2px"} * var(--size-adjust, 1))`,
-        marginTop: ({ symbol, usage }) =>
-          `calc(0.75rem - calc(${
-            ["square", "circle"].includes(symbol)
-              ? usage === "tooltip"
-                ? "0.6rem"
-                : "0.5rem"
-              : usage === "tooltip"
-                ? "0.2rem"
-                : "2px"
-          } * var(--size-adjust, 1)) * 0.5)`,
-        marginRight: "0.4rem",
-        flexShrink: 0,
-        backgroundColor: ({ color }) => color,
-        borderRadius: ({ symbol }) => (symbol === "circle" ? "50%" : 0),
-      },
-    },
-
-    legendCheckbox: {
-      marginBottom: () => "0.25rem",
-      marginRight: 0,
-    },
-    bigger: {
-      "--size-adjust": 1.5,
-    },
-  };
-});
 
 const useLegendGroups = ({
   chartConfig,
@@ -384,22 +328,21 @@ const LegendColorContent = ({
                     )}
                   </Typography>
                 ) : null}
-                {colorValues.map((d, i) => {
-                  const label = getLabel(d);
+                {colorValues.map((value) => {
+                  const label = getLabel(value);
                   const active = !activeInteractiveFilters.has(label);
 
                   return (
                     <LegendItem
-                      key={`${d}_${i}`}
-                      item={label}
-                      color={getColor(d)}
+                      key={value}
+                      label={label}
+                      color={getColor(value)}
                       dimension={getItemDimension?.(label)}
                       symbol={symbol}
                       interactive={interactive}
                       onToggle={handleToggle}
                       checked={interactive && active}
                       disabled={soleItemChecked && active}
-                      usage="legend"
                     />
                   );
                 })}
@@ -407,7 +350,7 @@ const LegendColorContent = ({
                   ? limits.map(({ label, values, color, symbol }, i) => (
                       <LegendItem
                         key={i}
-                        item={`${label}: ${values.map(formatNumber).join("-")}`}
+                        label={`${label}: ${values.map(formatNumber).join("-")}`}
                         color={color}
                         symbol={symbol}
                       />
@@ -421,8 +364,68 @@ const LegendColorContent = ({
   );
 };
 
-type LegendItemProps = {
-  item: string;
+const LegendIcon = ({
+  symbol,
+  size,
+  fill,
+}: {
+  symbol: LegendSymbol;
+  size: number;
+  fill: string;
+}) => {
+  let node: JSX.Element;
+
+  switch (symbol) {
+    case "circle":
+      node = <circle cx={0.5} cy={0.5} r={0.5} fill={fill} />;
+      break;
+    case "square":
+      node = <rect width={1} height={1} fill={fill} />;
+      break;
+    case "cross":
+      node = (
+        <g fill={fill} transform="translate(0 0.05) rotate(45 0.5 0.5)">
+          <rect x={0.45} y={0} width={0.1} height={1} />
+          <rect x={0} y={0.45} width={1} height={0.1} />
+        </g>
+      );
+      break;
+    case "line":
+      node = <rect x={0} y={0.425} width={1} height={0.175} fill={fill} />;
+      break;
+    case "triangle":
+      node = (
+        <polygon
+          points="0.5,0.1339746 0.0669873,0.8660254 0.9330127,0.8660254"
+          transform="translate(0 0.05)"
+          fill={fill}
+        />
+      );
+      break;
+    default:
+      const _exhaustiveCheck: never = symbol;
+      return _exhaustiveCheck;
+  }
+
+  return (
+    <svg width={size} height={size} viewBox="0 0 1 1">
+      {node}
+    </svg>
+  );
+};
+
+export const LegendItem = ({
+  label,
+  color,
+  dimension,
+  symbol,
+  interactive,
+  onToggle,
+  checked,
+  disabled,
+  smaller,
+}: {
+  label: string;
   color: string;
   dimension?: Measure;
   symbol: LegendSymbol;
@@ -430,25 +433,13 @@ type LegendItemProps = {
   onToggle?: ComponentProps<typeof Checkbox>["onChange"];
   checked?: boolean;
   disabled?: boolean;
-  usage?: LegendItemUsage;
-};
-
-export const LegendItem = (props: LegendItemProps) => {
-  const {
-    item,
-    color,
-    dimension,
-    symbol,
-    interactive,
-    onToggle,
-    checked,
-    disabled,
-    usage: _usage,
-  } = props;
-  const usage = _usage ?? "legend";
-  const classes = useItemStyles({ symbol, color, usage });
-  const shouldBeBigger =
-    (symbol === "circle" && _usage !== "legend") || usage === "colorPicker";
+  smaller?: boolean;
+}) => {
+  const labelNode = smaller ? (
+    <Typography variant="caption">{label}</Typography>
+  ) : (
+    <Typography variant="body3">{label}</Typography>
+  );
 
   return interactive && onToggle ? (
     <MaybeTooltip
@@ -463,39 +454,28 @@ export const LegendItem = (props: LegendItemProps) => {
     >
       <div>
         <Checkbox
-          label={item}
-          name={item}
-          value={item}
-          checked={checked !== undefined ? checked : true}
+          name={label}
+          label={label}
+          value={label}
+          checked={checked ?? true}
           onChange={onToggle}
-          key={item}
           color={color}
-          className={clsx(
-            classes.legendCheckbox,
-            shouldBeBigger && classes.bigger
-          )}
+          size={smaller ? "sm" : "md"}
         />
       </div>
     </MaybeTooltip>
   ) : (
     <Flex
       data-testid="legendItem"
-      className={clsx(classes.legendItem, shouldBeBigger && classes.bigger)}
-      sx={{
-        alignItems: symbol === "cross" ? "center !important" : "flex-start",
-      }}
+      sx={{ alignItems: "center", gap: smaller ? 1 : 2 }}
     >
-      {/* TODO: Use icons instead of ::before when migrating to new CI / CD */}
-      {symbol === "cross" ? (
-        <Icon size={16} name="close" color={color} />
-      ) : null}
+      <LegendIcon symbol={symbol} size={smaller ? 8 : 12} fill={color} />
       {dimension ? (
         <OpenMetadataPanelWrapper component={dimension}>
-          {/* Account for the added space, to align the symbol and label. */}
-          <span style={{ marginTop: 3 }}>{item}</span>
+          {labelNode}
         </OpenMetadataPanelWrapper>
       ) : (
-        item
+        labelNode
       )}
     </Flex>
   );

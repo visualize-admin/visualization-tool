@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Input } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import {
   hexToHsva,
@@ -11,7 +11,6 @@ import dynamic from "next/dynamic";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import Flex from "@/components/flex";
-import { Input } from "@/components/form";
 import { ColorItem } from "@/palettes";
 import { createColorId } from "@/utils/color-palette-utils";
 
@@ -22,14 +21,14 @@ const ChromePicker = dynamic(
   { ssr: false }
 );
 
-const useColorPickerStyles = makeStyles(() => ({
+const useColorPickerStyles = makeStyles({
   swatches: {
     gridTemplateColumns: "repeat(auto-fill, minmax(1rem, 1fr))",
     gap: 2,
     marginBottom: 2,
     marginTop: 8,
   },
-}));
+});
 
 type CustomColorPickerProps = {
   onChange: (color: HsvaColor) => void;
@@ -79,19 +78,13 @@ const CustomColorPicker = ({
   return (
     <Flex
       sx={{
-        padding: "8px",
-        borderRadius: "3px",
         flexDirection: "column",
         alignItems: "center",
+        p: 2,
+        borderRadius: 4,
       }}
     >
-      <Flex
-        sx={{
-          width: "162px",
-          flexDirection: "column",
-          gap: "4px",
-        }}
-      >
+      <Flex sx={{ flexDirection: "column", width: "162px", gap: 1 }}>
         <Saturation
           data-testid="color-picker-saturation"
           hsva={hsva}
@@ -127,7 +120,6 @@ const CustomColorPicker = ({
             style={{ width: "100%", height: "8px" }}
           />
         </Flex>
-
         <Box display="grid" className={classes.swatches}>
           {colorSwatches?.map((item, i) => (
             <Swatch

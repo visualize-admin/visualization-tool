@@ -259,20 +259,20 @@ const ChartFootnotesComboLineColumn = ({
     <ChartFootnotesLegendContainer>
       {firstComponent && (
         <LegendItem
-          item={firstComponent.label}
+          label={firstComponent.label}
           color={chartConfig.fields.color.colorMapping[firstComponent.id]}
           symbol={lineAxisOrientation === "left" ? "line" : "square"}
-          usage="tooltip"
           dimension={firstComponent as Measure}
+          smaller
         />
       )}
       {secondComponent && (
         <LegendItem
-          item={secondComponent.label}
+          label={secondComponent.label}
           color={chartConfig.fields.color.colorMapping[secondComponent.id]}
           symbol={lineAxisOrientation === "left" ? "square" : "line"}
-          usage="tooltip"
           dimension={secondComponent as Measure}
+          smaller
         />
       )}
     </ChartFootnotesLegendContainer>
@@ -302,20 +302,20 @@ const ChartFootnotesComboLineDual = ({
     <ChartFootnotesLegendContainer>
       {leftAxisComponent && (
         <LegendItem
-          item={leftAxisComponent.label}
+          label={leftAxisComponent.label}
           color={chartConfig.fields.color.colorMapping[leftAxisComponent.id]}
           symbol="line"
-          usage="tooltip"
           dimension={leftAxisComponent as Measure}
+          smaller
         />
       )}
       {rightAxisComponent && (
         <LegendItem
-          item={rightAxisComponent.label}
+          label={rightAxisComponent.label}
           color={chartConfig.fields.color.colorMapping[rightAxisComponent.id]}
           symbol="line"
-          usage="tooltip"
           dimension={rightAxisComponent as Measure}
+          smaller
         />
       )}
     </ChartFootnotesLegendContainer>
@@ -345,11 +345,11 @@ const ChartFootnotesComboLineSingle = ({
         return component ? (
           <LegendItem
             key={component.id}
-            item={component.label}
+            label={component.label}
             color={chartConfig.fields.color.colorMapping[component.id]}
             symbol="line"
-            usage="tooltip"
             dimension={component as Measure}
+            smaller
           />
         ) : null;
       })}

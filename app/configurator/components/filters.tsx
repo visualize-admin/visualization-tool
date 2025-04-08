@@ -160,8 +160,11 @@ const useStyles = makeStyles((theme: Theme) => {
     selectedValueRow: {
       display: "flex",
       alignItems: "center",
-      marginBottom: "0.5rem",
-      gap: "1rem",
+      gap: theme.spacing(2),
+
+      "&:not(:last-of-type)": {
+        paddingBottom: theme.spacing(4),
+      },
     },
   };
 });
@@ -419,10 +422,8 @@ const MultiFilterContent = ({
             </Trans>
           </Typography>
         </Flex>
-
-        <Divider sx={{ my: "0.75rem" }} />
+        <Divider sx={{ mt: 4 }} />
       </Box>
-
       {valueGroups.map(([parentLabel, children]) => {
         return (
           <Box sx={{ mb: 4 }} key={parentLabel}>

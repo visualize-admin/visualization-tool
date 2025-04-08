@@ -849,10 +849,9 @@ const ChartLimits = ({
                     }}
                   >
                     <LegendItem
-                      item={limit.name}
+                      label={limit.name}
                       color={color}
                       symbol="square"
-                      usage="colorPicker"
                     />
                     <ColorPickerMenu
                       colors={colors}

@@ -298,13 +298,8 @@ const ColorSelectionRow = (props: ColorSelectionRowProps) => {
   return (
     <Box className={classes.colorItem}>
       <Flex className={classes.colorItemContent}>
-        <LegendItem
-          item={color}
-          color={color}
-          symbol="square"
-          usage="colorPicker"
-        />
-        <Flex gap={2} alignItems={"center"}>
+        <LegendItem label={color} color={color} symbol="square" />
+        <Flex sx={{ alignItems: "center", gap: 2 }}>
           {warningContrast && (
             <DisabledMessageIcon message={getContrastWarning()} />
           )}

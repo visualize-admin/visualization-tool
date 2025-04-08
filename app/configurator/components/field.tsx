@@ -782,26 +782,21 @@ export const MultiFilterField = ({
   return color && checked ? (
     <Flex
       sx={{
-        width: "100%",
         justifyContent: "space-between",
         alignItems: "center",
         gap: 2,
+        width: "100%",
       }}
     >
-      <LegendItem
-        symbol={symbol}
-        item={label}
-        color={color}
-        usage="colorPicker"
-      />
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+      <LegendItem symbol={symbol} label={label} color={color} />
+      <Flex sx={{ alignItems: "center", gap: 1 }}>
         {enableShowValue ? <ShowValuesMappingField value={value} /> : null}
         <ColorPickerMenu
           colors={palette}
           selectedHexColor={color}
           onChange={onChange}
         />
-      </Box>
+      </Flex>
     </Flex>
   ) : null;
 };
@@ -882,12 +877,7 @@ export const ColorPickerField = ({
         width: "100%",
       }}
     >
-      <LegendItem
-        item={label}
-        color={color}
-        symbol={symbol}
-        usage="colorPicker"
-      />
+      <LegendItem label={label} color={color} symbol={symbol} />
       <ColorPickerMenu
         colors={palette}
         selectedHexColor={color}
