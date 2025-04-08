@@ -356,7 +356,7 @@ const MultiFilterContent = ({
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
         {chartConfig.activeField === "segment" ? (
-          <Flex sx={{ flexDirection: "column", gap: 3 }}>
+          <Flex sx={{ flexDirection: "column", gap: 3, mb: 3 }}>
             <Switch
               label={
                 <MaybeTooltip
@@ -383,16 +383,16 @@ const MultiFilterContent = ({
               })}
               {...visibleLegendProps}
             />
-            <Button
-              variant="outlined"
-              size="sm"
-              onClick={handleOpenAutocomplete}
-              sx={{ width: "fit-content" }}
-            >
-              <Trans id="controls.set-filters">Edit filters</Trans>
-            </Button>
           </Flex>
         ) : null}
+        <Button
+          variant="outlined"
+          size="sm"
+          onClick={handleOpenAutocomplete}
+          sx={{ width: "fit-content" }}
+        >
+          <Trans id="controls.set-filters">Edit filters</Trans>
+        </Button>
         <Flex sx={{ justifyContent: "space-between", mt: 4 }}>
           <Typography variant="h6" component="p" sx={{ fontWeight: 700 }}>
             <Trans id="controls.filters.select.selected-filters">
