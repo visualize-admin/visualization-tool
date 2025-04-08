@@ -269,7 +269,11 @@ export const SectionTitle = ({
   });
 
   return (
-    <Box className={classes.root} onClick={handleClick}>
+    <Box
+      className={classes.root}
+      onClick={handleClick}
+      {...(closable ? { "data-testid": "section-close" } : {})}
+    >
       <Typography variant="h6" id={id} className={classes.text} sx={sx}>
         {closable ? (
           <Icon name="chevronLeft" />
