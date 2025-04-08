@@ -469,7 +469,14 @@ const SelectTree = ({
 
   return (
     <div>
-      {label && <Label htmlFor={id!}>{label}</Label>}
+      {label && (
+        <Label
+          htmlFor={id!}
+          sx={{ display: "flex", alignItems: "center", mb: 1 }}
+        >
+          {label}
+        </Label>
+      )}
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <Select
           ref={inputRef}
