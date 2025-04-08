@@ -505,7 +505,14 @@ const ColorPaletteControls = ({
       paletteId === "dimension";
 
     return (
-      <Flex sx={{ alignItems: "center", gap: 2, color: "blue.main" }}>
+      <Flex
+        sx={{
+          alignItems: "center",
+          columnGap: 2,
+          flexWrap: "wrap",
+          color: "blue.main",
+        }}
+      >
         <Button
           variant="text"
           color="blue"
