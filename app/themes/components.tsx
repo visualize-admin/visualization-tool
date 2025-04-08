@@ -25,6 +25,7 @@ export const components: Components = {
         return {
           display: "flex",
           alignItems: "center",
+          width: "100%",
           padding: 0,
           backgroundColor: palette[color][50],
           color: palette[color].main,
