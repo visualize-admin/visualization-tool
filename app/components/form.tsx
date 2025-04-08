@@ -231,7 +231,7 @@ export const Checkbox = ({
   <FormControlLabel
     label={label}
     size={size}
-    htmlFor={`${name}`}
+    htmlFor={name}
     disabled={disabled}
     className={className}
     control={
@@ -243,11 +243,7 @@ export const Checkbox = ({
         disabled={disabled}
         onChange={onChange}
         indeterminate={indeterminate}
-        sx={{
-          alignSelf: "start",
-          svg: { color },
-          input: { color },
-        }}
+        sx={{ svg: { color } }}
       />
     }
   />
