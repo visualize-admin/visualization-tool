@@ -1798,11 +1798,6 @@ const ChartFieldMultiFilter = ({
               dimension={component}
               field={field}
               colorComponent={colorComponent}
-              // If colorType is defined, we are dealing with color field and
-              // not segment.
-              colorConfigPath={
-                isColorInConfig(chartConfig) ? undefined : "colorMapping"
-              }
             />
           )
         )}
