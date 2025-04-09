@@ -3,13 +3,13 @@ import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import orderBy from "lodash/orderBy";
-import { ComponentProps, memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 
 import { ColorsChartState, useChartState } from "@/charts/shared/chart-state";
 import { rgbArrayToHex } from "@/charts/shared/colors";
 import { getLegendGroups } from "@/charts/shared/legend-color-helpers";
 import Flex from "@/components/flex";
-import { Checkbox } from "@/components/form";
+import { Checkbox, CheckboxProps } from "@/components/form";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useChartConfigFilters, useLimits } from "@/config-utils";
@@ -280,18 +280,16 @@ const LegendColorContent = ({
 
   const soleItemChecked = activeInteractiveFilters.size === numberOfOptions - 1;
 
-  const handleToggle: ComponentProps<typeof Checkbox>["onChange"] = useEvent(
-    (e) => {
-      const disabled = soleItemChecked && !e.target.checked;
-      const item = e.target.value;
+  const handleToggle: CheckboxProps["onChange"] = useEvent((e) => {
+    const disabled = soleItemChecked && !e.target.checked;
+    const item = e.target.value;
 
-      if (activeInteractiveFilters.has(item)) {
-        removeCategory(item);
-      } else if (!disabled) {
-        addCategory(item);
-      }
+    if (activeInteractiveFilters.has(item)) {
+      removeCategory(item);
+    } else if (!disabled) {
+      addCategory(item);
     }
-  );
+  });
 
   const formatNumber = useFormatNumber({ decimals: "auto" });
 
@@ -430,7 +428,7 @@ export const LegendItem = ({
   dimension?: Measure;
   symbol: LegendSymbol;
   interactive?: boolean;
-  onToggle?: ComponentProps<typeof Checkbox>["onChange"];
+  onToggle?: CheckboxProps["onChange"];
   checked?: boolean;
   disabled?: boolean;
   smaller?: boolean;

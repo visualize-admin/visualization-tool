@@ -209,6 +209,15 @@ export const Slider = ({
   );
 };
 
+export type CheckboxProps = {
+  label: ComponentProps<typeof FormControlLabel>["label"];
+  size?: ComponentProps<typeof FormControlLabel>["size"];
+  disabled?: boolean;
+  color?: string;
+  indeterminate?: boolean;
+  className?: string;
+} & FieldProps;
+
 export const Checkbox = ({
   label,
   size,
@@ -220,14 +229,7 @@ export const Checkbox = ({
   color,
   indeterminate,
   className,
-}: {
-  label: ComponentProps<typeof FormControlLabel>["label"];
-  size?: ComponentProps<typeof FormControlLabel>["size"];
-  disabled?: boolean;
-  color?: string;
-  indeterminate?: boolean;
-  className?: string;
-} & FieldProps) => (
+}: CheckboxProps) => (
   <FormControlLabel
     label={label}
     size={size}

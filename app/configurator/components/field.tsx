@@ -20,6 +20,7 @@ import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
 import {
   Checkbox,
+  CheckboxProps,
   FormControlLabel,
   Input,
   MarkdownInput,
@@ -1084,7 +1085,7 @@ export const ChartOptionCheckboxField = ({
   disabled = false,
 }: {
   label: string;
-  size?: ComponentProps<typeof Checkbox>["size"];
+  size?: CheckboxProps["size"];
   field: EncodingFieldType | null;
   path: string;
   defaultValue?: boolean;
