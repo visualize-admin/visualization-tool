@@ -1,5 +1,6 @@
 import { Drawer as MuiDrawer } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { ReactNode } from "react";
 
 import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import { PANEL_HEADER_CSS_VAR } from "@/configurator/components/layout";
@@ -21,3 +22,36 @@ export const ConfiguratorDrawer = styled(MuiDrawer)(({ theme }) => ({
     boxShadow: "none",
   },
 }));
+
+export const RightDrawer = ({
+  children,
+  open,
+  onClose,
+  onExited,
+}: {
+  children: ReactNode;
+  open: boolean;
+  onClose: () => void;
+  onExited: () => void;
+}) => {
+  return (
+    <MuiDrawer
+      anchor="right"
+      open={open}
+      variant="temporary"
+      onClose={onClose}
+      SlideProps={{
+        onExited: onExited,
+      }}
+      PaperProps={{
+        sx: {
+          width: 1400,
+          maxWidth: "100%",
+          px: 8,
+        },
+      }}
+    >
+      {children}
+    </MuiDrawer>
+  );
+};
