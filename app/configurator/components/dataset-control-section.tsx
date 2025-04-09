@@ -17,7 +17,7 @@ import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
 import useDisclosure from "@/components/use-disclosure";
 import { getChartConfig } from "@/config-utils";
-import { DatasetDialog } from "@/configurator/components/add-dataset-dialog";
+import { AddDatasetDrawer } from "@/configurator/components/add-dataset-drawer";
 import { DatasetsBadge } from "@/configurator/components/badges";
 import {
   ControlSection,
@@ -248,7 +248,7 @@ export const DatasetsControlSection = () => {
             </Button>
           ) : null}
         </Flex>
-        <DatasetDialog
+        <AddDatasetDrawer
           state={state}
           open={isDatasetDialogOpen}
           onClose={closeDatasetDialog}

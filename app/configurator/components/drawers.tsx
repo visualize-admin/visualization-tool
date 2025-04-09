@@ -1,4 +1,4 @@
-import { Drawer as MuiDrawer } from "@mui/material";
+import { Drawer as MuiDrawer, DrawerProps } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ReactNode } from "react";
 
@@ -30,9 +30,9 @@ export const RightDrawer = ({
   onExited,
 }: {
   children: ReactNode;
-  open: boolean;
-  onClose: () => void;
-  onExited: () => void;
+  open?: DrawerProps["open"];
+  onClose?: DrawerProps["onClose"];
+  onExited?: () => void;
 }) => {
   return (
     <MuiDrawer
@@ -47,7 +47,7 @@ export const RightDrawer = ({
         sx: {
           width: 1400,
           maxWidth: "100%",
-          px: 8,
+          p: 8,
         },
       }}
     >

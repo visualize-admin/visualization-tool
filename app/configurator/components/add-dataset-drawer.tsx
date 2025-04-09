@@ -6,15 +6,11 @@ import {
   Checkbox,
   CircularProgress,
   Collapse,
-  Dialog,
   DialogActions,
-  dialogActionsClasses,
-  dialogClasses,
   DialogContent,
-  dialogContentClasses,
   DialogProps,
   DialogTitle,
-  dialogTitleClasses,
+  DrawerProps,
   Grow,
   IconButton,
   IconButtonProps,
@@ -62,6 +58,7 @@ import { Error as ErrorHint, HintOrange, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
 import { ConfiguratorStateConfiguringChart, DataSource } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
+import { RightDrawer } from "@/configurator/components/drawers";
 import {
   addDatasetInConfig,
   isConfiguring,
@@ -121,24 +118,6 @@ const DialogCloseButton = (props: IconButtonProps) => {
 const useStyles = makeStyles((theme: Theme) => ({
   addButton: {
     transition: "opacity 0.25s ease",
-  },
-  dialog: {
-    "--dialog-padding": "60px",
-    [`& .${dialogTitleClasses.root}`]: {
-      padding: "var(--dialog-padding)",
-      paddingBottom: 0,
-    },
-    [`& .${dialogContentClasses.root}`]: {
-      padding: "var(--dialog-padding)",
-      paddingTop: "2rem",
-    },
-    [`& .${dialogActionsClasses.root}`]: {
-      padding: "var(--dialog-padding)",
-      paddingTop: 0,
-    },
-    [`& .${dialogClasses.paper}`]: {
-      minHeight: "calc(100vh - calc(30px * 2))",
-    },
   },
   dialogCloseArea: {
     position: "absolute",
@@ -604,10 +583,12 @@ const PreviewDataTable = ({
   );
 };
 
-export const DatasetDialog = ({
+export const AddDatasetDrawer = ({
   state,
   ...props
-}: { state: ConfiguratorStateConfiguringChart } & DialogProps) => {
+}: {
+  state: ConfiguratorStateConfiguringChart;
+} & DrawerProps) => {
   const locale = useLocale();
   const classes = useStyles();
 
@@ -853,13 +834,7 @@ export const DatasetDialog = ({
   });
 
   return (
-    <Dialog
-      {...props}
-      onClose={handleClose}
-      maxWidth="lg"
-      fullWidth
-      className={clsx(classes.dialog, props.className)}
-    >
+    <RightDrawer {...props} onClose={handleClose}>
       <Box className={classes.dialogCloseArea}>
         {otherCube ? null : (
           <Grow in={!isOpen}>
@@ -1067,7 +1042,7 @@ export const DatasetDialog = ({
           searchDimensionsSelected={selectedSearchDimensions ?? []}
         />
       ) : null}
-    </Dialog>
+    </RightDrawer>
   );
 };
 
