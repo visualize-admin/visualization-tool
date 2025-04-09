@@ -8,38 +8,44 @@ export type JoinBy = {
   right: string[];
 };
 
+const findDimensionForOption = (
+  option: SearchOptions,
+  dimensions: PartialSearchCube["dimensions"]
+) => {
+  const type = option.type;
+  switch (type) {
+    case "temporal":
+      return dimensions?.find(
+        (d) =>
+          // TODO Find out why this is necessary
+          d.timeUnit === `http://www.w3.org/2006/time#unit${option.timeUnit}`
+      );
+    case "shared":
+      return dimensions?.find((d) =>
+        d.termsets.some((t) =>
+          option.termsets.map((t) => t.iri).includes(t.iri)
+        )
+      );
+    default:
+      const exhaustiveCheck: never = type;
+      return exhaustiveCheck;
+  }
+};
+
 export const inferJoinBy = (
   leftOptions: SearchOptions[],
   rightCube: PartialSearchCube
 ): JoinBy => {
   const possibleJoinBys = leftOptions
     .map((leftOption) => {
-      const type = leftOption.type;
-      // For every selected dimension, we need to find the corresponding dimension on the other cube
-      switch (type) {
-        case "temporal":
-          return {
-            left: leftOption.id,
-            right: rightCube?.dimensions?.find(
-              (d) =>
-                // TODO Find out why this is necessary
-                d.timeUnit ===
-                `http://www.w3.org/2006/time#unit${leftOption.timeUnit}`
-            )?.id,
-          };
-        case "shared":
-          return {
-            left: leftOption.id,
-            right: rightCube?.dimensions?.find((d) =>
-              d.termsets.some((t) =>
-                leftOption.termsets.map((t) => t.iri).includes(t.iri)
-              )
-            )?.id,
-          };
-        default:
-          const exhaustiveCheck: never = type;
-          return exhaustiveCheck;
-      }
+      const rightDimension = findDimensionForOption(
+        leftOption,
+        rightCube?.dimensions
+      );
+      return {
+        left: leftOption.id,
+        right: rightDimension?.id,
+      };
     })
     .filter(
       (x): x is { left: ComponentId; right: ComponentId } =>
