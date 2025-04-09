@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   IconButton,
+  Theme,
   tooltipClasses,
   Typography,
 } from "@mui/material";
@@ -34,12 +35,11 @@ import {
   useDataCubesMetadataQuery,
 } from "@/graphql/hooks";
 import { Icon } from "@/icons";
-import SvgIcCheckmarkCircle from "@/icons/components/IcCheckmarkCircle";
 import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   row: {
     borderLeft: "0.25rem solid transparent",
     paddingLeft: "0.25rem",
@@ -50,21 +50,22 @@ const useStyles = makeStyles({
   },
   added: {
     transition: "border-left-color 0.25s ease",
-    borderLeftColor: "#A6DFE7",
+    borderLeftColor: theme.palette.success.main,
   },
   tooltipPopper: {
     [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: "#A6DFE7",
-      lineHeight: 1.5,
-      padding: "0.75rem",
-      whiteSpace: "nowrap",
       maxWidth: "none",
+      padding: "0.75rem",
+      backgroundColor: theme.palette.success.light,
+      color: theme.palette.success.main,
+      lineHeight: 1.5,
+      whiteSpace: "nowrap",
     },
     [`& .${tooltipClasses.arrow}`]: {
-      color: "#A6DFE7",
+      color: theme.palette.success.light,
     },
   },
-});
+}));
 
 const DatasetRow = ({
   canRemove,
@@ -91,7 +92,7 @@ const DatasetRow = ({
       title={
         <Box alignItems="center" display="flex" gap="0.75rem">
           <Box color="success.main">
-            <SvgIcCheckmarkCircle width={24} height={24} />
+            <Icon name="checkmarkCircle" />
           </Box>
           {t({
             id: "dataset.search.preview.added-dataset",

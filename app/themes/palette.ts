@@ -31,6 +31,8 @@ export const palette = {
     secondary: colors.monochrome[500],
   },
   divider: colors.cobalt[100],
+  success: colors.success,
+
   cobalt: {
     main: colors.cobalt[700],
     ...colors.cobalt,
