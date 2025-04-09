@@ -123,7 +123,8 @@ export const createActions = ({
     },
   },
   drawer: {
-    close: async () => await screen.getByTestId("section-close").click(),
+    close: async () =>
+      await screen.getByRole("button", { name: "Back to main" }).click(),
   },
   common: {
     switchLang: async (lang: "de" | "fr" | "en" | "it") => {
