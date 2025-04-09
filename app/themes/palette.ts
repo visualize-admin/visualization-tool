@@ -2,14 +2,14 @@ import { c as colors } from "@interactivethings/swiss-federal-ci";
 import { type ThemeOptions } from "@mui/material";
 
 export const palette = {
+  primary: {
+    main: "#1D4ED8",
+    light: "#60A5FA", // TODO: verify it correct / needed
+    contrastText: "#fff",
+  },
   text: {
     primary: colors.monochrome[800],
     secondary: colors.monochrome[500],
-  },
-  primary: {
-    main: "#1D4ED8",
-    light: "#60A5FA",
-    contrastText: "#FFFFFF",
   },
   divider: colors.cobalt[100],
   cobalt: {

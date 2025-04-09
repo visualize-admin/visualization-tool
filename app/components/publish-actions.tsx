@@ -115,9 +115,7 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
       }}
       renderTrigger={(setAnchorEl) => (
         <Button
-          startIcon={<Icon name="embed" size={16} />}
-          variant="contained"
-          color="blue"
+          startIcon={<Icon name="embed" size={20} />}
           onClick={(e) => setAnchorEl(e.currentTarget)}
         >
           <Trans id="button.embed">Embed</Trans>
@@ -218,10 +216,11 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
       renderTrigger={(setAnchorEl) => {
         return (
           <Button
-            onClick={(ev) => {
-              setAnchorEl(ev.target as HTMLElement);
+            size="sm"
+            onClick={(e) => {
+              setAnchorEl(e.target as HTMLElement);
             }}
-            startIcon={<Icon name="legacyLinkExternal" size={16} />}
+            startIcon={<Icon name="share" size={20} />}
           >
             <Trans id="button.share">Share</Trans>
           </Button>

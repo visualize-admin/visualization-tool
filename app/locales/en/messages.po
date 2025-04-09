@@ -133,7 +133,7 @@ msgstr "Proceed to layout options"
 
 #: app/pages/v/[chartId].tsx
 msgid "button.new.visualization"
-msgstr "Create New Visualization"
+msgstr "Create a new visualization"
 
 #: app/configurator/components/configurator.tsx
 msgid "button.publish"
