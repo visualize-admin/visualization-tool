@@ -406,7 +406,7 @@ const SelectDatasetStepContent = ({
                   sx={{
                     justifyContent: odsIframe ? "flex-end" : "space-between",
                     alignItems: "center",
-                    pt: odsIframe ? 12 : 6,
+                    pt: variant === "drawer" ? 18 : odsIframe ? 12 : 6,
                     pb: 6,
                   }}
                 >

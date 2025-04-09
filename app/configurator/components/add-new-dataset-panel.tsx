@@ -1,4 +1,4 @@
-import { Box, Drawer, useEventCallback } from "@mui/material";
+import { Drawer, useEventCallback } from "@mui/material";
 import { useState } from "react";
 import { useClient } from "urql";
 import createStore from "zustand";
@@ -104,7 +104,7 @@ export const AddNewDatasetPanel = () => {
       }}
     >
       <DialogCloseButton onClick={() => handleClose()} />
-      <Box>
+      <div>
         <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
           <SelectDatasetStep
             variant="drawer"
@@ -132,7 +132,7 @@ export const AddNewDatasetPanel = () => {
             }}
           />
         </ConfiguratorStateProvider>
-      </Box>
+      </div>
     </Drawer>
   );
 };
