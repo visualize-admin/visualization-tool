@@ -53,8 +53,7 @@ import { timeUnitToFormatter } from "@/configurator/components/ui-helpers";
 import { Component } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
-import { getChartIcon } from "@/icons";
-import SvgIcMore from "@/icons/components/IcMore";
+import { getChartIcon, Icon } from "@/icons";
 import { useLocale } from "@/src";
 import { animationFrame } from "@/utils/animation-frame";
 import { createId } from "@/utils/create-id";
@@ -197,13 +196,12 @@ export const ChartMoreButton = ({
   return disableButton ? null : (
     <>
       <IconButton
-        color="secondary"
-        onClick={(ev) => setAnchor(ev.currentTarget)}
-        sx={{ height: "fit-content" }}
         {...DISABLE_SCREENSHOT_ATTR}
         data-testid="chart-more-button"
+        onClick={(e) => setAnchor(e.currentTarget)}
+        sx={{ height: "fit-content" }}
       >
-        <SvgIcMore />
+        <Icon name="dots" />
       </IconButton>
       <ArrowMenuTopBottom
         open={!!anchor}
@@ -273,7 +271,7 @@ export const ChartMoreButton = ({
               <MenuActionItem
                 type="button"
                 as="menuitem"
-                color="red"
+                color="red.main"
                 requireConfirmation
                 confirmationTitle={t({
                   id: "chart-controls.delete.title",
