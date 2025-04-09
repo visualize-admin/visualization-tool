@@ -625,6 +625,7 @@ const TabContent = (props: {
     id: "chart-selection-tabs.no-label",
     message: "No label",
   });
+
   return (
     <Flex className={classes.root}>
       <Button
@@ -632,6 +633,7 @@ const TabContent = (props: {
         className={classes.chartIconWrapper}
         onClick={() => {
           onSwitchClick?.();
+
           if (editable) {
             dispatch({
               type: "CHART_ACTIVE_FIELD_CHANGED",
@@ -642,12 +644,12 @@ const TabContent = (props: {
       >
         <Icon name={iconName} />
         <Typography
-          variant="body2"
+          variant="caption"
           sx={{
             color: (t) =>
               label || !editable
                 ? "inherit"
-                : `${t.palette.grey[500]} !important`,
+                : `${t.palette.text.secondary} !important`,
           }}
         >
           {label || showAddLabel ? label || `[ ${addLabel} ]` : null}

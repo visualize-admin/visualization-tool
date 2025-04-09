@@ -86,6 +86,7 @@ const useStyles = makeStyles<
     height: "auto",
     margin: "auto",
     marginTop: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(12)),
+    backgroundColor: theme.palette.background.paper,
     transition: "margin-top 0.5s ease",
   },
   panelLeft: {
@@ -98,6 +99,7 @@ const useStyles = makeStyles<
     gridColumnStart: "middle",
     gridColumnEnd: "right",
     marginLeft: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(8)),
+    backgroundColor: theme.palette.background.paper,
     transition: "padding-top 0.5s ease",
   },
   panelBannerOuterWrapper: {
