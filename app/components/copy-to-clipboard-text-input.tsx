@@ -45,51 +45,19 @@ const useActionTooltipStyles = makeStyles((theme: Theme) => ({
 }));
 
 const useCopyToClipboardTextInputStyles = makeStyles((theme: Theme) => ({
-  input: {
-    color: theme.palette.grey[700],
-    padding: `${theme.spacing(0)} ${theme.spacing(2)}`,
-    flexGrow: 1,
-    fontSize: "1rem",
-    minWidth: 250,
-    overflowX: "auto",
-    borderTopLeftRadius: "default",
-    borderBottomLeftRadius: "default",
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: theme.palette.divider,
-  },
   button: {
-    color: theme.palette.grey[600],
-    backgroundColor: theme.palette.grey[200],
+    backgroundColor: theme.palette.cobalt[100],
     position: "relative",
-
-    borderTopRightRadius: "default",
-    borderBottomRightRadius: "default",
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
-    width: 48,
-    minWidth: 48,
-
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: theme.palette.divider,
-    borderLeft: "none",
-
+    width: 42,
+    minWidth: 42,
     cursor: "pointer",
 
     "&:hover": {
-      backgroundColor: theme.palette.grey[300],
-      color: theme.palette.grey[700],
+      backgroundColor: theme.palette.cobalt[200],
     },
+
     "&:active": {
-      backgroundColor: theme.palette.grey[400],
-      color: theme.palette.grey[800],
-    },
-    "&:disabled": {
-      cursor: "initial",
-      color: theme.palette.grey[300],
+      backgroundColor: theme.palette.cobalt[300],
     },
   },
 }));
@@ -120,8 +88,20 @@ export const CopyToClipboardTextInput = ({ content }: { content: string }) => {
   const classes = useCopyToClipboardTextInputStyles();
 
   return (
-    <Flex sx={{ alignItems: "stretch", height: 48, mt: 1 }}>
-      <Input className={classes.input} type="text" value={content} readOnly />
+    <Flex sx={{ gap: 1 }}>
+      <Input
+        size="sm"
+        value={content}
+        readOnly
+        sx={{
+          "& .MuiInput-input": {
+            pr: 0,
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+          },
+        }}
+      />
       <Button
         variant="text"
         onMouseOver={() => toggleTooltip(true)}
@@ -132,7 +112,7 @@ export const CopyToClipboardTextInput = ({ content }: { content: string }) => {
         onClick={(e) => handleClick(e, content)}
         className={classes.button}
       >
-        <Icon name="copy" size={16} />
+        <Icon name="copy" size={20} />
         {showTooltip && <ActionTooltip>{tooltipContent}</ActionTooltip>}
       </Button>
     </Flex>
