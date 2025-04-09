@@ -104,14 +104,15 @@ const PreviewDataTable = ({
 
   const isQueryPaused = !otherCubeComponents || !currentComponents;
 
+  const cubeIri = currentComponents!.dimensions?.[0].cubeIri;
   const cubeFilters = [
     {
       iri: currentComponents!.dimensions?.[0].cubeIri,
-      joinBy: inferredJoinBy.left,
+      joinBy: inferredJoinBy[cubeIri],
     },
     {
       iri: otherCube.iri,
-      joinBy: inferredJoinBy.right,
+      joinBy: inferredJoinBy[otherCube.iri],
     },
   ];
 

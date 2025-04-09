@@ -14,6 +14,7 @@ import {
   Layout,
   Limit,
 } from "@/config-types";
+import { JoinBy } from "@/configurator/components/add-dataset-dialog/infer-join-by";
 import { DataCubeComponents, Dimension, DimensionValue } from "@/domain/data";
 import { Locale } from "@/locales/locales";
 
@@ -41,10 +42,7 @@ export type ConfiguratorStateAction =
       type: "DATASET_ADD";
       value: {
         iri: string;
-        joinBy: {
-          left: string[];
-          right: string[];
-        };
+        joinBy: JoinBy;
       };
     }
   | {

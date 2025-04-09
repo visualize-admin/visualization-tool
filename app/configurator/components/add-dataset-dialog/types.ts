@@ -9,7 +9,10 @@ export type SearchOptions =
       id: ComponentId;
       label: string;
       timeUnit: string;
-      originalIds: Dimension["originalIds"];
+      originalIds: Pick<
+        NonNullable<Dimension["originalIds"]>[number],
+        "cubeIri" | "dimensionId"
+      >[];
     }
   | {
       type: "shared";
@@ -17,4 +20,8 @@ export type SearchOptions =
       id: string;
       label: string;
       termsets: Termset[];
+      originalIds: Pick<
+        NonNullable<Dimension["originalIds"]>[number],
+        "cubeIri" | "dimensionId"
+      >[];
     };

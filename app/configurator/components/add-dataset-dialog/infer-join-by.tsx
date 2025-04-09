@@ -1,14 +1,15 @@
+// eslint-disable-next-line no-restricted-imports
+import { groupBy, mapValues } from "lodash";
+
 import { PartialSearchCube } from "@/browser/dataset-browse";
 import { SearchOptions } from "@/configurator/components/add-dataset-dialog/types";
-import { ComponentId } from "@/graphql/make-component-id";
+import { truthy } from "@/domain/types";
+import { ComponentId, parseComponentId } from "@/graphql/make-component-id";
 
-export type JoinBy = {
-  // left and right are arrays because there can be multiple join by dimensions
-  left: string[];
-  right: string[];
-};
+// cubeIri to dimensionIds
+export type JoinBy = Record<string, ComponentId[]>;
 
-const findDimensionForOption = (
+export const findDimensionForOption = (
   option: SearchOptions,
   dimensions: PartialSearchCube["dimensions"]
 ) => {
@@ -33,31 +34,41 @@ const findDimensionForOption = (
 };
 
 export const inferJoinBy = (
-  leftOptions: SearchOptions[],
-  rightCube: PartialSearchCube
+  options: SearchOptions[],
+  newCube: PartialSearchCube
 ): JoinBy => {
-  const possibleJoinBys = leftOptions
-    .map((leftOption) => {
-      const rightDimension = findDimensionForOption(
-        leftOption,
-        rightCube?.dimensions
-      );
-      return {
-        left: leftOption.id,
-        right: rightDimension?.id,
-      };
-    })
-    .filter(
-      (x): x is { left: ComponentId; right: ComponentId } =>
-        !!(x.left && x.right)
-    );
+  const tmp = options.map((option) => {
+    const rightDimension = findDimensionForOption(option, newCube?.dimensions);
+    if (!rightDimension) {
+      console.log("No dimension found for option", option);
+      return {};
+    } else {
+      console.log("Found dimension", rightDimension);
+    }
 
-  return possibleJoinBys.reduce<JoinBy>(
-    (acc, item) => {
-      acc.left.push(item.left);
-      acc.right.push(item.right);
-      return acc;
-    },
-    { left: [], right: [] }
-  );
+    const originalIdsByCube = groupBy(option.originalIds, (x) => {
+      return parseComponentId(x.dimensionId).unversionedCubeIri;
+    });
+    console.log("originalIds", originalIdsByCube);
+    return {
+      ...mapValues(originalIdsByCube, (x) => x.map((x) => x.dimensionId)),
+      [newCube.iri]: [rightDimension?.id].filter(truthy),
+    };
+  });
+
+  console.log(JSON.stringify({ tmp }, null, 2));
+
+  const result = tmp.reduce((acc, curr) => {
+    Object.entries(curr).forEach(([key, value]) => {
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      if (value) {
+        acc[key].push(...value);
+      }
+    });
+    return acc;
+  }, {} as JoinBy);
+
+  return result;
 };

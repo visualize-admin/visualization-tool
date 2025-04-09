@@ -22,6 +22,7 @@ import {
   getChartConfigFilters,
   isSingleFilters,
 } from "@/config-utils";
+import { JoinBy } from "@/configurator/components/add-dataset-dialog/infer-join-by";
 import { Dimension, isJoinByComponent, ObservationValue } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { mkJoinById } from "@/graphql/join";
@@ -272,18 +273,19 @@ export const addDatasetInConfig = function (
   config: ConfiguratorStateConfiguringChart,
   options: {
     iri: string;
-    joinBy: {
-      left: string[];
-      right: string[];
-    };
+    joinBy: JoinBy;
   }
 ) {
   const chartConfig = getChartConfig(config, config.activeChartKey);
   const { iri, joinBy } = options;
-  chartConfig.cubes[0].joinBy = joinBy.left;
+
+  // Set new join by in existing cubes
+  for (let i = 0; i < chartConfig.cubes.length; i++) {
+    chartConfig.cubes[i].joinBy = joinBy[chartConfig.cubes[i].iri] ?? [];
+  }
   chartConfig.cubes.push({
     iri,
-    joinBy: joinBy.right,
+    joinBy: joinBy[iri],
     filters: {},
   });
 

@@ -53,7 +53,7 @@ import {
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
-import { ComponentId } from "@/graphql/make-component-id";
+import { ComponentId, parseComponentId } from "@/graphql/make-component-id";
 import {
   SearchCubeFilterType,
   SearchCubeResultOrder,
@@ -87,7 +87,7 @@ const DialogCloseButton = (props: IconButtonProps) => {
   );
 };
 
-const extractSearchDimensions = (
+const extractSearchOptions = (
   dimensions: Dimension[],
   termsets: ComponentTermsets[]
 ): SearchOptions[] => {
@@ -106,19 +106,36 @@ const extractSearchDimensions = (
         return {
           type: "temporal" as const,
           id: x.id as ComponentId,
-          originalIds: x.originalIds ?? [],
+          originalIds: x.originalIds ?? [
+            {
+              cubeIri: x.cubeIri,
+              dimensionId: x.id,
+            },
+          ],
           label: x.label,
           timeUnit: x.timeUnit,
         };
       }),
-    ...sharedDimensions.map((x) => {
-      return {
-        type: "shared" as const,
-        id: x.iri,
-        label: x.label,
-        termsets: x.termsets,
-      };
-    }),
+    ...sharedDimensions
+      .map((x) => {
+        const parsedIri = parseComponentId(x.iri as ComponentId);
+        if (!parsedIri) {
+          return;
+        }
+        return {
+          type: "shared" as const,
+          id: x.iri,
+          label: x.label,
+          termsets: x.termsets,
+          originalIds: [
+            {
+              cubeIri: parsedIri.unversionedCubeIri,
+              dimensionId: x.iri as ComponentId,
+            },
+          ],
+        };
+      })
+      .filter(truthy),
   ];
 };
 
@@ -184,7 +201,7 @@ const useMergeDatasetsData = ({
   };
 };
 
-type SearchDimension = ReturnType<typeof extractSearchDimensions>[number];
+type SearchDimension = ReturnType<typeof extractSearchOptions>[number];
 const isTemporalDimension = (
   x: SearchDimension
 ): x is Extract<SearchDimension, { type: "temporal" }> => x.type === "temporal";
@@ -234,7 +251,7 @@ export const DatasetDialog = ({
   const [{ fetching: addingDataset }, { addDataset }] = useAddDataset();
 
   const { searchDimensionOptions, searchDimensionOptionsById } = useMemo(() => {
-    const options = extractSearchDimensions(dimensions, termsets);
+    const options = extractSearchOptions(dimensions, termsets);
     return {
       searchDimensionOptions: options,
       searchDimensionOptionsById: keyBy(options, (x) => x.id),
