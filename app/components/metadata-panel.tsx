@@ -88,11 +88,12 @@ const useDrawerStyles = makeStyles<Theme, { top: number | string }>((theme) => {
   return {
     root: {
       position: "static",
+
       "& > .MuiPaper-root": {
         top: ({ top }) => top,
         bottom: 0,
         width: "100%",
-        maxWidth: DRAWER_WIDTH,
+        maxWidth: DRAWER_WIDTH + 1,
         height: "auto",
         paddingLeft: theme.spacing(4),
         paddingRight: theme.spacing(4),
@@ -380,41 +381,37 @@ export const MetadataPanel = ({
 };
 
 const ToggleButton = ({
-  onClick,
   smaller,
+  onClick,
 }: {
-  onClick: () => void;
   smaller?: boolean;
+  onClick: () => void;
 }) => {
   const classes = useOtherStyles();
+
   return (
     <Button
       data-testid="panel-metadata-toggle"
       className={classes.toggleButton}
       variant="text"
       color="blue"
-      size="sm"
+      size={smaller ? "xs" : "sm"}
       onClick={onClick}
     >
-      <Typography variant={smaller ? "caption" : "body2"} component="p">
-        <Trans id="controls.metadata-panel.metadata">Details</Trans>
-      </Typography>
+      <Trans id="controls.metadata-panel.metadata">Details</Trans>
     </Button>
   );
 };
 
 const Header = ({ onClose }: { onClose: () => void }) => {
   const classes = useOtherStyles();
+
   return (
     <div className={classes.header}>
-      <Typography variant="body2" fontWeight="bold">
+      <Typography variant="h6" component="p" sx={{ fontWeight: "bold" }}>
         <Trans id="controls.metadata-panel.metadata">Details</Trans>
       </Typography>
-      <IconButton
-        size="small"
-        onClick={onClose}
-        sx={{ color: "secondary.active" }}
-      >
+      <IconButton size="small" onClick={onClose}>
         <SvgIcClose />
       </IconButton>
     </div>

@@ -71,11 +71,11 @@ export const useChartStyles = makeStyles<Theme, { removeBorder?: boolean }>(
   (theme) => ({
     root: {
       flexGrow: 1,
-      padding: theme.spacing(6),
+      padding: theme.spacing(8),
       backgroundColor: theme.palette.background.paper,
       border: ({ removeBorder }) =>
         removeBorder ? "none" : `1px solid ${theme.palette.divider}`,
-      color: theme.palette.grey[800],
+
       [`.${chartPanelLayoutGridClasses.root} &`]: {
         display: "flex",
         flexDirection: "column",
