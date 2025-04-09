@@ -173,6 +173,7 @@ export const useChartBounds = ({
 }): Bounds & { yAxisTitleHeight: number } => {
   const [state] = useConfiguratorState(hasChartConfigs);
   const { top, bottom } = margins;
+  const { axisLabelFontSize } = useChartTheme();
   const yAxisTitleHeight = useMemo(() => {
     const leftAxisTitle = yAxisLabels?.leftLabel;
     const rightAxisTitle = yAxisLabels?.rightLabel;
@@ -183,16 +184,23 @@ export const useChartBounds = ({
 
     const leftAxisTitleSize = getAxisTitleSize(leftAxisTitle ?? "", {
       width: chartWidth,
+      fontSize: axisLabelFontSize,
     });
     const rightAxisTitleSize = getAxisTitleSize(rightAxisTitle ?? "", {
       width: chartWidth,
+      fontSize: axisLabelFontSize,
     });
 
     return (
       Math.max(leftAxisTitleSize.height, rightAxisTitleSize.height) -
       SINGLE_LINE_AXIS_LABEL_HEIGHT
     );
-  }, [chartWidth, yAxisLabels]);
+  }, [
+    axisLabelFontSize,
+    chartWidth,
+    yAxisLabels?.leftLabel,
+    yAxisLabels?.rightLabel,
+  ]);
 
   const chartHeight = isLayoutingFreeCanvas(state)
     ? Math.max(

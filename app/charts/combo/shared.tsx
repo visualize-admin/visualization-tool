@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { AXIS_LABEL_FONT_SIZE } from "@/charts/shared/use-chart-theme";
+import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { getTextSize, GetTextSizeOptions } from "@/utils/get-text-size";
 
 export const TITLE_V_PADDING = 4;
@@ -8,11 +8,10 @@ export const TITLE_H_PADDING = 8;
 
 export const getAxisTitleSize = (
   text: string,
-  options: Pick<GetTextSizeOptions, "width">
+  options: Pick<GetTextSizeOptions, "width" | "fontSize">
 ) => {
   return getTextSize(text, {
     ...options,
-    fontSize: AXIS_LABEL_FONT_SIZE,
     fontWeight: 400,
     paddingTop: TITLE_V_PADDING,
     paddingLeft: TITLE_H_PADDING,
@@ -25,6 +24,7 @@ export const useAxisTitleSize = (
   text: string,
   { width }: Pick<GetTextSizeOptions, "width">
 ) => {
+  const { axisLabelFontSize } = useChartTheme();
   const [size, setSize] = useState<DOMRect>(() => ({
     width: 0,
     height: 0,
@@ -38,12 +38,13 @@ export const useAxisTitleSize = (
   }));
 
   useEffect(() => {
-    setSize(getAxisTitleSize(text, { width }));
-  }, [text, width]);
+    setSize(getAxisTitleSize(text, { width, fontSize: axisLabelFontSize }));
+  }, [axisLabelFontSize, text, width]);
 
   return size;
 };
 
 export const SINGLE_LINE_AXIS_LABEL_HEIGHT = getAxisTitleSize("M", {
   width: 100,
+  fontSize: 14,
 }).height;
