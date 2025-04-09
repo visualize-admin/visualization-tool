@@ -14,6 +14,37 @@ import { shadows } from "@/themes/shadows";
 import { typography } from "@/themes/typography";
 
 export const components: Components = {
+  MuiAccordion: {
+    defaultProps: {
+      disableGutters: true,
+    },
+    styleOverrides: {
+      root: {
+        boxShadow: "none !important",
+        "&::before": {
+          display: "none",
+        },
+      },
+    },
+  },
+  MuiAccordionDetails: {
+    styleOverrides: {
+      root: {
+        padding: 0,
+      },
+    },
+  },
+  MuiAccordionSummary: {
+    defaultProps: {
+      expandIcon: <Icon name="chevronDown" />,
+    },
+    styleOverrides: {
+      root: {
+        alignItems: "center",
+        padding: 0,
+      },
+    },
+  },
   MuiAlert: {
     defaultProps: {
       icon: false,
