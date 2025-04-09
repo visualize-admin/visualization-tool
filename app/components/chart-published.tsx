@@ -44,7 +44,7 @@ import {
   useConfiguratorState,
 } from "@/configurator";
 import { Description, Title } from "@/configurator/components/annotators";
-import { DRAWER_WIDTH } from "@/configurator/components/drawer";
+import { DRAWER_WIDTH } from "@/configurator/components/drawers";
 import {
   DEFAULT_DATA_SOURCE,
   useIsTrustedDataSource,

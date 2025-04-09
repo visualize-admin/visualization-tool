@@ -10,6 +10,7 @@ export const ConfiguratorDrawer = styled(MuiDrawer)(({ theme }) => ({
   "&": {
     position: "static",
   },
+
   "& > .MuiPaper-root": {
     overflowX: "hidden",
     top: `calc(${HEADER_HEIGHT_CSS_VAR} + ${PANEL_HEADER_CSS_VAR})`,

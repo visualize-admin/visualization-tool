@@ -51,7 +51,7 @@ import { ChartOptionsSelector } from "@/configurator/components/chart-options-se
 import {
   ConfiguratorDrawer,
   DRAWER_WIDTH,
-} from "@/configurator/components/drawer";
+} from "@/configurator/components/drawers";
 import { IconButton } from "@/configurator/components/icon-button";
 import {
   LAYOUT_HEADER_HEIGHT,

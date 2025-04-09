@@ -16,7 +16,7 @@ import { createCustomColorPalette } from "@/utils/chart-config/api";
 import { createColorId } from "@/utils/color-palette-utils";
 import { useMutate } from "@/utils/use-fetch-data";
 
-import { DRAWER_WIDTH } from "../drawer";
+import { DRAWER_WIDTH } from "../drawers";
 
 const useStyles = makeStyles({
   autocompleteMenuContent: {

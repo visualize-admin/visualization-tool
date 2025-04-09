@@ -56,7 +56,7 @@ import {
 import {
   ConfiguratorDrawer,
   DRAWER_WIDTH,
-} from "@/configurator/components/drawer";
+} from "@/configurator/components/drawers";
 import {
   dimensionToFieldProps,
   MultiFilterField,

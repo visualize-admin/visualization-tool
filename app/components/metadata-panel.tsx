@@ -54,7 +54,7 @@ import {
   DashboardFiltersConfig,
   DataSource,
 } from "@/configurator";
-import { DRAWER_WIDTH } from "@/configurator/components/drawer";
+import { DRAWER_WIDTH } from "@/configurator/components/drawers";
 import {
   getComponentDescription,
   getComponentLabel,
