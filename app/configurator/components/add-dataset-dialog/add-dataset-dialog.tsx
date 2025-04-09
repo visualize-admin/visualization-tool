@@ -84,7 +84,6 @@ import { isJoinById, joinDimensions } from "@/graphql/join";
 import { ComponentId } from "@/graphql/make-component-id";
 import {
   DataCubeComponentsQuery,
-  DataCubeComponentsQueryVariables,
   SearchCubeFilterType,
   SearchCubeResultOrder,
   useDataCubeComponentsQuery,
@@ -260,15 +259,13 @@ const inferJoinBy = (
 type JoinBy = ReturnType<typeof inferJoinBy>;
 
 const PreviewDataTable = ({
-  existingCubes,
-  otherCube,
   dataSource,
+  existingCubes,
   currentComponents,
-  inferredJoinBy,
-  otherCubeComponents,
+  searchDimensionsSelected,
+  otherCube,
   onClickBack,
   onConfirm,
-  fetchingComponents,
   addingDataset,
 }: {
   dataSource: DataSource;
@@ -277,19 +274,36 @@ const PreviewDataTable = ({
     | DataCubeComponentsQuery["dataCubeComponents"]
     | undefined
     | null;
-  inferredJoinBy: JoinBy;
-  otherCube: PartialSearchCube;
-  otherCubeComponents:
-    | DataCubeComponentsQuery["dataCubeComponents"]
-    | undefined
-    | null;
   searchDimensionsSelected: SearchOptions[];
+  otherCube: PartialSearchCube;
   onClickBack: () => void;
   onConfirm: () => void;
-  fetchingComponents: boolean;
   addingDataset: boolean;
 }) => {
   const locale = useLocale();
+  const commonQueryVariables = {
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+  };
+
+  const inferredJoinBy = useMemo(
+    () => inferJoinBy(searchDimensionsSelected, otherCube),
+    [searchDimensionsSelected, otherCube]
+  );
+
+  const [otherCubeComponentsQuery] = useDataCubeComponentsQuery({
+    variables: {
+      ...commonQueryVariables,
+      cubeFilter: { iri: otherCube.iri },
+    },
+    pause: !otherCube,
+  });
+
+  const otherCubeComponents = otherCubeComponentsQuery.data?.dataCubeComponents;
+
+  const isFetchingComponents = otherCubeComponentsQuery.fetching;
+
   const isQueryPaused = !otherCubeComponents || !currentComponents;
 
   const cubeFilters = [
@@ -323,7 +337,7 @@ const PreviewDataTable = ({
   });
 
   const isFetching =
-    fetchingComponents || observations.fetching || currentCubes.fetching;
+    isFetchingComponents || observations.fetching || currentCubes.fetching;
 
   const allColumns = useMemo(() => {
     const shouldIncludeColumnInPreview = (d: Dimension | Measure) =>
@@ -848,33 +862,6 @@ export const DatasetDialog = ({
 
   const [otherCube, setOtherCube] = useState<PartialSearchCube>();
 
-  // When a cube is selected, contains the inferred joinBy
-  const inferredJoinBy = useMemo(() => {
-    if (!otherCube) {
-      return undefined;
-    }
-    return inferJoinBy(selectedSearchDimensions ?? [], otherCube);
-  }, [otherCube, selectedSearchDimensions]);
-
-  const [otherCubeComponentsQuery] = useDataCubeComponentsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilter: { iri: otherCube ? otherCube.iri : "" },
-    },
-    pause: !otherCube,
-  });
-
-  // We need to check for this otherwise otherCubeComponents will hold the previous data, even if
-  // we change otherCube
-  const otherCubeQueryCubeIri = (
-    otherCubeComponentsQuery?.operation
-      ?.variables as DataCubeComponentsQueryVariables
-  )?.cubeFilter.iri;
-  const otherCubeComponents =
-    otherCubeQueryCubeIri === otherCube?.iri
-      ? otherCubeComponentsQuery.data?.dataCubeComponents
-      : undefined;
-
   const [{ fetching: addingDataset }, { addDataset }] = useAddDataset();
 
   const handleClickOtherCube = (otherCube: PartialSearchCube) => {
@@ -885,12 +872,12 @@ export const DatasetDialog = ({
 
   const ee = useEventEmitter();
   const handleConfirm = useEventCallback(async () => {
-    if (!components || !otherCube || !inferredJoinBy) {
+    if (!components || !otherCube) {
       return null;
     }
 
     await addDataset({
-      joinBy: inferredJoinBy,
+      joinBy: inferJoinBy(selectedSearchDimensions ?? [], otherCube),
       otherCube: otherCube,
     });
     handleClose({}, "escapeKeyDown");
@@ -1088,16 +1075,13 @@ export const DatasetDialog = ({
           </DialogContent>
         </>
       )}
-      {otherCube && inferredJoinBy ? (
+      {otherCube ? (
         <PreviewDataTable
           key={otherCube.iri}
           dataSource={state.dataSource}
           currentComponents={components}
-          inferredJoinBy={inferredJoinBy}
           existingCubes={currentCubes}
           otherCube={otherCube}
-          otherCubeComponents={otherCubeComponents}
-          fetchingComponents={!!otherCubeComponentsQuery?.fetching}
           addingDataset={addingDataset}
           onConfirm={handleConfirm}
           onClickBack={() => setOtherCube(undefined)}
