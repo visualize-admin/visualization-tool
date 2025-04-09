@@ -4,12 +4,14 @@ import { type ThemeOptions } from "@mui/material";
 export const palette = {
   text: {
     primary: colors.monochrome[800],
+    secondary: colors.monochrome[500],
   },
   primary: {
     main: "#1D4ED8",
     light: "#60A5FA",
     contrastText: "#FFFFFF",
   },
+  divider: colors.cobalt[100],
   cobalt: {
     main: colors.cobalt[700],
     ...colors.cobalt,

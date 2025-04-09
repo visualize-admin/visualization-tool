@@ -229,11 +229,11 @@ const TabsEditable = (props: TabsEditableProps) => {
               </Typography>
               <Button
                 fullWidth
-                sx={{ justifyContent: "center" }}
                 onClick={() => {
                   setTabsState({ ...tabsState, popoverOpen: false });
                   openAddDatasetPanel();
                 }}
+                sx={{ justifyContent: "center" }}
               >
                 <Trans id="chart-selection-tabs.add-chart-different-dataset.button">
                   Select dataset
@@ -533,7 +533,7 @@ export const useIconStyles = makeStyles<
     "--bg": palette.background.paper,
     backgroundColor: "var(--bg)",
     alignItems: "center",
-    padding: spacing(2),
+    padding: spacing(4),
     borderTopLeftRadius: spacing(1),
     borderTopRightRadius: spacing(1),
     cursor: "default",

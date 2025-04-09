@@ -7,12 +7,10 @@ import {
   Button,
   ClickAwayListener,
   Divider,
-  FormControlLabel,
   IconButton,
   Input,
   InputAdornment,
   SelectChangeEvent,
-  Switch as MUISwitch,
   Theme,
   Tooltip,
   Typography,
@@ -90,7 +88,6 @@ import {
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { Icon } from "@/icons";
 import SvgIcCheckmark from "@/icons/components/IcCheckmark";
-import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcRefresh from "@/icons/components/IcRefresh";
 import { getTimeInterval } from "@/intervals";
@@ -108,24 +105,22 @@ import useEvent from "@/utils/use-event";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
-    autocompleteMenuContent: {
-      "--mx": "1rem",
-      "--colorBoxSize": "1.25rem",
+    wrapper: {
+      "--colorBoxSize": "12px", // matches legend item size
       "--columnGap": "0.75rem",
       width: DRAWER_WIDTH,
     },
-    autocompleteHeader: {
-      margin: "1rem var(--mx)",
+    header: {
+      margin: theme.spacing(4),
     },
     autocompleteApplyButtonContainer: {
       position: "sticky",
       zIndex: 1000,
-      bottom: "0",
-      left: "0",
-      marginTop: "1rem",
-      right: "0",
-      padding: "1rem var(--mx)",
-      background: "rgba(255,255,255,0.75)",
+      left: 0,
+      right: 0,
+      bottom: theme.spacing(3),
+      marginTop: theme.spacing(6),
+      padding: `0 ${theme.spacing(4)}`,
     },
     autocompleteApplyButton: {
       justifyContent: "center",
@@ -138,19 +133,22 @@ const useStyles = makeStyles((theme: Theme) => {
       minHeight: 40,
     },
     optionColor: {
-      borderRadius: "4px",
       width: "var(--colorBoxSize)",
       height: "var(--colorBoxSize)",
       flexShrink: 0,
-      boxSizing: "border-box",
-      border: `1px solid ${theme.palette.divider}`,
+      outline: `1px solid ${theme.palette.divider}`,
       transition: "background-color 0.125s ease-out",
       alignSelf: "flex-start",
-      marginTop: "0.375rem",
+      marginTop: theme.spacing(1.5),
       marginRight: "0.5rem",
     },
     optionLabel: {
       flexGrow: 1,
+      marginTop: -2,
+
+      [theme.breakpoints.up("xl")]: {
+        marginTop: -3.5,
+      },
     },
     optionCheck: {
       width: 16,
@@ -162,8 +160,11 @@ const useStyles = makeStyles((theme: Theme) => {
     selectedValueRow: {
       display: "flex",
       alignItems: "center",
-      marginBottom: "0.5rem",
-      gap: "1rem",
+      gap: theme.spacing(2),
+
+      "&:not(:last-of-type)": {
+        paddingBottom: theme.spacing(4),
+      },
     },
   };
 });
@@ -199,12 +200,23 @@ const FilterControls = ({
   activeKeysLength: number;
 }) => {
   const classes = useFootnotesStyles({ useMarginTop: false });
+
   return (
     <Box className={classes.actions}>
-      <Button onClick={selectAll} disabled={activeKeysLength === allKeysLength}>
+      <Button
+        variant="text"
+        size="sm"
+        disabled={activeKeysLength === allKeysLength}
+        onClick={selectAll}
+      >
         <Trans id="controls.filter.select.all">Select all</Trans>
       </Button>
-      <Button onClick={selectNone} disabled={activeKeysLength === 0}>
+      <Button
+        variant="text"
+        size="sm"
+        disabled={activeKeysLength === 0}
+        onClick={selectNone}
+      >
         <Trans id="controls.filter.select.none">Select none</Trans>
       </Button>
     </Box>
@@ -354,68 +366,46 @@ const MultiFilterContent = ({
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
-        <Box
-          sx={{
-            justifyContent: "space-between",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {chartConfig.activeField === "segment" ? (
-            <>
-              <Flex sx={{ py: 1, alignItems: "center", width: "100%" }}>
-                <FormControlLabel
-                  componentsProps={{ typography: { variant: "body2" } }}
-                  control={<MUISwitch {...interactiveFilterProps} />}
-                  label={
-                    <MaybeTooltip
-                      tooltipProps={{ enterDelay: 600 }}
-                      title={
-                        <Trans id="controls.filters.interactive.tooltip">
-                          Allow users to change filters
-                        </Trans>
-                      }
-                    >
-                      <div>
-                        <Trans id="controls.filters.interactive.toggle">
-                          Interactive
-                        </Trans>
-                      </div>
-                    </MaybeTooltip>
-                  }
-                />
-              </Flex>
-              <Flex sx={{ py: 1, alignItems: "center", width: "100%" }}>
-                <FormControlLabel
-                  componentsProps={{ typography: { variant: "body2" } }}
-                  control={<MUISwitch {...visibleLegendProps} />}
-                  label={
-                    <Trans id="controls.filters.show-legend.toggle">
-                      Show legend titles
+        {chartConfig.activeField === "segment" ? (
+          <Flex sx={{ flexDirection: "column", gap: 3, mb: 3 }}>
+            <Switch
+              label={
+                <MaybeTooltip
+                  tooltipProps={{ enterDelay: 600 }}
+                  title={
+                    <Trans id="controls.filters.interactive.tooltip">
+                      Allow users to change filters
                     </Trans>
                   }
-                />
-              </Flex>
-            </>
-          ) : null}
-          <Button
-            variant="contained"
-            size="sm"
-            color="blue"
-            onClick={handleOpenAutocomplete}
-            sx={{
-              justifyContent: "center",
-              mt: 4,
-              mb: 2,
-              width: "fit-content",
-            }}
-          >
-            <Trans id="controls.set-filters">Edit filters</Trans>
-          </Button>
-        </Box>
-        <Divider sx={{ mt: "0.5rem", mb: "0.7rem" }} />
-        <Flex justifyContent="space-between">
-          <Typography variant="h5">
+                >
+                  <div>
+                    <Trans id="controls.filters.interactive.toggle">
+                      Interactive
+                    </Trans>
+                  </div>
+                </MaybeTooltip>
+              }
+              {...interactiveFilterProps}
+            />
+            <Switch
+              label={t({
+                id: "controls.filters.show-legend.toggle",
+                message: "Show legend titles",
+              })}
+              {...visibleLegendProps}
+            />
+          </Flex>
+        ) : null}
+        <Button
+          variant="outlined"
+          size="sm"
+          onClick={handleOpenAutocomplete}
+          sx={{ width: "fit-content" }}
+        >
+          <Trans id="controls.set-filters">Edit filters</Trans>
+        </Button>
+        <Flex sx={{ justifyContent: "space-between", mt: 4 }}>
+          <Typography variant="h6" component="p" sx={{ fontWeight: 700 }}>
             <Trans id="controls.filters.select.selected-filters">
               Selected filters
             </Trans>
@@ -437,20 +427,18 @@ const MultiFilterContent = ({
               </Tooltip>
             )}
           </Typography>
-          <Typography variant="body2" component="span">
+          <Typography variant="caption" color="text.secondary">
             <Trans id="controls.filter.nb-elements">
               {activeKeys.size} of {allValues.length}
             </Trans>
           </Typography>
         </Flex>
-
-        <Divider sx={{ my: "0.75rem" }} />
+        <Divider sx={{ mt: 4 }} />
       </Box>
-
       {valueGroups.map(([parentLabel, children]) => {
         return (
           <Box sx={{ mb: 4 }} key={parentLabel}>
-            <Typography variant="h5" sx={{ mb: 3 }}>
+            <Typography variant="h6" sx={{ mb: 4, fontWeight: 700 }}>
               {interlace(explodeParents(parentLabel), (i) => (
                 <BreadcrumbChevron key={i} />
               ))}
@@ -471,7 +459,7 @@ const MultiFilterContent = ({
                     />
                   ) : (
                     <>
-                      <Typography variant="body2" style={{ flexGrow: 1 }}>
+                      <Typography variant="body3" style={{ flexGrow: 1 }}>
                         {label}
                       </Typography>
                       {enableSettingShowValuesBySegment ? (
@@ -555,14 +543,15 @@ const useEnsureUpToDateColorMapping = ({
 const useBreadcrumbStyles = makeStyles({
   root: {
     display: "inline",
-    top: 2,
+    top: 5,
     position: "relative",
   },
 });
 
 const BreadcrumbChevron = () => {
   const classes = useBreadcrumbStyles();
-  return <SvgIcChevronRight className={classes.root} />;
+
+  return <Icon className={classes.root} name="chevronRight" size={20} />;
 };
 
 const StyledAccordion = styled(Accordion)({
@@ -572,6 +561,7 @@ const StyledAccordion = styled(Accordion)({
   "&:before": {
     display: "none",
   },
+
   "&.Mui-expanded": {
     minHeight: 0,
   },
@@ -580,19 +570,28 @@ const StyledAccordion = styled(Accordion)({
 const TreeAccordionSummary = styled(AccordionSummary)(({ theme }) => ({
   minHeight: 0,
   transition: "background-color 0.1s ease",
-  paddingLeft: "0.25rem",
-  paddingRight: "1rem",
+  paddingLeft: theme.spacing(1),
+  paddingRight: theme.spacing(4),
 
   "&.Mui-expanded": {
     minHeight: 0,
   },
+
   "& > .MuiAccordionSummary-content": {
+    display: "flex",
+    alignItems: "center",
     marginTop: 0,
     marginBottom: 0,
-    minHeight: 32,
+    padding: `${theme.spacing(2)} 0`,
+    color: theme.palette.monochrome[600],
   },
+
   "&:hover": {
-    backgroundColor: theme.palette.primary.light,
+    backgroundColor: theme.palette.cobalt[50],
+
+    "& > .MuiAccordionSummary-content": {
+      color: theme.palette.monochrome[800],
+    },
   },
 }));
 
@@ -627,24 +626,23 @@ const TreeAccordion = ({
 }) => {
   const classes = useStyles();
   const { getValueColor } = useMultiFilterContext();
-  const [expanded, setExpanded] = useState(() => (depth === 0 ? true : false));
-
-  const paddingLeft = flat ? "1rem" : `${(depth + 1) * 8}px`;
+  const [expanded, setExpanded] = useState(() => depth === 0);
 
   return (
     <StyledAccordion
       expanded={expanded}
       disableGutters
-      TransitionProps={{ unmountOnExit: true }}
+      slotProps={{ transition: { unmountOnExit: true } }}
     >
       <TreeAccordionSummary
-        sx={{ paddingLeft }}
         onClick={(e) => {
           e.stopPropagation();
+
           if (selectable) {
             onSelect();
           }
         }}
+        sx={{ pl: flat ? 4 : `${(depth + 1) * 8}px` }}
       >
         {renderExpandButton && (
           <IconButton
@@ -655,15 +653,26 @@ const TreeAccordion = ({
             sx={{
               alignSelf: "flex-start",
               visibility: expandable ? "visible" : "hidden",
-              mt: 1,
-              p: 1,
               ml: 2,
+              mr: 1,
+              p: 1,
+
+              "&:hover": {
+                backgroundColor: "cobalt.100", // default hover color is the same
+                // as the parent hover color
+              },
             }}
           >
-            <Icon name={expanded ? "chevronDown" : "chevronRight"} size={16} />
+            <Icon
+              name="chevronRight"
+              size={16}
+              style={{
+                transition: "transform 0.2s ease",
+                transform: expanded ? "rotate(90deg)" : "rotate(0deg)",
+              }}
+            />
           </IconButton>
         )}
-
         {renderColorCheckbox && (
           <div
             className={classes.optionColor}
@@ -674,11 +683,9 @@ const TreeAccordion = ({
             }}
           />
         )}
-
-        <Typography variant="body2" className={classes.optionLabel}>
+        <Typography variant="body3" className={classes.optionLabel}>
           {label}
         </Typography>
-
         <Icon
           name={
             state === "SELECTED"
@@ -808,133 +815,139 @@ const DrawerContent = forwardRef<
     pendingValuesRef: MutableRefObject<HierarchyValue[]>;
     hasColorMapping: boolean;
   }
->((props, ref) => {
-  const {
-    onClose,
-    options,
-    flatOptions,
-    values,
-    pendingValuesRef,
-    hasColorMapping,
-  } = props;
-  const classes = useStyles();
-  const [textInput, setTextInput] = useState("");
-  const [pendingValues, setPendingValues] = useState<HierarchyValue[]>(() =>
-    // Do not set unselectable options
-    values.filter(isHierarchyOptionSelectable)
-  );
-  pendingValuesRef.current = pendingValues;
-
-  const { depthsMetadata, uniqueSelectableFlatOptions } = useMemo(() => {
-    const uniqueSelectableFlatOptions = uniqBy(
-      flatOptions.filter(isHierarchyOptionSelectable),
-      (d) => d.value
+>(
+  (
+    {
+      onClose,
+      options,
+      flatOptions,
+      values,
+      pendingValuesRef,
+      hasColorMapping,
+    },
+    ref
+  ) => {
+    const classes = useStyles();
+    const [textInput, setTextInput] = useState("");
+    const [pendingValues, setPendingValues] = useState<HierarchyValue[]>(() =>
+      // Do not set unselectable options
+      values.filter(isHierarchyOptionSelectable)
     );
+    pendingValuesRef.current = pendingValues;
 
-    const depthsMetadata = flatOptions.reduce(
-      (acc, d) => {
-        if (!acc[d.depth]) {
-          acc[d.depth] = { selectable: false, expandable: false };
-        }
+    const { depthsMetadata, uniqueSelectableFlatOptions } = useMemo(() => {
+      const uniqueSelectableFlatOptions = uniqBy(
+        flatOptions.filter(isHierarchyOptionSelectable),
+        (d) => d.value
+      );
 
-        if (acc[d.depth].selectable === false && d.hasValue) {
-          acc[d.depth].selectable = true;
-        }
-
-        if (
-          acc[d.depth].expandable === false &&
-          d.children &&
-          d.children.length > 0
-        ) {
-          acc[d.depth].expandable = true;
-        }
-
-        return acc;
-      },
-      {} as Record<number, { selectable: boolean; expandable: boolean }>
-    );
-
-    const maxDepth = max(flatOptions, (d) => d.depth);
-
-    // Expand last level by default, so it's aligned correctly.
-    if (maxDepth && maxDepth > 0) {
-      depthsMetadata[maxDepth].expandable = true;
-    }
-
-    return { depthsMetadata, uniqueSelectableFlatOptions };
-  }, [flatOptions]);
-
-  const filteredOptions = useMemo(() => {
-    return pruneTree(options, (d) =>
-      d.label.toLowerCase().includes(textInput.toLowerCase())
-    );
-  }, [textInput, options]);
-
-  return (
-    <div
-      className={classes.autocompleteMenuContent}
-      ref={ref}
-      data-testid="edition-filters-drawer"
-    >
-      <Box className={classes.autocompleteHeader}>
-        <Flex alignItems="center" justifyContent="space-between">
-          <Flex alignItems="center" gap="0.25rem" mb={3}>
-            <Icon name="filter" size={16} />
-            <Typography variant="h5">
-              <Trans id="controls.set-filters">Edit filters</Trans>
-            </Typography>
-          </Flex>
-          <IconButton sx={{ mt: "-0.5rem" }} size="small" onClick={onClose}>
-            <SvgIcClose fontSize="inherit" />
-          </IconButton>
-        </Flex>
-        <Typography variant="body2" color="textSecondary">
-          <Trans id="controls.set-filters-caption">
-            For best results, do not select more than 7 values in the
-            visualization.
-          </Trans>
-        </Typography>
-        <Input
-          className={classes.textInput}
-          value={textInput}
-          onChange={(e) => setTextInput(e.target.value)}
-          placeholder={t({ id: "select.controls.filters.search" })}
-          startAdornment={
-            <InputAdornment position="start">
-              <Icon name="search" size={16} />
-            </InputAdornment>
+      const depthsMetadata = flatOptions.reduce(
+        (acc, d) => {
+          if (!acc[d.depth]) {
+            acc[d.depth] = { selectable: false, expandable: false };
           }
-          sx={{ typography: "body2" }}
-        />
-        <FilterControls
-          selectAll={() => setPendingValues(uniqueSelectableFlatOptions)}
-          selectNone={() => setPendingValues([])}
-          allKeysLength={uniqueSelectableFlatOptions.length}
-          activeKeysLength={pendingValues.length}
-        />
-      </Box>
-      <Tree
-        flat={Object.keys(depthsMetadata).length === 1}
-        depthsMetadata={depthsMetadata}
-        options={filteredOptions}
-        selectedValues={pendingValues}
-        showColors={hasColorMapping}
-        onSelect={(newValues: HierarchyValue[]) => setPendingValues(newValues)}
-      />
 
-      <Box className={classes.autocompleteApplyButtonContainer}>
-        <Button
-          size="sm"
-          className={classes.autocompleteApplyButton}
-          fullWidth
-          onClick={onClose}
-        >
-          <Trans id="controls.set-values-apply">Apply filters</Trans>
-        </Button>
-      </Box>
-    </div>
-  );
-});
+          if (acc[d.depth].selectable === false && d.hasValue) {
+            acc[d.depth].selectable = true;
+          }
+
+          if (
+            acc[d.depth].expandable === false &&
+            d.children &&
+            d.children.length > 0
+          ) {
+            acc[d.depth].expandable = true;
+          }
+
+          return acc;
+        },
+        {} as Record<number, { selectable: boolean; expandable: boolean }>
+      );
+
+      const maxDepth = max(flatOptions, (d) => d.depth);
+
+      // Expand last level by default, so it's aligned correctly.
+      if (maxDepth && maxDepth > 0) {
+        depthsMetadata[maxDepth].expandable = true;
+      }
+
+      return { depthsMetadata, uniqueSelectableFlatOptions };
+    }, [flatOptions]);
+
+    const filteredOptions = useMemo(() => {
+      return pruneTree(options, (d) =>
+        d.label.toLowerCase().includes(textInput.toLowerCase())
+      );
+    }, [textInput, options]);
+
+    return (
+      <div
+        ref={ref}
+        className={classes.wrapper}
+        data-testid="edition-filters-drawer"
+      >
+        <Box className={classes.header}>
+          <Flex alignItems="center" justifyContent="space-between">
+            <Flex alignItems="center" gap={1} mb={3}>
+              <Icon name="filter" />
+              <Typography variant="h6" component="p" sx={{ fontWeight: 700 }}>
+                <Trans id="controls.set-filters">Edit filters</Trans>
+              </Typography>
+            </Flex>
+            <IconButton sx={{ mt: "-0.5rem" }} size="small" onClick={onClose}>
+              <SvgIcClose fontSize="inherit" />
+            </IconButton>
+          </Flex>
+          <Typography variant="body3" color="text.secondary">
+            <Trans id="controls.set-filters-caption">
+              For best results, do not select more than 7 values in the
+              visualization.
+            </Trans>
+          </Typography>
+          <Input
+            className={classes.textInput}
+            size="sm"
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+            placeholder={t({ id: "select.controls.filters.search" })}
+            startAdornment={
+              <InputAdornment position="start">
+                <Icon name="search" size={16} />
+              </InputAdornment>
+            }
+          />
+          <FilterControls
+            selectAll={() => setPendingValues(uniqueSelectableFlatOptions)}
+            selectNone={() => setPendingValues([])}
+            allKeysLength={uniqueSelectableFlatOptions.length}
+            activeKeysLength={pendingValues.length}
+          />
+        </Box>
+        <Tree
+          flat={Object.keys(depthsMetadata).length === 1}
+          depthsMetadata={depthsMetadata}
+          options={filteredOptions}
+          selectedValues={pendingValues}
+          showColors={hasColorMapping}
+          onSelect={(newValues: HierarchyValue[]) => {
+            setPendingValues(newValues);
+          }}
+        />
+
+        <Box className={classes.autocompleteApplyButtonContainer}>
+          <Button
+            size="sm"
+            className={classes.autocompleteApplyButton}
+            fullWidth
+            onClick={onClose}
+          >
+            <Trans id="controls.set-values-apply">Apply filters</Trans>
+          </Button>
+        </Box>
+      </div>
+    );
+  }
+);
 
 const getPathToColorConfigProperty = ({
   field,
@@ -966,9 +979,14 @@ export const DimensionValuesMultiFilter = ({
   const getValueColor = useEvent((value: string) => {
     const colorPath = getPathToColorConfigProperty({
       field: isColorInConfig(chartConfig) ? "color" : field,
-      colorConfigPath,
+      colorConfigPath:
+        isColorInConfig(chartConfig) &&
+        chartConfig.fields.color.type === "single"
+          ? undefined
+          : "colorMapping",
       propertyPath: `["${value}"]`,
     });
+
     return get(chartConfig, colorPath);
   });
 
@@ -1101,9 +1119,9 @@ export const TimeFilter = (props: TimeFilterProps) => {
     return (
       <Box>
         {!disableInteractiveFilters && (
-          <div style={{ marginBottom: "12px" }}>
+          <Flex sx={{ justifyContent: "flex-end", mb: 3 }}>
             <InteractiveTimeRangeToggle />
-          </div>
+          </Flex>
         )}
         <Box sx={{ display: "flex", gap: 1 }}>
           {rangeActiveFilter ? (
@@ -1195,12 +1213,13 @@ export const TimeFilter = (props: TimeFilterProps) => {
           }}
         />
         {rangeActiveFilter && (
-          <Box sx={{ display: "flex", gap: 3, alignItems: "center", mt: 3 }}>
+          <Flex sx={{ display: "flex", alignItems: "center", gap: 1, mt: 3 }}>
             <Switch
               label={t({
                 id: "controls.filter.use-most-recent",
                 message: "Use most recent",
               })}
+              size="sm"
               checked={usesMostRecentValue}
               onChange={() => {
                 setFilterRange([
@@ -1212,7 +1231,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
               }}
             />
             <Tooltip
-              enterDelay={600}
+              arrow
               PopperProps={{ sx: { maxWidth: 160 } }}
               title={
                 <Trans id="controls.filter.use-most-recent-explanation">
@@ -1225,7 +1244,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
                 <Icon name="infoCircle" />
               </Box>
             </Tooltip>
-          </Box>
+          </Flex>
         )}
       </Box>
     );
@@ -1272,6 +1291,7 @@ const InteractiveTimeRangeToggle = () => {
         id: "controls.filters.interactive.toggle",
         message: "Interactive",
       })}
+      size="sm"
       checked={checked}
       onChange={toggle}
     />

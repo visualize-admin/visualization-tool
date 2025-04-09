@@ -50,6 +50,7 @@ declare module "@mui/material/Button" {
     medium: false;
     large: false;
 
+    xs: true;
     sm: true;
     md: true;
     lg: true;
@@ -62,6 +63,7 @@ declare module "@mui/material/InputBase" {
     small: false;
     medium: false;
 
+    xs: true;
     sm: true;
     md: true;
     lg: true;

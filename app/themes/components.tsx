@@ -6,6 +6,8 @@ import {
   CheckboxCheckedIcon,
   CheckboxIcon,
   CheckboxIndeterminateIcon,
+  RadioCheckedIcon,
+  RadioIcon,
 } from "@/themes/custom-icons";
 import { palette } from "@/themes/palette";
 import { shadows } from "@/themes/shadows";
@@ -23,6 +25,7 @@ export const components: Components = {
         return {
           display: "flex",
           alignItems: "center",
+          width: "100%",
           padding: 0,
           backgroundColor: palette[color][50],
           color: palette[color].main,
@@ -95,6 +98,8 @@ export const components: Components = {
         const size = ownerState.size ?? "md";
         const sizeStyles = (() => {
           switch (size) {
+            case "xs":
+              return { padding: "10px 16px ", ...typography.caption };
             case "sm":
               return { padding: "10px 16px", ...typography.h6 };
             case "md":
@@ -211,7 +216,7 @@ export const components: Components = {
   MuiDivider: {
     styleOverrides: {
       root: {
-        borderColor: c.monochrome[400],
+        borderColor: c.monochrome[300],
       },
     },
   },
@@ -247,6 +252,31 @@ export const components: Components = {
       },
     },
   },
+  MuiInputBase: {
+    styleOverrides: {
+      root: {
+        display: "flex",
+        alignItems: "center",
+        width: "100%",
+        borderRadius: 2,
+        border: `1px solid ${palette.monochrome[300]}`,
+        backgroundColor: "#fff",
+        color: "inherit",
+
+        "&:hover": {
+          color: "inherit",
+        },
+
+        "&.Mui-focused": {
+          border: `1px solid ${palette.monochrome[500]}`,
+        },
+
+        "& fieldset": {
+          display: "none",
+        },
+      },
+    },
+  },
   MuiInput: {
     defaultProps: {
       size: "md",
@@ -257,6 +287,8 @@ export const components: Components = {
         const size = ownerState.size ?? "md";
         const sizeStyles = (() => {
           switch (size) {
+            case "xs":
+              return { padding: "10px 16px ", ...typography.caption };
             case "sm":
               return { padding: "10px 16px", ...typography.h6 };
             case "md":
@@ -271,24 +303,7 @@ export const components: Components = {
           }
         })();
 
-        return {
-          ...sizeStyles,
-          display: "flex",
-          alignItems: "center",
-          width: "100%",
-          borderRadius: 2,
-          border: `1px solid ${palette.monochrome[300]}`,
-          backgroundColor: "#fff",
-          color: "inherit",
-
-          "&:hover": {
-            color: "inherit",
-          },
-
-          "&.Mui-focused": {
-            border: `1px solid ${palette.monochrome[500]}`,
-          },
-        };
+        return sizeStyles;
       },
       input: {
         padding: 0,
@@ -333,9 +348,11 @@ export const components: Components = {
     styleOverrides: {
       root: {
         padding: 12,
+        paddingRight: 40,
         color: palette.text.primary,
         lineHeight: 1,
         fontWeight: 700,
+        cursor: "auto",
         ...typography.h6,
       },
     },
@@ -373,6 +390,31 @@ export const components: Components = {
         right: 0,
         color: "inherit !important",
         transition: "color 0.2s ease !important",
+      },
+    },
+  },
+  MuiRadio: {
+    defaultProps: {
+      icon: <RadioIcon />,
+      checkedIcon: <RadioCheckedIcon />,
+    },
+    styleOverrides: {
+      root: {
+        padding: 0,
+        borderRadius: 0,
+        color: palette.monochrome[500],
+
+        "&:hover": {
+          backgroundColor: "transparent",
+        },
+
+        "&.Mui-checked": {
+          color: palette.monochrome[800],
+        },
+
+        "&.Mui-disabled": {
+          opacity: 0.25,
+        },
       },
     },
   },
@@ -422,6 +464,8 @@ export const components: Components = {
         const size = ownerState.size ?? "md";
         const sizeStyles = (() => {
           switch (size) {
+            case "xs":
+              return { ...typography.caption };
             case "sm":
               return { ...typography.h6 };
             case "md":
@@ -446,10 +490,6 @@ export const components: Components = {
           padding: 0,
           border: "none !important",
           ...variantStyles,
-
-          "& fieldset": {
-            display: "none",
-          },
 
           "& .MuiSelect-select": {
             ...sizeStyles,
@@ -505,7 +545,7 @@ export const components: Components = {
 
         return {
           top: "calc(50% - 12px)",
-          right: variant === "standard" ? 0 : 12,
+          right: variant === "standard" ? 0 : 14,
           color: "inherit !important",
           transition: "color 0.2s ease, transform 0.2s ease !important",
         };
@@ -578,6 +618,15 @@ export const components: Components = {
     styleOverrides: {
       root: {
         border: `1px solid ${palette.monochrome[300]}`,
+      },
+    },
+  },
+  MuiTextField: {
+    styleOverrides: {
+      root: {
+        "& .MuiInputBase-root": {
+          transition: "border-color 0.2s ease",
+        },
       },
     },
   },

@@ -8,6 +8,7 @@ import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { LegendColor } from "@/charts/shared/legend-color";
+import { Observer } from "@/charts/shared/use-size";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import {
   InteractiveFiltersChartProvider,
@@ -66,32 +67,34 @@ const LineChartStory = () => (
   >
     <InteractiveFiltersProvider chartConfigs={[chartConfig]}>
       <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
-        <LineChart
-          limits={{ axisDimension: undefined, limits: [] }}
-          observations={observations}
-          dimensions={dimensions}
-          dimensionsById={keyBy(dimensions, (d) => d.id)}
-          measures={measures}
-          measuresById={keyBy(measures, (d) => d.id)}
-          chartConfig={chartConfig}
-        >
-          <ChartContainer>
-            <ChartSvg>
-              <BrushTime />
-              <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
-              <Lines />
-            </ChartSvg>
-          </ChartContainer>
+        <Observer>
+          <LineChart
+            limits={{ axisDimension: undefined, limits: [] }}
+            observations={observations}
+            dimensions={dimensions}
+            dimensionsById={keyBy(dimensions, (d) => d.id)}
+            measures={measures}
+            measuresById={keyBy(measures, (d) => d.id)}
+            chartConfig={chartConfig}
+          >
+            <ChartContainer>
+              <ChartSvg>
+                <BrushTime />
+                <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
+                <Lines />
+              </ChartSvg>
+            </ChartContainer>
 
-          {fields.segment && (
-            <LegendColor
-              chartConfig={chartConfig}
-              symbol="line"
-              interactive
-              showTitle
-            />
-          )}
-        </LineChart>
+            {fields.segment && (
+              <LegendColor
+                chartConfig={chartConfig}
+                symbol="line"
+                interactive
+                showTitle
+              />
+            )}
+          </LineChart>
+        </Observer>
       </InteractiveFiltersChartProvider>
     </InteractiveFiltersProvider>
   </ConfiguratorStateProvider>

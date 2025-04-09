@@ -325,6 +325,9 @@ const SelectTree = ({
     setOpenState(true);
     setMinMenuWidth(inputRef.current?.clientLeft);
     onOpen?.();
+    inputRef.current
+      ?.querySelector("div[role='combobox']")
+      ?.setAttribute("aria-expanded", "true");
   });
 
   const handleClose = useEventCallback(() => {
@@ -333,6 +336,9 @@ const SelectTree = ({
     setFilteredOptions(getFilteredOptions(options, ""));
     setExpanded(defaultExpanded);
     onClose?.();
+    inputRef.current
+      ?.querySelector("div[role='combobox']")
+      ?.setAttribute("aria-expanded", "false");
   });
 
   const handleInputChange: TextFieldProps["onChange"] = useEvent((ev) => {
@@ -464,7 +470,10 @@ const SelectTree = ({
   return (
     <div>
       {label && (
-        <Label htmlFor={id!} smaller>
+        <Label
+          htmlFor={id!}
+          sx={{ display: "flex", alignItems: "center", mb: 1 }}
+        >
           {label}
         </Label>
       )}

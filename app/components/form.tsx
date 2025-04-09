@@ -97,60 +97,46 @@ export const FormControlLabel = (
 
 export const Label = ({
   htmlFor,
-  smaller = false,
   children,
   sx,
 }: {
   htmlFor: string;
-  smaller?: boolean;
   children: ReactNode;
   sx?: TypographyProps["sx"];
 }) => {
   return (
-    <Typography
-      component="label"
-      htmlFor={htmlFor}
-      variant={smaller ? "caption" : "body2"}
-      color="secondary.active"
-      display="flex"
-      sx={sx}
-    >
+    <Typography variant="caption" component="label" htmlFor={htmlFor} sx={sx}>
       {children}
     </Typography>
   );
 };
 
+export const RadioGroup = ({ children }: { children: ReactNode }) => {
+  return <Flex sx={{ gap: 6, wrap: "wrap" }}>{children}</Flex>;
+};
+
 export const Radio = ({
   label,
+  size,
   name,
   value,
   checked,
   disabled,
   onChange,
   warnMessage,
-  formLabelProps,
 }: {
   label: string;
+  size?: ComponentProps<typeof FormControlLabel>["size"];
   disabled?: boolean;
   warnMessage?: string;
-  formLabelProps?: Partial<FormControlLabelProps>;
 } & FieldProps) => {
-  const color = checked
-    ? disabled
-      ? "primary.disabled"
-      : "primary"
-    : "grey.500";
-
   return (
     <MaybeTooltip title={warnMessage}>
       <FormControlLabel
-        label={label || "-"}
+        label={label}
+        size={size}
         htmlFor={`${name}-${value}`}
-        componentsProps={{
-          typography: {
-            variant: "body2",
-          },
-        }}
+        disabled={disabled}
         control={
           <MUIRadio
             name={name}
@@ -159,12 +145,8 @@ export const Radio = ({
             onChange={onChange}
             checked={!!checked}
             disabled={disabled}
-            size="small"
-            sx={{ color, "> *": { fill: color } }}
           />
         }
-        disabled={disabled}
-        {...formLabelProps}
       />
     </MaybeTooltip>
   );
@@ -187,11 +169,7 @@ export const Slider = ({
   Omit<SliderProps, "onChange">) => {
   return (
     <Box sx={sx}>
-      {label && (
-        <Label htmlFor={`${name}-${value}`} smaller sx={{ mb: 1 }}>
-          {label}
-        </Label>
-      )}
+      {label && <Label htmlFor={`${name}-${value}`}>{label}</Label>}
       <Stack
         direction="row"
         gap={4}
@@ -231,15 +209,6 @@ export const Slider = ({
   );
 };
 
-export type CheckboxProps = {
-  label: ComponentProps<typeof FormControlLabel>["label"];
-  size?: ComponentProps<typeof FormControlLabel>["size"];
-  disabled?: boolean;
-  color?: string;
-  indeterminate?: boolean;
-  className?: string;
-} & FieldProps;
-
 export const Checkbox = ({
   label,
   size,
@@ -251,16 +220,22 @@ export const Checkbox = ({
   color,
   indeterminate,
   className,
-}: CheckboxProps) => (
+}: {
+  label: ComponentProps<typeof FormControlLabel>["label"];
+  size?: ComponentProps<typeof FormControlLabel>["size"];
+  disabled?: boolean;
+  color?: string;
+  indeterminate?: boolean;
+  className?: string;
+} & FieldProps) => (
   <FormControlLabel
     label={label}
     size={size}
-    htmlFor={`${name}`}
+    htmlFor={name}
     disabled={disabled}
     className={className}
     control={
       <MUICheckbox
-        data-name="checkbox-component"
         id={name}
         name={name}
         value={value}
@@ -268,13 +243,10 @@ export const Checkbox = ({
         disabled={disabled}
         onChange={onChange}
         indeterminate={indeterminate}
-        sx={{
-          alignSelf: "start",
-          svg: { color },
-          input: { color },
-        }}
+        sx={{ svg: { color } }}
       />
     }
+    sx={{ whiteSpace: "nowrap" }}
   />
 );
 
@@ -356,8 +328,7 @@ export const Select = ({
       {label && (
         <Label
           htmlFor={id}
-          smaller
-          sx={{ display: "flex", alignItems: "center" }}
+          sx={{ display: "flex", alignItems: "center", mb: 1 }}
         >
           {label}
           {loading && (
@@ -396,38 +367,7 @@ export const Select = ({
               </>
             );
           }}
-          MenuProps={{
-            disablePortal: true,
-            slotProps: {
-              paper: {
-                sx: {
-                  "& .MuiList-root": {
-                    width: "auto",
-                    padding: "4px 0",
-                    boxShadow: 3,
-
-                    "& .MuiMenuItem-root": {
-                      color: "monochrome.600",
-
-                      "&:hover": {
-                        backgroundColor: "cobalt.50",
-                        color: "monochrome.800",
-                      },
-
-                      "&.Mui-selected": {
-                        backgroundColor: "transparent",
-                        color: "monochrome.800",
-
-                        "&:hover": {
-                          backgroundColor: "cobalt.50",
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          }}
+          MenuProps={selectMenuProps}
           sx={{ maxWidth: sideControls ? "calc(100% - 28px)" : "100%" }}
         >
           {sortedOptions.map((opt) => {
@@ -460,19 +400,12 @@ export const Select = ({
                   alignItems: "center",
                   gap: 1,
                   typography: selectSizeToTypography[size],
-
-                  "&.Mui-disabled": {
-                    opacity: 1,
-
-                    "&:hover": {
-                      backgroundColor: "transparent",
-                    },
-                  },
                 }}
               >
                 {opt.label}
                 <Flex
                   sx={{
+                    justifyContent: "flex-end",
                     alignItems: "center",
                     gap: 1,
                     minWidth: 24,
@@ -494,10 +427,44 @@ export const Select = ({
   );
 };
 
+export const selectMenuProps: SelectProps["MenuProps"] = {
+  slotProps: {
+    paper: {
+      sx: {
+        "& .MuiList-root": {
+          width: "auto",
+          padding: "4px 0",
+          boxShadow: 3,
+          cursor: "default",
+
+          "& .MuiMenuItem-root": {
+            color: "monochrome.600",
+
+            "&:hover": {
+              backgroundColor: "cobalt.50",
+              color: "monochrome.800",
+            },
+
+            "&.Mui-selected": {
+              backgroundColor: "transparent",
+              color: "monochrome.800",
+
+              "&:hover": {
+                backgroundColor: "cobalt.50",
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 export const selectSizeToTypography: Record<
   NonNullable<ComponentProps<typeof Select>["size"]>,
   TypographyVariant
 > = {
+  xs: "caption",
   sm: "h6",
   md: "h5",
   lg: "h4",
@@ -545,11 +512,7 @@ export const Input = ({
   error?: boolean;
 } & FieldProps) => (
   <Box sx={{ fontSize: "1rem", pb: 2 }}>
-    {label && name && (
-      <Label htmlFor={name} smaller sx={{ mb: 1 }}>
-        {label}
-      </Label>
-    )}
+    {label && name && <Label htmlFor={name}>{label}</Label>}
     <MUIInput
       id={name}
       size="sm"
@@ -596,11 +559,7 @@ export const MarkdownInput = ({
                   <Divider flexItem orientation="vertical" />
                   <LinkDialogToggle />
                 </Box>
-                {label && name ? (
-                  <Label htmlFor={name} smaller sx={{ my: 1 }}>
-                    {label}
-                  </Label>
-                ) : null}
+                {label && name ? <Label htmlFor={name}>{label}</Label> : null}
               </div>
             ),
           }),
@@ -743,31 +702,6 @@ export const SearchField = ({
 };
 
 export type SearchFieldProps = ComponentProps<typeof SearchField>;
-
-export const FieldSetLegend = ({
-  legendTitle,
-  sx,
-}: {
-  legendTitle: string | ReactNode;
-  sx?: TypographyProps["sx"];
-}) => (
-  <Typography
-    variant="caption"
-    color="secondary"
-    component="legend"
-    sx={{
-      lineHeight: ["1rem", "1.125rem", "1.125rem"],
-      fontWeight: "normal",
-      fontSize: ["0.625rem", "0.75rem", "0.75rem"],
-      pl: 0,
-      mb: 1,
-      paddingBlock: 0,
-      ...sx,
-    }}
-  >
-    {legendTitle}
-  </Typography>
-);
 
 export const Switch = ({
   id,

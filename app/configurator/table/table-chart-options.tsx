@@ -230,8 +230,8 @@ export const TableColumnOptions = ({
       aria-labelledby={`tab-${activeField}`}
       tabIndex={-1}
     >
-      <ControlSection>
-        <SectionTitle>{component.label}</SectionTitle>
+      <ControlSection hideTopBorder>
+        <SectionTitle closable>{component.label}</SectionTitle>
         <ControlSectionContent>
           {component.__typename !== "NumericalMeasure" && (
             <ChartOptionGroupHiddenField
@@ -492,8 +492,8 @@ const ColumnStyleSubOptions = ({
 
 const TableSettings = () => {
   return (
-    <ControlSection>
-      <SectionTitle>
+    <ControlSection hideTopBorder>
+      <SectionTitle closable>
         <Trans id="controls.section.tableSettings">Table Settings</Trans>
       </SectionTitle>
       <ControlSectionContent>

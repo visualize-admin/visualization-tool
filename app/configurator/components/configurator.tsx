@@ -79,7 +79,6 @@ import { ChartConfiguratorTable } from "@/configurator/table/table-chart-configu
 import { useUserConfig } from "@/domain/user-configs";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
-import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import { useLocale } from "@/locales/use-locale";
 import { useDataSourceStore } from "@/stores/data-source";
 import {
@@ -135,21 +134,6 @@ const useAssureCorrectDataSource = (stateGuard: ConfiguratorState["state"]) => {
     state.state,
     stateGuard,
   ]);
-};
-
-const BackToMainButton = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <Button
-      variant="text"
-      color="inherit"
-      size="sm"
-      sx={{ fontWeight: "bold" }}
-      startIcon={<SvgIcChevronLeft />}
-      onClick={onClick}
-    >
-      <Trans id="controls.nav.back-to-main">Back to main</Trans>
-    </Button>
-  );
 };
 
 const NextStepButton = ({ children }: PropsWithChildren<{}>) => {
@@ -464,7 +448,6 @@ const ConfigureChartStep = () => {
           onClose={handleClosePanel}
         >
           <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
-            <BackToMainButton onClick={handleClosePanel} />
             {isAnnotationField(chartConfig.activeField) ? (
               <ChartAnnotationsSelector />
             ) : (
@@ -719,7 +702,6 @@ const LayoutingStep = () => {
         onClose={handleClosePanel}
       >
         <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
-          <BackToMainButton onClick={handleClosePanel} />
           {isAnnotationField(state.layout.activeField) ? (
             <LayoutAnnotationsSelector />
           ) : (

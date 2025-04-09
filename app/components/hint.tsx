@@ -219,11 +219,10 @@ export const LoadingDataError = ({ message }: { message?: string }) => {
         The data could not be loaded.
       </Trans>
       <Link
-        typography="body2"
         target="_blank"
         href="https://visualization-tool.status.interactivethings.io/"
-        sx={{ mt: "0.5em" }}
       >
+        {" "}
         <Trans id="hint.dataloadingerror.status">
           Check our status page for more information.
           <Icon name="legacyLinkExternal" size={14} />

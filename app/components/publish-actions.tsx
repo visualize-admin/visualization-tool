@@ -145,7 +145,7 @@ const EmbedRadio = ({
 }) => {
   return (
     <Flex sx={{ alignItems: "center", gap: 1 }}>
-      <Radio {...rest} formLabelProps={{ sx: { m: 0 } }} />
+      <Radio {...rest} />
       {infoMessage && (
         <Tooltip
           arrow

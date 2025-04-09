@@ -122,7 +122,7 @@ const SequentialColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
         />
       </Box>
       <Box sx={{ fontSize: "1rem", pb: 2, maxWidth: 304 }}>
-        <Label htmlFor="custom-color-palette-base" smaller sx={{ mb: 1 }}>
+        <Label htmlFor="custom-color-palette-base">
           <Trans id="controls.custom-color-palettes.base" />
         </Label>
         {baseColor && (
@@ -167,7 +167,7 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
           />
         </Box>
         <Box sx={{ fontSize: "1rem", pb: 2, maxWidth: 304 }}>
-          <Label htmlFor="custom-color-palette-start" smaller sx={{ mb: 1 }}>
+          <Label htmlFor="custom-color-palette-start">
             <Trans id="controls.custom-color-palettes.start" />
           </Label>
           {startColorHex && (
@@ -182,7 +182,7 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
         </Box>
         {midColorHex && (
           <Box sx={{ fontSize: "1rem", pb: 2, maxWidth: 304 }}>
-            <Label htmlFor="custom-color-palette-mid" smaller sx={{ mb: 1 }}>
+            <Label htmlFor="custom-color-palette-mid">
               <Trans id="controls.custom-color-palettes.mid" />
             </Label>
             <ColorSelectionRow
@@ -196,7 +196,7 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
           </Box>
         )}
         <Box sx={{ fontSize: "1rem", pb: 2, maxWidth: 304 }}>
-          <Label htmlFor="custom-color-palette-end" smaller sx={{ mb: 1 }}>
+          <Label htmlFor="custom-color-palette-end">
             <Trans id="controls.custom-color-palettes.end" />
           </Label>
           {endColorHex && (
@@ -298,13 +298,8 @@ const ColorSelectionRow = (props: ColorSelectionRowProps) => {
   return (
     <Box className={classes.colorItem}>
       <Flex className={classes.colorItemContent}>
-        <LegendItem
-          item={color}
-          color={color}
-          symbol="square"
-          usage="colorPicker"
-        />
-        <Flex gap={2} alignItems={"center"}>
+        <LegendItem label={color} color={color} symbol="square" />
+        <Flex sx={{ alignItems: "center", gap: 2 }}>
           {warningContrast && (
             <DisabledMessageIcon message={getContrastWarning()} />
           )}

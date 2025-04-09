@@ -29,8 +29,8 @@ import { getMap } from "@/charts/map/ref";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
+import { RadioGroup } from "@/components/form";
 import {
-  FieldSetLegend,
   Label,
   Radio,
   Select,
@@ -469,10 +469,10 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
       {/* Only show component select if necessary */}
       {encoding.componentTypes.length > 0 && (
         <ControlSection hideTopBorder>
-          <SectionTitle>
+          <SectionTitle closable>
             {getFieldLabel(`${chartConfig.chartType}.${encoding.field}`)}
           </SectionTitle>
-          <ControlSectionContent gap="none">
+          <ControlSectionContent>
             {!encoding.customComponent && (
               <ChartFieldField
                 field={encoding.field}
@@ -484,17 +484,15 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
               />
             )}
             {encoding.options?.showValues ? (
-              <SwitchWrapper>
-                <ChartOptionCheckboxField
-                  path="showValues"
-                  field={encoding.field}
-                  label={t({ id: "controls.section.show-values" })}
-                  disabled={
-                    encoding.options.showValues.getDisabledState?.(chartConfig)
-                      .disabled
-                  }
-                />
-              </SwitchWrapper>
+              <ChartOptionCheckboxField
+                path="showValues"
+                field={encoding.field}
+                label={t({ id: "controls.section.show-values" })}
+                disabled={
+                  encoding.options.showValues.getDisabledState?.(chartConfig)
+                    .disabled
+                }
+              />
             ) : null}
             {encoding.options?.showStandardError && hasStandardError && (
               <SwitchWrapper>
@@ -547,12 +545,10 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                 </Box>
               )}
             {encoding.options?.useAbbreviations && (
-              <ControlSectionContent component="fieldset" gap="none" mt={3}>
-                <ChartFieldAbbreviations
-                  field={field}
-                  component={fieldComponent}
-                />
-              </ControlSectionContent>
+              <ChartFieldAbbreviations
+                field={field}
+                component={fieldComponent}
+              />
             )}
           </ControlSectionContent>
         </ControlSection>
@@ -650,18 +646,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
 };
 
 const SwitchWrapper = ({ children }: { children: ReactNode }) => {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        gap: 1,
-        alignItems: "center",
-        mt: 3,
-      }}
-    >
-      {children}
-    </Box>
-  );
+  return <Flex sx={{ alignItems: "center", gap: 1 }}>{children}</Flex>;
 };
 
 const ChartLayoutOptions = ({
@@ -706,10 +691,10 @@ const ChartLayoutOptions = ({
 
   return encoding.options || hasColorPalette ? (
     <ControlSection collapse>
-      <SectionTitle iconName="color">
+      <SectionTitle iconName="swatch">
         <Trans id="controls.section.layout-options">Layout options</Trans>
       </SectionTitle>
-      <ControlSectionContent component="fieldset">
+      <ControlSectionContent gap="large">
         {hasSubOptions && (
           <ChartFieldOptions
             encoding={encoding}
@@ -864,10 +849,9 @@ const ChartLimits = ({
                     }}
                   >
                     <LegendItem
-                      item={limit.name}
+                      label={limit.name}
                       color={color}
                       symbol="square"
-                      usage="colorPicker"
                     />
                     <ColorPickerMenu
                       colors={colors}
@@ -895,47 +879,49 @@ const ChartLimits = ({
                         Select symbol type
                       </Trans>
                     </Typography>
-                    <Radio
-                      name={`limit-${i}-symbol-type-dot`}
-                      label={t({ id: "controls.symbol.dot", message: "Dot" })}
-                      value="dot"
-                      checked={symbolType === "circle"}
-                      onChange={() => {
-                        dispatch({
-                          type: "LIMIT_SET",
-                          value: {
-                            measureId: measure.id,
-                            related: limit.related,
-                            color,
-                            lineType,
-                            symbolType: "circle",
-                          },
-                        });
-                      }}
-                      disabled={!maybeLimit}
-                    />
-                    <Radio
-                      name={`limit-${i}-symbol-type-cross`}
-                      label={t({
-                        id: "controls.symbol.cross",
-                        message: "Cross",
-                      })}
-                      value="cross"
-                      checked={symbolType === "cross"}
-                      onChange={() => {
-                        dispatch({
-                          type: "LIMIT_SET",
-                          value: {
-                            measureId: measure.id,
-                            related: limit.related,
-                            color,
-                            lineType,
-                            symbolType: "cross",
-                          },
-                        });
-                      }}
-                      disabled={!maybeLimit}
-                    />
+                    <RadioGroup>
+                      <Radio
+                        name={`limit-${i}-symbol-type-dot`}
+                        label={t({ id: "controls.symbol.dot", message: "Dot" })}
+                        value="dot"
+                        checked={symbolType === "circle"}
+                        onChange={() => {
+                          dispatch({
+                            type: "LIMIT_SET",
+                            value: {
+                              measureId: measure.id,
+                              related: limit.related,
+                              color,
+                              lineType,
+                              symbolType: "circle",
+                            },
+                          });
+                        }}
+                        disabled={!maybeLimit}
+                      />
+                      <Radio
+                        name={`limit-${i}-symbol-type-cross`}
+                        label={t({
+                          id: "controls.symbol.cross",
+                          message: "Cross",
+                        })}
+                        value="cross"
+                        checked={symbolType === "cross"}
+                        onChange={() => {
+                          dispatch({
+                            type: "LIMIT_SET",
+                            value: {
+                              measureId: measure.id,
+                              related: limit.related,
+                              color,
+                              lineType,
+                              symbolType: "cross",
+                            },
+                          });
+                        }}
+                        disabled={!maybeLimit}
+                      />
+                    </RadioGroup>
                   </div>
                 ) : null}
                 {limit.type === "range" ? (
@@ -945,47 +931,52 @@ const ChartLimits = ({
                         Select line type
                       </Trans>
                     </Typography>
-                    <Radio
-                      name={`limit-${i}-line-type-solid`}
-                      label={t({ id: "controls.line.solid", message: "Solid" })}
-                      value="solid"
-                      checked={lineType === "solid"}
-                      onChange={() => {
-                        dispatch({
-                          type: "LIMIT_SET",
-                          value: {
-                            measureId: measure.id,
-                            related: limit.related,
-                            color,
-                            lineType: "solid",
-                            symbolType,
-                          },
-                        });
-                      }}
-                      disabled={!maybeLimit}
-                    />
-                    <Radio
-                      name={`limit-${i}-line-type-dashed`}
-                      label={t({
-                        id: "controls.line.dashed",
-                        message: "Dashed",
-                      })}
-                      value="dashed"
-                      checked={lineType === "dashed"}
-                      onChange={() => {
-                        dispatch({
-                          type: "LIMIT_SET",
-                          value: {
-                            measureId: measure.id,
-                            related: limit.related,
-                            color,
-                            lineType: "dashed",
-                            symbolType,
-                          },
-                        });
-                      }}
-                      disabled={!maybeLimit}
-                    />
+                    <RadioGroup>
+                      <Radio
+                        name={`limit-${i}-line-type-solid`}
+                        label={t({
+                          id: "controls.line.solid",
+                          message: "Solid",
+                        })}
+                        value="solid"
+                        checked={lineType === "solid"}
+                        onChange={() => {
+                          dispatch({
+                            type: "LIMIT_SET",
+                            value: {
+                              measureId: measure.id,
+                              related: limit.related,
+                              color,
+                              lineType: "solid",
+                              symbolType,
+                            },
+                          });
+                        }}
+                        disabled={!maybeLimit}
+                      />
+                      <Radio
+                        name={`limit-${i}-line-type-dashed`}
+                        label={t({
+                          id: "controls.line.dashed",
+                          message: "Dashed",
+                        })}
+                        value="dashed"
+                        checked={lineType === "dashed"}
+                        onChange={() => {
+                          dispatch({
+                            type: "LIMIT_SET",
+                            value: {
+                              measureId: measure.id,
+                              related: limit.related,
+                              color,
+                              lineType: "dashed",
+                              symbolType,
+                            },
+                          });
+                        }}
+                        disabled={!maybeLimit}
+                      />
+                    </RadioGroup>
                   </div>
                 ) : null}
               </Box>
@@ -1670,15 +1661,13 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
         />
         {field.showPlayButton && (
           <>
-            <Box component="fieldset" mt={4}>
-              <FieldSetLegend
-                legendTitle={
-                  <Trans id="controls.section.animation.duration">
-                    Animation Duration
-                  </Trans>
-                }
-              />
-              <Flex sx={{ justifyContent: "flex-start" }}>
+            <Box mt={4}>
+              <Typography variant="caption" component="legend">
+                <Trans id="controls.section.animation.duration">
+                  Animation Duration
+                </Trans>
+              </Typography>
+              <RadioGroup>
                 {[10, 30, 60].map((d) => (
                   <ChartOptionRadioField
                     key={d}
@@ -1688,31 +1677,29 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                     value={d}
                   />
                 ))}
-              </Flex>
+              </RadioGroup>
             </Box>
             <Box component="fieldset" mt={4}>
-              <FieldSetLegend
-                legendTitle={
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Trans id="controls.section.animation.type">
-                      Animation Type
-                    </Trans>
-                    <Tooltip
-                      arrow
-                      title={t({
-                        id: "controls.section.animation.type.explanation",
-                        message:
-                          "Use the Stepped type to make the animation jump between data points at fixed intervals. This mode is useful when you want to animate data using a time dimension with a non-uniform distribution of dates.",
-                      })}
-                    >
-                      <Typography sx={{ color: "primary.main" }}>
-                        <SvgIcInfoCircle width={16} height={16} />
-                      </Typography>
-                    </Tooltip>
-                  </Box>
-                }
-              />
-              <Flex justifyContent="flex-start">
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography variant="caption">
+                  <Trans id="controls.section.animation.type">
+                    Animation Type
+                  </Trans>
+                </Typography>
+                <Tooltip
+                  arrow
+                  title={t({
+                    id: "controls.section.animation.type.explanation",
+                    message:
+                      "Use the Stepped type to make the animation jump between data points at fixed intervals. This mode is useful when you want to animate data using a time dimension with a non-uniform distribution of dates.",
+                  })}
+                >
+                  <Typography sx={{ color: "blue.main" }}>
+                    <SvgIcInfoCircle width={16} height={16} />
+                  </Typography>
+                </Tooltip>
+              </Box>
+              <RadioGroup>
                 <ChartOptionRadioField
                   label={t({
                     id: "controls.section.animation.type.continuous",
@@ -1731,7 +1718,7 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                   path="type"
                   value="stepped"
                 />
-              </Flex>
+              </RadioGroup>
             </Box>
             <Box display="flex" alignItems="center" mt={5} gap="0.5rem">
               <ChartOptionSwitchField
@@ -1811,11 +1798,6 @@ const ChartFieldMultiFilter = ({
               dimension={component}
               field={field}
               colorComponent={colorComponent}
-              // If colorType is defined, we are dealing with color field and
-              // not segment.
-              colorConfigPath={
-                isColorInConfig(chartConfig) ? undefined : "colorMapping"
-              }
             />
           )
         )}
@@ -1840,28 +1822,24 @@ const ChartFieldOptions = ({
   const values = chartSubType.getValues(chartConfig, components);
 
   return (
-    <div>
-      <Box component="fieldset" mt={2}>
-        <FieldSetLegend
-          legendTitle={
-            <Trans id="controls.select.column.layout">Column layout</Trans>
-          }
-        />
-        <Flex sx={{ justifyContent: "flex-start" }}>
-          {values.map((d) => (
-            <ChartOptionRadioField
-              key={d.value}
-              label={getFieldLabel(d.value)}
-              field={encoding.field}
-              path="type"
-              value={d.value}
-              disabled={disabled || d.disabled}
-              warnMessage={d.warnMessage}
-            />
-          ))}
-        </Flex>
-      </Box>
-    </div>
+    <Flex sx={{ flexDirection: "column", gap: 1 }}>
+      <Typography variant="caption">
+        <Trans id="controls.select.column.layout">Column layout</Trans>
+      </Typography>
+      <RadioGroup>
+        {values.map((d) => (
+          <ChartOptionRadioField
+            key={d.value}
+            label={getFieldLabel(d.value)}
+            field={encoding.field}
+            path="type"
+            value={d.value}
+            disabled={disabled || d.disabled}
+            warnMessage={d.warnMessage}
+          />
+        ))}
+      </RadioGroup>
+    </Flex>
   );
 };
 
@@ -1874,15 +1852,11 @@ const ChartFieldCalculation = ({
 }) => {
   return (
     <ControlSection collapse>
-      <SectionTitle
-        iconName="normalize"
-        disabled={disabled}
-        warnMessage={warnMessage}
-      >
+      <SectionTitle iconName="normalize" warnMessage={warnMessage}>
         <Trans id="controls.select.calculation.mode">Chart mode</Trans>
       </SectionTitle>
-      <ControlSectionContent component="fieldset">
-        <Flex sx={{ justifyContent: "flex-start", my: 2 }}>
+      <ControlSectionContent>
+        <RadioGroup>
           <ChartOptionRadioField
             label={getFieldLabel("identity")}
             field={null}
@@ -1897,7 +1871,7 @@ const ChartFieldCalculation = ({
             value="percent"
             disabled={disabled}
           />
-        </Flex>
+        </RadioGroup>
         <ChartOptionSwitchField
           label={
             <MaybeTooltip
@@ -1941,17 +1915,16 @@ const ChartFieldSorting = ({
   const getSortingTypeLabel = (type: SortingType): string => {
     switch (type) {
       case "byDimensionLabel":
-        return t({ id: "controls.sorting.byDimensionLabel", message: `Name` });
+        return t({ id: "controls.sorting.byDimensionLabel", message: "Name" });
       case "byMeasure":
-        return t({ id: "controls.sorting.byMeasure", message: `Measure` });
+        return t({ id: "controls.sorting.byMeasure", message: "Measure" });
       case "byTotalSize":
-        return t({ id: "controls.sorting.byTotalSize", message: `Total size` });
+        return t({ id: "controls.sorting.byTotalSize", message: "Total size" });
       case "byAuto":
-        return t({ id: "controls.sorting.byAuto", message: `Automatic` });
+        return t({ id: "controls.sorting.byAuto", message: "Automatic" });
       default:
-        const _sanityCheck: never = type;
-        console.warn(`Sorting type label is ${_sanityCheck}`);
-        return getSortingTypeLabel(DEFAULT_SORTING["sortingType"]);
+        const _exhaustiveCheck: never = type;
+        return _exhaustiveCheck;
     }
   };
 
@@ -1996,32 +1969,31 @@ const ChartFieldSorting = ({
       <SectionTitle disabled={disabled} iconName="sort">
         <Trans id="controls.section.sorting">Sort</Trans>
       </SectionTitle>
-      <ControlSectionContent component="fieldset">
-        <Box>
-          <Select
-            id="sort-by"
-            label={getFieldLabel("sortBy")}
-            options={encodingSortingOptions?.map((d) => {
-              const disabledState = d.getDisabledState?.(chartConfig);
+      <ControlSectionContent>
+        <Select
+          id="sort-by"
+          size="sm"
+          label={getFieldLabel("sortBy")}
+          options={encodingSortingOptions?.map((d) => {
+            const disabledState = d.getDisabledState?.(chartConfig);
 
-              return {
-                value: d.sortingType,
-                label: getSortingTypeLabel(d.sortingType),
-                ...disabledState,
-              };
-            })}
-            value={activeSortingType}
-            disabled={disabled}
-            onChange={(e) => {
-              updateSortingOption({
-                sortingType: e.target
-                  .value as EncodingSortingOption["sortingType"],
-                sortingOrder: activeSortingOrder,
-              });
-            }}
-          />
-        </Box>
-        <Flex sx={{ justifyContent: "flex-start", flexWrap: "wrap" }} mt={1}>
+            return {
+              value: d.sortingType,
+              label: getSortingTypeLabel(d.sortingType),
+              ...disabledState,
+            };
+          })}
+          value={activeSortingType}
+          disabled={disabled}
+          onChange={(e) => {
+            updateSortingOption({
+              sortingType: e.target
+                .value as EncodingSortingOption["sortingType"],
+              sortingOrder: activeSortingOrder,
+            });
+          }}
+        />
+        <RadioGroup>
           {sortingOrderOptions &&
             sortingOrderOptions.map((sortingOrder) => {
               const subType = get(
@@ -2051,7 +2023,7 @@ const ChartFieldSorting = ({
                 />
               );
             })}
-        </Flex>
+        </RadioGroup>
       </ControlSectionContent>
     </ControlSection>
   );
@@ -2286,13 +2258,10 @@ const ChartFieldColorComponent = ({
         ) : colorType === "numerical" ? (
           <div>
             <ColorRampField field={field} path="color" nSteps={nbClass} />
-            <FieldSetLegend
-              legendTitle={t({
-                id: "controls.scale.type",
-                message: "Scale type",
-              })}
-            />
-            <Flex sx={{ justifyContent: "flex-start" }}>
+            <Typography variant="caption">
+              <Trans id="controls.scale.type">Scale type</Trans>
+            </Typography>
+            <RadioGroup>
               <ChartOptionRadioField
                 label={t({
                   id: "controls.color.scale.type.continuous",
@@ -2302,7 +2271,6 @@ const ChartFieldColorComponent = ({
                 path="color.scaleType"
                 value="continuous"
               />
-
               {nbOptions >= 3 && (
                 <ChartOptionRadioField
                   label={t({
@@ -2314,7 +2282,7 @@ const ChartFieldColorComponent = ({
                   value="discrete"
                 />
               )}
-            </Flex>
+            </RadioGroup>
           </div>
         ) : null}
 
@@ -2485,7 +2453,7 @@ const ChartMapBaseLayerSettings = ({
 
   return (
     <ControlSection hideTopBorder>
-      <SectionTitle>
+      <SectionTitle closable>
         <Trans id="chart.map.layers.base">Base Layers</Trans>
       </SectionTitle>
       <ControlSectionContent gap="large">

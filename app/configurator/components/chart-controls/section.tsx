@@ -6,6 +6,7 @@ import {
   Theme,
   Typography,
   TypographyProps,
+  useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
@@ -21,7 +22,9 @@ import React, {
 
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import useDisclosure from "@/components/use-disclosure";
+import { isConfiguring, isLayouting } from "@/configurator/configurator-state";
 import { Icon, IconName } from "@/icons";
+import { useConfiguratorState } from "@/src";
 
 const useControlSectionStyles = makeStyles<Theme, { hideTopBorder: boolean }>(
   (theme) => ({
@@ -41,7 +44,7 @@ const useSectionTitleStyles = makeStyles<
   {
     disabled?: boolean;
     sectionOpen: boolean;
-    collapse?: boolean;
+    interactive?: boolean;
     warn?: boolean;
   }
 >((theme) => ({
@@ -69,9 +72,9 @@ const useSectionTitleStyles = makeStyles<
     transition: "background-color 0.2s ease",
 
     "&:hover": {
-      cursor: ({ collapse }) => (collapse ? "pointer" : "initial"),
-      backgroundColor: ({ collapse }) => {
-        if (collapse) {
+      cursor: ({ interactive }) => (interactive ? "pointer" : "initial"),
+      backgroundColor: ({ interactive }) => {
+        if (interactive) {
           return theme.palette.cobalt[50];
         }
 
@@ -93,10 +96,11 @@ const useSectionTitleStyles = makeStyles<
     fontWeight: 700,
 
     "& > svg:first-of-type": {
-      marginRight: theme.spacing(2),
+      marginRight: theme.spacing(1),
     },
   },
   icon: {
+    lineHeight: 0,
     justifySelf: "flex-end",
   },
 }));
@@ -216,6 +220,7 @@ export const useControlSectionContext = () => useContext(ControlSectionContext);
 
 export const SectionTitle = ({
   children,
+  closable,
   id,
   disabled,
   iconName,
@@ -223,27 +228,58 @@ export const SectionTitle = ({
   sx,
 }: {
   children: ReactNode;
+  closable?: boolean;
   id?: string;
   disabled?: boolean;
   iconName?: IconName;
   warnMessage?: string | ReactNode;
   sx?: TypographyProps["sx"];
 }) => {
+  const [state, dispatch] = useConfiguratorState();
+  const handleClick = useEventCallback(() => {
+    if (collapse) {
+      return setOpen((d) => !d);
+    }
+
+    if (!closable) {
+      return;
+    }
+
+    if (isConfiguring(state)) {
+      return dispatch({
+        type: "CHART_ACTIVE_FIELD_CHANGED",
+        value: undefined,
+      });
+    }
+
+    if (isLayouting(state)) {
+      return dispatch({
+        type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+        value: undefined,
+      });
+    }
+  });
+
   const { setOpen, isOpen, collapse } = useControlSectionContext();
   const classes = useSectionTitleStyles({
     disabled,
     sectionOpen: isOpen,
-    collapse,
+    interactive: !!collapse || !!closable,
     warn: !!warnMessage,
   });
 
   return (
     <Box
       className={classes.root}
-      onClick={collapse ? () => setOpen((v) => !v) : undefined}
+      onClick={handleClick}
+      {...(closable ? { "data-testid": "section-close" } : {})}
     >
       <Typography variant="h6" id={id} className={classes.text} sx={sx}>
-        {iconName ? <Icon name={iconName} /> : null}
+        {closable ? (
+          <Icon name="chevronLeft" />
+        ) : iconName ? (
+          <Icon name={iconName} />
+        ) : null}
         {children}
       </Typography>
       {warnMessage && <Warning title={warnMessage} />}

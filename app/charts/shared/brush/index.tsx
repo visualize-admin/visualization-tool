@@ -38,9 +38,8 @@ import { useTransitionStore } from "@/stores/transition";
 import { getTextWidth } from "@/utils/get-text-width";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
-// Brush constants
-const HANDLE_HEIGHT = 14;
-const BRUSH_HEIGHT = 3;
+const HANDLE_HEIGHT = 12;
+const BRUSH_HEIGHT = 4;
 const HEIGHT = HANDLE_HEIGHT + BRUSH_HEIGHT;
 
 export const shouldShowBrush = (
@@ -337,7 +336,7 @@ export const BrushTime = () => {
           .attr("fill", brushHandleFillColor)
           .attr("stroke", brushHandleStrokeColor)
           .attr("stroke-width", 2)
-          .style("y", `-${HANDLE_HEIGHT / 2 - 1}px`)
+          .style("y", `-${BRUSH_HEIGHT}px`)
           .style("width", `${HANDLE_HEIGHT}px`)
           .style("height", `${HANDLE_HEIGHT}px`)
           .attr("rx", `${HANDLE_HEIGHT}px`);

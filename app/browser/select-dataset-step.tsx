@@ -91,7 +91,7 @@ const useStyles = makeStyles<
   panelLeft: {
     minHeight: "100vh",
     boxShadow: "none",
-    border: "none",
+    outline: "none",
     transition: "padding-top 0.5s ease",
   },
   panelMiddle: {

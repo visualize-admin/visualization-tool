@@ -3,11 +3,9 @@ import {
   Box,
   Button,
   IconButton,
-  Link as MuiLink,
   tooltipClasses,
   Typography,
 } from "@mui/material";
-import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import uniqBy from "lodash/uniqBy";
@@ -41,34 +39,32 @@ import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles({
   row: {
     borderLeft: "0.25rem solid transparent",
     paddingLeft: "0.25rem",
     marginLeft: "-0.5rem",
     transition: "border-left-color 1s ease",
     display: "flex",
-    alignItems: "center",
     justifyContent: "space-between",
   },
   added: {
     transition: "border-left-color 0.25s ease",
-    borderLeftColor: theme.palette.success.light,
+    borderLeftColor: "#A6DFE7",
   },
   tooltipPopper: {
     [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: theme.palette.success.light,
+      backgroundColor: "#A6DFE7",
       lineHeight: 1.5,
       padding: "0.75rem",
       whiteSpace: "nowrap",
       maxWidth: "none",
-      // color: theme.palette.success.main,
     },
     [`& .${tooltipClasses.arrow}`]: {
-      color: theme.palette.success.light,
+      color: "#A6DFE7",
     },
   },
-}));
+});
 
 const DatasetRow = ({
   canRemove,
@@ -117,19 +113,19 @@ const DatasetRow = ({
         key={cube.iri}
         className={clsx(classes.row, { [classes.added]: added })}
       >
-        <div>
-          <MuiLink
-            underline="none"
-            sx={{ cursor: "pointer" }}
-            variant="caption"
-            component="span"
+        <Flex
+          sx={{ flexDirection: "column", alignItems: "flex-start", gap: 1 }}
+        >
+          <Button
+            variant="text"
+            color="blue"
+            size="sm"
             onClick={handleDatasetClick}
           >
             <Trans id="dataset.footnotes.dataset">Dataset</Trans>
-          </MuiLink>
-          <br />
-          <Typography variant="caption">{cube.title}</Typography>
-        </div>
+          </Button>
+          <Typography variant="body3">{cube.title}</Typography>
+        </Flex>
         <div>
           {canRemove ? (
             <IconButton
@@ -160,6 +156,7 @@ const DatasetRow = ({
                   setLoading(false);
                 }
               }}
+              sx={{ padding: 2, transform: "translate(8px, -8px)" }}
             >
               <SvgIcTrash />
             </IconButton>
@@ -225,15 +222,15 @@ export const DatasetsControlSection = () => {
         aria-labelledby="controls-data"
         data-testid="configurator-datasets"
       >
-        <Flex sx={{ flexDirection: "column", gap: 1, mb: 2 }}>
-          {metadataQuery.data?.dataCubesMetadata.map((x) => {
+        <Flex sx={{ flexDirection: "column", gap: 6 }}>
+          {metadataQuery.data?.dataCubesMetadata.map((cube) => {
             return (
               <DatasetRow
-                key={x.iri}
+                key={cube.iri}
                 handleDatasetClick={handleDatasetClick}
                 canRemove={cubes.length > 1}
-                added={addedIri === x.iri}
-                cube={x}
+                added={addedIri === cube.iri}
+                cube={cube}
               />
             );
           })}

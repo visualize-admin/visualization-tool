@@ -21,6 +21,7 @@ import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
+import { Observer } from "@/charts/shared/use-size";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { Dimension, Measure } from "@/domain/data";
 import {
@@ -88,26 +89,28 @@ const ColumnsStory = {
     >
       <InteractiveFiltersProvider chartConfigs={[chartConfig]}>
         <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
-          <ColumnChart
-            limits={{ axisDimension: undefined, limits: [] }}
-            observations={columnObservations}
-            measures={columnMeasures}
-            measuresById={keyBy(columnMeasures, (d: Measure) => d.id)}
-            dimensions={columnDimensions}
-            dimensionsById={keyBy(columnDimensions, (d: Dimension) => d.id)}
-            chartConfig={chartConfig}
-          >
-            <ChartContainer>
-              <ChartSvg>
-                <AxisHeightLinear />
-                <AxisWidthBand />
-                <AxisWidthBandDomain />
-                <Columns />
-                <ErrorWhiskers />
-              </ChartSvg>
-              <Tooltip type="single" />
-            </ChartContainer>
-          </ColumnChart>
+          <Observer>
+            <ColumnChart
+              limits={{ axisDimension: undefined, limits: [] }}
+              observations={columnObservations}
+              measures={columnMeasures}
+              measuresById={keyBy(columnMeasures, (d: Measure) => d.id)}
+              dimensions={columnDimensions}
+              dimensionsById={keyBy(columnDimensions, (d: Dimension) => d.id)}
+              chartConfig={chartConfig}
+            >
+              <ChartContainer>
+                <ChartSvg>
+                  <AxisHeightLinear />
+                  <AxisWidthBand />
+                  <AxisWidthBandDomain />
+                  <Columns />
+                  <ErrorWhiskers />
+                </ChartSvg>
+                <Tooltip type="single" />
+              </ChartContainer>
+            </ColumnChart>
+          </Observer>
         </InteractiveFiltersChartProvider>
       </InteractiveFiltersProvider>
     </ConfiguratorStateProvider>
@@ -160,34 +163,36 @@ const ScatterplotStory = {
     >
       <InteractiveFiltersProvider chartConfigs={[chartConfig]}>
         <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
-          <ScatterplotChart
-            observations={scatterplotObservations}
-            dimensions={scatterplotDimensions}
-            dimensionsById={keyBy(scatterplotDimensions, (d) => d.id)}
-            measures={scatterplotMeasures}
-            measuresById={keyBy(scatterplotMeasures, (d) => d.id)}
-            chartConfig={scatterplotChartConfig}
-          >
-            <ChartContainer>
-              <ChartSvg>
-                <AxisWidthLinear />
-                <AxisHeightLinear />
-                <AxisWidthLinearDomain />
-                <AxisHeightLinearDomain />
-                <Scatterplot />
-                <InteractionVoronoi />
-              </ChartSvg>
-              <Tooltip type="single" />
-            </ChartContainer>
-            {scatterplotFields.segment && (
-              <LegendColor
-                chartConfig={chartConfig}
-                symbol="square"
-                interactive
-                showTitle
-              />
-            )}
-          </ScatterplotChart>
+          <Observer>
+            <ScatterplotChart
+              observations={scatterplotObservations}
+              dimensions={scatterplotDimensions}
+              dimensionsById={keyBy(scatterplotDimensions, (d) => d.id)}
+              measures={scatterplotMeasures}
+              measuresById={keyBy(scatterplotMeasures, (d) => d.id)}
+              chartConfig={scatterplotChartConfig}
+            >
+              <ChartContainer>
+                <ChartSvg>
+                  <AxisWidthLinear />
+                  <AxisHeightLinear />
+                  <AxisWidthLinearDomain />
+                  <AxisHeightLinearDomain />
+                  <Scatterplot />
+                  <InteractionVoronoi />
+                </ChartSvg>
+                <Tooltip type="single" />
+              </ChartContainer>
+              {scatterplotFields.segment && (
+                <LegendColor
+                  chartConfig={chartConfig}
+                  symbol="square"
+                  interactive
+                  showTitle
+                />
+              )}
+            </ScatterplotChart>
+          </Observer>
         </InteractiveFiltersChartProvider>
       </InteractiveFiltersProvider>
     </ConfiguratorStateProvider>

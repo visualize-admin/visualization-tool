@@ -145,7 +145,8 @@ export const AxisTimeDomain = () => {
       g.selectAll(".tick text").remove();
       g.select(".domain")
         .attr("transform", `translate(0, -${bounds.chartHeight - yScale(0)})`)
-        .attr("stroke", domainColor);
+        .attr("stroke", domainColor)
+        .attr("stroke-linecap", "round");
     }
   });
 
