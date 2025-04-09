@@ -6,6 +6,7 @@ import {
   Checkbox,
   CircularProgress,
   Collapse,
+  Dialog,
   DialogContent,
   DialogProps,
   DialogTitle,
@@ -26,7 +27,6 @@ import {
 import keyBy from "lodash/keyBy";
 import uniq from "lodash/uniq";
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { useClient } from "urql";
 
 import {
   DatasetResults,
@@ -35,37 +35,24 @@ import {
   SearchDatasetResultsCount,
   SearchDatasetSortControl,
 } from "@/browser/dataset-browse";
-import { getEnabledChartTypes } from "@/charts";
 import Flex from "@/components/flex";
 import Tag from "@/components/tag";
 import { ConfiguratorStateConfiguringChart } from "@/config-types";
-import { getChartConfig } from "@/config-utils";
-import { RightDrawer } from "@/configurator/components/drawers";
 import {
   CautionAlert,
   useCautionAlert,
 } from "@/configurator/components/add-dataset-dialog/caution-alert";
-import {
-  inferJoinBy,
-  JoinBy,
-} from "@/configurator/components/add-dataset-dialog/infer-join-by";
+import { inferJoinBy } from "@/configurator/components/add-dataset-dialog/infer-join-by";
 import PreviewDataTable from "@/configurator/components/add-dataset-dialog/preview-table";
 import { SearchOptions } from "@/configurator/components/add-dataset-dialog/types";
-import {
-  addDatasetInConfig,
-  isConfiguring,
-  useConfiguratorState,
-} from "@/configurator/configurator-state";
+import useAddDataset from "@/configurator/components/add-dataset-dialog/use-add-dataset";
 import {
   ComponentTermsets,
   Dimension,
   isTemporalDimensionWithTimeUnit,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import {
-  executeDataCubesComponentsQuery,
-  useDataCubesComponentsQuery,
-} from "@/graphql/hooks";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { ComponentId } from "@/graphql/make-component-id";
 import {
   SearchCubeFilterType,
@@ -211,7 +198,7 @@ export const DatasetDialog = ({
   ...props
 }: {
   state: ConfiguratorStateConfiguringChart;
-} & DrawerProps) => {
+} & DialogProps) => {
   const locale = useLocale();
   const classes = useStyles();
 
@@ -231,7 +218,6 @@ export const DatasetDialog = ({
 
   const currentCubes = activeChartConfig.cubes;
 
-  // Getting cube dimensions, to find temporal dimensions
   const {
     dimensions,
     termsets,
@@ -243,6 +229,10 @@ export const DatasetDialog = ({
     locale,
     pause: !props.open,
   });
+
+  const [otherCube, setOtherCube] = useState<PartialSearchCube>();
+  const [{ fetching: addingDataset }, { addDataset }] = useAddDataset();
+
   const { searchDimensionOptions, searchDimensionOptionsById } = useMemo(() => {
     const options = extractSearchDimensions(dimensions, termsets);
     return {
@@ -255,19 +245,12 @@ export const DatasetDialog = ({
     typeof searchDimensionOptions | undefined
   >(undefined);
 
-  const handleChangeSearchDimensions = (ev: SelectChangeEvent<string[]>) => {
-    const {
-      target: { value },
-    } = ev;
-    setSelectedSearchDimensions(
-      // On autofill we get a stringified value.
-      (typeof value === "string" ? value.split(",") : value)
-        ?.map((x) => {
-          return searchDimensionOptionsById[x];
-        })
-        .filter(truthy)
-    );
-  };
+  // Initial setting of the selected search dimensions
+  useEffect(() => {
+    if (selectedSearchDimensions === undefined && termsets && components) {
+      setSelectedSearchDimensions(searchDimensionOptions);
+    }
+  }, [components, searchDimensionOptions, selectedSearchDimensions, termsets]);
 
   const selectedSharedDimensions =
     selectedSearchDimensions?.filter(isSharedDimension);
@@ -319,6 +302,20 @@ export const DatasetDialog = ({
     );
   }, [currentCubes, searchQuery.data?.searchCubes]);
 
+  const handleChangeSearchDimensions = (ev: SelectChangeEvent<string[]>) => {
+    const {
+      target: { value },
+    } = ev;
+    setSelectedSearchDimensions(
+      // On autofill we get a stringified value.
+      (typeof value === "string" ? value.split(",") : value)
+        ?.map((x) => {
+          return searchDimensionOptionsById[x];
+        })
+        .filter(truthy)
+    );
+  };
+
   const handleSubmit = useEvent((e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = Object.fromEntries(
@@ -333,17 +330,6 @@ export const DatasetDialog = ({
     setSelectedSearchDimensions(undefined);
     setOtherCube(undefined);
   });
-
-  // Initial setting of the selected search dimensions
-  useEffect(() => {
-    if (selectedSearchDimensions === undefined && termsets && components) {
-      setSelectedSearchDimensions(searchDimensionOptions);
-    }
-  }, [components, searchDimensionOptions, selectedSearchDimensions, termsets]);
-
-  const [otherCube, setOtherCube] = useState<PartialSearchCube>();
-
-  const [{ fetching: addingDataset }, { addDataset }] = useAddDataset();
 
   const handleClickOtherCube = (otherCube: PartialSearchCube) => {
     setOtherCube(otherCube);
@@ -378,7 +364,7 @@ export const DatasetDialog = ({
   });
 
   return (
-    <RightDrawer {...props} onClose={handleClose}>
+    <Dialog {...props} onClose={handleClose}>
       <Box className={classes.dialogCloseArea}>
         {otherCube ? null : (
           <Grow in={!isOpen}>
@@ -579,84 +565,6 @@ export const DatasetDialog = ({
           searchDimensionsSelected={selectedSearchDimensions ?? []}
         />
       ) : null}
-    </RightDrawer>
+    </Dialog>
   );
-};
-
-/**
- * Adds a dataset to the current chart configuration.
- * Is currently responsible for finding the correct joinBy dimension.
- */
-const useAddDataset = () => {
-  const [hookState, setHookState] = useState({
-    fetching: false,
-    otherIri: null as null | string,
-  });
-  const [state, dispatch] = useConfiguratorState(isConfiguring);
-  const { type: sourceType, url: sourceUrl } = state.dataSource;
-  const locale = useLocale();
-  const client = useClient();
-  const addDataset = useEventCallback(
-    async ({
-      otherCube,
-      joinBy,
-    }: {
-      otherCube: PartialSearchCube;
-      joinBy: JoinBy;
-    }) => {
-      const iri = otherCube.iri;
-      setHookState((hs) => ({ ...hs, fetching: true, otherIri: iri }));
-      try {
-        const addDatasetOptions = {
-          iri,
-          joinBy: joinBy,
-        };
-        const nextState = JSON.parse(
-          JSON.stringify(state)
-        ) as ConfiguratorStateConfiguringChart;
-        addDatasetInConfig(nextState, addDatasetOptions);
-        const chartConfig = getChartConfig(nextState, state.activeChartKey);
-
-        const res = await executeDataCubesComponentsQuery(client, {
-          locale,
-          sourceType,
-          sourceUrl,
-          cubeFilters: chartConfig.cubes.map((cube) => ({
-            iri: cube.iri,
-            joinBy: cube.joinBy,
-            componentIds: undefined,
-            loadValues: true,
-          })),
-        });
-
-        if (res.error || !res.data) {
-          throw Error("Could not fetch dimensions and measures");
-        }
-
-        dispatch({
-          type: "DATASET_ADD",
-          value: addDatasetOptions,
-        });
-        const { dimensions, measures } = res.data.dataCubesComponents;
-        const { enabledChartTypes } = getEnabledChartTypes({
-          dimensions,
-          measures,
-          cubeCount: chartConfig.cubes.length,
-        });
-        dispatch({
-          type: "CHART_TYPE_CHANGED",
-          value: {
-            locale,
-            chartKey: state.activeChartKey,
-            chartType: enabledChartTypes[0],
-            isAddingNewCube: true,
-          },
-        });
-      } finally {
-        setHookState((hs) => ({ ...hs, fetching: false, otherIri: null }));
-      }
-    }
-  );
-
-  return [hookState, { addDataset }] as const;
 };
