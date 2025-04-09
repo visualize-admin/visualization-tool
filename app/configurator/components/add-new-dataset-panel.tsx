@@ -99,11 +99,11 @@ export const AddNewDatasetPanel = () => {
         sx: {
           width: "1400px",
           maxWidth: "100%",
+          px: 8,
         },
       }}
     >
       <DialogCloseButton onClick={() => handleClose()} />
-
       <Box>
         <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
           <SelectDatasetStep
