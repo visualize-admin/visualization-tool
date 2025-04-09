@@ -384,9 +384,10 @@ const SelectDatasetStepContent = ({
       </AnimatePresence>
       <Box
         sx={{
-          borderBottom: odsIframe
-            ? "none"
-            : (t) => `1px solid ${t.palette.cobalt[100]}`,
+          borderBottom:
+            odsIframe || variant === "drawer"
+              ? "none"
+              : (t) => `1px solid ${t.palette.cobalt[100]}`,
         }}
       >
         <ContentWrapper
@@ -406,7 +407,7 @@ const SelectDatasetStepContent = ({
                   sx={{
                     justifyContent: odsIframe ? "flex-end" : "space-between",
                     alignItems: "center",
-                    pt: variant === "drawer" ? 18 : odsIframe ? 12 : 6,
+                    pt: odsIframe ? 12 : variant == "drawer" ? 10 : 6,
                     pb: 6,
                   }}
                 >
