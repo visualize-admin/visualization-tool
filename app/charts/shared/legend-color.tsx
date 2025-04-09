@@ -328,13 +328,13 @@ const LegendColorContent = ({
                     )}
                   </Typography>
                 ) : null}
-                {colorValues.map((value) => {
+                {colorValues.map((value, i) => {
                   const label = getLabel(value);
                   const active = !activeInteractiveFilters.has(label);
 
                   return (
                     <LegendItem
-                      key={value}
+                      key={value + i}
                       label={label}
                       color={getColor(value)}
                       dimension={getItemDimension?.(label)}
