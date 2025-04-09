@@ -3,7 +3,7 @@ import { Theme, Typography, TypographyProps } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 
-import { Markdown } from "@/components/markdown";
+import { MarkdownInheritFonts } from "@/components/markdown";
 import { getChartConfig } from "@/config-utils";
 import {
   ControlSection,
@@ -70,7 +70,7 @@ export const Title = ({
       sx={{ mb: smaller ? 1 : 4, fontWeight: smaller ? 400 : 700 }}
     >
       {text ? (
-        <Markdown>{text}</Markdown>
+        <MarkdownInheritFonts>{text}</MarkdownInheritFonts>
       ) : (
         <Trans id="annotation.add.title">[ Title ]</Trans>
       )}
@@ -100,7 +100,7 @@ export const Description = ({
       onClick={onClick}
     >
       {text ? (
-        <Markdown>{text}</Markdown>
+        <MarkdownInheritFonts>{text}</MarkdownInheritFonts>
       ) : (
         <Trans id="annotation.add.description">[ Description ]</Trans>
       )}
