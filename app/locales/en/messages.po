@@ -1923,7 +1923,7 @@ msgstr "Share"
 
 #: app/components/publish-actions.tsx
 msgid "publication.share.chart.url"
-msgstr "Chart URL:"
+msgstr "Chart URL"
 
 #: app/components/publish-actions.tsx
 msgid "publication.share.linktitle.facebook"

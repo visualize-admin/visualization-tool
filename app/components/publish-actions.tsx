@@ -5,8 +5,8 @@ import {
   AccordionSummary,
   Box,
   Button,
-  Divider,
   FormControlLabel,
+  IconButton,
   Popover,
   PopoverProps,
   Stack,
@@ -25,7 +25,6 @@ import {
 } from "@/components/embed-params";
 import Flex from "@/components/flex";
 import { Radio } from "@/components/form";
-import { IconLink } from "@/components/links";
 import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
 import { useI18n } from "@/utils/use-i18n";
@@ -456,20 +455,13 @@ export const ShareContent = ({
   }, [configKey, locale]);
 
   return (
-    <Box m={4} sx={{ "& > * + *": { mt: 4 } }}>
-      <Flex
-        sx={{
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 4,
-        }}
-      >
-        <Typography component="div" variant="body1" color="grey.700">
-          <Trans id="publication.popup.share">Share</Trans>:
+    <Flex sx={{ flexDirection: "column", gap: 2, p: 4 }}>
+      <Flex sx={{ justifyContent: "space-between", alignItems: "center" }}>
+        <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>
+          <Trans id="publication.popup.share">Share</Trans>
         </Typography>
-        <Flex color="primary.main">
-          <IconLink
-            iconName="facebook"
+        <Flex>
+          <IconButton
             title={i18n._(
               t({
                 id: "publication.share.linktitle.facebook",
@@ -477,9 +469,10 @@ export const ShareContent = ({
               })
             )}
             href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
-          ></IconLink>
-          <IconLink
-            iconName="twitter"
+          >
+            <Icon name="facebook" />
+          </IconButton>
+          <IconButton
             title={i18n._(
               t({
                 id: "publication.share.linktitle.twitter",
@@ -487,9 +480,10 @@ export const ShareContent = ({
               })
             )}
             href={`https://twitter.com/intent/tweet?url=${shareUrl}&via=bafuCH`}
-          ></IconLink>
-          <IconLink
-            iconName="envelope"
+          >
+            <Icon name="twitter" />
+          </IconButton>
+          <IconButton
             title={i18n._(
               t({
                 id: "publication.share.linktitle.mail",
@@ -507,16 +501,21 @@ export const ShareContent = ({
                 message: `Here is a link to a visualization I created on visualize.admin.ch`,
               })
             )}: ${shareUrl}`}
-          ></IconLink>
+          >
+            <Icon name="envelope" />
+          </IconButton>
         </Flex>
       </Flex>
-      <Divider />
-      <Box mt={2}>
-        <Typography component="div" variant="body1" color="grey.700">
-          <Trans id="publication.share.chart.url">Chart URL: </Trans>
+      <div>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ mb: 1, fontWeight: 700 }}
+        >
+          <Trans id="publication.share.chart.url">Chart URL</Trans>
         </Typography>
         <CopyToClipboardTextInput content={shareUrl} />
-      </Box>
-    </Box>
+      </div>
+    </Flex>
   );
 };
