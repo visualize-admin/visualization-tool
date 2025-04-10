@@ -197,9 +197,8 @@ const PlayButton = () => {
   return (
     <Button
       onClick={onClick}
+      variant="outlined"
       sx={{
-        display: "flex",
-        justifyContent: "center",
         minHeight: 32,
         minWidth: 32,
         p: 0,
