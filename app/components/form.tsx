@@ -523,12 +523,7 @@ export const Input = ({
       value={value}
       disabled={disabled}
       onChange={onChange}
-      sx={{
-        borderColor: error ? "error.main" : "grey.500",
-        backgroundColor: "grey.100",
-        padding: "10px 6px",
-        width: "100%",
-      }}
+      sx={error ? { borderColor: "error.main" } : {}}
     />
   </Box>
 );
