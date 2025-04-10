@@ -152,7 +152,7 @@ export const ChartFiltersList = ({
   ]);
 
   return fetching ? (
-    <Typography component="div" variant="caption" color="grey.600">
+    <Typography component="div" variant="caption">
       <Trans id="controls.section.data.filters">Filters</Trans>:{" "}
       <Trans id="hint.loading.data">Loading data...</Trans>
     </Typography>

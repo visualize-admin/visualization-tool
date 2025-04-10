@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Typography } from "@mui/material";
+import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import FlexSearch from "flexsearch";
 import { forwardRef, useCallback, useMemo, useState } from "react";
@@ -46,18 +46,19 @@ const TableContentWrapper = forwardRef<HTMLDivElement, $FixMe>(
   }
 );
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles((theme: Theme) => {
   return {
     desktopRow: {
       borderBottom: "1px solid",
-      borderBottomColor: "grey.400",
+      borderBottomColor: theme.palette.monochrome[300],
     },
     mobileRow: {
       borderBottom: "1px solid",
-      borderBottomColor: "grey.400",
+      borderBottomColor: theme.palette.monochrome[300],
+
       "&:first-of-type": {
         borderTop: "1px solid",
-        borderTopColor: "grey.400",
+        borderTopColor: theme.palette.monochrome[300],
       },
     },
   };
@@ -269,13 +270,7 @@ export const Table = () => {
               })
             ) : (
               // Group
-              <Flex
-                sx={{
-                  height: rowHeight,
-                  color: "grey.600",
-                  ml: `${row.depth * 12}px`,
-                }}
-              >
+              <Flex sx={{ height: rowHeight, ml: `${row.depth * 12}px` }}>
                 <GroupHeader row={row} groupingLevels={groupingIds.length} />
               </Flex>
             )}
@@ -353,12 +348,7 @@ export const Table = () => {
       ) : (
         /* Regular table view */
         <Box
-          sx={{
-            position: "relative",
-            backgroundColor: "grey.100",
-            mb: 4,
-            fontSize: "0.875rem",
-          }}
+          sx={{ position: "relative", mb: 4, fontSize: "0.875rem" }}
           {...getTableProps({ style: { minWidth: "100%", height: "100%" } })}
         >
           <div {...getTableBodyProps()} style={{ height: "100%" }}>
@@ -386,16 +376,9 @@ export const Table = () => {
           </div>
         </Box>
       )}
-
-      {/* Number of lines */}
       <Typography
-        variant="body2"
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-          mb: 5,
-          color: "grey.600",
-        }}
+        variant="body3"
+        sx={{ display: "flex", justifyContent: "flex-end", mb: 5 }}
       >
         <Trans id="chart.table.number.of.lines">Total number of rows:</Trans>{" "}
         {filteredData.length}
