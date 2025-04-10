@@ -75,14 +75,14 @@ const useStyles = makeStyles<Theme, { rotate: boolean }>((theme: Theme) => ({
     position: "absolute",
     borderWidth: 0.5,
     borderStyle: "solid",
-    borderColor: theme.palette.grey[200],
+    borderColor: theme.palette.cobalt[50],
     pointerEvents: "none",
     transform: "translateX(-50%)",
   },
   right: {
     position: "absolute",
     fontWeight: "bold",
-    backgroundColor: theme.palette.grey[100],
+    backgroundColor: theme.palette.background.paper,
     transform: ({ rotate }) =>
       rotate
         ? "translateX(-50%) translateY(50%) rotate(90deg)"
@@ -90,7 +90,6 @@ const useStyles = makeStyles<Theme, { rotate: boolean }>((theme: Theme) => ({
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
     fontSize: "0.875rem",
-    color: theme.palette.grey[800],
   },
 }));
 
