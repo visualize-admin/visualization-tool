@@ -594,7 +594,6 @@ const useMarkdownInputStyles = makeStyles<Theme>((theme) => ({
       padding: "0.5rem 0.75rem",
       border: `1px solid ${theme.palette.monochrome[300]}`,
       borderRadius: 3,
-      backgroundColor: theme.palette.monochrome[100],
 
       "&:focus": {
         border: `1px solid ${theme.palette.monochrome[500]}`,

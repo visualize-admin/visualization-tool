@@ -609,7 +609,7 @@ export const LayoutAnnotatorTabField = (
       {...tabProps}
       lowerLabel={
         state.layout.meta[value][locale] ? null : (
-          <Typography variant="caption" color="warning.main">
+          <Typography variant="caption" color="orange.main">
             {emptyValueWarning}
           </Typography>
         )

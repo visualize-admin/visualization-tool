@@ -4,6 +4,7 @@ import { Box, TextField } from "@mui/material";
 import { timeFormat } from "d3-time-format";
 import React, { ChangeEvent, ReactNode, useCallback } from "react";
 
+import Flex from "@/components/flex";
 import { Label } from "@/components/form";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
@@ -58,7 +59,7 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
   const dateLimitProps = getDateRenderProps(timeUnit, isDateDisabled);
 
   return (
-    <div>
+    <Flex sx={{ flexDirection: "column", gap: 1 }}>
       {label && name && <Label htmlFor={name}>{label}</Label>}
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <DatePicker<Date>
@@ -96,10 +97,20 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
               }}
               sx={{
                 ...params.sx,
+                width: "100%",
 
                 "& input": {
                   height: 40,
                   typography: "h6",
+                },
+
+                "& .MuiIconButton-root": {
+                  p: 1,
+                },
+
+                "& .MuiOutlinedInput-root": {
+                  py: 0,
+                  pl: 4,
                 },
 
                 "& svg": {
@@ -112,7 +123,7 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
         />
         {sideControls}
       </Box>
-    </div>
+    </Flex>
   );
 };
 
