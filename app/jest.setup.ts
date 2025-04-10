@@ -7,6 +7,16 @@ import { createClient, defaultExchanges } from "urql";
 
 import { GRAPHQL_ENDPOINT } from "@/domain/env";
 import * as ns from "@/rdf/namespace";
+import { color as d3color } from "d3-color";
+import {
+  isComponentId,
+  parseComponentId,
+  stringifyComponentId,
+} from "@/graphql/make-component-id";
+import * as fs from "fs";
+import { schemeCategory10 } from "d3-scale-chromatic";
+import { truthy } from "@/domain/types";
+import { logger } from "@/test/colored-console";
 
 jest.mock("@mapbox/tiny-sdf", () => {
   return {
@@ -172,3 +182,5 @@ jest.mock(
   "@interactivethings/swiss-federal-ci/dist/components/pages-router",
   () => {}
 );
+
+console.log = logger;
