@@ -99,7 +99,7 @@ export const BackButton = ({
   return (
     <Button
       variant="outlined"
-      size="sm"
+      size="xs"
       startIcon={<Icon name="arrowLeft" size={20} />}
       onClick={onClick}
       {...props}
