@@ -55,8 +55,8 @@ export const Step3 = () => (
       <path
         d="M118.877 133.324L309.979 133.18"
         stroke="#ACB4BD"
-        stroke-width="0.288889"
-        stroke-linecap="round"
+        strokeWidth="0.288889"
+        strokeLinecap="round"
       />
       <rect
         x="106.312"
@@ -69,8 +69,8 @@ export const Step3 = () => (
       <path
         d="M118.877 168.277L309.979 168.133"
         stroke="#ACB4BD"
-        stroke-width="0.288889"
-        stroke-linecap="round"
+        strokeWidth="0.288889"
+        strokeLinecap="round"
       />
       <rect
         x="106.312"
@@ -83,8 +83,8 @@ export const Step3 = () => (
       <path
         d="M118.877 203.236L309.979 203.092"
         stroke="#ACB4BD"
-        stroke-width="0.288889"
-        stroke-linecap="round"
+        strokeWidth="0.288889"
+        strokeLinecap="round"
       />
       <rect
         x="106.312"
@@ -97,8 +97,8 @@ export const Step3 = () => (
       <path
         d="M118.877 238.189L309.979 238.045"
         stroke="#ACB4BD"
-        stroke-width="0.288889"
-        stroke-linecap="round"
+        strokeWidth="0.288889"
+        strokeLinecap="round"
       />
       <rect
         x="122.49"

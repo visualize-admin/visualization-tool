@@ -341,7 +341,7 @@ export const components: Components = {
         paddingRight: 12,
 
         "&.Mui-disabled": {
-          "-webkit-text-fill-color": palette.monochrome[300],
+          WebkitTextFillColor: palette.monochrome[300],
         },
 
         "&::placeholder": {
@@ -422,6 +422,11 @@ export const components: Components = {
         color: "inherit !important",
         transition: "color 0.2s ease !important",
       },
+    },
+  },
+  MuiPaper: {
+    defaultProps: {
+      elevation: 0,
     },
   },
   MuiRadio: {

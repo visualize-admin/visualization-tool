@@ -414,17 +414,17 @@ const ControlTabButtonInner = ({
           <Typography
             variant="h6"
             component="p"
+            textAlign="left"
+            fontWeight={700}
             sx={{
               // --- Puts ellipsis on the second line.
               display: "-webkit-box",
               overflow: "hidden",
               textOverflow: "ellipsis",
-              "-webkit-box-orient": "vertical",
-              "-webkit-line-clamp": "2",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: "2",
               // ---
               color: optional && !checked ? "monochrome.300" : "monochrome.800",
-              textAlign: "left",
-              fontWeight: 700,
             }}
           >
             {mainLabel}
