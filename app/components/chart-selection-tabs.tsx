@@ -324,6 +324,7 @@ type TabDatum = {
 
 const TabsFixed = ({ data }: { data: TabDatum[] }) => {
   const [, dispatch] = useConfiguratorState(isPublished);
+
   return (
     <TabsInner
       data={data}
@@ -465,6 +466,7 @@ const TabsInner = ({
                         const transform = style?.transform
                           ? `${style.transform.split(",")[0]}, 0px)`
                           : undefined;
+
                         return (
                           <VisualizeTab
                             ref={provided.innerRef}
@@ -628,7 +630,6 @@ const TabContent = (props: {
 
   return (
     <Flex sx={{ alignItems: "center", gap: 2, p: 2, pl: 4 }}>
-      <Icon name={iconName} />
       <Button
         variant="text"
         onClick={() => {
@@ -641,7 +642,9 @@ const TabContent = (props: {
             });
           }
         }}
+        sx={{ alignItems: "center", gap: 2 }}
       >
+        <Icon name={iconName} />
         <Typography
           variant="caption"
           sx={{
