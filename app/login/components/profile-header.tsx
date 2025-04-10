@@ -7,8 +7,8 @@ import NextLink from "next/link";
 import { signOut } from "next-auth/react";
 
 import { ADFS_PROFILE_URL } from "@/domain/env";
-import { useRootStyles } from "@/login/utils";
 import { Icon } from "@/icons";
+import { useRootStyles } from "@/login/utils";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   section: {

@@ -156,7 +156,7 @@ const Feedback = ({
           }
         : { top: 0, left: 0 }
     );
-  }, [open]);
+  }, [open, paperEl]);
 
   return (
     <Menu

@@ -37,11 +37,11 @@ import { sourceToLabel } from "@/domain/datasource";
 import { truthy } from "@/domain/types";
 import { useUserConfigs } from "@/domain/user-configs";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
+import { Icon } from "@/icons";
 import { useRootStyles } from "@/login/utils";
 import { useLocale } from "@/src";
 import { removeConfig, updateConfig } from "@/utils/chart-config/api";
 import { useMutate } from "@/utils/use-fetch-data";
-import { Icon } from "@/icons";
 
 const PREVIEW_LIMIT = 3;
 const POPOVER_PADDING = 8;
