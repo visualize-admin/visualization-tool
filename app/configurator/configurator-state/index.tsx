@@ -1,4 +1,4 @@
-import produce from "immer";
+import produce, { current } from "immer";
 import get from "lodash/get";
 import pickBy from "lodash/pickBy";
 import set from "lodash/set";
@@ -281,7 +281,14 @@ export const addDatasetInConfig = function (
 
   // Set new join by in existing cubes
   for (let i = 0; i < chartConfig.cubes.length; i++) {
-    chartConfig.cubes[i].joinBy = joinBy[chartConfig.cubes[i].iri] ?? [];
+    // Crude unversioning, TODO
+    const cubeJoinBy =
+      joinBy[chartConfig.cubes[i].iri] ??
+      joinBy[chartConfig.cubes[i].iri.split("/").slice(0, -1).join("/")];
+    if (!cubeJoinBy) {
+      throw new Error("Could not find joinBy for cube");
+    }
+    chartConfig.cubes[i].joinBy = cubeJoinBy;
   }
   chartConfig.cubes.push({
     iri,
@@ -304,8 +311,17 @@ export const addDatasetInConfig = function (
     }
     for (const idAttribute of encoding.idAttributes) {
       const value = get(field, idAttribute);
-      const index = joinBy.left.indexOf(value) ?? joinBy.right.indexOf(value);
-      if (index > -1) {
+      const joinByIris = Object.keys(joinBy);
+      const index = (() => {
+        for (const iri of joinByIris) {
+          const index = joinBy[iri].indexOf(value);
+          if (index > -1) {
+            return index;
+          }
+        }
+        return undefined;
+      })();
+      if (index !== undefined && index > -1) {
         set(field, idAttribute, mkJoinById(index));
       }
     }
