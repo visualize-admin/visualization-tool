@@ -588,6 +588,63 @@ export const components: Components = {
       },
     },
   },
+  MuiSlider: {
+    styleOverrides: {
+      root: {
+        marginBottom: 8,
+        padding: 0,
+      },
+      rail: {
+        backgroundColor: palette.monochrome[300],
+        height: 4,
+      },
+      thumb: {
+        width: 14,
+        height: 14,
+        border: `2px solid ${palette.monochrome[500]}`,
+        backgroundColor: "#fff",
+        transition: "all 0.2s",
+
+        "&:hover": {
+          boxShadow: `0 0 0 2px ${palette.cobalt[50]}`,
+        },
+
+        "&.Mui-active, &.Mui-focusVisible": {
+          borderColor: palette.secondary.main,
+          boxShadow: "none",
+        },
+
+        "&::before": {
+          display: "none",
+        },
+      },
+      track: {
+        border: "none",
+        backgroundColor: palette.monochrome[500],
+        height: 4,
+      },
+      mark: {
+        width: 1,
+        height: 4,
+        borderRadius: 0,
+        backgroundColor: palette.monochrome[500],
+      },
+      markLabel: {
+        display: "none",
+      },
+      valueLabel: {
+        marginTop: 1,
+        backgroundColor: "#fff",
+        color: palette.text.primary,
+        ...typography.caption,
+        boxShadow: shadows[4],
+
+        "&::before": {
+          content: "none",
+        },
+      },
+    },
+  },
   MuiSwitch: {
     styleOverrides: {
       root: {

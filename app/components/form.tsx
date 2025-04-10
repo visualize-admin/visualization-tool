@@ -26,6 +26,7 @@ import {
   Select as MUISelect,
   SelectProps,
   Slider as MUISlider,
+  sliderClasses,
   SliderProps,
   Stack,
   Switch as MUISwitch,
@@ -156,6 +157,7 @@ export const Slider = ({
   label,
   name,
   value,
+  marks,
   disabled,
   renderTextInput = true,
   onChange,
@@ -184,7 +186,14 @@ export const Slider = ({
           disabled={disabled}
           // @ts-ignore
           onChange={onChange}
+          marks={marks}
           {...rest}
+          sx={{
+            [`& .${sliderClasses.mark}`]: {
+              [`&[data-index='0'], &[data-index='${Array.isArray(marks) ? marks.length - 1 : 0}']`]:
+                { display: "none" },
+            },
+          }}
         />
         {renderTextInput && (
           <MUIInput
