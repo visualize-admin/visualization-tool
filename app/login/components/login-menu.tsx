@@ -1,7 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import { Button, Menu, Typography } from "@mui/material";
 import { signIn, signOut } from "next-auth/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
 import { MenuActionItem } from "@/components/menu-action-item";
 import { ADFS_PROFILE_URL } from "@/domain/env";
@@ -21,6 +21,7 @@ export const LoginMenu = () => {
   const user = useUser();
   const [anchorEl, setAnchorEl] = useState<null | HTMLButtonElement>(null);
   const [feedbackMenuOpen, setFeedbackMenuOpen] = useState(false);
+  const paperEl = useRef<HTMLDivElement>(null);
 
   return (
     <div>
@@ -51,7 +52,8 @@ export const LoginMenu = () => {
             transformOrigin={{ vertical: "top", horizontal: "center" }}
             open={!!anchorEl}
             onClose={() => setAnchorEl(null)}
-            PaperProps={{ sx: { mt: 3 } }}
+            PaperProps={{ ref: paperEl, sx: { mt: 3 } }}
+            sx={{ "& .MuiLink-root": { pr: "64px !important" } }}
           >
             <MenuActionItem
               type="link"
@@ -77,7 +79,7 @@ export const LoginMenu = () => {
                 id: "login.profile.feedback",
                 message: "Feedback",
               })}
-              trailingIconName="chevronRight"
+              trailingIconName="arrowRight"
               onClick={() => setFeedbackMenuOpen(true)}
             />
             <MenuActionItem
@@ -93,7 +95,7 @@ export const LoginMenu = () => {
             />
           </Menu>
           <Feedback
-            anchorEl={anchorEl}
+            paperEl={paperEl.current}
             open={feedbackMenuOpen}
             handleClose={() => setFeedbackMenuOpen(false)}
           />
@@ -128,32 +130,33 @@ export const LoginMenu = () => {
 };
 
 const Feedback = ({
+  paperEl,
   open,
   handleClose,
-  anchorEl,
 }: {
+  paperEl: HTMLDivElement | null;
   open: boolean;
   handleClose: Dispatch<SetStateAction<boolean>>;
-  anchorEl: HTMLButtonElement | null;
 }) => {
   const locale = useLocale();
   const [position, setPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
+    if (!paperEl) {
+      return;
+    }
+
+    const paperRect = paperEl.getBoundingClientRect();
+
     setPosition(
-      anchorEl
+      paperEl
         ? {
-            top:
-              anchorEl.getBoundingClientRect().bottom +
-              anchorEl.getBoundingClientRect().y,
-            left:
-              anchorEl.getBoundingClientRect().left -
-              anchorEl.getBoundingClientRect().width -
-              100,
+            top: paperRect.y + 4,
+            left: paperRect.left - 8,
           }
         : { top: 0, left: 0 }
     );
-  }, [anchorEl, open]);
+  }, [open]);
 
   return (
     <Menu
@@ -161,7 +164,11 @@ const Feedback = ({
       open={open}
       onClose={handleClose}
       anchorReference="anchorPosition"
-      PaperProps={{ sx: { mt: 3 } }}
+      PaperProps={{
+        sx: {
+          transform: `translate(calc(-100%), 100%) !important`,
+        },
+      }}
     >
       <MenuActionItem
         type="link"
@@ -179,7 +186,6 @@ const Feedback = ({
           subject: "Visualize Bug Report",
         })}
       />
-
       <MenuActionItem
         type="link"
         as="menuitem"
