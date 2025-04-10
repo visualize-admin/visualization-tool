@@ -359,7 +359,6 @@ const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
   root: {
     display: "flex",
     alignItems: "center",
-    gap: 1,
   },
   tab: {
     zIndex: 1,
@@ -417,6 +416,7 @@ const TabsInner = ({
   const classes = useTabsInnerStyles();
   const [_, dispatch] = useConfiguratorState(hasChartConfigs);
   const activeTabIndex = data.findIndex((x) => x.active);
+
   return (
     <div className={classes.root}>
       <TabContext value={`${activeTabIndex}`}>
@@ -627,10 +627,10 @@ const TabContent = (props: {
   });
 
   return (
-    <Flex className={classes.root}>
+    <Flex sx={{ alignItems: "center", gap: 2, p: 2, pl: 4 }}>
+      <Icon name={iconName} />
       <Button
         variant="text"
-        className={classes.chartIconWrapper}
         onClick={() => {
           onSwitchClick?.();
 
@@ -642,7 +642,6 @@ const TabContent = (props: {
           }
         }}
       >
-        <Icon name={iconName} />
         <Typography
           variant="caption"
           sx={{
