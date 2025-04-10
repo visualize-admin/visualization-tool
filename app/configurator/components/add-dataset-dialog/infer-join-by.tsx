@@ -43,13 +43,12 @@ export const inferJoinBy = (
       console.log("No dimension found for option", option);
       return {};
     } else {
-      console.log("Found dimension", rightDimension);
+      console.log("Found dimension", JSON.stringify(rightDimension, null, 2));
     }
 
     const originalIdsByCube = groupBy(option.originalIds, (x) => {
-      return parseComponentId(x.dimensionId).unversionedCubeIri;
+      return x.cubeIri;
     });
-    console.log("originalIds", originalIdsByCube);
     return {
       ...mapValues(originalIdsByCube, (x) => x.map((x) => x.dimensionId)),
       [newCube.iri]: [rightDimension?.id].filter(truthy),

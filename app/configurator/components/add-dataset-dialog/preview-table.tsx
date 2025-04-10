@@ -104,17 +104,12 @@ const PreviewDataTable = ({
 
   const isQueryPaused = !otherCubeComponents || !currentComponents;
 
-  const cubeIri = currentComponents!.dimensions?.[0].cubeIri;
-  const cubeFilters = [
-    {
-      iri: currentComponents!.dimensions?.[0].cubeIri,
-      joinBy: inferredJoinBy[cubeIri],
-    },
-    {
-      iri: otherCube.iri,
-      joinBy: inferredJoinBy[otherCube.iri],
-    },
-  ];
+  const cubeFilters = Object.entries(inferredJoinBy).map(
+    ([cubeIri, joinBy]) => ({
+      iri: cubeIri,
+      joinBy,
+    })
+  );
 
   const [observations] = useDataCubesObservationsQuery({
     pause: isQueryPaused,
