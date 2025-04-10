@@ -32,6 +32,7 @@ export const palette = {
   },
   divider: colors.cobalt[100],
   success: colors.success,
+  error: colors.error,
   warning: {
     // BLW colors
     main: "#EDD15A",
