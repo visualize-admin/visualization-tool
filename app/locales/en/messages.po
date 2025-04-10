@@ -1846,10 +1846,6 @@ msgid "no"
 msgstr "No"
 
 #: app/components/rename-dialog.tsx
-msgid "profile.chart.rename-dialog.description"
-msgstr "Enhance chart clarity with a clear title; a good title helps understanding chart content."
-
-#: app/components/rename-dialog.tsx
 msgid "profile.chart.rename-dialog.title"
 msgstr "Rename the visualization"
 

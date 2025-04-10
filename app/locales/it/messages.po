@@ -1846,10 +1846,6 @@ msgid "no"
 msgstr "No"
 
 #: app/components/rename-dialog.tsx
-msgid "profile.chart.rename-dialog.description"
-msgstr "Rendi più chiaro il grafico con un titolo chiaro: un buon titolo aiuta a comprenderne il contenuto."
-
-#: app/components/rename-dialog.tsx
 msgid "profile.chart.rename-dialog.title"
 msgstr "Rinomina la visualizzazione"
 
