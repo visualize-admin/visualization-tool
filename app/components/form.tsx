@@ -505,12 +505,14 @@ export const Input = ({
   label,
   name,
   value,
+  defaultValue,
   disabled,
   onChange,
   error,
 }: {
   label?: string | ReactNode;
   disabled?: boolean;
+  defaultValue?: FieldProps["value"];
   error?: boolean;
 } & FieldProps) => (
   <Box sx={{ fontSize: "1rem", pb: 2 }}>
@@ -521,6 +523,7 @@ export const Input = ({
       color="secondary"
       name={name}
       value={value}
+      defaultValue={defaultValue}
       disabled={disabled}
       onChange={onChange}
       sx={error ? { borderColor: "error.main" } : {}}
