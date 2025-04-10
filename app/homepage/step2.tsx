@@ -13,7 +13,7 @@ export const Step2 = () => (
       <path
         d="M127.998 59.5175L128 59.6592H128.142H405.455V289.326H99.5214V45.2148H127.723L127.998 59.5175Z"
         stroke="#DFE4E9"
-        stroke-width="0.288889"
+        strokeWidth="0.288889"
       />
       <rect
         x="109.15"
@@ -50,8 +50,8 @@ export const Step2 = () => (
       <path
         d="M126.861 120.904L396.233 120.76"
         stroke="#DFE4E9"
-        stroke-width="0.288889"
-        stroke-linecap="round"
+        strokeWidth="0.288889"
+        strokeLinecap="round"
       />
       <rect
         x="109.15"
@@ -64,8 +64,8 @@ export const Step2 = () => (
       <path
         d="M126.861 155.857L396.233 155.713"
         stroke="#DFE4E9"
-        stroke-width="0.288889"
-        stroke-linecap="round"
+        strokeWidth="0.288889"
+        strokeLinecap="round"
       />
       <rect
         x="109.15"
@@ -78,8 +78,8 @@ export const Step2 = () => (
       <path
         d="M126.861 190.816L396.233 190.672"
         stroke="#DFE4E9"
-        stroke-width="0.288889"
-        stroke-linecap="round"
+        strokeWidth="0.288889"
+        strokeLinecap="round"
       />
       <rect
         x="109.15"
@@ -92,8 +92,8 @@ export const Step2 = () => (
       <path
         d="M126.861 225.769L396.233 225.625"
         stroke="#DFE4E9"
-        stroke-width="0.288889"
-        stroke-linecap="round"
+        strokeWidth="0.288889"
+        strokeLinecap="round"
       />
       <rect
         x="131.955"

@@ -133,7 +133,7 @@ msgstr "Proceed to layout options"
 
 #: app/pages/v/[chartId].tsx
 msgid "button.new.visualization"
-msgstr "Create New Visualization"
+msgstr "Create a new visualization"
 
 #: app/configurator/components/configurator.tsx
 msgid "button.publish"
@@ -1846,10 +1846,6 @@ msgid "no"
 msgstr "No"
 
 #: app/components/rename-dialog.tsx
-msgid "profile.chart.rename-dialog.description"
-msgstr "Enhance chart clarity with a clear title; a good title helps understanding chart content."
-
-#: app/components/rename-dialog.tsx
 msgid "profile.chart.rename-dialog.title"
 msgstr "Rename the visualization"
 
@@ -1923,7 +1919,7 @@ msgstr "Share"
 
 #: app/components/publish-actions.tsx
 msgid "publication.share.chart.url"
-msgstr "Chart URL:"
+msgstr "Chart URL"
 
 #: app/components/publish-actions.tsx
 msgid "publication.share.linktitle.facebook"

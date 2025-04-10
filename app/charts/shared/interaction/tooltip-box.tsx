@@ -178,7 +178,7 @@ export const TooltipBox = ({
               padding: 3,
               whiteSpace: "nowrap",
               pointerEvents: "none",
-              backgroundColor: "grey.100",
+              backgroundColor: "background.paper",
               borderRadius: 1,
               filter: `drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25))`,
 

@@ -3,7 +3,7 @@ import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 
 import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
-import { DRAWER_WIDTH } from "@/configurator/components/drawer";
+import { DRAWER_WIDTH } from "@/configurator/components/drawers";
 import { useResizeObserver } from "@/utils/use-resize-observer";
 
 export const LAYOUT_HEADER_HEIGHT = 88;
@@ -24,29 +24,34 @@ const useStyles = makeStyles<Theme>((theme) => ({
     gridTemplateAreas: `
     "header"
     "middle"`,
+    backgroundColor: theme.palette.monochrome[100],
   },
   LMPanelLayout: {
     gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr)`,
     gridTemplateAreas: `
     "header header"
     "left middle"`,
+    backgroundColor: theme.palette.monochrome[100],
   },
   MRPanelLayout: {
     gridTemplateColumns: `minmax(22rem, 1fr) ${DRAWER_WIDTH}px`,
     gridTemplateAreas: `
     "header header"
     "middle right"`,
+    backgroundColor: theme.palette.monochrome[100],
   },
   LMRPanelLayout: {
     gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr) ${DRAWER_WIDTH}px`,
     gridTemplateAreas: `
     "header header header"
     "left middle right"`,
+    backgroundColor: theme.palette.monochrome[100],
   },
   panelHeaderLayout: {
     gridArea: "header",
     height: LAYOUT_HEADER_HEIGHT,
     borderBottom: `1px solid ${theme.palette.cobalt[100]}`,
+    backgroundColor: theme.palette.background.paper,
   },
   LMRPanelHeaderLayout: {
     width: "100%",
@@ -60,24 +65,29 @@ const useStyles = makeStyles<Theme>((theme) => ({
     marginRight: "auto",
     paddingLeft: theme.spacing(12),
     paddingRight: theme.spacing(12),
+    backgroundColor: theme.palette.background.paper,
   },
   LPanelHeaderWrapper: {
     gridArea: "left",
+    backgroundColor: theme.palette.background.paper,
   },
   MPanelHeaderWrapper: {
     gridArea: "middle",
+    backgroundColor: theme.palette.background.paper,
   },
   RPanelHeaderWrapper: {
     gridArea: "right",
     display: "flex",
     alignItems: "center",
+    backgroundColor: theme.palette.background.paper,
   },
   LPanelBodyWrapper: {
     overflowX: "hidden",
     overflowY: "auto",
-    boxShadow: "none",
-    outline: `1px solid ${theme.palette.cobalt[100]}`,
     gridArea: "left",
+    outline: `1px solid ${theme.palette.cobalt[100]}`,
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: "none",
   },
   MPanelBodyWrapper: {
     gridArea: "middle",

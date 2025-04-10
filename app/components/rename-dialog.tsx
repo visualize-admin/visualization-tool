@@ -1,19 +1,19 @@
 import { t, Trans } from "@lingui/macro";
 import { LoadingButton } from "@mui/lab";
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogProps,
   DialogTitle,
-  TextField,
   Typography,
   useEventCallback,
 } from "@mui/material";
 import { FormEvent } from "react";
 
+import Flex from "@/components/flex";
+import { Input } from "@/components/form";
 import { ParsedConfig } from "@/db/config";
 import { useUserConfigs } from "@/domain/user-configs";
 import { Locale } from "@/locales/locales";
@@ -90,59 +90,47 @@ export const RenameDialog = ({
     <Dialog {...props} fullWidth>
       <form style={{ display: "contents" }} onSubmit={handleRename}>
         <DialogTitle>
-          <Trans id="profile.chart.rename-dialog.title">
-            Rename the visualization
-          </Trans>
-        </DialogTitle>
-        <DialogContent>
-          <Typography variant="body2">
-            <Trans id="profile.chart.rename-dialog.description">
-              Enhance chart clarity with a clear title; a good title helps
-              understanding chart content.
+          <Typography variant="h5" component="p" sx={{ fontWeight: 700 }}>
+            <Trans id="profile.chart.rename-dialog.title">
+              Rename the visualization
             </Trans>
           </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem",
-              mt: 3,
-            }}
-          >
-            <TextField
+        </DialogTitle>
+        <DialogContent>
+          <Flex sx={{ flexDirection: "column", gap: 4 }}>
+            <Input
               name="de"
               label={t({ id: "controls.language.german" })}
               defaultValue={meta.title.de}
             />
-            <TextField
+            <Input
               name="fr"
               label={t({ id: "controls.language.french" })}
               defaultValue={meta.title.fr}
             />
-            <TextField
+            <Input
               name="it"
               label={t({ id: "controls.language.italian" })}
               defaultValue={meta.title.it}
             />
-            <TextField
+            <Input
               name="en"
               label={t({ id: "controls.language.english" })}
               defaultValue={meta.title.en}
             />
-          </Box>
+          </Flex>
         </DialogContent>
         <DialogActions sx={{ pb: 6, pr: 6 }}>
           <Button variant="outlined" onClick={onClose}>
             Cancel
           </Button>
           <LoadingButton
-            sx={{ minWidth: "auto" }}
-            loading={updateConfigMut.status === "fetching"}
-            variant="contained"
-            color="blue"
             type="submit"
+            variant="contained"
+            loading={updateConfigMut.status === "fetching"}
+            sx={{ minWidth: "auto" }}
           >
-            OK
+            Ok
           </LoadingButton>
         </DialogActions>
       </form>

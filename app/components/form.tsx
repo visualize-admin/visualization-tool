@@ -26,6 +26,7 @@ import {
   Select as MUISelect,
   SelectProps,
   Slider as MUISlider,
+  sliderClasses,
   SliderProps,
   Stack,
   Switch as MUISwitch,
@@ -156,6 +157,7 @@ export const Slider = ({
   label,
   name,
   value,
+  marks,
   disabled,
   renderTextInput = true,
   onChange,
@@ -184,7 +186,14 @@ export const Slider = ({
           disabled={disabled}
           // @ts-ignore
           onChange={onChange}
+          marks={marks}
           {...rest}
+          sx={{
+            [`& .${sliderClasses.mark}`]: {
+              [`&[data-index='0'], &[data-index='${Array.isArray(marks) ? marks.length - 1 : 0}']`]:
+                { display: "none" },
+            },
+          }}
         />
         {renderTextInput && (
           <MUIInput
@@ -209,6 +218,15 @@ export const Slider = ({
   );
 };
 
+export type CheckboxProps = {
+  label: ComponentProps<typeof FormControlLabel>["label"];
+  size?: ComponentProps<typeof FormControlLabel>["size"];
+  disabled?: boolean;
+  color?: string;
+  indeterminate?: boolean;
+  className?: string;
+} & FieldProps;
+
 export const Checkbox = ({
   label,
   size,
@@ -220,14 +238,7 @@ export const Checkbox = ({
   color,
   indeterminate,
   className,
-}: {
-  label: ComponentProps<typeof FormControlLabel>["label"];
-  size?: ComponentProps<typeof FormControlLabel>["size"];
-  disabled?: boolean;
-  color?: string;
-  indeterminate?: boolean;
-  className?: string;
-} & FieldProps) => (
+}: CheckboxProps) => (
   <FormControlLabel
     label={label}
     size={size}
@@ -503,12 +514,14 @@ export const Input = ({
   label,
   name,
   value,
+  defaultValue,
   disabled,
   onChange,
   error,
 }: {
   label?: string | ReactNode;
   disabled?: boolean;
+  defaultValue?: FieldProps["value"];
   error?: boolean;
 } & FieldProps) => (
   <Box sx={{ fontSize: "1rem", pb: 2 }}>
@@ -519,14 +532,10 @@ export const Input = ({
       color="secondary"
       name={name}
       value={value}
+      defaultValue={defaultValue}
       disabled={disabled}
       onChange={onChange}
-      sx={{
-        borderColor: error ? "error.main" : "grey.500",
-        backgroundColor: "grey.100",
-        padding: "10px 6px",
-        width: "100%",
-      }}
+      sx={error ? { borderColor: "error.main" } : {}}
     />
   </Box>
 );
@@ -594,7 +603,6 @@ const useMarkdownInputStyles = makeStyles<Theme>((theme) => ({
       padding: "0.5rem 0.75rem",
       border: `1px solid ${theme.palette.monochrome[300]}`,
       borderRadius: 3,
-      backgroundColor: theme.palette.monochrome[100],
 
       "&:focus": {
         border: `1px solid ${theme.palette.monochrome[500]}`,

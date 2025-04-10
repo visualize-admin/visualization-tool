@@ -41,7 +41,7 @@ import { getFittingColorInterpolator } from "@/utils/color-palette-utils";
 import useEvent from "@/utils/use-event";
 import { useUserPalettes } from "@/utils/use-user-palettes";
 
-import { ConfiguratorDrawer } from "../drawer";
+import { ConfiguratorDrawer } from "../drawers";
 
 import { ColorPaletteDrawerContent } from "./drawer-color-palette-content";
 

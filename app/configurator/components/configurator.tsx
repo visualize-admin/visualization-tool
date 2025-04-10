@@ -51,7 +51,7 @@ import { ChartOptionsSelector } from "@/configurator/components/chart-options-se
 import {
   ConfiguratorDrawer,
   DRAWER_WIDTH,
-} from "@/configurator/components/drawer";
+} from "@/configurator/components/drawers";
 import { IconButton } from "@/configurator/components/icon-button";
 import {
   LAYOUT_HEADER_HEIGHT,
@@ -99,7 +99,7 @@ export const BackButton = ({
   return (
     <Button
       variant="outlined"
-      size="sm"
+      size="xs"
       startIcon={<Icon name="arrowLeft" size={20} />}
       onClick={onClick}
       {...props}

@@ -56,7 +56,7 @@ import {
 import {
   ConfiguratorDrawer,
   DRAWER_WIDTH,
-} from "@/configurator/components/drawer";
+} from "@/configurator/components/drawers";
 import {
   dimensionToFieldProps,
   MultiFilterField,
@@ -1241,7 +1241,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
               }
             >
               <Box sx={{ color: "primary.main", lineHeight: 0 }}>
-                <Icon name="infoCircle" />
+                <Icon name="infoCircle" size={16} />
               </Box>
             </Tooltip>
           </Flex>

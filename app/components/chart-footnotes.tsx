@@ -7,6 +7,7 @@ import { ComponentProps, ReactNode, useMemo } from "react";
 import { extractChartConfigUsedComponents } from "@/charts/shared/chart-helpers";
 import { LegendItem } from "@/charts/shared/legend-color";
 import { ChartFiltersList } from "@/components/chart-filters-list";
+import Flex from "@/components/flex";
 import {
   MetadataPanel,
   OpenMetadataPanelWrapper,
@@ -131,18 +132,14 @@ export const ChartFootnotes = ({
             )}
             {hideMetadata ? null : (
               <>
-                <Typography component="span" variant="caption" color="grey.600">
+                <Typography variant="caption">
                   <OpenMetadataPanelWrapper>
                     <Trans id="dataset.footnotes.dataset">Dataset</Trans>
                   </OpenMetadataPanelWrapper>
                   : {metadata.title}
                 </Typography>
                 {metadata.dateModified ? (
-                  <Typography
-                    component="span"
-                    variant="caption"
-                    color="grey.600"
-                  >
+                  <Typography variant="caption">
                     {", "}
                     <Trans id="dataset.footnotes.updated">
                       Latest data update
@@ -221,14 +218,12 @@ const ChartFootnotesLegend = ({
 const ChartFootnotesLegendContainer = ({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) => {
   return (
-    <Box
-      sx={{ display: "flex", flexWrap: "wrap", rowGap: 1, columnGap: 3, mb: 1 }}
-    >
+    <Flex sx={{ flexWrap: "wrap", rowGap: 1, columnGap: 3, mb: 1 }}>
       {children}
-    </Box>
+    </Flex>
   );
 };
 

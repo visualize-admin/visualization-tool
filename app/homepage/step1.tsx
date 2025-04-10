@@ -162,7 +162,7 @@ export const Step1 = () => (
             rx="0.722222"
             fill="white"
             stroke="#ACB4BD"
-            stroke-width="0.288889"
+            strokeWidth="0.288889"
           />
           <rect
             x="132.312"
@@ -181,7 +181,7 @@ export const Step1 = () => (
           rx="1.15556"
           fill="white"
           stroke="#ACB4BD"
-          stroke-width="0.288889"
+          strokeWidth="0.288889"
         />
         <rect
           x="124.223"

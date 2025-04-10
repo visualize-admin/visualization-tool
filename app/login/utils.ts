@@ -26,12 +26,6 @@ export const useRootStyles = makeStyles<Theme>((theme) => ({
     maxWidth: 1400,
     margin: "0 auto",
   },
-  noTooltip: {
-    "&::after": {
-      content: "''",
-      display: "block",
-    },
-  },
 }));
 
 export const useUser = () => {

@@ -250,7 +250,7 @@ const LayoutSharedFiltersConfigurator = () => {
                       width: "100%",
                     }}
                   >
-                    <Typography variant="body2">
+                    <Typography variant="body3">
                       {combinedTemporalDimension.label}
                     </Typography>
                     <Switch
@@ -290,7 +290,7 @@ const LayoutSharedFiltersConfigurator = () => {
                             alignItems: "center",
                           }}
                         >
-                          <Typography variant="body2">{dim.label}</Typography>
+                          <Typography variant="body3">{dim.label}</Typography>
                           <Switch
                             checked={checked}
                             onChange={(_, checked) => {

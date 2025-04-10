@@ -99,7 +99,7 @@ export const BlockMoreButton = ({ blockKey }: { blockKey: string }) => {
           <MenuActionItem
             type="button"
             as="menuitem"
-            color="red"
+            color="red.main"
             requireConfirmation
             confirmationTitle={t({
               id: "block-controls.delete.title",

@@ -14,6 +14,37 @@ import { shadows } from "@/themes/shadows";
 import { typography } from "@/themes/typography";
 
 export const components: Components = {
+  MuiAccordion: {
+    defaultProps: {
+      disableGutters: true,
+    },
+    styleOverrides: {
+      root: {
+        boxShadow: "none !important",
+        "&::before": {
+          display: "none",
+        },
+      },
+    },
+  },
+  MuiAccordionDetails: {
+    styleOverrides: {
+      root: {
+        padding: 0,
+      },
+    },
+  },
+  MuiAccordionSummary: {
+    defaultProps: {
+      expandIcon: <Icon name="chevronDown" />,
+    },
+    styleOverrides: {
+      root: {
+        alignItems: "center",
+        padding: 0,
+      },
+    },
+  },
   MuiAlert: {
     defaultProps: {
       icon: false,
@@ -310,7 +341,7 @@ export const components: Components = {
         paddingRight: 12,
 
         "&.Mui-disabled": {
-          "-webkit-text-fill-color": palette.monochrome[300],
+          WebkitTextFillColor: palette.monochrome[300],
         },
 
         "&::placeholder": {
@@ -391,6 +422,11 @@ export const components: Components = {
         color: "inherit !important",
         transition: "color 0.2s ease !important",
       },
+    },
+  },
+  MuiPaper: {
+    defaultProps: {
+      elevation: 0,
     },
   },
   MuiRadio: {
@@ -552,6 +588,63 @@ export const components: Components = {
       },
     },
   },
+  MuiSlider: {
+    styleOverrides: {
+      root: {
+        marginBottom: 8,
+        padding: 0,
+      },
+      rail: {
+        backgroundColor: palette.monochrome[300],
+        height: 4,
+      },
+      thumb: {
+        width: 14,
+        height: 14,
+        border: `2px solid ${palette.monochrome[500]}`,
+        backgroundColor: "#fff",
+        transition: "all 0.2s",
+
+        "&:hover": {
+          boxShadow: `0 0 0 2px ${palette.cobalt[50]}`,
+        },
+
+        "&.Mui-active, &.Mui-focusVisible": {
+          borderColor: palette.secondary.main,
+          boxShadow: "none",
+        },
+
+        "&::before": {
+          display: "none",
+        },
+      },
+      track: {
+        border: "none",
+        backgroundColor: palette.monochrome[500],
+        height: 4,
+      },
+      mark: {
+        width: 1,
+        height: 4,
+        borderRadius: 0,
+        backgroundColor: palette.monochrome[500],
+      },
+      markLabel: {
+        display: "none",
+      },
+      valueLabel: {
+        marginTop: 1,
+        backgroundColor: "#fff",
+        color: palette.text.primary,
+        ...typography.caption,
+        boxShadow: shadows[4],
+
+        "&::before": {
+          content: "none",
+        },
+      },
+    },
+  },
   MuiSwitch: {
     styleOverrides: {
       root: {
@@ -588,6 +681,24 @@ export const components: Components = {
       track: {
         borderRadius: 12,
         backgroundColor: palette.monochrome[300],
+      },
+    },
+  },
+  MuiTabs: {
+    styleOverrides: {
+      indicator: {
+        backgroundColor: palette.red[600],
+      },
+    },
+  },
+  MuiTab: {
+    styleOverrides: {
+      root: {
+        color: palette.text.primary,
+
+        "&.Mui-selected": {
+          color: palette.text.primary,
+        },
       },
     },
   },

@@ -960,7 +960,6 @@ type ResultProps = {
   highlightedTitle?: string | null;
   highlightedDescription?: string | null;
   showTags?: boolean;
-  rowActions?: (r: PartialSearchCube) => React.ReactNode;
   disableTitleLink?: boolean;
   showDimensions?: boolean;
   onClickTitle?: (ev: React.MouseEvent<HTMLDivElement>, iri: string) => void;
@@ -971,7 +970,6 @@ export const DatasetResult = ({
   highlightedTitle,
   highlightedDescription,
   showTags,
-  rowActions,
   disableTitleLink,
   showDimensions,
   onClickTitle,
@@ -1111,57 +1109,47 @@ export const DatasetResult = ({
             <Tag type="organization">{creator.label}</Tag>
           </Link>
         ) : null}
-      </Flex>
-      <Flex alignItems="center" width="100%">
-        <Box flexGrow={1}>
-          {showDimensions &&
-            dimensions?.length !== undefined &&
-            dimensions.length > 0 && (
-              <Flex alignItems="center" mt={1} flexWrap="wrap" gap="0.25rem">
-                <Typography variant="body2" sx={{ mr: 1 }}>
-                  <Trans id="dataset-result.shared-dimensions">
-                    Shared dimensions:
-                  </Trans>
-                </Typography>
-                {sortBy(dimensions, (t) => t.label).map((dimension) => {
-                  return (
-                    <MaybeTooltip
-                      key={dimension.id}
-                      title={
-                        dimension.termsets.length > 0 ? (
-                          <>
-                            <Typography variant="body2">
-                              <Trans id="dataset-result.dimension-joined-by">
-                                Joined by
-                              </Trans>
-                              <Stack gap={1} flexDirection="row" mt={1}>
-                                {dimension.termsets.map((termset) => {
-                                  return (
-                                    <Tag
-                                      key={termset.iri}
-                                      type="termset"
-                                      sx={{ flexShrink: 0 }}
-                                    >
-                                      {termset.label}
-                                    </Tag>
-                                  );
-                                })}
-                              </Stack>
-                            </Typography>
-                          </>
-                        ) : undefined
-                      }
-                    >
-                      <Tag sx={{ cursor: "default" }} type="dimension">
-                        {dimension.label}
-                      </Tag>
-                    </MaybeTooltip>
-                  );
-                })}
-              </Flex>
-            )}
-        </Box>
-        <Box flexShrink={1}>{rowActions?.(dataCube)}</Box>
+        {showDimensions &&
+          dimensions?.length !== undefined &&
+          dimensions.length > 0 && (
+            <>
+              {sortBy(dimensions, (t) => t.label).map((dimension) => {
+                return (
+                  <MaybeTooltip
+                    key={dimension.id}
+                    title={
+                      dimension.termsets.length > 0 ? (
+                        <>
+                          <Typography variant="body2">
+                            <Trans id="dataset-result.dimension-joined-by">
+                              Joined by
+                            </Trans>
+                            <Stack gap={1} flexDirection="row" mt={1}>
+                              {dimension.termsets.map((termset) => {
+                                return (
+                                  <Tag
+                                    key={termset.iri}
+                                    type="termset"
+                                    sx={{ flexShrink: 0 }}
+                                  >
+                                    {termset.label}
+                                  </Tag>
+                                );
+                              })}
+                            </Stack>
+                          </Typography>
+                        </>
+                      ) : undefined
+                    }
+                  >
+                    <Tag sx={{ cursor: "default" }} type="dimension">
+                      {dimension.label}
+                    </Tag>
+                  </MaybeTooltip>
+                );
+              })}
+            </>
+          )}
       </Flex>
     </MotionCard>
   );

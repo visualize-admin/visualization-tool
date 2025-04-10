@@ -20,6 +20,7 @@ import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
 import {
   Checkbox,
+  CheckboxProps,
   FormControlLabel,
   Input,
   MarkdownInput,
@@ -608,7 +609,7 @@ export const LayoutAnnotatorTabField = (
       {...tabProps}
       lowerLabel={
         state.layout.meta[value][locale] ? null : (
-          <Typography variant="caption" color="warning.main">
+          <Typography variant="caption" color="orange.main">
             {emptyValueWarning}
           </Typography>
         )
@@ -1084,7 +1085,7 @@ export const ChartOptionCheckboxField = ({
   disabled = false,
 }: {
   label: string;
-  size?: ComponentProps<typeof Checkbox>["size"];
+  size?: CheckboxProps["size"];
   field: EncodingFieldType | null;
   path: string;
   defaultValue?: boolean;

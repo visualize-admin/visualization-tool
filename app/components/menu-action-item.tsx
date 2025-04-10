@@ -1,6 +1,13 @@
-import { Button, Divider, Link, MenuItem, styled } from "@mui/material";
+import {
+  Button,
+  Divider,
+  Link,
+  MenuItem,
+  styled,
+  Typography,
+} from "@mui/material";
 import NextLink from "next/link";
-import { MouseEvent } from "react";
+import { MouseEvent, ReactNode } from "react";
 
 import ConfirmationDialog from "@/components/confirmation-dialog";
 import useDisclosure from "@/components/use-disclosure";
@@ -23,7 +30,7 @@ export type MenuActionProps = {
   leadingIconName?: IconName;
   priority?: number;
   stayOpen?: boolean;
-  color?: "blue" | "red";
+  color?: "text.primary" | "red.main";
   onClick?: (e: MouseEvent<HTMLElement>) => Promise<unknown> | void;
 } & (
   | {
@@ -62,16 +69,16 @@ export const MenuActionItem = (
     leadingIcon,
     trailingIcon,
     label,
-    color = "blue",
+    color = "text.primary",
     ...rest
   }: {
     leadingIcon?: IconName;
     trailingIcon?: IconName;
-    label: string | NonNullable<React.ReactNode>;
+    label: string | NonNullable<ReactNode>;
     color?: MenuActionProps["color"];
-    onClick?: (e: React.MouseEvent<HTMLElement>) => void;
+    onClick?: (e: MouseEvent<HTMLElement>) => void;
   }) => {
-    const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    const handleClick = (e: MouseEvent<HTMLElement>) => {
       if (props.onClick) {
         if ("requireConfirmation" in props && props.requireConfirmation) {
           openConfirmation();
@@ -98,8 +105,8 @@ export const MenuActionItem = (
       return (
         <Button
           disabled={disabled}
-          color={color}
           variant="contained"
+          size="sm"
           {...forwardedProps}
           sx={{ minHeight: 0 }}
         >
@@ -111,29 +118,27 @@ export const MenuActionItem = (
     return (
       <>
         <StyledMenuItem
-          color={color}
           disabled={disabled}
           component={props.type === "link" ? Link : "div"}
           {...forwardedProps}
-          sx={{ minHeight: 0 }}
+          sx={{ display: "flex", alignItems: "center", minHeight: 0, color }}
         >
-          {leadingIcon && (
-            <Icon
-              size={16}
-              name={leadingIcon}
-              style={{ marginTop: "0.25rem" }}
-            />
-          )}
-          {label}
+          {leadingIcon && <Icon name={leadingIcon} />}
+          <Typography variant="body3">{label}</Typography>
           {trailingIcon && (
-            <Icon
-              size={16}
-              name={trailingIcon}
-              style={{ marginTop: "0.25rem", marginLeft: "auto" }}
-            />
+            <Icon name={trailingIcon} style={{ marginLeft: "auto" }} />
           )}
         </StyledMenuItem>
-        <Divider sx={{ mx: 1, "&:last-of-type": { display: "none" } }} />
+        <Divider
+          sx={{
+            mx: 4,
+            my: "0 !important",
+
+            "&:last-of-type": {
+              display: "none",
+            },
+          }}
+        />
       </>
     );
   };

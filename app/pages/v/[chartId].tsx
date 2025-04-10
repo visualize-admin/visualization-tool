@@ -65,25 +65,14 @@ export const getServerSideProps: GetServerSideProps<PageProps> = async ({
 
 const useStyles = makeStyles((theme: Theme) => ({
   actionBar: {
-    backgroundColor: "white",
-    padding: `${theme.spacing(3)} 2.25rem`,
+    display: "flex",
     justifyContent: "flex-end",
     alignItems: "center",
-    display: "flex",
     width: "100%",
+    padding: `${theme.spacing(6)} ${theme.spacing(12)}`,
     borderBottom: "1px solid",
     borderBottomColor: theme.palette.divider,
-    [theme.breakpoints.down("md")]: {
-      padding: `${theme.spacing(3)} 0.75rem`,
-    },
-  },
-  viewCount: {
-    display: "flex",
-    alignItems: "center",
-    "& svg": {
-      marginRight: theme.spacing(1),
-    },
-    color: theme.palette.text.secondary,
+    backgroundColor: theme.palette.background.paper,
   },
 }));
 
@@ -177,20 +166,15 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
             />
           </Box>
         )}
-        <Box
-          px={[2, 4]}
-          sx={{ backgroundColor: "muted.main" }}
-          mb="auto"
-          mx="auto"
-          width="100%"
-          overflow="hidden"
-        >
+        <Box px={[2, 4]} mb="auto" mx="auto" width="100%" overflow="hidden">
           <Box
             sx={{
-              maxWidth: { xs: "100%", lg: 1280 },
+              maxWidth: {
+                xs: "100%",
+                lg: 1152,
+              },
               margin: "auto",
-              pt: 4,
-              px: 6,
+              p: 8,
             }}
           >
             {publishSuccess && (
@@ -198,7 +182,6 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 <PublishSuccess />
               </Box>
             )}
-
             {config.published_state === PUBLISHED_STATE.DRAFT && (
               <Box mt={2} mb={5}>
                 <HintOrange
@@ -231,7 +214,6 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 </HintOrange>
               </Box>
             )}
-
             <Box ref={chartWrapperRef}>
               <ConfiguratorStateProvider
                 chartId="published"
@@ -240,8 +222,12 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 <ChartPublished configKey={key} embedParams={embedParams} />
               </ConfiguratorStateProvider>
             </Box>
-
-            <Typography component="div" my={4}>
+            <Typography
+              variant="body2"
+              component="div"
+              my={6}
+              color="monochrome.700"
+            >
               {publishSuccess ? (
                 <Trans id="hint.how.to.share">
                   You can share this chart either by sharing its URL or by
@@ -256,7 +242,6 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 </Trans>
               )}
             </Typography>
-
             <Stack
               alignItems="flex-start"
               direction={{ xs: "column", sm: "row" }}
@@ -266,7 +251,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
               sx={{ mb: 5 }}
             >
               <NextLink href="/create/new" passHref legacyBehavior>
-                <Button component="a" variant="outlined" color="blue">
+                <Button>
                   <Trans id="button.new.visualization">
                     Create a new visualization
                   </Trans>
@@ -277,7 +262,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                 passHref
                 legacyBehavior
               >
-                <Button component="a" variant="outlined" color="blue">
+                <Button>
                   <Trans id="button.copy.visualization">
                     Copy and edit this visualization
                   </Trans>

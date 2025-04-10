@@ -5,8 +5,8 @@ import {
   AccordionSummary,
   Box,
   Button,
-  Divider,
   FormControlLabel,
+  IconButton,
   Popover,
   PopoverProps,
   Stack,
@@ -25,7 +25,6 @@ import {
 } from "@/components/embed-params";
 import Flex from "@/components/flex";
 import { Radio } from "@/components/form";
-import { IconLink } from "@/components/links";
 import { Icon } from "@/icons";
 import useEvent from "@/utils/use-event";
 import { useI18n } from "@/utils/use-i18n";
@@ -80,6 +79,7 @@ export const TriggeredPopover = (props: TriggeredPopoverProps) => {
               }
             : undefined
         }
+        elevation={4}
         onClose={() => setAnchorEl(undefined)}
       >
         <Box ref={ref}>{children}</Box>
@@ -115,9 +115,8 @@ const Embed = ({ chartWrapperRef, configKey, locale }: PublishActionProps) => {
       }}
       renderTrigger={(setAnchorEl) => (
         <Button
-          startIcon={<Icon name="embed" size={16} />}
-          variant="contained"
-          color="blue"
+          size="sm"
+          startIcon={<Icon name="embed" size={20} />}
           onClick={(e) => setAnchorEl(e.currentTarget)}
         >
           <Trans id="button.embed">Embed</Trans>
@@ -149,15 +148,12 @@ const EmbedRadio = ({
       {infoMessage && (
         <Tooltip
           arrow
-          title={<Typography variant="body2">{infoMessage}</Typography>}
+          title={infoMessage}
           PopperProps={{ sx: { width: 190, p: 0 } }}
-          componentsProps={{
-            tooltip: { sx: { color: "secondary.active", px: 4, py: 3 } },
-          }}
         >
-          <Box sx={{ color: "secondary.active" }}>
+          <div style={{ fontSize: 0 }}>
             <Icon name="infoCircle" size={16} />
-          </Box>
+          </div>
         </Tooltip>
       )}
     </Flex>
@@ -170,35 +166,29 @@ const EmbedToggleSwitch = ({
   ...rest
 }: {
   checked: boolean;
-  onChange: (
-    event: React.ChangeEvent<HTMLInputElement>,
-    checked: boolean
-  ) => void;
+  onChange: (event: ChangeEvent<HTMLInputElement>, checked: boolean) => void;
   label: string;
   infoMessage?: string;
 }) => {
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+    <Flex sx={{ alignItems: "center", gap: 1 }}>
       <FormControlLabel
         control={<Switch {...rest} />}
-        label={<Typography variant="body2">{label}</Typography>}
+        label={<Typography variant="body3">{label}</Typography>}
         sx={{ mr: 0 }}
       />
       {infoMessage && (
         <Tooltip
           arrow
-          title={<Typography variant="body2">{infoMessage}</Typography>}
+          title={infoMessage}
           PopperProps={{ sx: { width: 190, p: 0 } }}
-          componentsProps={{
-            tooltip: { sx: { color: "secondary.active", px: 4, py: 3 } },
-          }}
         >
-          <Box sx={{ color: "secondary.active" }}>
+          <div style={{ fontSize: 0 }}>
             <Icon name="infoCircle" size={16} />
-          </Box>
+          </div>
         </Tooltip>
       )}
-    </Box>
+    </Flex>
   );
 };
 
@@ -218,10 +208,11 @@ const Share = ({ configKey, locale }: PublishActionProps) => {
       renderTrigger={(setAnchorEl) => {
         return (
           <Button
-            onClick={(ev) => {
-              setAnchorEl(ev.target as HTMLElement);
+            size="sm"
+            onClick={(e) => {
+              setAnchorEl(e.target as HTMLElement);
             }}
-            startIcon={<Icon name="legacyLinkExternal" size={16} />}
+            startIcon={<Icon name="share" size={20} />}
           >
             <Trans id="button.share">Share</Trans>
           </Button>
@@ -285,11 +276,11 @@ export const EmbedContent = ({
 
   return (
     <Flex sx={{ flexDirection: "column", gap: 4, p: 4 }}>
-      <div>
-        <Typography component="div" variant="h5">
+      <Flex sx={{ flexDirection: "column", gap: 2 }}>
+        <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>
           <Trans id="publication.embed.iframe">Iframe Embed Code</Trans>
         </Typography>
-        <Typography variant="caption">
+        <Typography variant="body3">
           <Trans id="publication.embed.iframe.caption">
             Use this link to embed the chart into other webpages.
           </Trans>
@@ -325,17 +316,44 @@ export const EmbedContent = ({
           />
         </Flex>
         <Accordion
-          sx={{ mb: 4 }}
           defaultExpanded={Object.values(embedParams).some((d) => d)}
+          sx={{
+            boxShadow: 0,
+
+            "&::before": {
+              display: "none",
+            },
+          }}
         >
-          <AccordionSummary>
-            <Typography variant="h5" component="p">
+          <AccordionSummary
+            sx={{
+              width: "fit-content",
+              gap: 1,
+              minHeight: 0,
+              color: "primary.main",
+              transition: "color 0.2s ease",
+
+              "&:hover": {
+                color: "primary.dark",
+              },
+
+              "& > .MuiAccordionSummary-content": {
+                m: 0,
+                p: 0,
+              },
+
+              "& svg": {
+                color: "primary.main",
+              },
+            }}
+          >
+            <Typography variant="h6" component="p">
               <Trans id="publication.embed.advanced-settings">
                 Advanced settings
               </Trans>
             </Typography>
           </AccordionSummary>
-          <AccordionDetails>
+          <AccordionDetails sx={{ pt: 3 }}>
             <EmbedToggleSwitch
               checked={embedParams.removeBorder}
               onChange={(_, checked) => {
@@ -404,23 +422,23 @@ export const EmbedContent = ({
             />
           </AccordionDetails>
         </Accordion>
-        <CopyToClipboardTextInput
-          content={`<iframe src="${embedUrl}" width="100%" style="${responsive ? "" : `height: ${iframeHeight || 640}px; `}border: 0px #ffffff none;"  name="visualize.admin.ch"></iframe>${responsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
-        />
-      </div>
-      <div>
-        <Typography component="div" variant="h5">
+      </Flex>
+      <CopyToClipboardTextInput
+        content={`<iframe src="${embedUrl}" width="100%" style="${responsive ? "" : `height: ${iframeHeight || 640}px; `}border: 0px #ffffff none;"  name="visualize.admin.ch"></iframe>${responsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
+      />
+      <Flex sx={{ flexDirection: "column", gap: 2 }}>
+        <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>
           <Trans id="publication.embed.external-application">
             Embed Code for &quot;External Application&quot;
           </Trans>
         </Typography>
-        <Typography variant="caption">
+        <Typography variant="body3">
           <Trans id="publication.embed.external-application.caption">
             Use this link to embed the chart without iframe tags.
           </Trans>
         </Typography>
         <CopyToClipboardTextInput content={embedAEMUrl} />
-      </div>
+      </Flex>
     </Flex>
   );
 };
@@ -437,20 +455,13 @@ export const ShareContent = ({
   }, [configKey, locale]);
 
   return (
-    <Box m={4} sx={{ "& > * + *": { mt: 4 } }}>
-      <Flex
-        sx={{
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 4,
-        }}
-      >
-        <Typography component="div" variant="body1" color="grey.700">
-          <Trans id="publication.popup.share">Share</Trans>:
+    <Flex sx={{ flexDirection: "column", gap: 2, p: 4 }}>
+      <Flex sx={{ justifyContent: "space-between", alignItems: "center" }}>
+        <Typography variant="h6" component="div" sx={{ fontWeight: 700 }}>
+          <Trans id="publication.popup.share">Share</Trans>
         </Typography>
-        <Flex color="primary.main">
-          <IconLink
-            iconName="facebook"
+        <Flex>
+          <IconButton
             title={i18n._(
               t({
                 id: "publication.share.linktitle.facebook",
@@ -458,9 +469,10 @@ export const ShareContent = ({
               })
             )}
             href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
-          ></IconLink>
-          <IconLink
-            iconName="twitter"
+          >
+            <Icon name="facebook" />
+          </IconButton>
+          <IconButton
             title={i18n._(
               t({
                 id: "publication.share.linktitle.twitter",
@@ -468,9 +480,10 @@ export const ShareContent = ({
               })
             )}
             href={`https://twitter.com/intent/tweet?url=${shareUrl}&via=bafuCH`}
-          ></IconLink>
-          <IconLink
-            iconName="envelope"
+          >
+            <Icon name="twitter" />
+          </IconButton>
+          <IconButton
             title={i18n._(
               t({
                 id: "publication.share.linktitle.mail",
@@ -488,16 +501,21 @@ export const ShareContent = ({
                 message: `Here is a link to a visualization I created on visualize.admin.ch`,
               })
             )}: ${shareUrl}`}
-          ></IconLink>
+          >
+            <Icon name="envelope" />
+          </IconButton>
         </Flex>
       </Flex>
-      <Divider />
-      <Box mt={2}>
-        <Typography component="div" variant="body1" color="grey.700">
-          <Trans id="publication.share.chart.url">Chart URL: </Trans>
+      <div>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ mb: 1, fontWeight: 700 }}
+        >
+          <Trans id="publication.share.chart.url">Chart URL</Trans>
         </Typography>
         <CopyToClipboardTextInput content={shareUrl} />
-      </Box>
-    </Box>
+      </div>
+    </Flex>
   );
 };

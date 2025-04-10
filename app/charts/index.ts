@@ -636,7 +636,7 @@ export const getInitialConfig = (
               columnStyle: {
                 textStyle: "regular",
                 type: "text",
-                textColor: "#000",
+                textColor: theme.palette.monochrome[600],
                 columnColor: "#fff",
               },
             },

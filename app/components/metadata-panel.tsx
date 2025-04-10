@@ -8,6 +8,7 @@ import {
   Drawer,
   IconButton,
   InputAdornment,
+  MenuItem,
   Stack,
   Tab,
   TextField,
@@ -26,6 +27,7 @@ import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 import { useRouter } from "next/router";
 import React, {
+  Fragment,
   ReactNode,
   useCallback,
   useEffect,
@@ -54,7 +56,7 @@ import {
   DashboardFiltersConfig,
   DataSource,
 } from "@/configurator";
-import { DRAWER_WIDTH } from "@/configurator/components/drawer";
+import { DRAWER_WIDTH } from "@/configurator/components/drawers";
 import {
   getComponentDescription,
   getComponentLabel,
@@ -88,11 +90,12 @@ const useDrawerStyles = makeStyles<Theme, { top: number | string }>((theme) => {
   return {
     root: {
       position: "static",
+
       "& > .MuiPaper-root": {
         top: ({ top }) => top,
         bottom: 0,
         width: "100%",
-        maxWidth: DRAWER_WIDTH,
+        maxWidth: DRAWER_WIDTH + 1,
         height: "auto",
         paddingLeft: theme.spacing(4),
         paddingRight: theme.spacing(4),
@@ -141,9 +144,10 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
     },
     dimensionButton: {
       textAlign: "left",
-      minHeight: 0,
+      lineHeight: 1,
+      minHeight: "auto",
       padding: 0,
-      color: theme.palette.grey[700],
+      fontWeight: "bold",
 
       "& > svg": {
         marginLeft: 0,
@@ -165,14 +169,13 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       },
     },
     searchInputResultList: {
-      marginTop: theme.spacing(1),
       padding: 0,
-      border: `1px solid ${theme.palette.grey[700]}`,
+      border: `1px solid ${theme.palette.divider}`,
       borderRadius: 3,
     },
     searchInputResult: {
       justifyContent: "space-between",
-      borderBottom: `1px solid ${theme.palette.grey[400]}`,
+      borderBottom: `1px solid ${theme.palette.divider}`,
 
       "&:last-of-type": {
         borderBottom: "none",
@@ -187,10 +190,6 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       color: theme.palette.primary.main,
       textAlign: "left",
       transition: "opacity 0.2s ease-in-out",
-
-      "&:hover": {
-        opacity: 0.9,
-      },
     },
     openComponentNonInteractive: {
       position: "relative",
@@ -342,7 +341,7 @@ export const MetadataPanel = ({
             <Tab
               value="general"
               label={
-                <Typography variant="body2" fontWeight="bold">
+                <Typography>
                   <Trans id="controls.metadata-panel.section.general">
                     General
                   </Trans>
@@ -352,7 +351,7 @@ export const MetadataPanel = ({
             <Tab
               value="data"
               label={
-                <Typography variant="body2" fontWeight="bold">
+                <Typography>
                   <Trans id="controls.metadata-panel.section.data">Data</Trans>
                 </Typography>
               }
@@ -380,41 +379,37 @@ export const MetadataPanel = ({
 };
 
 const ToggleButton = ({
-  onClick,
   smaller,
+  onClick,
 }: {
-  onClick: () => void;
   smaller?: boolean;
+  onClick: () => void;
 }) => {
   const classes = useOtherStyles();
+
   return (
     <Button
       data-testid="panel-metadata-toggle"
       className={classes.toggleButton}
       variant="text"
       color="blue"
-      size="sm"
+      size={smaller ? "xs" : "sm"}
       onClick={onClick}
     >
-      <Typography variant={smaller ? "caption" : "body2"} component="p">
-        <Trans id="controls.metadata-panel.metadata">Details</Trans>
-      </Typography>
+      <Trans id="controls.metadata-panel.metadata">Details</Trans>
     </Button>
   );
 };
 
 const Header = ({ onClose }: { onClose: () => void }) => {
   const classes = useOtherStyles();
+
   return (
     <div className={classes.header}>
-      <Typography variant="body2" fontWeight="bold">
+      <Typography variant="h6" component="p" sx={{ fontWeight: "bold" }}>
         <Trans id="controls.metadata-panel.metadata">Details</Trans>
       </Typography>
-      <IconButton
-        size="small"
-        onClick={onClose}
-        sx={{ color: "secondary.active" }}
-      >
+      <IconButton size="small" onClick={onClose}>
         <SvgIcClose />
       </IconButton>
     </div>
@@ -584,10 +579,7 @@ const DataPanel = ({
       <AnimatePresence mode="wait">
         {selectedDimension ? (
           <MotionBox key="dimension-selected" {...animationProps}>
-            <BackButton
-              onClick={() => clearSelectedComponent()}
-              sx={{ color: "primary.main" }}
-            >
+            <BackButton onClick={clearSelectedComponent}>
               <Trans id="button.back">Back</Trans>
             </BackButton>
             <Box sx={{ mt: 4 }}>
@@ -623,12 +615,12 @@ const DataPanel = ({
                   })}
                   InputProps={{
                     ...params.InputProps,
-                    startAdornment: (
+                    endAdornment: (
                       <InputAdornment position="start">
-                        <Icon name="search" size={16} />
+                        <Icon name="search" />
                       </InputAdornment>
                     ),
-                    sx: { typography: "body2" },
+                    sx: { pr: "0 !important", typography: "h6" },
                   }}
                 />
               )}
@@ -637,18 +629,23 @@ const DataPanel = ({
                   insideWords: true,
                 });
                 const parts = parse(option.label, matches);
+
                 return (
-                  <li
+                  <MenuItem
                     {...props}
                     className={clsx(props.className, classes.searchInputResult)}
                   >
                     {parts.map(({ text, highlight }, i) => (
                       <Typography
                         key={i}
-                        variant="body2"
+                        variant="body3"
                         component="span"
                         flexGrow={1}
-                        style={{ fontWeight: highlight ? 700 : 400 }}
+                        style={{
+                          fontWeight: highlight ? 700 : 400,
+                          textOverflow: "ellipsis",
+                          overflow: "hidden",
+                        }}
                       >
                         {text}
                       </Typography>
@@ -660,7 +657,7 @@ const DataPanel = ({
                     ) : (
                       ""
                     )}
-                  </li>
+                  </MenuItem>
                 );
               }}
               clearIcon={null}
@@ -676,15 +673,11 @@ const DataPanel = ({
                   return (
                     <div key={cubeIri}>
                       {dataCubesMetadata && dataCubesMetadata.length > 1 ? (
-                        <Typography
-                          variant="h4"
-                          sx={{ mb: 2 }}
-                          color="grey.700"
-                        >
+                        <Typography variant="h5" component="p" sx={{ mb: 6 }}>
                           {cube.title}
                         </Typography>
                       ) : null}
-                      <Stack spacing={2}>
+                      <Stack gap={6}>
                         {components.map((component) => (
                           <ComponentTabPanel
                             key={component.id}
@@ -750,29 +743,30 @@ const ComponentTabPanel = ({
     () => keyBy(cubesQuery.data?.dataCubesMetadata, (x) => x.iri),
     [cubesQuery.data?.dataCubesMetadata]
   );
-  const [componentsQuery] = useDataCubesComponentsQuery({
-    pause: !expanded,
-    variables: {
-      cubeFilters: [
-        {
-          iri: component.cubeIri,
-          loadValues: true,
-          componentIds: [component.id],
-        },
-      ],
-      locale,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-    },
-  });
+  const [{ data: componentsData, fetching: fetchingComponents }] =
+    useDataCubesComponentsQuery({
+      pause: !expanded,
+      variables: {
+        cubeFilters: [
+          {
+            iri: component.cubeIri,
+            loadValues: true,
+            componentIds: [component.id],
+          },
+        ],
+        locale,
+        sourceType: dataSource.type,
+        sourceUrl: dataSource.url,
+      },
+    });
   const loadedComponent = useMemo(() => {
     return [
-      ...(componentsQuery.data?.dataCubesComponents.dimensions ?? []),
-      ...(componentsQuery.data?.dataCubesComponents.measures ?? []),
+      ...(componentsData?.dataCubesComponents.dimensions ?? []),
+      ...(componentsData?.dataCubesComponents.measures ?? []),
     ].find((d) => component.id === d.id);
   }, [
-    componentsQuery.data?.dataCubesComponents.dimensions,
-    componentsQuery.data?.dataCubesComponents.measures,
+    componentsData?.dataCubesComponents.dimensions,
+    componentsData?.dataCubesComponents.measures,
     component.id,
   ]);
 
@@ -781,6 +775,8 @@ const ComponentTabPanel = ({
       setSelectedComponent(component);
     }
   }, [expanded, component, setSelectedComponent]);
+
+  console.log(fetchingComponents);
 
   return (
     <div>
@@ -793,13 +789,11 @@ const ComponentTabPanel = ({
               size="sm"
               onClick={handleClick}
               sx={{
-                lineHeight: 1,
-                minHeight: "auto",
-                padding: 0,
-                typography: "body2",
-                fontWeight: "bold",
-                ":hover": { color: !expanded ? "primary.main" : "grey.800" },
                 cursor: !expanded ? "pointer" : "default",
+
+                "&:hover": {
+                  color: !expanded ? "primary.main" : "text.primary",
+                },
               }}
             >
               {label}
@@ -821,11 +815,12 @@ const ComponentTabPanel = ({
             ) : null}
           </Box>
           {description && (
-            <Typography variant="body2">{description}</Typography>
+            <Typography variant="body3" component="p" sx={{ mt: 1 }}>
+              {description}
+            </Typography>
           )}
         </div>
       </Flex>
-
       <AnimatePresence>
         {expanded && loadedComponent && loadedComponent.values.length > 0 && (
           <MotionBox
@@ -849,17 +844,18 @@ const ComponentTabPanel = ({
                 )}
               </div>
             ) : null}
-            <Typography
-              sx={{ mt: 2, color: "grey.800" }}
-              variant="body2"
-              fontWeight="bold"
-              gutterBottom
-            >
+            <Typography variant="body3" sx={{ my: 2, fontWeight: 700 }}>
               <Trans id="controls.metadata-panel.available-values">
                 Available values
               </Trans>
             </Typography>
-            <ComponentValues component={loadedComponent} />
+            {fetchingComponents ? (
+              <Box sx={{ mt: 6 }}>
+                <Loading delayMs={0} />
+              </Box>
+            ) : (
+              <ComponentValues component={loadedComponent} />
+            )}
           </MotionBox>
         )}
       </AnimatePresence>
@@ -868,6 +864,7 @@ const ComponentTabPanel = ({
           component="a"
           variant="text"
           size="sm"
+          color="blue"
           onClick={handleClick}
           endIcon={<SvgIcArrowRight />}
           sx={{ p: 0 }}
@@ -922,8 +919,8 @@ const DimensionValuesNominal = ({ values }: { values: DimensionValue[] }) => {
     <>
       {values.map((d) =>
         d.label ? (
-          <React.Fragment key={d.value}>
-            <Typography variant="body2" fontWeight="bold" {...animationProps}>
+          <Fragment key={d.value}>
+            <Typography variant="body3" component="p" {...animationProps}>
               {d.label}{" "}
               {d.alternateName ? (
                 <span style={{ fontStyle: "italic" }}>({d.alternateName})</span>
@@ -932,9 +929,11 @@ const DimensionValuesNominal = ({ values }: { values: DimensionValue[] }) => {
               )}
             </Typography>
             {d.description ? (
-              <Typography variant="body2">{d.description}</Typography>
+              <Typography variant="body3" component="p">
+                {d.description}
+              </Typography>
             ) : null}
-          </React.Fragment>
+          </Fragment>
         ) : null
       )}
     </>
@@ -943,10 +942,15 @@ const DimensionValuesNominal = ({ values }: { values: DimensionValue[] }) => {
 
 const MeasureValuesNumeric = ({ values }: { values: DimensionValue[] }) => {
   const [min, max] = [values[0].value, values[values.length - 1].value];
+
   return (
     <>
-      <Typography variant="body2">Min: {min}</Typography>
-      <Typography variant="body2">Max: {max}</Typography>
+      <Typography variant="body3" component="p">
+        Min: {min}
+      </Typography>
+      <Typography variant="body3" component="p">
+        Max: {max}
+      </Typography>
     </>
   );
 };
@@ -964,8 +968,12 @@ const DimensionValuesTemporal = ({
 
   return (
     <>
-      <Typography variant="body2">Min: {format(min)}</Typography>
-      <Typography variant="body2">Max: {format(max)}</Typography>
+      <Typography variant="body3" component="p">
+        Min: {format(min)}
+      </Typography>
+      <Typography variant="body3" component="p">
+        Max: {format(max)}
+      </Typography>
     </>
   );
 };

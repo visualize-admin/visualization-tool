@@ -1,17 +1,44 @@
 import { c as colors } from "@interactivethings/swiss-federal-ci";
 import { type ThemeOptions } from "@mui/material";
+import { PaletteOptions } from "@mui/material/styles";
+
+const blue: PaletteOptions["blue"] = {
+  main: "#1D4ED8",
+  50: "#EFF6FF",
+  100: "#DBEAFE",
+  200: "#BFDBFE",
+  300: "#93C5FD",
+  400: "#60A5FA",
+  500: "#3B82F6",
+  600: "#2563EB",
+  700: "#1D4ED8",
+  800: "#1E40AF",
+  900: "#1E3A8A",
+};
 
 export const palette = {
+  primary: {
+    main: blue[700],
+    dark: blue[900],
+    contrastText: "#fff",
+  },
+  secondary: {
+    main: colors.cobalt[700],
+    contrastText: "#fff",
+  },
   text: {
     primary: colors.monochrome[800],
     secondary: colors.monochrome[500],
   },
-  primary: {
-    main: "#1D4ED8",
-    light: "#60A5FA",
-    contrastText: "#FFFFFF",
-  },
   divider: colors.cobalt[100],
+  success: colors.success,
+  error: colors.error,
+  warning: {
+    // BLW colors
+    main: "#EDD15A",
+    light: "#F7EBB6",
+  },
+
   cobalt: {
     main: colors.cobalt[700],
     ...colors.cobalt,
@@ -63,17 +90,5 @@ export const palette = {
     800: "#065F46",
     900: "#064E3B",
   },
-  blue: {
-    main: "#1D4ED8",
-    50: "#EFF6FF",
-    100: "#DBEAFE",
-    200: "#BFDBFE",
-    300: "#93C5FD",
-    400: "#60A5FA",
-    500: "#3B82F6",
-    600: "#2563EB",
-    700: "#1D4ED8",
-    800: "#1E40AF",
-    900: "#1E3A8A",
-  },
+  blue,
 } satisfies ThemeOptions["palette"];
