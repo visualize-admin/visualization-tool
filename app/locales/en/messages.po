@@ -1388,7 +1388,7 @@ msgstr "Keywords"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset-result.dimension-joined-by"
-msgstr "Contains value of"
+msgstr "Contains values of"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset-result.shared-dimensions"
