@@ -432,7 +432,7 @@ const ChartPublishedInnerImpl = ({
               }}
             >
               {meta.title[locale] ? (
-                <Title text={meta.title[locale]} />
+                <Title text={meta.title[locale]} smaller />
               ) : (
                 // We need to have a span here to keep the space between the
                 // title and the chart (subgrid layout)
@@ -450,10 +450,7 @@ const ChartPublishedInnerImpl = ({
               )}
             </Flex>
             {meta.description[locale] ? (
-              <Description
-                text={meta.description[locale]}
-                smaller={state.layout.type === "dashboard"}
-              />
+              <Description text={meta.description[locale]} smaller />
             ) : (
               // We need to have a span here to keep the space between the
               // title and the chart (subgrid layout)
