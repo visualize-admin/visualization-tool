@@ -124,7 +124,7 @@ export const createActions = ({
   },
   drawer: {
     close: async () =>
-      await screen.getByRole("button", { name: "Back to main" }).click(),
+      await screen.locator('button[aria-label="Back to main"]').click(),
   },
   common: {
     switchLang: async (lang: "de" | "fr" | "en" | "it") => {

@@ -270,7 +270,7 @@ export const SectionTitle = ({
 
   return (
     <Box
-      aria-label="Back to main"
+      aria-label={closable ? "Back to main" : undefined}
       component={closable || collapse ? "button" : "div"}
       className={classes.root}
       onClick={handleClick}
