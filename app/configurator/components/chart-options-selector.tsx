@@ -1040,7 +1040,7 @@ const ChartShowDots = ({
           <Typography variant="caption" sx={{ mt: 2 }}>
             <Trans id="controls.section.dots-size">Select a Size</Trans>
           </Typography>
-          <Flex justifyContent="flex-start">
+          <RadioGroup>
             <ChartShowDotRadio
               size="Small"
               label={t({
@@ -1065,7 +1065,7 @@ const ChartShowDots = ({
               })}
               disabled={disabled}
             />
-          </Flex>
+          </RadioGroup>
         </Stack>
       </ControlSectionContent>
     </ControlSection>
