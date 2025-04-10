@@ -3,6 +3,7 @@ import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Button,
+  ButtonBase,
   Checkbox,
   CircularProgress,
   Collapse,
@@ -10,15 +11,15 @@ import {
   DialogContent,
   DialogProps,
   DialogTitle,
+  Divider,
   DrawerProps,
   Grow,
   IconButton,
   IconButtonProps,
-  InputAdornment,
+  Input,
   Link,
   ListItemText,
   MenuItem,
-  OutlinedInput,
   paperClasses,
   Select,
   SelectChangeEvent,
@@ -28,7 +29,6 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TextField,
   Tooltip,
   Typography,
   TypographyProps,
@@ -41,7 +41,14 @@ import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import maxBy from "lodash/maxBy";
 import uniq from "lodash/uniq";
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useClient } from "urql";
 
 import {
@@ -56,6 +63,7 @@ import { getEnabledChartTypes } from "@/charts";
 import Flex from "@/components/flex";
 import { Error as ErrorHint, HintOrange, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
+import VisuallyHidden from "@/components/visually-hidden";
 import { ConfiguratorStateConfiguringChart, DataSource } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import { RightDrawer } from "@/configurator/components/drawers";
@@ -90,13 +98,9 @@ import {
   useDataCubeComponentTermsetsQuery,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
-import SvgIcFilter from "@/icons/components/IcFilter";
-import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
-import SvgIcSearch from "@/icons/components/IcSearch";
-import SvgIcTrash from "@/icons/components/IcTrash";
+import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
-import useEvent from "@/utils/use-event";
 import useLocalState from "@/utils/use-local-state";
 
 const DialogCloseButton = (props: IconButtonProps) => {
@@ -104,21 +108,18 @@ const DialogCloseButton = (props: IconButtonProps) => {
     <IconButton
       {...props}
       sx={{
-        position: "absolute",
+        position: "static",
         top: "1.5rem",
         right: "1.5rem",
         ...props.sx,
       }}
     >
-      <SvgIcTrash width={24} height={24} fontSize={24} />
+      <Icon name="close" />
     </IconButton>
   );
 };
 
 const useStyles = makeStyles((theme: Theme) => ({
-  addButton: {
-    transition: "opacity 0.25s ease",
-  },
   dialogCloseArea: {
     position: "absolute",
     top: "1rem",
@@ -743,14 +744,6 @@ export const AddDatasetDrawer = ({
 
   const currentComponents = cubesComponentQuery.data?.dataCubesComponents;
 
-  const handleSubmit = useEvent((e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = Object.fromEntries(
-      new FormData(e.currentTarget).entries()
-    );
-    setQuery(formData.search as string);
-  });
-
   const handleClose: DialogProps["onClose"] = useEventCallback((ev, reason) => {
     props.onClose?.(ev, reason);
     setQuery("");
@@ -833,20 +826,33 @@ export const AddDatasetDrawer = ({
     }, 100);
   });
 
+  const inputRef = useRef<HTMLInputElement>();
+
+  const handleKeyDown = useEventCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        setQuery(e.currentTarget.value);
+      }
+    }
+  );
+
+  const handleReset = useEventCallback(() => {
+    setQuery("");
+  });
+
   return (
     <RightDrawer {...props} onClose={handleClose}>
       <Box className={classes.dialogCloseArea}>
         {otherCube ? null : (
           <Grow in={!isOpen}>
-            <IconButton onClick={() => open()}>
-              <SvgIcInfoCircle />
-            </IconButton>
+            <div>
+              <IconButton color="primary" onClick={open}>
+                <Icon name="infoCircle" />
+              </IconButton>
+            </div>
           </Grow>
         )}
-        <DialogCloseButton
-          onClick={(ev) => handleClose(ev, "escapeKeyDown")}
-          sx={{ position: "static" }}
-        />
+        <DialogCloseButton onClick={(e) => handleClose(e, "escapeKeyDown")} />
       </Box>
       {otherCube ? null : (
         <>
@@ -869,52 +875,41 @@ export const AddDatasetDrawer = ({
                 current chart are selected.
               </Trans>
             </Typography>
-            <Box
-              display="flex"
-              alignItems="center"
-              component="form"
-              gap="0.5rem"
-              mb="1rem"
-              onSubmit={handleSubmit}
-            >
-              <TextField
-                size="small"
-                name="search"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SvgIcSearch />
-                    </InputAdornment>
-                  ),
-                }}
+            <Box display="flex" alignItems="center" gap="0.5rem" mb="1rem">
+              <Input
+                key={query}
+                id="search"
+                inputProps={{ ref: inputRef }}
+                defaultValue={query}
                 placeholder={t({ id: "dataset.search.placeholder" })}
+                autoComplete="off"
+                onKeyDown={handleKeyDown}
+                endAdornment={
+                  query !== "" ? (
+                    <ButtonBase data-testid="clearSearch" onClick={handleReset}>
+                      <VisuallyHidden>
+                        <Trans id="controls.search.clear">
+                          Clear search field
+                        </Trans>
+                      </VisuallyHidden>
+                      <Icon name="close" />
+                    </ButtonBase>
+                  ) : (
+                    <ButtonBase data-testid="submitSearch" type="submit">
+                      <VisuallyHidden>
+                        <Trans id="dataset.search.label">Search</Trans>
+                      </VisuallyHidden>
+                      <Icon name="search" />
+                    </ButtonBase>
+                  )
+                }
+                sx={{ width: "50%" }}
               />
               <Select
                 multiple
+                size="sm"
                 value={(selectedSearchDimensions ?? []).map((x) => x.id)}
                 onChange={handleChangeSearchDimensions}
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      width: 300,
-                      marginTop: "0.5rem",
-                      marginLeft: "-1rem",
-                    },
-                  },
-                }}
-                input={
-                  <OutlinedInput
-                    id="select-multiple-chip"
-                    label="Chip"
-                    notched={false}
-                    startAdornment={
-                      <InputAdornment position="start" sx={{ mr: 0 }}>
-                        <SvgIcFilter />
-                      </InputAdornment>
-                    }
-                    style={{ width: "100%" }}
-                  />
-                }
                 renderValue={(selected) =>
                   cubeComponentTermsets.fetching ||
                   cubesComponentQuery.fetching ? (
@@ -928,12 +923,17 @@ export const AddDatasetDrawer = ({
                   ) : (
                     selected.map((id, i) => {
                       const value = searchDimensionOptionsById[id];
+
                       return i < 2 ? (
-                        <Tag key={value.id} type="dimension" sx={{ mr: 1 }}>
+                        <Tag
+                          key={value.id}
+                          type="dimension"
+                          sx={{ py: 0, mr: 2 }}
+                        >
                           {value.label}
                         </Tag>
                       ) : i === 2 ? (
-                        <Tag key="more" type="dimension" sx={{ mr: 1 }}>
+                        <Tag key="more" type="dimension" sx={{ py: 0, mr: 2 }}>
                           <Trans id="dataset.search.search-options.more-2-options-selected">
                             {selected.length - 2} more
                           </Trans>
@@ -942,12 +942,21 @@ export const AddDatasetDrawer = ({
                     })
                   )
                 }
+                sx={{ width: "50%" }}
               >
                 {searchDimensionOptions.map((sd) => (
                   <MenuItem
                     key={sd.label}
                     value={sd.id}
-                    sx={{ gap: 2, alignItems: "start" }}
+                    sx={{
+                      gap: 2,
+                      backgroundColor: "transparent !important",
+
+                      "&:hover": {
+                        backgroundColor: (t) =>
+                          `${t.palette.cobalt[50]} !important`,
+                      },
+                    }}
                   >
                     <Checkbox
                       checked={
@@ -962,28 +971,33 @@ export const AddDatasetDrawer = ({
                 ))}
               </Select>
               <Button
-                color="blue"
-                type="submit"
-                variant="contained"
                 style={{ minWidth: "fit-content" }}
+                onClick={() => {
+                  if (inputRef.current) {
+                    setQuery(inputRef.current.value);
+                  }
+                }}
               >
                 {t({ id: "dataset.search.label" })}
               </Button>
             </Box>
-
             <Flex
-              style={{ alignItems: "center", justifyContent: "space-between" }}
+              sx={{
+                alignItems: "center",
+                justifyContent: "space-between",
+                mb: 2,
+              }}
             >
               <SearchDatasetResultsCount cubes={searchCubes} />
-              <Flex style={{ alignItems: "center" }}>
+              <Flex sx={{ alignItems: "center", gap: 5 }}>
                 <SearchDatasetDraftsControl
                   checked={includeDrafts}
                   onChange={setIncludeDrafts}
                 />
+                <Divider flexItem orientation="vertical" />
                 <SearchDatasetSortControl value={order} onChange={setOrder} />
               </Flex>
             </Flex>
-
             {selectedSearchDimensions?.length === 0 ? (
               <Typography variant="body1">
                 <Trans id="dataset.search.at-least-one-compatible-dimension-selected">
@@ -1000,25 +1014,11 @@ export const AddDatasetDrawer = ({
                 }
                 error={searchQuery.error}
                 datasetResultProps={({ cube }) => ({
-                  disableTitleLink: true,
                   showDimensions: true,
                   showTags: true,
-                  rowActions: () => {
-                    return (
-                      <Box display="flex" justifyContent="flex-end">
-                        <LoadingButton
-                          size="sm"
-                          variant="outlined"
-                          className={classes.addButton}
-                          onClick={() => handleClickOtherCube(cube)}
-                        >
-                          {t({
-                            id: "dataset.search.add-dataset",
-                            message: "Add dataset",
-                          })}
-                        </LoadingButton>
-                      </Box>
-                    );
+                  onClickTitle: (e) => {
+                    e.preventDefault();
+                    handleClickOtherCube(cube);
                   },
                 })}
               />

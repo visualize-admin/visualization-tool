@@ -1120,7 +1120,7 @@ export const DatasetResult = ({
                     title={
                       dimension.termsets.length > 0 ? (
                         <>
-                          <Typography variant="body2">
+                          <Typography variant="caption">
                             <Trans id="dataset-result.dimension-joined-by">
                               Joined by
                             </Trans>
