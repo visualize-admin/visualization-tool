@@ -6,6 +6,10 @@ const ID_SEPARATOR = "(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)";
 
 export type ComponentId = string & { __componentId: true };
 
+export const isComponentId = (string: string): string is ComponentId => {
+  return string.includes(ID_SEPARATOR);
+};
+
 export const stringifyComponentId = ({
   unversionedCubeIri,
   unversionedComponentIri,

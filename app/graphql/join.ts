@@ -40,6 +40,15 @@ export const getOriginalDimension = (dim: JoinByComponent, cube: Cube) => {
   const originalId = dim.originalIds.find(
     (o) => o.cubeIri === cube.iri
   )?.dimensionId;
+
+  if (!originalId) {
+    console.warn(
+      "Could not find original id for joinBy dimension",
+      dim,
+      cube.iri
+    );
+  }
+
   assert(!!originalId, "Original id should have been found");
 
   return {
