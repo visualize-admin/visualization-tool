@@ -29,6 +29,11 @@ import { mkJoinById } from "@/graphql/join";
 import { getDataSourceFromLocalStorage } from "@/stores/data-source";
 
 import { ConfiguratorStateAction } from "./actions";
+import { getCachedComponents } from "@/urql-cache";
+import { getEnabledChartTypes, getInitialConfig } from "@/charts";
+import { deriveFiltersFromFields } from "@/configurator/configurator-state/reducer";
+import { getInitialConfiguringConfigBasedOnCube } from "@/configurator/configurator-state/initial";
+import { Locale } from "@/locales/locales";
 
 export {
   ConfiguratorStateProvider,
@@ -296,7 +301,7 @@ export const addDatasetInConfig = function (
     filters: {},
   });
 
-  // Need to go over fields, and replace any IRI part of the joinBy by "joinBy"
+  // Need to go over fields, and replace any IRI part of the joinBy by "joinBy__<index>"
   const { encodings } = getChartSpec(chartConfig);
   const encodingAndFields = encodings.map(
     (e) =>
@@ -326,4 +331,65 @@ export const addDatasetInConfig = function (
       }
     }
   }
+};
+
+export const removeDatasetInConfig = function (
+  draft: ConfiguratorStateConfiguringChart,
+  options: {
+    iri: string;
+    locale: Locale;
+  }
+) {
+  const { locale, iri: removedCubeIri } = options;
+  const chartConfig = getChartConfig(draft);
+  const newCubes = chartConfig.cubes.filter((c) => c.iri !== removedCubeIri);
+  const dataCubesComponents = getCachedComponents({
+    locale,
+    dataSource: draft.dataSource,
+    cubeFilters: newCubes.map((cube) => ({
+      iri: cube.iri,
+      joinBy: newCubes.length > 1 ? cube.joinBy : undefined,
+    })),
+  });
+
+  if (!dataCubesComponents) {
+    throw Error(
+      "Error while removing dataset: Could not find cached dataCubesComponents"
+    );
+  }
+
+  const { dimensions, measures } = dataCubesComponents;
+  const iris = chartConfig.cubes
+    .filter((c) => c.iri !== removedCubeIri)
+    .map(({ iri }) => ({ iri }));
+  const { enabledChartTypes } = getEnabledChartTypes({
+    dimensions,
+    measures,
+    cubeCount: iris.length,
+  });
+  const initialConfig = getInitialConfig({
+    chartType: enabledChartTypes.includes(chartConfig.chartType)
+      ? chartConfig.chartType
+      : enabledChartTypes[0],
+    iris,
+    dimensions,
+    measures,
+    meta: current(chartConfig.meta),
+  });
+  const newChartConfig = deriveFiltersFromFields(initialConfig, {
+    dimensions,
+  });
+  const initConfig = getInitialConfiguringConfigBasedOnCube({
+    dataSource: draft.dataSource,
+    chartConfig: newChartConfig,
+  });
+  const newConfig = {
+    ...initConfig.chartConfigs[0],
+    key: chartConfig.key,
+  } as ChartConfig;
+  const index = draft.chartConfigs.findIndex((d) => d.key === chartConfig.key);
+  const withFilters = deriveFiltersFromFields(newConfig, { dimensions });
+  draft.chartConfigs[index] = withFilters;
+
+  return draft;
 };
