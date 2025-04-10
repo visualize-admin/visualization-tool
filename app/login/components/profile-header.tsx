@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Link, Theme, Typography } from "@mui/material";
+import { Box, Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { User } from "@prisma/client";
 import clsx from "clsx";
@@ -8,16 +8,17 @@ import { signOut } from "next-auth/react";
 
 import { ADFS_PROFILE_URL } from "@/domain/env";
 import { useRootStyles } from "@/login/utils";
+import { Icon } from "@/icons";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   section: {
     paddingTop: theme.spacing(6),
-    // backgroundColor: theme.palette.muted.main, FIXME
   },
   topRow: {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
+    marginBottom: theme.spacing(1),
   },
   button: {
     width: "fit-content",
@@ -32,7 +33,9 @@ export const ProfileHeader = (props: { user: User }) => {
     <Box className={clsx(rootClasses.section, classes.section)}>
       <Box className={rootClasses.sectionContent}>
         <Box className={classes.topRow}>
-          <Typography variant="h1">{user.name}</Typography>
+          <Typography variant="h1" sx={{ fontWeight: 700 }}>
+            {user.name}
+          </Typography>
           <BrowseButton />
         </Box>
         {ADFS_PROFILE_URL && (
@@ -43,7 +46,7 @@ export const ProfileHeader = (props: { user: User }) => {
             variant="text"
             color="blue"
             size="sm"
-            sx={{ marginRight: 2 }}
+            sx={{ mr: 2 }}
           >
             eIAM MyAccount
           </Button>
@@ -64,18 +67,10 @@ export const ProfileHeader = (props: { user: User }) => {
 
 const BrowseButton = () => {
   return (
-    <Button>
-      <NextLink href="/browse" passHref legacyBehavior>
-        <Link
-          sx={{
-            "&:hover": {
-              textDecoration: "none",
-            },
-          }}
-        >
-          <Trans id="browse.dataset.all">Browse all datasets</Trans>
-        </Link>
-      </NextLink>
-    </Button>
+    <NextLink href="/browse" passHref legacyBehavior>
+      <Button size="sm" endIcon={<Icon name="arrowRight" size={20} />}>
+        <Trans id="browse.dataset.all">Browse all datasets</Trans>
+      </Button>
+    </NextLink>
   );
 };

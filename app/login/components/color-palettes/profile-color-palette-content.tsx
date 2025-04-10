@@ -75,7 +75,6 @@ export const ProfileColorPaletteContent = ({ title }: ProfileContentProps) => {
             </Typography>
           )}
           <Button
-            color="blue"
             variant="contained"
             startIcon={<Icon name="plus" />}
             sx={{ width: "fit-content" }}

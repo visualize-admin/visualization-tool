@@ -106,8 +106,9 @@ export const MenuActionItem = (
         <Button
           disabled={disabled}
           variant="contained"
+          size="sm"
           {...forwardedProps}
-          sx={{ minHeight: 0, color }}
+          sx={{ minHeight: 0 }}
         >
           {label}
         </Button>

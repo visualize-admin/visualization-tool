@@ -19,7 +19,7 @@ import {
 import { PUBLISHED_STATE } from "@prisma/client";
 import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
-import React, { useMemo, useState } from "react";
+import React, { ReactNode, useMemo, useState } from "react";
 
 import { MenuActionProps } from "@/components/menu-action-item";
 import { OverflowTooltip } from "@/components/overflow-tooltip";
@@ -41,6 +41,7 @@ import { useRootStyles } from "@/login/utils";
 import { useLocale } from "@/src";
 import { removeConfig, updateConfig } from "@/utils/chart-config/api";
 import { useMutate } from "@/utils/use-fetch-data";
+import { Icon } from "@/icons";
 
 const PREVIEW_LIMIT = 3;
 const POPOVER_PADDING = 8;
@@ -49,7 +50,7 @@ export const SectionContent = ({
   children,
   title,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   title?: string;
 }) => {
   const rootClasses = useRootStyles();
@@ -57,11 +58,10 @@ export const SectionContent = ({
   return (
     <Box className={rootClasses.sectionContent}>
       {title && (
-        <Typography variant="h3" sx={{ mb: 4 }}>
+        <Typography variant="h3" sx={{ mb: 6, fontWeight: 700 }}>
           {title}
         </Typography>
       )}
-
       {children}
     </Box>
   );
@@ -77,15 +77,19 @@ type ProfileVisualizationsTableProps = {
 
 const StyledTable = styled(Table)(({ theme }) => ({
   tableLayout: "fixed",
+  boxShadow: theme.shadows[4],
+
   [`& .${tableRowClasses.root}`]: {
     verticalAlign: "middle",
     height: 56,
+
     [`& > .${tableCellClasses.root}`]: {
       borderBottomColor: theme.palette.divider,
     },
   },
+
   [`& .${tableHeadClasses.root} .${tableCellClasses.root}`]: {
-    color: theme.palette.grey[600],
+    color: theme.palette.text.secondary,
   },
 }));
 
@@ -99,36 +103,29 @@ export const ProfileVisualizationsTable = (
       {userConfigs.length > 0 ? (
         <>
           <StyledTable>
-            <TableHead
-              sx={{
-                "& > .MuiTableCell-root": {
-                  borderBottomColor: "divider",
-                  color: "secondary.main",
-                },
-              }}
-            >
+            <TableHead>
               <TableRow>
-                <TableCell>
+                <TableCell component="th">
                   <Trans id="login.profile.my-visualizations.chart-type">
                     Type
                   </Trans>
                 </TableCell>
-                <TableCell>
+                <TableCell component="th">
                   <Trans id="login.profile.my-visualizations.chart-name">
                     Name
                   </Trans>
                 </TableCell>
-                <TableCell>
+                <TableCell component="th">
                   <Trans id="login.profile.my-visualizations.dataset-name">
                     Dataset
                   </Trans>
                 </TableCell>
-                <TableCell>
+                <TableCell component="th">
                   <Trans id="login.profile.my-visualizations.chart-updated-date">
                     Last edit
                   </Trans>
                 </TableCell>
-                <TableCell>
+                <TableCell component="th">
                   <Trans id="login.profile.my-visualizations.chart-actions">
                     Actions
                   </Trans>
@@ -152,20 +149,21 @@ export const ProfileVisualizationsTable = (
               variant="text"
               color="blue"
               size="sm"
+              endIcon={<Icon name="arrowDown" size={20} />}
               onClick={onShowAll}
-              sx={{ ml: 1, mt: 2 }}
+              sx={{ mt: 6 }}
             >
-              <Typography variant="body2">
-                <Trans id="show.all">Show all</Trans>
-              </Typography>
+              <Trans id="show.all">Show all</Trans>
             </Button>
           )}
         </>
       ) : (
-        <Typography variant="body1">
+        <Typography variant="body2">
           <Trans id="login.no-charts">No charts yet</Trans>,{" "}
-          <NextLink href="/browse" legacyBehavior>
-            <Trans id="login.create-chart">create one</Trans>
+          <NextLink href="/browse" passHref legacyBehavior>
+            <Link>
+              <Trans id="login.create-chart">create one</Trans>
+            </Link>
           </NextLink>
           .
         </Typography>
@@ -349,16 +347,12 @@ const ProfileVisualizationsRow = (props: {
     locale,
   ]);
 
-  const rootClasses = useRootStyles();
-
   return (
     <TableRow>
       <TableCell width="10%">
-        <Typography variant="body2">
-          {isSingleChart
-            ? t({ id: "controls.layout.chart", message: "Chart" })
-            : t({ id: "controls.layout.dashboard", message: "Dashboard" })}
-        </Typography>
+        {isSingleChart
+          ? t({ id: "controls.layout.chart", message: "Chart" })
+          : t({ id: "controls.layout.dashboard", message: "Dashboard" })}
       </TableCell>
       <TableCell width="30%">
         <NextLink
@@ -368,11 +362,7 @@ const ProfileVisualizationsRow = (props: {
         >
           <Link>
             <OverflowTooltip arrow title={chartTitle} color="primary.main">
-              <Typography
-                className={rootClasses.noTooltip}
-                variant="body2"
-                noWrap
-              >
+              <Typography variant="body3" noWrap>
                 {chartTitle}
               </Typography>
             </OverflowTooltip>
@@ -396,18 +386,14 @@ const ProfileVisualizationsRow = (props: {
                 title={data?.dataCubesMetadata[0]?.title ?? ""}
                 color="primary.main"
               >
-                <Typography
-                  className={rootClasses.noTooltip}
-                  variant="body2"
-                  noWrap
-                >
+                <Typography variant="body3" component="p" noWrap>
                   {data?.dataCubesMetadata[0]?.title ?? ""}
                 </Typography>
               </OverflowTooltip>
             </Link>
           </NextLink>
         ) : (
-          <Typography variant="body2" noWrap>
+          <Typography variant="body3" component="p" noWrap>
             {t({
               id: "login.profile.my-visualizations.multiple-datasets",
               message: "Multiple datasets",
@@ -416,12 +402,10 @@ const ProfileVisualizationsRow = (props: {
         )}
       </TableCell>
       <TableCell width="10%">
-        <Typography width="auto" variant="body2">
-          {config.updated_at.toLocaleString("de", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })}
-        </Typography>
+        {config.updated_at.toLocaleString("de", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        })}
       </TableCell>
       <TableCell width="20%" align="right">
         <RowActions actions={actions} />

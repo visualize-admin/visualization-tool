@@ -7,7 +7,7 @@ import { useCallback, useRef, useState } from "react";
 
 import Flex from "@/components/flex";
 import { RadioGroup } from "@/components/form";
-import { Input, Label, Radio } from "@/components/form";
+import { Input, Radio } from "@/components/form";
 import { BackButton, CustomPaletteType } from "@/configurator";
 import { ColorItem, ColorsByType, getDefaultColorValues } from "@/palettes";
 import { theme } from "@/themes/theme";
@@ -27,7 +27,7 @@ const useStyles = makeStyles({
     padding: "8px 0px",
   },
   backButton: {
-    color: theme.palette.grey[800],
+    width: "fit-content",
   },
   colorPickerContainer: {
     gap: theme.spacing(5),
@@ -187,28 +187,21 @@ export const ProfileColorPaletteForm = ({
   };
 
   return (
-    <Flex flexDirection="column" gap="30px">
+    <Flex flexDirection="column" gap={8}>
       <BackButton className={classes.backButton} onClick={onBack}>
         <Trans id="login.profile.my-color-palettes.create.back-button">
-          My palettes
+          My palette
         </Trans>
       </BackButton>
-
-      <Flex
-        flexDirection="column"
-        gap={5}
-        className={classes.colorPickerContainer}
-      >
+      <Flex flexDirection="column" className={classes.colorPickerContainer}>
         <ColorPaletteTypeSelector
           onChange={handleTypeChange}
           selectedType={type}
         />
-        <Typography variant="body2" color="textSecondary">
-          {captions[type]}
-        </Typography>
+        <Typography variant="body2">{captions[type]}</Typography>
 
         <Box className={classes.inputContainer}>
-          <Flex flexDirection={"column"}>
+          <Flex flexDirection="column">
             <Input
               error={isNotAvailable}
               label={t({ id: "controls.custom-color-palettes.title" })}
@@ -217,7 +210,7 @@ export const ProfileColorPaletteForm = ({
               onChange={(e) => setTitleInput(e.target.value)}
             />
             {isNotAvailable && (
-              <Typography color={"error.main"} variant="caption">
+              <Typography color="error.main" variant="caption">
                 <Trans id="controls.custom-color-palettes.title-unavailable">
                   This name is already in use. Please choose a unique name for
                   your color palette.
@@ -290,9 +283,9 @@ const ColorPaletteTypeSelector = ({
 
   return (
     <Box sx={{ fontSize: "1rem", pb: 2 }}>
-      <Label htmlFor="custom-color-palette-type" sx={{ mb: 1 }}>
+      <Typography variant="caption" component="p" sx={{ mb: 2 }}>
         <Trans id="controls.custom-color-palettes.type" />
-      </Label>
+      </Typography>
       <RadioGroup>
         {types.map((type) => {
           return (
