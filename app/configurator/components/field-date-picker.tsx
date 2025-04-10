@@ -108,7 +108,7 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
                   p: 1,
                 },
 
-                "& .MuiOutlinedInput-root": {
+                "& .MuiOutlinedInput-input": {
                   py: 0,
                   pl: 4,
                 },
