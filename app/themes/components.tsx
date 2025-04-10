@@ -622,6 +622,24 @@ export const components: Components = {
       },
     },
   },
+  MuiTabs: {
+    styleOverrides: {
+      indicator: {
+        backgroundColor: palette.red[600],
+      },
+    },
+  },
+  MuiTab: {
+    styleOverrides: {
+      root: {
+        color: palette.text.primary,
+
+        "&.Mui-selected": {
+          color: palette.text.primary,
+        },
+      },
+    },
+  },
   MuiTableCell: {
     styleOverrides: {
       // @ts-ignore
