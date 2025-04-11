@@ -1189,9 +1189,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
           const maybeLimitIndex = chartConfig.limits[measureId].findIndex((d) =>
             d.related.every((r) =>
               limit.related.some(
-                (nr) =>
-                  r.dimensionId === nr.dimensionId &&
-                  r.dimensionValue === nr.dimensionValue
+                (nr) => r.dimensionId === nr.dimensionId && r.value === nr.value
               )
             )
           );
@@ -1215,10 +1213,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const limit = limits.find((l) => {
           return l.related.every((lr) => {
             return related.some((nr) => {
-              return (
-                lr.dimensionId === nr.dimensionId &&
-                lr.dimensionValue === nr.dimensionValue
-              );
+              return lr.dimensionId === nr.dimensionId && lr.value === nr.value;
             });
           });
         });
@@ -1230,8 +1225,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
             return l.related.some((lr) => {
               return related.every((nr) => {
                 return (
-                  lr.dimensionId !== nr.dimensionId ||
-                  lr.dimensionValue !== nr.dimensionValue
+                  lr.dimensionId !== nr.dimensionId || lr.value !== nr.value
                 );
               });
             });

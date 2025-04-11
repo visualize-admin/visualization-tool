@@ -744,17 +744,16 @@ const ChartLimits = ({
   const onToggle = useEvent((checked: boolean, limit: Limit) => {
     const actionProps = {
       measureId: measure.id,
-      related: limit.related,
+      related: limit.related.map((r) => ({
+        dimensionId: r.dimensionId,
+        value: r.value,
+      })),
     };
 
     if (checked) {
       dispatch({
         type: "LIMIT_SET",
-        value: {
-          ...actionProps,
-          color: "#ff0000",
-          lineType: "solid",
-        },
+        value: { ...actionProps, color: "#ff0000", lineType: "solid" },
       });
     } else {
       dispatch({
@@ -1040,7 +1039,7 @@ const ChartShowDots = ({
           <Typography variant="caption" sx={{ mt: 2 }}>
             <Trans id="controls.section.dots-size">Select a Size</Trans>
           </Typography>
-          <Flex justifyContent="flex-start">
+          <RadioGroup>
             <ChartShowDotRadio
               size="Small"
               label={t({
@@ -1065,7 +1064,7 @@ const ChartShowDots = ({
               })}
               disabled={disabled}
             />
-          </Flex>
+          </RadioGroup>
         </Stack>
       </ControlSectionContent>
     </ControlSection>

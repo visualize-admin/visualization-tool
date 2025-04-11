@@ -22,7 +22,8 @@ describe("getTimeFilterOptions", () => {
         label: "2025-01-12T00:00:00+01:00",
       },
     ],
-  } as TemporalDimension;
+    relatedLimitValues: [],
+  } as unknown as TemporalDimension;
   const formatLocale = getD3TimeFormatLocale("de");
   const timeFormatUnit = jest.fn();
 

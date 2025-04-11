@@ -264,16 +264,24 @@ export const dataCubeComponents: NonNullable<
     componentIris,
     cache,
   });
+  const allRelatedLimitValues = rawComponents.flatMap((rc) =>
+    (rc.data.limits ?? []).flatMap((limit) => limit.related)
+  );
   const components = await Promise.all(
     rawComponents.map(async (component) => {
       const { data } = component;
+      const id = stringifyComponentId({
+        unversionedCubeIri,
+        unversionedComponentIri: data.iri,
+      });
       const dimensionValuesLoader = getDimensionValuesLoader(
         sparqlClient,
         loaders,
         cache,
         filters
       );
-      const [values, rawHierarchies] = await Promise.all(
+
+      const [rawValues, rawHierarchies] = await Promise.all(
         loadValues
           ? [
               dimensionValuesLoader.load(component),
@@ -284,19 +292,23 @@ export const dataCubeComponents: NonNullable<
             ]
           : [[] as DimensionValue[], null]
       );
-      values.sort((a, b) =>
+      const values = rawValues.sort((a, b) =>
         ascending(
           a.position ?? a.value ?? undefined,
           b.position ?? b.value ?? undefined
         )
       );
+      const relatedLimitValues = allRelatedLimitValues
+        .filter((r) => r.dimensionId === id)
+        .map((r) => ({
+          value: r.value,
+          label: r.label,
+          position: r.position,
+        }));
       const baseComponent: BaseComponent = {
         // We need to use original iri here, as the cube iri might have changed.
         cubeIri: iri,
-        id: stringifyComponentId({
-          unversionedCubeIri,
-          unversionedComponentIri: data.iri,
-        }),
+        id,
         label: data.name,
         description: data.description,
         unit: data.unit,
@@ -306,6 +318,7 @@ export const dataCubeComponents: NonNullable<
         isNumerical: data.isNumerical,
         isKeyDimension: data.isKeyDimension,
         values,
+        relatedLimitValues,
         related: data.related.map((r) => ({
           type: r.type,
           id: stringifyComponentId({

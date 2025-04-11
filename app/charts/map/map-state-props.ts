@@ -91,7 +91,6 @@ export const useMapStateData = (
     getSymbolLabel,
   } = variables;
   const filters = useChartConfigFilters(chartConfig);
-  // No need to sort the data for map.
   const plottableData = usePlottableData(observations, {});
   const data = useChartData(plottableData, {
     chartConfig,
@@ -178,7 +177,6 @@ export const useMapStateData = (
 
   return {
     ...data,
-    allData: plottableData,
     features: {
       areaLayer,
       symbolLayer,

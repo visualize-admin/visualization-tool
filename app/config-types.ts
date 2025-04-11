@@ -283,7 +283,7 @@ const Limit = t.intersection([
     related: t.array(
       t.type({
         dimensionId: t.string,
-        dimensionValue: t.string,
+        value: t.string,
       })
     ),
     color: t.string,

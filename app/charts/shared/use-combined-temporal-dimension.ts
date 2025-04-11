@@ -104,6 +104,7 @@ export const getCombinedTemporalDimension = ({
     isKeyDimension: true,
     isNumerical: false,
     values: uniqBy(values, "value").sort((a, b) => ascending(a.value, b.value)),
+    relatedLimitValues: [],
     timeUnit,
     timeFormat,
   };

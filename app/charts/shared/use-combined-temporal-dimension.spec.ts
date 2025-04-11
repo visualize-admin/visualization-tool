@@ -32,6 +32,7 @@ describe("useCombinedTemporalDimension", () => {
             label: "Litres",
           },
         ],
+        relatedLimitValues: [],
         related: [],
         hierarchy: null,
       },

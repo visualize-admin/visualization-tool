@@ -17,6 +17,7 @@ export const dimensions: Dimension[] = [
       { value: "2007-05-21", label: "2007-05-21" },
       { value: "2020-09-28", label: "2020-09-28" },
     ],
+    relatedLimitValues: [],
     timeUnit: TimeUnit.Day,
     timeFormat: "%Y-%m-%d",
     __typename: "TemporalDimension",
@@ -35,6 +36,7 @@ export const dimensions: Dimension[] = [
       { value: "E.coli", label: "E.coli" },
       { value: "Enterokokken", label: "Enterokokken" },
     ],
+    relatedLimitValues: [],
     __typename: "NominalDimension",
   },
   {
@@ -66,6 +68,7 @@ export const dimensions: Dimension[] = [
       { value: "BAQUA_ZG", label: "BAQUA_ZG" },
       { value: "BAQUA_ZH", label: "BAQUA_ZH" },
     ],
+    relatedLimitValues: [],
     __typename: "NominalDimension",
   },
   {
@@ -836,6 +839,7 @@ export const dimensions: Dimension[] = [
         label: "Strandbad Lido",
       },
     ],
+    relatedLimitValues: [],
     __typename: "NominalDimension",
   },
 ];
@@ -855,6 +859,7 @@ export const measures: Measure[] = [
       { value: 0, label: "0" },
       { value: 7700, label: "7700" },
     ],
+    relatedLimitValues: [],
     unit: "CFU/100mL",
     __typename: "NumericalMeasure",
     limits: [],

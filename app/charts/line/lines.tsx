@@ -13,6 +13,7 @@ import { useRenderTemporalValueLabelsData } from "@/charts/shared/show-values-ut
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { LineConfig, LineFields } from "@/config-types";
 import { Observation } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { useTransitionStore } from "@/stores/transition";
 
 export const ErrorWhiskers = () => {
@@ -179,17 +180,23 @@ const Points = ({ dotSize }: { dotSize: LineFields["y"]["showDotsSize"] }) => {
     useChartState() as LinesState;
   const { chartHeight, width } = bounds;
   const dots = useMemo(() => {
-    return chartData.map((d) => {
-      const x = xScale(getX(d));
-      const y = yScale(getY(d) as number);
-      const fill = colors(getSegment(d));
+    return chartData
+      .map((d) => {
+        const x = xScale(getX(d));
+        const y = yScale(getY(d) as number);
+        const fill = colors(getSegment(d));
 
-      return {
-        x,
-        y,
-        fill,
-      };
-    });
+        if (y === undefined) {
+          return;
+        }
+
+        return {
+          x,
+          y,
+          fill,
+        };
+      })
+      .filter(truthy);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     width,

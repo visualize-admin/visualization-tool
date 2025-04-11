@@ -203,6 +203,7 @@ export const dimensions: Dimension[] = [
       { value: "2000", label: "2000" },
       { value: "2020", label: "2020" },
     ],
+    relatedLimitValues: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -217,6 +218,7 @@ export const dimensions: Dimension[] = [
     isNumerical: false,
     isKeyDimension: true,
     values: [],
+    relatedLimitValues: [],
   },
   {
     cubeIri: "http://environment.ld.admin.ch/foen/px/0703030000_124",
@@ -231,6 +233,7 @@ export const dimensions: Dimension[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
   },
 ];
 
@@ -248,6 +251,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -263,6 +267,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -278,6 +283,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -293,6 +299,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -308,6 +315,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -323,6 +331,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -338,6 +347,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -353,6 +363,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -368,6 +379,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -383,6 +395,7 @@ export const measures: Measure[] = [
     isNumerical: true,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
 ];
@@ -618,6 +631,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -632,6 +646,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -646,6 +661,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -660,6 +676,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -674,6 +691,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -688,6 +706,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -702,6 +721,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -716,6 +736,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
   {
@@ -730,6 +751,7 @@ export const tableMeasures: Measure[] = [
     isNumerical: false,
     isKeyDimension: false,
     values: [],
+    relatedLimitValues: [],
     limits: [],
   },
 ];
@@ -750,6 +772,7 @@ export const tableDimensions: Dimension[] = [
       { value: "2017", label: "2017" },
       { value: "2018", label: "2018" },
     ],
+    relatedLimitValues: [],
     isNumerical: false,
     isKeyDimension: false,
     timeUnit: TimeUnit.Year,
@@ -797,6 +820,7 @@ export const tableDimensions: Dimension[] = [
         label: "Alpen-Südseite",
       },
     ],
+    relatedLimitValues: [],
     __typename: "NominalDimension",
   },
   {
@@ -946,6 +970,7 @@ export const tableDimensions: Dimension[] = [
         label: "Jura",
       },
     ],
+    relatedLimitValues: [],
     __typename: "NominalDimension",
   },
   {
@@ -990,6 +1015,7 @@ export const tableDimensions: Dimension[] = [
         label: ">= 2000 ha",
       },
     ],
+    relatedLimitValues: [],
     __typename: "NominalDimension",
   },
   {
@@ -1054,6 +1080,7 @@ export const tableDimensions: Dimension[] = [
         label: "Gemischte (mit/ohne) - Total",
       },
     ],
+    relatedLimitValues: [],
     __typename: "NominalDimension",
   },
 ];

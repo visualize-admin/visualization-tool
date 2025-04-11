@@ -232,6 +232,10 @@ export type BaseComponent = {
   isNumerical: boolean;
   isKeyDimension: boolean;
   values: DimensionValue[];
+  relatedLimitValues: Pick<
+    Limit["related"][number],
+    "value" | "label" | "position"
+  >[];
   related?: RelatedDimension[];
 };
 

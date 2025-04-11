@@ -15,7 +15,8 @@ describe("TimeFilter", () => {
     timeFormat: "%Y",
     timeUnit: TimeUnit.Year,
     values: [{ value: "2020" }, { value: "ABC" }],
-  } as TemporalDimension;
+    relatedLimitValues: [],
+  } as unknown as TemporalDimension;
   const formatLocale = getD3TimeFormatLocale("de");
   const timeFormatUnit = (date: Date | string, _: TimeUnit) => {
     return date.toString();
