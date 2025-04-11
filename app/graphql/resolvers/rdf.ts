@@ -301,7 +301,8 @@ export const dataCubeComponents: NonNullable<
           position: r.position,
         }));
       const values = uniqBy(
-        [...relatedValues, ...rawValues],
+        // rawValues first, because we prefer these
+        [...rawValues, ...relatedValues],
         (d) => d.value
       ).sort((a, b) =>
         ascending(
