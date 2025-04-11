@@ -233,8 +233,7 @@ export const getMaybeValidChartConfigLimit = ({
   wouldBeValid: boolean;
 } => {
   const relatedAxisDimensionValue = axisDimension
-    ? limit.related.find((r) => r.dimensionId === axisDimension.id)
-        ?.dimensionValue
+    ? limit.related.find((r) => r.dimensionId === axisDimension.id)?.value
     : undefined;
   const relatedAxisDimensionValueLabel = axisDimension
     ? axisDimension.values.find((v) => v.value === relatedAxisDimensionValue)
@@ -251,7 +250,7 @@ export const getMaybeValidChartConfigLimit = ({
         ? maybeFilter.value
         : undefined;
 
-    if (maybeFilterValue !== relatedToFilterBy.dimensionValue) {
+    if (maybeFilterValue !== relatedToFilterBy.value) {
       return {
         limit: undefined,
         relatedAxisDimensionValueLabel,
@@ -267,8 +266,7 @@ export const getMaybeValidChartConfigLimit = ({
       return configLimit.related.every((cr) => {
         return limit.related.some((lr) => {
           return (
-            lr.dimensionId === cr.dimensionId &&
-            lr.dimensionValue === cr.dimensionValue
+            lr.dimensionId === cr.dimensionId && lr.value === cr.dimensionValue
           );
         });
       });

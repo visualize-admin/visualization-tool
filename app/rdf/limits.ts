@@ -8,6 +8,7 @@ type BaseLimit = {
   name: string;
   related: {
     dimensionId: string;
+    value: string;
     dimensionValue: string;
   }[];
 };
@@ -37,9 +38,9 @@ export const getDimensionLimits = (
       const related = ctxs
         .map((ctx) => {
           const dimensionIri = ctx.out(ns.sh.path).value;
-          const dimensionValue = ctx.out(ns.sh.hasValue).value;
+          const value = ctx.out(ns.sh.hasValue).value;
 
-          if (!dimensionIri || !dimensionValue) {
+          if (!dimensionIri || !value) {
             return null;
           }
 
@@ -48,7 +49,7 @@ export const getDimensionLimits = (
               unversionedCubeIri,
               unversionedComponentIri: dimensionIri,
             }),
-            dimensionValue,
+            value,
           };
         })
         .filter(truthy);
