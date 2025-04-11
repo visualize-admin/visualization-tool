@@ -267,6 +267,10 @@ export const dataCubeComponents: NonNullable<
   const components = await Promise.all(
     rawComponents.map(async (component) => {
       const { data } = component;
+      const id = stringifyComponentId({
+        unversionedCubeIri,
+        unversionedComponentIri: data.iri,
+      });
       const dimensionValuesLoader = getDimensionValuesLoader(
         sparqlClient,
         loaders,
@@ -293,10 +297,7 @@ export const dataCubeComponents: NonNullable<
       const baseComponent: BaseComponent = {
         // We need to use original iri here, as the cube iri might have changed.
         cubeIri: iri,
-        id: stringifyComponentId({
-          unversionedCubeIri,
-          unversionedComponentIri: data.iri,
-        }),
+        id,
         label: data.name,
         description: data.description,
         unit: data.unit,
