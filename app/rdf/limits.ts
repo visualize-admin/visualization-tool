@@ -11,7 +11,8 @@ type BaseLimit = {
   name: string;
   related: ({
     dimensionId: string;
-  } & Pick<DimensionValue, "value" | "label" | "position">)[];
+    value: string;
+  } & Pick<DimensionValue, "label" | "position">)[];
 };
 
 type LimitSingle = BaseLimit & {

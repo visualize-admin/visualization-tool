@@ -1,6 +1,5 @@
 import { ascending, descending } from "d3-array";
 import DataLoader from "dataloader";
-import uniqBy from "lodash/uniqBy";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { topology } from "topojson-server";
 import { LRUCache } from "typescript-lru-cache";
@@ -265,7 +264,7 @@ export const dataCubeComponents: NonNullable<
     componentIris,
     cache,
   });
-  const allRelatedValues = rawComponents.flatMap((rc) =>
+  const allRelatedLimitValues = rawComponents.flatMap((rc) =>
     (rc.data.limits ?? []).flatMap((limit) => limit.related)
   );
   const components = await Promise.all(
@@ -293,23 +292,19 @@ export const dataCubeComponents: NonNullable<
             ]
           : [[] as DimensionValue[], null]
       );
-      const relatedValues = allRelatedValues
+      const values = rawValues.sort((a, b) =>
+        ascending(
+          a.position ?? a.value ?? undefined,
+          b.position ?? b.value ?? undefined
+        )
+      );
+      const relatedLimitValues = allRelatedLimitValues
         .filter((r) => r.dimensionId === id)
         .map((r) => ({
           value: r.value,
           label: r.label,
           position: r.position,
         }));
-      const values = uniqBy(
-        // rawValues first, because we prefer these
-        [...rawValues, ...relatedValues],
-        (d) => d.value
-      ).sort((a, b) =>
-        ascending(
-          a.position ?? a.value ?? undefined,
-          b.position ?? b.value ?? undefined
-        )
-      );
       const baseComponent: BaseComponent = {
         // We need to use original iri here, as the cube iri might have changed.
         cubeIri: iri,
@@ -323,6 +318,7 @@ export const dataCubeComponents: NonNullable<
         isNumerical: data.isNumerical,
         isKeyDimension: data.isKeyDimension,
         values,
+        relatedLimitValues,
         related: data.related.map((r) => ({
           type: r.type,
           id: stringifyComponentId({

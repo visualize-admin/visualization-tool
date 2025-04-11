@@ -291,6 +291,7 @@ CONSTRUCT {
       isNumerical: false,
       isKeyDimension,
       values: dimMetadataByDimIri[dimIri].values,
+      relatedLimitValues: [],
     };
 
     if (isMeasureDimension) {

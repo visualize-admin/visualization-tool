@@ -47,9 +47,7 @@ export const HorizontalLimits = ({
 
     return preparedLimits
       .map((limit) => {
-        const key = limit.related
-          .map((d) => d.dimensionId + d.dimensionValue)
-          .join();
+        const key = limit.related.map((d) => d.dimensionId + d.value).join();
         const x1 = xScale(limit.x1);
         const x2 = xScale(limit.x2);
         const fill = limit.color;
@@ -153,9 +151,7 @@ export const VerticalLimits = ({
 
     return preparedLimits
       .map((limit) => {
-        const key = limit.related
-          .map((d) => d.dimensionId + d.dimensionValue)
-          .join();
+        const key = limit.related.map((d) => d.dimensionId + d.value).join();
         const y1 = yScale(limit.y1);
         const y2 = yScale(limit.y2);
         const fill = limit.color;

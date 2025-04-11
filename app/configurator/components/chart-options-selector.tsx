@@ -744,17 +744,16 @@ const ChartLimits = ({
   const onToggle = useEvent((checked: boolean, limit: Limit) => {
     const actionProps = {
       measureId: measure.id,
-      related: limit.related,
+      related: limit.related.map((r) => ({
+        dimensionId: r.dimensionId,
+        value: r.value,
+      })),
     };
 
     if (checked) {
       dispatch({
         type: "LIMIT_SET",
-        value: {
-          ...actionProps,
-          color: "#ff0000",
-          lineType: "solid",
-        },
+        value: { ...actionProps, color: "#ff0000", lineType: "solid" },
       });
     } else {
       dispatch({
