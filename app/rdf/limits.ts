@@ -5,6 +5,7 @@ import { DimensionValue } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { stringifyComponentId } from "@/graphql/make-component-id";
 import * as ns from "@/rdf/namespace";
+import { buildLocalizedSubQuery } from "@/rdf/query-utils";
 
 type BaseLimit = {
   name: string;
@@ -63,10 +64,13 @@ export const getDimensionLimits = async (
             const query = `PREFIX schema: <http://schema.org/>
 
 SELECT ?label ?position WHERE {
-  <${r.value}>
-    schema:name ?label ;
-    schema:position ?position .
+  VALUES ?value { <${r.value}> }
+    ${buildLocalizedSubQuery("value", "schema:name", "label", {
+      locale,
+    })}
+    ?value schema:position ?position .
 }`;
+
             return {
               ...r,
               ...(await sparqlClient.query
