@@ -72,7 +72,7 @@ export const useScatterplotStateData = (
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
   const { getX, getY, getSegmentAbbreviationOrLabel } = variables;
-  // No need to sort the data for pie.
+  // No need to sort the data for scatterplot.
   const plottableData = usePlottableData(observations, {
     getX,
     getY,
