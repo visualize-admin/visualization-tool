@@ -97,20 +97,23 @@ export const getCubeDimensions = async ({
       (d) => d.iri.value
     );
 
-    return dimensions
-      .map((dim) => {
-        return parseCubeDimension({
-          dim,
-          cube,
-          locale,
-          units: dimensionUnitIndex,
-          limits: getDimensionLimits(dim, {
+    return (
+      await Promise.all(
+        dimensions.map(async (dim) => {
+          return parseCubeDimension({
+            dim,
+            cube,
             locale,
-            unversionedCubeIri,
-          }),
-        });
-      })
-      .sort((a, b) => ascending(a.data.order, b.data.order));
+            units: dimensionUnitIndex,
+            limits: await getDimensionLimits(dim, {
+              locale,
+              unversionedCubeIri,
+              sparqlClient,
+            }),
+          });
+        })
+      )
+    ).sort((a, b) => ascending(a.data.order, b.data.order));
   } catch (e) {
     console.error(e);
 
@@ -403,7 +406,6 @@ export const getCubeObservations = async ({
   const observationFilters = filters
     ? await buildFilters({
         cube,
-        unversionedCubeIri,
         view: cubeView,
         filters: dbFilters,
         locale,
@@ -610,7 +612,6 @@ export const hasHierarchy = (dim: CubeDimension) => {
 
 const buildFilters = async ({
   cube,
-  unversionedCubeIri,
   view,
   filters,
   locale,
@@ -618,7 +619,6 @@ const buildFilters = async ({
   cache,
 }: {
   cube: ExtendedCube;
-  unversionedCubeIri: string;
   view: View;
   filters: Filters;
   locale: string;
@@ -666,8 +666,9 @@ const buildFilters = async ({
       const resolvedDimension = parseCubeDimension({
         dim: cubeDimension,
         cube,
-        unversionedCubeIri,
         locale,
+        // We don't need to know the limits when filtering.
+        limits: [],
       });
 
       const { dataType, dataKind, scaleType, timeUnit, related } =
