@@ -3,6 +3,7 @@ import { ScaleTime } from "d3-scale";
 import get from "lodash/get";
 import overEvery from "lodash/overEvery";
 import uniq from "lodash/uniq";
+import uniqBy from "lodash/uniqBy";
 import { createContext, useCallback, useContext, useMemo } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
@@ -300,9 +301,13 @@ export const useTemporalXVariables = (
   }
 
   const getXTemporal = useTemporalVariable(x.componentId);
-  const getXTemporalEntity = useTemporalEntityVariable(
-    dimensionsById[x.componentId].values
-  )(x.componentId);
+  const dimensionValues = dimensionsById[x.componentId].values;
+  const relatedLimitValues = dimensionsById[x.componentId].relatedLimitValues;
+  const values = uniqBy(
+    [...dimensionValues, ...relatedLimitValues],
+    (d) => d.value
+  );
+  const getXTemporalEntity = useTemporalEntityVariable(values)(x.componentId);
   const getXAsString = useStringVariable(x.componentId);
 
   const xAxisLabel = getLabelWithUnit(xDimension);
@@ -722,9 +727,13 @@ export const useInteractiveFiltersVariables = (
   const id = interactiveFiltersConfig?.timeRange.componentId ?? "";
   const dimension = dimensionsById[id];
   const getTimeRangeDate = useTemporalVariable(id);
-  const getTimeRangeEntityDate = useTemporalEntityVariable(
-    dimension?.values ?? []
-  )(id);
+  const dimensionValues = dimension?.values ?? [];
+  const relatedLimitValues = dimension?.relatedLimitValues ?? [];
+  const values = uniqBy(
+    [...dimensionValues, ...relatedLimitValues],
+    (d) => d.value
+  );
+  const getTimeRangeEntityDate = useTemporalEntityVariable(values)(id);
 
   return {
     getTimeRangeDate: isTemporalDimension(dimension)
