@@ -116,7 +116,7 @@ export const useComboLineDualStateData = (
   chartProps: ChartProps<ComboLineDualConfig>,
   variables: ComboLineDualStateVariables
 ): ChartStateData => {
-  const { chartConfig, dimensions, observations } = chartProps;
+  const { chartConfig, observations } = chartProps;
   const { sortData, xDimension, getX, y, getTimeRangeDate } = variables;
   const plottableData = usePlottableData(observations, {
     getX,
@@ -134,7 +134,6 @@ export const useComboLineDualStateData = (
   return useChartData(plottableData, {
     sortData,
     chartConfig,
-    dimensions,
     timeRangeDimensionId: xDimension.id,
     getAxisValueAsDate: getX,
     getTimeRangeDate,

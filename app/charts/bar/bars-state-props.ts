@@ -125,10 +125,10 @@ export const useBarsStateVariables = (
 };
 
 export const useBarsStateData = (
-  chartProps: ChartProps<BarConfig>,
+  chartProps: ChartProps<BarConfig> & { limits: ReturnType<typeof useLimits> },
   variables: BarsStateVariables
 ): ChartStateData => {
-  const { chartConfig, dimensions, observations } = chartProps;
+  const { chartConfig, observations } = chartProps;
   const { sortData, yDimension, getYAsDate, getX, getTimeRangeDate } =
     variables;
   const plottableData = usePlottableData(observations, {
@@ -138,7 +138,6 @@ export const useBarsStateData = (
   return useChartData(plottableData, {
     sortData,
     chartConfig,
-    dimensions,
     timeRangeDimensionId: yDimension.id,
     getAxisValueAsDate: getYAsDate,
     getTimeRangeDate,

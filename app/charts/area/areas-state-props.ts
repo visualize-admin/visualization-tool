@@ -78,10 +78,10 @@ export const useAreasStateVariables = (
 };
 
 export const useAreasStateData = (
-  chartProps: ChartProps<AreaConfig>,
+  chartProps: ChartProps<AreaConfig> & { limits: ReturnType<typeof useLimits> },
   variables: AreasStateVariables
 ): ChartStateData => {
-  const { chartConfig, dimensions, observations } = chartProps;
+  const { chartConfig, observations } = chartProps;
   const {
     sortData,
     xDimension,
@@ -98,7 +98,6 @@ export const useAreasStateData = (
   return useChartData(plottableData, {
     sortData,
     chartConfig,
-    dimensions,
     timeRangeDimensionId: xDimension.id,
     getAxisValueAsDate: getX,
     getSegmentAbbreviationOrLabel,

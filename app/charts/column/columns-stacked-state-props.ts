@@ -121,7 +121,7 @@ export const useColumnsStackedStateData = (
   chartProps: ChartProps<ColumnConfig>,
   variables: ColumnsStackedStateVariables
 ): ColumnsStackedStateData => {
-  const { chartConfig, dimensions, observations } = chartProps;
+  const { chartConfig, observations } = chartProps;
   const { fields } = chartConfig;
   const { x } = fields;
   const {
@@ -156,7 +156,6 @@ export const useColumnsStackedStateData = (
   const data = useChartData(plottableData, {
     sortData: sortPlottableData,
     chartConfig,
-    dimensions,
     timeRangeDimensionId: xDimension.id,
     getAxisValueAsDate: getXAsDate,
     getSegmentAbbreviationOrLabel,

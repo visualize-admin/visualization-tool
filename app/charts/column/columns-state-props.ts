@@ -125,10 +125,12 @@ export const useColumnsStateVariables = (
 };
 
 export const useColumnsStateData = (
-  chartProps: ChartProps<ColumnConfig>,
+  chartProps: ChartProps<ColumnConfig> & {
+    limits: ReturnType<typeof useLimits>;
+  },
   variables: ColumnsStateVariables
 ): ChartStateData => {
-  const { chartConfig, dimensions, observations } = chartProps;
+  const { chartConfig, observations } = chartProps;
   const { sortData, xDimension, getXAsDate, getY, getTimeRangeDate } =
     variables;
   const plottableData = usePlottableData(observations, {
@@ -138,7 +140,6 @@ export const useColumnsStateData = (
   return useChartData(plottableData, {
     sortData,
     chartConfig,
-    dimensions,
     timeRangeDimensionId: xDimension.id,
     getAxisValueAsDate: getXAsDate,
     getTimeRangeDate,

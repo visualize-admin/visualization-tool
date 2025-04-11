@@ -121,7 +121,7 @@ export const useBarsStackedStateData = (
   chartProps: ChartProps<BarConfig>,
   variables: BarsStackedStateVariables
 ): BarsStackedStateData => {
-  const { chartConfig, dimensions, observations } = chartProps;
+  const { chartConfig, observations } = chartProps;
   const { fields } = chartConfig;
   const { y } = fields;
   const {
@@ -156,7 +156,6 @@ export const useBarsStackedStateData = (
   const data = useChartData(plottableData, {
     sortData: sortPlottableData,
     chartConfig,
-    dimensions,
     timeRangeDimensionId: yDimension.id,
     getAxisValueAsDate: getYAsDate,
     getSegmentAbbreviationOrLabel,

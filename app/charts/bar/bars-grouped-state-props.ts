@@ -128,7 +128,7 @@ export const useBarsGroupedStateData = (
   chartProps: ChartProps<BarConfig>,
   variables: BarsGroupedStateVariables
 ): ChartStateData => {
-  const { chartConfig, dimensions, observations } = chartProps;
+  const { chartConfig, observations } = chartProps;
   const {
     sortData,
     yDimension,
@@ -144,7 +144,6 @@ export const useBarsGroupedStateData = (
   return useChartData(plottableData, {
     sortData,
     chartConfig,
-    dimensions,
     timeRangeDimensionId: yDimension.id,
     getAxisValueAsDate: getYAsDate,
     getSegmentAbbreviationOrLabel,

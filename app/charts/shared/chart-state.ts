@@ -70,6 +70,7 @@ import {
 import { Has } from "@/domain/types";
 import { RelatedDimensionType } from "@/graphql/query-hooks";
 import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
+import { Limit } from "@/rdf/limits";
 import {
   useChartInteractiveFilters,
   useDashboardInteractiveFilters,
@@ -810,6 +811,8 @@ export const useChartData = (
     sortData,
     chartConfig,
     timeRangeDimensionId,
+    axisDimensionId,
+    limits,
     getAxisValueAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
@@ -817,6 +820,8 @@ export const useChartData = (
     sortData?: (data: Observation[]) => Observation[];
     chartConfig: ChartConfig;
     timeRangeDimensionId: string | undefined;
+    axisDimensionId?: string;
+    limits?: Limit[];
     getAxisValueAsDate?: (d: Observation) => Date;
     getSegmentAbbreviationOrLabel?: (d: Observation) => string;
     getTimeRangeDate?: (d: Observation) => Date;
@@ -824,8 +829,29 @@ export const useChartData = (
 ): ChartStateData => {
   const { interactiveFiltersConfig } = chartConfig;
   const allData = useMemo(() => {
-    return sortData ? sortData(observations) : observations;
-  }, [observations, sortData]);
+    let allData = observations;
+
+    if (axisDimensionId && limits) {
+      const dimensionValuesObservations = limits
+        .flatMap((limit) => limit.related)
+        .filter((limit) => limit.dimensionId === axisDimensionId)
+        .map((d) => ({
+          [axisDimensionId]: d.label,
+        }));
+      const axisObservationValues = uniq(
+        observations.map((o) => o[axisDimensionId])
+      );
+      allData = [
+        ...observations,
+        ...dimensionValuesObservations.filter(
+          (d) => !axisObservationValues.includes(d[axisDimensionId])
+        ),
+      ];
+    }
+
+    return sortData ? sortData(allData) : observations;
+  }, [axisDimensionId, limits, observations, sortData]);
+
   const categories = useChartInteractiveFilters((d) => d.categories);
   const timeRange = useChartInteractiveFilters((d) => d.timeRange);
   const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
@@ -929,7 +955,7 @@ export const useChartData = (
   ]);
 
   const chartData = useMemo(() => {
-    return observations.filter(
+    return allData.filter(
       overEvery([
         ...interactiveLegendFilters,
         ...interactiveTimeRangeFilters,
@@ -937,7 +963,7 @@ export const useChartData = (
       ])
     );
   }, [
-    observations,
+    allData,
     interactiveLegendFilters,
     interactiveTimeRangeFilters,
     interactiveTimeSliderFilters,
@@ -947,35 +973,36 @@ export const useChartData = (
     if (dynamicScales) {
       return chartData;
     } else {
-      return observations.filter(
+      return allData.filter(
         overEvery([...interactiveLegendFilters, ...interactiveTimeRangeFilters])
       );
     }
   }, [
     dynamicScales,
     chartData,
-    observations,
+    allData,
     interactiveLegendFilters,
     interactiveTimeRangeFilters,
   ]);
 
   const segmentData = useMemo(() => {
-    return observations.filter(overEvery(interactiveTimeRangeFilters));
-  }, [observations, interactiveTimeRangeFilters]);
+    return allData.filter(overEvery(interactiveTimeRangeFilters));
+  }, [allData, interactiveTimeRangeFilters]);
 
   const timeRangeData = useMemo(() => {
-    return observations.filter(overEvery(timeRangeFilters));
-  }, [observations, timeRangeFilters]);
+    return allData.filter(overEvery(timeRangeFilters));
+  }, [allData, timeRangeFilters]);
 
   const paddingData = useMemo(() => {
     if (dynamicScales) {
       return chartData;
     } else {
-      return observations.filter(overEvery(interactiveLegendFilters));
+      return allData.filter(overEvery(interactiveLegendFilters));
     }
-  }, [dynamicScales, chartData, observations, interactiveLegendFilters]);
+  }, [dynamicScales, chartData, allData, interactiveLegendFilters]);
 
   return {
+    allData,
     chartData,
     scalesData,
     segmentData,

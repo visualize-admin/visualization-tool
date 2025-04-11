@@ -1,5 +1,5 @@
 import { ascending } from "d3-array";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
@@ -95,10 +95,10 @@ export const useLinesStateVariables = (
 };
 
 export const useLinesStateData = (
-  chartProps: ChartProps<LineConfig>,
+  chartProps: ChartProps<LineConfig> & { limits: ReturnType<typeof useLimits> },
   variables: LinesStateVariables
 ): ChartStateData => {
-  const { chartConfig, dimensions, observations } = chartProps;
+  const { chartConfig, observations, limits } = chartProps;
   const {
     sortData,
     xDimension,
@@ -114,7 +114,8 @@ export const useLinesStateData = (
   return useChartData(plottableData, {
     sortData,
     chartConfig,
-    dimensions,
+    axisDimensionId: xDimension.id,
+    limits: limits.limits.map((limit) => limit.measureLimit),
     timeRangeDimensionId: xDimension.id,
     getAxisValueAsDate: getX,
     getSegmentAbbreviationOrLabel,
