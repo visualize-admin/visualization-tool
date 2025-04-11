@@ -24,16 +24,13 @@ export const useTableStateVariables = (
 export const useTableStateData = (
   chartProps: ChartProps<TableConfig>
 ): ChartStateData => {
-  const { chartConfig, observations } = chartProps;
+  const { chartConfig, dimensions, observations } = chartProps;
   // No need to sort the data for table.
   const plottableData = usePlottableData(observations, {});
-  const data = useChartData(plottableData, {
+
+  return useChartData(plottableData, {
     chartConfig,
+    dimensions,
     timeRangeDimensionId: undefined,
   });
-
-  return {
-    ...data,
-    allData: plottableData,
-  };
 };

@@ -94,13 +94,11 @@ export const useLinesStateVariables = (
   };
 };
 
-// TODO: same as Area chart, useTemporalXData, except for plottable data deps.
-// Check if getX shouldn't be included here.
 export const useLinesStateData = (
   chartProps: ChartProps<LineConfig>,
   variables: LinesStateVariables
 ): ChartStateData => {
-  const { chartConfig, observations } = chartProps;
+  const { chartConfig, dimensions, observations } = chartProps;
   const {
     sortData,
     xDimension,
@@ -112,19 +110,14 @@ export const useLinesStateData = (
   const plottableData = usePlottableData(observations, {
     getY,
   });
-  const sortedPlottableData = useMemo(() => {
-    return sortData(plottableData);
-  }, [sortData, plottableData]);
-  const data = useChartData(sortedPlottableData, {
+
+  return useChartData(plottableData, {
+    sortData,
     chartConfig,
+    dimensions,
     timeRangeDimensionId: xDimension.id,
     getAxisValueAsDate: getX,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   });
-
-  return {
-    ...data,
-    allData: sortedPlottableData,
-  };
 };

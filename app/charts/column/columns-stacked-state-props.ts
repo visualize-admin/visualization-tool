@@ -121,7 +121,7 @@ export const useColumnsStackedStateData = (
   chartProps: ChartProps<ColumnConfig>,
   variables: ColumnsStackedStateVariables
 ): ColumnsStackedStateData => {
-  const { chartConfig, observations } = chartProps;
+  const { chartConfig, dimensions, observations } = chartProps;
   const { fields } = chartConfig;
   const { x } = fields;
   const {
@@ -137,24 +137,26 @@ export const useColumnsStackedStateData = (
   const plottableData = usePlottableData(observations, {
     getY,
   });
-  const { sortedPlottableData, plottableDataWide } = useMemo(() => {
+  const plottableDataWide = useMemo(() => {
     const plottableDataByX = group(plottableData, getX);
-    const plottableDataWide = getWideData({
+
+    return getWideData({
       dataGrouped: plottableDataByX,
       key: x.componentId,
       getAxisValue: getY,
       getSegment,
     });
-
-    return {
-      sortedPlottableData: sortData(plottableData, {
-        plottableDataWide,
-      }),
-      plottableDataWide,
-    };
-  }, [plottableData, getX, x.componentId, getY, getSegment, sortData]);
-  const data = useChartData(sortedPlottableData, {
+  }, [plottableData, getX, x.componentId, getY, getSegment]);
+  const sortPlottableData = useCallback(
+    (data: Observation[]) => {
+      return sortData(data, { plottableDataWide });
+    },
+    [plottableDataWide, sortData]
+  );
+  const data = useChartData(plottableData, {
+    sortData: sortPlottableData,
     chartConfig,
+    dimensions,
     timeRangeDimensionId: xDimension.id,
     getAxisValueAsDate: getXAsDate,
     getSegmentAbbreviationOrLabel,
@@ -163,7 +165,6 @@ export const useColumnsStackedStateData = (
 
   return {
     ...data,
-    allData: sortedPlottableData,
     plottableDataWide,
   };
 };

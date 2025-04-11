@@ -63,20 +63,17 @@ export const usePieStateData = (
   chartProps: ChartProps<PieConfig>,
   variables: PieStateVariables
 ): ChartStateData => {
-  const { chartConfig, observations } = chartProps;
+  const { chartConfig, dimensions, observations } = chartProps;
   const { getY, getSegmentAbbreviationOrLabel } = variables;
   // No need to sort the data for pie.
   const plottableData = usePlottableData(observations, {
     getY,
   });
-  const data = useChartData(plottableData, {
+
+  return useChartData(plottableData, {
     chartConfig,
+    dimensions,
     timeRangeDimensionId: undefined,
     getSegmentAbbreviationOrLabel,
   });
-
-  return {
-    ...data,
-    allData: plottableData,
-  };
 };

@@ -70,21 +70,18 @@ export const useScatterplotStateData = (
   chartProps: ChartProps<ScatterPlotConfig>,
   variables: ScatterplotStateVariables
 ): ChartStateData => {
-  const { chartConfig, observations } = chartProps;
+  const { chartConfig, dimensions, observations } = chartProps;
   const { getX, getY, getSegmentAbbreviationOrLabel } = variables;
   // No need to sort the data for scatterplot.
   const plottableData = usePlottableData(observations, {
     getX,
     getY,
   });
-  const data = useChartData(plottableData, {
+
+  return useChartData(plottableData, {
     chartConfig,
+    dimensions,
     timeRangeDimensionId: undefined,
     getSegmentAbbreviationOrLabel,
   });
-
-  return {
-    ...data,
-    allData: plottableData,
-  };
 };

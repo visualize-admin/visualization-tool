@@ -1,6 +1,6 @@
 import { ascending, rollup, sum } from "d3-array";
 import orderBy from "lodash/orderBy";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
@@ -128,7 +128,7 @@ export const useColumnsGroupedStateData = (
   chartProps: ChartProps<ColumnConfig>,
   variables: ColumnsGroupedStateVariables
 ): ChartStateData => {
-  const { chartConfig, observations } = chartProps;
+  const { chartConfig, dimensions, observations } = chartProps;
   const {
     sortData,
     xDimension,
@@ -140,19 +140,14 @@ export const useColumnsGroupedStateData = (
   const plottableData = usePlottableData(observations, {
     getY,
   });
-  const sortedPlottableData = useMemo(() => {
-    return sortData(plottableData);
-  }, [sortData, plottableData]);
-  const data = useChartData(sortedPlottableData, {
+
+  return useChartData(plottableData, {
+    sortData,
     chartConfig,
+    dimensions,
     timeRangeDimensionId: xDimension.id,
     getAxisValueAsDate: getXAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   });
-
-  return {
-    ...data,
-    allData: sortedPlottableData,
-  };
 };

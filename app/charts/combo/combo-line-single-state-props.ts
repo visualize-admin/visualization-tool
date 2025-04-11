@@ -1,5 +1,5 @@
 import { min } from "d3-array";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 import { BaseYGetter, sortComboData } from "@/charts/combo/combo-state-props";
 import {
@@ -90,7 +90,7 @@ export const useComboLineSingleStateData = (
   chartProps: ChartProps<ComboLineSingleConfig>,
   variables: ComboLineSingleStateVariables
 ): ChartStateData => {
-  const { chartConfig, observations } = chartProps;
+  const { chartConfig, dimensions, observations } = chartProps;
   const { sortData, xDimension, getX, y, getTimeRangeDate } = variables;
   const plottableData = usePlottableData(observations, {
     getX,
@@ -104,18 +104,13 @@ export const useComboLineSingleStateData = (
       }
     },
   });
-  const sortedPlottableData = useMemo(() => {
-    return sortData(plottableData);
-  }, [sortData, plottableData]);
-  const data = useChartData(sortedPlottableData, {
+
+  return useChartData(plottableData, {
+    sortData,
     chartConfig,
+    dimensions,
     timeRangeDimensionId: xDimension.id,
     getAxisValueAsDate: getX,
     getTimeRangeDate,
   });
-
-  return {
-    ...data,
-    allData: sortedPlottableData,
-  };
 };

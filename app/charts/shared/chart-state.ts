@@ -2,6 +2,7 @@ import { max, min } from "d3-array";
 import { ScaleTime } from "d3-scale";
 import get from "lodash/get";
 import overEvery from "lodash/overEvery";
+import uniq from "lodash/uniq";
 import { createContext, useCallback, useContext, useMemo } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
@@ -797,20 +798,25 @@ type ValuePredicate = (v: any) => boolean;
 export const useChartData = (
   observations: Observation[],
   {
+    sortData,
     chartConfig,
     timeRangeDimensionId,
     getAxisValueAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   }: {
+    sortData?: (data: Observation[]) => Observation[];
     chartConfig: ChartConfig;
     timeRangeDimensionId: string | undefined;
     getAxisValueAsDate?: (d: Observation) => Date;
     getSegmentAbbreviationOrLabel?: (d: Observation) => string;
     getTimeRangeDate?: (d: Observation) => Date;
   }
-): Omit<ChartStateData, "allData"> => {
+): ChartStateData => {
   const { interactiveFiltersConfig } = chartConfig;
+  const allData = useMemo(() => {
+    return sortData ? sortData(observations) : observations;
+  }, [observations, sortData]);
   const categories = useChartInteractiveFilters((d) => d.categories);
   const timeRange = useChartInteractiveFilters((d) => d.timeRange);
   const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);

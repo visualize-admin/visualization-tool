@@ -83,7 +83,8 @@ export const useMapStateData = (
   chartProps: ChartMapProps,
   variables: MapStateVariables
 ): MapStateData => {
-  const { chartConfig, observations, shapes, coordinates } = chartProps;
+  const { chartConfig, dimensions, observations, shapes, coordinates } =
+    chartProps;
   const {
     areaLayerDimension,
     symbolLayerDimension,
@@ -95,6 +96,7 @@ export const useMapStateData = (
   const plottableData = usePlottableData(observations, {});
   const data = useChartData(plottableData, {
     chartConfig,
+    dimensions,
     timeRangeDimensionId: undefined,
   });
 
@@ -178,7 +180,6 @@ export const useMapStateData = (
 
   return {
     ...data,
-    allData: plottableData,
     features: {
       areaLayer,
       symbolLayer,
