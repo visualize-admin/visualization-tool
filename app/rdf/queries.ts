@@ -29,6 +29,7 @@ import {
 } from "@/graphql/shared-types";
 import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
+import { getDimensionLimits } from "@/rdf/limits";
 import * as ns from "@/rdf/namespace";
 import { parseCubeDimension, parseRelatedDimensions } from "@/rdf/parse";
 import { queryCubeUnversionedIri } from "@/rdf/query-cube-unversioned-iri";
@@ -101,9 +102,12 @@ export const getCubeDimensions = async ({
         return parseCubeDimension({
           dim,
           cube,
-          unversionedCubeIri,
           locale,
           units: dimensionUnitIndex,
+          limits: getDimensionLimits(dim, {
+            locale,
+            unversionedCubeIri,
+          }),
         });
       })
       .sort((a, b) => ascending(a.data.order, b.data.order));
