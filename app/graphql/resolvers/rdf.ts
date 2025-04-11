@@ -1,5 +1,6 @@
 import { ascending, descending } from "d3-array";
 import DataLoader from "dataloader";
+import uniqBy from "lodash/uniqBy";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { topology } from "topojson-server";
 import { LRUCache } from "typescript-lru-cache";
@@ -264,6 +265,9 @@ export const dataCubeComponents: NonNullable<
     componentIris,
     cache,
   });
+  const allRelatedValues = rawComponents.flatMap((rc) =>
+    (rc.data.limits ?? []).flatMap((limit) => limit.related)
+  );
   const components = await Promise.all(
     rawComponents.map(async (component) => {
       const { data } = component;
@@ -277,7 +281,8 @@ export const dataCubeComponents: NonNullable<
         cache,
         filters
       );
-      const [values, rawHierarchies] = await Promise.all(
+
+      const [rawValues, rawHierarchies] = await Promise.all(
         loadValues
           ? [
               dimensionValuesLoader.load(component),
@@ -288,7 +293,17 @@ export const dataCubeComponents: NonNullable<
             ]
           : [[] as DimensionValue[], null]
       );
-      values.sort((a, b) =>
+      const relatedValues = allRelatedValues
+        .filter((r) => r.dimensionId === id)
+        .map((r) => ({
+          value: r.value,
+          label: r.label,
+          position: r.position,
+        }));
+      const values = uniqBy(
+        [...relatedValues, ...rawValues],
+        (d) => d.value
+      ).sort((a, b) =>
         ascending(
           a.position ?? a.value ?? undefined,
           b.position ?? b.value ?? undefined
