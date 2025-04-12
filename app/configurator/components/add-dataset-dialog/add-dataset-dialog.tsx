@@ -310,7 +310,7 @@ export const DatasetDialog = ({
     pause: isSearchQueryPaused,
   });
 
-  const searchCubes = useMemo(() => {
+  const rawSearchCubes = useMemo(() => {
     const relevantCubeIris = currentCubes.map((d) => d.iri);
     return (
       searchQuery.data?.searchCubes.filter(
@@ -318,6 +318,29 @@ export const DatasetDialog = ({
       ) ?? []
     );
   }, [currentCubes, searchQuery.data?.searchCubes]);
+
+  const searchCubes = useMemo(() => {
+    if (currentCubes.length === 1) {
+      return rawSearchCubes;
+    } else {
+      return rawSearchCubes.filter((result) => {
+        const inferred = inferJoinBy(
+          selectedSearchDimensions ?? [],
+          result.cube
+        );
+        const resultJoinBy = inferred[result.cube.iri];
+
+        // TODO Verify that this is correct
+        // The idea is that we want to be sure that the cube has the same join by dimensions
+        // as the other cubes
+        return (
+          (resultJoinBy &&
+            resultJoinBy.length === selectedSearchDimensions?.length) ??
+          0
+        );
+      });
+    }
+  }, [rawSearchCubes]);
 
   const handleChangeSearchDimensions = (ev: SelectChangeEvent<string[]>) => {
     const {
