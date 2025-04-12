@@ -1,6 +1,11 @@
-import { Dimension, Termset } from "@/domain/data";
+import { Termset } from "@/domain/data";
 import { ComponentId } from "@/graphql/make-component-id";
 
+type OriginalId = {
+  /** Versioned cube IRI */
+  cubeIri: string;
+  dimensionId: ComponentId;
+};
 export type SearchOptions =
   | {
       type: "temporal";
@@ -9,10 +14,7 @@ export type SearchOptions =
       id: ComponentId;
       label: string;
       timeUnit: string;
-      originalIds: Pick<
-        NonNullable<Dimension["originalIds"]>[number],
-        "cubeIri" | "dimensionId"
-      >[];
+      originalIds: OriginalId[];
     }
   | {
       type: "shared";
@@ -20,8 +22,5 @@ export type SearchOptions =
       id: string;
       label: string;
       termsets: Termset[];
-      originalIds: Pick<
-        NonNullable<Dimension["originalIds"]>[number],
-        "cubeIri" | "dimensionId"
-      >[];
+      originalIds: OriginalId[];
     };

@@ -129,7 +129,7 @@ const extractSearchOptions = (
           termsets: x.termsets,
           originalIds: [
             {
-              cubeIri: parsedIri.unversionedCubeIri,
+              cubeIri: x.cubeIri,
               dimensionId: x.iri as ComponentId,
             },
           ],

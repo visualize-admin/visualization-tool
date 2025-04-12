@@ -105,6 +105,7 @@ export type Termset = {
 
 export type ComponentTermsets = {
   iri: string;
+  cubeIri: string;
   label: string;
   termsets: Termset[];
 };
