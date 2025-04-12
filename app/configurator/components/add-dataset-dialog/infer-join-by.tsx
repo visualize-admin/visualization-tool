@@ -4,7 +4,7 @@ import { groupBy, mapValues } from "lodash";
 import { PartialSearchCube } from "@/browser/dataset-browse";
 import { SearchOptions } from "@/configurator/components/add-dataset-dialog/types";
 import { truthy } from "@/domain/types";
-import { ComponentId, parseComponentId } from "@/graphql/make-component-id";
+import { ComponentId } from "@/graphql/make-component-id";
 
 // cubeIri to dimensionIds
 export type JoinBy = Record<string, ComponentId[]>;
@@ -42,8 +42,6 @@ export const inferJoinBy = (
     if (!rightDimension) {
       console.log("No dimension found for option", option);
       return {};
-    } else {
-      console.log("Found dimension", JSON.stringify(rightDimension, null, 2));
     }
 
     const originalIdsByCube = groupBy(option.originalIds, (x) => {
@@ -54,8 +52,6 @@ export const inferJoinBy = (
       [newCube.iri]: [rightDimension?.id].filter(truthy),
     };
   });
-
-  console.log(JSON.stringify({ tmp }, null, 2));
 
   const result = tmp.reduce((acc, curr) => {
     Object.entries(curr).forEach(([key, value]) => {
