@@ -34,6 +34,7 @@ import { getEnabledChartTypes, getInitialConfig } from "@/charts";
 import { deriveFiltersFromFields } from "@/configurator/configurator-state/reducer";
 import { getInitialConfiguringConfigBasedOnCube } from "@/configurator/configurator-state/initial";
 import { Locale } from "@/locales/locales";
+import { indexBy } from "lodash";
 
 export {
   ConfiguratorStateProvider,
@@ -359,19 +360,19 @@ export const removeDatasetInConfig = function (
   }
 
   const { dimensions, measures } = dataCubesComponents;
-  const iris = chartConfig.cubes
+  const remainingCubeIris = chartConfig.cubes
     .filter((c) => c.iri !== removedCubeIri)
     .map(({ iri }) => ({ iri }));
   const { enabledChartTypes } = getEnabledChartTypes({
     dimensions,
     measures,
-    cubeCount: iris.length,
+    cubeCount: remainingCubeIris.length,
   });
   const initialConfig = getInitialConfig({
     chartType: enabledChartTypes.includes(chartConfig.chartType)
       ? chartConfig.chartType
       : enabledChartTypes[0],
-    iris,
+    iris: remainingCubeIris,
     dimensions,
     measures,
     meta: current(chartConfig.meta),
@@ -389,6 +390,19 @@ export const removeDatasetInConfig = function (
   } as ChartConfig;
   const index = draft.chartConfigs.findIndex((d) => d.key === chartConfig.key);
   const withFilters = deriveFiltersFromFields(newConfig, { dimensions });
+
+  // Reput the join by inside the cubes
+  const joinByByCubes = Object.fromEntries(
+    chartConfig.cubes.map((cube) => [cube.iri, cube.joinBy] as const)
+  );
+
+  for (const cube of withFilters.cubes) {
+    const joinBy = joinByByCubes[cube.iri];
+    if (joinBy) {
+      cube.joinBy = joinBy;
+    }
+  }
+
   draft.chartConfigs[index] = withFilters;
 
   return draft;
