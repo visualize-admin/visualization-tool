@@ -136,7 +136,7 @@ Object {
     const options = {
       options: [
         {
-          type: "temporal",
+          type: "temporal" as const,
           id: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr" as ComponentId,
           originalIds: [
             {
@@ -157,7 +157,7 @@ Object {
             {
               iri: "https://ld.admin.ch/dimension/canton",
               label: "Cantons",
-              __typename: "Termset",
+              __typename: "Termset" as const,
             },
           ],
           originalIds: [
@@ -198,7 +198,11 @@ Object {
             label: "Canton",
             timeUnit: "",
             termsets: [
-              { iri: "https://ld.admin.ch/dimension/canton", label: "Cantons" },
+              {
+                iri: "https://ld.admin.ch/dimension/canton",
+                label: "Cantons",
+                __typename: "Termset",
+              },
             ],
           },
         ],
