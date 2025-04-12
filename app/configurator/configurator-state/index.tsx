@@ -399,6 +399,7 @@ export const removeDatasetInConfig = function (
   for (const cube of withFilters.cubes) {
     const joinBy = joinByByCubes[cube.iri];
     if (joinBy) {
+      // TODO Should there be dimensions in the joinBy that should be removed ?
       cube.joinBy = joinBy;
     }
   }
