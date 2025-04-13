@@ -155,7 +155,7 @@ const createColoredConsole = (
 };
 
 // URL handling
-const urlPattern = /https?:\/\/[^\s"]+/g;
+const urlPattern = /(https?:\/\/[^\s"]+)|(joinBy__\d+)/g;
 const urlHandler = (url: string, colorizeText: (str: string) => string) => {
   if (isComponentId(url)) {
     const parsed = parseComponentId(url);
