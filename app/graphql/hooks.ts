@@ -25,6 +25,7 @@ import {
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
 } from "./query-hooks";
+import { truthy } from "@/domain/types";
 
 const useQueryKey = (options: object) => {
   return useMemo(() => {
@@ -183,6 +184,13 @@ export const executeDataCubesComponentsQuery = async (
   onFetching?: () => void
 ) => {
   const { locale, sourceType, sourceUrl, cubeFilters } = variables;
+  const joinBy = Object.fromEntries(
+    cubeFilters
+      .map((x) => {
+        return [x.iri, x.joinBy];
+      })
+      .filter(truthy)
+  );
   const queries = await Promise.all(
     cubeFilters.map((cubeFilter) => {
       const cubeVariables = {
@@ -239,20 +247,20 @@ export const executeDataCubesComponentsQuery = async (
           }
         : {
             dataCubesComponents: {
-              dimensions: joinDimensions(
-                queries.map((q) => {
-                  const dataCubeComponents = q.data?.dataCubeComponents;
-                  const joinBy = q.operation.variables?.cubeFilter.joinBy;
-                  assert(
-                    dataCubeComponents !== undefined,
-                    "Undefined dataCubeComponents"
-                  );
-                  return {
-                    dataCubeComponents,
-                    joinBy,
-                  };
-                })
-              ),
+              dimensions: joinDimensions({
+                joinBy,
+                dimensions: queries
+                  .map((q) => {
+                    const dataCubeComponents = q.data?.dataCubeComponents;
+                    assert(
+                      dataCubeComponents !== undefined,
+                      "Undefined dataCubeComponents"
+                    );
+                    return dataCubeComponents.dimensions;
+                  })
+                  .filter(truthy)
+                  .flat(),
+              }),
               measures: queries.flatMap((q) => {
                 const measures = q.data?.dataCubeComponents.measures;
                 assert(measures !== undefined, "Undefined measures");

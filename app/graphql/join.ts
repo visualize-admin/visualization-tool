@@ -21,6 +21,7 @@ import {
   Exact,
 } from "@/graphql/query-hooks";
 import { assert } from "@/utils/assert";
+import { JoinBy } from "@/configurator/components/add-dataset-dialog/infer-join-by";
 
 const JOIN_BY_CUBE_IRI = "joinBy";
 
@@ -69,33 +70,32 @@ const dimensionValueSorter = (
 /** Use to exclude joinBy dimensions when fetching dimensions, and create
  * a new joinBy dimension with values from all joinBy dimensions.
  */
-export const joinDimensions = (
-  fetchedDataCubeComponents: {
-    dataCubeComponents: DataCubeComponentsQuery["dataCubeComponents"];
-    joinBy: string[] | undefined | null;
-  }[]
-) => {
+export const joinDimensions = (options: {
+  dimensions: DataCubeComponentsQuery["dataCubeComponents"]["dimensions"];
+  joinBy: JoinBy;
+}) => {
   const joinByDimensions: (Dimension & { joinByIndex: undefined | number })[] =
     [];
   const dimensions: Dimension[] = [];
 
-  for (const { dataCubeComponents, joinBy } of fetchedDataCubeComponents) {
-    const { dimensions: queryDimensions } = dataCubeComponents;
-    const {
-      false: queryNormalDimensions = [],
-      true: queryJoinByDimensions = [],
-    } = groupBy(
-      queryDimensions.map((d) => {
-        return { ...d, joinByIndex: joinBy?.indexOf(d.id) };
-      }),
-      (d) => d.joinByIndex !== undefined && d.joinByIndex >= 0
-    );
+  const { dimensions: fetchedDimensions, joinBy } = options;
 
-    joinByDimensions.push(...queryJoinByDimensions);
-    dimensions.push(
-      ...queryNormalDimensions.map((x) => omit(x, ["joinByIndex"]) as Dimension)
-    );
-  }
+  const {
+    false: queryNormalDimensions = [],
+    true: queryJoinByDimensions = [],
+  } = groupBy(
+    fetchedDimensions.map((d) => {
+      const cubeJoinBy = joinBy[d.cubeIri];
+      const joinByIndex = cubeJoinBy?.indexOf(d.id as ComponentId);
+      return { ...d, joinByIndex };
+    }),
+    (d) => d.joinByIndex !== undefined && d.joinByIndex >= 0
+  );
+
+  joinByDimensions.push(...queryJoinByDimensions);
+  dimensions.push(
+    ...queryNormalDimensions.map((x) => omit(x, ["joinByIndex"]) as Dimension)
+  );
 
   if (joinByDimensions.length >= 1) {
     for (const [index, joinedDimensions] of Object.entries(

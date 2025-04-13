@@ -148,22 +148,10 @@ const PreviewDataTable = ({
       shouldIncludeColumnInPreview(x)
     );
 
-    const joinedColumns = joinDimensions([
-      {
-        dataCubeComponents: {
-          dimensions: currentDimensions,
-          measures: [],
-        },
-        joinBy: inferredJoinBy.left,
-      },
-      {
-        dataCubeComponents: {
-          dimensions: otherDimensions,
-          measures: [],
-        },
-        joinBy: inferredJoinBy.right,
-      },
-    ]);
+    const joinedColumns = joinDimensions({
+      dimensions: [...currentDimensions, ...otherDimensions],
+      joinBy: inferredJoinBy,
+    });
 
     const {
       join: joinedJoinDimensions = [],
