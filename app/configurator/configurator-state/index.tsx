@@ -34,7 +34,6 @@ import { getEnabledChartTypes, getInitialConfig } from "@/charts";
 import { deriveFiltersFromFields } from "@/configurator/configurator-state/reducer";
 import { getInitialConfiguringConfigBasedOnCube } from "@/configurator/configurator-state/initial";
 import { Locale } from "@/locales/locales";
-import { indexBy } from "lodash";
 
 export {
   ConfiguratorStateProvider,

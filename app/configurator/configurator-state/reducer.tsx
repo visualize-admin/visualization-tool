@@ -15,11 +15,9 @@ import { Reducer } from "use-immer";
 
 import {
   getChartConfigAdjustedToChartType,
-  getEnabledChartTypes,
   getFieldComponentIds,
   getGroupedFieldIds,
   getHiddenFieldIds,
-  getInitialConfig,
 } from "@/charts";
 import {
   getChartFieldChangeSideEffect,
