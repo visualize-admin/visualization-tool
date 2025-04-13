@@ -57,6 +57,15 @@ export const getOriginalDimension = (dim: JoinByComponent, cube: Cube) => {
   };
 };
 
+const dimensionValueSorter = (
+  a: Dimension["values"][number],
+  b: Dimension["values"][number]
+) =>
+  ascending(
+    a.position ?? a.value ?? undefined,
+    b.position ?? b.value ?? undefined
+  );
+
 /** Use to exclude joinBy dimensions when fetching dimensions, and create
  * a new joinBy dimension with values from all joinBy dimensions.
  */
@@ -97,12 +106,7 @@ export const joinDimensions = (
         values: uniqBy(
           joinedDimensions
             .flatMap((d) => d.values ?? [])
-            .sort((a, b) =>
-              ascending(
-                a.position ?? a.value ?? undefined,
-                b.position ?? b.value ?? undefined
-              )
-            ),
+            .sort(dimensionValueSorter),
           (x) => x.value
         ),
         id: mkJoinById(Number(index)),
