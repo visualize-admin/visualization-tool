@@ -156,10 +156,7 @@ const createColoredConsole = (
 
 // URL handling
 const urlPattern = /https?:\/\/[^\s"]+/g;
-const componentUrlHandler = (
-  url: string,
-  colorizeText: (str: string) => string
-) => {
+const urlHandler = (url: string, colorizeText: (str: string) => string) => {
   if (isComponentId(url)) {
     const parsed = parseComponentId(url);
     return stringifyComponentId({
@@ -175,5 +172,5 @@ const componentUrlHandler = (
 // Set up colored console with URL matcher
 export const logger = createColoredConsole(console.log, {
   palette: schemeCategory10,
-  matchers: [{ pattern: urlPattern, handler: componentUrlHandler }],
+  matchers: [{ pattern: urlPattern, handler: urlHandler }],
 });
