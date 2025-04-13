@@ -52,12 +52,14 @@ import {
   isTemporalDimensionWithTimeUnit,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { useDataCubesComponentsQuery } from "@/graphql/hooks";
+import {
+  useDataCubesComponentsQuery,
+  useDataCubesComponentTermsetsQuery,
+} from "@/graphql/hooks";
 import { ComponentId, parseComponentId } from "@/graphql/make-component-id";
 import {
   SearchCubeFilterType,
   SearchCubeResultOrder,
-  useDataCubeComponentTermsetsQuery,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
 import SvgIcClose from "@/icons/components/IcClose";
@@ -70,6 +72,7 @@ import { useEventEmitter } from "@/utils/eventEmitter";
 import useEvent from "@/utils/use-event";
 
 import useStyles from "./use-styles";
+import { groupBy } from "lodash";
 
 const DialogCloseButton = (props: IconButtonProps) => {
   return (
@@ -94,7 +97,12 @@ const extractSearchOptions = (
   const temporalDimensions =
     dimensions.filter(isTemporalDimensionWithTimeUnit) ?? [];
   const sharedDimensions = termsets ?? [];
+  const sharedDimensionsByFirstTermset = groupBy(
+    sharedDimensions,
+    (x) => x.termsets[0].iri
+  );
   const sharedDimensionIds = sharedDimensions.map((dim) => dim.iri);
+  const sharedDimensionHasBeenAdded = new Set();
 
   return [
     ...temporalDimensions
@@ -119,20 +127,29 @@ const extractSearchOptions = (
     ...sharedDimensions
       .map((x) => {
         const parsedIri = parseComponentId(x.iri as ComponentId);
-        if (!parsedIri) {
+        const firstTermset = x.termsets[0].iri;
+        const hasBeenAdded = sharedDimensionHasBeenAdded.has(firstTermset);
+        if (!parsedIri || hasBeenAdded) {
           return;
         }
+
+        sharedDimensionHasBeenAdded.add(firstTermset);
+
+        const allDimensions = sharedDimensionsByFirstTermset[firstTermset];
+        const label = allDimensions.map((d) => d.label).join(", ");
+        const originalIds = allDimensions.map((ct) => {
+          return {
+            cubeIri: ct.cubeIri,
+            dimensionId: ct.iri as ComponentId,
+          };
+        });
+
         return {
           type: "shared" as const,
           id: x.iri,
-          label: x.label,
+          label: label,
           termsets: x.termsets,
-          originalIds: [
-            {
-              cubeIri: x.cubeIri,
-              dimensionId: x.iri as ComponentId,
-            },
-          ],
+          originalIds,
         };
       })
       .filter(truthy),
@@ -178,15 +195,13 @@ const useMergeDatasetsData = ({
 
   // Getting cube termsets, to then search for cubes with at least one matching termset
   // TODO The cube filters should use all of the cubes and not just the first one
-  const [cubeComponentTermsets] = useDataCubeComponentTermsetsQuery({
+  const [cubeComponentTermsets] = useDataCubesComponentTermsetsQuery({
     pause: pause,
     variables: {
       locale,
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
-      cubeFilter: {
-        iri: currentCubes[0].iri,
-      },
+      cubeFilters: currentCubes.map((cube) => ({ iri: cube.iri })),
     },
   });
 

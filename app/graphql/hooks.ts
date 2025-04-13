@@ -16,6 +16,9 @@ import {
   DataCubeComponentsDocument,
   DataCubeComponentsQuery,
   DataCubeComponentsQueryVariables,
+  DataCubeComponentTermsetsDocument,
+  DataCubeComponentTermsetsQuery,
+  DataCubeComponentTermsetsQueryVariables,
   DataCubeMetadataDocument,
   DataCubeMetadataFilter,
   DataCubeMetadataQuery,
@@ -429,4 +432,85 @@ export const useConfigsCubeComponents = makeUseQuery<
   Awaited<ReturnType<typeof executeFetchAllUsedCubeComponents>>["data"]
 >({
   fetch: executeFetchAllUsedCubeComponents,
+});
+
+type DataCubesComponentTermsetsOptions = {
+  variables: Omit<DataCubeComponentTermsetsQueryVariables, "cubeFilter"> & {
+    cubeFilters: DataCubeObservationFilter[];
+  };
+  pause?: boolean;
+};
+
+/**
+ * Fetches all cubes termsets in one go.
+ */
+export const executeDataCubesTermsetsQuery = async (
+  client: Client,
+  variables: DataCubesComponentTermsetsOptions["variables"],
+  /** Callback triggered when data fetching starts (cache miss). */
+  onFetching?: () => void
+) => {
+  const { locale, sourceType, sourceUrl, cubeFilters } = variables;
+
+  const queries = await Promise.all(
+    cubeFilters.map((cubeFilter) => {
+      const cubeVariables = { locale, sourceType, sourceUrl, cubeFilter };
+
+      // Try to read from cache first
+      const cached = client.readQuery<
+        DataCubeComponentTermsetsQuery,
+        DataCubeComponentTermsetsQueryVariables
+      >(DataCubeComponentTermsetsDocument, cubeVariables);
+
+      if (cached) {
+        return Promise.resolve(cached);
+      }
+
+      onFetching?.();
+
+      // If not in cache, execute the query
+      return client
+        .query<
+          DataCubeComponentTermsetsQuery,
+          DataCubeComponentTermsetsQueryVariables
+        >(DataCubeComponentTermsetsDocument, cubeVariables)
+        .toPromise();
+    })
+  );
+
+  const error = queries.find((q) => q.error)?.error;
+  const fetching = !error && queries.some((q) => !q.data);
+
+  if (error || fetching) {
+    return {
+      data: undefined,
+      error,
+      fetching,
+    };
+  }
+
+  const termsets =
+    // If we are fetching data from multiple cubes, we need to merge them into one
+    (
+      queries.length > 1
+        ? queries.map((q) => q.data?.dataCubeComponentTermsets).flat()
+        : // If we are fetching data from a single cube, we can just return the data
+          queries[0].data?.dataCubeComponentTermsets!
+    ).filter(truthy);
+
+  console.log("TERMSETS", termsets);
+  return {
+    data: {
+      dataCubeComponentTermsets: termsets,
+    },
+    error,
+    fetching,
+  };
+};
+
+export const useDataCubesComponentTermsetsQuery = makeUseQuery<
+  DataCubesComponentTermsetsOptions,
+  Awaited<ReturnType<typeof executeDataCubesTermsetsQuery>>["data"]
+>({
+  fetch: executeDataCubesTermsetsQuery,
 });
