@@ -80,17 +80,49 @@ export const joinDimensions = (options: {
 
   const { dimensions: fetchedDimensions, joinBy } = options;
 
+  const dimensionsWithJoinByIndex = fetchedDimensions.flatMap(
+    (d): (Dimension & { joinByIndex: number | undefined })[] => {
+      // Extracts out the joinBy dimensions from the fetched dimensions
+      if (isJoinByComponent(d)) {
+        const index = getJoinByIdIndex(d.id);
+        const label = d.label.split(", ");
+        return d.originalIds.map(
+          (originalId, i) =>
+            ({
+              ...omit(d, ["originalIds"]),
+              originalIds: [],
+              dimensionId: originalId.dimensionId,
+              id: originalId.dimensionId,
+              label: label[i],
+              cubeIri: originalId.cubeIri,
+              joinByIndex: index!,
+
+              // Not sure why we have to do a type assertion here :-(
+            }) as Dimension & {
+              joinByIndex: number;
+            }
+        );
+      } else {
+        const cubeJoinBy = joinBy[d.cubeIri];
+        const joinByIndex = cubeJoinBy?.indexOf(d.id as ComponentId);
+        return [
+          {
+            ...d,
+            joinByIndex:
+              // Set it directly to undefined if === -1
+              joinByIndex !== undefined && joinByIndex > -1
+                ? joinByIndex
+                : undefined,
+          },
+        ];
+      }
+    }
+  );
+
   const {
     false: queryNormalDimensions = [],
     true: queryJoinByDimensions = [],
-  } = groupBy(
-    fetchedDimensions.map((d) => {
-      const cubeJoinBy = joinBy[d.cubeIri];
-      const joinByIndex = cubeJoinBy?.indexOf(d.id as ComponentId);
-      return { ...d, joinByIndex };
-    }),
-    (d) => d.joinByIndex !== undefined && d.joinByIndex >= 0
-  );
+  } = groupBy(dimensionsWithJoinByIndex, (d) => d.joinByIndex !== undefined);
 
   joinByDimensions.push(...queryJoinByDimensions);
   dimensions.push(
@@ -102,7 +134,10 @@ export const joinDimensions = (options: {
       groupBy(joinByDimensions, (d) => d.joinByIndex)
     ).reverse()) {
       const joinByDimension: Dimension = {
-        ...(omit(joinedDimensions[0], ["joinByIndex"]) as Dimension),
+        ...(omit(joinedDimensions[0], [
+          "joinByIndex",
+          "dimensionId",
+        ]) as Dimension),
         values: uniqBy(
           joinedDimensions
             .flatMap((d) => d.values ?? [])

@@ -709,4 +709,263 @@ describe("joinDimensions", () => {
       ]
     `);
   });
+
+  it("should join dimensions (more than 1 cube)", () => {
+    const dimensions = [
+      {
+        __typename: "TemporalDimension" as const,
+        timeFormat: "%Y",
+        timeUnit: TimeUnit.Year,
+        cubeIri: "joinBy",
+        id: "joinBy__0",
+        label: "Jahr der Vergütung, Period",
+        description: "Jahr, in welchem die EIV ausbezahlt wurde",
+        unit: "a",
+        scaleType: ScaleType.Interval,
+        dataType: "http://www.w3.org/2001/XMLSchema#gYear",
+        order: 1,
+        isNumerical: false,
+        isKeyDimension: true,
+        values: [],
+        related: [],
+        relatedLimitValues: [],
+        hierarchy: null,
+        isJoinByDimension: true as const,
+        originalIds: [
+          {
+            cubeIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+            dimensionId:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr" as ComponentId,
+            label: "Jahr der Vergütung",
+            description: "Jahr, in welchem die EIV ausbezahlt wurde",
+          },
+          {
+            cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+            dimensionId:
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period" as ComponentId,
+            label: "Period",
+            description: "",
+          },
+        ],
+      },
+      {
+        __typename: "GeoShapesDimension" as const,
+        cubeIri: "joinBy",
+        id: "joinBy__1",
+        label: "Kanton, Canton",
+        description: "Kanton, in welchem die geförderten Anlagen stehen",
+        scaleType: ScaleType.Nominal,
+        order: 2,
+        isNumerical: false,
+        isKeyDimension: true,
+        values: [],
+        related: [],
+        relatedLimitValues: [],
+        hierarchy: null,
+        isJoinByDimension: true as const,
+        originalIds: [
+          {
+            cubeIri:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+            dimensionId:
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton" as ComponentId,
+            label: "Kanton",
+            description: "Kanton, in welchem die geförderten Anlagen stehen",
+          },
+          {
+            cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+            dimensionId:
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton" as ComponentId,
+            label: "Canton",
+            description: "",
+          },
+        ],
+      },
+      {
+        __typename: "NominalDimension" as const,
+        cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        id: "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/category" as ComponentId,
+        label: "Consumption profiles of typical households",
+        scaleType: ScaleType.Nominal,
+        isNumerical: false,
+        isKeyDimension: true,
+        values: [],
+        related: [],
+        relatedLimitValues: [],
+        hierarchy: null,
+      },
+      {
+        __typename: "NominalDimension" as const,
+        cubeIri: "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        id: "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/product" as ComponentId,
+        label: "Product",
+        scaleType: ScaleType.Nominal,
+        isNumerical: false,
+        isKeyDimension: true,
+        values: [],
+        related: [],
+        relatedLimitValues: [],
+        hierarchy: null,
+      },
+      {
+        __typename: "TemporalDimension" as const,
+        timeFormat: "%Y",
+        timeUnit: TimeUnit.Year,
+        cubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/18",
+        id: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/Jahr" as ComponentId,
+        label: "Jahr",
+        unit: "a",
+        scaleType: ScaleType.Interval,
+        dataType: "http://www.w3.org/2001/XMLSchema#gYear",
+        order: 1,
+        isNumerical: false,
+        isKeyDimension: true,
+        values: [],
+        related: [],
+        relatedLimitValues: [],
+        hierarchy: null,
+      },
+      {
+        __typename: "GeoShapesDimension" as const,
+        cubeIri:
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/18",
+        id: "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/region" as ComponentId,
+        label: "Kanton",
+        scaleType: ScaleType.Nominal,
+        order: 2,
+        isNumerical: false,
+        isKeyDimension: true,
+        values: [],
+        related: [],
+        relatedLimitValues: [],
+        hierarchy: null,
+      },
+    ] satisfies DataCubeComponentsQuery["dataCubeComponents"]["dimensions"];
+
+    const joinBy = {
+      "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10":
+        [
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr" as ComponentId,
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton" as ComponentId,
+        ],
+      "https://energy.ld.admin.ch/elcom/electricityprice-canton": [
+        "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period" as ComponentId,
+        "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton" as ComponentId,
+      ],
+      "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/18":
+        [
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/Jahr" as ComponentId,
+          "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/region" as ComponentId,
+        ],
+    } satisfies JoinBy;
+
+    const result = joinDimensions({
+      joinBy,
+      dimensions,
+    });
+    expect(result).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "__typename": "TemporalDimension",
+    "cubeIri": "joinBy",
+    "dataType": "http://www.w3.org/2001/XMLSchema#gYear",
+    "description": "Jahr, in welchem die EIV ausbezahlt wurde",
+    "hierarchy": null,
+    "id": "joinBy__0",
+    "isJoinByDimension": true,
+    "isKeyDimension": true,
+    "isNumerical": false,
+    "label": "Jahr der Vergütung, Period, Jahr",
+    "order": 1,
+    "originalIds": Array [
+      Object {
+        "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+        "description": "Jahr, in welchem die EIV ausbezahlt wurde",
+        "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
+        "label": "Jahr der Vergütung",
+      },
+      Object {
+        "cubeIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        "description": "Jahr, in welchem die EIV ausbezahlt wurde",
+        "dimensionId": "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+        "label": "Period",
+      },
+      Object {
+        "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/18",
+        "description": "",
+        "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/Jahr",
+        "label": "Jahr",
+      },
+    ],
+    "related": Array [],
+    "scaleType": "Interval",
+    "timeFormat": "%Y",
+    "timeUnit": "Year",
+    "unit": "a",
+    "values": Array [],
+  },
+  Object {
+    "__typename": "GeoShapesDimension",
+    "cubeIri": "joinBy",
+    "description": "Kanton, in welchem die geförderten Anlagen stehen",
+    "hierarchy": null,
+    "id": "joinBy__1",
+    "isJoinByDimension": true,
+    "isKeyDimension": true,
+    "isNumerical": false,
+    "label": "Kanton, Canton",
+    "order": 2,
+    "originalIds": Array [
+      Object {
+        "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+        "description": "Kanton, in welchem die geförderten Anlagen stehen",
+        "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
+        "label": "Kanton",
+      },
+      Object {
+        "cubeIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+        "description": "Kanton, in welchem die geförderten Anlagen stehen",
+        "dimensionId": "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
+        "label": "Canton",
+      },
+      Object {
+        "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/18",
+        "description": "",
+        "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/region",
+        "label": "Kanton",
+      },
+    ],
+    "related": Array [],
+    "scaleType": "Nominal",
+    "values": Array [],
+  },
+  Object {
+    "__typename": "NominalDimension",
+    "cubeIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+    "hierarchy": null,
+    "id": "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
+    "isKeyDimension": true,
+    "isNumerical": false,
+    "label": "Consumption profiles of typical households",
+    "related": Array [],
+    "scaleType": "Nominal",
+    "values": Array [],
+  },
+  Object {
+    "__typename": "NominalDimension",
+    "cubeIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
+    "hierarchy": null,
+    "id": "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/product",
+    "isKeyDimension": true,
+    "isNumerical": false,
+    "label": "Product",
+    "related": Array [],
+    "scaleType": "Nominal",
+    "values": Array [],
+  },
+]
+`);
+  });
 });
