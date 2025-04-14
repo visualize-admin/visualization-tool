@@ -13,17 +13,18 @@ import {
   Grow,
   IconButton,
   IconButtonProps,
+  Input,
   ListItemText,
   MenuItem,
   Select,
   SelectChangeEvent,
   Typography,
   useEventCallback,
-  Input,
 } from "@mui/material";
+import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import uniq from "lodash/uniq";
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   DatasetResults,
@@ -34,6 +35,7 @@ import {
 } from "@/browser/dataset-browse";
 import Flex from "@/components/flex";
 import Tag from "@/components/tag";
+import VisuallyHidden from "@/components/visually-hidden";
 import { ConfiguratorStateConfiguringChart } from "@/config-types";
 import {
   CautionAlert,
@@ -43,6 +45,7 @@ import { inferJoinBy } from "@/configurator/components/add-dataset-dialog/infer-
 import PreviewDataTable from "@/configurator/components/add-dataset-dialog/preview-table";
 import { SearchOptions } from "@/configurator/components/add-dataset-dialog/types";
 import useAddDataset from "@/configurator/components/add-dataset-dialog/use-add-dataset";
+import { RightDrawer } from "@/configurator/components/drawers";
 import {
   ComponentTermsets,
   Dimension,
@@ -59,18 +62,14 @@ import {
   SearchCubeResultOrder,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
+import { Icon } from "@/icons";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
-import useEvent from "@/utils/use-event";
 
 import useStyles from "./use-styles";
-import groupBy from "lodash/groupBy";
-import { RightDrawer } from "@/configurator/components/drawers";
-import VisuallyHidden from "@/components/visually-hidden";
-import { Icon } from "@/icons";
 
 const DialogCloseButton = (props: IconButtonProps) => {
   return (
