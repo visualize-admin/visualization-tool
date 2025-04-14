@@ -7,6 +7,7 @@ import {
   DataCubeMetadata,
   DataCubesObservations,
 } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { Locale } from "@/locales/locales";
 import { assert } from "@/utils/assert";
 
@@ -28,7 +29,6 @@ import {
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
 } from "./query-hooks";
-import { truthy } from "@/domain/types";
 
 const useQueryKey = (options: object) => {
   return useMemo(() => {

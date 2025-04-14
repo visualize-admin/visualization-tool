@@ -176,8 +176,7 @@ const PreviewDataTable = ({
   }, [
     currentComponents?.dimensions,
     currentComponents?.measures,
-    inferredJoinBy.left,
-    inferredJoinBy.right,
+    inferredJoinBy,
     otherCube.iri,
     otherCubeComponents?.dimensions,
     otherCubeComponents?.measures,

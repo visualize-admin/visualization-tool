@@ -1,12 +1,15 @@
-import { truthy } from "@/domain/types";
-import { schemeCategory10 } from "d3-scale-chromatic";
+import * as fs from "fs";
+
 import { color as d3color } from "d3-color";
+import { schemeCategory10 } from "d3-scale-chromatic";
+
+import { truthy } from "@/domain/types";
 import {
   isComponentId,
   parseComponentId,
   stringifyComponentId,
 } from "@/graphql/make-component-id";
-import * as fs from "fs";
+
 
 // ANSI color control functions
 const rgbControlSegment = (r: number, g: number, b: number) => {

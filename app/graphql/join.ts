@@ -6,6 +6,7 @@ import uniqBy from "lodash/uniqBy";
 import { OperationResult } from "urql";
 
 import { ChartConfig, Cube } from "@/config-types";
+import { JoinBy } from "@/configurator/components/add-dataset-dialog/infer-join-by";
 import {
   Dimension,
   isJoinByComponent,
@@ -21,7 +22,6 @@ import {
   Exact,
 } from "@/graphql/query-hooks";
 import { assert } from "@/utils/assert";
-import { JoinBy } from "@/configurator/components/add-dataset-dialog/infer-join-by";
 
 const JOIN_BY_CUBE_IRI = "joinBy";
 

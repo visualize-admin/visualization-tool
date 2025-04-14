@@ -52,12 +52,12 @@ import { getChartConfig, makeMultiFilter } from "@/config-utils";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   addDatasetInConfig,
-  removeDatasetInConfig,
   getPreviousState,
   getStateWithCurrentDataSource,
   hasChartConfigs,
   isConfiguring,
   isLayouting,
+  removeDatasetInConfig,
 } from "@/configurator/configurator-state";
 import { ConfiguratorStateAction } from "@/configurator/configurator-state/actions";
 import {

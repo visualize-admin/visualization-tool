@@ -10,7 +10,6 @@ import {
   DialogContent,
   DialogProps,
   DialogTitle,
-  DrawerProps,
   Grow,
   IconButton,
   IconButtonProps,
@@ -72,7 +71,7 @@ import { useEventEmitter } from "@/utils/eventEmitter";
 import useEvent from "@/utils/use-event";
 
 import useStyles from "./use-styles";
-import { groupBy } from "lodash";
+import groupBy from "lodash/groupBy";
 
 const DialogCloseButton = (props: IconButtonProps) => {
   return (
@@ -355,7 +354,7 @@ export const DatasetDialog = ({
         );
       });
     }
-  }, [rawSearchCubes]);
+  }, [rawSearchCubes, currentCubes.length, selectedSearchDimensions]);
 
   const handleChangeSearchDimensions = (ev: SelectChangeEvent<string[]>) => {
     const {
