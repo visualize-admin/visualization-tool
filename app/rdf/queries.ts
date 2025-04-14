@@ -97,29 +97,41 @@ export const getCubeDimensions = async ({
       (d) => d.iri.value
     );
 
-    return (
-      await Promise.all(
-        dimensions.map(async (dim) => {
-          return parseCubeDimension({
-            dim,
-            cube,
-            locale,
-            units: dimensionUnitIndex,
-            limits: await getDimensionLimits(dim, {
-              locale,
-              unversionedCubeIri,
-              sparqlClient,
-            }),
-          });
-        })
-      )
-    ).sort((a, b) => ascending(a.data.order, b.data.order));
+    const limits = await createCubeDimensionLimitsLoader({
+      locale,
+      unversionedCubeIri,
+      sparqlClient,
+    })(dimensions);
+
+    return dimensions
+      .map((dim, i) => {
+        return parseCubeDimension({
+          dim,
+          cube,
+          locale,
+          units: dimensionUnitIndex,
+          limits: limits[i],
+        });
+      })
+      .sort((a, b) => ascending(a.data.order, b.data.order));
   } catch (e) {
     console.error(e);
 
     return [];
   }
 };
+
+export const createCubeDimensionLimitsLoader =
+  (options: {
+    locale: string;
+    unversionedCubeIri: string;
+    sparqlClient: ParsingClient;
+  }) =>
+  async (dimensions: readonly CubeDimension[]) => {
+    return Promise.all(
+      dimensions.map((dimension) => getDimensionLimits(dimension, options))
+    );
+  };
 
 export const createCubeDimensionValuesLoader =
   (
