@@ -55,20 +55,20 @@ page with two iframes containing chart previews. The second iframe gets the
 chart state from posting a message to the iframe window.
 
 This method works by pointing an iframe to the `/preview` page, and posting a
-message with the chart state to the iframe window on load.
+message with the chart state to the iframe window when ready.
 
 <CodeSpecimen
   lang="js"
   raw
   rawBody={`const iframe = document.getElementById("chart");
-iframe.onload = () => {
-  const iframeWindow = iframe?.contentWindow;
-  if (iframeWindow) {
-    iframeWindow.postMessage(configuratorState, "*");
+const handleMessage = (e) => {
+  if (e.data?.type === "ready" && e.source === iframe.contentWindow) {
+    iframe.contentWindow?.postMessage(configuratorState, "*");
+    window.removeEventListener("message", handleMessage);
   }
 };
-`}
-/>
+
+window.addEventListener("message", handleMessage);; `} />
 
 ### Controlling the language
 

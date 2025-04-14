@@ -97,6 +97,12 @@ export default function Preview({ configuratorState }: PageProps) {
   const state = useStore(chartStateStore, (d) => d.state);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.parent?.postMessage({ type: "ready" }, "*");
+    }
+  }, []);
+
+  useEffect(() => {
     if (configuratorState) {
       chartStateStore.setState({ state: JSON.parse(configuratorState) });
     }
