@@ -873,7 +873,7 @@ const ChartLimits = ({
                 </Box>
                 {limit.type === "single" && supportsLimitSymbols ? (
                   <div>
-                    <Typography variant="body2" sx={{ mb: 2 }}>
+                    <Typography variant="h6" component="p" sx={{ mb: 2 }}>
                       <Trans id="controls.section.targets-and-limit-values.symbol-type">
                         Select symbol type
                       </Trans>
@@ -925,7 +925,7 @@ const ChartLimits = ({
                 ) : null}
                 {limit.type === "range" ? (
                   <div>
-                    <Typography variant="body2" sx={{ mb: 2 }}>
+                    <Typography variant="body3" component="p" sx={{ mb: 2 }}>
                       <Trans id="controls.section.targets-and-limit-values.line-type">
                         Select line type
                       </Trans>
