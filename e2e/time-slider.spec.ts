@@ -16,8 +16,8 @@ test("is should be possible to use time slider", async ({
     .locator(".MuiSlider-thumb")
     .boundingBox()
     .then((box) => box.x);
-  const firstMark = page.locator(".MuiSlider-mark").nth(2);
-  await firstMark.click();
+  const secondMark = page.locator(".MuiSlider-mark").nth(2);
+  await secondMark.click();
   const thumbX1 = await page
     .locator(".MuiSlider-thumb")
     .boundingBox()
