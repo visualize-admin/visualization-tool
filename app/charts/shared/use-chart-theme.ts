@@ -3,6 +3,8 @@ import { useMediaQuery } from "@mui/material";
 import { useTheme } from "../../themes";
 
 export const TICK_FONT_SIZE = 12;
+const AXIS_LABEL_FONT_SIZE_XXS = 12;
+const AXIS_LABEL_FONT_SIZE_XL = 14;
 
 export const useChartTheme = () => {
   const theme = useTheme();
@@ -16,7 +18,9 @@ export const useChartTheme = () => {
   const brushHandleFillColor = theme.palette.background.paper;
 
   const smallerTexts = useMediaQuery(theme.breakpoints.down("xl"));
-  const axisLabelFontSize = smallerTexts ? 12 : 14;
+  const axisLabelFontSize = smallerTexts
+    ? AXIS_LABEL_FONT_SIZE_XXS
+    : AXIS_LABEL_FONT_SIZE_XL;
 
   return {
     axisLabelFontSize,
