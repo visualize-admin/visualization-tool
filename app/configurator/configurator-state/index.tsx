@@ -23,12 +23,12 @@ import {
   getChartConfigFilters,
   isSingleFilters,
 } from "@/config-utils";
-import { JoinBy } from "@/configurator/components/add-dataset-dialog/infer-join-by";
 import { getInitialConfiguringConfigBasedOnCube } from "@/configurator/configurator-state/initial";
 import { deriveFiltersFromFields } from "@/configurator/configurator-state/reducer";
 import { Dimension, isJoinByComponent, ObservationValue } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { mkJoinById } from "@/graphql/join";
+import { JoinBy } from "@/graphql/join";
 import { Locale } from "@/locales/locales";
 import { getDataSourceFromLocalStorage } from "@/stores/data-source";
 import { getCachedComponents } from "@/urql-cache";

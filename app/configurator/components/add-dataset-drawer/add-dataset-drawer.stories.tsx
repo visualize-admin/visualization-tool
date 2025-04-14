@@ -3,7 +3,7 @@ import { Meta } from "@storybook/react";
 import { photovoltaikChartStateMock } from "@/configurator/components/add-dataset-drawer.mock";
 import { ConfiguratorStateProvider } from "@/src";
 
-import { DatasetDialog as AddDatasetDialogComponent } from "./add-dataset-dialog";
+import { AddDatasetDrawer as AddDatasetDrawer_ } from "./add-dataset-drawer";
 
 export const AddDatasetDrawer = () => {
   return (
@@ -11,13 +11,13 @@ export const AddDatasetDrawer = () => {
       chartId="testing"
       initialState={photovoltaikChartStateMock}
     >
-      <AddDatasetDialogComponent open state={photovoltaikChartStateMock} />
+      <AddDatasetDrawer_ open state={photovoltaikChartStateMock} />
     </ConfiguratorStateProvider>
   );
 };
 
 const meta: Meta = {
-  component: AddDatasetDialogComponent,
+  component: AddDatasetDrawer_,
   title: "Organisms / AddDatasetDrawer",
 };
 

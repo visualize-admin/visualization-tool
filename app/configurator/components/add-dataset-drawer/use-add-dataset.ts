@@ -6,13 +6,13 @@ import { PartialSearchCube } from "@/browser/dataset-browse";
 import { getEnabledChartTypes } from "@/charts";
 import { ConfiguratorStateConfiguringChart } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
-import { JoinBy } from "@/configurator/components/add-dataset-dialog/infer-join-by";
 import {
   addDatasetInConfig,
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
+import { JoinBy } from "@/graphql/join";
 import { useLocale } from "@/locales/use-locale";
 
 /**

@@ -6,7 +6,6 @@ import uniqBy from "lodash/uniqBy";
 import { OperationResult } from "urql";
 
 import { ChartConfig, Cube } from "@/config-types";
-import { JoinBy } from "@/configurator/components/add-dataset-dialog/infer-join-by";
 import {
   Dimension,
   isJoinByComponent,
@@ -235,4 +234,5 @@ export const mergeObservations = (
 
   // Extract observations from the merged object indexed by joinBy value
   return Object.values(merged);
-};
+}; /** cubeIri to dimensionIds */
+export type JoinBy = Record<string, ComponentId[]>;

@@ -1,6 +1,5 @@
 import { OperationResult } from "urql";
 
-import { JoinBy } from "@/configurator/components/add-dataset-dialog/infer-join-by";
 import { Dimension } from "@/domain/data";
 import { joinDimensions, mergeObservations } from "@/graphql/join";
 import { ComponentId, stringifyComponentId } from "@/graphql/make-component-id";
@@ -12,6 +11,8 @@ import {
   ScaleType,
   TimeUnit,
 } from "@/graphql/query-hooks";
+
+import { JoinBy } from "./join";
 
 type ObservationsQuery = OperationResult<
   DataCubeObservationsQuery,

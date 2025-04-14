@@ -37,14 +37,6 @@ import Flex from "@/components/flex";
 import Tag from "@/components/tag";
 import VisuallyHidden from "@/components/visually-hidden";
 import { ConfiguratorStateConfiguringChart } from "@/config-types";
-import {
-  CautionAlert,
-  useCautionAlert,
-} from "@/configurator/components/add-dataset-dialog/caution-alert";
-import { inferJoinBy } from "@/configurator/components/add-dataset-dialog/infer-join-by";
-import PreviewDataTable from "@/configurator/components/add-dataset-dialog/preview-table";
-import { SearchOptions } from "@/configurator/components/add-dataset-dialog/types";
-import useAddDataset from "@/configurator/components/add-dataset-dialog/use-add-dataset";
 import { RightDrawer } from "@/configurator/components/drawers";
 import {
   ComponentTermsets,
@@ -69,6 +61,11 @@ import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
 
+import { CautionAlert, useCautionAlert } from "./caution-alert";
+import { inferJoinBy } from "./infer-join-by";
+import PreviewDataTable from "./preview-table";
+import { SearchOptions } from "./types";
+import useAddDataset from "./use-add-dataset";
 import useStyles from "./use-styles";
 
 const DialogCloseButton = (props: IconButtonProps) => {
@@ -222,7 +219,7 @@ const isSharedDimension = (
   x: SearchDimension
 ): x is Extract<SearchDimension, { type: "shared" }> => x.type === "shared";
 
-export const DatasetDialog = ({
+export const AddDatasetDrawer = ({
   state,
   ...props
 }: {

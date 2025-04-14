@@ -1,8 +1,8 @@
 import { DataSource } from "@/config-types";
-import { JoinBy } from "@/configurator/components/add-dataset-dialog/infer-join-by";
 import { DataCubeComponents } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { client } from "@/graphql/client";
+import { JoinBy } from "@/graphql/join";
 import { joinDimensions } from "@/graphql/join";
 import {
   DataCubeComponentFilter,

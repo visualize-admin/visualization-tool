@@ -2,12 +2,10 @@
 import { groupBy, mapValues } from "lodash";
 
 import { PartialSearchCube } from "@/browser/dataset-browse";
-import { SearchOptions } from "@/configurator/components/add-dataset-dialog/types";
 import { truthy } from "@/domain/types";
-import { ComponentId } from "@/graphql/make-component-id";
+import { JoinBy } from "@/graphql/join";
 
-// cubeIri to dimensionIds
-export type JoinBy = Record<string, ComponentId[]>;
+import { SearchOptions } from "./types";
 
 export const findDimensionForOption = (
   option: SearchOptions,

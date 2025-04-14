@@ -14,8 +14,8 @@ import {
   Layout,
   Limit,
 } from "@/config-types";
-import { JoinBy } from "@/configurator/components/add-dataset-dialog/infer-join-by";
 import { DataCubeComponents, Dimension, DimensionValue } from "@/domain/data";
+import { JoinBy } from "@/graphql/join";
 import { Locale } from "@/locales/locales";
 
 export type ConfiguratorStateAction =

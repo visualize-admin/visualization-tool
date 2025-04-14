@@ -25,8 +25,7 @@ import { FirstTenRowsCaption } from "@/browser/dataset-preview";
 import { Error as ErrorHint, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
 import { DataSource } from "@/config-types";
-import { JoinBy } from "@/configurator/components/add-dataset-dialog/infer-join-by";
-import { SearchOptions } from "@/configurator/components/add-dataset-dialog/types";
+import { SearchOptions } from "@/configurator/components/add-dataset-drawer/types";
 import {
   Dimension,
   isJoinByComponent,
@@ -38,6 +37,7 @@ import {
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 import { joinDimensions } from "@/graphql/join";
+import { JoinBy } from "@/graphql/join";
 import {
   DataCubeComponentsQuery,
   useDataCubeComponentsQuery,

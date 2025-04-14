@@ -1,10 +1,10 @@
 import mapValues from "lodash/mapValues";
 
-import { SearchOptions } from "@/configurator/components/add-dataset-dialog/types";
 import { ComponentId, stringifyComponentId } from "@/graphql/make-component-id";
 import { DataCubePublicationStatus } from "@/graphql/query-hooks";
 
 import { inferJoinBy } from "./infer-join-by";
+import { SearchOptions } from "./types";
 
 const selectedSearchDimensions: SearchOptions[] = [
   {
