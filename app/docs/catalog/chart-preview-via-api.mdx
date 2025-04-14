@@ -30,18 +30,23 @@ While usually you'll want to publish your chart, sometimes you might want to
 simply preview it, without going through the publishing process. This could be
 especially helpful to programmatically generate charts based on many different
 configuration options. Visualize offers a way to preview charts without
-publishing them, by using a custom API or iframe query parameter.
+publishing them, by using a custom API or iframe hash parameter.
 
 ## iframe preview via query parameter
 
 **Demo**: Visit <a href="/_preview" target="_blank">`/_preview`</a> to see a
 page with two iframes containing chart previews. The first iframe gets the chart
-state a `state` query parameter.
+state via hash parameters.
+
+In order to get the parameters, you can use the "Copy preview link" button found
+in the editor or use the
+[objectToHashString](https://github.com/visualize-admin/visualization-tool/blob/main/app/utils/hash-utils.ts)
+function.
 
 ```html
 <iframe
   id="chart"
-  src="https://visualize.admin.ch/it/preview?state={JSON.stringify(photovoltaikanlagenState)}"
+  src="https://visualize.admin.ch/it/preview#hash-params"
   width="100%"
   height="500"
   frameborder="0"
