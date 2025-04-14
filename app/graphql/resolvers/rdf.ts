@@ -1,5 +1,6 @@
 import { ascending, descending } from "d3-array";
 import DataLoader from "dataloader";
+import groupBy from "lodash/groupBy";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { topology } from "topojson-server";
 import { LRUCache } from "typescript-lru-cache";
@@ -264,8 +265,11 @@ export const dataCubeComponents: NonNullable<
     componentIris,
     cache,
   });
-  const allRelatedLimitValues = rawComponents.flatMap((rc) =>
-    (rc.data.limits ?? []).flatMap((limit) => limit.related)
+  const allRelatedLimitValuesByDimensionId = groupBy(
+    rawComponents.flatMap((rc) =>
+      (rc.data.limits ?? []).flatMap((limit) => limit.related)
+    ),
+    (d) => d.dimensionId
   );
   const components = await Promise.all(
     rawComponents.map(async (component) => {
@@ -280,7 +284,6 @@ export const dataCubeComponents: NonNullable<
         cache,
         filters
       );
-
       const [rawValues, rawHierarchies] = await Promise.all(
         loadValues
           ? [
@@ -298,13 +301,13 @@ export const dataCubeComponents: NonNullable<
           b.position ?? b.value ?? undefined
         )
       );
-      const relatedLimitValues = allRelatedLimitValues
-        .filter((r) => r.dimensionId === id)
-        .map((r) => ({
-          value: r.value,
-          label: r.label,
-          position: r.position,
-        }));
+      const relatedLimitValues = (
+        allRelatedLimitValuesByDimensionId[id] ?? []
+      ).map((r) => ({
+        value: r.value,
+        label: r.label,
+        position: r.position,
+      }));
       const baseComponent: BaseComponent = {
         // We need to use original iri here, as the cube iri might have changed.
         cubeIri: iri,
