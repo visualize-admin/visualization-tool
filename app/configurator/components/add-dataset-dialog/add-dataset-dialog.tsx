@@ -1,31 +1,29 @@
 import { t, Trans } from "@lingui/macro";
-import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Button,
+  ButtonBase,
   Checkbox,
   CircularProgress,
   Collapse,
-  Dialog,
   DialogContent,
   DialogProps,
   DialogTitle,
+  Divider,
   Grow,
   IconButton,
   IconButtonProps,
-  InputAdornment,
   ListItemText,
   MenuItem,
-  OutlinedInput,
   Select,
   SelectChangeEvent,
-  TextField,
   Typography,
   useEventCallback,
+  Input,
 } from "@mui/material";
 import keyBy from "lodash/keyBy";
 import uniq from "lodash/uniq";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   DatasetResults,
@@ -62,9 +60,7 @@ import {
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
 import SvgIcClose from "@/icons/components/IcClose";
-import SvgIcFilter from "@/icons/components/IcFilter";
 import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
-import SvgIcSearch from "@/icons/components/IcSearch";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/eventEmitter";
@@ -72,6 +68,9 @@ import useEvent from "@/utils/use-event";
 
 import useStyles from "./use-styles";
 import groupBy from "lodash/groupBy";
+import { RightDrawer } from "@/configurator/components/drawers";
+import VisuallyHidden from "@/components/visually-hidden";
+import { Icon } from "@/icons";
 
 const DialogCloseButton = (props: IconButtonProps) => {
   return (
@@ -248,6 +247,7 @@ export const DatasetDialog = ({
   }
 
   const currentCubes = activeChartConfig.cubes;
+  console.log(currentCubes);
 
   const {
     dimensions,
@@ -354,7 +354,7 @@ export const DatasetDialog = ({
         );
       });
     }
-  }, [rawSearchCubes, currentCubes.length, selectedSearchDimensions]);
+  }, [rawSearchCubes, currentCubes, selectedSearchDimensions]);
 
   const handleChangeSearchDimensions = (ev: SelectChangeEvent<string[]>) => {
     const {
@@ -417,14 +417,30 @@ export const DatasetDialog = ({
     }, 100);
   });
 
+  const inputRef = useRef<HTMLInputElement>();
+
+  const handleKeyDown = useEventCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        setQuery(e.currentTarget.value);
+      }
+    }
+  );
+
+  const handleReset = useEventCallback(() => {
+    setQuery("");
+  });
+
   return (
-    <Dialog {...props} onClose={handleClose}>
+    <RightDrawer {...props} onClose={handleClose}>
       <Box className={classes.dialogCloseArea}>
         {otherCube ? null : (
           <Grow in={!isOpen}>
-            <IconButton onClick={() => open()}>
-              <SvgIcInfoCircle />
-            </IconButton>
+            <div>
+              <IconButton onClick={() => open()}>
+                <SvgIcInfoCircle />
+              </IconButton>
+            </div>
           </Grow>
         )}
         <DialogCloseButton
@@ -453,52 +469,40 @@ export const DatasetDialog = ({
                 current chart are selected.
               </Trans>
             </Typography>
-            <Box
-              display="flex"
-              alignItems="center"
-              component="form"
-              gap="0.5rem"
-              mb="1rem"
-              onSubmit={handleSubmit}
-            >
-              <TextField
-                size="small"
-                name="search"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SvgIcSearch />
-                    </InputAdornment>
-                  ),
-                }}
+            <Box display="flex" alignItems="center" gap="0.5rem" mb="1rem">
+              <Input
+                key={query}
+                id="search"
+                inputProps={{ ref: inputRef }}
+                defaultValue={query}
                 placeholder={t({ id: "dataset.search.placeholder" })}
+                autoComplete="off"
+                onKeyDown={handleKeyDown}
+                endAdornment={
+                  query !== "" ? (
+                    <ButtonBase data-testid="clearSearch" onClick={handleReset}>
+                      <VisuallyHidden>
+                        <Trans id="controls.search.clear">
+                          Clear search field
+                        </Trans>
+                      </VisuallyHidden>
+                      <Icon name="close" />
+                    </ButtonBase>
+                  ) : (
+                    <ButtonBase data-testid="submitSearch" type="submit">
+                      <VisuallyHidden>
+                        <Trans id="dataset.search.label">Search</Trans>
+                      </VisuallyHidden>
+                      <Icon name="search" />
+                    </ButtonBase>
+                  )
+                }
+                sx={{ width: "50%" }}
               />
               <Select
                 multiple
                 value={(selectedSearchDimensions ?? []).map((x) => x.id)}
                 onChange={handleChangeSearchDimensions}
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      width: 300,
-                      marginTop: "0.5rem",
-                      marginLeft: "-1rem",
-                    },
-                  },
-                }}
-                input={
-                  <OutlinedInput
-                    id="select-multiple-chip"
-                    label="Chip"
-                    notched={false}
-                    startAdornment={
-                      <InputAdornment position="start" sx={{ mr: 0 }}>
-                        <SvgIcFilter />
-                      </InputAdornment>
-                    }
-                    style={{ width: "100%" }}
-                  />
-                }
                 renderValue={(selected) =>
                   isMergeDatasetsDataFetching ? (
                     <CircularProgress size={12} />
@@ -512,11 +516,15 @@ export const DatasetDialog = ({
                     selected.map((id, i) => {
                       const value = searchDimensionOptionsById[id];
                       return i < 2 ? (
-                        <Tag key={value.id} type="dimension" sx={{ mr: 1 }}>
+                        <Tag
+                          key={value.id}
+                          type="dimension"
+                          sx={{ py: 0, mr: 2 }}
+                        >
                           {value.label}
                         </Tag>
                       ) : i === 2 ? (
-                        <Tag key="more" type="dimension" sx={{ mr: 1 }}>
+                        <Tag key="more" type="dimension" sx={{ py: 0, mr: 2 }}>
                           <Trans id="dataset.search.search-options.more-2-options-selected">
                             {selected.length - 2} more
                           </Trans>
@@ -525,12 +533,21 @@ export const DatasetDialog = ({
                     })
                   )
                 }
+                sx={{ width: "50%" }}
               >
                 {searchDimensionOptions.map((sd) => (
                   <MenuItem
                     key={sd.label}
                     value={sd.id}
-                    sx={{ gap: 2, alignItems: "start" }}
+                    sx={{
+                      gap: 2,
+                      backgroundColor: "transparent !important",
+
+                      "&:hover": {
+                        backgroundColor: (t) =>
+                          `${t.palette.cobalt[50]} !important`,
+                      },
+                    }}
                   >
                     <Checkbox
                       checked={
@@ -545,24 +562,31 @@ export const DatasetDialog = ({
                 ))}
               </Select>
               <Button
-                color="blue"
-                type="submit"
-                variant="contained"
                 style={{ minWidth: "fit-content" }}
+                onClick={() => {
+                  if (inputRef.current) {
+                    setQuery(inputRef.current.value);
+                  }
+                }}
               >
                 {t({ id: "dataset.search.label" })}
               </Button>
             </Box>
 
             <Flex
-              style={{ alignItems: "center", justifyContent: "space-between" }}
+              sx={{
+                alignItems: "center",
+                justifyContent: "space-between",
+                mb: 2,
+              }}
             >
               <SearchDatasetResultsCount cubes={searchCubes} />
-              <Flex style={{ alignItems: "center" }}>
+              <Flex sx={{ alignItems: "center", gap: 5 }}>
                 <SearchDatasetDraftsControl
                   checked={includeDrafts}
                   onChange={setIncludeDrafts}
                 />
+                <Divider flexItem orientation="vertical" />
                 <SearchDatasetSortControl value={order} onChange={setOrder} />
               </Flex>
             </Flex>
@@ -579,25 +603,13 @@ export const DatasetDialog = ({
                 fetching={searchQuery.fetching || isMergeDatasetsDataFetching}
                 error={searchQuery.error}
                 datasetResultProps={({ cube }) => ({
-                  disableTitleLink: true,
+                  disableTitleLink: false,
                   showDimensions: true,
                   showTags: true,
-                  rowActions: () => {
-                    return (
-                      <Box display="flex" justifyContent="flex-end">
-                        <LoadingButton
-                          size="sm"
-                          variant="outlined"
-                          className={classes.addButton}
-                          onClick={() => handleClickOtherCube(cube)}
-                        >
-                          {t({
-                            id: "dataset.search.add-dataset",
-                            message: "Add dataset",
-                          })}
-                        </LoadingButton>
-                      </Box>
-                    );
+                  onClickTitle: (e) => {
+                    e.preventDefault();
+                    alert("hello");
+                    handleClickOtherCube(cube);
                   },
                 })}
               />
@@ -619,6 +631,6 @@ export const DatasetDialog = ({
           searchDimensionsSelected={selectedSearchDimensions ?? []}
         />
       ) : null}
-    </Dialog>
+    </RightDrawer>
   );
 };
