@@ -92,6 +92,7 @@ import useEvent from "@/utils/use-event";
 import { useMutate } from "@/utils/use-fetch-data";
 
 export const BackButton = ({
+  size = "xs",
   children,
   onClick,
   ...props
@@ -99,7 +100,7 @@ export const BackButton = ({
   return (
     <Button
       variant="outlined"
-      size="xs"
+      size={size}
       startIcon={<Icon name="arrowLeft" size={20} />}
       onClick={onClick}
       {...props}
@@ -393,7 +394,7 @@ const ConfigureChartStep = () => {
       <PanelLayout type="LM">
         <PanelHeaderLayout type="LMR">
           <PanelHeaderWrapper type="L">
-            <BackButton onClick={handlePrevious}>
+            <BackButton size="sm" onClick={handlePrevious}>
               <Trans id="controls.nav.back-to-preview">Back to preview</Trans>
             </BackButton>
           </PanelHeaderWrapper>
@@ -525,7 +526,7 @@ const LayoutingStep = () => {
     <PanelLayout type={centerLayout ? "M" : "LM"}>
       <PanelHeaderLayout type="LMR">
         <PanelHeaderWrapper type="L">
-          <BackButton onClick={handlePrevious}>
+          <BackButton size="sm" onClick={handlePrevious}>
             <Trans id="controls.nav.back-to-configurator">
               Back to editing
             </Trans>
