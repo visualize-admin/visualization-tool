@@ -36,88 +36,113 @@ export const getDimensionLimits = async (
     sparqlClient,
   }: { locale: string; unversionedCubeIri: string; sparqlClient: ParsingClient }
 ): Promise<Limit[]> => {
-  return (
-    await Promise.all(
-      dim.out(ns.cubeMeta.annotation).map(async (a) => {
-        const name = a.out(ns.schema.name, { language: locale }).value ?? "";
-        const ctxs = a.out(ns.cubeMeta.annotationContext);
-        const baseRelated = ctxs
-          .map((ctx) => {
-            const dimensionIri = ctx.out(ns.sh.path).value;
-            const value = ctx.out(ns.sh.hasValue).value;
+  const baseLimits = dim
+    .out(ns.cubeMeta.annotation)
+    .map((a, index) => {
+      const name = a.out(ns.schema.name, { language: locale }).value ?? "";
+      const ctxs = a.out(ns.cubeMeta.annotationContext);
+      const related = ctxs
+        .map((ctx) => {
+          const dimensionIri = ctx.out(ns.sh.path).value;
+          const value = ctx.out(ns.sh.hasValue).value;
 
-            if (!dimensionIri || !value) {
-              return null;
-            }
+          if (!dimensionIri || !value) {
+            return null;
+          }
 
-            return {
-              dimensionId: stringifyComponentId({
-                unversionedCubeIri,
-                unversionedComponentIri: dimensionIri,
-              }),
-              value,
-            };
-          })
-          .filter(truthy);
-
-        const related = await Promise.all(
-          baseRelated.map(async (r) => {
-            const query = `PREFIX schema: <http://schema.org/>
-
-SELECT ?label ?position WHERE {
-  VALUES ?value { <${r.value}> }
-    ${buildLocalizedSubQuery("value", "schema:name", "label", {
-      locale,
-    })}
-    ?value schema:position ?position .
-}`;
-
-            return {
-              ...r,
-              ...(await sparqlClient.query
-                .select(query, {
-                  operation: "postUrlencoded",
-                })
-                .then((result) => {
-                  const d = result[0];
-                  const label = d?.label.value;
-                  const position = d?.position.value;
-
-                  return {
-                    label,
-                    position,
-                  };
-                })),
-            };
-          })
-        );
-
-        const value = a.out(ns.schema.value).value;
-
-        if (!!value) {
           return {
+            dimensionId: stringifyComponentId({
+              unversionedCubeIri,
+              unversionedComponentIri: dimensionIri,
+            }),
+            value,
+          };
+        })
+        .filter(truthy);
+
+      const value = a.out(ns.schema.value).value;
+
+      if (!!value) {
+        return {
+          index,
+          related,
+          limit: {
             type: "single" as const,
             name,
-            related,
             value: +value,
-          };
-        }
+          },
+        };
+      }
 
-        const minValue = a.out(ns.schema.minValue).value;
-        const maxValue = a.out(ns.schema.maxValue).value;
+      const minValue = a.out(ns.schema.minValue).value;
+      const maxValue = a.out(ns.schema.maxValue).value;
 
-        if (!!minValue && !!maxValue) {
-          return {
+      if (!!minValue && !!maxValue) {
+        return {
+          index,
+          related,
+          limit: {
             type: "range" as const,
             name,
-            related,
             from: +minValue,
             to: +maxValue,
-          };
-        }
-      })
-    )
-  )
+          },
+        };
+      }
+    })
     .filter(truthy)
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => a.limit.name.localeCompare(b.limit.name));
+
+  const baseRelated = baseLimits.flatMap((l) =>
+    l.related.map((r) => ({ ...r, index: l.index }))
+  );
+
+  if (baseRelated.length > 0) {
+    const allRelatedQuery = `PREFIX schema: <http://schema.org/>
+
+    SELECT ?index ?dimensionId ?value ?label ?position WHERE {
+      VALUES (?index ?dimensionId ?value) { ${baseLimits
+        .flatMap((l) => l.related.map((r) => ({ ...r, index: l.index })))
+        .map((r) => `(${r.index} <${r.dimensionId}> <${r.value}>)`)
+        .join(" ")} }
+        ${buildLocalizedSubQuery("value", "schema:name", "label", {
+          locale,
+        })}
+        ?value schema:position ?position .
+    }`;
+
+    const allRelated = (
+      await sparqlClient.query.select(allRelatedQuery, {
+        operation: "postUrlencoded",
+      })
+    ).map((d) => {
+      const index = +d.index.value;
+      const dimensionId = d.dimensionId.value;
+      const value = d.value.value;
+      const label = d.label.value;
+      const position = d.position.value;
+
+      return {
+        index,
+        dimensionId,
+        value,
+        label,
+        position,
+      };
+    });
+
+    return baseLimits.map(({ index, limit }) => {
+      return {
+        ...limit,
+        related: allRelated.filter((r) => r.index === index),
+      };
+    });
+  } else {
+    return baseLimits.map(({ limit }) => {
+      return {
+        ...limit,
+        related: [],
+      };
+    });
+  }
 };
