@@ -498,7 +498,6 @@ export const executeDataCubesTermsetsQuery = async (
           queries[0].data?.dataCubeComponentTermsets!
     ).filter(truthy);
 
-  console.log("TERMSETS", termsets);
   return {
     data: {
       dataCubeComponentTermsets: termsets,
