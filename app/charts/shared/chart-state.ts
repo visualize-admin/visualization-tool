@@ -2,6 +2,8 @@ import { max, min } from "d3-array";
 import { ScaleTime } from "d3-scale";
 import get from "lodash/get";
 import overEvery from "lodash/overEvery";
+import uniq from "lodash/uniq";
+import uniqBy from "lodash/uniqBy";
 import { createContext, useCallback, useContext, useMemo } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
@@ -68,6 +70,7 @@ import {
 import { Has } from "@/domain/types";
 import { RelatedDimensionType } from "@/graphql/query-hooks";
 import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
+import { Limit } from "@/rdf/limits";
 import {
   useChartInteractiveFilters,
   useDashboardInteractiveFilters,
@@ -299,9 +302,13 @@ export const useTemporalXVariables = (
   }
 
   const getXTemporal = useTemporalVariable(x.componentId);
-  const getXTemporalEntity = useTemporalEntityVariable(
-    dimensionsById[x.componentId].values
-  )(x.componentId);
+  const dimensionValues = dimensionsById[x.componentId].values;
+  const relatedLimitValues = dimensionsById[x.componentId].relatedLimitValues;
+  const values = uniqBy(
+    [...dimensionValues, ...relatedLimitValues],
+    (d) => d.value
+  );
+  const getXTemporalEntity = useTemporalEntityVariable(values)(x.componentId);
   const getXAsString = useStringVariable(x.componentId);
 
   const xAxisLabel = getLabelWithUnit(xDimension);
@@ -721,9 +728,13 @@ export const useInteractiveFiltersVariables = (
   const id = interactiveFiltersConfig?.timeRange.componentId ?? "";
   const dimension = dimensionsById[id];
   const getTimeRangeDate = useTemporalVariable(id);
-  const getTimeRangeEntityDate = useTemporalEntityVariable(
-    dimension?.values ?? []
-  )(id);
+  const dimensionValues = dimension?.values ?? [];
+  const relatedLimitValues = dimension?.relatedLimitValues ?? [];
+  const values = uniqBy(
+    [...dimensionValues, ...relatedLimitValues],
+    (d) => d.value
+  );
+  const getTimeRangeEntityDate = useTemporalEntityVariable(values)(id);
 
   return {
     getTimeRangeDate: isTemporalDimension(dimension)
@@ -797,20 +808,50 @@ type ValuePredicate = (v: any) => boolean;
 export const useChartData = (
   observations: Observation[],
   {
+    sortData,
     chartConfig,
     timeRangeDimensionId,
+    axisDimensionId,
+    limits,
     getAxisValueAsDate,
     getSegmentAbbreviationOrLabel,
     getTimeRangeDate,
   }: {
+    sortData?: (data: Observation[]) => Observation[];
     chartConfig: ChartConfig;
     timeRangeDimensionId: string | undefined;
+    axisDimensionId?: string;
+    limits?: Limit[];
     getAxisValueAsDate?: (d: Observation) => Date;
     getSegmentAbbreviationOrLabel?: (d: Observation) => string;
     getTimeRangeDate?: (d: Observation) => Date;
   }
-): Omit<ChartStateData, "allData"> => {
+): ChartStateData => {
   const { interactiveFiltersConfig } = chartConfig;
+  const allData = useMemo(() => {
+    let allData = observations;
+
+    if (axisDimensionId && limits) {
+      const dimensionValuesObservations = limits
+        .flatMap((limit) => limit.related)
+        .filter((limit) => limit.dimensionId === axisDimensionId)
+        .map((d) => ({
+          [axisDimensionId]: d.label,
+        }));
+      const axisObservationValues = uniq(
+        observations.map((o) => o[axisDimensionId])
+      );
+      allData = [
+        ...observations,
+        ...dimensionValuesObservations.filter(
+          (d) => !axisObservationValues.includes(d[axisDimensionId])
+        ),
+      ];
+    }
+
+    return sortData ? sortData(allData) : observations;
+  }, [axisDimensionId, limits, observations, sortData]);
+
   const categories = useChartInteractiveFilters((d) => d.categories);
   const timeRange = useChartInteractiveFilters((d) => d.timeRange);
   const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
@@ -914,7 +955,7 @@ export const useChartData = (
   ]);
 
   const chartData = useMemo(() => {
-    return observations.filter(
+    return allData.filter(
       overEvery([
         ...interactiveLegendFilters,
         ...interactiveTimeRangeFilters,
@@ -922,7 +963,7 @@ export const useChartData = (
       ])
     );
   }, [
-    observations,
+    allData,
     interactiveLegendFilters,
     interactiveTimeRangeFilters,
     interactiveTimeSliderFilters,
@@ -932,35 +973,36 @@ export const useChartData = (
     if (dynamicScales) {
       return chartData;
     } else {
-      return observations.filter(
+      return allData.filter(
         overEvery([...interactiveLegendFilters, ...interactiveTimeRangeFilters])
       );
     }
   }, [
     dynamicScales,
     chartData,
-    observations,
+    allData,
     interactiveLegendFilters,
     interactiveTimeRangeFilters,
   ]);
 
   const segmentData = useMemo(() => {
-    return observations.filter(overEvery(interactiveTimeRangeFilters));
-  }, [observations, interactiveTimeRangeFilters]);
+    return allData.filter(overEvery(interactiveTimeRangeFilters));
+  }, [allData, interactiveTimeRangeFilters]);
 
   const timeRangeData = useMemo(() => {
-    return observations.filter(overEvery(timeRangeFilters));
-  }, [observations, timeRangeFilters]);
+    return allData.filter(overEvery(timeRangeFilters));
+  }, [allData, timeRangeFilters]);
 
   const paddingData = useMemo(() => {
     if (dynamicScales) {
       return chartData;
     } else {
-      return observations.filter(overEvery(interactiveLegendFilters));
+      return allData.filter(overEvery(interactiveLegendFilters));
     }
-  }, [dynamicScales, chartData, observations, interactiveLegendFilters]);
+  }, [dynamicScales, chartData, allData, interactiveLegendFilters]);
 
   return {
+    allData,
     chartData,
     scalesData,
     segmentData,

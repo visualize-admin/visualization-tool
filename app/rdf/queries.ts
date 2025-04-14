@@ -29,6 +29,7 @@ import {
 } from "@/graphql/shared-types";
 import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
+import { getDimensionLimits } from "@/rdf/limits";
 import * as ns from "@/rdf/namespace";
 import { parseCubeDimension, parseRelatedDimensions } from "@/rdf/parse";
 import { queryCubeUnversionedIri } from "@/rdf/query-cube-unversioned-iri";
@@ -96,14 +97,20 @@ export const getCubeDimensions = async ({
       (d) => d.iri.value
     );
 
+    const limits = await createCubeDimensionLimitsLoader({
+      locale,
+      unversionedCubeIri,
+      sparqlClient,
+    })(dimensions);
+
     return dimensions
-      .map((dim) => {
+      .map((dim, i) => {
         return parseCubeDimension({
           dim,
           cube,
-          unversionedCubeIri,
           locale,
           units: dimensionUnitIndex,
+          limits: limits[i],
         });
       })
       .sort((a, b) => ascending(a.data.order, b.data.order));
@@ -113,6 +120,18 @@ export const getCubeDimensions = async ({
     return [];
   }
 };
+
+export const createCubeDimensionLimitsLoader =
+  (options: {
+    locale: string;
+    unversionedCubeIri: string;
+    sparqlClient: ParsingClient;
+  }) =>
+  async (dimensions: readonly CubeDimension[]) => {
+    return Promise.all(
+      dimensions.map((dimension) => getDimensionLimits(dimension, options))
+    );
+  };
 
 export const createCubeDimensionValuesLoader =
   (
@@ -399,7 +418,6 @@ export const getCubeObservations = async ({
   const observationFilters = filters
     ? await buildFilters({
         cube,
-        unversionedCubeIri,
         view: cubeView,
         filters: dbFilters,
         locale,
@@ -606,7 +624,6 @@ export const hasHierarchy = (dim: CubeDimension) => {
 
 const buildFilters = async ({
   cube,
-  unversionedCubeIri,
   view,
   filters,
   locale,
@@ -614,7 +631,6 @@ const buildFilters = async ({
   cache,
 }: {
   cube: ExtendedCube;
-  unversionedCubeIri: string;
   view: View;
   filters: Filters;
   locale: string;
@@ -662,8 +678,9 @@ const buildFilters = async ({
       const resolvedDimension = parseCubeDimension({
         dim: cubeDimension,
         cube,
-        unversionedCubeIri,
         locale,
+        // We don't need to know the limits when filtering.
+        limits: [],
       });
 
       const { dataType, dataKind, scaleType, timeUnit, related } =

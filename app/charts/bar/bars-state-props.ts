@@ -1,5 +1,5 @@
 import { ascending, descending } from "d3-array";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 import { usePlottableData } from "@/charts/shared/chart-helpers";
 import {
@@ -125,7 +125,7 @@ export const useBarsStateVariables = (
 };
 
 export const useBarsStateData = (
-  chartProps: ChartProps<BarConfig>,
+  chartProps: ChartProps<BarConfig> & { limits: ReturnType<typeof useLimits> },
   variables: BarsStateVariables
 ): ChartStateData => {
   const { chartConfig, observations } = chartProps;
@@ -134,18 +134,12 @@ export const useBarsStateData = (
   const plottableData = usePlottableData(observations, {
     getX,
   });
-  const sortedPlottableData = useMemo(() => {
-    return sortData(plottableData);
-  }, [sortData, plottableData]);
-  const data = useChartData(sortedPlottableData, {
+
+  return useChartData(plottableData, {
+    sortData,
     chartConfig,
     timeRangeDimensionId: yDimension.id,
     getAxisValueAsDate: getYAsDate,
     getTimeRangeDate,
   });
-
-  return {
-    ...data,
-    allData: sortedPlottableData,
-  };
 };

@@ -11,6 +11,8 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - Future limit values are now displayed for line charts
 - Styles
   - Migrated the application to the new CI / CD
   - Visualize font was changed to Noto Sans

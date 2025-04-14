@@ -9,7 +9,7 @@ import {
 } from "@/graphql/query-hooks";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { ExtendedCube } from "@/rdf/extended-cube";
-import { getDimensionLimits } from "@/rdf/limits";
+import { Limit } from "@/rdf/limits";
 import { timeFormats, timeUnitFormats, timeUnits } from "@/rdf/mappings";
 import * as ns from "@/rdf/namespace";
 import { hasHierarchy } from "@/rdf/queries";
@@ -101,18 +101,23 @@ export const parseRelatedDimensions = (dim: CubeDimension) => {
 export const parseCubeDimension = ({
   dim,
   cube,
-  unversionedCubeIri,
   locale,
   units,
+  limits,
 }: {
   dim: CubeDimension;
   cube: ExtendedCube;
-  unversionedCubeIri: string;
   locale: string;
   units?: Map<
     string,
-    { iri: Term; label?: Term; isCurrency?: Term; currencyExponent?: Term }
+    {
+      iri: Term;
+      label?: Term;
+      isCurrency?: Term;
+      currencyExponent?: Term;
+    }
   >;
+  limits: Limit[];
 }): ResolvedDimension => {
   const iri = dim.path?.value!;
   const outOpts = { language: getQueryLocales(locale) };
@@ -174,7 +179,7 @@ export const parseCubeDimension = ({
       timeUnit,
       timeFormat,
       scaleType: getScaleType(dim.out(ns.qudt.scaleType).term),
-      limits: getDimensionLimits(dim, { locale, unversionedCubeIri }),
+      limits,
     },
   };
 };

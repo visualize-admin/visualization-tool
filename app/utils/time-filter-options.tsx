@@ -19,14 +19,17 @@ export const getTimeFilterOptions = ({
   const { timeFormat, timeUnit } = dimension;
   const parseDate = getMaybeTimezoneDateParser({ formatLocale, timeFormat });
   const formatDate = formatLocale.format(timeFormat);
-  const sortedOptions: {
+  const options: {
     value: ObservationValue;
     label: string;
     date: Date;
   }[] = [];
-  const sortedValues: ObservationValue[] = [];
 
-  for (const dimensionValue of dimension.values) {
+  for (const dimensionValue of [
+    ...dimension.values,
+    // TODO: could be improved to be scoped to only currently activated limits
+    ...dimension.relatedLimitValues,
+  ]) {
     let value: DimensionValue["value"];
 
     switch (dimension.__typename) {
@@ -44,20 +47,23 @@ export const getTimeFilterOptions = ({
     const date = parseDate(value);
 
     if (date) {
-      sortedOptions.push({
+      options.push({
         // By formatting the date, we remove potential timezone.
         // FIXME: This might lead to issues with SPARQL filtering.
         value: formatDate(date),
         label: timeFormatUnit(date, timeUnit),
         date,
       });
-      sortedValues.push(value);
     }
   }
 
+  const sortedOptions = options.sort(
+    (a, b) => a.date.getTime() - b.date.getTime()
+  );
+
   return {
     sortedOptions,
-    sortedValues,
+    sortedValues: sortedOptions.map((d) => d.value),
   };
 };
 

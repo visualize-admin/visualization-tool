@@ -18,13 +18,14 @@ export const InteractionHorizontal = memo(function InteractionHorizontal() {
     | ComboLineSingleState
     | ComboLineDualState
     | ComboLineColumnState;
-  const { chartData, chartWideData, xScale, getX } =
+  const { chartData, chartWideData, xScale, getX, getAnnotationInfo } =
     chartState.chartType === "comboLineColumn"
       ? {
           chartData: chartState.chartData,
           chartWideData: chartState.chartWideData,
           xScale: chartState.xScaleTime,
           getX: chartState.getXAsDate,
+          getAnnotationInfo: chartState.getAnnotationInfo,
         }
       : chartState;
   const { chartWidth, chartHeight, margins } = chartState.bounds;
@@ -51,8 +52,11 @@ export const InteractionHorizontal = memo(function InteractionHorizontal() {
       getX(dRight).getTime() - thisDate.getTime()
         ? dRight
         : dLeft;
+    const yAnchor = closestDatum
+      ? getAnnotationInfo(closestDatum).yAnchor
+      : undefined;
 
-    if (!closestDatum) {
+    if (!closestDatum || Number.isNaN(yAnchor) || yAnchor === undefined) {
       if (state.interaction.visible) {
         hideTooltip();
       }
