@@ -15,9 +15,9 @@ import { ProfileColorPaletteContent } from "./color-palettes/profile-color-palet
 
 const useStyles = makeStyles<Theme>((theme) => ({
   section: {
-    borderBottom: 1,
-    borderColor: "divider",
-    paddingTop: theme.spacing(6),
+    borderTop: `1px solid ${theme.palette.monochrome[300]}`,
+    borderBottom: `1px solid ${theme.palette.monochrome[300]}`,
+    marginTop: theme.spacing(6),
   },
   tabList: {
     minHeight: "fit-content",
@@ -72,43 +72,41 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
     <TabContext value={value}>
       <Box className={clsx(rootClasses.section, classes.section)}>
         <Box className={rootClasses.sectionContent}>
-          <Box className={classes.section}>
-            <TabList className={classes.tabList} onChange={handleChange}>
-              <Tab
-                className={classes.tab}
-                label={t({
-                  id: "login.profile.home",
-                  message: "Home",
-                })}
-                value="home"
-              />
-              <Tab
-                className={classes.tab}
-                label={t({
-                  id: "login.profile.my-drafts",
-                  message: "My Drafts",
-                })}
-                value="drafts"
-              />
-              <Tab
-                className={classes.tab}
-                label={t({
-                  id: "login.profile.my-published-visualizations",
-                  message: "My Visualizations",
-                })}
-                value="published"
-              />
-              <Tab
-                data-testid="color-palettes-tab"
-                className={classes.tab}
-                label={t({
-                  id: "login.profile.my-color-palettes",
-                  message: "My Color Palettes",
-                })}
-                value="palettes"
-              />
-            </TabList>
-          </Box>
+          <TabList className={classes.tabList} onChange={handleChange}>
+            <Tab
+              className={classes.tab}
+              label={t({
+                id: "login.profile.home",
+                message: "Home",
+              })}
+              value="home"
+            />
+            <Tab
+              className={classes.tab}
+              label={t({
+                id: "login.profile.my-drafts",
+                message: "My Drafts",
+              })}
+              value="drafts"
+            />
+            <Tab
+              className={classes.tab}
+              label={t({
+                id: "login.profile.my-published-visualizations",
+                message: "My Visualizations",
+              })}
+              value="published"
+            />
+            <Tab
+              data-testid="color-palettes-tab"
+              className={classes.tab}
+              label={t({
+                id: "login.profile.my-color-palettes",
+                message: "My Color Palettes",
+              })}
+              value="palettes"
+            />
+          </TabList>
         </Box>
       </Box>
       <TabPanel className={classes.tabPanel} value="home">

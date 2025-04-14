@@ -288,7 +288,7 @@ const TabsEditable = (props: TabsEditableProps) => {
               type="button"
               leadingIconName="trash"
               label={<Trans id="chart-controls.delete">Delete</Trans>}
-              color="red"
+              color="red.main"
               requireConfirmation
               confirmationTitle={t({
                 id: "chat-preview.delete.title",
@@ -324,6 +324,7 @@ type TabDatum = {
 
 const TabsFixed = ({ data }: { data: TabDatum[] }) => {
   const [, dispatch] = useConfiguratorState(isPublished);
+
   return (
     <TabsInner
       data={data}
@@ -359,7 +360,6 @@ const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
   root: {
     display: "flex",
     alignItems: "center",
-    gap: 1,
   },
   tab: {
     zIndex: 1,
@@ -417,6 +417,7 @@ const TabsInner = ({
   const classes = useTabsInnerStyles();
   const [_, dispatch] = useConfiguratorState(hasChartConfigs);
   const activeTabIndex = data.findIndex((x) => x.active);
+
   return (
     <div className={classes.root}>
       <TabContext value={`${activeTabIndex}`}>
@@ -465,6 +466,7 @@ const TabsInner = ({
                         const transform = style?.transform
                           ? `${style.transform.split(",")[0]}, 0px)`
                           : undefined;
+
                         return (
                           <VisualizeTab
                             ref={provided.innerRef}
@@ -625,13 +627,14 @@ const TabContent = (props: {
     id: "chart-selection-tabs.no-label",
     message: "No label",
   });
+
   return (
-    <Flex className={classes.root}>
+    <Flex sx={{ alignItems: "center", gap: 2, p: 2, pl: 4 }}>
       <Button
         variant="text"
-        className={classes.chartIconWrapper}
         onClick={() => {
           onSwitchClick?.();
+
           if (editable) {
             dispatch({
               type: "CHART_ACTIVE_FIELD_CHANGED",
@@ -639,15 +642,16 @@ const TabContent = (props: {
             });
           }
         }}
+        sx={{ alignItems: "center", gap: 2 }}
       >
         <Icon name={iconName} />
         <Typography
-          variant="body2"
+          variant="caption"
           sx={{
             color: (t) =>
               label || !editable
                 ? "inherit"
-                : `${t.palette.grey[500]} !important`,
+                : `${t.palette.text.secondary} !important`,
           }}
         >
           {label || showAddLabel ? label || `[ ${addLabel} ]` : null}

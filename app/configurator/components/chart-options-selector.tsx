@@ -1662,7 +1662,7 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
         {field.showPlayButton && (
           <>
             <Box mt={4}>
-              <Typography variant="caption" component="legend">
+              <Typography variant="caption" component="p" sx={{ mb: 1 }}>
                 <Trans id="controls.section.animation.duration">
                   Animation Duration
                 </Trans>
@@ -1679,9 +1679,11 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                 ))}
               </RadioGroup>
             </Box>
-            <Box component="fieldset" mt={4}>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Typography variant="caption">
+            <Box mt={4}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+              >
+                <Typography variant="caption" component="p">
                   <Trans id="controls.section.animation.type">
                     Animation Type
                   </Trans>
@@ -1694,7 +1696,9 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                       "Use the Stepped type to make the animation jump between data points at fixed intervals. This mode is useful when you want to animate data using a time dimension with a non-uniform distribution of dates.",
                   })}
                 >
-                  <Typography sx={{ color: "blue.main" }}>
+                  <Typography
+                    sx={{ color: "primary.main", lineHeight: "0 !important" }}
+                  >
                     <SvgIcInfoCircle width={16} height={16} />
                   </Typography>
                 </Tooltip>
@@ -1737,7 +1741,9 @@ const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
                     "Enable dynamic scaling to adjust the chart's scale based on the data range, ensuring optimal visualization.",
                 })}
               >
-                <Typography color="primary.main">
+                <Typography
+                  sx={{ color: "primary.main", lineHeight: "0 !important" }}
+                >
                   <SvgIcInfoCircle width={16} height={16} />
                 </Typography>
               </Tooltip>

@@ -86,6 +86,7 @@ const useStyles = makeStyles<
     height: "auto",
     margin: "auto",
     marginTop: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(12)),
+    backgroundColor: theme.palette.background.paper,
     transition: "margin-top 0.5s ease",
   },
   panelLeft: {
@@ -98,6 +99,7 @@ const useStyles = makeStyles<
     gridColumnStart: "middle",
     gridColumnEnd: "right",
     marginLeft: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(8)),
+    backgroundColor: theme.palette.background.paper,
     transition: "padding-top 0.5s ease",
   },
   panelBannerOuterWrapper: {
@@ -382,9 +384,10 @@ const SelectDatasetStepContent = ({
       </AnimatePresence>
       <Box
         sx={{
-          borderBottom: odsIframe
-            ? "none"
-            : (t) => `1px solid ${t.palette.cobalt[100]}`,
+          borderBottom:
+            odsIframe || variant === "drawer"
+              ? "none"
+              : (t) => `1px solid ${t.palette.cobalt[100]}`,
         }}
       >
         <ContentWrapper
@@ -405,7 +408,7 @@ const SelectDatasetStepContent = ({
                   sx={{
                     justifyContent: odsIframe ? "flex-end" : "space-between",
                     alignItems: "center",
-                    pt: odsIframe ? 12 : 6,
+                    pt: odsIframe ? 12 : variant == "drawer" ? 10 : 6,
                     pb: 6,
                   }}
                 >

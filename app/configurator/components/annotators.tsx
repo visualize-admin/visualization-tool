@@ -3,7 +3,7 @@ import { Theme, Typography, TypographyProps } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 
-import { Markdown } from "@/components/markdown";
+import { MarkdownInheritFonts } from "@/components/markdown";
 import { getChartConfig } from "@/config-utils";
 import {
   ControlSection,
@@ -22,37 +22,33 @@ import {
 } from "@/configurator/configurator-state";
 import { useLocale } from "@/locales/use-locale";
 
-const useStyles = makeStyles<
-  Theme,
-  { interactive?: boolean; empty: boolean; lighterColor?: boolean }
->((theme) => ({
-  text: {
-    wordBreak: "break-word",
-    color: ({ empty, lighterColor }) =>
-      !empty
-        ? theme.palette.text.primary
-        : lighterColor
-          ? theme.palette.grey[500]
-          : theme.palette.secondary.main,
-    cursor: ({ interactive }) => (interactive ? "pointer" : "text"),
-    "&:hover": {
-      textDecoration: ({ interactive }) => (interactive ? "underline" : "none"),
+const useStyles = makeStyles<Theme, { interactive?: boolean; empty: boolean }>(
+  (theme) => ({
+    text: {
+      wordBreak: "break-word",
+      color: ({ empty }) =>
+        empty ? theme.palette.text.secondary : theme.palette.text.primary,
+      cursor: ({ interactive }) => (interactive ? "pointer" : "text"),
+
+      "&:hover": {
+        textDecoration: ({ interactive }) =>
+          interactive ? "underline" : "none",
+      },
+
+      "& > :last-child": {
+        marginBottom: 0,
+      },
     },
-    "& > :last-child": {
-      marginBottom: 0,
-    },
-  },
-}));
+  })
+);
 
 type Props = TypographyProps & {
   text: string;
-  lighterColor?: boolean;
   smaller?: boolean;
 };
 
 export const Title = ({
   text,
-  lighterColor,
   smaller,
   onClick,
   className,
@@ -62,20 +58,19 @@ export const Title = ({
   const classes = useStyles({
     interactive: !!onClick,
     empty: !text,
-    lighterColor,
   });
 
   return (
     <Typography
       {...rest}
-      variant={smaller ? "h3" : "h2"}
+      variant={smaller ? "h2" : "h1"}
       component="span"
       className={clsx(classes.text, className)}
       onClick={onClick}
-      style={{ marginBottom: "0.5rem" }}
+      sx={{ mb: smaller ? 1 : 4, fontWeight: smaller ? 400 : 700 }}
     >
       {text ? (
-        <Markdown>{text}</Markdown>
+        <MarkdownInheritFonts>{text}</MarkdownInheritFonts>
       ) : (
         <Trans id="annotation.add.title">[ Title ]</Trans>
       )}
@@ -85,7 +80,6 @@ export const Title = ({
 
 export const Description = ({
   text,
-  lighterColor,
   smaller,
   onClick,
   className,
@@ -95,19 +89,18 @@ export const Description = ({
   const classes = useStyles({
     interactive: !!onClick,
     empty: !text,
-    lighterColor,
   });
 
   return (
     <Typography
       {...rest}
-      variant={smaller ? "body2" : "body1"}
+      variant="body2"
       component="span"
       className={clsx(classes.text, className)}
       onClick={onClick}
     >
       {text ? (
-        <Markdown>{text}</Markdown>
+        <MarkdownInheritFonts>{text}</MarkdownInheritFonts>
       ) : (
         <Trans id="annotation.add.description">[ Description ]</Trans>
       )}

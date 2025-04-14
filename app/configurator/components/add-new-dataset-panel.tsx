@@ -1,10 +1,11 @@
-import { Box, Drawer, useEventCallback } from "@mui/material";
+import { useEventCallback } from "@mui/material";
 import { useState } from "react";
 import { useClient } from "urql";
 import createStore from "zustand";
 
 import { SelectDatasetStep } from "@/browser/select-dataset-step";
 import { DialogCloseButton } from "@/components/dialog-close-button";
+import { RightDrawer } from "@/configurator/components/drawers";
 import {
   ConfiguratorStateProvider,
   initChartStateFromCube,
@@ -87,52 +88,35 @@ export const AddNewDatasetPanel = () => {
   });
 
   return (
-    <Drawer
-      anchor="right"
-      open={isOpen}
-      variant="temporary"
-      onClose={handleClose}
-      SlideProps={{
-        onExited: handleExited,
-      }}
-      PaperProps={{
-        sx: {
-          width: "1400px",
-          maxWidth: "100%",
-        },
-      }}
-    >
+    <RightDrawer open={isOpen} onClose={handleClose} onExited={handleExited}>
       <DialogCloseButton onClick={() => handleClose()} />
-
-      <Box>
-        <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
-          <SelectDatasetStep
-            variant="drawer"
-            dataset={dataSetIri}
-            onClickBackLink={(ev) => {
-              ev.preventDefault();
-              setDataSetIri("");
-            }}
-            onCreateChartFromDataset={async (ev, datasetIri) => {
-              ev.preventDefault();
-              await addNewDataset(datasetIri);
-              close();
-            }}
-            datasetResultsProps={{
-              datasetResultProps: () => ({
-                showDimensions: true,
-                onClickTitle: (ev, datasetIri) => {
-                  ev.preventDefault();
-                  setDataSetIri(datasetIri);
-                },
-              }),
-            }}
-            datasetPreviewProps={{
-              dataSetIri,
-            }}
-          />
-        </ConfiguratorStateProvider>
-      </Box>
-    </Drawer>
+      <ConfiguratorStateProvider chartId="new" allowDefaultRedirect={false}>
+        <SelectDatasetStep
+          variant="drawer"
+          dataset={dataSetIri}
+          onClickBackLink={(ev) => {
+            ev.preventDefault();
+            setDataSetIri("");
+          }}
+          onCreateChartFromDataset={async (ev, datasetIri) => {
+            ev.preventDefault();
+            await addNewDataset(datasetIri);
+            close();
+          }}
+          datasetResultsProps={{
+            datasetResultProps: () => ({
+              showDimensions: true,
+              onClickTitle: (ev, datasetIri) => {
+                ev.preventDefault();
+                setDataSetIri(datasetIri);
+              },
+            }),
+          }}
+          datasetPreviewProps={{
+            dataSetIri,
+          }}
+        />
+      </ConfiguratorStateProvider>
+    </RightDrawer>
   );
 };
