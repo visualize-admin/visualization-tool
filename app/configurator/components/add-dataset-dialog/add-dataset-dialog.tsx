@@ -370,14 +370,6 @@ export const DatasetDialog = ({
     );
   };
 
-  const handleSubmit = useEvent((e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = Object.fromEntries(
-      new FormData(e.currentTarget).entries()
-    );
-    setQuery(formData.search as string);
-  });
-
   const handleClose: DialogProps["onClose"] = useEventCallback((ev, reason) => {
     props.onClose?.(ev, reason);
     setQuery("");
