@@ -182,17 +182,19 @@ const Points = ({ dotSize }: { dotSize: LineFields["y"]["showDotsSize"] }) => {
   const dots = useMemo(() => {
     return chartData
       .map((d) => {
-        const x = xScale(getX(d));
-        const y = yScale(getY(d) as number);
-        const fill = colors(getSegment(d));
+        const xScaled = xScale(getX(d));
+        const y = getY(d);
 
-        if (y === undefined) {
+        if (Number.isNaN(y) || y === null) {
           return;
         }
 
+        const yScaled = yScale(y);
+        const fill = colors(getSegment(d));
+
         return {
-          x,
-          y,
+          x: xScaled,
+          y: yScaled,
           fill,
         };
       })
