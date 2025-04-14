@@ -596,7 +596,6 @@ export const AddDatasetDrawer = ({
                   showTags: true,
                   onClickTitle: (e) => {
                     e.preventDefault();
-                    alert("hello");
                     handleClickOtherCube(cube);
                   },
                 })}
