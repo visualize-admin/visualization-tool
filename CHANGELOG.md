@@ -13,6 +13,7 @@ You can also check the
 
 - Features
   - Added a way to preview charts using hash parameters through `/preview` page
+  - Measure units are now displayed in symbol layer color and size legends
 
 # [5.6.0] - 2025-04-15
 
