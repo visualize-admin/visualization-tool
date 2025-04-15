@@ -2,10 +2,7 @@ import { TileLayer } from "@deck.gl/geo-layers";
 import { BitmapLayer } from "@deck.gl/layers";
 import { XMLParser } from "fast-xml-parser";
 
-import { fetchWMSorWMSLayersFromEndpoint } from "@/charts/map/wms-endpoint-utils";
 import { WMTSCustomLayer } from "@/config-types";
-import { useLocale } from "@/locales/use-locale";
-import { useFetchData } from "@/utils/use-fetch-data";
 
 type WMTSData = {
   Capabilities: {
@@ -98,31 +95,6 @@ export const parseWMTSResponse = async (resp: Response, endpoint: string) => {
 
 export const DEFAULT_WMTS_URL =
   "https://wmts.geo.admin.ch/EPSG/3857/1.0.0/WMTSCapabilities.xml";
-
-export const useWMTSLayers = (
-  endpoints: string[],
-  { pause }: { pause?: boolean } = { pause: false }
-) => {
-  const locale = useLocale();
-
-  return useFetchData<ParsedWMTSLayer[]>({
-    queryKey: ["custom-wmts-layers", locale],
-    queryFn: async () => {
-      return (
-        await Promise.all(
-          endpoints.map((endpoint) =>
-            fetchWMSorWMSLayersFromEndpoint(endpoint, locale)
-          )
-        )
-      )
-        .flat()
-        .filter((l) => l.type === "wmts");
-    },
-    options: {
-      pause: pause || !endpoints.length,
-    },
-  });
-};
 
 export const getWMTSTile = ({
   wmtsLayers,

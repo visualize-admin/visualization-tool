@@ -1,6 +1,9 @@
 import { ParsedWMSLayer, parseWMSResponse } from "@/charts/map/wms-utils";
 import { ParsedWMTSLayer, parseWMTSResponse } from "@/charts/map/wmts-utils";
 import { Locale } from "@/locales/locales";
+import { useLocale } from "@/src";
+import { useFetchData } from "@/utils/use-fetch-data";
+import sortBy from "lodash/sortBy";
 
 /** Logic taken from GeoAdmin
  *
@@ -125,3 +128,30 @@ export const fetchWMSorWMSLayersFromEndpoint = async (
     return [];
   }
 };
+
+export const mkUseWMTSorWMSLayers =
+  <TLayer extends ParsedWMSLayer | ParsedWMTSLayer>(type: TLayer["type"]) =>
+  (endpoints: string[], { pause }: { pause?: boolean } = { pause: false }) => {
+    const locale = useLocale();
+
+    return useFetchData<TLayer[]>({
+      queryKey: [`custom-${type}-layers`, ...sortBy(endpoints), locale],
+      queryFn: async () => {
+        return (
+          await Promise.all(
+            endpoints.map((endpoint) =>
+              fetchWMSorWMSLayersFromEndpoint(endpoint, locale)
+            )
+          )
+        )
+          .flat()
+          .filter((l) => l.type === type) as TLayer[];
+      },
+      options: {
+        pause,
+      },
+    });
+  };
+
+export const useWMTSLayers = mkUseWMTSorWMSLayers<ParsedWMTSLayer>("wmts");
+export const useWMSLayers = mkUseWMTSorWMSLayers<ParsedWMSLayer>("wms");

@@ -1,10 +1,7 @@
 import { _WMSLayer as DeckGLWMSLayer } from "@deck.gl/geo-layers";
 import { XMLParser } from "fast-xml-parser";
 
-import { fetchWMSorWMSLayersFromEndpoint } from "@/charts/map/wms-endpoint-utils";
 import { WMSCustomLayer } from "@/config-types";
-import { useLocale } from "@/locales/use-locale";
-import { useFetchData } from "@/utils/use-fetch-data";
 
 type WMSData = {
   WMS_Capabilities: {
@@ -71,31 +68,6 @@ export const parseWMSResponse = async (resp: Response, endpoint: string) => {
   ).WMS_Capabilities.Capability.Layer.Layer.map((l) =>
     parseWMSLayer(l, endpoint)
   );
-};
-
-export const useWMSLayers = (
-  endpoints: string[],
-  { pause }: { pause?: boolean } = { pause: false }
-) => {
-  const locale = useLocale();
-
-  return useFetchData<ParsedWMSLayer[]>({
-    queryKey: ["custom-wms-layers", locale],
-    queryFn: async () => {
-      return (
-        await Promise.all(
-          endpoints.map((endpoint) =>
-            fetchWMSorWMSLayersFromEndpoint(endpoint, locale)
-          )
-        )
-      )
-        .flat()
-        .filter((l) => l.type === "wms");
-    },
-    options: {
-      pause,
-    },
-  });
 };
 
 export const getWMSTile = ({

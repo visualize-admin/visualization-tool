@@ -30,16 +30,8 @@ import {
 import { MapState } from "@/charts/map/map-state";
 import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
 import { getMap, setMap } from "@/charts/map/ref";
-import {
-  DEFAULT_WMS_URL,
-  getWMSTile,
-  useWMSLayers,
-} from "@/charts/map/wms-utils";
-import {
-  DEFAULT_WMTS_URL,
-  getWMTSTile,
-  useWMTSLayers,
-} from "@/charts/map/wmts-utils";
+import { DEFAULT_WMS_URL, getWMSTile } from "@/charts/map/wms-utils";
+import { DEFAULT_WMTS_URL, getWMTSTile } from "@/charts/map/wmts-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { useLimits } from "@/config-utils";
@@ -56,6 +48,7 @@ import useEvent from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 import "maplibre-gl/dist/maplibre-gl.css";
+import { useWMSLayers, useWMTSLayers } from "@/charts/map/wms-endpoint-utils";
 
 // supported was removed as of maplibre-gl v3.0.0, so we need to add it back
 const maplibregl = { ...maplibreglRaw, supported };
@@ -134,7 +127,6 @@ export const MapComponent = ({
   );
   const { data: wmsLayers } = useWMSLayers(wmsEndpoints);
   const { data: wmtsLayers } = useWMTSLayers(wmtsEndpoints);
-  console.log("map", { wmsLayers, wmtsLayers, wmsEndpoints, wmtsEndpoints });
   const { behindAreaCustomLayers, afterAreaCustomLayers } = useMemo(() => {
     return {
       behindAreaCustomLayers: customLayers
