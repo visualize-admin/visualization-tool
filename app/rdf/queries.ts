@@ -121,7 +121,7 @@ export const getCubeDimensions = async ({
   }
 };
 
-export const createCubeDimensionLimitsLoader =
+const createCubeDimensionLimitsLoader =
   (options: {
     locale: string;
     unversionedCubeIri: string;

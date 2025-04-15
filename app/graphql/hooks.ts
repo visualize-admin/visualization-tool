@@ -443,7 +443,7 @@ type DataCubesComponentTermsetsOptions = {
 /**
  * Fetches all cubes termsets in one go.
  */
-export const executeDataCubesTermsetsQuery = async (
+const executeDataCubesTermsetsQuery = async (
   client: Client,
   variables: DataCubesComponentTermsetsOptions["variables"],
   /** Callback triggered when data fetching starts (cache miss). */
