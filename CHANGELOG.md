@@ -11,6 +11,8 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - Added a way to preview charts using hash parameters through `/preview` page
 - Fixes
   - Total value labels are not rendered correctly in Chrome browsers
 
