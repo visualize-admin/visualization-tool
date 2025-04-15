@@ -307,7 +307,6 @@ export const executeDataCubesObservationsQuery = async (
     cubeFilters.map((cubeFilter) => {
       const cubeVariables = { locale, sourceType, sourceUrl, cubeFilter };
 
-      // Try to read from cache first
       const cached = client.readQuery<
         DataCubeObservationsQuery,
         DataCubeObservationsQueryVariables
