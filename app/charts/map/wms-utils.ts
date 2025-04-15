@@ -1,8 +1,8 @@
 import { _WMSLayer as DeckGLWMSLayer } from "@deck.gl/geo-layers";
 import { XMLParser } from "fast-xml-parser";
 
+import { fetchWMSorWMSLayersFromEndpoint } from "@/charts/map/wms-endpoint-utils";
 import { WMSCustomLayer } from "@/config-types";
-import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { useFetchData } from "@/utils/use-fetch-data";
 
@@ -58,7 +58,7 @@ const parseWMSLayer = (layer: WMSLayer, endpoint: string): ParsedWMSLayer => {
 export const DEFAULT_WMS_URL =
   "https://wms.geo.admin.ch/?REQUEST=GetCapabilities&SERVICE=WMS&VERSION=1.3.0";
 
-const parseWMSResponse = async (resp: Response, endpoint: string) => {
+export const parseWMSResponse = async (resp: Response, endpoint: string) => {
   const parser = new XMLParser({
     ignoreAttributes: false,
     attributeNamePrefix: "",
@@ -73,23 +73,6 @@ const parseWMSResponse = async (resp: Response, endpoint: string) => {
   );
 };
 
-const fetchWMSLayersFromEndpoint = async (
-  endpoint: string,
-  locale: Locale
-): Promise<ParsedWMSLayer[]> => {
-  const url = new URL(endpoint);
-  const params = url.searchParams;
-  params.append("lang", locale);
-
-  try {
-    const resp = await fetch(url);
-    return parseWMSResponse(resp, endpoint);
-  } catch (e) {
-    console.error(`Error fetching WMS layers from endpoint ${endpoint} :`, e);
-    return [];
-  }
-};
-
 export const useWMSLayers = (
   endpoints: string[],
   { pause }: { pause?: boolean } = { pause: false }
@@ -102,10 +85,12 @@ export const useWMSLayers = (
       return (
         await Promise.all(
           endpoints.map((endpoint) =>
-            fetchWMSLayersFromEndpoint(endpoint, locale)
+            fetchWMSorWMSLayersFromEndpoint(endpoint, locale)
           )
         )
-      ).flat();
+      )
+        .flat()
+        .filter((l) => l.type === "wms");
     },
     options: {
       pause,

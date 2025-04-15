@@ -2,8 +2,8 @@ import { TileLayer } from "@deck.gl/geo-layers";
 import { BitmapLayer } from "@deck.gl/layers";
 import { XMLParser } from "fast-xml-parser";
 
+import { fetchWMSorWMSLayersFromEndpoint } from "@/charts/map/wms-endpoint-utils";
 import { WMTSCustomLayer } from "@/config-types";
-import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { useFetchData } from "@/utils/use-fetch-data";
 
@@ -83,7 +83,7 @@ const parseWMTSLayer = (
   };
 };
 
-const parseWMTSResponse = async (resp: Response, endpoint: string) => {
+export const parseWMTSResponse = async (resp: Response, endpoint: string) => {
   const text = await resp.text();
 
   const parser = new XMLParser({
@@ -94,26 +94,6 @@ const parseWMTSResponse = async (resp: Response, endpoint: string) => {
   return (parser.parse(text) as WMTSData).Capabilities.Contents.Layer.map((l) =>
     parseWMTSLayer(l, endpoint)
   );
-};
-
-const fetchWMTSLayersFromEndpoint = async (
-  endpoint: string,
-  locale: Locale
-): Promise<ParsedWMTSLayer[]> => {
-  const url = new URL(endpoint);
-  const searchParams = url.searchParams;
-  searchParams.append("lang", locale);
-
-  try {
-    const resp = await fetch(url);
-    return parseWMTSResponse(resp, endpoint);
-  } catch {
-    console.error(
-      `Error fetching WMTS layers from endpoint ${endpoint}`,
-      endpoint
-    );
-    return [];
-  }
 };
 
 export const DEFAULT_WMTS_URL =
@@ -131,10 +111,12 @@ export const useWMTSLayers = (
       return (
         await Promise.all(
           endpoints.map((endpoint) =>
-            fetchWMTSLayersFromEndpoint(endpoint, locale)
+            fetchWMSorWMSLayersFromEndpoint(endpoint, locale)
           )
         )
-      ).flat();
+      )
+        .flat()
+        .filter((l) => l.type === "wmts");
     },
     options: {
       pause: pause || !endpoints.length,
