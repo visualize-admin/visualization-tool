@@ -2,16 +2,11 @@ import { Box, Typography } from "@mui/material";
 import uniq from "lodash/uniq";
 import NextImage from "next/image";
 
-import {
-  DEFAULT_WMS_URL,
-  ParsedWMSLayer,
-  useWMSLayers,
-} from "@/charts/map/wms-utils";
+import { DEFAULT_WMS_URL, ParsedWMSLayer } from "@/charts/map/wms-utils";
 import {
   DEFAULT_WMTS_URL,
   getWMTSLayerValue,
   ParsedWMTSLayer,
-  useWMTSLayers,
 } from "@/charts/map/wmts-utils";
 import { Error, InlineLoading } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
@@ -19,6 +14,7 @@ import { BaseLayer, MapConfig } from "@/config-types";
 import { truthy } from "@/domain/types";
 import { useLocale } from "@/locales/use-locale";
 import { useFetchData } from "@/utils/use-fetch-data";
+import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 
 export const MapCustomLayersLegend = ({
   chartConfig,
@@ -103,8 +99,14 @@ const useLegendsData = ({
   const wmsEndpoints = uniq(
     wmsLayerConfigs.map((x) => x.endpoint ?? DEFAULT_WMS_URL)
   );
-  const { data: wmsLayers, error: wmsError } = useWMSLayers(wmsEndpoints);
-  const { data: wmtsLayers, error: wmtsError } = useWMTSLayers(wmtsEndpoints);
+  const { data: groupedLayers, error: customLayersError } = useWMTSorWMSLayers([
+    ...wmtsEndpoints,
+    ...wmsEndpoints,
+  ]);
+  const { wms: wmsLayers, wmts: wmtsLayers } = groupedLayers ?? {
+    wms: [],
+    wmts: [],
+  };
   const { data: legendsData, error: legendsError } = useFetchData({
     queryKey: [
       "custom-layers-legends",
@@ -157,6 +159,6 @@ const useLegendsData = ({
 
   return {
     data: legendsData,
-    error: wmsError ?? wmtsError ?? legendsError,
+    error: customLayersError ?? legendsError,
   };
 };

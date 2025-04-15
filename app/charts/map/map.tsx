@@ -48,7 +48,7 @@ import useEvent from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useWMSLayers, useWMTSLayers } from "@/charts/map/wms-endpoint-utils";
+import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 
 // supported was removed as of maplibre-gl v3.0.0, so we need to add it back
 const maplibregl = { ...maplibreglRaw, supported };
@@ -125,8 +125,14 @@ export const MapComponent = ({
   const wmtsEndpoints = uniq(
     wmtsCustomLayers.map((x) => x.endpoint ?? DEFAULT_WMTS_URL)
   );
-  const { data: wmsLayers } = useWMSLayers(wmsEndpoints);
-  const { data: wmtsLayers } = useWMTSLayers(wmtsEndpoints);
+  const { data: groupedLayers } = useWMTSorWMSLayers([
+    ...wmsEndpoints,
+    ...wmtsEndpoints,
+  ]);
+  const { wms: wmsLayers, wmts: wmtsLayers } = groupedLayers ?? {
+    wms: [],
+    wmts: [],
+  };
   const { behindAreaCustomLayers, afterAreaCustomLayers } = useMemo(() => {
     return {
       behindAreaCustomLayers: customLayers

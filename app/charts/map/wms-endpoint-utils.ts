@@ -3,6 +3,7 @@ import { ParsedWMTSLayer, parseWMTSResponse } from "@/charts/map/wmts-utils";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
 import { useFetchData } from "@/utils/use-fetch-data";
+import groupBy from "lodash/groupBy";
 import sortBy from "lodash/sortBy";
 
 /** Logic taken from GeoAdmin
@@ -129,29 +130,32 @@ export const fetchWMSorWMSLayersFromEndpoint = async (
   }
 };
 
-export const mkUseWMTSorWMSLayers =
-  <TLayer extends ParsedWMSLayer | ParsedWMTSLayer>(type: TLayer["type"]) =>
-  (endpoints: string[], { pause }: { pause?: boolean } = { pause: false }) => {
-    const locale = useLocale();
+export const useWMTSorWMSLayers = (
+  endpoints: string[],
+  { pause }: { pause?: boolean } = { pause: false }
+) => {
+  const locale = useLocale();
 
-    return useFetchData<TLayer[]>({
-      queryKey: [`custom-${type}-layers`, ...sortBy(endpoints), locale],
-      queryFn: async () => {
-        return (
-          await Promise.all(
-            endpoints.map((endpoint) =>
-              fetchWMSorWMSLayersFromEndpoint(endpoint, locale)
-            )
+  return useFetchData<{
+    wmts: ParsedWMTSLayer[];
+    wms: ParsedWMSLayer[];
+  }>({
+    queryKey: [`custom-layers`, ...sortBy(endpoints), locale],
+    queryFn: async () => {
+      const allLayers = (
+        await Promise.all(
+          endpoints.map((endpoint) =>
+            fetchWMSorWMSLayersFromEndpoint(endpoint, locale)
           )
         )
-          .flat()
-          .filter((l) => l.type === type) as TLayer[];
-      },
-      options: {
-        pause,
-      },
-    });
-  };
+      ).flat();
+      const { wmts = [], wms = [] } = groupBy(allLayers, (x) => x.type);
 
-export const useWMTSLayers = mkUseWMTSorWMSLayers<ParsedWMTSLayer>("wmts");
-export const useWMSLayers = mkUseWMTSorWMSLayers<ParsedWMSLayer>("wms");
+      // Don't know why I need to as since the groupBy is correctly discriminating on type ?
+      return { wmts: wmts as ParsedWMTSLayer[], wms: wms as ParsedWMSLayer[] };
+    },
+    options: {
+      pause,
+    },
+  });
+};

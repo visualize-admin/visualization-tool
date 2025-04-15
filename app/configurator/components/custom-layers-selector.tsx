@@ -15,16 +15,8 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 
-import {
-  DEFAULT_WMS_URL,
-  ParsedWMSLayer,
-  useWMSLayers,
-} from "@/charts/map/wms-utils";
-import {
-  DEFAULT_WMTS_URL,
-  ParsedWMTSLayer,
-  useWMTSLayers,
-} from "@/charts/map/wmts-utils";
+import { DEFAULT_WMS_URL, ParsedWMSLayer } from "@/charts/map/wms-utils";
+import { DEFAULT_WMTS_URL, ParsedWMTSLayer } from "@/charts/map/wmts-utils";
 import { Select, SelectOption, Switch } from "@/components/form";
 import { MoveDragButton } from "@/components/move-drag-button";
 import { MapConfig, WMSCustomLayer, WMTSCustomLayer } from "@/config-types";
@@ -40,6 +32,7 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 
 export const CustomLayersSelector = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
@@ -47,9 +40,14 @@ export const CustomLayersSelector = () => {
   const customLayers = chartConfig.baseLayer.customLayers;
   const [wmtsEndpoint] = useState(DEFAULT_WMTS_URL);
   const [wmsEndpoint] = useState(DEFAULT_WMS_URL);
-  const { data: wmsLayers, error: wmsError } = useWMSLayers([wmsEndpoint]);
-  const { data: wmtsLayers, error: wmtsError } = useWMTSLayers([wmtsEndpoint]);
-  const error = wmsError ?? wmtsError;
+  const { data: groupedLayers, error } = useWMTSorWMSLayers([
+    wmsEndpoint,
+    wmtsEndpoint,
+  ]);
+  const { wms: wmsLayers, wmts: wmtsLayers } = groupedLayers ?? {
+    wms: [],
+    wmts: [],
+  };
   const options = useMemo(() => {
     return getCustomLayerOptions({ wmsLayers, wmtsLayers });
   }, [wmsLayers, wmtsLayers]);
