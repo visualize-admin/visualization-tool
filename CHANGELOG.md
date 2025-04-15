@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Total value labels are not rendered correctly in Chrome browsers
 
 # [5.6.0] - 2025-04-15
 
