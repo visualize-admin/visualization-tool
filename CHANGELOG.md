@@ -13,6 +13,7 @@ You can also check the
 
 - Features
   - Future limit values are now displayed for line charts
+  - Added a way to preview charts using hash parameters through `/preview` page
 - Styles
   - Migrated the application to the new CI / CD
   - Visualize font was changed to Noto Sans
