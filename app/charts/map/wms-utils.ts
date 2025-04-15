@@ -2,6 +2,7 @@ import { _WMSLayer as DeckGLWMSLayer } from "@deck.gl/geo-layers";
 import { XMLParser } from "fast-xml-parser";
 
 import { WMSCustomLayer } from "@/config-types";
+import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { useFetchData } from "@/utils/use-fetch-data";
 
@@ -39,21 +40,53 @@ export type ParsedWMSLayer = {
   legendUrl?: string;
   availableDimensionValues?: (string | number)[];
   defaultDimensionValue?: string | number;
+  endpoint: string;
 };
 
-const parseWMSLayer = (layer: WMSLayer): ParsedWMSLayer => {
+const parseWMSLayer = (layer: WMSLayer, endpoint: string): ParsedWMSLayer => {
   return {
     id: layer.Name,
     title: layer.Title,
     description: layer.Abstract ?? "",
     legendUrl: layer.Style?.LegendURL.OnlineResource["xlink:href"],
+    endpoint,
   };
 };
 
-const WMS_URL =
-  "https://wms.geo.admin.ch/?REQUEST=GetCapabilities&SERVICE=WMS&VERSION=1.3.0&lang=en";
+export const DEFAULT_WMS_URL =
+  "https://wms.geo.admin.ch/?REQUEST=GetCapabilities&SERVICE=WMS&VERSION=1.3.0";
+
+const fetchWMSLayersFromEndpoint = async (
+  endpoint: string,
+  locale: Locale
+): Promise<ParsedWMSLayer[]> => {
+  const url = new URL(endpoint);
+  const params = url.searchParams;
+  params.append("lang", locale);
+
+  try {
+    const resp = await fetch(url);
+
+    const parser = new XMLParser({
+      ignoreAttributes: false,
+      attributeNamePrefix: "",
+      parseAttributeValue: true,
+    });
+
+    const text = await resp.text();
+    return (
+      parser.parse(text) as WMSData
+    ).WMS_Capabilities.Capability.Layer.Layer.map((l) =>
+      parseWMSLayer(l, endpoint)
+    );
+  } catch (e) {
+    console.error(`Error fetching WMS layers from endpoint ${endpoint} :`, e);
+    return [];
+  }
+};
 
 export const useWMSLayers = (
+  endpoints: string[],
   { pause }: { pause?: boolean } = { pause: false }
 ) => {
   const locale = useLocale();
@@ -61,19 +94,13 @@ export const useWMSLayers = (
   return useFetchData<ParsedWMSLayer[]>({
     queryKey: ["custom-wms-layers", locale],
     queryFn: async () => {
-      return fetch(`${WMS_URL}?lang=${locale}`).then(async (res) => {
-        const parser = new XMLParser({
-          ignoreAttributes: false,
-          attributeNamePrefix: "",
-          parseAttributeValue: true,
-        });
-
-        return res.text().then((text) => {
-          return (
-            parser.parse(text) as WMSData
-          ).WMS_Capabilities.Capability.Layer.Layer.map(parseWMSLayer);
-        });
-      });
+      return (
+        await Promise.all(
+          endpoints.map((endpoint) =>
+            fetchWMSLayersFromEndpoint(endpoint, locale)
+          )
+        )
+      ).flat();
     },
     options: {
       pause,

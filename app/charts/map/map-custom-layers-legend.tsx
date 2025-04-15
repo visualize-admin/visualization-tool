@@ -1,8 +1,14 @@
 import { Box, Typography } from "@mui/material";
+import uniq from "lodash/uniq";
 import NextImage from "next/image";
 
-import { ParsedWMSLayer, useWMSLayers } from "@/charts/map/wms-utils";
 import {
+  DEFAULT_WMS_URL,
+  ParsedWMSLayer,
+  useWMSLayers,
+} from "@/charts/map/wms-utils";
+import {
+  DEFAULT_WMTS_URL,
   getWMTSLayerValue,
   ParsedWMTSLayer,
   useWMTSLayers,
@@ -86,8 +92,19 @@ const useLegendsData = ({
   customLayers: BaseLayer["customLayers"];
 }) => {
   const locale = useLocale();
-  const { data: wmsLayers, error: wmsError } = useWMSLayers();
-  const { data: wmtsLayers, error: wmtsError } = useWMTSLayers();
+  const wmsLayerConfigs = customLayers.filter((layer) => layer.type === "wms");
+  const wmtsLayerConfigs = customLayers.filter(
+    (layer) => layer.type === "wmts"
+  );
+
+  const wmtsEndpoints = uniq(
+    wmtsLayerConfigs.map((x) => x.endpoint ?? DEFAULT_WMTS_URL)
+  );
+  const wmsEndpoints = uniq(
+    wmsLayerConfigs.map((x) => x.endpoint ?? DEFAULT_WMS_URL)
+  );
+  const { data: wmsLayers, error: wmsError } = useWMSLayers(wmsEndpoints);
+  const { data: wmtsLayers, error: wmtsError } = useWMTSLayers(wmtsEndpoints);
   const { data: legendsData, error: legendsError } = useFetchData({
     queryKey: [
       "custom-layers-legends",

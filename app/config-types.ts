@@ -857,12 +857,14 @@ const BaseCustomLayer = t.type({
   id: t.string,
   isBehindAreaLayer: t.boolean,
   syncTemporalFilters: t.boolean,
+  endpoint: t.union([t.string, t.undefined]),
 });
 export type BaseCustomLayer = t.TypeOf<typeof BaseCustomLayer>;
 
 const WMSCustomLayer = t.intersection([
   t.type({
     type: t.literal("wms"),
+    endpoint: t.string,
   }),
   BaseCustomLayer,
 ]);

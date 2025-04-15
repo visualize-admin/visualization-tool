@@ -3,6 +3,7 @@ import { BitmapLayer } from "@deck.gl/layers";
 import { XMLParser } from "fast-xml-parser";
 
 import { WMTSCustomLayer } from "@/config-types";
+import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { useFetchData } from "@/utils/use-fetch-data";
 
@@ -58,9 +59,13 @@ export type ParsedWMTSLayer = {
   dimensionIdentifier: string;
   availableDimensionValues: (string | number)[];
   defaultDimensionValue: string | number;
+  endpoint: string;
 };
 
-const parseWMTSLayer = (layer: WMTSLayer): ParsedWMTSLayer => {
+const parseWMTSLayer = (
+  layer: WMTSLayer,
+  endpoint: string
+): ParsedWMTSLayer => {
   return {
     id: layer["ows:Identifier"],
     url: layer.ResourceURL.template,
@@ -72,13 +77,45 @@ const parseWMTSLayer = (layer: WMTSLayer): ParsedWMTSLayer => {
       ? layer.Dimension.Value
       : [layer.Dimension.Value],
     defaultDimensionValue: layer.Dimension.Default,
+    endpoint,
   };
 };
 
-const WMTS_URL =
+const fetchWMTSLayersFromEndpoint = async (
+  endpoint: string,
+  locale: Locale
+): Promise<ParsedWMTSLayer[]> => {
+  const url = new URL(endpoint);
+  const searchParams = url.searchParams;
+  searchParams.append("lang", locale);
+
+  try {
+    const resp = await fetch(url);
+
+    const text = await resp.text();
+
+    const parser = new XMLParser({
+      ignoreAttributes: false,
+      attributeNamePrefix: "",
+      parseAttributeValue: true,
+    });
+    return (parser.parse(text) as WMTSData).Capabilities.Contents.Layer.map(
+      (l) => parseWMTSLayer(l, endpoint)
+    );
+  } catch {
+    console.error(
+      `Error fetching WMTS layers from endpoint ${endpoint}`,
+      endpoint
+    );
+    return [];
+  }
+};
+
+export const DEFAULT_WMTS_URL =
   "https://wmts.geo.admin.ch/EPSG/3857/1.0.0/WMTSCapabilities.xml";
 
 export const useWMTSLayers = (
+  endpoints: string[],
   { pause }: { pause?: boolean } = { pause: false }
 ) => {
   const locale = useLocale();
@@ -86,22 +123,16 @@ export const useWMTSLayers = (
   return useFetchData<ParsedWMTSLayer[]>({
     queryKey: ["custom-wmts-layers", locale],
     queryFn: async () => {
-      return fetch(`${WMTS_URL}?lang=${locale}`).then(async (res) => {
-        const parser = new XMLParser({
-          ignoreAttributes: false,
-          attributeNamePrefix: "",
-          parseAttributeValue: true,
-        });
-
-        return res.text().then((text) => {
-          return (
-            parser.parse(text) as WMTSData
-          ).Capabilities.Contents.Layer.map(parseWMTSLayer);
-        });
-      });
+      return (
+        await Promise.all(
+          endpoints.map((endpoint) =>
+            fetchWMTSLayersFromEndpoint(endpoint, locale)
+          )
+        )
+      ).flat();
     },
     options: {
-      pause,
+      pause: pause || !endpoints.length,
     },
   });
 };

@@ -8,6 +8,7 @@ import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { hexToRgba } from "@uiw/react-color";
 import { geoArea } from "d3-geo";
+import { uniq } from "lodash";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
 import maplibreglRaw from "maplibre-gl";
@@ -29,8 +30,16 @@ import {
 import { MapState } from "@/charts/map/map-state";
 import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
 import { getMap, setMap } from "@/charts/map/ref";
-import { getWMSTile, useWMSLayers } from "@/charts/map/wms-utils";
-import { getWMTSTile, useWMTSLayers } from "@/charts/map/wmts-utils";
+import {
+  DEFAULT_WMS_URL,
+  getWMSTile,
+  useWMSLayers,
+} from "@/charts/map/wms-utils";
+import {
+  DEFAULT_WMTS_URL,
+  getWMTSTile,
+  useWMTSLayers,
+} from "@/charts/map/wmts-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { useLimits } from "@/config-utils";
@@ -117,12 +126,15 @@ export const MapComponent = ({
     };
   }, [customLayers]);
 
-  const { data: wmsLayers } = useWMSLayers({
-    pause: wmsCustomLayers.length === 0,
-  });
-  const { data: wmtsLayers } = useWMTSLayers({
-    pause: wmtsCustomLayers.length === 0,
-  });
+  const wmsEndpoints = uniq(
+    wmsCustomLayers.map((x) => x.endpoint ?? DEFAULT_WMS_URL)
+  );
+  const wmtsEndpoints = uniq(
+    wmtsCustomLayers.map((x) => x.endpoint ?? DEFAULT_WMTS_URL)
+  );
+  const { data: wmsLayers } = useWMSLayers(wmsEndpoints);
+  const { data: wmtsLayers } = useWMTSLayers(wmtsEndpoints);
+  console.log("map", { wmsLayers, wmtsLayers, wmsEndpoints, wmtsEndpoints });
   const { behindAreaCustomLayers, afterAreaCustomLayers } = useMemo(() => {
     return {
       behindAreaCustomLayers: customLayers
