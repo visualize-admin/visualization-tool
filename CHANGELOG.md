@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Added a way to preview charts using hash parameters through `/preview` page
 
 # [5.6.0] - 2025-04-15
 
