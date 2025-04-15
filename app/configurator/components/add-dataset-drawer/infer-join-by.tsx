@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-restricted-imports
 import { groupBy, mapValues } from "lodash";
 
-import { PartialSearchCube } from "@/domain/data";
+import { isDimensionOfTimeUnit, PartialSearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { JoinBy } from "@/graphql/join";
 
@@ -14,11 +14,7 @@ export const findDimensionForOption = (
   const type = option.type;
   switch (type) {
     case "temporal":
-      return dimensions?.find(
-        (d) =>
-          // TODO Find out why this is necessary
-          d.timeUnit === `http://www.w3.org/2006/time#unit${option.timeUnit}`
-      );
+      return dimensions?.find((d) => isDimensionOfTimeUnit(d, option.timeUnit));
     case "shared":
       return dimensions?.find((d) =>
         d.termsets.some((t) =>

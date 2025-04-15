@@ -13,6 +13,7 @@ import {
 // @ts-ignore
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { Limit } from "@/rdf/limits";
+import { unitsToNode } from "@/rdf/mappings";
 
 type RawObservationValue = Term;
 
@@ -647,6 +648,21 @@ export const isTemporalDimensionWithTimeUnit = (
   dimension?: Component | null
 ): dimension is Extract<Dimension, { timeUnit: any }> => {
   return !!dimension && "timeUnit" in dimension;
+};
+
+export const isDimensionOfTimeUnit = (
+  dimension:
+    | Component
+    | NonNullable<PartialSearchCube["dimensions"]>[number]
+    | null,
+  timeUnit: TimeUnit
+) => {
+  return (
+    !!dimension &&
+    "timeUnit" in dimension &&
+    dimension.timeUnit &&
+    unitsToNode.get(timeUnit)
+  );
 };
 
 const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {

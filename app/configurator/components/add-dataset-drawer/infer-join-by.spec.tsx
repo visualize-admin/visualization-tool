@@ -1,9 +1,9 @@
 import mapValues from "lodash/mapValues";
 
 import { ComponentId, stringifyComponentId } from "@/graphql/make-component-id";
-import { DataCubePublicationStatus } from "@/graphql/query-hooks";
+import { DataCubePublicationStatus, TimeUnit } from "@/graphql/query-hooks";
 
-import { inferJoinBy } from "./infer-join-by";
+import { findDimensionForOption, inferJoinBy } from "./infer-join-by";
 import { SearchOptions } from "./types";
 
 const selectedSearchDimensions: SearchOptions[] = [
@@ -16,7 +16,7 @@ const selectedSearchDimensions: SearchOptions[] = [
         "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
     }),
     label: "Jahr der Vergütung",
-    timeUnit: "Year",
+    timeUnit: TimeUnit.Year,
     originalIds: [
       {
         cubeIri:
@@ -111,6 +111,23 @@ const cubeElectricityPriceCanton = {
   ],
 };
 
+describe("find dimension for option", () => {
+  it("should find dimension for temporal option", () => {
+    const result = findDimensionForOption(
+      selectedSearchDimensions[0],
+      cubeElectricityPriceCanton.dimensions
+    );
+    expect(result).toMatchInlineSnapshot(`
+Object {
+  "id": "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
+  "label": "Period",
+  "termsets": Array [],
+  "timeUnit": "http://www.w3.org/2006/time#unitYear",
+}
+`);
+  });
+});
+
 describe("inferJoinBy", () => {
   it("should infer join-by dimensions correctly", () => {
     const result = inferJoinBy(
@@ -147,7 +164,7 @@ Object {
             },
           ],
           label: "Jahr der Vergütung",
-          timeUnit: "Year",
+          timeUnit: TimeUnit.Year,
         },
         {
           type: "shared" as const,

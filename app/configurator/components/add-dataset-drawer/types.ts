@@ -1,5 +1,6 @@
 import { Termset } from "@/domain/data";
 import { ComponentId } from "@/graphql/make-component-id";
+import { TimeUnit } from "@/graphql/query-hooks";
 
 type OriginalId = {
   /** Versioned cube IRI */
@@ -13,7 +14,7 @@ export type SearchOptions =
       /** Contains for now the join by id */
       id: ComponentId;
       label: string;
-      timeUnit: string;
+      timeUnit: TimeUnit;
       originalIds: OriginalId[];
     }
   | {
