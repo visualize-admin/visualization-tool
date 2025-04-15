@@ -2263,7 +2263,7 @@ const ChartFieldColorComponent = ({
         ) : colorType === "numerical" ? (
           <div>
             <ColorRampField field={field} path="color" nSteps={nbClass} />
-            <Typography variant="caption">
+            <Typography variant="caption" component="p" sx={{ mb: 1 }}>
               <Trans id="controls.scale.type">Scale type</Trans>
             </Typography>
             <RadioGroup>
