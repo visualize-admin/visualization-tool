@@ -2,6 +2,36 @@ type Object = Record<string, any>;
 
 const KEY_SEPARATOR = "__SEP__";
 const VALUE_SEPARATOR = "=";
+const JOIN_SEPARATOR = ",";
+
+/** Converts an object into a URL-friendly hash string. */
+export const objectToHashString = (o: Object) => {
+  return `#${objectToKeyValuePairs(o).join(JOIN_SEPARATOR)}`;
+};
+
+/** Converts a URL-friendly hash string back into the original object. */
+export const hashStringToObject = (hashString: string) => {
+  return keyValuePairsToObject(hashString.slice(1).split(JOIN_SEPARATOR));
+};
+
+const objectToKeyValuePairs = (o: Object) => {
+  const flatObject = flattenObject(o);
+
+  return Object.entries(flatObject).map(([k, v]) => {
+    return `${k}${VALUE_SEPARATOR}${v}`;
+  });
+};
+
+const keyValuePairsToObject = (keyValuePairs: string[]) => {
+  const o: Object = {};
+
+  keyValuePairs.forEach((kv) => {
+    const [k, v] = kv.split(VALUE_SEPARATOR);
+    o[k] = v;
+  });
+
+  return unflattenObject(o);
+};
 
 const flattenObject = (o: Object, parentKey = "", result: Object = {}) => {
   if (
@@ -54,9 +84,7 @@ const parseValue = (v: any) => {
   if (v === "undefined") return undefined;
   if (v === "[]") return [];
   if (v === "{}") return {};
-  if (v !== "" && !isNaN(Number(v))) {
-    return Number(v);
-  }
+  if (v !== "" && !isNaN(+v)) return +v;
 
   return v;
 };
@@ -107,35 +135,4 @@ const unflattenObject = (o: Object) => {
   };
 
   return transformArraysAndScalars(result);
-};
-
-const objectToKeyValuePairs = (o: Object) => {
-  const flatObject = flattenObject(o);
-
-  return Object.entries(flatObject).map(([k, v]) => {
-    return `${k}${VALUE_SEPARATOR}${v}`;
-  });
-};
-
-const keyValuePairsToObject = (keyValuePairs: string[]) => {
-  const o: Object = {};
-
-  keyValuePairs.forEach((kv) => {
-    const [k, v] = kv.split(VALUE_SEPARATOR);
-    o[k] = v;
-  });
-
-  return unflattenObject(o);
-};
-
-const SEP = ",";
-
-/** Converts an object into a URL-friendly hash string. */
-export const objectToHashString = (o: Object) => {
-  return `#${objectToKeyValuePairs(o).join(SEP)}`;
-};
-
-/** Converts a URL-friendly hash string back into the original object. */
-export const hashStringToObject = (hashString: string) => {
-  return keyValuePairsToObject(hashString.slice(1).split(SEP));
 };
