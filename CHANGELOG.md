@@ -13,6 +13,9 @@ You can also check the
 
 - Features
   - Added a way to preview charts using hash parameters through `/preview` page
+- Styles
+  - Details button and Created with visualize.admin.ch are now rendered in the
+    same line in footnotes when using "minimal" embed mode
 
 # [5.6.0] - 2025-04-15
 
