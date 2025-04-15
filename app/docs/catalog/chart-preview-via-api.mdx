@@ -38,7 +38,7 @@ publishing them, by using a custom API or iframe hash parameter.
 page with two iframes containing chart previews. The first iframe gets the chart
 state via hash parameters.
 
-In order to get the parameters, you can use the "Copy preview link" button found
+In order to get the parameters, you can use the _Copy preview link_ button found
 in the editor or use the
 [objectToHashString](https://github.com/visualize-admin/visualization-tool/blob/main/app/utils/hash-utils.ts)
 function.
@@ -72,8 +72,9 @@ const handleMessage = (e) => {
     window.removeEventListener("message", handleMessage);
   }
 };
-
-window.addEventListener("message", handleMessage);; `} />
+window.addEventListener("message", handleMessage);
+`}
+/>
 
 ### Controlling the language
 

@@ -8,6 +8,7 @@ it("should persist chart configs as is", () => {
       type: "sparql",
       url: "https://lindas-cached.cluster.ldbar.ch/query",
     },
+    activeField: undefined,
     layout: {
       type: "tab",
       meta: {
