@@ -10,6 +10,7 @@ it("should persist chart configs as is", () => {
     },
     activeField: undefined,
     fakePropertyToTestNumbersParsing: 12345.6789,
+    fakePropertyToTestNumbersParsing2: "12345.6789",
     layout: {
       type: "tab",
       meta: {
