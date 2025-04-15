@@ -243,7 +243,6 @@ export const AddDatasetDrawer = ({
   }
 
   const currentCubes = activeChartConfig.cubes;
-  console.log(currentCubes);
 
   const {
     dimensions,
