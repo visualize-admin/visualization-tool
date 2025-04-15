@@ -12,8 +12,12 @@ You can also check the
 # Unreleased
 
 - Features
-  - Future limit values are now displayed for line charts
   - Added a way to preview charts using hash parameters through `/preview` page
+
+# [5.6.0] - 2025-04-15
+
+- Features
+  - Future limit values are now displayed for line charts
 - Styles
   - Migrated the application to the new CI / CD
   - Visualize font was changed to Noto Sans
