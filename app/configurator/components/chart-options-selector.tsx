@@ -1606,7 +1606,7 @@ const ColorSelection = ({
 }) => {
   return (
     <ControlSection collapse>
-      <SectionTitle iconName="color">
+      <SectionTitle iconName="swatch">
         <Trans id="controls.section.layout-options">Layout options</Trans>
       </SectionTitle>
       <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
@@ -2185,7 +2185,7 @@ const ChartFieldColorComponent = ({
 
   return (
     <ControlSection collapse>
-      <SectionTitle iconName="color">
+      <SectionTitle iconName="swatch">
         <Trans id="controls.color">Color</Trans>
       </SectionTitle>
       <ControlSectionContent>
