@@ -57,7 +57,6 @@ export const renderTotalValueLabels = (
               dy,
             })
           )
-          .style("transform-origin", "0% 50%")
           .style("line-height", 1)
           .style("opacity", 0)
           .text((d) => d.valueLabel)
@@ -107,7 +106,7 @@ const getValueLabelTransform = (
   }
 ) => {
   if (rotate) {
-    return `translate(${d.x + labelHeight}px, ${d.y - labelHeight}px) rotate(-90deg)`;
+    return `translate(${d.x + labelHeight / 3}px, ${d.y - (labelHeight * 2) / 3}px) rotate(-90deg)`;
   }
 
   return `translate(${d.x + dx}px, ${d.y + dy}px) rotate(0deg)`;
