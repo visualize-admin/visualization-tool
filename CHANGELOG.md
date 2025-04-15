@@ -11,7 +11,9 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - It's now possible to bulk select and unselect show value checkboxes in
+    segmented column and bar charts
 
 # [5.6.0] - 2025-04-15
 
