@@ -9,6 +9,7 @@ it("should persist chart configs as is", () => {
       url: "https://lindas-cached.cluster.ldbar.ch/query",
     },
     activeField: undefined,
+    fakePropertyToTestNumbersParsing: 12345.6789,
     layout: {
       type: "tab",
       meta: {

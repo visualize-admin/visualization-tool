@@ -3,6 +3,7 @@ type Object = Record<string, any>;
 const KEY_SEPARATOR = "__SEP__";
 const VALUE_SEPARATOR = "=";
 const JOIN_SEPARATOR = ",";
+const NUMBER_PREFIX = "__NUM__";
 
 /** Converts an object into a URL-friendly hash string. */
 export const objectToHashString = (o: Object) => {
@@ -70,7 +71,8 @@ const flattenObject = (o: Object, parentKey = "", result: Object = {}) => {
           });
         }
       } else {
-        result[newKey] = `${v}`;
+        result[newKey] =
+          typeof v === "number" ? `${NUMBER_PREFIX}${v}` : `${v}`;
       }
     }
   }
@@ -84,7 +86,13 @@ const parseValue = (v: any) => {
   if (v === "undefined") return undefined;
   if (v === "[]") return [];
   if (v === "{}") return {};
-  if (v !== "" && !isNaN(+v)) return +v;
+  if (typeof v === "string" && v.startsWith(NUMBER_PREFIX)) {
+    const num = v.slice(NUMBER_PREFIX.length);
+
+    if (num !== "" && !isNaN(+num)) {
+      return +num;
+    }
+  }
 
   return v;
 };
