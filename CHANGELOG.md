@@ -13,6 +13,8 @@ You can also check the
 
 - Features
   - Added a way to preview charts using hash parameters through `/preview` page
+- Styles
+  - Improved ODS dataset preview iframe's appearance
 
 # [5.6.0] - 2025-04-15
 
