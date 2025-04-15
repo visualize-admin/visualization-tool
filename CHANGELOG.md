@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.6.0] - 2025-04-15
+
 - Features
   - Future limit values are now displayed for line charts
 - Styles
