@@ -29,7 +29,7 @@ import {
   ensureDashboardLayoutIsCorrect,
   handleChartFieldChanged,
   handleChartFieldDeleted,
-  handleChartOptionChanged,
+  handleChartFieldUpdated,
   reducer,
   setRangeFilter,
   updateColorMapping,
@@ -1534,8 +1534,8 @@ describe("handleChartOptionChanged", () => {
       activeChartKey: "bac",
     } as unknown as ConfiguratorStateConfiguringChart;
 
-    handleChartOptionChanged(state, {
-      type: "COLOR_FIELD_UPDATED",
+    handleChartFieldUpdated(state, {
+      type: "CHART_FIELD_UPDATED",
       value: {
         locale: "en",
         field: "areaLayer",
@@ -1594,8 +1594,8 @@ describe("handleChartOptionChanged", () => {
       activeChartKey: "cab",
     } as unknown as ConfiguratorStateConfiguringChart;
 
-    handleChartOptionChanged(state, {
-      type: "COLOR_FIELD_UPDATED",
+    handleChartFieldUpdated(state, {
+      type: "CHART_FIELD_UPDATED",
       value: {
         locale: "en",
         field: "areaLayer",

@@ -142,7 +142,7 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
   ) => {
     if (value) {
       dispatch({
-        type: "COLOR_FIELD_UPDATED",
+        type: "CHART_FIELD_UPDATED",
         value: {
           locale,
           field,

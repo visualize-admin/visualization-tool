@@ -1015,7 +1015,7 @@ const ChartShowDots = ({
               const { checked } = e.target;
               if ("y" in fields && !("showDots" in fields.y)) {
                 dispatch({
-                  type: "COLOR_FIELD_UPDATED",
+                  type: "CHART_FIELD_UPDATED",
                   value: {
                     locale,
                     field: "y",
@@ -1025,7 +1025,7 @@ const ChartShowDots = ({
                 });
               }
               dispatch({
-                type: "COLOR_FIELD_UPDATED",
+                type: "CHART_FIELD_UPDATED",
                 value: {
                   locale,
                   field,
@@ -1309,7 +1309,7 @@ const ChartComboLineSingleYField = ({
                   }
 
                   dispatch({
-                    type: "COLOR_FIELD_UPDATED",
+                    type: "CHART_FIELD_UPDATED",
                     value: {
                       locale,
                       field: "y",
@@ -1337,7 +1337,7 @@ const ChartComboLineSingleYField = ({
 
                 if (id !== FIELD_VALUE_NONE) {
                   dispatch({
-                    type: "COLOR_FIELD_UPDATED",
+                    type: "CHART_FIELD_UPDATED",
                     value: {
                       locale,
                       field: "y",
@@ -1426,7 +1426,7 @@ const ChartComboLineDualYField = ({
             onChange={(e) => {
               const newId = e.target.value as string;
               dispatch({
-                type: "COLOR_FIELD_UPDATED",
+                type: "CHART_FIELD_UPDATED",
                 value: {
                   locale,
                   field: "y",
@@ -1451,7 +1451,7 @@ const ChartComboLineDualYField = ({
             onChange={(e) => {
               const newId = e.target.value as string;
               dispatch({
-                type: "COLOR_FIELD_UPDATED",
+                type: "CHART_FIELD_UPDATED",
                 value: {
                   locale,
                   field: "y",
@@ -1541,7 +1541,7 @@ const ChartComboLineColumnYField = ({
             onChange={(e) => {
               const newId = e.target.value as string;
               dispatch({
-                type: "COLOR_FIELD_UPDATED",
+                type: "CHART_FIELD_UPDATED",
                 value: {
                   locale,
                   field: "y",
@@ -1566,7 +1566,7 @@ const ChartComboLineColumnYField = ({
             onChange={(e) => {
               const newId = e.target.value as string;
               dispatch({
-                type: "COLOR_FIELD_UPDATED",
+                type: "CHART_FIELD_UPDATED",
                 value: {
                   locale,
                   field: "y",
@@ -1941,7 +1941,7 @@ const ChartFieldSorting = ({
   >(
     ({ sortingType, sortingOrder }) => {
       dispatch({
-        type: "COLOR_FIELD_UPDATED",
+        type: "CHART_FIELD_UPDATED",
         value: {
           locale,
           field,
@@ -2433,7 +2433,7 @@ const ChartMapBaseLayerSettings = ({
     if (chartConfig.baseLayer.locked) {
       if (map !== null) {
         dispatch({
-          type: "COLOR_FIELD_UPDATED",
+          type: "CHART_FIELD_UPDATED",
           value: {
             locale,
             field: null,
@@ -2445,7 +2445,7 @@ const ChartMapBaseLayerSettings = ({
       }
     } else {
       dispatch({
-        type: "COLOR_FIELD_UPDATED",
+        type: "CHART_FIELD_UPDATED",
         value: {
           locale,
           field: null,
