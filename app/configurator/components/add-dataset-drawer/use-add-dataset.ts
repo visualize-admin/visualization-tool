@@ -4,7 +4,6 @@ import { useClient } from "urql";
 
 import { PartialSearchCube } from "@/browser/dataset-browse";
 import { getEnabledChartTypes } from "@/charts";
-import { ConfiguratorStateConfiguringChart } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import {
   addDatasetInConfig,
@@ -43,9 +42,7 @@ const useAddDataset = () => {
           iri,
           joinBy: joinBy,
         };
-        const nextState = JSON.parse(
-          JSON.stringify(state)
-        ) as ConfiguratorStateConfiguringChart;
+        const nextState = structuredClone(state);
         addDatasetInConfig(nextState, addDatasetOptions);
         const chartConfig = getChartConfig(nextState, state.activeChartKey);
 
