@@ -37,7 +37,7 @@ import {
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 import { joinDimensions } from "@/graphql/join";
-import { JoinBy } from "@/graphql/join";
+import { VersionedJoinBy } from "@/graphql/join";
 import {
   DataCubeComponentsQuery,
   useDataCubeComponentsQuery,
@@ -81,7 +81,7 @@ const PreviewDataTable = ({
   onClickBack: () => void;
   onConfirm: () => void;
   addingDataset: boolean;
-  inferredJoinBy: JoinBy;
+  inferredJoinBy: VersionedJoinBy;
 }) => {
   const locale = useLocale();
   const commonQueryVariables = {

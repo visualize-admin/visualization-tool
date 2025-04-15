@@ -11,7 +11,7 @@ import {
 } from "@/configurator/configurator-state";
 import { PartialSearchCube } from "@/domain/data";
 import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
-import { JoinBy } from "@/graphql/join";
+import { VersionedJoinBy } from "@/graphql/join";
 import { useLocale } from "@/locales/use-locale";
 
 /**
@@ -33,7 +33,7 @@ const useAddDataset = () => {
       joinBy,
     }: {
       otherCube: PartialSearchCube;
-      joinBy: JoinBy;
+      joinBy: VersionedJoinBy;
     }) => {
       const iri = otherCube.iri;
       setHookState((hs) => ({ ...hs, fetching: true, otherIri: iri }));

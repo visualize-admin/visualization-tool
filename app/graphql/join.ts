@@ -71,7 +71,7 @@ const dimensionValueSorter = (
  */
 export const joinDimensions = (options: {
   dimensions: DataCubeComponentsQuery["dataCubeComponents"]["dimensions"];
-  joinBy: JoinBy;
+  joinBy: VersionedJoinBy;
 }) => {
   const joinByDimensions: (Dimension & { joinByIndex: undefined | number })[] =
     [];
@@ -234,5 +234,7 @@ export const mergeObservations = (
 
   // Extract observations from the merged object indexed by joinBy value
   return Object.values(merged);
-}; /** cubeIri to dimensionIds */
-export type JoinBy = Record<string, ComponentId[]>;
+};
+
+/** Versioned cubeIri to dimensionIds */
+export type VersionedJoinBy = Record<string, ComponentId[]>;

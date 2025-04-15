@@ -12,7 +12,7 @@ import {
   TimeUnit,
 } from "@/graphql/query-hooks";
 
-import { JoinBy } from "./join";
+import { VersionedJoinBy } from "./join";
 
 type ObservationsQuery = OperationResult<
   DataCubeObservationsQuery,
@@ -209,7 +209,7 @@ describe("mergeObservations", () => {
 
 describe("joinDimensions", () => {
   it("should join dimensions (editor mode, all dimensions fetched)", () => {
-    const joinBy: JoinBy = {
+    const joinBy: VersionedJoinBy = {
       population: ["year" as ComponentId, "canton" as ComponentId],
       elec: ["YEAR" as ComponentId, "CANTON" as ComponentId],
     };
@@ -860,7 +860,7 @@ describe("joinDimensions", () => {
           "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/Jahr" as ComponentId,
           "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/region" as ComponentId,
         ],
-    } satisfies JoinBy;
+    } satisfies VersionedJoinBy;
 
     const result = joinDimensions({
       joinBy,

@@ -28,7 +28,7 @@ import { deriveFiltersFromFields } from "@/configurator/configurator-state/reduc
 import { Dimension, isJoinByComponent, ObservationValue } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
 import { mkJoinById } from "@/graphql/join";
-import { JoinBy } from "@/graphql/join";
+import { VersionedJoinBy } from "@/graphql/join";
 import { Locale } from "@/locales/locales";
 import { getDataSourceFromLocalStorage } from "@/stores/data-source";
 import { getCachedComponents } from "@/urql-cache";
@@ -278,7 +278,7 @@ export const addDatasetInConfig = function (
   config: ConfiguratorStateConfiguringChart,
   options: {
     iri: string;
-    joinBy: JoinBy;
+    joinBy: VersionedJoinBy;
   }
 ) {
   const chartConfig = getChartConfig(config, config.activeChartKey);

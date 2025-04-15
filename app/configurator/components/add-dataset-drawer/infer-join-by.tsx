@@ -3,7 +3,7 @@ import { groupBy, mapValues } from "lodash";
 
 import { isDimensionOfTimeUnit, PartialSearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { JoinBy } from "@/graphql/join";
+import { VersionedJoinBy } from "@/graphql/join";
 
 import { SearchOptions } from "./types";
 
@@ -30,7 +30,7 @@ export const findDimensionForOption = (
 export const inferJoinBy = (
   options: SearchOptions[],
   newCube: PartialSearchCube
-): JoinBy => {
+): VersionedJoinBy => {
   const tmp = options.map((option) => {
     const rightDimension = findDimensionForOption(option, newCube?.dimensions);
     if (!rightDimension) {
@@ -57,7 +57,7 @@ export const inferJoinBy = (
       }
     });
     return acc;
-  }, {} as JoinBy);
+  }, {} as VersionedJoinBy);
 
   return result;
 };

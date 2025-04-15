@@ -2,7 +2,7 @@ import { DataSource } from "@/config-types";
 import { DataCubeComponents } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { client } from "@/graphql/client";
-import { JoinBy } from "@/graphql/join";
+import { VersionedJoinBy } from "@/graphql/join";
 import { joinDimensions } from "@/graphql/join";
 import {
   DataCubeComponentFilter,
@@ -44,7 +44,7 @@ export const getCachedComponents = ({
     })
     .filter(truthy);
 
-  const joinBy: JoinBy = Object.fromEntries(
+  const joinBy: VersionedJoinBy = Object.fromEntries(
     cubeFilters
       .map((cubeFilter) => {
         return [cubeFilter.iri, cubeFilter.joinBy];
