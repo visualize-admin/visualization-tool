@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Value labels in segmented column charts are now centered horizontally
 
 # [5.6.0] - 2025-04-15
 
