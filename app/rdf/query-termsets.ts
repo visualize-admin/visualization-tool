@@ -52,6 +52,7 @@ SELECT DISTINCT ?dimensionIri ?dimensionLabel ?termsetIri ?termsetLabel WHERE {
 
   return grouped.map(([dimensionIri, termsets]) => ({
     iri: dimensionIri,
+    cubeIri: iri,
     label: termsets[0].dimensionLabel,
     termsets: termsets.map(({ iri, label }) => ({
       iri,

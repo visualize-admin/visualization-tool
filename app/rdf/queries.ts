@@ -372,6 +372,10 @@ export const getCubeObservations = async ({
   componentIris?: Maybe<string[]>;
   cache: LRUCache | undefined;
 }): Promise<ResolvedObservationsQuery["data"]> => {
+  console.log("getCubeObservations", {
+    cube,
+    filters,
+  });
   const cubeIri = cube.term?.value!;
   const cubeView = View.fromCube(cube, false);
   const unversionedCubeIri =
@@ -383,6 +387,7 @@ export const getCubeObservations = async ({
     unversionedCubeIri,
     cache,
   });
+  console.log({ allResolvedDimensions, cubeIri: cube.term?.value });
   const resolvedDimensions = allResolvedDimensions.filter((d) => {
     if (componentIris) {
       return (
@@ -802,6 +807,8 @@ async function fetchViewObservations({
       projection.addOut(ns.cubeView.limit, limit)
     );
   }
+
+  console.log(observationsView);
 
   const fullQuery = observationsView.observationsQuery({ disableDistinct });
   const query = pragmas

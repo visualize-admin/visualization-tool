@@ -23,6 +23,8 @@ You can also check the
   - Visualize font was changed to Noto Sans
 - Maintenance
   - Updated Next.js
+- Features
+  - Ability to merge more than 2 datasets
 
 # [5.5.0] - 2025-03-24
 
