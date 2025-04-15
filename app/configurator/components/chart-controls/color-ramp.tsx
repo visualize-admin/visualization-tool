@@ -192,12 +192,9 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
         <Trans id="controls.color.palette">Color palette</Trans>
       </Label>
       <Select
+        size="sm"
         value={currentPaletteId}
         disabled={disabled}
-        sx={{
-          width: "100%",
-          "& .MuiSelect-select": { height: "44px", width: "100%" },
-        }}
         displayEmpty
         onChange={onSelectedItemChange}
         renderValue={(selected) => {
@@ -210,6 +207,7 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
               </Typography>
             );
           }
+
           return (
             <ColorRamp
               colorInterpolator={selectedColorInterpolator}
@@ -218,6 +216,7 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
             />
           );
         }}
+        sx={{ lineHeight: 0 }}
       >
         {[
           ...PaletteSection({
