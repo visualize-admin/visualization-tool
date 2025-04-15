@@ -1,7 +1,12 @@
+import { BaseOf } from "ts-brand";
 import { OperationResult } from "urql";
 
 import { Dimension } from "@/domain/data";
-import { joinDimensions, mergeObservations } from "@/graphql/join";
+import {
+  joinDimensions,
+  mergeObservations,
+  mkVersionedJoinBy,
+} from "@/graphql/join";
 import { ComponentId, stringifyComponentId } from "@/graphql/make-component-id";
 import {
   DataCubeComponentsQuery,
@@ -209,10 +214,10 @@ describe("mergeObservations", () => {
 
 describe("joinDimensions", () => {
   it("should join dimensions (editor mode, all dimensions fetched)", () => {
-    const joinBy: VersionedJoinBy = {
+    const joinBy: VersionedJoinBy = mkVersionedJoinBy({
       population: ["year" as ComponentId, "canton" as ComponentId],
       elec: ["YEAR" as ComponentId, "CANTON" as ComponentId],
-    };
+    });
     const fetchedDimensions = [
       {
         cubeIri: "population",
@@ -326,7 +331,7 @@ describe("joinDimensions", () => {
   });
 
   it("should join dimensions (publish mode, only some dimensions are fetched)", () => {
-    const joinBy = {
+    const joinBy = mkVersionedJoinBy({
       "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9":
         [
           stringifyComponentId({
@@ -345,7 +350,7 @@ describe("joinDimensions", () => {
               "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/Jahr",
           }),
         ],
-    };
+    });
     const fetchedDimensions: DataCubeComponentsQuery["dataCubeComponents"]["dimensions"] =
       [
         {
@@ -845,7 +850,7 @@ describe("joinDimensions", () => {
       },
     ] satisfies DataCubeComponentsQuery["dataCubeComponents"]["dimensions"];
 
-    const joinBy = {
+    const joinBy = mkVersionedJoinBy({
       "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10":
         [
           "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr" as ComponentId,
@@ -860,7 +865,7 @@ describe("joinDimensions", () => {
           "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/Jahr" as ComponentId,
           "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/region" as ComponentId,
         ],
-    } satisfies VersionedJoinBy;
+    } satisfies BaseOf<VersionedJoinBy>);
 
     const result = joinDimensions({
       joinBy,

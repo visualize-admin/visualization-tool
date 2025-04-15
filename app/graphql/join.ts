@@ -3,6 +3,7 @@ import groupBy from "lodash/groupBy";
 import omit from "lodash/omit";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
+import { BaseOf, Brand } from "ts-brand";
 import { OperationResult } from "urql";
 
 import { ChartConfig, Cube } from "@/config-types";
@@ -236,5 +237,22 @@ export const mergeObservations = (
   return Object.values(merged);
 };
 
+type JoinBy = Record<string, ComponentId[]>;
+
 /** Versioned cubeIri to dimensionIds */
-export type VersionedJoinBy = Record<string, ComponentId[]>;
+export type VersionedJoinBy = Brand<JoinBy, "VersionedJoinBy">;
+
+/** Type only helpers to make handling of joinby typesafe */
+export const mkVersionedJoinBy = (joinBy: JoinBy): VersionedJoinBy =>
+  joinBy as VersionedJoinBy;
+
+export const getCubeFiltersFromVersionedJoinBy = (joinBy: VersionedJoinBy) => {
+  // We need to do the BaseOf otherwise Object.entries wrongly things
+  // branded properties are really there
+  return Object.entries(joinBy as BaseOf<VersionedJoinBy>).map(
+    ([cubeIri, joinBy]) => ({
+      iri: cubeIri,
+      joinBy,
+    })
+  );
+};

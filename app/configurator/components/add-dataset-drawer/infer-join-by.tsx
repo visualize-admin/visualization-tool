@@ -3,7 +3,7 @@ import { groupBy, mapValues } from "lodash";
 
 import { isDimensionOfTimeUnit, PartialSearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { VersionedJoinBy } from "@/graphql/join";
+import { mkVersionedJoinBy, VersionedJoinBy } from "@/graphql/join";
 
 import { SearchOptions } from "./types";
 
@@ -59,5 +59,5 @@ export const inferJoinBy = (
     return acc;
   }, {} as VersionedJoinBy);
 
-  return result;
+  return mkVersionedJoinBy(result);
 };

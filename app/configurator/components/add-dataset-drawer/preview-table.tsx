@@ -36,7 +36,10 @@ import {
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
-import { joinDimensions } from "@/graphql/join";
+import {
+  getCubeFiltersFromVersionedJoinBy,
+  joinDimensions,
+} from "@/graphql/join";
 import { VersionedJoinBy } from "@/graphql/join";
 import {
   DataCubeComponentsQuery,
@@ -104,12 +107,7 @@ const PreviewDataTable = ({
 
   const isQueryPaused = !otherCubeComponents || !currentComponents;
 
-  const cubeFilters = Object.entries(inferredJoinBy).map(
-    ([cubeIri, joinBy]) => ({
-      iri: cubeIri,
-      joinBy,
-    })
-  );
+  const cubeFilters = getCubeFiltersFromVersionedJoinBy(inferredJoinBy);
 
   const [observations] = useDataCubesObservationsQuery({
     pause: isQueryPaused,

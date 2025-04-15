@@ -35,6 +35,7 @@ import {
   updateColorMapping,
 } from "@/configurator/configurator-state/reducer";
 import { Dimension, Measure, NominalDimension } from "@/domain/data";
+import { mkVersionedJoinBy } from "@/graphql/join";
 import { ComponentId, stringifyComponentId } from "@/graphql/make-component-id";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/test/chartConfig-column-covid19.json";
 import covid19TableChartConfig from "@/test/__fixtures/config/test/chartConfig-table-covid19.json";
@@ -94,10 +95,10 @@ describe("add dataset", () => {
     type: "DATASET_ADD",
     value: {
       iri: "http://second-dataset",
-      joinBy: {
+      joinBy: mkVersionedJoinBy({
         "https://first-dataset": ["year-period-1" as ComponentId],
         "http://second-dataset": ["year-period-2" as ComponentId],
-      },
+      }),
     },
   };
 

@@ -27,8 +27,7 @@ import { getInitialConfiguringConfigBasedOnCube } from "@/configurator/configura
 import { deriveFiltersFromFields } from "@/configurator/configurator-state/reducer";
 import { Dimension, isJoinByComponent, ObservationValue } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
-import { mkJoinById } from "@/graphql/join";
-import { VersionedJoinBy } from "@/graphql/join";
+import { mkJoinById, VersionedJoinBy } from "@/graphql/join";
 import { Locale } from "@/locales/locales";
 import { getDataSourceFromLocalStorage } from "@/stores/data-source";
 import { getCachedComponents } from "@/urql-cache";
@@ -286,13 +285,7 @@ export const addDatasetInConfig = function (
 
   // Set new join by in existing cubes
   for (let i = 0; i < chartConfig.cubes.length; i++) {
-    // Crude unversioning, TODO
-    const cubeJoinBy =
-      joinBy[chartConfig.cubes[i].iri] ??
-      joinBy[chartConfig.cubes[i].iri.split("/").slice(0, -1).join("/")];
-    if (!cubeJoinBy) {
-      throw new Error("Could not find joinBy for cube");
-    }
+    const cubeJoinBy = joinBy[chartConfig.cubes[i].iri];
     chartConfig.cubes[i].joinBy = cubeJoinBy;
   }
   chartConfig.cubes.push({

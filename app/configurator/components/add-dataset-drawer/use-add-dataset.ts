@@ -40,7 +40,7 @@ const useAddDataset = () => {
       try {
         const addDatasetOptions = {
           iri,
-          joinBy: joinBy,
+          joinBy,
         };
         const nextState = structuredClone(state);
         addDatasetInConfig(nextState, addDatasetOptions);
