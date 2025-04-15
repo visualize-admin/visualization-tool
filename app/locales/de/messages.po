@@ -98,6 +98,18 @@ msgstr "Zurück"
 msgid "button.confirm"
 msgstr "Bestätigen"
 
+#: app/configurator/components/configurator.tsx
+msgid "button.copy-preview-link"
+msgstr "Vorschau-Link kopieren"
+
+#: app/configurator/components/configurator.tsx
+msgid "button.copy-preview-link.explanation"
+msgstr "Erhalten Sie einen Diagrammlink mit in der URL gespeicherter Konfiguration, ohne ihn veröffentlichen zu müssen."
+
+#: app/configurator/components/configurator.tsx
+msgid "button.copy-preview-link.success"
+msgstr "Vorschau-Link kopiert!"
+
 #: app/pages/v/[chartId].tsx
 msgid "button.copy.visualization"
 msgstr "Diese Visualisierung kopieren und editieren"

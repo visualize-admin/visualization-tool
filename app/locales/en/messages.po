@@ -98,6 +98,18 @@ msgstr "Back"
 msgid "button.confirm"
 msgstr "Confirm"
 
+#: app/configurator/components/configurator.tsx
+msgid "button.copy-preview-link"
+msgstr "Copy preview link"
+
+#: app/configurator/components/configurator.tsx
+msgid "button.copy-preview-link.explanation"
+msgstr "Get a chart link with configuration stored in the URL without having to publish it."
+
+#: app/configurator/components/configurator.tsx
+msgid "button.copy-preview-link.success"
+msgstr "Preview link copied!"
+
 #: app/pages/v/[chartId].tsx
 msgid "button.copy.visualization"
 msgstr "Copy and edit this visualization"

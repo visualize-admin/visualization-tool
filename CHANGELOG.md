@@ -12,6 +12,7 @@ You can also check the
 # Unreleased
 
 - Features
+  - Added a way to preview charts using hash parameters through `/preview` page
   - It's now possible to bulk select and unselect show value checkboxes in
     segmented column and bar charts
 
