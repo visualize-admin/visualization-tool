@@ -3,16 +3,19 @@ import { useEffect } from "react";
 
 import { useLocale } from "@/locales/use-locale";
 import CONFIGURATOR_STATE_MAP from "@/test/__fixtures/config/prod/map-1.json";
+import { objectToHashString } from "@/utils/hash-utils";
 
 const loadIframe = (id: string, config: any) => {
   const iframe = document.getElementById(id) as HTMLIFrameElement;
-  iframe.onload = async () => {
-    const iframeWindow = iframe?.contentWindow as Window | undefined;
 
-    if (iframeWindow) {
-      iframeWindow.postMessage(config, "*");
+  const handleMessage = (e: MessageEvent) => {
+    if (e.data?.type === "ready" && e.source === iframe.contentWindow) {
+      iframe.contentWindow?.postMessage(config, "*");
+      window.removeEventListener("message", handleMessage);
     }
   };
+
+  window.addEventListener("message", handleMessage);
 };
 
 const Page = () => {
@@ -37,7 +40,7 @@ const Page = () => {
     >
       <iframe
         id="chart-column"
-        src={`/${locale}/preview?state=${JSON.stringify(CONFIGURATOR_STATE_COLUMN)}`}
+        src={`/${locale}/preview${objectToHashString(CONFIGURATOR_STATE_COLUMN)}`}
       />
       <iframe id="chart-map" src={`/${locale}/preview`} />
     </Box>

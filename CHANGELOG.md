@@ -12,6 +12,7 @@ You can also check the
 # Unreleased
 
 - Features
+  - Added a way to preview charts using hash parameters through `/preview` page
   - Value labels in segmented column charts are now centered horizontally
 
 # [5.6.0] - 2025-04-15

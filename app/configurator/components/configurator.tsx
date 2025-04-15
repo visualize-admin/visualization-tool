@@ -9,9 +9,11 @@ import {
 } from "@mui/material";
 import Button, { ButtonProps } from "@mui/material/Button";
 import { PUBLISHED_STATE } from "@prisma/client";
+import * as clipboard from "clipboard-polyfill/text";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import { enqueueSnackbar } from "notistack";
 import React, {
   PropsWithChildren,
   ReactNode,
@@ -86,6 +88,7 @@ import {
   InteractiveFiltersProvider,
 } from "@/stores/interactive-filters";
 import { createConfig, updateConfig } from "@/utils/chart-config/api";
+import { objectToHashString } from "@/utils/hash-utils";
 import { getRouterChartId } from "@/utils/router/helpers";
 import { replaceLinks } from "@/utils/ui-strings";
 import useEvent from "@/utils/use-event";
@@ -316,6 +319,38 @@ const SaveDraftButton = ({ chartId }: { chartId: string | undefined }) => {
   );
 };
 
+const CopyPreviewLinkButton = () => {
+  const locale = useLocale();
+  const [state] = useConfiguratorState();
+
+  const handleClick = () => {
+    const hashString = objectToHashString(state);
+    clipboard.writeText(`${window.origin}/${locale}/preview${hashString}`);
+    enqueueSnackbar({
+      message: t({
+        id: "button.copy-preview-link.success",
+        message: "Preview link copied!",
+      }),
+      variant: "success",
+    });
+  };
+
+  return (
+    <Tooltip
+      title={t({
+        id: "button.copy-preview-link.explanation",
+        message:
+          "Get a chart link with configuration stored in the URL without having to publish it.",
+      })}
+      disableInteractive
+    >
+      <Button size="sm" variant="outlined" onClick={handleClick}>
+        <Trans id="button.copy-preview-link">Copy preview link</Trans>
+      </Button>
+    </Tooltip>
+  );
+};
+
 const LayoutChartButton = () => {
   return (
     <NextStepButton>
@@ -408,6 +443,7 @@ const ConfigureChartStep = () => {
               gap: "0.5rem",
             }}
           >
+            <CopyPreviewLinkButton />
             <SaveDraftButton chartId={chartId} />
             {enableLayouting(state) ? (
               <LayoutChartButton />
@@ -601,6 +637,7 @@ const LayoutingStep = () => {
             gap: "0.5rem",
           }}
         >
+          <CopyPreviewLinkButton />
           <SaveDraftButton chartId={chartId} />
           <PublishChartButton chartId={chartId} />
         </PanelHeaderWrapper>
