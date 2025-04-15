@@ -43,7 +43,7 @@ import {
 } from "@/components/presence";
 import Tag from "@/components/tag";
 import useDisclosure from "@/components/use-disclosure";
-import { SearchCube } from "@/domain/data";
+import { PartialSearchCube, SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useFormatDate } from "@/formatters";
 import {
@@ -944,17 +944,6 @@ const DateFormat = ({ date }: { date: string }) => {
   return <>{formatted}</>;
 };
 
-export type PartialSearchCube = Pick<
-  SearchCube,
-  | "iri"
-  | "publicationStatus"
-  | "title"
-  | "description"
-  | "datePublished"
-  | "themes"
-  | "creator"
-  | "dimensions"
->;
 type ResultProps = {
   dataCube: PartialSearchCube;
   highlightedTitle?: string | null;

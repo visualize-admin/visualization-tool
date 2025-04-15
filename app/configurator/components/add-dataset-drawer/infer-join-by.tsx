@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-restricted-imports
 import { groupBy, mapValues } from "lodash";
 
-import { PartialSearchCube } from "@/browser/dataset-browse";
+import { PartialSearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { JoinBy } from "@/graphql/join";
 

@@ -455,6 +455,18 @@ export type SearchCube = {
   }[];
 };
 
+export type PartialSearchCube = Pick<
+  SearchCube,
+  | "iri"
+  | "publicationStatus"
+  | "title"
+  | "description"
+  | "datePublished"
+  | "themes"
+  | "creator"
+  | "dimensions"
+>;
+
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";
 const parseRDFLiteral = <T = ObservationValue>(value: Literal): T => {
   const v = value.value;

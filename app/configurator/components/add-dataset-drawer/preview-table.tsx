@@ -20,7 +20,6 @@ import groupBy from "lodash/groupBy";
 import maxBy from "lodash/maxBy";
 import { useEffect, useMemo, useState } from "react";
 
-import { PartialSearchCube } from "@/browser/dataset-browse";
 import { FirstTenRowsCaption } from "@/browser/dataset-preview";
 import { Error as ErrorHint, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
@@ -31,6 +30,7 @@ import {
   isJoinByComponent,
   isStandardErrorDimension,
   Measure,
+  PartialSearchCube,
 } from "@/domain/data";
 import {
   useDataCubesMetadataQuery,

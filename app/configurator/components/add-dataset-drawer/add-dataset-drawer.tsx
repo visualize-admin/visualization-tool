@@ -28,7 +28,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   DatasetResults,
-  PartialSearchCube,
   SearchDatasetDraftsControl,
   SearchDatasetResultsCount,
   SearchDatasetSortControl,
@@ -42,6 +41,7 @@ import {
   ComponentTermsets,
   Dimension,
   isTemporalDimensionWithTimeUnit,
+  PartialSearchCube,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import {

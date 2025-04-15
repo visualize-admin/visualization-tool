@@ -2,7 +2,6 @@ import { useEventCallback } from "@mui/material";
 import { useState } from "react";
 import { useClient } from "urql";
 
-import { PartialSearchCube } from "@/browser/dataset-browse";
 import { getEnabledChartTypes } from "@/charts";
 import { getChartConfig } from "@/config-utils";
 import {
@@ -10,6 +9,7 @@ import {
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
+import { PartialSearchCube } from "@/domain/data";
 import { executeDataCubesComponentsQuery } from "@/graphql/hooks";
 import { JoinBy } from "@/graphql/join";
 import { useLocale } from "@/locales/use-locale";
