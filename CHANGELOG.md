@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - It's now possible to use triangle symbol for single-value limits
 
 # [5.7.0] - 2025-04-16
 

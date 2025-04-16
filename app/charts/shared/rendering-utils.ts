@@ -1,4 +1,5 @@
 import { select, Selection } from "d3-selection";
+import { symbol, symbolTriangle } from "d3-shape";
 import { Transition } from "d3-transition";
 import { useCallback, useMemo } from "react";
 
@@ -160,25 +161,13 @@ export type RenderVerticalLimitDatum = {
   width: number;
   fill: string;
   lineType: Limit["lineType"];
-  symbolType: Limit["symbolType"];
+  symbolType?: Limit["symbolType"];
 };
 
-const getTopBottomLineHeight = (d: RenderVerticalLimitDatum) => {
-  return d.symbolType
-    ? d.symbolType === "cross"
-      ? LIMIT_SIZE
-      : 0
-    : LIMIT_SIZE;
-};
-const getTopRotate = (d: RenderVerticalLimitDatum) => {
-  return d.symbolType === "cross" ? "rotate(45deg)" : "rotate(0deg)";
-};
-const getBottomRotate = (d: RenderVerticalLimitDatum) => {
-  return d.symbolType === "cross" ? "rotate(-45deg)" : "rotate(0deg)";
-};
-const getMiddleRadius = (d: RenderVerticalLimitDatum) => {
-  return d.symbolType === "circle" ? LIMIT_SIZE * 1.5 : 0;
-};
+const getMiddle = (d: RenderVerticalLimitDatum) => ({
+  cx: d.x + d.width / 2,
+  cy: (d.y1 + d.y2) / 2,
+});
 
 export const renderVerticalLimits = (
   g: Selection<SVGGElement, null, SVGGElement, unknown>,
@@ -187,124 +176,115 @@ export const renderVerticalLimits = (
 ) => {
   const { transition } = options;
 
-  g.selectAll<SVGGElement, RenderVerticalLimitDatum>("g")
+  const groups = g
+    .selectAll<SVGGElement, RenderVerticalLimitDatum>("g.limit")
     .data(data, (d) => d.key)
     .join(
       (enter) =>
         enter
           .append("g")
+          .attr("class", "limit")
           .attr("opacity", 0)
-          .call((g) =>
-            g
-              .append("rect")
-              .attr("class", "top")
-              .attr("x", (d) => d.x)
-              .attr("y", (d) => d.y2 - LIMIT_SIZE / 2)
-              .attr("width", (d) => d.width)
-              .attr("height", getTopBottomLineHeight)
-              .attr("fill", (d) => d.fill)
-              .attr("stroke", "none")
-              .style("transform-box", "fill-box")
-              .style("transform-origin", "center")
-              .style("transform", getTopRotate)
-          )
-          .call((g) =>
-            g
-              .append("line")
-              .attr("class", "middle-line")
-              .attr("x1", (d) => d.x + d.width / 2)
-              .attr("x2", (d) => d.x + d.width / 2)
-              .attr("y1", (d) => d.y1 - LIMIT_SIZE / 2)
-              .attr("y2", (d) => d.y2 - LIMIT_SIZE / 2)
-              .attr("stroke", (d) => d.fill)
-              .attr("stroke-width", LIMIT_SIZE)
-              .attr("stroke-dasharray", (d) =>
-                d.lineType === "dashed" ? "3 3" : "none"
-              )
-          )
-          .call((g) =>
-            g
-              .append("circle")
-              .attr("class", "middle-dot")
-              .attr("cx", (d) => d.x + d.width / 2)
-              .attr("cy", (d) => (d.y1 + d.y2) / 2)
-              .attr("r", getMiddleRadius)
-              .attr("fill", (d) => d.fill)
-          )
-          .call((g) =>
-            g
-              .append("rect")
-              .attr("class", "bottom")
-              .attr("x", (d) => d.x)
-              .attr("y", (d) => d.y1 - LIMIT_SIZE / 2)
-              .attr("width", (d) => d.width)
-              .attr("height", getTopBottomLineHeight)
-              .attr("fill", (d) => d.fill)
-              .attr("stroke", "none")
-              .style("transform-box", "fill-box")
-              .style("transform-origin", "center")
-              .style("transform", getBottomRotate)
-          )
           .call((enter) =>
             maybeTransition(enter, {
               s: (g) => g.attr("opacity", 1),
               transition,
             })
           ),
-      (update) =>
-        maybeTransition(update, {
-          s: (g) =>
-            g
-              .attr("opacity", 1)
-              .call((g) =>
-                g
-                  .select(".top")
-                  .attr("x", (d) => d.x)
-                  .attr("y", (d) => d.y2 - LIMIT_SIZE / 2)
-                  .attr("width", (d) => d.width)
-                  .attr("height", getTopBottomLineHeight)
-                  .attr("fill", (d) => d.fill)
-                  .style("transform", getTopRotate)
-              )
-              .call((g) =>
-                g
-                  .select(".middle-line")
-                  .attr("x1", (d) => d.x + d.width / 2)
-                  .attr("x2", (d) => d.x + d.width / 2)
-                  .attr("y1", (d) => d.y1 - LIMIT_SIZE / 2)
-                  .attr("y2", (d) => d.y2 - LIMIT_SIZE / 2)
-                  .attr("stroke", (d) => d.fill)
-                  .attr("stroke-width", LIMIT_SIZE)
-                  .attr("stroke-dasharray", (d) =>
-                    d.lineType === "dashed" ? "3 3" : "none"
-                  )
-              )
-              .call((g) =>
-                g
-                  .select(".middle-dot")
-                  .attr("cx", (d) => d.x + d.width / 2)
-                  .attr("cy", (d) => (d.y1 + d.y2) / 2)
-                  .attr("r", getMiddleRadius)
-                  .attr("fill", (d) => d.fill)
-              )
-              .call((g) =>
-                g
-                  .select(".bottom")
-                  .attr("x", (d) => d.x)
-                  .attr("y", (d) => d.y1 - LIMIT_SIZE / 2)
-                  .attr("width", (d) => d.width)
-                  .attr("height", getTopBottomLineHeight)
-                  .attr("fill", (d) => d.fill)
-                  .style("transform", getBottomRotate)
-              ),
-          transition,
-        }),
+      (update) => update,
       (exit) =>
         maybeTransition(exit, {
           transition,
           s: (g) => g.attr("opacity", 0).remove(),
         })
     );
+
+  groups.each(function (d) {
+    const group = select(this);
+    group.selectAll("*").remove();
+
+    group
+      .append("line")
+      .attr("class", "middle-line")
+      .attr("x1", d.x + d.width / 2)
+      .attr("x2", d.x + d.width / 2)
+      .attr("y1", d.y1 - LIMIT_SIZE / 2)
+      .attr("y2", d.y2 - LIMIT_SIZE / 2)
+      .attr("stroke", d.fill)
+      .attr("stroke-width", LIMIT_SIZE)
+      .attr("stroke-dasharray", d.lineType === "dashed" ? "3 3" : "none");
+
+    const isRange = d.symbolType === undefined;
+
+    if (isRange) {
+      group
+        .append("rect")
+        .attr("class", "top-line")
+        .attr("x", d.x)
+        .attr("y", d.y2 - LIMIT_SIZE / 2)
+        .attr("width", d.width)
+        .attr("height", LIMIT_SIZE)
+        .attr("fill", d.fill);
+      group
+        .append("rect")
+        .attr("class", "bottom-line")
+        .attr("x", d.x)
+        .attr("y", d.y1 - LIMIT_SIZE / 2)
+        .attr("width", d.width)
+        .attr("height", LIMIT_SIZE)
+        .attr("fill", d.fill);
+    } else {
+      const symbolGroup = group.append("g").attr("class", "symbol");
+      const { cx, cy } = getMiddle(d);
+      const symbolType = d.symbolType as NonNullable<Limit["symbolType"]>;
+
+      switch (symbolType) {
+        case "circle":
+          symbolGroup
+            .append("circle")
+            .attr("cx", cx)
+            .attr("cy", cy)
+            .attr("r", LIMIT_SIZE * 1.5)
+            .attr("fill", d.fill);
+          break;
+        case "cross":
+          symbolGroup
+            .append("rect")
+            .attr("x", d.x)
+            .attr("y", d.y2 - LIMIT_SIZE / 2)
+            .attr("width", d.width)
+            .attr("height", LIMIT_SIZE)
+            .attr("fill", d.fill)
+            .style("transform", "rotate(45deg)")
+            .style("transform-box", "fill-box")
+            .style("transform-origin", "center");
+          symbolGroup
+            .append("rect")
+            .attr("x", d.x)
+            .attr("y", d.y1 - LIMIT_SIZE / 2)
+            .attr("width", d.width)
+            .attr("height", LIMIT_SIZE)
+            .attr("fill", d.fill)
+            .style("transform", "rotate(-45deg)")
+            .style("transform-box", "fill-box")
+            .style("transform-origin", "center");
+          break;
+        case "triangle":
+          const triangleSymbol = symbol()
+            .type(symbolTriangle)
+            .size(50)() as string;
+          symbolGroup
+            .append("path")
+            .attr("d", triangleSymbol)
+            .attr("fill", d.fill)
+            .attr("transform", `translate(${cx}, ${cy})`);
+          break;
+        default:
+          const _exhaustiveCheck: never = symbolType;
+          return _exhaustiveCheck;
+      }
+    }
+  });
 };
 
 export type RenderHorizontalLimitDatum = {

@@ -912,6 +912,28 @@ const ChartLimits = ({
                         }}
                         disabled={!maybeLimit}
                       />
+                      <Radio
+                        name={`limit-${i}-symbol-type-triangle`}
+                        label={t({
+                          id: "controls.symbol.triangle",
+                          message: "Triangle",
+                        })}
+                        value="triangle"
+                        checked={symbolType === "triangle"}
+                        onChange={() => {
+                          dispatch({
+                            type: "LIMIT_SET",
+                            value: {
+                              measureId: measure.id,
+                              related: limit.related,
+                              color,
+                              lineType,
+                              symbolType: "triangle",
+                            },
+                          });
+                        }}
+                        disabled={!maybeLimit}
+                      />
                     </RadioGroup>
                   </div>
                 ) : null}

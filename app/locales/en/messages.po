@@ -90,11 +90,11 @@ msgid "browse.datasets.description"
 msgstr "Explore datasets provided by the LINDAS Linked Data Service by either filtering by categories or organizations or search directly for specific keywords. Click on a dataset to see more detailed information and start creating your own visualizations."
 
 #: app/components/metadata-panel.tsx
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
 msgid "button.back"
 msgstr "Back"
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
 msgid "button.confirm"
 msgstr "Confirm"
 
@@ -245,11 +245,11 @@ msgstr "No label"
 msgid "chart.datasets.add"
 msgstr "Add dataset"
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "chart.datasets.add-dataset-dialog.description"
 msgstr "You can only combine datasets that share dimensions with the same unit and resolution. By default, dimensions matching the current chart are selected."
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "chart.datasets.add-dataset-dialog.title"
 msgstr "Select dataset with shared dimensions"
 
@@ -946,6 +946,7 @@ msgid "controls.scale.type"
 msgstr "Scale type"
 
 #: app/components/form.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "controls.search.clear"
 msgstr "Clear search field"
 
@@ -1357,6 +1358,10 @@ msgstr "Cross"
 msgid "controls.symbol.dot"
 msgstr "Dot"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.symbol.triangle"
+msgstr "Triangle"
+
 #: app/configurator/table/table-chart-options.tsx
 msgid "controls.table.column.group"
 msgstr "Use as group"
@@ -1477,30 +1482,27 @@ msgstr "Careful, the data for this chart has expired.<0/><1>Don't use for report
 msgid "dataset.results"
 msgstr "{0, plural, zero {No datasets} one {# dataset} other {# datasets}}"
 
-#: app/configurator/components/add-dataset-drawer.tsx
-msgid "dataset.search.add-dataset"
-msgstr "Add dataset"
-
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.at-least-one-compatible-dimension-selected"
 msgstr "At least one compatible dimension must be selected."
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/caution-alert.tsx
 msgid "dataset.search.caution.acknowledge"
 msgstr "Understood, I'll proceed cautiously."
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/caution-alert.tsx
 msgid "dataset.search.caution.body"
 msgstr "The linking of different datasets carries risks such as data inconsistencies, scalability issues, and unexpected correlations. Be sure to use to merge datasets only when you are confident that data should be merged together."
 
 #: app/browser/dataset-browse.tsx
 #: app/components/form.tsx
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.label"
 msgstr "Search"
 
 #: app/browser/dataset-browse.tsx
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.placeholder"
 msgstr "Name, organization, keyword..."
 
@@ -1508,27 +1510,27 @@ msgstr "Name, organization, keyword..."
 msgid "dataset.search.preview.added-dataset"
 msgstr "New dataset added. You can now use its data in the chart(s)."
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
 msgid "dataset.search.preview.datasets"
 msgstr "Datasets"
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
 msgid "dataset.search.preview.description"
 msgstr "Review data preview of available dimensions and continue to edit visualization."
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
 msgid "dataset.search.preview.new-dimension"
 msgstr "New"
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
 msgid "dataset.search.preview.title"
 msgstr "Available dimensions"
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.search-options.more-2-options-selected"
 msgstr "{0} more"
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.search-options.no-options-selected"
 msgstr "dataset.search.search-options.no-options-selected"
 
