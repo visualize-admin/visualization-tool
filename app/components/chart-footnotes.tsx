@@ -102,15 +102,6 @@ export const ChartFootnotes = ({
         "& > :not(:last-child)": { mb: 3 },
       }}
     >
-      {metadataPanelProps ? (
-        <MetadataPanel
-          dataSource={dataSource}
-          chartConfig={chartConfig}
-          dashboardFilters={dashboardFilters}
-          {...metadataPanelProps}
-          smallerToggle
-        />
-      ) : null}
       {data?.dataCubesMetadata.map((metadata) => {
         const hide = hideLegend && hideMetadata && hideFilters;
 
@@ -155,12 +146,23 @@ export const ChartFootnotes = ({
           </div>
         );
       })}
-      {showVisualizeLink && configKey ? (
-        <VisualizeLink
-          configKey={configKey}
-          createdWith={t({ id: "metadata.link.created.with" })}
-        />
-      ) : null}
+      <Flex justifyContent="space-between" alignItems="center">
+        {metadataPanelProps ? (
+          <MetadataPanel
+            dataSource={dataSource}
+            chartConfig={chartConfig}
+            dashboardFilters={dashboardFilters}
+            {...metadataPanelProps}
+            smallerToggle
+          />
+        ) : null}
+        {showVisualizeLink && configKey ? (
+          <VisualizeLink
+            configKey={configKey}
+            createdWith={t({ id: "metadata.link.created.with" })}
+          />
+        ) : null}
+      </Flex>
     </Box>
   );
 };

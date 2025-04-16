@@ -142,7 +142,7 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
   ) => {
     if (value) {
       dispatch({
-        type: "COLOR_FIELD_UPDATED",
+        type: "CHART_FIELD_UPDATED",
         value: {
           locale,
           field,
@@ -188,16 +188,13 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
 
   return (
     <Box pb={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
-      <Label sx={{ mb: 1 }} htmlFor="color-palette">
+      <Label htmlFor="color-palette">
         <Trans id="controls.color.palette">Color palette</Trans>
       </Label>
       <Select
+        size="sm"
         value={currentPaletteId}
         disabled={disabled}
-        sx={{
-          width: "100%",
-          "& .MuiSelect-select": { height: "44px", width: "100%" },
-        }}
         displayEmpty
         onChange={onSelectedItemChange}
         renderValue={(selected) => {
@@ -210,6 +207,7 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
               </Typography>
             );
           }
+
           return (
             <ColorRamp
               colorInterpolator={selectedColorInterpolator}
@@ -218,6 +216,7 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
             />
           );
         }}
+        sx={{ mt: 1, lineHeight: 0 }}
       >
         {[
           ...PaletteSection({

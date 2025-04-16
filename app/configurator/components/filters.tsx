@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
-import { ascending, groups, max } from "d3-array";
+import { ascending, groups, max, sum } from "d3-array";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
@@ -44,6 +44,7 @@ import { Loading } from "@/components/hint";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { ChartConfig, ColorMapping, isColorInConfig } from "@/config-types";
 import { getChartConfig, useChartConfigFilters } from "@/config-utils";
+import { isSegmentInConfig } from "@/configurator";
 import {
   ColorField,
   getFilterValue,
@@ -249,6 +250,7 @@ const MultiFilterContent = ({
   colorComponent?: Component;
   tree: HierarchyValue[];
 }) => {
+  const locale = useLocale();
   const [config, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(config);
   const { cubeIri, dimensionId, activeKeys, allValues, colorConfigPath } =
@@ -355,9 +357,16 @@ const MultiFilterContent = ({
       colorConfig?.type !== "single" ? colorConfig?.colorMapping : undefined,
   });
 
+  const segment = isSegmentInConfig(chartConfig)
+    ? chartConfig.fields.segment
+    : undefined;
   const enableSettingShowValuesBySegment =
+    segment &&
     chartConfig.activeField === "segment" &&
     shouldEnableSettingShowValuesBySegment(chartConfig);
+  const showValuesMappingBooleans: boolean[] = Object.values(
+    segment?.showValuesMapping ?? {}
+  );
 
   const interactiveFilterProps = useInteractiveFiltersToggle("legend");
   const visibleLegendProps = useLegendTitleVisibility();
@@ -435,6 +444,50 @@ const MultiFilterContent = ({
         </Flex>
         <Divider sx={{ mt: 4 }} />
       </Box>
+      {enableSettingShowValuesBySegment ? (
+        <Flex justifyContent="flex-end" gap={2}>
+          <Button
+            variant="text"
+            color="blue"
+            size="xs"
+            disabled={
+              sum(showValuesMappingBooleans, (d) => +d) === values.length
+            }
+            onClick={() => {
+              dispatch({
+                type: "CHART_FIELD_UPDATED",
+                value: {
+                  locale,
+                  path: "fields.segment.showValuesMapping",
+                  field: null,
+                  value: Object.fromEntries(values.map((v) => [v.value, true])),
+                },
+              });
+            }}
+          >
+            <Trans id="controls.filter.show-values.all">Show all values</Trans>
+          </Button>
+          <Button
+            variant="text"
+            color="blue"
+            size="xs"
+            disabled={showValuesMappingBooleans.every((d) => !d)}
+            onClick={() => {
+              dispatch({
+                type: "CHART_FIELD_UPDATED",
+                value: {
+                  locale,
+                  path: "fields.segment.showValuesMapping",
+                  field: null,
+                  value: {},
+                },
+              });
+            }}
+          >
+            <Trans id="controls.filter.show-values.none">Show no values</Trans>
+          </Button>
+        </Flex>
+      ) : null}
       {valueGroups.map(([parentLabel, children]) => {
         return (
           <Box sx={{ mb: 4 }} key={parentLabel}>
@@ -635,6 +688,7 @@ const TreeAccordion = ({
       slotProps={{ transition: { unmountOnExit: true } }}
     >
       <TreeAccordionSummary
+        expandIcon={null}
         onClick={(e) => {
           e.stopPropagation();
 

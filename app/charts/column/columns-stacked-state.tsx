@@ -408,6 +408,7 @@ const useColumnsStackedState = (
 
   /** Chart dimensions */
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
     height,
