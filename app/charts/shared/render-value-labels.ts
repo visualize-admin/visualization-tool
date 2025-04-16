@@ -124,7 +124,7 @@ export const setSegmentValueLabelStyles = <
   return g
     .style("overflow", "hidden")
     .style("margin", 0)
-    .style("padding-left", "4px")
+    .style("text-align", "center")
     .style("font-size", "12px")
     .style("white-space", "nowrap")
     .style("text-overflow", "ellipsis");

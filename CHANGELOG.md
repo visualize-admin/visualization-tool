@@ -12,7 +12,9 @@ You can also check the
 # Unreleased
 
 - Features
+  - Ability to merge more than 2 datasets
   - Added a way to preview charts using hash parameters through `/preview` page
+  - Value labels in segmented column charts are now centered horizontally
   - Measure units are now displayed in symbol layer color and size legends
 - Fixes
   - Total value labels are not rendered correctly in Chrome browsers
@@ -26,8 +28,6 @@ You can also check the
   - Visualize font was changed to Noto Sans
 - Maintenance
   - Updated Next.js
-- Features
-  - Ability to merge more than 2 datasets
 
 # [5.5.0] - 2025-03-24
 
