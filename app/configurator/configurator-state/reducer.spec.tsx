@@ -29,13 +29,14 @@ import {
   ensureDashboardLayoutIsCorrect,
   handleChartFieldChanged,
   handleChartFieldDeleted,
-  handleChartOptionChanged,
+  handleChartFieldUpdated,
   reducer,
   setRangeFilter,
   updateColorMapping,
 } from "@/configurator/configurator-state/reducer";
 import { Dimension, Measure, NominalDimension } from "@/domain/data";
-import { stringifyComponentId } from "@/graphql/make-component-id";
+import { mkVersionedJoinBy } from "@/graphql/join";
+import { ComponentId, stringifyComponentId } from "@/graphql/make-component-id";
 import covid19ColumnChartConfig from "@/test/__fixtures/config/test/chartConfig-column-covid19.json";
 import covid19TableChartConfig from "@/test/__fixtures/config/test/chartConfig-table-covid19.json";
 import covid19Metadata from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-covid19.json";
@@ -94,10 +95,10 @@ describe("add dataset", () => {
     type: "DATASET_ADD",
     value: {
       iri: "http://second-dataset",
-      joinBy: {
-        left: ["year-period-1"],
-        right: ["year-period-2"],
-      },
+      joinBy: mkVersionedJoinBy({
+        "https://first-dataset": ["year-period-1" as ComponentId],
+        "http://second-dataset": ["year-period-2" as ComponentId],
+      }),
     },
   };
 
@@ -1534,8 +1535,8 @@ describe("handleChartOptionChanged", () => {
       activeChartKey: "bac",
     } as unknown as ConfiguratorStateConfiguringChart;
 
-    handleChartOptionChanged(state, {
-      type: "COLOR_FIELD_UPDATED",
+    handleChartFieldUpdated(state, {
+      type: "CHART_FIELD_UPDATED",
       value: {
         locale: "en",
         field: "areaLayer",
@@ -1594,8 +1595,8 @@ describe("handleChartOptionChanged", () => {
       activeChartKey: "cab",
     } as unknown as ConfiguratorStateConfiguringChart;
 
-    handleChartOptionChanged(state, {
-      type: "COLOR_FIELD_UPDATED",
+    handleChartFieldUpdated(state, {
+      type: "CHART_FIELD_UPDATED",
       value: {
         locale: "en",
         field: "areaLayer",

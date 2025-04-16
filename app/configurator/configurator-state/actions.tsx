@@ -15,6 +15,7 @@ import {
   Limit,
 } from "@/config-types";
 import { DataCubeComponents, Dimension, DimensionValue } from "@/domain/data";
+import { VersionedJoinBy } from "@/graphql/join";
 import { Locale } from "@/locales/locales";
 
 export type ConfiguratorStateAction =
@@ -41,10 +42,7 @@ export type ConfiguratorStateAction =
       type: "DATASET_ADD";
       value: {
         iri: string;
-        joinBy: {
-          left: string[];
-          right: string[];
-        };
+        joinBy: VersionedJoinBy;
       };
     }
   | {
@@ -77,7 +75,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "COLOR_FIELD_UPDATED";
+      type: "CHART_FIELD_UPDATED";
       value: {
         locale: Locale;
         path: string;

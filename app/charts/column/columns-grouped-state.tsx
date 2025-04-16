@@ -346,6 +346,7 @@ const useColumnsGroupedState = (
   }, [getSegment, getX, chartData, segmentSortingOrder, segments, xScale]);
 
   const { left, bottom } = useChartPadding({
+    xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
     height,

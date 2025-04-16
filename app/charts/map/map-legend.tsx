@@ -156,6 +156,9 @@ export const MapLegend = ({
               <Box>
                 <Typography component="div" variant="caption">
                   {symbolLayer.colors.component.label}
+                  {symbolLayer.colors.component.unit
+                    ? ` (${symbolLayer.colors.component.unit})`
+                    : ""}
                 </Typography>
                 {symbolLayer.colors.interpolationType === "linear" ? (
                   <ContinuousColorLegend
@@ -199,6 +202,9 @@ export const MapLegend = ({
               <Box>
                 <Typography component="div" variant="caption">
                   {symbolLayer.measureLabel}
+                  {symbolLayer.measureDimension.unit
+                    ? ` (${symbolLayer.measureDimension.unit})`
+                    : ""}
                 </Typography>
                 <CircleLegend
                   valueFormatter={formatters[symbolLayer.measureDimension.id]}

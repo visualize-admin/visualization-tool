@@ -63,6 +63,7 @@ export const renderColumns = (
               )
               .append("xhtml:p")
               .call(setSegmentValueLabelStyles)
+              .style("padding-top", "4px")
               .style("color", function (d) {
                 return d.valueLabelColor ?? select(this).style("color");
               })
@@ -101,9 +102,7 @@ export const renderColumns = (
           transition,
           s: (g) =>
             g
-              .call((g) =>
-                g.select("rect").attr("y", y0).attr("height", 0)
-              )
+              .call((g) => g.select("rect").attr("y", y0).attr("height", 0))
               .remove(),
         })
     );

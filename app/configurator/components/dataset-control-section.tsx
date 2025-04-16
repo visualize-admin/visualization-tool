@@ -18,7 +18,7 @@ import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
 import useDisclosure from "@/components/use-disclosure";
 import { getChartConfig } from "@/config-utils";
-import { AddDatasetDrawer } from "@/configurator/components/add-dataset-drawer";
+import { AddDatasetDrawer } from "@/configurator/components/add-dataset-drawer/add-dataset-drawer";
 import { DatasetsBadge } from "@/configurator/components/badges";
 import {
   ControlSection,
@@ -237,17 +237,15 @@ export const DatasetsControlSection = () => {
           })}
         </Flex>
         <Flex sx={{ justifyContent: "end" }}>
-          {cubes.length === 1 ? (
-            <Button
-              variant="text"
-              size="sm"
-              color="blue"
-              startIcon={<Icon name="plus" size={20} />}
-              onClick={openDatasetDialog}
-            >
-              {t({ id: "chart.datasets.add", message: "Add dataset" })}
-            </Button>
-          ) : null}
+          <Button
+            variant="text"
+            size="sm"
+            color="blue"
+            startIcon={<Icon name="plus" size={20} />}
+            onClick={openDatasetDialog}
+          >
+            {t({ id: "chart.datasets.add", message: "Add dataset" })}
+          </Button>
         </Flex>
         <AddDatasetDrawer
           state={state}

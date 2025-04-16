@@ -12,8 +12,15 @@ You can also check the
 # Unreleased
 
 - Features
+  - Ability to merge more than 2 datasets
   - Added a way to preview charts using hash parameters through `/preview` page
   - Advanced embed options now work with AEM EXT embeds
+  - It's now possible to bulk select and unselect show value checkboxes in
+    segmented column and bar charts
+  - Value labels in segmented column charts are now centered horizontally
+  - Measure units are now displayed in symbol layer color and size legends
+- Fixes
+  - Total value labels are now rendered correctly in Chrome browsers
 - Styles
   - Details button and Created with visualize.admin.ch are now rendered in the
     same line in footnotes when using "minimal" embed mode
