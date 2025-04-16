@@ -72,6 +72,7 @@ export const renderBars = (
               .style("height", "100%")
               .append("xhtml:p")
               .call(setSegmentValueLabelStyles)
+              .style("padding-left", "4px")
               .style("color", function (d) {
                 return d.valueLabelColor ?? select(this).style("color");
               })
@@ -110,9 +111,7 @@ export const renderBars = (
           transition,
           s: (g) =>
             g
-              .call((g) =>
-                g.select("rect").attr("x", x0).attr("width", 0)
-              )
+              .call((g) => g.select("rect").attr("x", x0).attr("width", 0))
               .remove(),
         })
     );

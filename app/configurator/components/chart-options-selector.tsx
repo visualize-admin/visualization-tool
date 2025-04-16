@@ -1606,7 +1606,7 @@ const ColorSelection = ({
 }) => {
   return (
     <ControlSection collapse>
-      <SectionTitle iconName="color">
+      <SectionTitle iconName="swatch">
         <Trans id="controls.section.layout-options">Layout options</Trans>
       </SectionTitle>
       <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
@@ -2185,7 +2185,7 @@ const ChartFieldColorComponent = ({
 
   return (
     <ControlSection collapse>
-      <SectionTitle iconName="color">
+      <SectionTitle iconName="swatch">
         <Trans id="controls.color">Color</Trans>
       </SectionTitle>
       <ControlSectionContent>
@@ -2263,7 +2263,7 @@ const ChartFieldColorComponent = ({
         ) : colorType === "numerical" ? (
           <div>
             <ColorRampField field={field} path="color" nSteps={nbClass} />
-            <Typography variant="caption">
+            <Typography variant="caption" component="p" sx={{ mb: 1 }}>
               <Trans id="controls.scale.type">Scale type</Trans>
             </Typography>
             <RadioGroup>

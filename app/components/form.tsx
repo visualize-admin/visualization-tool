@@ -189,6 +189,8 @@ export const Slider = ({
           marks={marks}
           {...rest}
           sx={{
+            mb: 0,
+
             [`& .${sliderClasses.mark}`]: {
               [`&[data-index='0'], &[data-index='${Array.isArray(marks) ? marks.length - 1 : 0}']`]:
                 { display: "none" },
@@ -202,9 +204,8 @@ export const Slider = ({
             disabled={disabled}
             onChange={onChange}
             sx={{
-              width: 50,
+              width: 64,
               height: 30,
-              minHeight: 0,
 
               ".MuiInput-input": {
                 p: 0,

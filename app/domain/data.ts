@@ -13,6 +13,7 @@ import {
 // @ts-ignore
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { Limit } from "@/rdf/limits";
+import { unitsToNode } from "@/rdf/mappings";
 
 type RawObservationValue = Term;
 
@@ -105,6 +106,7 @@ export type Termset = {
 
 export type ComponentTermsets = {
   iri: string;
+  cubeIri: string;
   label: string;
   termsets: Termset[];
 };
@@ -454,6 +456,18 @@ export type SearchCube = {
   }[];
 };
 
+export type PartialSearchCube = Pick<
+  SearchCube,
+  | "iri"
+  | "publicationStatus"
+  | "title"
+  | "description"
+  | "datePublished"
+  | "themes"
+  | "creator"
+  | "dimensions"
+>;
+
 const xmlSchema = "http://www.w3.org/2001/XMLSchema#";
 const parseRDFLiteral = <T = ObservationValue>(value: Literal): T => {
   const v = value.value;
@@ -634,6 +648,21 @@ export const isTemporalDimensionWithTimeUnit = (
   dimension?: Component | null
 ): dimension is Extract<Dimension, { timeUnit: any }> => {
   return !!dimension && "timeUnit" in dimension;
+};
+
+export const isDimensionOfTimeUnit = (
+  dimension:
+    | Component
+    | NonNullable<PartialSearchCube["dimensions"]>[number]
+    | null,
+  timeUnit: TimeUnit
+) => {
+  return (
+    !!dimension &&
+    "timeUnit" in dimension &&
+    dimension.timeUnit &&
+    unitsToNode.get(timeUnit)
+  );
 };
 
 const isStandardErrorResolvedDimension = (dim: ResolvedDimension) => {

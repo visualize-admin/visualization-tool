@@ -458,6 +458,13 @@ export const components: Components = {
     defaultProps: {
       size: "md",
       notched: false,
+      MenuProps: {
+        slotProps: {
+          paper: {
+            elevation: 4,
+          },
+        },
+      },
       IconComponent: ({ style, ...rest }: any) => {
         return (
           <Icon

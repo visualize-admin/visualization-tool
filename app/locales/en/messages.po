@@ -1408,7 +1408,7 @@ msgstr "Keywords"
 
 #: app/browser/dataset-browse.tsx
 msgid "dataset-result.dimension-joined-by"
-msgstr "Contains value of"
+msgstr "Contains values of"
 
 #: app/components/chart-footnotes.tsx
 #: app/configurator/components/dataset-control-section.tsx

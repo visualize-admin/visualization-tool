@@ -1,8 +1,9 @@
-import produce from "immer";
+import produce, { current } from "immer";
 import get from "lodash/get";
 import pickBy from "lodash/pickBy";
 import set from "lodash/set";
 
+import { getEnabledChartTypes, getInitialConfig } from "@/charts";
 import { getChartSpec } from "@/charts/chart-config-ui-options";
 import {
   ChartConfig,
@@ -22,10 +23,14 @@ import {
   getChartConfigFilters,
   isSingleFilters,
 } from "@/config-utils";
+import { getInitialConfiguringConfigBasedOnCube } from "@/configurator/configurator-state/initial";
+import { deriveFiltersFromFields } from "@/configurator/configurator-state/reducer";
 import { Dimension, isJoinByComponent, ObservationValue } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
-import { mkJoinById } from "@/graphql/join";
+import { mkJoinById, VersionedJoinBy } from "@/graphql/join";
+import { Locale } from "@/locales/locales";
 import { getDataSourceFromLocalStorage } from "@/stores/data-source";
+import { getCachedComponents } from "@/urql-cache";
 
 import { ConfiguratorStateAction } from "./actions";
 
@@ -272,22 +277,24 @@ export const addDatasetInConfig = function (
   config: ConfiguratorStateConfiguringChart,
   options: {
     iri: string;
-    joinBy: {
-      left: string[];
-      right: string[];
-    };
+    joinBy: VersionedJoinBy;
   }
 ) {
   const chartConfig = getChartConfig(config, config.activeChartKey);
   const { iri, joinBy } = options;
-  chartConfig.cubes[0].joinBy = joinBy.left;
+
+  // Set new join by in existing cubes
+  for (let i = 0; i < chartConfig.cubes.length; i++) {
+    const cubeJoinBy = joinBy[chartConfig.cubes[i].iri];
+    chartConfig.cubes[i].joinBy = cubeJoinBy;
+  }
   chartConfig.cubes.push({
     iri,
-    joinBy: joinBy.right,
+    joinBy: joinBy[iri],
     filters: {},
   });
 
-  // Need to go over fields, and replace any IRI part of the joinBy by "joinBy"
+  // Need to go over fields, and replace any IRI part of the joinBy by "joinBy__<index>"
   const { encodings } = getChartSpec(chartConfig);
   const encodingAndFields = encodings.map(
     (e) =>
@@ -302,10 +309,94 @@ export const addDatasetInConfig = function (
     }
     for (const idAttribute of encoding.idAttributes) {
       const value = get(field, idAttribute);
-      const index = joinBy.left.indexOf(value) ?? joinBy.right.indexOf(value);
-      if (index > -1) {
+      const joinByIris = Object.keys(joinBy);
+      const index = (() => {
+        for (const iri of joinByIris) {
+          const index = joinBy[iri].indexOf(value);
+          if (index > -1) {
+            return index;
+          }
+        }
+        return undefined;
+      })();
+      if (index !== undefined && index > -1) {
         set(field, idAttribute, mkJoinById(index));
       }
     }
   }
+};
+
+export const removeDatasetInConfig = function (
+  draft: ConfiguratorStateConfiguringChart,
+  options: {
+    iri: string;
+    locale: Locale;
+  }
+) {
+  const { locale, iri: removedCubeIri } = options;
+  const chartConfig = getChartConfig(draft);
+  const newCubes = chartConfig.cubes.filter((c) => c.iri !== removedCubeIri);
+  const dataCubesComponents = getCachedComponents({
+    locale,
+    dataSource: draft.dataSource,
+    cubeFilters: newCubes.map((cube) => ({
+      iri: cube.iri,
+      joinBy: newCubes.length > 1 ? cube.joinBy : undefined,
+    })),
+  });
+
+  if (!dataCubesComponents) {
+    throw Error(
+      "Error while removing dataset: Could not find cached dataCubesComponents"
+    );
+  }
+
+  const { dimensions, measures } = dataCubesComponents;
+  const remainingCubeIris = chartConfig.cubes
+    .filter((c) => c.iri !== removedCubeIri)
+    .map(({ iri }) => ({ iri }));
+  const { enabledChartTypes } = getEnabledChartTypes({
+    dimensions,
+    measures,
+    cubeCount: remainingCubeIris.length,
+  });
+  const initialConfig = getInitialConfig({
+    chartType: enabledChartTypes.includes(chartConfig.chartType)
+      ? chartConfig.chartType
+      : enabledChartTypes[0],
+    iris: remainingCubeIris,
+    dimensions,
+    measures,
+    meta: current(chartConfig.meta),
+  });
+  const newChartConfig = deriveFiltersFromFields(initialConfig, {
+    dimensions,
+  });
+  const initConfig = getInitialConfiguringConfigBasedOnCube({
+    dataSource: draft.dataSource,
+    chartConfig: newChartConfig,
+  });
+  const newConfig = {
+    ...initConfig.chartConfigs[0],
+    key: chartConfig.key,
+  } as ChartConfig;
+  const index = draft.chartConfigs.findIndex((d) => d.key === chartConfig.key);
+  const withFilters = deriveFiltersFromFields(newConfig, { dimensions });
+
+  // Reput the join by inside the cubes
+  const joinByByCubes = Object.fromEntries(
+    chartConfig.cubes.map((cube) => [cube.iri, cube.joinBy] as const)
+  );
+
+  for (const cube of withFilters.cubes) {
+    const joinBy = joinByByCubes[cube.iri];
+    if (joinBy) {
+      // TODO Should there be dimensions in the joinBy that should be removed ?
+      cube.joinBy = joinBy;
+    }
+  }
+
+  draft.chartConfigs[index] = withFilters;
+
+  return draft;
 };

@@ -688,6 +688,7 @@ const TreeAccordion = ({
       slotProps={{ transition: { unmountOnExit: true } }}
     >
       <TreeAccordionSummary
+        expandIcon={null}
         onClick={(e) => {
           e.stopPropagation();
 
