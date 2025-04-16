@@ -45,6 +45,7 @@ type WMTSLayer = {
     "ows:LowerCorner": string;
     "ows:UpperCorner": string;
   };
+  Layer?: WMTSLayer[];
 };
 
 export type ParsedWMTSLayer = {
@@ -53,43 +54,57 @@ export type ParsedWMTSLayer = {
   title: string;
   description?: string;
   legendUrl?: string;
-  dimensionIdentifier: string;
-  availableDimensionValues: (string | number)[];
+  dimensionIdentifier: string | undefined;
+  availableDimensionValues: (string | number)[] | undefined;
   defaultDimensionValue: string | number;
   endpoint: string;
   type: "wmts";
+  children?: ParsedWMTSLayer[];
 };
 
 const parseWMTSLayer = (
   layer: WMTSLayer,
   endpoint: string
 ): ParsedWMTSLayer => {
-  return {
+  const res: ParsedWMTSLayer = {
     id: layer["ows:Identifier"],
     url: layer.ResourceURL.template,
     title: layer["ows:Title"],
     description: layer["ows:Abstract"],
     legendUrl: layer.Style.LegendURL?.["xlink:href"],
-    dimensionIdentifier: layer.Dimension["ows:Identifier"],
-    availableDimensionValues: Array.isArray(layer.Dimension.Value)
-      ? layer.Dimension.Value
-      : [layer.Dimension.Value],
-    defaultDimensionValue: layer.Dimension.Default,
+    /** @patrick: Not sure why but dimension can be missing (see zh.wmts.xml) */
+    dimensionIdentifier: layer.Dimension?.["ows:Identifier"],
+    availableDimensionValues: layer.Dimension
+      ? Array.isArray(layer.Dimension.Value)
+        ? layer.Dimension.Value
+        : [layer.Dimension.Value]
+      : undefined,
+    defaultDimensionValue: layer.Dimension?.Default,
     endpoint,
     type: "wmts",
   };
+
+  /** @patrick: Haven't found any WMTS with nested layer yet */
+  if (layer.Layer) {
+    const children = layer.Layer
+      ? layer.Layer instanceof Array
+        ? layer.Layer.map((l) => parseWMTSLayer(l, endpoint))
+        : [parseWMTSLayer(layer.Layer, endpoint)]
+      : undefined;
+    res.children = children;
+  }
+
+  return res;
 };
 
-export const parseWMTSResponse = async (resp: Response, endpoint: string) => {
-  const text = await resp.text();
-
+export const parseWMTSContent = (content: string, endpoint: string) => {
   const parser = new XMLParser({
     ignoreAttributes: false,
     attributeNamePrefix: "",
     parseAttributeValue: true,
   });
-  return (parser.parse(text) as WMTSData).Capabilities.Contents.Layer.map((l) =>
-    parseWMTSLayer(l, endpoint)
+  return (parser.parse(content) as WMTSData).Capabilities.Contents.Layer.map(
+    (l) => parseWMTSLayer(l, endpoint)
   );
 };
 
@@ -123,7 +138,7 @@ export const getWMTSTile = ({
     data: getWMTSLayerData(customLayer.url, {
       identifier: wmtsLayer.dimensionIdentifier,
       value: getWMTSLayerValue({
-        availableDimensionValues: wmtsLayer.availableDimensionValues,
+        availableDimensionValues: wmtsLayer.availableDimensionValues ?? [],
         defaultDimensionValue: wmtsLayer.defaultDimensionValue,
         customLayer,
         value,

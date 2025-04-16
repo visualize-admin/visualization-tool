@@ -28,6 +28,7 @@ type WMSLayer = {
     "ows:Identifier": string;
     "ows:Title": string;
   };
+  Layer?: WMSLayer[];
 };
 
 export type ParsedWMSLayer = {
@@ -39,10 +40,11 @@ export type ParsedWMSLayer = {
   defaultDimensionValue?: string | number;
   endpoint: string;
   type: "wms";
+  children?: ParsedWMSLayer[];
 };
 
 const parseWMSLayer = (layer: WMSLayer, endpoint: string): ParsedWMSLayer => {
-  return {
+  const res: ParsedWMSLayer = {
     id: layer.Name,
     title: layer.Title,
     description: layer.Abstract ?? "",
@@ -50,21 +52,29 @@ const parseWMSLayer = (layer: WMSLayer, endpoint: string): ParsedWMSLayer => {
     endpoint,
     type: "wms",
   };
+  if (layer.Layer) {
+    const children = layer.Layer
+      ? layer.Layer instanceof Array
+        ? layer.Layer.map((l) => parseWMSLayer(l, endpoint))
+        : [parseWMSLayer(layer.Layer, endpoint)]
+      : undefined;
+    res.children = children;
+  }
+  return res;
 };
 
 export const DEFAULT_WMS_URL =
   "https://wms.geo.admin.ch/?REQUEST=GetCapabilities&SERVICE=WMS&VERSION=1.3.0";
 
-export const parseWMSResponse = async (resp: Response, endpoint: string) => {
+export const parseWMSContent = (content: string, endpoint: string) => {
   const parser = new XMLParser({
     ignoreAttributes: false,
     attributeNamePrefix: "",
     parseAttributeValue: true,
   });
 
-  const text = await resp.text();
   return (
-    parser.parse(text) as WMSData
+    parser.parse(content) as WMSData
   ).WMS_Capabilities.Capability.Layer.Layer.map((l) =>
     parseWMSLayer(l, endpoint)
   );

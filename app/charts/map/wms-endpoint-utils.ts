@@ -1,5 +1,5 @@
-import { ParsedWMSLayer, parseWMSResponse } from "@/charts/map/wms-utils";
-import { ParsedWMTSLayer, parseWMTSResponse } from "@/charts/map/wmts-utils";
+import { ParsedWMSLayer, parseWMSContent } from "@/charts/map/wms-utils";
+import { ParsedWMTSLayer, parseWMTSContent } from "@/charts/map/wmts-utils";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
 import { useFetchData } from "@/utils/use-fetch-data";
@@ -118,9 +118,11 @@ export const fetchWMSorWMSLayersFromEndpoint = async (
 
   try {
     const resp = await fetch(url);
+    const text = await resp.text();
+
     return type === "wmts"
-      ? parseWMTSResponse(resp, endpoint)
-      : parseWMSResponse(resp, endpoint);
+      ? parseWMTSContent(text, endpoint)
+      : parseWMSContent(text, endpoint);
   } catch {
     console.error(
       `Error fetching WMTS layers from endpoint ${endpoint}`,
