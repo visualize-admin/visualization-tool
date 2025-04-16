@@ -1,11 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import {
-  Box,
-  Stack,
-  Switch as MUISwitch,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { groups } from "d3-array";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
@@ -29,9 +23,8 @@ import { getMap } from "@/charts/map/ref";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
-import { RadioGroup } from "@/components/form";
+import { RadioGroup, Switch } from "@/components/form";
 import {
-  Label,
   Radio,
   Select,
   SelectOption,
@@ -827,18 +820,17 @@ const ChartLimits = ({
                   }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-                    <MUISwitch
+                    <Switch
                       id={`limit-${i}`}
+                      label={t({
+                        id: "controls.section.targets-and-limit-values.show-target",
+                        message: "Show target",
+                      })}
                       checked={!!maybeLimit}
                       onChange={(e) => {
                         onToggle(e.target.checked, limit);
                       }}
                     />
-                    <Label htmlFor={`limit-${i}`}>
-                      <Trans id="controls.section.targets-and-limit-values.show-target">
-                        Show target
-                      </Trans>
-                    </Label>
                   </Box>
                   <Flex
                     sx={{
