@@ -40,29 +40,52 @@ export const isEmbedQueryParam = (param: string): param is EmbedQueryParam => {
   );
 };
 
+export const getEmbedParamsFromQuery = (
+  query: Record<string, string | string[] | undefined>
+): EmbedQueryParams => {
+  return [
+    ...LEGACY_EMBED_QUERY_PARAMS,
+    ...EMBED_QUERY_PARAMS,
+  ].reduce<EmbedQueryParams>(
+    (acc, param) => {
+      const value = query[param];
+
+      if (value === "true") {
+        acc[migrateEmbedQueryParam(param)] = true;
+      }
+
+      return acc;
+    },
+    {
+      removeBorder: false,
+      optimizeSpace: false,
+      removeMoreOptionsButton: false,
+      removeLabelsInteractivity: false,
+      removeFootnotes: false,
+      removeFilters: false,
+    }
+  );
+};
+
+const buildEmbedQueryParams = (embedParams: EmbedQueryParams) => {
+  return Object.fromEntries(
+    Object.entries(embedParams)
+      .filter(([_, v]) => v)
+      .map(([k]) => [k, "true"])
+  );
+};
+
+export const getEmbedParamsQueryString = (embedParams: EmbedQueryParams) => {
+  const queryObject = buildEmbedQueryParams(embedParams);
+  const searchParams = new URLSearchParams(queryObject);
+
+  return searchParams.toString();
+};
+
 export const useEmbedQueryParams = () => {
   const router = useRouter();
   const embedParams = useMemo(() => {
-    return [
-      ...LEGACY_EMBED_QUERY_PARAMS,
-      ...EMBED_QUERY_PARAMS,
-    ].reduce<EmbedQueryParams>(
-      (acc, param) => {
-        if (router.query[param] === "true") {
-          acc[migrateEmbedQueryParam(param)] = true;
-        }
-
-        return acc;
-      },
-      {
-        removeBorder: false,
-        optimizeSpace: false,
-        removeMoreOptionsButton: false,
-        removeLabelsInteractivity: false,
-        removeFootnotes: false,
-        removeFilters: false,
-      }
-    );
+    return getEmbedParamsFromQuery(router.query);
   }, [router.query]);
   const setEmbedQueryParam = useCallback(
     (param: EmbedQueryParam, value: boolean) => {
@@ -75,11 +98,7 @@ export const useEmbedQueryParams = () => {
           pathname: router.pathname,
           query: {
             ...nonEmbedParams,
-            ...Object.fromEntries(
-              Object.entries(updatedParams)
-                .filter(([_, v]) => v)
-                .map(([k]) => [k, "true"])
-            ),
+            ...buildEmbedQueryParams(updatedParams),
           },
         },
         undefined,
