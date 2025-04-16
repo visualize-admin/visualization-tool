@@ -24,6 +24,7 @@ You can also check the
 - Styles
   - Details button and Created with visualize.admin.ch are now rendered in the
     same line in footnotes when using "minimal" embed mode
+  - Improved ODS dataset preview iframe's appearance
 
 # [5.6.0] - 2025-04-15
 

@@ -391,7 +391,11 @@ const SelectDatasetStepContent = ({
         }}
       >
         <ContentWrapper
-          sx={odsIframe ? { maxWidth: "unset !important", px: 8 } : {}}
+          sx={
+            odsIframe
+              ? { maxWidth: "unset !important", px: "8px !important" }
+              : {}
+          }
         >
           <AnimatePresence mode="wait">
             {dataset ? (
@@ -488,7 +492,11 @@ const SelectDatasetStepContent = ({
         </ContentWrapper>
       </Box>
       <ContentWrapper
-        sx={odsIframe ? { maxWidth: "unset !important", px: 8 } : {}}
+        sx={
+          odsIframe
+            ? { maxWidth: "unset !important", px: "8px !important" }
+            : {}
+        }
       >
         <PanelLayout
           type={odsIframe ? "M" : "LM"}

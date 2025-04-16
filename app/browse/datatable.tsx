@@ -132,7 +132,7 @@ export const PreviewTable = ({
   );
 
   return (
-    <div ref={tooltipContainerRef}>
+    <div ref={tooltipContainerRef} style={{ width: "100%" }}>
       <Table>
         <caption style={{ display: "none" }}>{title}</caption>
         <TableHead
