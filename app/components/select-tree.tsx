@@ -260,22 +260,17 @@ const getFilteredOptions = (options: Tree, value: string) => {
       ) as Tree);
 };
 
-const SelectTree = ({
-  size = "sm",
-  label,
-  options,
+/**
+ * Manages business logic for a select tree with search functionality
+ *
+ * When searching, the tree is automatically expanded
+ */
+export const useSelectTree = ({
   value,
-  onChange,
-  disabled,
-  sideControls,
-  onOpen,
-  onClose,
-  open,
-  id,
-}: SelectTreeProps) => {
-  const [openState, setOpenState] = useState(false);
-  const [minMenuWidth, setMinMenuWidth] = useState<number>();
+  options,
+}: Pick<SelectTreeProps, "value" | "options">) => {
   const [inputValue, setInputValue] = useState("");
+
   const [filteredOptions, setFilteredOptions] = useState<Tree>([]);
 
   useEffect(() => {
@@ -283,8 +278,6 @@ const SelectTree = ({
   }, [options]);
 
   const parentsRef = useRef({} as Record<NodeId, NodeId>);
-  const menuRef = useRef<PopoverActions>(null);
-  const inputRef = useRef<HTMLDivElement>();
 
   const defaultExpanded = useMemo(() => {
     if (!value && options.length > 0) {
@@ -303,6 +296,89 @@ const SelectTree = ({
     return res;
   }, [value, options]);
   const [expanded, setExpanded] = useState(defaultExpanded);
+
+  const handleInputChange: TextFieldProps["onChange"] = useEvent((ev) => {
+    const value = ev.currentTarget.value;
+    setInputValue(value);
+    const filteredOptions = getFilteredOptions(options, value);
+    setFilteredOptions(filteredOptions);
+    setExpanded((curExpanded) => {
+      const newExpanded = Array.from(
+        new Set([
+          ...curExpanded,
+          ...flattenTree(filteredOptions as HierarchyValue[]).map(
+            (v) => v.value
+          ),
+        ])
+      );
+      return newExpanded;
+    });
+  });
+
+  const handleNodeToggle: TreeViewProps["onNodeToggle"] = useEvent(
+    (_ev, nodeIds) => {
+      setExpanded(nodeIds);
+    }
+  );
+
+  const handleClickResetInput = useEvent(() => {
+    const newValue = "";
+    setInputValue(newValue);
+    setFilteredOptions(getFilteredOptions(options, newValue));
+    setExpanded(defaultExpanded);
+  });
+
+  return {
+    inputValue,
+    setInputValue,
+    filteredOptions,
+    setFilteredOptions,
+    expanded,
+    setExpanded,
+    handleInputChange,
+    parentsRef,
+    handleNodeToggle,
+    handleClickResetInput,
+    defaultExpanded,
+  };
+};
+
+const SelectTree = ({
+  size = "sm",
+  label,
+  options,
+  value,
+  onChange,
+  disabled,
+  sideControls,
+  onOpen,
+  onClose,
+  open,
+  id,
+}: SelectTreeProps) => {
+  const [openState, setOpenState] = useState(false);
+  const [minMenuWidth, setMinMenuWidth] = useState<number>();
+
+  const {
+    inputValue,
+    setInputValue,
+    filteredOptions,
+    setFilteredOptions,
+    parentsRef,
+    expanded,
+    setExpanded,
+    handleInputChange,
+    handleNodeToggle,
+    handleClickResetInput,
+    defaultExpanded,
+  } = useSelectTree({
+    value,
+    options,
+  });
+
+  const menuRef = useRef<PopoverActions>(null);
+  const inputRef = useRef<HTMLDivElement>();
+
   const labelsByValue = useMemo(() => {
     parentsRef.current = {} as Record<NodeId, NodeId>;
     const res: Record<string, string> = {};
@@ -334,37 +410,6 @@ const SelectTree = ({
     setExpanded(defaultExpanded);
     onClose?.();
   });
-
-  const handleInputChange: TextFieldProps["onChange"] = useEvent((ev) => {
-    const value = ev.currentTarget.value;
-    setInputValue(value);
-    const filteredOptions = getFilteredOptions(options, value);
-    setFilteredOptions(filteredOptions);
-    setExpanded((curExpanded) => {
-      const newExpanded = Array.from(
-        new Set([
-          ...curExpanded,
-          ...flattenTree(filteredOptions as HierarchyValue[]).map(
-            (v) => v.value
-          ),
-        ])
-      );
-      return newExpanded;
-    });
-  });
-
-  const handleClickResetInput = useEvent(() => {
-    const newValue = "";
-    setInputValue(newValue);
-    setFilteredOptions(getFilteredOptions(options, newValue));
-    setExpanded(defaultExpanded);
-  });
-
-  const handleNodeToggle: TreeViewProps["onNodeToggle"] = useEvent(
-    (_ev, nodeIds) => {
-      setExpanded(nodeIds);
-    }
-  );
 
   const handleNodeSelect = useEventCallback((_ev, value: NodeId) => {
     onChange({ target: { value } });
