@@ -14,6 +14,8 @@ You can also check the
 - Features
   - Ability to merge more than 2 datasets
   - Added a way to preview charts using hash parameters through `/preview` page
+  - It's now possible to bulk select and unselect show value checkboxes in
+    segmented column and bar charts
   - Value labels in segmented column charts are now centered horizontally
   - Measure units are now displayed in symbol layer color and size legends
 - Fixes
