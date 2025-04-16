@@ -13,6 +13,7 @@ You can also check the
 
 - Features
   - It's now possible to use triangle symbol for single-value limits
+  - It's now possible to make single-value limit lines dashed when makes sense
 
 # [5.7.0] - 2025-04-16
 

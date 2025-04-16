@@ -214,25 +214,35 @@ export const renderVerticalLimits = (
       .attr("stroke-width", LIMIT_SIZE)
       .attr("stroke-dasharray", d.lineType === "dashed" ? "3 3" : "none");
 
-    const isRange = d.symbolType === undefined;
+    const isRange = d.y1 !== d.y2;
 
-    if (isRange) {
+    if (d.symbolType === undefined) {
       group
-        .append("rect")
+        .append("line")
         .attr("class", "top-line")
-        .attr("x", d.x)
-        .attr("y", d.y2 - LIMIT_SIZE / 2)
-        .attr("width", d.width)
-        .attr("height", LIMIT_SIZE)
-        .attr("fill", d.fill);
+        .attr("x1", d.x)
+        .attr("y1", d.y2)
+        .attr("x2", d.x + d.width)
+        .attr("y2", d.y2)
+        .attr("stroke", d.fill)
+        .attr("stroke-width", LIMIT_SIZE)
+        .attr(
+          "stroke-dasharray",
+          isRange || d.lineType === "solid" ? "none" : "3 3"
+        );
       group
-        .append("rect")
+        .append("line")
         .attr("class", "bottom-line")
-        .attr("x", d.x)
-        .attr("y", d.y1 - LIMIT_SIZE / 2)
-        .attr("width", d.width)
-        .attr("height", LIMIT_SIZE)
-        .attr("fill", d.fill);
+        .attr("x1", d.x)
+        .attr("y1", d.y1)
+        .attr("x2", d.x + d.width)
+        .attr("y2", d.y1)
+        .attr("stroke", d.fill)
+        .attr("stroke-width", LIMIT_SIZE)
+        .attr(
+          "stroke-dasharray",
+          isRange || d.lineType === "solid" ? "none" : "3 3"
+        );
     } else {
       const symbolGroup = group.append("g").attr("class", "symbol");
       const { cx, cy } = getMiddle(d);

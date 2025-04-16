@@ -760,14 +760,17 @@ const ChartLimits = ({
   const availableLimitOptions = useMemo(() => {
     return measure.limits
       .map((limit) => {
-        const { limit: maybeLimit, wouldBeValid } =
-          getMaybeValidChartConfigLimit({
-            chartConfig,
-            measureId: measure.id,
-            axisDimension,
-            limit,
-            filters,
-          });
+        const {
+          limit: maybeLimit,
+          wouldBeValid,
+          relatedAxisDimensionValueLabel,
+        } = getMaybeValidChartConfigLimit({
+          chartConfig,
+          measureId: measure.id,
+          axisDimension,
+          limit,
+          filters,
+        });
 
         if (!wouldBeValid) {
           return;
@@ -780,6 +783,7 @@ const ChartLimits = ({
         } = maybeLimit ?? {};
 
         return {
+          relatedAxisDimensionValueLabel,
           limit,
           maybeLimit,
           color,
@@ -808,7 +812,22 @@ const ChartLimits = ({
       </SectionTitle>
       <ControlSectionContent component="fieldset">
         {availableLimitOptions.map(
-          ({ maybeLimit, limit, color, lineType, symbolType }, i) => {
+          (
+            {
+              relatedAxisDimensionValueLabel,
+              maybeLimit,
+              limit,
+              color,
+              lineType,
+              symbolType,
+            },
+            i
+          ) => {
+            /** It means that the limit is rendered as overarching line, not tied
+             * to any axis dimension value. */
+            const hasNoAxisDimension =
+              relatedAxisDimensionValueLabel === undefined;
+
             return (
               <Box key={i} sx={{ mb: 2 }}>
                 <Box
@@ -937,9 +956,11 @@ const ChartLimits = ({
                     </RadioGroup>
                   </div>
                 ) : null}
-                {limit.type === "range" ? (
+                {limit.type === "range" ||
+                !supportsLimitSymbols ||
+                hasNoAxisDimension ? (
                   <div>
-                    <Typography variant="body3" component="p" sx={{ mb: 2 }}>
+                    <Typography variant="body3" component="p" sx={{ my: 2 }}>
                       <Trans id="controls.section.targets-and-limit-values.line-type">
                         Select line type
                       </Trans>

@@ -42,7 +42,13 @@ import useEvent from "@/utils/use-event";
 
 import { DimensionsById } from "./ChartProps";
 
-export type LegendSymbol = "square" | "line" | "circle" | "cross" | "triangle";
+export type LegendSymbol =
+  | "square"
+  | "line"
+  | "dashed-line"
+  | "circle"
+  | "cross"
+  | "triangle";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   legendContainer: {
@@ -165,7 +171,11 @@ export const LegendColor = memo(function LegendColor({
               ? [measureLimit.value]
               : [measureLimit.from, measureLimit.to],
           color: configLimit.color,
-          symbol: !configLimit.symbolType ? "line" : configLimit.symbolType,
+          symbol: !configLimit.symbolType
+            ? configLimit.lineType === "dashed"
+              ? "dashed-line"
+              : "line"
+            : configLimit.symbolType,
         }))}
         getColor={colors}
         getLabel={getColorLabel}
@@ -390,6 +400,21 @@ const LegendIcon = ({
       break;
     case "line":
       node = <rect x={0} y={0.425} width={1} height={0.175} fill={fill} />;
+      break;
+    case "dashed-line":
+      node = (
+        <line
+          x1={0}
+          x2={1}
+          y1={0.5}
+          y2={0.5}
+          stroke={fill}
+          strokeWidth={2.5}
+          vectorEffect="non-scaling-stroke"
+          strokeDashoffset="3"
+          strokeDasharray="2 2"
+        />
+      );
       break;
     case "triangle":
       node = (
