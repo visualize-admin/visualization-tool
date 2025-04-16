@@ -1156,6 +1156,7 @@ export const ChartOptionSelectField = <V extends {} = string>(
     <Select
       id={id}
       disabled={disabled}
+      size="sm"
       label={
         <FieldLabel optional={optional} isFetching={false} label={label} />
       }

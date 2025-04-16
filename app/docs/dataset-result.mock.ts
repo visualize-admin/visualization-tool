@@ -1,4 +1,4 @@
-import { PartialSearchCube } from "@/browser/dataset-browse";
+import { PartialSearchCube } from "@/domain/data";
 import { DataCubePublicationStatus } from "@/graphql/query-hooks";
 
 export const waldDatacubeResult: PartialSearchCube = {

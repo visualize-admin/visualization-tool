@@ -5,6 +5,7 @@ const config: KnipConfig = {
   paths: {
     "@/*": ["./app/*"],
   },
+  entry: ["./app/pages/**/*.{ts,tsx,js,jsx}", "./app/test/colored-console.ts"],
   ignore: [
     ".github/**/*",
     ".svgrrc.js",

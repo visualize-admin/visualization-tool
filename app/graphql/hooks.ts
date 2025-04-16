@@ -7,6 +7,7 @@ import {
   DataCubeMetadata,
   DataCubesObservations,
 } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { Locale } from "@/locales/locales";
 import { assert } from "@/utils/assert";
 
@@ -16,6 +17,9 @@ import {
   DataCubeComponentsDocument,
   DataCubeComponentsQuery,
   DataCubeComponentsQueryVariables,
+  DataCubeComponentTermsetsDocument,
+  DataCubeComponentTermsetsQuery,
+  DataCubeComponentTermsetsQueryVariables,
   DataCubeMetadataDocument,
   DataCubeMetadataFilter,
   DataCubeMetadataQuery,
@@ -183,6 +187,13 @@ export const executeDataCubesComponentsQuery = async (
   onFetching?: () => void
 ) => {
   const { locale, sourceType, sourceUrl, cubeFilters } = variables;
+  const joinBy = Object.fromEntries(
+    cubeFilters
+      .map((x) => {
+        return [x.iri, x.joinBy];
+      })
+      .filter(truthy)
+  );
   const queries = await Promise.all(
     cubeFilters.map((cubeFilter) => {
       const cubeVariables = {
@@ -239,20 +250,20 @@ export const executeDataCubesComponentsQuery = async (
           }
         : {
             dataCubesComponents: {
-              dimensions: joinDimensions(
-                queries.map((q) => {
-                  const dataCubeComponents = q.data?.dataCubeComponents;
-                  const joinBy = q.operation.variables?.cubeFilter.joinBy;
-                  assert(
-                    dataCubeComponents !== undefined,
-                    "Undefined dataCubeComponents"
-                  );
-                  return {
-                    dataCubeComponents,
-                    joinBy,
-                  };
-                })
-              ),
+              dimensions: joinDimensions({
+                joinBy,
+                dimensions: queries
+                  .map((q) => {
+                    const dataCubeComponents = q.data?.dataCubeComponents;
+                    assert(
+                      dataCubeComponents !== undefined,
+                      "Undefined dataCubeComponents"
+                    );
+                    return dataCubeComponents.dimensions;
+                  })
+                  .filter(truthy)
+                  .flat(),
+              }),
               measures: queries.flatMap((q) => {
                 const measures = q.data?.dataCubeComponents.measures;
                 assert(measures !== undefined, "Undefined measures");
@@ -295,6 +306,7 @@ export const executeDataCubesObservationsQuery = async (
   const queries = await Promise.all(
     cubeFilters.map((cubeFilter) => {
       const cubeVariables = { locale, sourceType, sourceUrl, cubeFilter };
+
       const cached = client.readQuery<
         DataCubeObservationsQuery,
         DataCubeObservationsQueryVariables
@@ -306,6 +318,7 @@ export const executeDataCubesObservationsQuery = async (
 
       onFetching?.();
 
+      // If not in cache, execute the query
       return client
         .query<
           DataCubeObservationsQuery,
@@ -418,4 +431,84 @@ export const useConfigsCubeComponents = makeUseQuery<
   Awaited<ReturnType<typeof executeFetchAllUsedCubeComponents>>["data"]
 >({
   fetch: executeFetchAllUsedCubeComponents,
+});
+
+type DataCubesComponentTermsetsOptions = {
+  variables: Omit<DataCubeComponentTermsetsQueryVariables, "cubeFilter"> & {
+    cubeFilters: DataCubeObservationFilter[];
+  };
+  pause?: boolean;
+};
+
+/**
+ * Fetches all cubes termsets in one go.
+ */
+const executeDataCubesTermsetsQuery = async (
+  client: Client,
+  variables: DataCubesComponentTermsetsOptions["variables"],
+  /** Callback triggered when data fetching starts (cache miss). */
+  onFetching?: () => void
+) => {
+  const { locale, sourceType, sourceUrl, cubeFilters } = variables;
+
+  const queries = await Promise.all(
+    cubeFilters.map((cubeFilter) => {
+      const cubeVariables = { locale, sourceType, sourceUrl, cubeFilter };
+
+      // Try to read from cache first
+      const cached = client.readQuery<
+        DataCubeComponentTermsetsQuery,
+        DataCubeComponentTermsetsQueryVariables
+      >(DataCubeComponentTermsetsDocument, cubeVariables);
+
+      if (cached) {
+        return Promise.resolve(cached);
+      }
+
+      onFetching?.();
+
+      // If not in cache, execute the query
+      return client
+        .query<
+          DataCubeComponentTermsetsQuery,
+          DataCubeComponentTermsetsQueryVariables
+        >(DataCubeComponentTermsetsDocument, cubeVariables)
+        .toPromise();
+    })
+  );
+
+  const error = queries.find((q) => q.error)?.error;
+  const fetching = !error && queries.some((q) => !q.data);
+
+  if (error || fetching) {
+    return {
+      data: undefined,
+      error,
+      fetching,
+    };
+  }
+
+  const termsets =
+    // If we are fetching data from multiple cubes, we need to merge them into one
+    (
+      queries.length > 1
+        ? queries.map((q) => q.data?.dataCubeComponentTermsets).flat()
+        : // If we are fetching data from a single cube, we can just return the data
+          queries[0].data?.dataCubeComponentTermsets!
+    ).filter(truthy);
+
+  return {
+    data: {
+      dataCubeComponentTermsets: termsets,
+    },
+    error,
+    fetching,
+  };
+};
+
+export const useDataCubesComponentTermsetsQuery = makeUseQuery<
+  DataCubesComponentTermsetsOptions,
+  Awaited<ReturnType<typeof executeDataCubesTermsetsQuery>>["data"]
+>({
+  fetch: executeDataCubesTermsetsQuery,
 });
