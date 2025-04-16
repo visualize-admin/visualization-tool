@@ -71,6 +71,7 @@ export type GroupedColumnsState = CommonChartState &
     grouped: [string, Observation[]][];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
+    leftAxisLabelOffset: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
@@ -345,7 +346,7 @@ const useColumnsGroupedState = (
     });
   }, [getSegment, getX, chartData, segmentSortingOrder, segments, xScale]);
 
-  const { left, bottom } = useChartPadding({
+  const { top, left, bottom } = useChartPadding({
     xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
@@ -366,7 +367,7 @@ const useColumnsGroupedState = (
     width,
   });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
+    top: DEFAULT_MARGIN_TOP + top + leftAxisLabelSize.offset,
     right,
     bottom,
     left,
@@ -455,6 +456,7 @@ const useColumnsGroupedState = (
     grouped,
     getAnnotationInfo,
     leftAxisLabelSize,
+    leftAxisLabelOffset: top,
     bottomAxisLabelSize,
     ...variables,
   };

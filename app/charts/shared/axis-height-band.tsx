@@ -1,6 +1,8 @@
 import { axisLeft } from "d3-axis";
 import { useEffect, useRef } from "react";
 
+import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
+import { StackedBarsState } from "@/charts/bar/bars-stacked-state";
 import { BarsState } from "@/charts/bar/bars-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
@@ -22,7 +24,8 @@ export const AxisHeightBand = () => {
     bounds,
     yDimension,
     leftAxisLabelSize,
-  } = useChartState() as BarsState;
+    leftAxisLabelOffset,
+  } = useChartState() as BarsState | GroupedBarsState | StackedBarsState;
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const formatDate = useTimeFormatUnit();
@@ -97,6 +100,7 @@ export const AxisHeightBand = () => {
     <>
       <g ref={ref} />
       <foreignObject
+        y={leftAxisLabelOffset}
         width={leftAxisLabelSize.width}
         height={leftAxisLabelSize.height}
         style={{ display: "flex" }}

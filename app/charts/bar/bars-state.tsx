@@ -77,6 +77,7 @@ export type BarsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     leftAxisLabelSize: AxisLabelSizeVariables;
+    leftAxisLabelOffset: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
@@ -233,7 +234,7 @@ const useBarsState = (
     getX,
   ]);
 
-  const { left, bottom } = useChartPadding({
+  const { top, left, bottom } = useChartPadding({
     xLabelPresent: !!xMeasure.label,
     yScale: paddingYScale,
     width,
@@ -255,7 +256,7 @@ const useBarsState = (
     width,
   });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
+    top: DEFAULT_MARGIN_TOP + top + leftAxisLabelSize.offset,
     right,
     bottom: bottom + 45,
     left,
@@ -357,6 +358,7 @@ const useBarsState = (
     getColorLabel: getSegmentLabel,
     colors,
     leftAxisLabelSize,
+    leftAxisLabelOffset: top,
     bottomAxisLabelSize,
     ...showValuesVariables,
     ...variables,

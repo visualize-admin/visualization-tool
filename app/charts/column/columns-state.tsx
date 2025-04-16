@@ -72,6 +72,7 @@ export type ColumnsState = CommonChartState &
     getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
+    leftAxisLabelOffset: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
@@ -240,7 +241,7 @@ const useColumnsState = (
     getY,
   ]);
 
-  const { left, bottom } = useChartPadding({
+  const { top, left, bottom } = useChartPadding({
     xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
@@ -275,7 +276,8 @@ const useColumnsState = (
       bandwidth: xScale.bandwidth(),
     });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset + yValueLabelsOffset,
+    top:
+      DEFAULT_MARGIN_TOP + top + leftAxisLabelSize.offset + yValueLabelsOffset,
     right,
     bottom,
     left,
@@ -335,6 +337,7 @@ const useColumnsState = (
     yScale,
     getAnnotationInfo,
     leftAxisLabelSize,
+    leftAxisLabelOffset: top,
     bottomAxisLabelSize,
     ...showValuesVariables,
     ...variables,
