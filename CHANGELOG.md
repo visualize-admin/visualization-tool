@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Combo charts tooltips now work correctly again
 
 # [5.7.0] - 2025-04-16
 
