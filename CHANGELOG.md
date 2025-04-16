@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.7.0] - 2025-04-16
+
 - Features
   - Ability to merge more than 2 datasets
   - Added a way to preview charts using hash parameters through `/preview` page
