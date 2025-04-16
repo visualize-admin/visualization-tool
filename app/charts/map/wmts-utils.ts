@@ -60,6 +60,7 @@ export type ParsedWMTSLayer = {
   availableDimensionValues: (string | number)[];
   defaultDimensionValue: string | number;
   endpoint: string;
+  type: "wmts";
 };
 
 const parseWMTSLayer = (
@@ -78,7 +79,21 @@ const parseWMTSLayer = (
       : [layer.Dimension.Value],
     defaultDimensionValue: layer.Dimension.Default,
     endpoint,
+    type: "wmts",
   };
+};
+
+const parseWMTSResponse = async (resp: Response, endpoint: string) => {
+  const text = await resp.text();
+
+  const parser = new XMLParser({
+    ignoreAttributes: false,
+    attributeNamePrefix: "",
+    parseAttributeValue: true,
+  });
+  return (parser.parse(text) as WMTSData).Capabilities.Contents.Layer.map((l) =>
+    parseWMTSLayer(l, endpoint)
+  );
 };
 
 const fetchWMTSLayersFromEndpoint = async (
@@ -91,17 +106,7 @@ const fetchWMTSLayersFromEndpoint = async (
 
   try {
     const resp = await fetch(url);
-
-    const text = await resp.text();
-
-    const parser = new XMLParser({
-      ignoreAttributes: false,
-      attributeNamePrefix: "",
-      parseAttributeValue: true,
-    });
-    return (parser.parse(text) as WMTSData).Capabilities.Contents.Layer.map(
-      (l) => parseWMTSLayer(l, endpoint)
-    );
+    return parseWMTSResponse(resp, endpoint);
   } catch {
     console.error(
       `Error fetching WMTS layers from endpoint ${endpoint}`,
