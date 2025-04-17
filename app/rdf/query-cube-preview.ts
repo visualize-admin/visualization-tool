@@ -87,7 +87,7 @@ CONSTRUCT {
       OPTIONAL { ?dimensionUnit ?dimensionUnitIsCurrency qudt:CurrencyUnit . }
       OPTIONAL { ?dimensionUnit qudt:currencyExponent ?dimensionUnitCurrencyExponent . }
       BIND(STR(COALESCE(STR(?dimensionUnitSymbol), STR(?dimensionUnitUcumCode), STR(?dimensionUnitExpression), STR(?dimensionUnitRdfsLabel))) AS ?dimensionUnitLabel)
-      FILTER (LANG(?dimensionUnitRdfsLabel) = "en")
+      FILTER (LANG(?dimensionUnitRdfsLabel) = "${locale}" || LANG(?dimensionUnitRdfsLabel) = "en" || datatype(?dimensionUnitRdfsLabel) = xsd:string)
     }
     OPTIONAL { ?dimension sh:order ?dimensionOrder . }
     OPTIONAL {

@@ -202,7 +202,7 @@ const useComboLineDualState = (
       .filter(truthy);
     const yAnchor = isMobile
       ? chartHeight + margins.bottom
-      : mean(values.map((d) => d.yPos));
+      : (mean(values.map((d) => d.yPos)) ?? chartHeight);
     const placement = isMobile
       ? MOBILE_TOOLTIP_PLACEMENT
       : getCenteredTooltipPlacement({
