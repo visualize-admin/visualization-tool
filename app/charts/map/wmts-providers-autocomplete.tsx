@@ -28,7 +28,9 @@ const useStyles = makeStyles<Theme>((theme) => ({
     minHeight: 300,
   },
   input: {
-    fontSize: theme.typography.body2.fontSize,
+    "&&": {
+      fontSize: theme.typography.body2.fontSize,
+    },
   },
 }));
 

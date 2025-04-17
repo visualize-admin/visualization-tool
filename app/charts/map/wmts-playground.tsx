@@ -23,7 +23,11 @@ import {
 } from "@mui/material";
 import { Icon } from "@/icons";
 import ProviderAutocomplete from "@/charts/map/wmts-providers-autocomplete";
-import { DEFAULT_WMTS_URL, ParsedWMTSLayer } from "@/charts/map/wmts-utils";
+import {
+  DEFAULT_WMTS_URL,
+  getWMTSTile,
+  ParsedWMTSLayer,
+} from "@/charts/map/wmts-utils";
 import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 import { HintRed, Spinner } from "@/components/hint";
 import { makeStyles } from "@mui/styles";
@@ -163,7 +167,7 @@ const TreeRow = ({
   initialChecked?: boolean;
   onCheck: (layer: CustomLayer, checked: boolean) => void;
 }) => {
-  const [checked, setChecked] = useState(initialChecked);
+  const [checked, setChecked] = useState(initialChecked ?? false);
   const handleChangeCheckbox = useCallback(() => {
     return setChecked((c) => {
       const newValue = !c;
@@ -335,9 +339,11 @@ const WMTSSelector = ({
         // TODO i18n
         placeholder="Search custom layers"
         endAdornment={
-          <IconButton size="small" onClick={handleClickResetInput}>
-            <Icon name="close" size={16} />
-          </IconButton>
+          inputValue.length > 0 ? (
+            <IconButton size="small" onClick={handleClickResetInput}>
+              <Icon name="close" size={16} />
+            </IconButton>
+          ) : null
         }
         onChange={handleInputChange}
         sx={{
@@ -384,6 +390,13 @@ export const WMTSPlayground = () => {
     showLabels: true,
   });
 
+  const deckglLayers = useMemo(() => {
+    return layers.map((x) => {
+      return x.type === "wms"
+        ? getWMSTile({ wmsLayers: [x], customLayer: x })
+        : getWMTSTile({ wmtsLayers: [x], customLayer: x });
+    });
+  }, [layers]);
   return (
     <LocaleProvider value="en">
       <Box
@@ -416,18 +429,7 @@ export const WMTSPlayground = () => {
             dragRotate={false}
             touchZoomRotate
           >
-            <DeckGLOverlay
-              layers={layers.map((x) => {
-                return x.type === "wms"
-                  ? new DeckGLWMSLayer({
-                      id: `wms-layer-${x.id}`,
-                      data: x.dataUrl,
-                      serviceType: "wms",
-                      layers: [x.id],
-                    })
-                  : null;
-              })}
-            />
+            <DeckGLOverlay layers={deckglLayers} />
           </Map>
         </Box>
       </Box>

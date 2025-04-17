@@ -122,17 +122,19 @@ export const getWMTSTile = ({
   value,
 }: {
   wmtsLayers?: ParsedWMTSLayer[];
-  customLayer?: WMTSCustomLayer;
+  customLayer?: WMTSCustomLayer | ParsedWMTSLayer;
   beforeId?: string;
   value?: number | string;
 }) => {
   if (!customLayer || !isValidWMTSLayerUrl(customLayer.url)) {
+    console.warn("No custom layer or invalid wmts layer URL");
     return;
   }
 
   const wmtsLayer = wmtsLayers?.find((layer) => layer.id === customLayer.id);
 
   if (!wmtsLayer) {
+    console.warn("No wmts layer");
     return;
   }
 
@@ -188,10 +190,15 @@ export const getWMTSLayerValue = ({
 }: {
   availableDimensionValues: (string | number)[];
   defaultDimensionValue: string | number;
-  customLayer?: WMTSCustomLayer;
+  customLayer?: WMTSCustomLayer | ParsedWMTSLayer;
   value?: string | number;
 }) => {
-  if (!customLayer?.syncTemporalFilters) {
+  if (
+    !customLayer ||
+    (customLayer &&
+      "syncTemporalFilters" in customLayer &&
+      !customLayer.syncTemporalFilters)
+  ) {
     return defaultDimensionValue;
   }
 

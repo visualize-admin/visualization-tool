@@ -109,7 +109,7 @@ export const getWMSTile = ({
   beforeId,
 }: {
   wmsLayers?: ParsedWMSLayer[];
-  customLayer?: WMSCustomLayer;
+  customLayer?: WMSCustomLayer | ParsedWMSLayer;
   beforeId?: string;
 }) => {
   if (!customLayer) {
@@ -125,7 +125,7 @@ export const getWMSTile = ({
   return new DeckGLWMSLayer({
     id: `wms-layer-${customLayer.id}`,
     beforeId,
-    data: "https://wms.geo.admin.ch/?",
+    data: wmsLayer.dataUrl,
     serviceType: "wms",
     layers: [wmsLayer.id],
   });
