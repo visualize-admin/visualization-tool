@@ -1,11 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import {
-  Box,
-  Stack,
-  Switch as MUISwitch,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { groups } from "d3-array";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
@@ -29,9 +23,8 @@ import { getMap } from "@/charts/map/ref";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
-import { RadioGroup } from "@/components/form";
+import { RadioGroup, Switch } from "@/components/form";
 import {
-  Label,
   Radio,
   Select,
   SelectOption,
@@ -767,14 +760,17 @@ const ChartLimits = ({
   const availableLimitOptions = useMemo(() => {
     return measure.limits
       .map((limit) => {
-        const { limit: maybeLimit, wouldBeValid } =
-          getMaybeValidChartConfigLimit({
-            chartConfig,
-            measureId: measure.id,
-            axisDimension,
-            limit,
-            filters,
-          });
+        const {
+          limit: maybeLimit,
+          wouldBeValid,
+          relatedAxisDimensionValueLabel,
+        } = getMaybeValidChartConfigLimit({
+          chartConfig,
+          measureId: measure.id,
+          axisDimension,
+          limit,
+          filters,
+        });
 
         if (!wouldBeValid) {
           return;
@@ -787,6 +783,7 @@ const ChartLimits = ({
         } = maybeLimit ?? {};
 
         return {
+          relatedAxisDimensionValueLabel,
           limit,
           maybeLimit,
           color,
@@ -815,7 +812,22 @@ const ChartLimits = ({
       </SectionTitle>
       <ControlSectionContent component="fieldset">
         {availableLimitOptions.map(
-          ({ maybeLimit, limit, color, lineType, symbolType }, i) => {
+          (
+            {
+              relatedAxisDimensionValueLabel,
+              maybeLimit,
+              limit,
+              color,
+              lineType,
+              symbolType,
+            },
+            i
+          ) => {
+            /** It means that the limit is rendered as overarching line, not tied
+             * to any axis dimension value. */
+            const hasNoAxisDimension =
+              relatedAxisDimensionValueLabel === undefined;
+
             return (
               <Box key={i} sx={{ mb: 2 }}>
                 <Box
@@ -827,18 +839,17 @@ const ChartLimits = ({
                   }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-                    <MUISwitch
+                    <Switch
                       id={`limit-${i}`}
+                      label={t({
+                        id: "controls.section.targets-and-limit-values.show-target",
+                        message: "Show target",
+                      })}
                       checked={!!maybeLimit}
                       onChange={(e) => {
                         onToggle(e.target.checked, limit);
                       }}
                     />
-                    <Label htmlFor={`limit-${i}`}>
-                      <Trans id="controls.section.targets-and-limit-values.show-target">
-                        Show target
-                      </Trans>
-                    </Label>
                   </Box>
                   <Flex
                     sx={{
@@ -920,12 +931,36 @@ const ChartLimits = ({
                         }}
                         disabled={!maybeLimit}
                       />
+                      <Radio
+                        name={`limit-${i}-symbol-type-triangle`}
+                        label={t({
+                          id: "controls.symbol.triangle",
+                          message: "Triangle",
+                        })}
+                        value="triangle"
+                        checked={symbolType === "triangle"}
+                        onChange={() => {
+                          dispatch({
+                            type: "LIMIT_SET",
+                            value: {
+                              measureId: measure.id,
+                              related: limit.related,
+                              color,
+                              lineType,
+                              symbolType: "triangle",
+                            },
+                          });
+                        }}
+                        disabled={!maybeLimit}
+                      />
                     </RadioGroup>
                   </div>
                 ) : null}
-                {limit.type === "range" ? (
+                {limit.type === "range" ||
+                !supportsLimitSymbols ||
+                hasNoAxisDimension ? (
                   <div>
-                    <Typography variant="body3" component="p" sx={{ mb: 2 }}>
+                    <Typography variant="body3" component="p" sx={{ my: 2 }}>
                       <Trans id="controls.section.targets-and-limit-values.line-type">
                         Select line type
                       </Trans>

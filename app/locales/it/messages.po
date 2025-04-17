@@ -1358,6 +1358,10 @@ msgstr "Attraverso"
 msgid "controls.symbol.dot"
 msgstr "Punto"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.symbol.triangle"
+msgstr "Triangolo"
+
 #: app/configurator/table/table-chart-options.tsx
 msgid "controls.table.column.group"
 msgstr "Raggruppa secondo questa colonna"

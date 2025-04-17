@@ -1358,6 +1358,10 @@ msgstr "Kreuz"
 msgid "controls.symbol.dot"
 msgstr "Punkt"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.symbol.triangle"
+msgstr "Dreieck"
+
 #: app/configurator/table/table-chart-options.tsx
 msgid "controls.table.column.group"
 msgstr "Gruppieren"

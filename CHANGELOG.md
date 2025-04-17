@@ -12,6 +12,8 @@ You can also check the
 # Unreleased
 
 - Features
+  - It's now possible to use triangle symbol for single-value limits
+  - It's now possible to make single-value limit lines dashed when makes sense
   - Display of future limits is now compatible with area charts
   - Dimension unit labels are now fetched not only in English language, but
     others too – and we fall back to a regular string in case the label is not
