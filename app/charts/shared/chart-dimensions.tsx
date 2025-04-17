@@ -80,8 +80,11 @@ const computeChartPadding = ({
       70;
   }
 
+  const top = interactiveFiltersConfig?.calculation.active ? 24 : 0;
+
   return isFlipped
     ? {
+        top,
         bottom:
           left +
           (xLabelPresent ? 20 : 0) +
@@ -89,6 +92,7 @@ const computeChartPadding = ({
         left: bottom,
       }
     : {
+        top,
         left,
         bottom:
           bottom +

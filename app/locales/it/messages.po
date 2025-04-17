@@ -1136,8 +1136,8 @@ msgid "controls.section.show-standard-error.explanation"
 msgstr "Mostrare le incertezze che si estendono dai punti di dati per rappresentare gli errori standard."
 
 #: app/configurator/components/chart-options-selector.tsx
-msgid "controls.section.show-values"
-msgstr "Mostra sempre i valori"
+msgid "controls.section.show-total-values"
+msgstr "Mostra sempre i valori totali"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.sorting"

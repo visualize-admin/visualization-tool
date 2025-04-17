@@ -26,15 +26,21 @@ export const TICK_PADDING = 6;
 export const AxisHeightLinear = () => {
   const { gridColor, labelColor, axisLabelFontSize } = useChartTheme();
   const [ref, setRef] = useState<SVGGElement | null>(null);
-  const { yScale, bounds, yAxisLabel, leftAxisLabelSize, ...rest } =
-    useChartState() as
-      | AreasState
-      | ColumnsState
-      | GroupedColumnsState
-      | StackedColumnsState
-      | LinesState
-      | ScatterplotState
-      | ComboLineSingleState;
+  const {
+    yScale,
+    bounds,
+    yAxisLabel,
+    leftAxisLabelSize,
+    leftAxisLabelOffsetTop,
+    ...rest
+  } = useChartState() as
+    | AreasState
+    | ColumnsState
+    | GroupedColumnsState
+    | StackedColumnsState
+    | LinesState
+    | ScatterplotState
+    | ComboLineSingleState;
 
   useRenderAxisHeightLinear(ref, {
     id: "axis-height-linear",
@@ -58,6 +64,7 @@ export const AxisHeightLinear = () => {
         </text>
       ) : (
         <foreignObject
+          y={leftAxisLabelOffsetTop}
           width={leftAxisLabelSize.width}
           height={leftAxisLabelSize.height}
           style={{ display: "flex" }}

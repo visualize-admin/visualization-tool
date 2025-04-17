@@ -49,6 +49,7 @@ export type ScatterplotState = CommonChartState &
     getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
+    leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
@@ -160,7 +161,7 @@ const useScatterplotState = (
     );
   }
   // Dimensions
-  const { left, bottom } = useChartPadding({
+  const { top, left, bottom } = useChartPadding({
     xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
@@ -178,7 +179,7 @@ const useScatterplotState = (
     width,
   });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
+    top: DEFAULT_MARGIN_TOP + top + leftAxisLabelSize.offset,
     right,
     bottom: bottom + bottomAxisLabelSize.offset,
     left,
@@ -250,6 +251,7 @@ const useScatterplotState = (
     getColorLabel: getSegmentLabel,
     getAnnotationInfo,
     leftAxisLabelSize,
+    leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     ...variables,
   };

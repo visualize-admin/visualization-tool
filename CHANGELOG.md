@@ -14,6 +14,14 @@ You can also check the
 - Features
   - It's now possible to use triangle symbol for single-value limits
   - It's now possible to make single-value limit lines dashed when makes sense
+  - Display of future limits is now compatible with area charts
+  - Dimension unit labels are now fetched not only in English language, but
+    others too – and we fall back to a regular string in case the label is not
+    localized
+- Fixes
+  - Color palette can be changed again
+  - Combo charts tooltips now work correctly again
+  - Interactive 100% mode switch doesn't overlap with Y axis label anymore
 
 # [5.7.0] - 2025-04-16
 

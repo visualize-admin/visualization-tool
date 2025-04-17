@@ -88,6 +88,7 @@ export type AreasState = CommonChartState &
     series: Series<{ [key: string]: number }, string>[];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
+    leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
@@ -357,7 +358,7 @@ const useAreasState = (
   ]);
 
   /** Dimensions */
-  const { left, bottom } = useChartPadding({
+  const { top, left, bottom } = useChartPadding({
     xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
@@ -387,7 +388,8 @@ const useAreasState = (
       segment: fields.segment,
     });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset + yValueLabelsOffset,
+    top:
+      DEFAULT_MARGIN_TOP + top + leftAxisLabelSize.offset + yValueLabelsOffset,
     right,
     bottom,
     left,
@@ -419,9 +421,12 @@ const useAreasState = (
         formatNumber,
       });
       const xAnchor = xScale(getX(datum));
-      const yDesktopAnchor = normalize
-        ? yScale.range()[0] * 0.5
-        : yScale(sum(yValues) * (fields.segment ? 0.5 : 1));
+      const allNaN = yValues.every((d) => Number.isNaN(d));
+      const yDesktopAnchor = allNaN
+        ? NaN
+        : normalize
+          ? yScale.range()[0] * 0.5
+          : yScale(sum(yValues) * (fields.segment ? 0.5 : 1));
       const yAnchor = isMobile ? chartHeight : yDesktopAnchor;
       const placement = isMobile
         ? MOBILE_TOOLTIP_PLACEMENT
@@ -491,6 +496,7 @@ const useAreasState = (
     series,
     getAnnotationInfo,
     leftAxisLabelSize,
+    leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     ...showValuesVariables,
     ...variables,

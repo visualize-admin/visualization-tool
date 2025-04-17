@@ -90,7 +90,7 @@ export const getCubeDimensions = async ({
     const dimensionUnitIndex = index(
       await loadUnits({
         ids: dimensionUnits,
-        locale: "en", // No other locales exist yet
+        locale,
         sparqlClient,
         cache,
       }),
