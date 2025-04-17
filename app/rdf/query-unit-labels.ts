@@ -8,10 +8,10 @@ import batchLoad from "./batch-load";
 import { pragmas } from "./create-source";
 import * as ns from "./namespace";
 
-interface ResourceLabel {
+type ResourceLabel = {
   iri: Term;
   label?: Term;
-}
+};
 
 const buildUnitsQuery = (values: Term[], locale: string) => {
   const uniqueValues = uniqBy(values, (v) => v.value);
@@ -30,8 +30,8 @@ const buildUnitsQuery = (values: Term[], locale: string) => {
         OPTIONAL { ?iri ${ns.qudt.currencyExponent} ?currencyExponent }
 
         BIND(str(coalesce(str(?symbol), str(?ucumCode), str(?expression), str(?rdfsLabel), "?")) AS ?label)
-        
-        FILTER ( lang(?rdfsLabel) = "${locale}" )
+
+        FILTER ( lang(?rdfsLabel) = "${locale}" || lang(?rdfsLabel) = "en" || datatype(?rdfsLabel) = ${ns.xsd.string} )
       `.prologue`${pragmas}`;
 };
 
