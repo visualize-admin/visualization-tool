@@ -34,7 +34,6 @@ import SvgIcClose from "@/icons/components/IcClose";
 import { LocaleProvider } from "@/locales";
 
 import React from "react";
-import { _WMSLayer as DeckGLWMSLayer } from "@deck.gl/geo-layers";
 import { useMapStyle } from "@/charts/map/get-base-layer-style";
 import maplibreglRaw from "maplibre-gl";
 import { supported } from "@mapbox/mapbox-gl-supported";
@@ -175,7 +174,6 @@ const TreeRow = ({
 
   const handleClickZoom: HTMLProps<HTMLButtonElement>["onClick"] = useCallback(
     (ev) => {
-      const value = ev.currentTarget.dataset["value"];
       console.log("Clicked zoom for layer", layer);
     },
     []
@@ -204,7 +202,6 @@ const WMTSSelector = ({
 }: {
   onLayerCheck: (layer: CustomLayer, checked: boolean) => void;
 }) => {
-  console.log("RENDER");
   const treeItemClasses = useTreeItemStyles();
 
   const classes = useStyles();
@@ -241,8 +238,6 @@ const WMTSSelector = ({
     return res;
   }, [allLayers]);
 
-  console.log(layersByPath);
-
   const options = useMemo(() => {
     return mapTree(allLayers, ({ children, ...x }) => ({
       ...x,
@@ -267,8 +262,6 @@ const WMTSSelector = ({
     value: "",
     options,
   });
-
-  console.log("HELLO", filteredOptions);
 
   const renderTreeContent = useCallback(
     (nodesData: Tree) => {
@@ -314,7 +307,6 @@ const WMTSSelector = ({
   );
 
   const treeRef = useRef();
-  const [value, setValue] = useState("");
   const handleNodeSelect = () => {};
 
   return (
@@ -367,7 +359,7 @@ const WMTSSelector = ({
       <TreeView
         sx={{ flexGrow: 1, overflow: "auto" }}
         ref={treeRef}
-        defaultSelected={value}
+        defaultSelected={undefined}
         expanded={expanded}
         onNodeToggle={handleNodeToggle}
         onNodeSelect={handleNodeSelect}
