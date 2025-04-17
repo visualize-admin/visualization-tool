@@ -89,7 +89,6 @@ export const CustomLayersSelector = () => {
                     <DraggableLayer
                       key={`${customLayer.type}-${customLayer.id}`}
                       customLayer={customLayer}
-                      wmtsLayers={wmtsLayers}
                       options={options}
                       index={i}
                     />
@@ -238,19 +237,29 @@ const getBaseLayerOption = (layer: ParsedWMSLayer | ParsedWMTSLayer) => {
   };
 };
 
+const defaultedEndpoint = (
+  endpoint: string | undefined,
+  type: "wms" | "wmts"
+) => {
+  return endpoint ?? (type === "wms" ? DEFAULT_WMS_URL : DEFAULT_WMTS_URL);
+};
+
 const DraggableLayer = ({
   customLayer,
-  wmtsLayers,
   options,
   index,
 }: {
   customLayer: WMSCustomLayer | WMTSCustomLayer;
-  wmtsLayers: ParsedWMTSLayer[];
   options: CustomLayerOption[];
   index: number;
 }) => {
   const [_, dispatch] = useConfiguratorState(isConfiguring);
   const value = customLayer.id;
+  const endpoint = customLayer.endpoint;
+  const { data: groupedLayers } = useWMTSorWMSLayers([
+    defaultedEndpoint(endpoint, customLayer.type),
+  ]);
+  const wmtsLayers = groupedLayers?.wmts ?? [];
   const enableTemporalFiltering = useMemo(() => {
     switch (customLayer.type) {
       case "wms":
