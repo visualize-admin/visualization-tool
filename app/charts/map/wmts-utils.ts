@@ -9,6 +9,9 @@ type WMTSData = {
     Contents: {
       Layer: WMTSLayer[];
     };
+    "ows:ServiceProvider": {
+      "ows:ProviderName": string;
+    };
   };
 };
 
@@ -63,11 +66,15 @@ export type ParsedWMTSLayer = {
   endpoint: string;
   type: "wmts";
   children?: ParsedWMTSLayer[];
+  attribution: string;
 };
 
 const parseWMTSLayer = (
   layer: WMTSLayer,
-  endpoint: string
+  attributes: {
+    endpoint: string;
+    attribution: string;
+  }
 ): ParsedWMTSLayer => {
   const res: ParsedWMTSLayer = {
     id: layer["ows:Identifier"],
@@ -84,16 +91,16 @@ const parseWMTSLayer = (
         : [layer.Dimension.Value]
       : undefined,
     defaultDimensionValue: layer.Dimension?.Default,
-    endpoint,
     type: "wmts",
+    ...attributes,
   };
 
   /** @patrick: Haven't found any WMTS with nested layer yet */
   if (layer.Layer) {
     const children = layer.Layer
       ? layer.Layer instanceof Array
-        ? layer.Layer.map((l) => parseWMTSLayer(l, endpoint))
-        : [parseWMTSLayer(layer.Layer, endpoint)]
+        ? layer.Layer.map((l) => parseWMTSLayer(l, attributes))
+        : [parseWMTSLayer(layer.Layer, attributes)]
       : undefined;
     res.children = children;
   }
@@ -107,8 +114,13 @@ export const parseWMTSContent = (content: string, endpoint: string) => {
     attributeNamePrefix: "",
     parseAttributeValue: true,
   });
-  return (parser.parse(content) as WMTSData).Capabilities.Contents.Layer.map(
-    (l) => parseWMTSLayer(l, endpoint)
+  const parsed = parser.parse(content) as WMTSData;
+  const attributes = {
+    endpoint,
+    attribution: parsed.Capabilities["ows:ServiceProvider"]["ows:ProviderName"],
+  };
+  return parsed.Capabilities.Contents.Layer.map((l) =>
+    parseWMTSLayer(l, attributes)
   );
 };
 

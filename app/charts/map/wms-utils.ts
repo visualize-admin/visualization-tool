@@ -8,12 +8,14 @@ type WMSData = {
     Capability: {
       Layer: {
         Layer: WMSLayer[];
+        Attribution: string;
       };
     };
     Service: {
       OnlineResource: {
         "xlink:href": string;
       };
+      Title: string;
     };
   };
 };
@@ -57,6 +59,7 @@ const parseWMSLayer = (
   attributes: {
     endpoint: string;
     dataUrl: string;
+    attribution: string;
   },
   parentPath = ""
 ): ParsedWMSLayer => {
@@ -100,10 +103,14 @@ export const parseWMSContent = (content: string, endpoint: string) => {
 
   const wmsData = parser.parse(content) as WMSData;
   const dataUrl = wmsData.WMS_Capabilities.Service.OnlineResource["xlink:href"];
+  const attribution =
+    wmsData.WMS_Capabilities.Capability.Layer.Attribution ??
+    wmsData.WMS_Capabilities.Service.Title;
   return wmsData.WMS_Capabilities.Capability.Layer.Layer.map((l) =>
     parseWMSLayer(l, {
       endpoint,
       dataUrl,
+      attribution,
     })
   );
 };
