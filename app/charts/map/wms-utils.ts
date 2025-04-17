@@ -60,7 +60,7 @@ const parseWMSLayer = (
   },
   parentPath = ""
 ): ParsedWMSLayer => {
-  const currentPath = `${parentPath}/${layer.Name}`;
+  const currentPath = `${parentPath ?? ""}/${layer.Name ?? layer.Title}`;
   const res: ParsedWMSLayer = {
     // Non unique
     id: layer.Name,
