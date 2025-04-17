@@ -80,6 +80,11 @@ const parseWMSLayer = (
       : undefined;
     res.children = children;
   }
+
+  // Hoist single children with same id as parent
+  if (res.children?.length === 1 && res.children[0]!.id === res.id) {
+    return res.children[0];
+  }
   return res;
 };
 
