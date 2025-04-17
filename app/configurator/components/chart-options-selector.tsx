@@ -494,6 +494,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                 }
               />
             ) : null}
+            {encoding.options?.adjustScaleDomain ? <ChartScaleDomain /> : null}
             {encoding.options?.showStandardError && hasStandardError && (
               <SwitchWrapper>
                 <ChartOptionSwitchField
@@ -728,6 +729,10 @@ const ChartLayoutOptions = ({
       </ControlSectionContent>
     </ControlSection>
   ) : null;
+};
+
+const ChartScaleDomain = () => {
+  return null;
 };
 
 const ChartLimits = ({

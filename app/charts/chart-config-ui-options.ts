@@ -125,6 +125,9 @@ type EncodingOption<T extends ChartConfig = ChartConfig> =
       };
     }
   | {
+      field: "adjustScaleDomain";
+    }
+  | {
       field: "showStandardError";
     }
   | {
@@ -606,6 +609,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               };
             },
           },
+          adjustScaleDomain: {},
         },
       },
       {
@@ -716,6 +720,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           },
           showStandardError: {},
           showConfidenceInterval: {},
+          adjustScaleDomain: {},
         },
       },
       {
@@ -885,6 +890,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           },
           showStandardError: {},
           showConfidenceInterval: {},
+          adjustScaleDomain: {},
         },
       },
       {
@@ -1033,6 +1039,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           },
           showStandardError: {},
           showConfidenceInterval: {},
+          adjustScaleDomain: {},
           showDots: {},
           showDotsSize: {},
         },
@@ -1174,6 +1181,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
+        options: {
+          adjustScaleDomain: {},
+        },
       },
       {
         idAttributes: ["componentId"],
@@ -1181,6 +1191,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
+        options: {
+          adjustScaleDomain: {},
+        },
       },
       {
         idAttributes: ["componentId"],
@@ -1232,6 +1245,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               chartConfig.fields.color.colorMapping = newColorMapping;
             },
           },
+          adjustScaleDomain: {},
         },
       },
       {
