@@ -4,11 +4,11 @@ import sortBy from "lodash/sortBy";
 import { HierarchyValue } from "@/domain/data";
 import { bfs } from "@/utils/bfs";
 
-export const mapTree = <T extends { children?: T[] | null }>(
-  tree: T[],
-  cb: (h: T) => T
+export const mapTree = <TIn extends { children?: TIn[] | null }, TOut>(
+  tree: TIn[],
+  cb: (h: TIn) => TOut
 ) => {
-  return tree.map((t): T => {
+  return tree.map((t): TOut => {
     return {
       ...cb(t),
       children: t.children ? mapTree(t.children, cb) : undefined,
