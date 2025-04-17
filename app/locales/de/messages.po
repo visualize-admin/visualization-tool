@@ -90,11 +90,11 @@ msgid "browse.datasets.description"
 msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datensätze, indem Sie entweder nach Kategorien oder Organisationen filtern oder direkt nach bestimmten Stichworten suchen. Klicken Sie auf einen Datensatz, um detailliertere Informationen zu erhalten und Ihre eigenen Visualisierungen zu erstellen."
 
 #: app/components/metadata-panel.tsx
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
 msgid "button.back"
 msgstr "Zurück"
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
 msgid "button.confirm"
 msgstr "Bestätigen"
 
@@ -245,11 +245,11 @@ msgstr "Kein Tab-Titel"
 msgid "chart.datasets.add"
 msgstr "Hinzufügen"
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "chart.datasets.add-dataset-dialog.description"
 msgstr "Sie können nur Datensätze kombinieren, die Dimensionen mit derselben Einheit und Auflösung teilen. Standardmässig werden Dimensionen ausgewählt, die zum aktuellen Diagramm passen."
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "chart.datasets.add-dataset-dialog.title"
 msgstr "Wählen Sie einen Datensatz mit gemeinsamen Dimensionen aus"
 
@@ -946,6 +946,7 @@ msgid "controls.scale.type"
 msgstr "Skalierungstyp"
 
 #: app/components/form.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "controls.search.clear"
 msgstr "Suche zurücksetzen"
 
@@ -1135,8 +1136,8 @@ msgid "controls.section.show-standard-error.explanation"
 msgstr "Zeigen Sie Unsicherheiten, die sich von Datenpunkten ausbreiten, um Standardfehler darzustellen."
 
 #: app/configurator/components/chart-options-selector.tsx
-msgid "controls.section.show-values"
-msgstr "Werte immer anzeigen"
+msgid "controls.section.show-total-values"
+msgstr "Immer Gesamtwerte anzeigen"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.section.sorting"
@@ -1477,30 +1478,27 @@ msgstr "Achtung, dieser Datensatz ist abgelaufen.<0/><1>Diese Grafik nicht für 
 msgid "dataset.results"
 msgstr "{0, plural, zero {Keine Datensätze} one {# Datensatz} other {# Datensätze}}"
 
-#: app/configurator/components/add-dataset-drawer.tsx
-msgid "dataset.search.add-dataset"
-msgstr "Datensatz hinzufügen"
-
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.at-least-one-compatible-dimension-selected"
 msgstr "Es muss mindestens eine kompatible Dimension ausgewählt werden."
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/caution-alert.tsx
 msgid "dataset.search.caution.acknowledge"
 msgstr "Verstanden, ich werde vorsichtig vorgehen."
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/caution-alert.tsx
 msgid "dataset.search.caution.body"
 msgstr "Die Verknüpfung verschiedener Datensätze birgt Risiken wie Dateninkonsistenzen, Skalierbarkeitsprobleme und unerwartete Korrelationen. Stellen Sie sicher, dass Sie Datensätze nur dann zusammenführen, wenn Sie sicher sind, dass die Daten zusammengeführt werden sollen."
 
 #: app/browser/dataset-browse.tsx
 #: app/components/form.tsx
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.label"
 msgstr "Suchen"
 
 #: app/browser/dataset-browse.tsx
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.placeholder"
 msgstr "Name, Organisation, Stichwort..."
 
@@ -1508,27 +1506,27 @@ msgstr "Name, Organisation, Stichwort..."
 msgid "dataset.search.preview.added-dataset"
 msgstr "Neuer Datensatz hinzugefügt. Sie können die Daten nun in den Diagrammen verwenden."
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
 msgid "dataset.search.preview.datasets"
 msgstr "Datensätze"
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
 msgid "dataset.search.preview.description"
 msgstr "Überprüfen Sie die verfügbaren Dimensionen."
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
 msgid "dataset.search.preview.new-dimension"
 msgstr "Neu"
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
 msgid "dataset.search.preview.title"
 msgstr "Verfügbare Dimensionen"
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.search-options.more-2-options-selected"
 msgstr "{0} weitere"
 
-#: app/configurator/components/add-dataset-drawer.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.search-options.no-options-selected"
 msgstr "Keine Optionen ausgewählt"
 

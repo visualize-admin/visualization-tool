@@ -487,7 +487,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
               <ChartOptionCheckboxField
                 path="showValues"
                 field={encoding.field}
-                label={t({ id: "controls.section.show-values" })}
+                label={t({ id: "controls.section.show-total-values" })}
                 disabled={
                   encoding.options.showValues.getDisabledState?.(chartConfig)
                     .disabled

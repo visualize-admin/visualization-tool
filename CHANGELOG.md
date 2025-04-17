@@ -11,6 +11,8 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - Display of future limits is now compatible with area charts
 - Fixes
   - Combo charts tooltips now work correctly again
 

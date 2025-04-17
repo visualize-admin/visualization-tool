@@ -22,7 +22,13 @@ export const Areas = () => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const areaGenerator = area<$FixMe>()
-    .defined((d) => d[0] !== null && d[1] !== null)
+    .defined(
+      (d) =>
+        d[0] !== null &&
+        d[1] !== null &&
+        !Number.isNaN(d[0]) &&
+        !Number.isNaN(d[1])
+    )
     .x((d) => xScale(getX(d.data)))
     .y0((d) => yScale(d[0]))
     .y1((d) => yScale(d[1]));
