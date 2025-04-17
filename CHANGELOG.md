@@ -13,6 +13,8 @@ You can also check the
 
 - Features
   - Display of future limits is now compatible with area charts
+- Fixes
+  - Combo charts tooltips now work correctly again
 
 # [5.7.0] - 2025-04-16
 
