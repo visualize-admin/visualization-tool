@@ -269,7 +269,7 @@ const usePublishedChartStyles = makeStyles<
     gap: 16,
     display: "flex",
     flexDirection: "column",
-    backgroundColor: theme.palette.grey[200],
+    backgroundColor: theme.palette.cobalt[50],
   },
 }));
 

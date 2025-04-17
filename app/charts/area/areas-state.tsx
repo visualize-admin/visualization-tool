@@ -421,9 +421,12 @@ const useAreasState = (
         formatNumber,
       });
       const xAnchor = xScale(getX(datum));
-      const yDesktopAnchor = normalize
-        ? yScale.range()[0] * 0.5
-        : yScale(sum(yValues) * (fields.segment ? 0.5 : 1));
+      const allNaN = yValues.every((d) => Number.isNaN(d));
+      const yDesktopAnchor = allNaN
+        ? NaN
+        : normalize
+          ? yScale.range()[0] * 0.5
+          : yScale(sum(yValues) * (fields.segment ? 0.5 : 1));
       const yAnchor = isMobile ? chartHeight : yDesktopAnchor;
       const placement = isMobile
         ? MOBILE_TOOLTIP_PLACEMENT
