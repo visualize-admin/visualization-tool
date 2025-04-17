@@ -10,6 +10,11 @@ type WMSData = {
         Layer: WMSLayer[];
       };
     };
+    Service: {
+      OnlineResource: {
+        "xlink:href": string;
+      };
+    };
   };
 };
 
@@ -41,22 +46,29 @@ export type ParsedWMSLayer = {
   endpoint: string;
   type: "wms";
   children?: ParsedWMSLayer[];
+  dataUrl: string;
 };
 
-const parseWMSLayer = (layer: WMSLayer, endpoint: string): ParsedWMSLayer => {
+const parseWMSLayer = (
+  layer: WMSLayer,
+  attributes: {
+    endpoint: string;
+    dataUrl: string;
+  }
+): ParsedWMSLayer => {
   const res: ParsedWMSLayer = {
     id: layer.Name,
     title: layer.Title,
     description: layer.Abstract ?? "",
     legendUrl: layer.Style?.LegendURL.OnlineResource["xlink:href"],
-    endpoint,
     type: "wms",
+    ...attributes,
   };
   if (layer.Layer) {
     const children = layer.Layer
       ? layer.Layer instanceof Array
-        ? layer.Layer.map((l) => parseWMSLayer(l, endpoint))
-        : [parseWMSLayer(layer.Layer, endpoint)]
+        ? layer.Layer.map((l) => parseWMSLayer(l, attributes))
+        : [parseWMSLayer(layer.Layer, attributes)]
       : undefined;
     res.children = children;
   }
@@ -73,10 +85,13 @@ export const parseWMSContent = (content: string, endpoint: string) => {
     parseAttributeValue: true,
   });
 
-  return (
-    parser.parse(content) as WMSData
-  ).WMS_Capabilities.Capability.Layer.Layer.map((l) =>
-    parseWMSLayer(l, endpoint)
+  const wmsData = parser.parse(content) as WMSData;
+  const dataUrl = wmsData.WMS_Capabilities.Service.OnlineResource["xlink:href"];
+  return wmsData.WMS_Capabilities.Capability.Layer.Layer.map((l) =>
+    parseWMSLayer(l, {
+      endpoint,
+      dataUrl,
+    })
   );
 };
 

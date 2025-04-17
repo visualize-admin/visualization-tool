@@ -69,10 +69,12 @@ export const sortHierarchy = (tree: HierarchyValue[]): HierarchyValue[] => {
 /**
  * Visits a hierarchy with depth first search
  */
-export const visitHierarchy = (
-  tree: HierarchyValue[],
+export const visitHierarchy = <
+  TNode extends { children?: TNode[] | undefined },
+>(
+  tree: TNode[],
   /** Will be run over all children. Return false to abort early */
-  visitor: (node: HierarchyValue) => void | false
+  visitor: (node: TNode) => void | false
 ) => {
   const q = [...tree];
   while (q.length > 0) {

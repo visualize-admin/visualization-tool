@@ -57,6 +57,7 @@ Array [
   Object {
     "children": Array [
       Object {
+        "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
         "id": 1,
@@ -65,6 +66,7 @@ Array [
         "type": "wms",
       },
       Object {
+        "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
         "id": 2,
@@ -73,6 +75,7 @@ Array [
         "type": "wms",
       },
       Object {
+        "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
         "id": 3,
@@ -81,6 +84,7 @@ Array [
         "type": "wms",
       },
       Object {
+        "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
         "id": 4,
@@ -89,6 +93,7 @@ Array [
         "type": "wms",
       },
       Object {
+        "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
         "id": 5,
@@ -97,6 +102,7 @@ Array [
         "type": "wms",
       },
       Object {
+        "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
         "id": 6,
@@ -105,6 +111,7 @@ Array [
         "type": "wms",
       },
       Object {
+        "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
         "id": 7,
@@ -113,6 +120,7 @@ Array [
         "type": "wms",
       },
     ],
+    "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
     "description": "",
     "endpoint": "http://example.com/wms",
     "id": undefined,
@@ -123,6 +131,7 @@ Array [
   Object {
     "children": Array [
       Object {
+        "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
         "id": 9,
@@ -131,6 +140,7 @@ Array [
         "type": "wms",
       },
     ],
+    "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
     "description": "",
     "endpoint": "http://example.com/wms",
     "id": undefined,
@@ -141,6 +151,7 @@ Array [
   Object {
     "children": Array [
       Object {
+        "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
         "id": 11,
@@ -149,6 +160,7 @@ Array [
         "type": "wms",
       },
       Object {
+        "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
         "id": 12,
@@ -157,6 +169,7 @@ Array [
         "type": "wms",
       },
     ],
+    "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
     "description": "",
     "endpoint": "http://example.com/wms",
     "id": undefined,
@@ -184,8 +197,6 @@ describe("parseWMTSContent", () => {
     const xmlContent = (
       await readFile(join(__dirname, "./mocks/geo-admin.wmts.xml"))
     ).toString();
-
-    console.log({ xmlContent });
 
     const endpoint = "http://example.com/wms";
     const parsedLayers = await parseWMTSContent(xmlContent, endpoint);
