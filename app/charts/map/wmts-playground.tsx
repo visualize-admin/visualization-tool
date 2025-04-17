@@ -1,8 +1,15 @@
-import { HTMLProps, useCallback, useMemo, useRef, useState } from "react";
+import {
+  HTMLProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { Tree, useSelectTree } from "@/components/select-tree";
 import { mapTree, visitHierarchy } from "@/rdf/tree-utils";
-import Map from "react-map-gl";
+import Map, { useMap } from "react-map-gl";
 
 import {
   DEFAULT_WMS_URL,
@@ -20,6 +27,7 @@ import {
   Popover,
   Theme,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { Icon } from "@/icons";
 import ProviderAutocomplete from "@/charts/map/wmts-providers-autocomplete";
@@ -376,6 +384,30 @@ const WMTSSelector = ({
   );
 };
 
+/**
+ * Could not use the CustomAttribute from maplibre gl, it was not updating properly
+ */
+const CustomAttribution = ({ attribution }: { attribution: string }) => {
+  const mapRef = useMap();
+  const theme = useTheme();
+  useEffect(() => {
+    const map = mapRef.current as maplibregl.Map | undefined;
+    if (!map || !attribution) {
+      return;
+    }
+    const control = new maplibregl.AttributionControl({
+      // className was not working (?), so style is used. To revisit later if needed.
+      customAttribution: `<span style="color: ${theme.palette.error.main}">${attribution}</span>`,
+    });
+    // As of now, we cannot "update" the control, we need to add it and remove it
+    map.addControl(control, "bottom-right");
+    return () => {
+      map.removeControl(control);
+    };
+  }, [attribution]);
+  return null;
+};
+
 export const WMTSPlayground = () => {
   const [layers, setLayers] = useState(() => [] as CustomLayer[]);
   const onLayerCheck = (layer: CustomLayer, checked: boolean) => {
@@ -397,6 +429,11 @@ export const WMTSPlayground = () => {
         : getWMTSTile({ wmtsLayers: [x], customLayer: x });
     });
   }, [layers]);
+
+  const attribution = useMemo(() => {
+    return Array.from(new Set(layers.map((x) => x.attribution))).join(", ");
+  }, [layers]);
+
   return (
     <LocaleProvider value="en">
       <Box
@@ -428,8 +465,10 @@ export const WMTSPlayground = () => {
             doubleClickZoom
             dragRotate={false}
             touchZoomRotate
+            attributionControl={false}
           >
             <DeckGLOverlay layers={deckglLayers} />
+            <CustomAttribution attribution={attribution} />
           </Map>
         </Box>
       </Box>
