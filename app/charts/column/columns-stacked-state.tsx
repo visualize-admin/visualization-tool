@@ -92,6 +92,7 @@ export type StackedColumnsState = CommonChartState &
       orderedSegments: string[]
     ) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
+    leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
     valueLabelFormatter: ValueLabelFormatter;
   };
@@ -407,7 +408,7 @@ const useColumnsStackedState = (
   }, [chartWideData, fields.segment?.sorting, segments]);
 
   /** Chart dimensions */
-  const { left, bottom } = useChartPadding({
+  const { top, left, bottom } = useChartPadding({
     xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
@@ -429,7 +430,7 @@ const useColumnsStackedState = (
     width,
   });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset,
+    top: DEFAULT_MARGIN_TOP + top + leftAxisLabelSize.offset,
     right,
     bottom,
     left,
@@ -543,6 +544,7 @@ const useColumnsStackedState = (
     series,
     getAnnotationInfo,
     leftAxisLabelSize,
+    leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     valueLabelFormatter,
     ...variables,

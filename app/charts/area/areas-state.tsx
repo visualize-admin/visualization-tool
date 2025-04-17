@@ -88,6 +88,7 @@ export type AreasState = CommonChartState &
     series: Series<{ [key: string]: number }, string>[];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
+    leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
@@ -357,7 +358,7 @@ const useAreasState = (
   ]);
 
   /** Dimensions */
-  const { left, bottom } = useChartPadding({
+  const { top, left, bottom } = useChartPadding({
     xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
@@ -387,7 +388,8 @@ const useAreasState = (
       segment: fields.segment,
     });
   const margins = {
-    top: DEFAULT_MARGIN_TOP + leftAxisLabelSize.offset + yValueLabelsOffset,
+    top:
+      DEFAULT_MARGIN_TOP + top + leftAxisLabelSize.offset + yValueLabelsOffset,
     right,
     bottom,
     left,
@@ -494,6 +496,7 @@ const useAreasState = (
     series,
     getAnnotationInfo,
     leftAxisLabelSize,
+    leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     ...showValuesVariables,
     ...variables,

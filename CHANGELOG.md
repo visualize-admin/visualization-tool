@@ -19,6 +19,7 @@ You can also check the
 - Fixes
   - Color palette can be changed again
   - Combo charts tooltips now work correctly again
+  - Interactive 100% mode switch doesn't overlap with Y axis label anymore
 
 # [5.7.0] - 2025-04-16
 

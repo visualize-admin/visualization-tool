@@ -53,6 +53,7 @@ export type ComboLineSingleState = CommonChartState &
     chartWideData: ArrayLike<Observation>;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
+    leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
@@ -109,7 +110,7 @@ const useComboLineSingleState = (
   });
 
   // Dimensions
-  const { left, bottom } = useChartPadding({
+  const { top, left, bottom } = useChartPadding({
     xLabelPresent: !!xAxisLabel,
     yScale: paddingYScale,
     width,
@@ -117,7 +118,7 @@ const useComboLineSingleState = (
     interactiveFiltersConfig,
     formatNumber,
   });
-  const margins = getMargins({ left, bottom });
+  const margins = getMargins({ top, left, bottom });
   const leftAxisLabelSize = useAxisLabelSizeVariables({
     label: yAxisLabel,
     width,
@@ -196,6 +197,7 @@ const useComboLineSingleState = (
     chartWideData,
     getAnnotationInfo,
     leftAxisLabelSize,
+    leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     ...variables,
   };
