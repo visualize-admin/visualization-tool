@@ -271,7 +271,14 @@ export const useSelectTree = ({
 }: Pick<SelectTreeProps, "value" | "options">) => {
   const [inputValue, setInputValue] = useState("");
 
-  const [filteredOptions, setFilteredOptions] = useState<Tree>([]);
+  const optionsRef = useRef(options);
+  const [filteredOptions_, setFilteredOptions] = useState<Tree>([]);
+
+  // Trick to get filteredOptions updated synchronously
+  const filteredOptions =
+    optionsRef.current !== options ? options : filteredOptions_;
+
+  optionsRef.current = options;
 
   useEffect(() => {
     setFilteredOptions(options);
