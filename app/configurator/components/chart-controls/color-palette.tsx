@@ -5,7 +5,6 @@ import {
   Divider,
   MenuItem,
   Select,
-  SelectProps,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -87,9 +86,9 @@ export const ColorPalette = ({
 
   const currentPalette = palettes.find((p) => p.value === currentPaletteName);
 
-  const handleChangePalette: SelectProps["onChange"] = useEvent((ev) =>
-    handleChartConfigUpdate(ev.target.value as string)
-  );
+  const handleChangePalette = useEvent((paletteId: string) => {
+    handleChartConfigUpdate(paletteId);
+  });
 
   const handleChartConfigUpdate = (
     value?: string,
@@ -268,7 +267,6 @@ export const ColorPalette = ({
           }}
           value={value}
           displayEmpty
-          onChange={handleChangePalette}
         >
           {user && (
             <MenuItem onClick={handleOpenCreateColorPalette}>
@@ -312,6 +310,7 @@ export const ColorPalette = ({
                   label={palette.name}
                   colors={palette.colors}
                   selected={palette.paletteId === value}
+                  onClick={() => handleChangePalette(palette.paletteId)}
                 />
               ))}
           <Flex sx={{ flexDirection: "column", gap: 2, pt: 3 }}>
@@ -332,6 +331,7 @@ export const ColorPalette = ({
               label={palette.label}
               colors={palette.colors}
               selected={palette.value === value}
+              onClick={() => handleChangePalette(palette.value)}
             />
           ))}
         </Select>
@@ -360,15 +360,18 @@ const ColorPaletteMenuItem = ({
   label,
   colors,
   selected,
+  onClick,
 }: {
   value: string;
   label: string;
   colors: ReadonlyArray<string>;
   selected: boolean;
+  onClick: () => void;
 }) => {
   return (
     <MenuItem
       value={value}
+      onClick={onClick}
       sx={{
         display: "flex",
         justifyContent: "space-between",
