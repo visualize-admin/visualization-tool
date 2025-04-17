@@ -50,6 +50,9 @@ type WMTSLayer = {
 
 export type ParsedWMTSLayer = {
   id: string;
+  // Path is there to mirror WMS layer, but
+  // not sure this is be necessary
+  path: string;
   url: string;
   title: string;
   description?: string;
@@ -68,6 +71,7 @@ const parseWMTSLayer = (
 ): ParsedWMTSLayer => {
   const res: ParsedWMTSLayer = {
     id: layer["ows:Identifier"],
+    path: layer["ows:Identifier"],
     url: layer.ResourceURL.template,
     title: layer["ows:Title"],
     description: layer["ows:Abstract"],

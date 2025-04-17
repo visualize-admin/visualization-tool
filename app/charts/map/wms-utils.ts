@@ -37,7 +37,10 @@ type WMSLayer = {
 };
 
 export type ParsedWMSLayer = {
+  /** id not unique */
   id: string;
+  /** path should be unique */
+  path: string;
   title: string;
   description?: string;
   legendUrl?: string;
@@ -54,10 +57,15 @@ const parseWMSLayer = (
   attributes: {
     endpoint: string;
     dataUrl: string;
-  }
+  },
+  parentPath = ""
 ): ParsedWMSLayer => {
+  const currentPath = `${parentPath}/${layer.Name}`;
   const res: ParsedWMSLayer = {
+    // Non unique
     id: layer.Name,
+    // Unique
+    path: `${currentPath}`,
     title: layer.Title,
     description: layer.Abstract ?? "",
     legendUrl: layer.Style?.LegendURL.OnlineResource["xlink:href"],
@@ -67,8 +75,8 @@ const parseWMSLayer = (
   if (layer.Layer) {
     const children = layer.Layer
       ? layer.Layer instanceof Array
-        ? layer.Layer.map((l) => parseWMSLayer(l, attributes))
-        : [parseWMSLayer(layer.Layer, attributes)]
+        ? layer.Layer.map((l) => parseWMSLayer(l, attributes, currentPath))
+        : [parseWMSLayer(layer.Layer, attributes, currentPath)]
       : undefined;
     res.children = children;
   }

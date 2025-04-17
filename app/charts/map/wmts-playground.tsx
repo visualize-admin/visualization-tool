@@ -29,13 +29,11 @@ import { HintRed, Spinner } from "@/components/hint";
 import { makeStyles } from "@mui/styles";
 import SvgIcZoomIn from "@/icons/components/IcZoomIn";
 import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
-import { keyBy, uniqBy } from "lodash";
+import { uniqBy } from "lodash";
 import SvgIcClose from "@/icons/components/IcClose";
 import { LocaleProvider } from "@/locales";
 
 import React from "react";
-import DeckGL from "@deck.gl/react";
-import { MapViewState } from "@deck.gl/core";
 import { _WMSLayer as DeckGLWMSLayer } from "@deck.gl/geo-layers";
 import { useMapStyle } from "@/charts/map/get-base-layer-style";
 import maplibreglRaw from "maplibre-gl";
@@ -109,11 +107,11 @@ const LegendButton = ({
   return (
     <>
       <IconButton
-        data-value={layer.id}
+        data-value={layer.path}
         size="small"
         onClick={(ev) =>
           setShowLegend({
-            value: layer.id,
+            value: layer.path,
             element: ev.currentTarget,
           })
         }
@@ -206,6 +204,7 @@ const WMTSSelector = ({
 }: {
   onLayerCheck: (layer: CustomLayer, checked: boolean) => void;
 }) => {
+  console.log("RENDER");
   const treeItemClasses = useTreeItemStyles();
 
   const classes = useStyles();
@@ -231,26 +230,28 @@ const WMTSSelector = ({
     [wmsLayers, wmtsLayers]
   );
 
-  const layersById = useMemo(() => {
+  const layersByPath = useMemo(() => {
     const res: Record<string, CustomLayer> = {};
     visitHierarchy(allLayers, (x) => {
-      if (res[x.id]) {
+      if (res[x.path]) {
         return;
       }
-      res[x.id] = x;
+      res[x.path] = x;
     });
     return res;
   }, [allLayers]);
+
+  console.log(layersByPath);
 
   const options = useMemo(() => {
     return mapTree(allLayers, ({ children, ...x }) => ({
       ...x,
       hasValue: true,
-      value: x.id,
+      value: x.path,
       label: x.title,
-      id: x.id,
-      nodeId: x.title,
-      itemId: x.title,
+      id: x.path,
+      nodeId: x.path,
+      itemId: x.path,
     }));
   }, [allLayers]);
 
@@ -266,6 +267,8 @@ const WMTSSelector = ({
     value: "",
     options,
   });
+
+  console.log("HELLO", filteredOptions);
 
   const renderTreeContent = useCallback(
     (nodesData: Tree) => {
@@ -283,7 +286,7 @@ const WMTSSelector = ({
                   <TreeRow
                     className={classes.treeRow}
                     labelClassName={classes.label}
-                    layer={layersById[value]}
+                    layer={layersByPath[value]}
                     label={label}
                     value={value}
                     onCheck={onLayerCheck}
@@ -366,7 +369,7 @@ const WMTSSelector = ({
         ref={treeRef}
         defaultSelected={value}
         expanded={expanded}
-        // onNodeToggle={handleNodeToggle}
+        onNodeToggle={handleNodeToggle}
         onNodeSelect={handleNodeSelect}
       >
         {renderTreeContent(filteredOptions)}
@@ -435,7 +438,6 @@ export const WMTSPlayground = () => {
             />
           </Map>
         </Box>
-        {/* DeckGL React Map */}
       </Box>
     </LocaleProvider>
   );
