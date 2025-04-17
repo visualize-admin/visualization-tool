@@ -31,7 +31,7 @@ export const AxisHeightLinear = () => {
     bounds,
     yAxisLabel,
     leftAxisLabelSize,
-    leftAxisLabelOffset,
+    leftAxisLabelOffsetTop,
     ...rest
   } = useChartState() as
     | AreasState
@@ -64,7 +64,7 @@ export const AxisHeightLinear = () => {
         </text>
       ) : (
         <foreignObject
-          y={leftAxisLabelOffset}
+          y={leftAxisLabelOffsetTop}
           width={leftAxisLabelSize.width}
           height={leftAxisLabelSize.height}
           style={{ display: "flex" }}

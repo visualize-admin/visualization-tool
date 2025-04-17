@@ -88,7 +88,7 @@ export type AreasState = CommonChartState &
     series: Series<{ [key: string]: number }, string>[];
     getAnnotationInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
-    leftAxisLabelOffset: number;
+    leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
@@ -496,7 +496,7 @@ const useAreasState = (
     series,
     getAnnotationInfo,
     leftAxisLabelSize,
-    leftAxisLabelOffset: top,
+    leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     ...showValuesVariables,
     ...variables,

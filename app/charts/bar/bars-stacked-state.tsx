@@ -96,7 +96,7 @@ export type StackedBarsState = CommonChartState &
       orderedSegments: string[]
     ) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
-    leftAxisLabelOffset: number;
+    leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
     valueLabelFormatter: ValueLabelFormatter;
   };
@@ -560,7 +560,7 @@ const useBarsStackedState = (
     series,
     getAnnotationInfo,
     leftAxisLabelSize,
-    leftAxisLabelOffset: top,
+    leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     valueLabelFormatter,
     ...variables,

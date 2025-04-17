@@ -92,7 +92,7 @@ export type StackedColumnsState = CommonChartState &
       orderedSegments: string[]
     ) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
-    leftAxisLabelOffset: number;
+    leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
     valueLabelFormatter: ValueLabelFormatter;
   };
@@ -544,7 +544,7 @@ const useColumnsStackedState = (
     series,
     getAnnotationInfo,
     leftAxisLabelSize,
-    leftAxisLabelOffset: top,
+    leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     valueLabelFormatter,
     ...variables,

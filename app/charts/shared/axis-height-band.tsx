@@ -24,7 +24,7 @@ export const AxisHeightBand = () => {
     bounds,
     yDimension,
     leftAxisLabelSize,
-    leftAxisLabelOffset,
+    leftAxisLabelOffsetTop,
   } = useChartState() as BarsState | GroupedBarsState | StackedBarsState;
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
@@ -100,7 +100,7 @@ export const AxisHeightBand = () => {
     <>
       <g ref={ref} />
       <foreignObject
-        y={leftAxisLabelOffset}
+        y={leftAxisLabelOffsetTop}
         width={leftAxisLabelSize.width}
         height={leftAxisLabelSize.height}
         style={{ display: "flex" }}

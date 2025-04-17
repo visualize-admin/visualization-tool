@@ -49,7 +49,7 @@ export type ScatterplotState = CommonChartState &
     getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
-    leftAxisLabelOffset: number;
+    leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
@@ -251,7 +251,7 @@ const useScatterplotState = (
     getColorLabel: getSegmentLabel,
     getAnnotationInfo,
     leftAxisLabelSize,
-    leftAxisLabelOffset: top,
+    leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     ...variables,
   };

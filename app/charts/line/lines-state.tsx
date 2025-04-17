@@ -76,7 +76,7 @@ export type LinesState = CommonChartState &
     xKey: string;
     getAnnotationInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
-    leftAxisLabelOffset: number;
+    leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
   };
 
@@ -363,7 +363,7 @@ const useLinesState = (
     xKey,
     getAnnotationInfo,
     leftAxisLabelSize,
-    leftAxisLabelOffset: top,
+    leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     ...showValuesVariables,
     ...variables,
