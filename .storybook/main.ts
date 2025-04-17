@@ -11,6 +11,10 @@ function getAbsolutePath(value: string): any {
 const config: StorybookConfig = {
   stories: ["../app/**/*.docs.mdx", "../app/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
 
+  // react-docgen-typescript is slow and we do not use docgen so we disable
+  // docgen at the moment
+  typescript: { reactDocgen: false },
+
   addons: [
     getAbsolutePath("@storybook/addon-links"),
     getAbsolutePath("@storybook/addon-essentials"),
