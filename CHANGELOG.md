@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Display of future limits is now compatible with area charts
 
 # [5.7.0] - 2025-04-16
 
