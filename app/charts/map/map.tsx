@@ -8,9 +8,9 @@ import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { hexToRgba } from "@uiw/react-color";
 import { geoArea } from "d3-geo";
-import { uniq } from "lodash";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
+import uniq from "lodash/uniq";
 import maplibreglRaw from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Map, { LngLatLike, MapboxEvent } from "react-map-gl";
@@ -30,6 +30,7 @@ import {
 import { MapState } from "@/charts/map/map-state";
 import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
 import { getMap, setMap } from "@/charts/map/ref";
+import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 import { DEFAULT_WMS_URL, getWMSTile } from "@/charts/map/wms-utils";
 import { DEFAULT_WMTS_URL, getWMTSTile } from "@/charts/map/wmts-utils";
 import { useChartState } from "@/charts/shared/chart-state";
@@ -48,7 +49,6 @@ import useEvent from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 
 // supported was removed as of maplibre-gl v3.0.0, so we need to add it back
 const maplibregl = { ...maplibreglRaw, supported };

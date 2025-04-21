@@ -1,7 +1,8 @@
-import { ParsedWMSLayer, parseWMSContent } from "@/charts/map/wms-utils";
-import { parseWMTSContent } from "@/charts/map/wmts-utils";
 import { readFile } from "fs/promises";
 import { join } from "path";
+
+import { ParsedWMSLayer, parseWMSContent } from "@/charts/map/wms-utils";
+import { parseWMTSContent } from "@/charts/map/wmts-utils";
 
 const formatTree = <TNode extends { children?: TNode[] }>(
   node: TNode,

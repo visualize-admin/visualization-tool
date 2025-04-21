@@ -1,23 +1,5 @@
-import {
-  HTMLProps,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-
-import { Tree, useSelectTree } from "@/components/select-tree";
-import { mapTree, visitHierarchy } from "@/rdf/tree-utils";
-import Map, { useMap } from "react-map-gl";
-
-import {
-  DEFAULT_WMS_URL,
-  getWMSTile,
-  ParsedWMSLayer,
-} from "@/charts/map/wms-utils";
+import { supported } from "@mapbox/mapbox-gl-supported";
 import { TreeItem, TreeView } from "@mui/lab";
-import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import {
   Box,
   Checkbox,
@@ -29,27 +11,43 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { Icon } from "@/icons";
+import { makeStyles } from "@mui/styles";
+import uniqBy from "lodash/uniqBy";
+import maplibreglRaw from "maplibre-gl";
+import React from "react";
+import {
+  HTMLProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import Map, { useMap } from "react-map-gl";
+
+import { useMapStyle } from "@/charts/map/get-base-layer-style";
+import { DeckGLOverlay } from "@/charts/map/helpers";
+import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
+import {
+  DEFAULT_WMS_URL,
+  getWMSTile,
+  ParsedWMSLayer,
+} from "@/charts/map/wms-utils";
 import ProviderAutocomplete from "@/charts/map/wmts-providers-autocomplete";
 import {
   DEFAULT_WMTS_URL,
   getWMTSTile,
   ParsedWMTSLayer,
 } from "@/charts/map/wmts-utils";
-import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 import { HintRed, Spinner } from "@/components/hint";
-import { makeStyles } from "@mui/styles";
-import SvgIcZoomIn from "@/icons/components/IcZoomIn";
-import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
-import { uniqBy } from "lodash";
+import { Tree, useSelectTree } from "@/components/select-tree";
+import { Icon } from "@/icons";
+import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
+import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
+import SvgIcZoomIn from "@/icons/components/IcZoomIn";
 import { LocaleProvider } from "@/locales";
-
-import React from "react";
-import { useMapStyle } from "@/charts/map/get-base-layer-style";
-import maplibreglRaw from "maplibre-gl";
-import { supported } from "@mapbox/mapbox-gl-supported";
-import { DeckGLOverlay } from "@/charts/map/helpers";
+import { mapTree, visitHierarchy } from "@/rdf/tree-utils";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 const maplibregl = { ...maplibreglRaw, supported };
@@ -148,7 +146,8 @@ const LegendButton = ({
             <SvgIcClose />
           </IconButton>
           {showLegend && (
-            <img src={layer?.legendUrl} style={{ maxWidth: "100%" }} />
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={layer?.legendUrl} style={{ maxWidth: "100%" }} alt="" />
           )}
         </Box>
       </Popover>
@@ -182,14 +181,12 @@ const TreeRow = ({
       onCheck(layer, newValue);
       return newValue;
     });
-  }, []);
+  }, [layer, onCheck]);
 
-  const handleClickZoom: HTMLProps<HTMLButtonElement>["onClick"] = useCallback(
-    (ev) => {
+  const handleClickZoom: HTMLProps<HTMLButtonElement>["onClick"] =
+    useCallback(() => {
       console.log("Clicked zoom for layer", layer);
-    },
-    []
-  );
+    }, [layer]);
 
   return (
     <Box className={className} onClick={handleChangeCheckbox}>
@@ -315,7 +312,7 @@ const WMTSSelector = ({
         </>
       );
     },
-    [defaultExpanded]
+    [defaultExpanded, classes, layersByPath, onLayerCheck, treeItemClasses]
   );
 
   const treeRef = useRef();
@@ -404,7 +401,7 @@ const CustomAttribution = ({ attribution }: { attribution: string }) => {
     return () => {
       map.removeControl(control);
     };
-  }, [attribution]);
+  }, [attribution, mapRef, theme]);
   return null;
 };
 

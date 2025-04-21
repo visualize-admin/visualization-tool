@@ -15,6 +15,7 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 
+import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 import { DEFAULT_WMS_URL, ParsedWMSLayer } from "@/charts/map/wms-utils";
 import { DEFAULT_WMTS_URL, ParsedWMTSLayer } from "@/charts/map/wmts-utils";
 import { Select, SelectOption, Switch } from "@/components/form";
@@ -32,7 +33,6 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 
 export const CustomLayersSelector = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
@@ -259,8 +259,8 @@ const DraggableLayer = ({
   const { data: groupedLayers } = useWMTSorWMSLayers([
     defaultedEndpoint(endpoint, customLayer.type),
   ]);
-  const wmtsLayers = groupedLayers?.wmts ?? [];
   const enableTemporalFiltering = useMemo(() => {
+    const wmtsLayers = groupedLayers?.wmts ?? [];
     switch (customLayer.type) {
       case "wms":
         return false;
@@ -274,7 +274,7 @@ const DraggableLayer = ({
         const _exhaustiveCheck: never = customLayer;
         return _exhaustiveCheck;
     }
-  }, [customLayer, wmtsLayers]);
+  }, [customLayer, groupedLayers?.wmts]);
 
   return (
     <Draggable key={value} draggableId={value} index={index}>

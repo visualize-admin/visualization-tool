@@ -2,6 +2,7 @@ import { Box, Typography } from "@mui/material";
 import uniq from "lodash/uniq";
 import NextImage from "next/image";
 
+import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 import { DEFAULT_WMS_URL, ParsedWMSLayer } from "@/charts/map/wms-utils";
 import {
   DEFAULT_WMTS_URL,
@@ -14,7 +15,6 @@ import { BaseLayer, MapConfig } from "@/config-types";
 import { truthy } from "@/domain/types";
 import { useLocale } from "@/locales/use-locale";
 import { useFetchData } from "@/utils/use-fetch-data";
-import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 
 export const MapCustomLayersLegend = ({
   chartConfig,

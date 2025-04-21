@@ -402,7 +402,7 @@ const SelectTree = ({
       registerNode(root);
     }
     return res;
-  }, [options]);
+  }, [options, parentsRef]);
 
   const handleOpen = useEventCallback(() => {
     setOpenState(true);

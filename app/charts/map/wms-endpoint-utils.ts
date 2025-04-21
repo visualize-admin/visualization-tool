@@ -1,10 +1,11 @@
+import groupBy from "lodash/groupBy";
+import sortBy from "lodash/sortBy";
+
 import { ParsedWMSLayer, parseWMSContent } from "@/charts/map/wms-utils";
 import { ParsedWMTSLayer, parseWMTSContent } from "@/charts/map/wmts-utils";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
 import { useFetchData } from "@/utils/use-fetch-data";
-import groupBy from "lodash/groupBy";
-import sortBy from "lodash/sortBy";
 
 /** Logic taken from GeoAdmin
  *
@@ -153,7 +154,7 @@ export const useWMTSorWMSLayers = (
       ).flat();
       const { wmts = [], wms = [] } = groupBy(allLayers, (x) => x.type);
 
-      // Don't know why I need to as since the groupBy is correctly discriminating on type ?
+      // Don't know why I need to "as" since the groupBy is correctly discriminating on type ?
       return { wmts: wmts as ParsedWMTSLayer[], wms: wms as ParsedWMSLayer[] };
     },
     options: {
