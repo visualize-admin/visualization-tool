@@ -10,7 +10,7 @@ const formatTree = <TNode extends { children?: TNode[] }>(
   depth = 0
 ): string => {
   return `${Array.from({ length: depth })
-    .map((x) => "     ")
+    .map(() => "     ")
     .join("")}${getLabel(node)}${
     node.children
       ? `

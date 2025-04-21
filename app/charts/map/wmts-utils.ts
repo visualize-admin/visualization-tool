@@ -154,7 +154,8 @@ export const getWMTSTile = ({
     id: `tile-layer-${customLayer.url}`,
     beforeId,
     data: getWMTSLayerData(customLayer.url, {
-      identifier: wmtsLayer.dimensionIdentifier,
+      // TODO, Understand the implications of the empty string here
+      identifier: wmtsLayer.dimensionIdentifier ?? "",
       value: getWMTSLayerValue({
         availableDimensionValues: wmtsLayer.availableDimensionValues ?? [],
         defaultDimensionValue: wmtsLayer.defaultDimensionValue,
