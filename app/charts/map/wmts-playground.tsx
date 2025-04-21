@@ -405,7 +405,7 @@ const CustomAttribution = ({ attribution }: { attribution: string }) => {
   return null;
 };
 
-export const WMTSPlayground = () => {
+const WMTSPlayground = () => {
   const [layers, setLayers] = useState(() => [] as CustomLayer[]);
   const onLayerCheck = (layer: CustomLayer, checked: boolean) => {
     setLayers((layers) =>

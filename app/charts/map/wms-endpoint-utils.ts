@@ -12,33 +12,13 @@ import { useFetchData } from "@/utils/use-fetch-data";
  * @see https://github.com/geoadmin/web-mapviewer/blob/develop/packages/mapviewer/src/api/layers/layers-external.api.js#L125
  */
 
-// /**
-//  * Checks if file has WMS Capabilities XML content
-//  *
-//  * @param {string} fileContent
-//  * @returns {boolean}
-//  */
-// export function isWmsGetCap(fileContent: string) {
-//   return /<(WMT_MS_Capabilities|WMS_Capabilities)/.test(fileContent);
-// }
-
-// /**
-//  * Checks if file has WMTS Capabilities XML content
-//  *
-//  * @param {string} fileContent
-//  * @returns {boolean}
-//  */
-// export function isWmtsGetCap(fileContent: string) {
-//   return /<Capabilities/.test(fileContent);
-// }
-
 /**
  * Checks if the URL is a WMS url
  *
  * @param {string} url
  * @returns {boolean}
  */
-export function isWmsUrl(url: string) {
+function isWmsUrl(url: string) {
   return /(wms|map=|\.map)/i.test(url);
 }
 
@@ -48,7 +28,7 @@ export function isWmsUrl(url: string) {
  * @param {string} urlreturn SetWmsUrlParameters(new URL(provider), language)
  * @returns {boolean}
  */
-export function isWmtsUrl(url: string) {
+function isWmtsUrl(url: string) {
   return /wmts/i.test(url);
 }
 
@@ -59,7 +39,7 @@ export function isWmtsUrl(url: string) {
  * @param {string} language Current viewer language
  * @returns {URL} Url object with backend parameters (eg. SERVICE=WMS, ...)
  */
-export function guessExternalLayerUrl(provider: string, language: string) {
+function guessExternalLayerUrl(provider: string, language: string) {
   if (isWmtsUrl(provider)) {
     return {
       type: "wmts" as const,
@@ -86,7 +66,7 @@ export function guessExternalLayerUrl(provider: string, language: string) {
  * @param {string} language Language to use
  * @returns {URL} Url with wmts parameters
  */
-export function setWmtsGetCapParams(url: URL, language: string) {
+function setWmtsGetCapParams(url: URL, language: string) {
   // Set mandatory parameters
   url.searchParams.set("SERVICE", "WMTS");
   url.searchParams.set("REQUEST", "GetCapabilities");
@@ -97,7 +77,7 @@ export function setWmtsGetCapParams(url: URL, language: string) {
   return url;
 }
 
-export function setWmsGetCapParams(url: URL, language: string) {
+function setWmsGetCapParams(url: URL, language: string) {
   // Mandatory params
   url.searchParams.set("SERVICE", "WMS");
   url.searchParams.set("REQUEST", "GetCapabilities");
@@ -111,7 +91,7 @@ export function setWmsGetCapParams(url: URL, language: string) {
   return url;
 }
 
-export const fetchWMSorWMSLayersFromEndpoint = async (
+const fetchWMSorWMSLayersFromEndpoint = async (
   endpoint: string,
   locale: Locale
 ): Promise<(ParsedWMTSLayer | ParsedWMSLayer)[]> => {
