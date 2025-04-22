@@ -54,8 +54,8 @@ import SvgIcZoomIn from "@/icons/components/IcZoomIn";
 import { LocaleProvider } from "@/locales";
 import { mapTree, visitHierarchy } from "@/rdf/tree-utils";
 import "maplibre-gl/dist/maplibre-gl.css";
-import useLocalState from "@/utils/use-local-state";
 import useEvent from "@/utils/use-event";
+import useLocalState from "@/utils/use-local-state";
 
 const maplibregl = { ...maplibreglRaw, supported };
 
