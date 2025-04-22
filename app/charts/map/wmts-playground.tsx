@@ -1,11 +1,16 @@
 import { supported } from "@mapbox/mapbox-gl-supported";
 import { TreeItem, TreeView } from "@mui/lab";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Checkbox,
   Collapse,
   IconButton,
   Input,
+  List,
+  ListItem,
   Popover,
   Theme,
   Typography,
@@ -49,6 +54,8 @@ import SvgIcZoomIn from "@/icons/components/IcZoomIn";
 import { LocaleProvider } from "@/locales";
 import { mapTree, visitHierarchy } from "@/rdf/tree-utils";
 import "maplibre-gl/dist/maplibre-gl.css";
+import useLocalState from "@/utils/use-local-state";
+import useEvent from "@/utils/use-event";
 
 const maplibregl = { ...maplibreglRaw, supported };
 
@@ -406,12 +413,15 @@ const CustomAttribution = ({ attribution }: { attribution: string }) => {
 };
 
 const WMTSPlayground = () => {
-  const [layers, setLayers] = useState(() => [] as CustomLayer[]);
-  const onLayerCheck = (layer: CustomLayer, checked: boolean) => {
+  const [layers, setLayers] = useLocalState(
+    "storybook-wmts-playground",
+    [] as CustomLayer[]
+  );
+  const onLayerCheck = useEvent((layer: CustomLayer, checked: boolean) => {
     setLayers((layers) =>
       checked ? [...layers, layer] : layers.filter((l) => l != layer)
     );
-  };
+  });
 
   const mapStyle = useMapStyle({
     locale: "en",
@@ -436,13 +446,40 @@ const WMTSPlayground = () => {
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: "300px 1fr",
+          gridTemplateColumns: "500px 1fr",
           border: "1px solid",
           borderColor: "cobalt.500",
         }}
       >
         <Box sx={{ p: "0.5rem" }}>
           <WMTSSelector onLayerCheck={onLayerCheck} />
+          <Accordion defaultExpanded>
+            <AccordionSummary>Added Layers</AccordionSummary>
+            <AccordionDetails>
+              <List>
+                {layers.map((x) => {
+                  return (
+                    <ListItem
+                      key={x.id}
+                      secondaryAction={
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={() =>
+                            setLayers((layers) => layers.filter((y) => x !== y))
+                          }
+                        >
+                          <Icon name="trash" />
+                        </IconButton>
+                      }
+                    >
+                      <Typography variant="body2">{x.title}</Typography>
+                    </ListItem>
+                  );
+                })}
+              </List>
+            </AccordionDetails>
+          </Accordion>
         </Box>
         <Box sx={{ position: "relative" }}>
           <Map
