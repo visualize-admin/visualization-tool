@@ -2,7 +2,7 @@
 import { Autocomplete, TextField, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
-import wmtsProviders from "@/configurator/components/wmts-providers.json";
+import wmtsProviders from "@/charts/map/wmts-providers.json";
 
 type ProviderUrl = string;
 
