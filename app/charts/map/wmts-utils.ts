@@ -108,6 +108,13 @@ const parseWMTSLayer = (
   return res;
 };
 
+const mapArrayOrUnique = <T, I>(arr: T | T[], cb: (item: T) => I): I[] => {
+  if (Array.isArray(arr)) {
+    return arr.map(cb);
+  }
+  return [cb(arr)];
+};
+
 export const parseWMTSContent = (content: string, endpoint: string) => {
   const parser = new XMLParser({
     ignoreAttributes: false,
@@ -117,11 +124,11 @@ export const parseWMTSContent = (content: string, endpoint: string) => {
   const parsed = parser.parse(content) as WMTSData;
   const attributes = {
     endpoint,
-    attribution: parsed.Capabilities["ows:ServiceProvider"]["ows:ProviderName"],
+    attribution:
+      parsed.Capabilities["ows:ServiceProvider"]?.["ows:ProviderName"],
   };
-  return parsed.Capabilities.Contents.Layer.map((l) =>
-    parseWMTSLayer(l, attributes)
-  );
+  const Layer = parsed.Capabilities.Contents.Layer;
+  return mapArrayOrUnique(Layer, (l) => parseWMTSLayer(l, attributes));
 };
 
 export const DEFAULT_WMTS_URL =
