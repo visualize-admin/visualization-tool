@@ -141,7 +141,7 @@ export const getWMSTile = ({
   return new DeckGLWMSLayer({
     id: `wms-layer-${customLayer.id}`,
     beforeId,
-    data: `${wmsLayer.dataUrl}`,
+    data: `${wmsLayer.dataUrl.replace(/\?$/, "")}`,
     loadOptions: {
       fetch: (url: string) => {
         const parsedUrl = new URL(url);
