@@ -1,5 +1,4 @@
 import { t } from "@lingui/macro";
-import { supported } from "@mapbox/mapbox-gl-supported";
 import { TreeItem, TreeView } from "@mui/lab";
 import {
   Box,
@@ -14,7 +13,6 @@ import {
 import { makeStyles } from "@mui/styles";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
-import maplibreglRaw from "maplibre-gl";
 import React from "react";
 import { useCallback, useMemo, useRef, useState } from "react";
 
@@ -30,10 +28,6 @@ import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
 import { mapTree, visitHierarchy } from "@/rdf/tree-utils";
-import "maplibre-gl/dist/maplibre-gl.css";
-import "maplibre-gl/dist/maplibre-gl.css";
-
-const maplibregl = { ...maplibreglRaw, supported };
 
 const useTreeItemStyles = makeStyles({
   // Necessary to use $content below

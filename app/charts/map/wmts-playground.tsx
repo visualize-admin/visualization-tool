@@ -1,3 +1,4 @@
+import { supported } from "@mapbox/mapbox-gl-supported";
 import {
   Accordion,
   AccordionDetails,
@@ -8,7 +9,7 @@ import {
   ListItem,
   Typography,
 } from "@mui/material";
-import maplibregl from "maplibre-gl";
+import maplibreglRaw from "maplibre-gl";
 import React from "react";
 import { useMemo } from "react";
 import Map from "react-map-gl";
@@ -27,6 +28,8 @@ import useEvent from "@/utils/use-event";
 import useLocalState from "@/utils/use-local-state";
 
 import "maplibre-gl/dist/maplibre-gl.css";
+
+const maplibregl = { ...maplibreglRaw, supported };
 
 const WMTSPlayground = () => {
   const [layers, setLayers] = useLocalState(
