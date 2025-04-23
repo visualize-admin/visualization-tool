@@ -19,7 +19,7 @@ import {
 
 import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 import { ParsedWMSLayer } from "@/charts/map/wms-utils";
-import { WMTSSelector } from "@/charts/map/wmts-playground";
+import WMTSSelector from "@/charts/map/wmts-selector";
 import { ParsedWMTSLayer } from "@/charts/map/wmts-utils";
 import { Switch } from "@/components/form";
 import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
