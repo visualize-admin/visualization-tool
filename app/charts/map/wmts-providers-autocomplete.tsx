@@ -1,10 +1,9 @@
 // TODO rename into wmts or wms
+import { t } from "@lingui/macro";
 import { Autocomplete, TextField, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 import wmtsProviders from "@/charts/map/wmts-providers.json";
-import { Trans } from "@lingui/react";
-import { t } from "@lingui/macro";
 
 type ProviderUrl = string;
 
