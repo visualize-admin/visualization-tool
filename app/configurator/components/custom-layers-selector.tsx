@@ -41,7 +41,7 @@ import {
 import { truthy } from "@/domain/types";
 import { Icon } from "@/icons";
 
-export const LeftDrawer = ({
+const LeftDrawer = ({
   children,
   open,
   onClose,
