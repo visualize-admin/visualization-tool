@@ -15,6 +15,7 @@ import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import React from "react";
 import { useCallback, useMemo, useRef, useState } from "react";
+import createStore from "zustand";
 
 import { CustomLayer } from "@/charts/map/types";
 import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
@@ -185,6 +186,23 @@ const TreeRow = ({
   );
 };
 
+// Zustand store for persistence across open/close
+const useInputValueStore = createStore<{
+  inputValue: string;
+  setInputValue: (inputValue: string) => void;
+  provider: string | null;
+  setProvider: (provider: string | null) => void;
+}>((set) => ({
+  inputValue: "",
+  setInputValue: (inputValue: string) => {
+    set({ inputValue });
+  },
+  provider: null,
+  setProvider: (provider: string | null) => {
+    set({ provider });
+  },
+}));
+
 const WMTSSelector = ({
   onLayerCheck,
   selected,
@@ -195,7 +213,10 @@ const WMTSSelector = ({
   const treeItemClasses = useTreeItemStyles();
 
   const classes = useStyles();
-  const [provider, setProvider] = useState<string | null>(null);
+
+  const { provider, setProvider, inputValue, setInputValue } =
+    useInputValueStore();
+
   const endpoints = useMemo(() => (provider ? [provider] : []), [provider]);
 
   const { data: groupedLayers, error, status } = useWMTSorWMSLayers(endpoints);
@@ -241,7 +262,6 @@ const WMTSSelector = ({
   }, [allLayers]);
 
   const {
-    inputValue,
     filteredOptions: unsortedFilteredOptions,
     expanded,
     handleInputChange,
@@ -251,6 +271,8 @@ const WMTSSelector = ({
   } = useSelectTree({
     value: "",
     options,
+    inputValue,
+    onChangeInputValue: setInputValue,
   });
 
   const filteredOptions = useMemo(() => {
