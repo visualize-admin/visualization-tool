@@ -56,6 +56,7 @@ import { mapTree, visitHierarchy } from "@/rdf/tree-utils";
 import "maplibre-gl/dist/maplibre-gl.css";
 import useEvent from "@/utils/use-event";
 import useLocalState from "@/utils/use-local-state";
+import sortBy from "lodash/sortBy";
 
 const maplibregl = { ...maplibreglRaw, supported };
 
