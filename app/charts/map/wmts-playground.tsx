@@ -179,13 +179,15 @@ const TreeRow = ({
 
   return (
     <div className={className} onClick={handleChangeCheckbox}>
-      <Checkbox
-        inputProps={{
-          // @ts-ignore
-          "data-value": value,
-        }}
-        checked={checked}
-      />
+      {layer.id ? (
+        <Checkbox
+          inputProps={{
+            // @ts-ignore
+            "data-value": value,
+          }}
+          checked={checked}
+        />
+      ) : null}
       <span className={labelClassName}>{label}</span>
       {layer && layer.legendUrl ? <LegendButton layer={layer} /> : null}
     </div>
