@@ -199,8 +199,7 @@ const WMTSSelector = ({
   }, [groupedLayers]);
 
   const allLayers = useMemo(
-    // TODO FInd out why there are duplicate ids
-    () => uniqBy([...wmsLayers, ...wmtsLayers], (x) => x.id),
+    () => uniqBy([...wmsLayers, ...wmtsLayers], (x) => x.path),
     [wmsLayers, wmtsLayers]
   );
 
