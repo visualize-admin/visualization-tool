@@ -43,12 +43,28 @@ const ProviderAutocomplete = ({
   onChange: (newValue: ProviderUrl | null) => void;
 }) => {
   const classes = useStyles();
+  const options = wmtsProviders.map((provider) => {
+    const url = new URL(provider);
+    return {
+      url: url,
+      host: url.host,
+      value: provider,
+    };
+  });
   return (
     <Autocomplete
-      options={wmtsProviders}
+      options={options}
       value={value}
       freeSolo
-      onChange={(_ev, newValue) => onChange(newValue)}
+      groupBy={(option) => option.host}
+      getOptionLabel={(option) =>
+        typeof option === "string" ? option : option.value
+      }
+      onChange={(_ev, newValue) =>
+        onChange(
+          typeof newValue === "string" ? newValue : (newValue?.value ?? null)
+        )
+      }
       // renderOption={(props) => {
       //   return <Typography variant="caption" component="li" {...props} />;
       // }}
