@@ -268,7 +268,7 @@ const WMTSSelector = ({
 
   const {
     inputValue,
-    filteredOptions,
+    filteredOptions: unsortedFilteredOptions,
     expanded,
     handleInputChange,
     handleNodeToggle,
@@ -278,6 +278,16 @@ const WMTSSelector = ({
     value: "",
     options,
   });
+
+  const filteredOptions = useMemo(() => {
+    return mapTree(
+      sortBy(unsortedFilteredOptions, (x) => x.label),
+      (x) => ({
+        ...x,
+        children: sortBy(x.children, (y) => y.label),
+      })
+    );
+  }, [unsortedFilteredOptions]);
 
   const renderTreeContent = useCallback(
     (nodesData: Tree) => {
