@@ -68,6 +68,62 @@ export const CustomLayersSelector = () => {
     });
   });
 
+  const handleAddLayer = (
+    value: { type?: "wms" | "wmts" | undefined; value: string } | null
+  ) => {
+    const valueType = value?.type;
+
+    if (!valueType) {
+      return;
+    }
+
+    switch (valueType) {
+      case "wms":
+        const wmsLayer = wmsLayers.find((layer) => layer.id === value.value);
+
+        if (!wmsLayer) {
+          return;
+        }
+
+        dispatch({
+          type: "CUSTOM_LAYER_ADD",
+          value: {
+            layer: {
+              type: "wms",
+              id: wmsLayer.id,
+              isBehindAreaLayer: false,
+              syncTemporalFilters: false,
+              endpoint: wmsLayer.endpoint,
+            },
+          },
+        });
+        break;
+      case "wmts":
+        const wmtsLayer = wmtsLayers.find((layer) => layer.id === value.value);
+
+        if (!wmtsLayer) {
+          return;
+        }
+
+        dispatch({
+          type: "CUSTOM_LAYER_ADD",
+          value: {
+            layer: {
+              type: "wmts",
+              id: wmtsLayer.id,
+              url: wmtsLayer.url,
+              isBehindAreaLayer: false,
+              syncTemporalFilters: false,
+              endpoint: wmtsLayer.endpoint,
+            },
+          },
+        });
+        break;
+      default:
+        const _exhaustiveCheck: never = valueType;
+        return _exhaustiveCheck;
+    }
+  };
   return error ? (
     <Typography mx={2} color="error">
       {error.message}
@@ -127,64 +183,7 @@ export const CustomLayersSelector = () => {
               <Typography>{option.label}</Typography>
             </MenuItem>
           )}
-          onChange={(_, value) => {
-            const valueType = value?.type;
-
-            if (!valueType) {
-              return;
-            }
-
-            switch (valueType) {
-              case "wms":
-                const wmsLayer = wmsLayers.find(
-                  (layer) => layer.id === value.value
-                );
-
-                if (!wmsLayer) {
-                  return;
-                }
-
-                dispatch({
-                  type: "CUSTOM_LAYER_ADD",
-                  value: {
-                    layer: {
-                      type: "wms",
-                      id: wmsLayer.id,
-                      isBehindAreaLayer: false,
-                      syncTemporalFilters: false,
-                      endpoint: wmsLayer.endpoint,
-                    },
-                  },
-                });
-                break;
-              case "wmts":
-                const wmtsLayer = wmtsLayers.find(
-                  (layer) => layer.id === value.value
-                );
-
-                if (!wmtsLayer) {
-                  return;
-                }
-
-                dispatch({
-                  type: "CUSTOM_LAYER_ADD",
-                  value: {
-                    layer: {
-                      type: "wmts",
-                      id: wmtsLayer.id,
-                      url: wmtsLayer.url,
-                      isBehindAreaLayer: false,
-                      syncTemporalFilters: false,
-                      endpoint: wmtsLayer.endpoint,
-                    },
-                  },
-                });
-                break;
-              default:
-                const _exhaustiveCheck: never = valueType;
-                return _exhaustiveCheck;
-            }
-          }}
+          onChange={(ev, value) => handleAddLayer(value)}
         />
       </ControlSectionContent>
     </ControlSection>
