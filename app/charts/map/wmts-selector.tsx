@@ -55,6 +55,15 @@ const useTreeItemStyles = makeStyles({
   },
   iconContainer: {
     opacity: 0.5,
+
+    "&:empty": {
+      display: "none",
+    },
+  },
+  label: {
+    "&&": {
+      padding: "0.25rem",
+    },
   },
   group: {
     // The padding is done on the content inside the row for the hover
@@ -76,6 +85,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
+    lineHeight: "1.5rem",
   },
 }));
 
@@ -169,7 +179,7 @@ const TreeRow = ({
           checked={checked}
         />
       ) : null}
-      <span className={labelClassName}>{label}</span>
+      <div className={labelClassName}>{label}</div>
       {layer && layer.legendUrl ? <LegendButton layer={layer} /> : null}
     </div>
   );
