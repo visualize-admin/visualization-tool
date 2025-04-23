@@ -39,7 +39,7 @@ const useControlSectionStyles = makeStyles<Theme, { hideTopBorder: boolean }>(
   })
 );
 
-const useSectionTitleStyles = makeStyles<
+export const useSectionTitleStyles = makeStyles<
   Theme,
   {
     disabled?: boolean;

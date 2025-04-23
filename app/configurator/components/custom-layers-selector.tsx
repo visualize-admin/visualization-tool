@@ -1,13 +1,15 @@
 import { t, Trans } from "@lingui/macro";
 import {
-  Autocomplete,
   Box,
-  MenuItem,
-  TextField,
+  Button,
+  DrawerProps,
+  IconButton,
   Typography,
   useEventCallback,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { Drawer as MuiDrawer } from "@mui/material";
+import uniq from "lodash/uniq";
+import { ReactNode, useMemo, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -16,9 +18,11 @@ import {
 } from "react-beautiful-dnd";
 
 import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
-import { DEFAULT_WMS_URL, ParsedWMSLayer } from "@/charts/map/wms-utils";
-import { DEFAULT_WMTS_URL, ParsedWMTSLayer } from "@/charts/map/wmts-utils";
-import { Select, SelectOption, Switch } from "@/components/form";
+import { ParsedWMSLayer } from "@/charts/map/wms-utils";
+import { WMTSSelector } from "@/charts/map/wmts-playground";
+import { ParsedWMTSLayer } from "@/charts/map/wmts-utils";
+import { Switch } from "@/components/form";
+import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import { MoveDragButton } from "@/components/move-drag-button";
 import { MapConfig, WMSCustomLayer, WMTSCustomLayer } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
@@ -27,30 +31,65 @@ import {
   ControlSectionContent,
   ControlSectionSkeleton,
   SectionTitle,
+  useSectionTitleStyles,
 } from "@/configurator/components/chart-controls/section";
+import { PANEL_HEADER_CSS_VAR } from "@/configurator/components/layout";
 import {
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
-import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { truthy } from "@/domain/types";
+import { Icon } from "@/icons";
+
+export const LeftDrawer = ({
+  children,
+  open,
+  onClose,
+  onExited,
+}: {
+  children: ReactNode;
+  open?: DrawerProps["open"];
+  onClose?: DrawerProps["onClose"];
+  onExited?: () => void;
+}) => {
+  return (
+    <MuiDrawer
+      anchor="left"
+      open={open}
+      variant="temporary"
+      onClose={onClose}
+      SlideProps={{
+        onExited: onExited,
+      }}
+      hideBackdrop
+      disableScrollLock={false}
+      PaperProps={{
+        sx: {
+          // TODO Use the nav bar width
+          width: 340,
+          maxWidth: "100%",
+          top: `calc(${HEADER_HEIGHT_CSS_VAR} + ${PANEL_HEADER_CSS_VAR} + 1px)`,
+        },
+      }}
+    >
+      {children}
+    </MuiDrawer>
+  );
+};
 
 export const CustomLayersSelector = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state) as MapConfig;
   const customLayers = chartConfig.baseLayer.customLayers;
-  const [wmtsEndpoint] = useState(DEFAULT_WMTS_URL);
-  const [wmsEndpoint] = useState(DEFAULT_WMS_URL);
-  const { data: groupedLayers, error } = useWMTSorWMSLayers([
-    wmsEndpoint,
-    wmtsEndpoint,
-  ]);
+  const endpoints = useMemo(() => {
+    return uniq(customLayers.map((layer) => layer.endpoint)).filter(truthy);
+  }, [customLayers]);
+  const { data: groupedLayers, error } = useWMTSorWMSLayers(endpoints);
   const { wms: wmsLayers, wmts: wmtsLayers } = groupedLayers ?? {
     wms: [],
     wmts: [],
   };
-  const options = useMemo(() => {
-    return getCustomLayerOptions({ wmsLayers, wmtsLayers });
-  }, [wmsLayers, wmtsLayers]);
+
   const handleDragEnd: OnDragEndResponder = useEventCallback((e) => {
     const oldIndex = e.source.index;
     const newIndex = e.destination?.index;
@@ -68,62 +107,78 @@ export const CustomLayersSelector = () => {
     });
   });
 
-  const handleAddLayer = (
-    value: { type?: "wms" | "wmts" | undefined; value: string } | null
+  const handleCheckLayer = (
+    layer: ParsedWMSLayer | ParsedWMTSLayer | null,
+    checked: boolean
   ) => {
-    const valueType = value?.type;
+    const valueType = layer?.type;
 
     if (!valueType) {
       return;
     }
 
-    switch (valueType) {
-      case "wms":
-        const wmsLayer = wmsLayers.find((layer) => layer.id === value.value);
-
-        if (!wmsLayer) {
-          return;
-        }
-
-        dispatch({
-          type: "CUSTOM_LAYER_ADD",
-          value: {
-            layer: {
-              type: "wms",
-              id: wmsLayer.id,
-              isBehindAreaLayer: false,
-              syncTemporalFilters: false,
-              endpoint: wmsLayer.endpoint,
+    if (!checked) {
+      dispatch({
+        type: "CUSTOM_LAYER_REMOVE",
+        value: {
+          type: valueType,
+          id: layer.id,
+        },
+      });
+      return;
+    } else {
+      switch (valueType) {
+        case "wms":
+          dispatch({
+            type: "CUSTOM_LAYER_ADD",
+            value: {
+              layer: {
+                type: "wms",
+                id: layer.id,
+                isBehindAreaLayer: false,
+                syncTemporalFilters: false,
+                endpoint: layer.endpoint,
+              },
             },
-          },
-        });
-        break;
-      case "wmts":
-        const wmtsLayer = wmtsLayers.find((layer) => layer.id === value.value);
-
-        if (!wmtsLayer) {
-          return;
-        }
-
-        dispatch({
-          type: "CUSTOM_LAYER_ADD",
-          value: {
-            layer: {
-              type: "wmts",
-              id: wmtsLayer.id,
-              url: wmtsLayer.url,
-              isBehindAreaLayer: false,
-              syncTemporalFilters: false,
-              endpoint: wmtsLayer.endpoint,
+          });
+          break;
+        case "wmts":
+          dispatch({
+            type: "CUSTOM_LAYER_ADD",
+            value: {
+              layer: {
+                type: "wmts",
+                id: layer.id,
+                url: layer.url,
+                isBehindAreaLayer: false,
+                syncTemporalFilters: false,
+                endpoint: layer.endpoint,
+              },
             },
-          },
-        });
-        break;
-      default:
-        const _exhaustiveCheck: never = valueType;
-        return _exhaustiveCheck;
+          });
+          break;
+        default:
+          const _exhaustiveCheck: never = valueType;
+          return _exhaustiveCheck;
+      }
     }
   };
+
+  const [addingLayer, setAddingLayer] = useState(false);
+  const layersById = useMemo(() => {
+    const layersById: Record<string, ParsedWMSLayer | ParsedWMTSLayer> = {};
+    wmsLayers?.forEach((layer) => {
+      layersById[layer.id] = layer;
+    });
+    wmtsLayers?.forEach((layer) => {
+      layersById[layer.id] = layer;
+    });
+    return layersById;
+  }, [wmsLayers, wmtsLayers]);
+  const sectionTitleClasses = useSectionTitleStyles({
+    sectionOpen: true,
+    interactive: true,
+  });
   return error ? (
     <Typography mx={2} color="error">
       {error.message}
@@ -135,7 +190,42 @@ export const CustomLayersSelector = () => {
       <SectionTitle>
         <Trans id="chart.map.layers.custom-layers">Custom Layers</Trans>
       </SectionTitle>
+      <LeftDrawer open={addingLayer} onClose={() => setAddingLayer(false)}>
+        <div>
+          <div
+            className={sectionTitleClasses.root}
+            onClick={() => setAddingLayer(false)}
+          >
+            {/* TODO i18n */}
+
+            <Typography variant="h6" className={sectionTitleClasses.text}>
+              <Icon name="chevronLeft" />
+              <Trans id="wmts.custom-layer.section-title">
+                Add custom layer
+              </Trans>
+            </Typography>
+          </div>
+        </div>
+        <Box px={4}>
+          {addingLayer ? (
+            <WMTSSelector
+              onLayerCheck={(x, checked) => {
+                return handleCheckLayer(x, checked);
+              }}
+              selected={customLayers.map((layer) => {
+                return layer.id;
+              })}
+            />
+          ) : null}
+        </Box>
+      </LeftDrawer>
       <ControlSectionContent gap="large">
+        {customLayers.length === 0 && (
+          <Typography variant="body3" color="text.secondary">
+            <Trans id="chart.map.layers.no-layers">No custom layers</Trans>
+          </Typography>
+        )}
+
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="layers">
             {(provided) => (
@@ -144,8 +234,8 @@ export const CustomLayersSelector = () => {
                   return (
                     <DraggableLayer
                       key={`${customLayer.type}-${customLayer.id}`}
-                      customLayer={customLayer}
-                      options={options}
+                      configLayer={customLayer}
+                      layersById={layersById}
                       index={i}
                     />
                   );
@@ -155,125 +245,57 @@ export const CustomLayersSelector = () => {
             )}
           </Droppable>
         </DragDropContext>
-        <Autocomplete
-          key={customLayers.length}
-          options={options.filter(
-            (option) =>
-              !option.isNoneValue &&
-              !customLayers.some(
-                (layer) =>
-                  layer.type === option.type && layer.id === option.value
-              )
-          )}
-          getOptionLabel={(option) => option.label}
-          groupBy={(option) => option.type?.toUpperCase() ?? ""}
-          renderInput={(params) => {
-            return (
-              <TextField
-                {...params}
-                label={t({
-                  id: "chart.map.layers.base.add-layer",
-                  message: "Add layer",
-                })}
-              />
-            );
-          }}
-          renderOption={(props, option) => (
-            <MenuItem {...props} key={option.value}>
-              <Typography>{option.label}</Typography>
-            </MenuItem>
-          )}
-          onChange={(ev, value) => handleAddLayer(value)}
-        />
+        <Box>
+          <Button
+            variant="contained"
+            color="cobalt"
+            onClick={() => setAddingLayer(true)}
+          >
+            Add layer
+          </Button>
+        </Box>
       </ControlSectionContent>
     </ControlSection>
   );
 };
 
-type CustomLayerOption = SelectOption & { type?: "wms" | "wmts" };
-
-const getCustomLayerOptions = ({
-  wmsLayers,
-  wmtsLayers,
-}: {
-  wmsLayers?: ParsedWMSLayer[];
-  wmtsLayers?: ParsedWMTSLayer[];
-}): CustomLayerOption[] => {
-  if (!wmsLayers || !wmtsLayers) {
-    return [];
-  }
-
-  return [
-    {
-      label: t({ id: "controls.none", message: "None" }),
-      value: FIELD_VALUE_NONE,
-      isNoneValue: true,
-    },
-  ]
-    .concat(
-      wmtsLayers
-        .map((layer) => ({
-          type: "wmts" as const,
-          ...getBaseLayerOption(layer),
-        }))
-        .sort((a, b) => a.label.localeCompare(b.label))
-    )
-    .concat(
-      wmsLayers
-        .map((layer) => ({
-          type: "wms" as const,
-          ...getBaseLayerOption(layer),
-        }))
-        .sort((a, b) => a.label.localeCompare(b.label))
-    );
-};
-
-const getBaseLayerOption = (layer: ParsedWMSLayer | ParsedWMTSLayer) => {
-  return {
-    value: layer.id,
-    label: layer.title,
-    isNoneValue: false,
-  };
-};
-
-const defaultedEndpoint = (
-  endpoint: string | undefined,
-  type: "wms" | "wmts"
-) => {
-  return endpoint ?? (type === "wms" ? DEFAULT_WMS_URL : DEFAULT_WMTS_URL);
-};
-
 const DraggableLayer = ({
-  customLayer,
-  options,
+  configLayer,
   index,
+  layersById,
 }: {
-  customLayer: WMSCustomLayer | WMTSCustomLayer;
-  options: CustomLayerOption[];
+  configLayer: WMSCustomLayer | WMTSCustomLayer;
   index: number;
+  layersById: Record<string, ParsedWMSLayer | ParsedWMTSLayer>;
 }) => {
   const [_, dispatch] = useConfiguratorState(isConfiguring);
-  const value = customLayer.id;
-  const endpoint = customLayer.endpoint;
-  const { data: groupedLayers } = useWMTSorWMSLayers([
-    defaultedEndpoint(endpoint, customLayer.type),
-  ]);
+  const value = configLayer.id;
+  const layer = layersById[configLayer.id];
+
   const enableTemporalFiltering = useMemo(() => {
-    const wmtsLayers = groupedLayers?.wmts ?? [];
-    switch (customLayer.type) {
+    switch (configLayer.type) {
       case "wms":
         return false;
       case "wmts":
-        const wmtsLayer = wmtsLayers.find((l) => l.id === customLayer.id);
         return (
-          wmtsLayer?.availableDimensionValues &&
-          wmtsLayer.availableDimensionValues.length > 1
+          layer?.availableDimensionValues &&
+          layer.availableDimensionValues.length > 1
         );
       default:
-        const _exhaustiveCheck: never = customLayer;
+        const _exhaustiveCheck: never = configLayer;
         return _exhaustiveCheck;
     }
-  }, [customLayer, groupedLayers?.wmts]);
+  }, [configLayer, layer?.availableDimensionValues]);
+
+  const handleRemoveClick = () => {
+    dispatch({
+      type: "CUSTOM_LAYER_REMOVE",
+      value: {
+        type: configLayer.type,
+        id: configLayer.id,
+      },
+    });
+  };
 
   return (
     <Draggable key={value} draggableId={value} index={index}>
@@ -292,30 +314,12 @@ const DraggableLayer = ({
               mb: 2,
             }}
           >
-            <Select
-              id={`layer-${value}`}
-              options={options.filter(
-                (o) =>
-                  (o.type === customLayer.type && o.value === customLayer.id) ||
-                  o.isNoneValue
-              )}
-              sortOptions={false}
-              onChange={(e) => {
-                const value = e.target.value as string;
-
-                if (value === FIELD_VALUE_NONE) {
-                  dispatch({
-                    type: "CUSTOM_LAYER_REMOVE",
-                    value: {
-                      type: customLayer.type,
-                      id: customLayer.id,
-                    },
-                  });
-                }
-              }}
-              value={value}
-              sx={{ maxWidth: 280 }}
-            />
+            <Typography variant="body3" sx={{ flexGrow: 1 }}>
+              {layer?.title ?? "Unknown layer"}
+            </Typography>
+            <IconButton onClick={handleRemoveClick}>
+              <Icon name="trash" />
+            </IconButton>
             <MoveDragButton />
           </Box>
           <Switch
@@ -323,33 +327,33 @@ const DraggableLayer = ({
               id: "chart.map.layers.base.behind-area-layer",
               message: "Behind area layer",
             })}
-            checked={customLayer.isBehindAreaLayer}
+            checked={configLayer.isBehindAreaLayer}
             onChange={(e) => {
               dispatch({
                 type: "CUSTOM_LAYER_UPDATE",
                 value: {
                   layer: {
-                    ...customLayer,
+                    ...configLayer,
                     isBehindAreaLayer: e.target.checked,
                   },
                 },
               });
             }}
           />
-          {customLayer.type === "wmts" ? (
+          {configLayer.type === "wmts" ? (
             <Switch
               label={t({
                 id: "chart.map.layers.base.enable-temporal-filtering",
                 message: "Sync with temporal filters",
               })}
-              checked={customLayer.syncTemporalFilters}
+              checked={configLayer.syncTemporalFilters}
               disabled={!enableTemporalFiltering}
               onChange={(e) => {
                 dispatch({
                   type: "CUSTOM_LAYER_UPDATE",
                   value: {
                     layer: {
-                      ...customLayer,
+                      ...configLayer,
                       syncTemporalFilters: e.target.checked,
                     },
                   },

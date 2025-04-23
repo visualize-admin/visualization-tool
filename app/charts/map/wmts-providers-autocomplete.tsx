@@ -3,6 +3,8 @@ import { Autocomplete, TextField, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 import wmtsProviders from "@/charts/map/wmts-providers.json";
+import { Trans } from "@lingui/react";
+import { t } from "@lingui/macro";
 
 type ProviderUrl = string;
 
@@ -65,9 +67,6 @@ const ProviderAutocomplete = ({
           typeof newValue === "string" ? newValue : (newValue?.value ?? null)
         )
       }
-      // renderOption={(props) => {
-      //   return <Typography variant="caption" component="li" {...props} />;
-      // }}
       size="small"
       ListboxProps={{
         className: classes.listbox,
@@ -82,7 +81,10 @@ const ProviderAutocomplete = ({
         <TextField
           {...params}
           // TODO i18n
-          placeholder="WMTS Provider"
+          placeholder={t({
+            id: "wmts-providers-autocomplete.placeholder",
+            message: "Enter a WMTS provider URL",
+          })}
           variant="outlined"
           margin="normal"
           fullWidth

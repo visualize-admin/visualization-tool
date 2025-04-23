@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import { supported } from "@mapbox/mapbox-gl-supported";
 import { TreeItem, TreeView } from "@mui/lab";
 import {
@@ -21,37 +22,21 @@ import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import maplibreglRaw from "maplibre-gl";
 import React from "react";
-import {
-  HTMLProps,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Map, { useMap } from "react-map-gl";
 
 import { useMapStyle } from "@/charts/map/get-base-layer-style";
 import { DeckGLOverlay } from "@/charts/map/helpers";
 import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
-import {
-  DEFAULT_WMS_URL,
-  getWMSTile,
-  ParsedWMSLayer,
-} from "@/charts/map/wms-utils";
+import { getWMSTile, ParsedWMSLayer } from "@/charts/map/wms-utils";
 import ProviderAutocomplete from "@/charts/map/wmts-providers-autocomplete";
-import {
-  DEFAULT_WMTS_URL,
-  getWMTSTile,
-  ParsedWMTSLayer,
-} from "@/charts/map/wmts-utils";
+import { getWMTSTile, ParsedWMTSLayer } from "@/charts/map/wmts-utils";
 import { HintRed, Spinner } from "@/components/hint";
 import { Tree, useSelectTree } from "@/components/select-tree";
 import { Icon } from "@/icons";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
-import SvgIcZoomIn from "@/icons/components/IcZoomIn";
 import { LocaleProvider } from "@/locales";
 import { mapTree, visitHierarchy } from "@/rdf/tree-utils";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -192,11 +177,6 @@ const TreeRow = ({
     });
   }, [layer, onCheck]);
 
-  const handleClickZoom: HTMLProps<HTMLButtonElement>["onClick"] =
-    useCallback(() => {
-      console.log("Clicked zoom for layer", layer);
-    }, [layer]);
-
   return (
     <div className={className} onClick={handleChangeCheckbox}>
       <Checkbox
@@ -207,27 +187,23 @@ const TreeRow = ({
         checked={checked}
       />
       <span className={labelClassName}>{label}</span>
-      <IconButton size="small" onClick={handleClickZoom} data-value={value}>
-        <SvgIcZoomIn />
-      </IconButton>
       {layer && layer.legendUrl ? <LegendButton layer={layer} /> : null}
     </div>
   );
 };
 
-const WMTSSelector = ({
+export const WMTSSelector = ({
   onLayerCheck,
+  selected,
 }: {
   onLayerCheck: (layer: CustomLayer, checked: boolean) => void;
+  selected: string[];
 }) => {
   const treeItemClasses = useTreeItemStyles();
 
   const classes = useStyles();
   const [provider, setProvider] = useState<string | null>(null);
-  const endpoints = useMemo(
-    () => (provider ? [provider] : [DEFAULT_WMTS_URL, DEFAULT_WMS_URL]),
-    [provider]
-  );
+  const endpoints = useMemo(() => (provider ? [provider] : []), [provider]);
 
   const { data: groupedLayers, error, status } = useWMTSorWMSLayers(endpoints);
   const { wms: wmsLayers, wmts: wmtsLayers } = useMemo(() => {
@@ -255,6 +231,10 @@ const WMTSSelector = ({
     });
     return res;
   }, [allLayers]);
+
+  const selectedSet = useMemo(() => {
+    return new Set(selected);
+  }, [selected]);
 
   const options = useMemo(() => {
     return mapTree(allLayers, ({ children, ...x }) => ({
@@ -311,6 +291,7 @@ const WMTSSelector = ({
                     label={label}
                     value={value}
                     onCheck={onLayerCheck}
+                    initialChecked={selectedSet.has(layersByPath[value].id)}
                   />
                 }
                 expandIcon={
@@ -331,7 +312,15 @@ const WMTSSelector = ({
         </>
       );
     },
-    [defaultExpanded, classes, layersByPath, onLayerCheck, treeItemClasses]
+    [
+      treeItemClasses,
+      defaultExpanded,
+      classes.treeRow,
+      classes.label,
+      layersByPath,
+      onLayerCheck,
+      selectedSet,
+    ]
   );
 
   const treeRef = useRef();
@@ -354,30 +343,35 @@ const WMTSSelector = ({
         onChange={(newValue) => setProvider(newValue)}
       />
 
-      <Input
-        size="sm"
-        value={inputValue}
-        autoFocus
-        startAdornment={<Icon name="search" size={18} />}
-        // TODO i18n
-        placeholder="Search custom layers"
-        endAdornment={
-          inputValue.length > 0 ? (
-            <IconButton size="small" onClick={handleClickResetInput}>
-              <Icon name="close" size={16} />
-            </IconButton>
-          ) : null
-        }
-        onChange={handleInputChange}
-        sx={{
-          px: 2,
-          py: 1,
+      {provider && (
+        <Input
+          size="sm"
+          value={inputValue}
+          autoFocus
+          startAdornment={<Icon name="search" size={18} />}
+          // TODO i18n
+          placeholder={t({
+            id: "wmts.search-placeholder",
+            message: "Search custom layers",
+          })}
+          endAdornment={
+            inputValue.length > 0 ? (
+              <IconButton size="small" onClick={handleClickResetInput}>
+                <Icon name="close" size={16} />
+              </IconButton>
+            ) : null
+          }
+          onChange={handleInputChange}
+          sx={{
+            px: 2,
+            py: 1,
 
-          "& .MuiInput-input": {
-            px: 1,
-          },
-        }}
-      />
+            "& .MuiInput-input": {
+              px: 1,
+            },
+          }}
+        />
+      )}
 
       {status === "fetching" ? (
         <Box textAlign="center" p={2}>
@@ -434,6 +428,7 @@ const WMTSPlayground = () => {
     [] as CustomLayer[]
   );
   const onLayerCheck = useEvent((layer: CustomLayer, checked: boolean) => {
+    console.log("onLayerCheck", layer, checked);
     setLayers((layers) =>
       checked ? [...layers, layer] : layers.filter((l) => l != layer)
     );
@@ -478,7 +473,7 @@ const WMTSPlayground = () => {
           }}
         >
           <Box flexGrow={1} overflow="auto">
-            <WMTSSelector onLayerCheck={onLayerCheck} />
+            <WMTSSelector onLayerCheck={onLayerCheck} selected={[]} />
           </Box>
           <Accordion defaultExpanded sx={{ flexShrink: 1 }}>
             <AccordionSummary
