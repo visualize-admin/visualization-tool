@@ -251,6 +251,11 @@ export const components: Components = {
       },
     },
   },
+  MuiDrawer: {
+    defaultProps: {
+      elevation: 1,
+    },
+  },
   MuiFormControlLabel: {
     styleOverrides: {
       root: {

@@ -33,6 +33,7 @@ import {
   SectionTitle,
   useSectionTitleStyles,
 } from "@/configurator/components/chart-controls/section";
+import { DRAWER_WIDTH } from "@/configurator/components/drawers";
 import { PANEL_HEADER_CSS_VAR } from "@/configurator/components/layout";
 import {
   isConfiguring,
@@ -65,8 +66,7 @@ const LeftDrawer = ({
       disableScrollLock={false}
       PaperProps={{
         sx: {
-          // TODO Use the nav bar width
-          width: 340,
+          width: DRAWER_WIDTH,
           maxWidth: "100%",
           top: `calc(${HEADER_HEIGHT_CSS_VAR} + ${PANEL_HEADER_CSS_VAR} + 1px)`,
         },
