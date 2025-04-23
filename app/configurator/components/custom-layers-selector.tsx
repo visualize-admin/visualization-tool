@@ -196,8 +196,6 @@ export const CustomLayersSelector = () => {
             className={sectionTitleClasses.root}
             onClick={() => setAddingLayer(false)}
           >
-            {/* TODO i18n */}
-
             <Typography variant="h6" className={sectionTitleClasses.text}>
               <Icon name="chevronLeft" />
               <Trans id="wmts.custom-layer.section-title">

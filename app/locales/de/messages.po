@@ -268,10 +268,6 @@ msgid "chart.map.layers.base"
 msgstr "Basisschichten"
 
 #: app/configurator/components/custom-layers-selector.tsx
-msgid "chart.map.layers.base.add-layer"
-msgstr "Ebene hinzufügen"
-
-#: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.base.behind-area-layer"
 msgstr "Hinter der Flächenebene"
 
@@ -290,6 +286,10 @@ msgstr "Gesperrte Ansicht"
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.custom-layers"
 msgstr "Benutzerdefinierte Ebenen"
+
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.no-layers"
+msgstr "Keine benutzerdefinierten Ebenen"
 
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.symbol"
@@ -927,7 +927,6 @@ msgstr "Zurück zur Vorschau"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
-#: app/configurator/components/custom-layers-selector.tsx
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.none"
@@ -2003,6 +2002,23 @@ msgstr "Woche"
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Year"
 msgstr "Jahr"
+
+#: app/charts/map/wmts-providers-autocomplete.tsx
+msgid "wmts-providers-autocomplete.placeholder"
+msgstr "Geben Sie die URL eines WMTS-Anbieters ein"
+
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "wmts.custom-layer.section-title"
+#  Add custom layer
+msgstr "Add custom layer"
+
+#: app/charts/map/wmts-selector.tsx
+msgid "wmts.legend-title"
+msgstr "Legende"
+
+#: app/charts/map/wmts-selector.tsx
+msgid "wmts.search-placeholder"
+msgstr "Suche nach WMTS-Provider"
 
 #: app/components/confirmation-dialog.tsx
 msgid "yes"

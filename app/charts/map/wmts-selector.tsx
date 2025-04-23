@@ -1,4 +1,4 @@
-import { t } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { TreeItem, TreeView } from "@mui/lab";
 import {
   Box,
@@ -113,8 +113,7 @@ const LegendButton = ({
       >
         <Box sx={{ p: 2, position: "relative", width: 300 }}>
           <Typography variant="h5" gutterBottom>
-            {/* TODO i18n */}
-            Legend
+            <Trans id="wmts.legend-title">Legend</Trans>
           </Typography>
           <IconButton
             sx={{ position: "absolute", top: "0.25rem", right: "0.25rem" }}
@@ -333,7 +332,6 @@ const WMTSSelector = ({
           value={inputValue}
           autoFocus
           startAdornment={<Icon name="search" size={18} />}
-          // TODO i18n
           placeholder={t({
             id: "wmts.search-placeholder",
             message: "Search custom layers",

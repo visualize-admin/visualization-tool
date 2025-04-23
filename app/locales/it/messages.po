@@ -268,10 +268,6 @@ msgid "chart.map.layers.base"
 msgstr "Strati di base"
 
 #: app/configurator/components/custom-layers-selector.tsx
-msgid "chart.map.layers.base.add-layer"
-msgstr "Aggiungi livello"
-
-#: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.base.behind-area-layer"
 msgstr "Dietro lo strato dell'area"
 
@@ -290,6 +286,10 @@ msgstr "Vista bloccata"
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.custom-layers"
 msgstr "Livelli personalizzati"
+
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.no-layers"
+msgstr "Nessun livello personalizzato"
 
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.symbol"
@@ -927,7 +927,6 @@ msgstr "Torna all'anteprima"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
-#: app/configurator/components/custom-layers-selector.tsx
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.none"
@@ -2003,6 +2002,22 @@ msgstr "Settimana"
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Year"
 msgstr "Anno"
+
+#: app/charts/map/wmts-providers-autocomplete.tsx
+msgstr "wmts-providers-autocomplete.placeholder"
+msgstr "Inserisci l'URL di un provider WMTS"
+
+#: app/configurator/components/custom-layers-selector.tsx
+msgstr "wmts.custom-layer.section-title"
+msgstr "Aggiungi un livello"
+
+#: app/charts/map/wmts-selector.tsx
+msgstr "wmts.legend-title"
+msgstr "Leggenda"
+
+#: app/charts/map/wmts-selector.tsx
+msgstr "wmts.search-placeholder"
+msgstr "Cerca un provider WMTS"
 
 #: app/components/confirmation-dialog.tsx
 msgid "yes"

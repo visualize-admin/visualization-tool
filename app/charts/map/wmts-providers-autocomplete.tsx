@@ -72,7 +72,6 @@ const ProviderAutocomplete = ({
       renderInput={(params) => (
         <TextField
           {...params}
-          // TODO i18n
           placeholder={t({
             id: "wmts-providers-autocomplete.placeholder",
             message: "Enter a WMTS provider URL",
