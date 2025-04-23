@@ -100,6 +100,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     gap: "0.5rem",
     fontSize: theme.typography.body2.fontSize,
     width: "100%",
+    alignItems: "center",
   },
   label: {
     flexGrow: 1,
@@ -197,7 +198,7 @@ const TreeRow = ({
     }, [layer]);
 
   return (
-    <Box className={className} onClick={handleChangeCheckbox}>
+    <div className={className} onClick={handleChangeCheckbox}>
       <Checkbox
         inputProps={{
           // @ts-ignore
@@ -210,7 +211,7 @@ const TreeRow = ({
         <SvgIcZoomIn />
       </IconButton>
       {layer && layer.legendUrl ? <LegendButton layer={layer} /> : null}
-    </Box>
+    </div>
   );
 };
 
