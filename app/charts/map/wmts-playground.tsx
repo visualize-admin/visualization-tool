@@ -417,7 +417,12 @@ const CustomAttribution = ({ attribution }: { attribution: string }) => {
     // As of now, we cannot "update" the control, we need to add it and remove it
     map.addControl(control, "bottom-right");
     return () => {
-      map.removeControl(control);
+      try {
+        map.removeControl(control);
+      } catch {
+        // Ignore the error, it is probably because the map was destroyed
+        // before the control was removed
+      }
     };
   }, [attribution, mapRef, theme]);
   return null;
