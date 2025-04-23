@@ -1,4 +1,3 @@
-// TODO rename into wmts or wms
 import { t } from "@lingui/macro";
 import { Autocomplete, TextField, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
