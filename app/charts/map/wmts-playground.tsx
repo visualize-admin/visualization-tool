@@ -339,9 +339,8 @@ const WMTSSelector = ({
   return (
     <Box
       sx={{
-        width: 375,
+        width: "100%",
         maxWidth: "100%",
-        height: "80vh",
         overflow: "hidden",
       }}
       display="flex"
@@ -465,12 +464,28 @@ const WMTSPlayground = () => {
           gridTemplateColumns: "500px 1fr",
           border: "1px solid",
           borderColor: "cobalt.500",
+          height: "80vh",
         }}
       >
-        <Box sx={{ p: "0.5rem" }}>
-          <WMTSSelector onLayerCheck={onLayerCheck} />
-          <Accordion defaultExpanded>
-            <AccordionSummary>Added Layers</AccordionSummary>
+        <Box
+          sx={{
+            p: "0.5rem",
+            height: "100%",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box flexGrow={1} overflow="auto">
+            <WMTSSelector onLayerCheck={onLayerCheck} />
+          </Box>
+          <Accordion defaultExpanded sx={{ flexShrink: 1 }}>
+            <AccordionSummary
+              sx={{ typography: "body2" }}
+              expandIcon={<Icon name="chevronDown" />}
+            >
+              Added Layers
+            </AccordionSummary>
             <AccordionDetails>
               <List>
                 {layers.map((x) => {
