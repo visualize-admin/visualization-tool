@@ -48,6 +48,16 @@ export const useSectionTitleStyles = makeStyles<
     warn?: boolean;
   }
 >((theme) => ({
+  text: {
+    flexGrow: 1,
+    display: "flex",
+    alignItems: "center",
+    fontWeight: 700,
+
+    "& > svg:first-of-type": {
+      marginRight: theme.spacing(1),
+    },
+  },
   root: {
     display: "flex",
     justifyContent: "flex-start",
@@ -87,16 +97,6 @@ export const useSectionTitleStyles = makeStyles<
             ? theme.palette.monochrome[300]
             : theme.palette.monochrome[800],
       },
-    },
-  },
-  text: {
-    flexGrow: 1,
-    display: "flex",
-    alignItems: "center",
-    fontWeight: 700,
-
-    "& > svg:first-of-type": {
-      marginRight: theme.spacing(1),
     },
   },
   icon: {
