@@ -10,13 +10,6 @@ type ProviderUrl = string;
 const useStyles = makeStyles<Theme>((theme) => ({
   listbox: {
     maxHeight: 300,
-    "&::-webkit-scrollbar": {
-      width: 4,
-    },
-    "&::-webkit-scrollbar-thumb": {
-      backgroundColor: "rgba(65, 45, 45, 0.3)",
-      borderRadius: 2,
-    },
     "& li": {
       whiteSpace: "nowrap",
       textOverflow: "ellipsis",
