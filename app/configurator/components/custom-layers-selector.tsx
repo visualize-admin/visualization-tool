@@ -7,7 +7,6 @@ import {
   Typography,
   useEventCallback,
 } from "@mui/material";
-import { Drawer as MuiDrawer } from "@mui/material";
 import uniq from "lodash/uniq";
 import { ReactNode, useMemo, useState } from "react";
 import {
@@ -22,7 +21,6 @@ import { ParsedWMSLayer } from "@/charts/map/wms-utils";
 import WMTSSelector from "@/charts/map/wmts-selector";
 import { ParsedWMTSLayer } from "@/charts/map/wmts-utils";
 import { Switch } from "@/components/form";
-import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import { MoveDragButton } from "@/components/move-drag-button";
 import { MapConfig, WMSCustomLayer, WMTSCustomLayer } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
@@ -33,8 +31,7 @@ import {
   SectionTitle,
   useSectionTitleStyles,
 } from "@/configurator/components/chart-controls/section";
-import { DRAWER_WIDTH } from "@/configurator/components/drawers";
-import { PANEL_HEADER_CSS_VAR } from "@/configurator/components/layout";
+import { ConfiguratorDrawer } from "@/configurator/components/drawers";
 import {
   isConfiguring,
   useConfiguratorState,
@@ -54,7 +51,7 @@ const LeftDrawer = ({
   onExited?: () => void;
 }) => {
   return (
-    <MuiDrawer
+    <ConfiguratorDrawer
       anchor="left"
       open={open}
       variant="temporary"
@@ -63,17 +60,9 @@ const LeftDrawer = ({
         onExited: onExited,
       }}
       hideBackdrop
-      disableScrollLock={false}
-      PaperProps={{
-        sx: {
-          width: DRAWER_WIDTH,
-          maxWidth: "100%",
-          top: `calc(${HEADER_HEIGHT_CSS_VAR} + ${PANEL_HEADER_CSS_VAR} + 1px)`,
-        },
-      }}
     >
       {children}
-    </MuiDrawer>
+    </ConfiguratorDrawer>
   );
 };
 
