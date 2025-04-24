@@ -158,15 +158,24 @@ export const CustomLayersSelector = () => {
   };
 
   const [addingLayer, setAddingLayer] = useState(false);
-  const layersById = useMemo(() => {
-    const layersById: Record<string, ParsedWMSLayer | ParsedWMTSLayer> = {};
+  const getParsedLayer = useMemo(() => {
+    const getKey = ({
+      type,
+      id,
+    }: WMTSCustomLayer | WMSCustomLayer | ParsedWMSLayer | ParsedWMTSLayer) => {
+      return `${type}-${id}`;
+    };
+    const layersByKey: Record<string, ParsedWMSLayer | ParsedWMTSLayer> = {};
     wmsLayers?.forEach((layer) => {
-      layersById[layer.id] = layer;
+      layersByKey[getKey(layer)] = layer;
     });
     wmtsLayers?.forEach((layer) => {
-      layersById[layer.id] = layer;
+      layersByKey[getKey(layer)] = layer;
     });
-    return layersById;
+    return (configLayer: WMTSCustomLayer | WMSCustomLayer) => {
+      const key = getKey(configLayer);
+      return layersByKey[key];
+    };
   }, [wmsLayers, wmtsLayers]);
   const sectionTitleClasses = useSectionTitleStyles({
     sectionOpen: true,
@@ -222,12 +231,12 @@ export const CustomLayersSelector = () => {
             <Droppable droppableId="layers">
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {customLayers.map((customLayer, i) => {
+                  {customLayers.map((configLayer, i) => {
                     return (
                       <DraggableLayer
-                        key={`${customLayer.type}-${customLayer.id}`}
-                        configLayer={customLayer}
-                        layersById={layersById}
+                        key={`${configLayer.type}-${configLayer.id}`}
+                        configLayer={configLayer}
+                        parsedLayer={getParsedLayer(configLayer)}
                         index={i}
                       />
                     );
@@ -262,15 +271,14 @@ export const CustomLayersSelector = () => {
 const DraggableLayer = ({
   configLayer,
   index,
-  layersById,
+  parsedLayer,
 }: {
   configLayer: WMSCustomLayer | WMTSCustomLayer;
   index: number;
-  layersById: Record<string, ParsedWMSLayer | ParsedWMTSLayer>;
+  parsedLayer: ParsedWMSLayer | ParsedWMTSLayer;
 }) => {
   const [_, dispatch] = useConfiguratorState(isConfiguring);
   const value = configLayer.id;
-  const layer = layersById[configLayer.id];
 
   const enableTemporalFiltering = useMemo(() => {
     switch (configLayer.type) {
@@ -278,14 +286,14 @@ const DraggableLayer = ({
         return false;
       case "wmts":
         return (
-          layer?.availableDimensionValues &&
-          layer.availableDimensionValues.length > 1
+          parsedLayer?.availableDimensionValues &&
+          parsedLayer.availableDimensionValues.length > 1
         );
       default:
         const _exhaustiveCheck: never = configLayer;
         return _exhaustiveCheck;
     }
-  }, [configLayer, layer?.availableDimensionValues]);
+  }, [configLayer, parsedLayer?.availableDimensionValues]);
 
   const handleRemoveClick = () => {
     dispatch({
@@ -314,7 +322,7 @@ const DraggableLayer = ({
             }}
           >
             <Typography variant="body3" sx={{ flexGrow: 1 }}>
-              {layer?.title ?? "Unknown layer"}
+              {parsedLayer?.title ?? "Unknown layer"}
             </Typography>
             <IconButton onClick={handleRemoveClick}>
               <Icon name="trash" />
