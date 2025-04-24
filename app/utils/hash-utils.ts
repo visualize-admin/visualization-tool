@@ -2,8 +2,9 @@ type Object = Record<string, any>;
 
 const KEY_SEPARATOR = "__SEP__";
 const VALUE_SEPARATOR = "=";
-const JOIN_SEPARATOR = ",";
+const JOIN_SEPARATOR = "||";
 const NUMBER_PREFIX = "__NUM__";
+const NEWLINE_REPLACEMENT = "__NL__";
 
 /** Converts an object into a URL-friendly hash string. */
 export const objectToHashString = (o: Object) => {
@@ -19,7 +20,6 @@ export const hashStringToObject = (hashString: string) => {
 
 const objectToKeyValuePairs = (o: Object) => {
   const flatObject = flattenObject(o);
-
   return Object.entries(flatObject).map(([k, v]) => {
     return `${k}${VALUE_SEPARATOR}${v}`;
   });
@@ -27,9 +27,16 @@ const objectToKeyValuePairs = (o: Object) => {
 
 const keyValuePairsToObject = (keyValuePairs: string[]) => {
   const o: Object = {};
-
   keyValuePairs.forEach((kv) => {
-    const [k, v] = kv.split(VALUE_SEPARATOR);
+    // Make sure we allow equal signs in the value - the first one is the actual separator.
+    const firstEqualIndex = kv.indexOf(VALUE_SEPARATOR);
+
+    if (firstEqualIndex === -1) {
+      return;
+    }
+
+    const k = kv.slice(0, firstEqualIndex);
+    const v = kv.slice(firstEqualIndex + 1);
     o[k] = v;
   });
 
@@ -68,13 +75,20 @@ const flattenObject = (o: Object, parentKey = "", result: Object = {}) => {
             if (typeof item === "object" && item !== null) {
               flattenObject(item, arrayKey, result);
             } else {
-              result[arrayKey] = `${item}`;
+              result[arrayKey] =
+                typeof item === "string"
+                  ? item.replace(/\n/g, NEWLINE_REPLACEMENT)
+                  : `${item}`;
             }
           });
         }
       } else {
         result[newKey] =
-          typeof v === "number" ? `${NUMBER_PREFIX}${v}` : `${v}`;
+          typeof v === "number"
+            ? `${NUMBER_PREFIX}${v}`
+            : typeof v === "string"
+              ? v.replace(/\n/g, NEWLINE_REPLACEMENT)
+              : `${v}`;
       }
     }
   }
@@ -94,6 +108,10 @@ const parseValue = (v: any) => {
     if (num !== "" && !isNaN(+num)) {
       return +num;
     }
+  }
+
+  if (typeof v === "string") {
+    return v.replace(new RegExp(NEWLINE_REPLACEMENT, "g"), "\n");
   }
 
   return v;
