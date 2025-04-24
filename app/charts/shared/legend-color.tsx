@@ -399,7 +399,17 @@ const LegendIcon = ({
       );
       break;
     case "line":
-      node = <rect x={0} y={0.425} width={1} height={0.175} fill={fill} />;
+      node = (
+        <line
+          x1={0}
+          x2={1}
+          y1={0.5}
+          y2={0.5}
+          stroke={fill}
+          strokeWidth={2.5}
+          vectorEffect="non-scaling-stroke"
+        />
+      );
       break;
     case "dashed-line":
       node = (
