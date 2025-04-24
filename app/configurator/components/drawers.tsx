@@ -9,6 +9,10 @@ export const DRAWER_WIDTH = 340;
 
 export const ConfiguratorDrawer = styled(MuiDrawer)(({ theme }) => ({
   "&": {
+    /**
+     * We use position static otherwise the Drawer is fixed and takes
+     * the whole screen, blocking screen underneath.
+     * */
     position: "static",
   },
 
