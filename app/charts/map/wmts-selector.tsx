@@ -395,7 +395,6 @@ const WMTSSelector = ({
       <TreeView
         sx={{ flexGrow: 1, overflow: "auto" }}
         ref={treeRef}
-        defaultSelected={undefined}
         expanded={expanded}
         onNodeToggle={handleNodeToggle}
         onNodeSelect={handleNodeSelect}
