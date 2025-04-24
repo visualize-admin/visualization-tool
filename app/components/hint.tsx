@@ -45,7 +45,10 @@ const spin = keyframes`
   100% { transform: rotate(0deg) }
 `;
 
-const Spinner = ({ size = 40, ...props }: { size?: number } & BoxProps) => {
+export const Spinner = ({
+  size = 40,
+  ...props
+}: { size?: number } & BoxProps) => {
   return (
     <Flex
       {...props}

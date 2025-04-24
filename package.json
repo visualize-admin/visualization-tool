@@ -47,7 +47,8 @@
     "storybook:build": "storybook build -o app/public/storybook",
     "chromatic": "npx chromatic --build-script-name storybook:build -o app/public/storybook",
     "compare-screenshots": "npx tsx scripts/compare-screenshots.ts",
-    "generate-json-schema": "tsx -r dotenv/config app/scripts/generate-json-schema.ts"
+    "generate-json-schema": "tsx -r dotenv/config app/scripts/generate-json-schema.ts",
+    "wmts-providers:scrape": "bun app/configurator/components/wmts-providers.gen.ts"
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2",

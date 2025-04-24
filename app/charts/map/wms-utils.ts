@@ -2,15 +2,22 @@ import { _WMSLayer as DeckGLWMSLayer } from "@deck.gl/geo-layers";
 import { XMLParser } from "fast-xml-parser";
 
 import { WMSCustomLayer } from "@/config-types";
-import { useLocale } from "@/locales/use-locale";
-import { useFetchData } from "@/utils/use-fetch-data";
 
 type WMSData = {
   WMS_Capabilities: {
     Capability: {
       Layer: {
         Layer: WMSLayer[];
+        Attribution: {
+          Title: string;
+        };
       };
+    };
+    Service: {
+      OnlineResource: {
+        "xlink:href": string;
+      };
+      Title: string;
     };
   };
 };
@@ -30,55 +37,86 @@ type WMSLayer = {
     "ows:Identifier": string;
     "ows:Title": string;
   };
+  Layer?: WMSLayer[];
 };
 
 export type ParsedWMSLayer = {
+  /** id not unique */
   id: string;
+  /** path should be unique */
+  path: string;
   title: string;
   description?: string;
   legendUrl?: string;
   availableDimensionValues?: (string | number)[];
   defaultDimensionValue?: string | number;
+  endpoint: string;
+  type: "wms";
+  children?: ParsedWMSLayer[];
+  dataUrl: string;
+  attribution: string;
 };
 
-const parseWMSLayer = (layer: WMSLayer): ParsedWMSLayer => {
-  return {
+const parseWMSLayer = (
+  layer: WMSLayer,
+  attributes: {
+    endpoint: string;
+    dataUrl: string;
+    attribution: string;
+  },
+  parentPath = ""
+): ParsedWMSLayer => {
+  const currentPath = `${parentPath ?? ""}/${layer.Name ?? layer.Title}`;
+  const res: ParsedWMSLayer = {
+    // Non unique
     id: layer.Name,
+    // Unique
+    path: `${currentPath}`,
     title: layer.Title,
     description: layer.Abstract ?? "",
     legendUrl: layer.Style?.LegendURL.OnlineResource["xlink:href"],
+    type: "wms",
+    ...attributes,
   };
+  if (layer.Layer) {
+    const children = layer.Layer
+      ? layer.Layer instanceof Array
+        ? layer.Layer.map((l) => parseWMSLayer(l, attributes, currentPath))
+        : [parseWMSLayer(layer.Layer, attributes, currentPath)]
+      : undefined;
+    res.children = children;
+  }
+
+  // Hoist single children with same id as parent
+  if (res.children?.length === 1 && res.children[0]!.id === res.id) {
+    return res.children[0];
+  }
+  return res;
 };
 
-const WMS_URL =
-  "https://wms.geo.admin.ch/?REQUEST=GetCapabilities&SERVICE=WMS&VERSION=1.3.0&lang=en";
+export const DEFAULT_WMS_URL =
+  "https://wms.geo.admin.ch/?REQUEST=GetCapabilities&SERVICE=WMS&VERSION=1.3.0";
 
-export const useWMSLayers = (
-  { pause }: { pause?: boolean } = { pause: false }
-) => {
-  const locale = useLocale();
-
-  return useFetchData<ParsedWMSLayer[]>({
-    queryKey: ["custom-wms-layers", locale],
-    queryFn: async () => {
-      return fetch(`${WMS_URL}?lang=${locale}`).then(async (res) => {
-        const parser = new XMLParser({
-          ignoreAttributes: false,
-          attributeNamePrefix: "",
-          parseAttributeValue: true,
-        });
-
-        return res.text().then((text) => {
-          return (
-            parser.parse(text) as WMSData
-          ).WMS_Capabilities.Capability.Layer.Layer.map(parseWMSLayer);
-        });
-      });
-    },
-    options: {
-      pause,
-    },
+export const parseWMSContent = (content: string, endpoint: string) => {
+  const parser = new XMLParser({
+    ignoreAttributes: false,
+    attributeNamePrefix: "",
+    parseAttributeValue: true,
   });
+
+  const wmsData = parser.parse(content) as WMSData;
+  const dataUrl = wmsData.WMS_Capabilities.Service.OnlineResource["xlink:href"];
+  const attribution =
+    wmsData.WMS_Capabilities.Capability.Layer.Attribution?.Title ??
+    wmsData.WMS_Capabilities.Service.Title;
+
+  return wmsData.WMS_Capabilities.Capability.Layer.Layer.map((l) =>
+    parseWMSLayer(l, {
+      endpoint,
+      dataUrl,
+      attribution,
+    })
+  );
 };
 
 export const getWMSTile = ({
@@ -87,7 +125,7 @@ export const getWMSTile = ({
   beforeId,
 }: {
   wmsLayers?: ParsedWMSLayer[];
-  customLayer?: WMSCustomLayer;
+  customLayer?: WMSCustomLayer | ParsedWMSLayer;
   beforeId?: string;
 }) => {
   if (!customLayer) {
@@ -103,7 +141,7 @@ export const getWMSTile = ({
   return new DeckGLWMSLayer({
     id: `wms-layer-${customLayer.id}`,
     beforeId,
-    data: "https://wms.geo.admin.ch/?",
+    data: wmsLayer.dataUrl,
     serviceType: "wms",
     layers: [wmsLayer.id],
   });

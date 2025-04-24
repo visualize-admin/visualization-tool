@@ -19,10 +19,14 @@ You can also check the
     others too – and we fall back to a regular string in case the label is not
     localized
   - Value labels in segmented bar charts are now centered horizontally
+  - It's now possible to enter www links in text blocks link elements, instead
+    of having to always use https://
 - Fixes
   - Color palette can be changed again
   - Combo charts tooltips now work correctly again
   - Interactive 100% mode switch doesn't overlap with Y axis label anymore
+  - Chart preview using hash parameters now correctly deals with spacial
+    characters
 
 # [5.7.0] - 2025-04-16
 
