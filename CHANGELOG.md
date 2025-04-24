@@ -27,6 +27,7 @@ You can also check the
   - Interactive 100% mode switch doesn't overlap with Y axis label anymore
   - Chart preview using hash parameters now correctly deals with spacial
     characters
+  - Value labels are not gray anymore when downloading an image
 
 # [5.7.0] - 2025-04-16
 
