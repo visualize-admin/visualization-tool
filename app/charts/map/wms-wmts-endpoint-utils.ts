@@ -18,7 +18,7 @@ import { useFetchData } from "@/utils/use-fetch-data";
  * @param {string} url
  * @returns {boolean}
  */
-export function isWmsUrl(url: string) {
+function isWmsUrl(url: string) {
   return /(wms|map=|\.map)/i.test(url);
 }
 
@@ -28,7 +28,7 @@ export function isWmsUrl(url: string) {
  * @param {string} urlreturn SetWmsUrlParameters(new URL(provider), language)
  * @returns {boolean}
  */
-export function isWmtsUrl(url: string) {
+function isWmtsUrl(url: string) {
   return /wmts/i.test(url);
 }
 
