@@ -186,27 +186,36 @@ export const fetchChartsMetadata = async () => {
       layout_subtype?: LayoutDashboard["layout"];
     }[]
   >`
-    SELECT
-      DATE_TRUNC('day', created_at) AS day,
-      jsonb_agg(
+    WITH filtered_data AS (
+      SELECT
+        DATE_TRUNC('day', created_at) AS day,
+        jsonb_agg(
+          COALESCE(
+            data ->> 'dataSet',
+            chart_config_obj ->> 'dataSet',
+            cubes_obj ->> 'iri'
+          )
+        ) AS iris,
         COALESCE(
-          data ->> 'dataSet',
-          chart_config_obj ->> 'dataSet',
-          cubes_obj ->> 'iri'
-        )
-      ) AS iris,
-      COALESCE(
-        jsonb_agg(chart_config_array ->> 'chartType') FILTER (WHERE chart_config_array ->> 'chartType' IS NOT NULL),
-        jsonb_build_array(chart_config_obj ->> 'chartType')
-      ) AS chart_types,
-      layout -> 'type' AS layout_type,
-      layout -> 'layout' AS layout_subtype
-    FROM config
-    LEFT JOIN LATERAL jsonb_array_elements(data -> 'chartConfigs') AS chart_config_array ON true
-    LEFT JOIN LATERAL jsonb_array_elements(chart_config_array -> 'cubes') AS cubes_obj ON true
-    LEFT JOIN LATERAL (SELECT data -> 'chartConfig' AS chart_config_obj) AS single_config ON true
-    LEFT JOIN LATERAL (SELECT data -> 'layout' AS layout) AS layout ON true
-    GROUP BY day, data, chart_config_obj, layout, layout_subtype
+          jsonb_agg(chart_config_array ->> 'chartType') FILTER (WHERE chart_config_array ->> 'chartType' IS NOT NULL),
+          jsonb_build_array(chart_config_obj ->> 'chartType')
+        ) AS chart_types,
+        layout -> 'type' AS layout_type,
+        layout -> 'layout' AS layout_subtype
+      FROM config
+      LEFT JOIN LATERAL jsonb_array_elements(data -> 'chartConfigs') AS chart_config_array ON true
+      LEFT JOIN LATERAL jsonb_array_elements(chart_config_array -> 'cubes') AS cubes_obj ON true
+      LEFT JOIN LATERAL (SELECT data -> 'chartConfig' AS chart_config_obj) AS single_config ON true
+      LEFT JOIN LATERAL (SELECT data -> 'layout' AS layout) AS layout ON true
+      GROUP BY day, data, chart_config_obj, layout, layout_subtype
+    )
+    SELECT day, iris, chart_types, layout_type, layout_subtype
+    FROM filtered_data
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM jsonb_array_elements_text(iris) AS iri
+      WHERE NOT (iri LIKE 'http%://%')
+    );
   `.then((rows) => {
     return rows.map((row) => ({
       day: row.day,
