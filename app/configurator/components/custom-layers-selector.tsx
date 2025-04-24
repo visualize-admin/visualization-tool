@@ -84,7 +84,11 @@ export const CustomLayersSelector = () => {
   const endpoints = useMemo(() => {
     return uniq(customLayers.map((layer) => layer.endpoint)).filter(truthy);
   }, [customLayers]);
-  const { data: groupedLayers, error } = useWMTSorWMSLayers(endpoints);
+  const {
+    data: groupedLayers,
+    error,
+    status: layersStatus,
+  } = useWMTSorWMSLayers(endpoints);
   const { wms: wmsLayers, wmts: wmtsLayers } = groupedLayers ?? {
     wms: [],
     wmts: [],
@@ -224,25 +228,34 @@ export const CustomLayersSelector = () => {
           </Typography>
         )}
 
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="layers">
-            {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef}>
-                {customLayers.map((customLayer, i) => {
-                  return (
-                    <DraggableLayer
-                      key={`${customLayer.type}-${customLayer.id}`}
-                      configLayer={customLayer}
-                      layersById={layersById}
-                      index={i}
-                    />
-                  );
-                })}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+        {layersStatus === "success" ? (
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="layers">
+              {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef}>
+                  {customLayers.map((customLayer, i) => {
+                    return (
+                      <DraggableLayer
+                        key={`${customLayer.type}-${customLayer.id}`}
+                        configLayer={customLayer}
+                        layersById={layersById}
+                        index={i}
+                      />
+                    );
+                  })}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        ) : null}
+
+        {layersStatus === "fetching" ? (
+          <Box sx={{ width: "100%" }}>
+            <ControlSectionSkeleton />
+          </Box>
+        ) : null}
+
         <Box>
           <Button
             variant="contained"
