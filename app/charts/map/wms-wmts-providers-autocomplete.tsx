@@ -3,11 +3,11 @@ import { Alert, Autocomplete, TextField, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useMemo } from "react";
 
-import wmtsProvidersExtra_ from "@/charts/map/wmts-providers-extra.json";
-import wmtsProviders from "@/charts/map/wmts-providers.json";
+import wmsWmtsProvidersExtra_ from "@/charts/map/wms-wmts-providers-extra.json";
+import wmsWmtsProviders from "@/charts/map/wms-wmts-providers.json";
 import { useFlag } from "@/flags";
 
-const wmtsProvidersExtra = wmtsProvidersExtra_ as Record<
+const wmsWmtsProvidersExtra = wmsWmtsProvidersExtra_ as Record<
   string,
   { hidden?: boolean; note?: string }
 >;
@@ -44,12 +44,12 @@ const ProviderAutocomplete = ({
   onChange: (newValue: ProviderUrl | null) => void;
 }) => {
   const classes = useStyles();
-  const extraInfo = value ? wmtsProvidersExtra[value] : undefined;
+  const extraInfo = value ? wmsWmtsProvidersExtra[value] : undefined;
   const showExtraInfo = useFlag("wmts-show-extra-info");
   const options = useMemo(() => {
-    return wmtsProviders
+    return wmsWmtsProviders
       .filter((p) => {
-        return !wmtsProvidersExtra[p] || !wmtsProvidersExtra[p].hidden;
+        return !wmsWmtsProvidersExtra[p] || !wmsWmtsProvidersExtra[p].hidden;
       })
       .map((provider) => {
         const url = new URL(provider);

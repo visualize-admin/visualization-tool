@@ -19,7 +19,7 @@ import { useMapStyle } from "@/charts/map/get-base-layer-style";
 import { DeckGLOverlay } from "@/charts/map/helpers";
 import { CustomLayer } from "@/charts/map/types";
 import { getWMSTile } from "@/charts/map/wms-utils";
-import WMTSSelector from "@/charts/map/wmts-selector";
+import WMTSSelector from "@/charts/map/wms-wmts-selector";
 import { getWMTSTile } from "@/charts/map/wmts-utils";
 import { Icon } from "@/icons";
 import { LocaleProvider } from "@/locales";

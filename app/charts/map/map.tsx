@@ -31,8 +31,8 @@ import {
 import { MapState } from "@/charts/map/map-state";
 import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
 import { getMap, setMap } from "@/charts/map/ref";
-import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 import { DEFAULT_WMS_URL, getWMSTile } from "@/charts/map/wms-utils";
+import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
 import { DEFAULT_WMTS_URL, getWMTSTile } from "@/charts/map/wmts-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";

@@ -48,7 +48,7 @@
     "chromatic": "npx chromatic --build-script-name storybook:build -o app/public/storybook",
     "compare-screenshots": "npx tsx scripts/compare-screenshots.ts",
     "generate-json-schema": "tsx -r dotenv/config app/scripts/generate-json-schema.ts",
-    "wmts-providers:scrape": "curl https://raw.githubusercontent.com/geoadmin/web-mapviewer/refs/heads/develop/packages/mapviewer/src/modules/menu/components/advancedTools/ImportCatalogue/external-providers.json | prettier --parser json > ./app/charts/map/wmts-providers.json"
+    "wms-wmts-providers:scrape": "curl https://raw.githubusercontent.com/geoadmin/web-mapviewer/refs/heads/develop/packages/mapviewer/src/modules/menu/components/advancedTools/ImportCatalogue/external-providers.json | prettier --parser json > ./app/charts/map/wms-wmts-providers.json"
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2",

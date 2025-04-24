@@ -18,9 +18,9 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import createStore from "zustand";
 
 import { CustomLayer } from "@/charts/map/types";
-import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 import { ParsedWMSLayer } from "@/charts/map/wms-utils";
-import ProviderAutocomplete from "@/charts/map/wmts-providers-autocomplete";
+import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
+import ProviderAutocomplete from "@/charts/map/wms-wmts-providers-autocomplete";
 import { ParsedWMTSLayer } from "@/charts/map/wmts-utils";
 import { HintRed, Spinner } from "@/components/hint";
 import { Tree, useSelectTree } from "@/components/select-tree";

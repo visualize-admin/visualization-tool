@@ -16,9 +16,9 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 
-import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
 import { ParsedWMSLayer } from "@/charts/map/wms-utils";
-import WMTSSelector from "@/charts/map/wmts-selector";
+import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
+import WMTSSelector from "@/charts/map/wms-wmts-selector";
 import { ParsedWMTSLayer } from "@/charts/map/wmts-utils";
 import { Switch } from "@/components/form";
 import { MoveDragButton } from "@/components/move-drag-button";
