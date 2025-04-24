@@ -22,7 +22,7 @@ it("should persist chart configs as is", () => {
         },
         description: {
           de: "",
-          en: "",
+          en: "Very long description with equal sign (=) and new\n\nlines\n\n!",
           fr: "",
           it: "",
         },
