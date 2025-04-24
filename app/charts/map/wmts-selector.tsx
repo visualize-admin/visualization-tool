@@ -107,12 +107,12 @@ const LegendButton = ({
       <IconButton
         data-value={layer.path}
         size="small"
-        onClick={(ev) =>
-          setShowLegend({
+        onClick={(ev) => {
+          return setShowLegend({
             value: layer.path,
             element: ev.currentTarget,
-          })
-        }
+          });
+        }}
       >
         <SvgIcInfoCircle />
       </IconButton>
@@ -170,17 +170,20 @@ const TreeRow = ({
   }, [layer, onCheck]);
 
   return (
-    <div className={className} onClick={handleChangeCheckbox}>
+    <div className={className}>
       {layer.id ? (
         <Checkbox
           inputProps={{
             // @ts-ignore
             "data-value": value,
           }}
+          onClick={handleChangeCheckbox}
           checked={checked}
         />
       ) : null}
-      <div className={labelClassName}>{label}</div>
+      <div className={labelClassName} onClick={handleChangeCheckbox}>
+        {label}
+      </div>
       {layer && layer.legendUrl ? <LegendButton layer={layer} /> : null}
     </div>
   );
