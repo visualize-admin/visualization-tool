@@ -504,7 +504,8 @@ const useModifyNode = (configKey?: string) => {
   );
 };
 
-const DISABLE_SCREENSHOT_COLOR_WIPE_KEY = "data-disable-screenshot-color";
+export const DISABLE_SCREENSHOT_COLOR_WIPE_KEY =
+  "data-disable-screenshot-color";
 export const DISABLE_SCREENSHOT_COLOR_WIPE_ATTR = {
   [DISABLE_SCREENSHOT_COLOR_WIPE_KEY]: true,
 };

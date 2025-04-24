@@ -4,6 +4,7 @@ import {
   maybeTransition,
   RenderOptions,
 } from "@/charts/shared/rendering-utils";
+import { DISABLE_SCREENSHOT_COLOR_WIPE_KEY } from "@/components/chart-shared";
 
 export type RenderTotalValueLabelDatum = {
   key: string;
@@ -116,12 +117,13 @@ const getValueLabelTextAnchor = (rotate: boolean) => {
   return rotate ? "start" : "middle";
 };
 
-export const setSegmentValueLabelStyles = <
+export const setSegmentValueLabelProps = <
   T extends { valueLabel?: string; valueLabelColor?: string },
 >(
   g: Selection<BaseType, T, SVGGElement, null>
 ) => {
   return g
+    .attr(DISABLE_SCREENSHOT_COLOR_WIPE_KEY, true)
     .style("overflow", "hidden")
     .style("width", "100%")
     .style("margin", 0)
