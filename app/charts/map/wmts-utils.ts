@@ -54,7 +54,7 @@ type WMTSLayer = {
 export type ParsedWMTSLayer = {
   id: string;
   // Path is there to mirror WMS layer, but
-  // not sure this is be necessary
+  // not sure this is necessary since I haven't seen nested layers
   path: string;
   url: string;
   title: string;
