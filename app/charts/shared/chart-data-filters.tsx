@@ -441,6 +441,7 @@ export const DataFilterGenericDimension = (
   return (
     <Select
       id="dataFilterBaseDimension"
+      size="sm"
       label={
         <FieldLabel
           label={

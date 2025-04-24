@@ -367,7 +367,15 @@ const LinkEditForm = ({
       <form
         className={classes.form}
         onSubmit={(e) => {
-          void handleSubmit(onSubmit)(e);
+          void handleSubmit(({ url, text }) => {
+            url = url.trim();
+            if (!/^https?:\/\//i.test(url)) {
+              url = "https://" + url;
+            }
+
+            onSubmit({ url, text });
+          })(e);
+
           e.stopPropagation();
           e.preventDefault();
         }}
@@ -391,12 +399,16 @@ const LinkEditForm = ({
           id="link-url"
           className={classes.input}
           size="sm"
-          type="url"
-          {...register("url")}
+          type="text"
           placeholder={t({
             id: "mdx-editor.link-dialog.url-placeholder",
             message: "URL...",
           })}
+          inputProps={{
+            pattern: "https?://.*|www\\..*",
+            title: "Enter a valid URL starting with https:// or www.",
+          }}
+          {...register("url")}
         />
         <div className={classes.buttonGroup}>
           <Button type="reset" variant="outlined">

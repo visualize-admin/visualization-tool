@@ -18,6 +18,8 @@ You can also check the
   - Dimension unit labels are now fetched not only in English language, but
     others too – and we fall back to a regular string in case the label is not
     localized
+  - It's now possible to enter www links in text blocks link elements, instead
+    of having to always use https://
 - Fixes
   - Color palette can be changed again
   - Combo charts tooltips now work correctly again
