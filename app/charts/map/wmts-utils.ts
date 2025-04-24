@@ -162,7 +162,7 @@ export const getWMTSTile = ({
     beforeId,
     data: getWMTSLayerData(customLayer.url, {
       // TODO, Understand the implications of the empty string here
-      identifier: wmtsLayer.dimensionIdentifier ?? "",
+      identifier: wmtsLayer.dimensionIdentifier,
       value: getWMTSLayerValue({
         availableDimensionValues: wmtsLayer.availableDimensionValues ?? [],
         defaultDimensionValue: wmtsLayer.defaultDimensionValue,
@@ -193,10 +193,15 @@ const isValidWMTSLayerUrl = (url: string) => {
 
 const getWMTSLayerData = (
   url: string,
-  { identifier, value }: { identifier: string; value: string | number }
+  {
+    identifier,
+    value,
+  }: { identifier: string | undefined; value: string | number }
 ) => {
-  return url
-    .replace(`{${identifier}}`, `${value}`)
+  const identifierReplaced = identifier
+    ? url.replace(`{${identifier}}`, `${value}`)
+    : url;
+  return identifierReplaced
     .replace("{TileMatrix}", "{z}")
     .replace("{TileCol}", "{x}")
     .replace("{TileRow}", "{y}");
