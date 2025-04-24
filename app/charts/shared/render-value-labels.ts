@@ -123,6 +123,7 @@ export const setSegmentValueLabelStyles = <
 ) => {
   return g
     .style("overflow", "hidden")
+    .style("width", "100%")
     .style("margin", 0)
     .style("text-align", "center")
     .style("font-size", "12px")

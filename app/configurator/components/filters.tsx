@@ -445,7 +445,7 @@ const MultiFilterContent = ({
         <Divider sx={{ mt: 4 }} />
       </Box>
       {enableSettingShowValuesBySegment ? (
-        <Flex justifyContent="flex-end" gap={2}>
+        <Flex gap={2} alignItems="center" sx={{ color: "primary.main" }}>
           <Button
             variant="text"
             color="blue"
@@ -467,6 +467,7 @@ const MultiFilterContent = ({
           >
             <Trans id="controls.filter.show-values.all">Show all values</Trans>
           </Button>
+          •
           <Button
             variant="text"
             color="blue"
