@@ -18,6 +18,7 @@ You can also check the
   - Dimension unit labels are now fetched not only in English language, but
     others too – and we fall back to a regular string in case the label is not
     localized
+  - Value labels in segmented bar charts are now centered horizontally
 - Fixes
   - Color palette can be changed again
   - Combo charts tooltips now work correctly again
