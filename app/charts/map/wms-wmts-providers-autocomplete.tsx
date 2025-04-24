@@ -1,8 +1,9 @@
 import { t } from "@lingui/macro";
-import { Alert, Autocomplete, TextField, Theme } from "@mui/material";
+import { Alert, Autocomplete, Chip, TextField, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useMemo } from "react";
 
+import { guessUrlType } from "@/charts/map/wms-wmts-endpoint-utils";
 import wmsWmtsProvidersExtra_ from "@/charts/map/wms-wmts-providers-extra.json";
 import wmsWmtsProviders from "@/charts/map/wms-wmts-providers.json";
 import { useFlag } from "@/flags";
@@ -28,13 +29,25 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
   paper: {
     minHeight: 300,
+    width: 500,
   },
   input: {
     "&&": {
       fontSize: theme.typography.body2.fontSize,
     },
   },
+  chip: {
+    marginRight: theme.spacing(1),
+    marginLeft: theme.spacing(-2),
+    fontSize: "0.75rem",
+    color: theme.palette.text.secondary,
+    backgroundColor: theme.palette.background.paper,
+  },
 }));
+
+const inferUrlGroup = (host: string) => {
+  return host.split(".").slice(-2).join(".");
+};
 
 const ProviderAutocomplete = ({
   value,
@@ -53,10 +66,14 @@ const ProviderAutocomplete = ({
       })
       .map((provider) => {
         const url = new URL(provider);
+        const group = inferUrlGroup(url.host);
         return {
           url: url,
           host: url.host,
+          label: url.href.replace(`${url.protocol}//`, ""),
+          group: group,
           value: provider,
+          type: guessUrlType(provider),
         };
       });
   }, []);
@@ -66,9 +83,23 @@ const ProviderAutocomplete = ({
         options={options}
         value={value}
         freeSolo
-        groupBy={(option) => option.host}
+        groupBy={(option) => option.group}
+        open
+        // @ts-ignore
         getOptionLabel={(option) =>
-          typeof option === "string" ? option : option.value
+          typeof option === "string" ? (
+            option
+          ) : (
+            <>
+              <Chip
+                size="small"
+                label={option.type}
+                variant="outlined"
+                className={classes.chip}
+              />
+              {option.label}
+            </>
+          )
         }
         onChange={(_ev, newValue) =>
           onChange(

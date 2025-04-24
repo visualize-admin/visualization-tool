@@ -18,7 +18,7 @@ import { useFetchData } from "@/utils/use-fetch-data";
  * @param {string} url
  * @returns {boolean}
  */
-function isWmsUrl(url: string) {
+export function isWmsUrl(url: string) {
   return /(wms|map=|\.map)/i.test(url);
 }
 
@@ -28,9 +28,20 @@ function isWmsUrl(url: string) {
  * @param {string} urlreturn SetWmsUrlParameters(new URL(provider), language)
  * @returns {boolean}
  */
-function isWmtsUrl(url: string) {
+export function isWmtsUrl(url: string) {
   return /wmts/i.test(url);
 }
+
+export const guessUrlType = (url: string) => {
+  if (isWmtsUrl(url)) {
+    return "wmts";
+  }
+  if (isWmsUrl(url)) {
+    return "wms";
+  }
+  // Default must be coherent with the default in guessExternalLayerUrl
+  return "wms";
+};
 
 /**
  * Guess the provider URL type and return URL with correct parameters if needed
