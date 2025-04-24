@@ -17,6 +17,7 @@ import {
   TextFieldProps,
   Theme,
   Typography,
+  useControlled,
   useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -247,6 +248,10 @@ export type SelectTreeProps = {
   onClose?: () => void;
   open?: boolean;
   id?: string;
+
+  // Controlled input value
+  inputValue?: string;
+  onChangeInputValue?: (value: string) => void;
 };
 
 const getFilteredOptions = (options: Tree, value: string) => {
@@ -268,8 +273,23 @@ const getFilteredOptions = (options: Tree, value: string) => {
 export const useSelectTree = ({
   value,
   options,
-}: Pick<SelectTreeProps, "value" | "options">) => {
-  const [inputValue, setInputValue] = useState("");
+  inputValue: controlledInputValue,
+  onChangeInputValue,
+}: Pick<
+  SelectTreeProps,
+  "value" | "options" | "inputValue" | "onChangeInputValue"
+>) => {
+  const [inputValue, setInputValue_] = useControlled({
+    name: "SelectTree",
+    state: "inputValue",
+    controlled: controlledInputValue,
+    default: "",
+  });
+
+  const setInputValue = useEvent((value: string) => {
+    setInputValue_(value);
+    onChangeInputValue?.(value);
+  });
 
   const optionsRef = useRef(options);
   const [filteredOptions_, setFilteredOptions] = useState<Tree>([]);

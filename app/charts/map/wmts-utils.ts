@@ -54,7 +54,7 @@ type WMTSLayer = {
 export type ParsedWMTSLayer = {
   id: string;
   // Path is there to mirror WMS layer, but
-  // not sure this is be necessary
+  // not sure this is necessary since I haven't seen nested layers
   path: string;
   url: string;
   title: string;
@@ -108,6 +108,13 @@ const parseWMTSLayer = (
   return res;
 };
 
+const mapArrayOrUnique = <T, I>(arr: T | T[], cb: (item: T) => I): I[] => {
+  if (Array.isArray(arr)) {
+    return arr.map(cb);
+  }
+  return [cb(arr)];
+};
+
 export const parseWMTSContent = (content: string, endpoint: string) => {
   const parser = new XMLParser({
     ignoreAttributes: false,
@@ -117,11 +124,11 @@ export const parseWMTSContent = (content: string, endpoint: string) => {
   const parsed = parser.parse(content) as WMTSData;
   const attributes = {
     endpoint,
-    attribution: parsed.Capabilities["ows:ServiceProvider"]["ows:ProviderName"],
+    attribution:
+      parsed.Capabilities["ows:ServiceProvider"]?.["ows:ProviderName"],
   };
-  return parsed.Capabilities.Contents.Layer.map((l) =>
-    parseWMTSLayer(l, attributes)
-  );
+  const Layer = parsed.Capabilities.Contents.Layer;
+  return mapArrayOrUnique(Layer, (l) => parseWMTSLayer(l, attributes));
 };
 
 export const DEFAULT_WMTS_URL =
@@ -155,7 +162,7 @@ export const getWMTSTile = ({
     beforeId,
     data: getWMTSLayerData(customLayer.url, {
       // TODO, Understand the implications of the empty string here
-      identifier: wmtsLayer.dimensionIdentifier ?? "",
+      identifier: wmtsLayer.dimensionIdentifier,
       value: getWMTSLayerValue({
         availableDimensionValues: wmtsLayer.availableDimensionValues ?? [],
         defaultDimensionValue: wmtsLayer.defaultDimensionValue,
@@ -186,10 +193,15 @@ const isValidWMTSLayerUrl = (url: string) => {
 
 const getWMTSLayerData = (
   url: string,
-  { identifier, value }: { identifier: string; value: string | number }
+  {
+    identifier,
+    value,
+  }: { identifier: string | undefined; value: string | number }
 ) => {
-  return url
-    .replace(`{${identifier}}`, `${value}`)
+  const identifierReplaced = identifier
+    ? url.replace(`{${identifier}}`, `${value}`)
+    : url;
+  return identifierReplaced
     .replace("{TileMatrix}", "{z}")
     .replace("{TileCol}", "{x}")
     .replace("{TileRow}", "{y}");

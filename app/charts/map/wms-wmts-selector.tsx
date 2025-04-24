@@ -1,63 +1,34 @@
-import { supported } from "@mapbox/mapbox-gl-supported";
+import { t, Trans } from "@lingui/macro";
 import { TreeItem, TreeView } from "@mui/lab";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
   Checkbox,
   Collapse,
   IconButton,
   Input,
-  List,
-  ListItem,
   Popover,
   Theme,
   Typography,
-  useTheme,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
-import maplibreglRaw from "maplibre-gl";
 import React from "react";
-import {
-  HTMLProps,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import Map, { useMap } from "react-map-gl";
+import { useCallback, useMemo, useRef, useState } from "react";
+import createStore from "zustand";
 
-import { useMapStyle } from "@/charts/map/get-base-layer-style";
-import { DeckGLOverlay } from "@/charts/map/helpers";
-import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
-import {
-  DEFAULT_WMS_URL,
-  getWMSTile,
-  ParsedWMSLayer,
-} from "@/charts/map/wms-utils";
-import ProviderAutocomplete from "@/charts/map/wmts-providers-autocomplete";
-import {
-  DEFAULT_WMTS_URL,
-  getWMTSTile,
-  ParsedWMTSLayer,
-} from "@/charts/map/wmts-utils";
+import { CustomLayer } from "@/charts/map/types";
+import { ParsedWMSLayer } from "@/charts/map/wms-utils";
+import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
+import ProviderAutocomplete from "@/charts/map/wms-wmts-providers-autocomplete";
+import { ParsedWMTSLayer } from "@/charts/map/wmts-utils";
 import { HintRed, Spinner } from "@/components/hint";
 import { Tree, useSelectTree } from "@/components/select-tree";
 import { Icon } from "@/icons";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
-import SvgIcZoomIn from "@/icons/components/IcZoomIn";
-import { LocaleProvider } from "@/locales";
 import { mapTree, visitHierarchy } from "@/rdf/tree-utils";
-import "maplibre-gl/dist/maplibre-gl.css";
-import useEvent from "@/utils/use-event";
-import useLocalState from "@/utils/use-local-state";
-
-const maplibregl = { ...maplibreglRaw, supported };
 
 const useTreeItemStyles = makeStyles({
   // Necessary to use $content below
@@ -85,6 +56,15 @@ const useTreeItemStyles = makeStyles({
   },
   iconContainer: {
     opacity: 0.5,
+
+    "&:empty": {
+      display: "none",
+    },
+  },
+  label: {
+    "&&": {
+      padding: "0.25rem",
+    },
   },
   group: {
     // The padding is done on the content inside the row for the hover
@@ -99,12 +79,14 @@ const useStyles = makeStyles<Theme>((theme) => ({
     gap: "0.5rem",
     fontSize: theme.typography.body2.fontSize,
     width: "100%",
+    alignItems: "center",
   },
   label: {
     flexGrow: 1,
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
+    lineHeight: "1.5rem",
   },
 }));
 
@@ -125,12 +107,12 @@ const LegendButton = ({
       <IconButton
         data-value={layer.path}
         size="small"
-        onClick={(ev) =>
-          setShowLegend({
+        onClick={(ev) => {
+          return setShowLegend({
             value: layer.path,
             element: ev.currentTarget,
-          })
-        }
+          });
+        }}
       >
         <SvgIcInfoCircle />
       </IconButton>
@@ -142,8 +124,7 @@ const LegendButton = ({
       >
         <Box sx={{ p: 2, position: "relative", width: 300 }}>
           <Typography variant="h5" gutterBottom>
-            {/* TODO i18n */}
-            Legend
+            <Trans id="wmts.legend-title">Legend</Trans>
           </Typography>
           <IconButton
             sx={{ position: "absolute", top: "0.25rem", right: "0.25rem" }}
@@ -162,8 +143,6 @@ const LegendButton = ({
   );
 };
 
-type CustomLayer = ParsedWMSLayer | ParsedWMTSLayer;
-
 const TreeRow = ({
   layer,
   className,
@@ -173,7 +152,7 @@ const TreeRow = ({
   initialChecked,
   onCheck,
 }: {
-  layer: ParsedWMSLayer | ParsedWMTSLayer;
+  layer: CustomLayer;
   className?: string;
   labelClassName?: string;
   label: string;
@@ -190,42 +169,58 @@ const TreeRow = ({
     });
   }, [layer, onCheck]);
 
-  const handleClickZoom: HTMLProps<HTMLButtonElement>["onClick"] =
-    useCallback(() => {
-      console.log("Clicked zoom for layer", layer);
-    }, [layer]);
-
   return (
-    <Box className={className} onClick={handleChangeCheckbox}>
-      <Checkbox
-        inputProps={{
-          // @ts-ignore
-          "data-value": value,
-        }}
-        checked={checked}
-      />
-      <span className={labelClassName}>{label}</span>
-      <IconButton size="small" onClick={handleClickZoom} data-value={value}>
-        <SvgIcZoomIn />
-      </IconButton>
+    <div className={className}>
+      {layer.id ? (
+        <Checkbox
+          inputProps={{
+            // @ts-ignore
+            "data-value": value,
+          }}
+          onClick={handleChangeCheckbox}
+          checked={checked}
+        />
+      ) : null}
+      <div className={labelClassName} onClick={handleChangeCheckbox}>
+        {label}
+      </div>
       {layer && layer.legendUrl ? <LegendButton layer={layer} /> : null}
-    </Box>
+    </div>
   );
 };
 
+// Zustand store for persistence across open/close
+const useInputValueStore = createStore<{
+  inputValue: string;
+  setInputValue: (inputValue: string) => void;
+  provider: string | null;
+  setProvider: (provider: string | null) => void;
+}>((set) => ({
+  inputValue: "",
+  setInputValue: (inputValue: string) => {
+    set({ inputValue });
+  },
+  provider: null,
+  setProvider: (provider: string | null) => {
+    set({ provider });
+  },
+}));
+
 const WMTSSelector = ({
   onLayerCheck,
+  selected,
 }: {
   onLayerCheck: (layer: CustomLayer, checked: boolean) => void;
+  selected: string[];
 }) => {
   const treeItemClasses = useTreeItemStyles();
 
   const classes = useStyles();
-  const [provider, setProvider] = useState<string | null>(null);
-  const endpoints = useMemo(
-    () => (provider ? [provider] : [DEFAULT_WMTS_URL, DEFAULT_WMS_URL]),
-    [provider]
-  );
+
+  const { provider, setProvider, inputValue, setInputValue } =
+    useInputValueStore();
+
+  const endpoints = useMemo(() => (provider ? [provider] : []), [provider]);
 
   const { data: groupedLayers, error, status } = useWMTSorWMSLayers(endpoints);
   const { wms: wmsLayers, wmts: wmtsLayers } = useMemo(() => {
@@ -238,8 +233,7 @@ const WMTSSelector = ({
   }, [groupedLayers]);
 
   const allLayers = useMemo(
-    // TODO FInd out why there are duplicate ids
-    () => uniqBy([...wmsLayers, ...wmtsLayers], (x) => x.id),
+    () => uniqBy([...wmsLayers, ...wmtsLayers], (x) => x.path),
     [wmsLayers, wmtsLayers]
   );
 
@@ -254,6 +248,10 @@ const WMTSSelector = ({
     return res;
   }, [allLayers]);
 
+  const selectedSet = useMemo(() => {
+    return new Set(selected);
+  }, [selected]);
+
   const options = useMemo(() => {
     return mapTree(allLayers, ({ children, ...x }) => ({
       ...x,
@@ -267,8 +265,7 @@ const WMTSSelector = ({
   }, [allLayers]);
 
   const {
-    inputValue,
-    filteredOptions,
+    filteredOptions: unsortedFilteredOptions,
     expanded,
     handleInputChange,
     handleNodeToggle,
@@ -277,7 +274,19 @@ const WMTSSelector = ({
   } = useSelectTree({
     value: "",
     options,
+    inputValue,
+    onChangeInputValue: setInputValue,
   });
+
+  const filteredOptions = useMemo(() => {
+    return mapTree(
+      sortBy(unsortedFilteredOptions, (x) => x.label),
+      (x) => ({
+        ...x,
+        children: sortBy(x.children, (y) => y.label),
+      })
+    );
+  }, [unsortedFilteredOptions]);
 
   const renderTreeContent = useCallback(
     (nodesData: Tree) => {
@@ -299,6 +308,7 @@ const WMTSSelector = ({
                     label={label}
                     value={value}
                     onCheck={onLayerCheck}
+                    initialChecked={selectedSet.has(layersByPath[value].id)}
                   />
                 }
                 expandIcon={
@@ -319,7 +329,15 @@ const WMTSSelector = ({
         </>
       );
     },
-    [defaultExpanded, classes, layersByPath, onLayerCheck, treeItemClasses]
+    [
+      treeItemClasses,
+      defaultExpanded,
+      classes.treeRow,
+      classes.label,
+      layersByPath,
+      onLayerCheck,
+      selectedSet,
+    ]
   );
 
   const treeRef = useRef();
@@ -328,9 +346,8 @@ const WMTSSelector = ({
   return (
     <Box
       sx={{
-        width: 375,
+        width: "100%",
         maxWidth: "100%",
-        height: "80vh",
         overflow: "hidden",
       }}
       display="flex"
@@ -343,30 +360,34 @@ const WMTSSelector = ({
         onChange={(newValue) => setProvider(newValue)}
       />
 
-      <Input
-        size="sm"
-        value={inputValue}
-        autoFocus
-        startAdornment={<Icon name="search" size={18} />}
-        // TODO i18n
-        placeholder="Search custom layers"
-        endAdornment={
-          inputValue.length > 0 ? (
-            <IconButton size="small" onClick={handleClickResetInput}>
-              <Icon name="close" size={16} />
-            </IconButton>
-          ) : null
-        }
-        onChange={handleInputChange}
-        sx={{
-          px: 2,
-          py: 1,
+      {provider && (
+        <Input
+          size="sm"
+          value={inputValue}
+          autoFocus
+          startAdornment={<Icon name="search" size={18} />}
+          placeholder={t({
+            id: "wmts.search-placeholder",
+            message: "Search custom layers",
+          })}
+          endAdornment={
+            inputValue.length > 0 ? (
+              <IconButton size="small" onClick={handleClickResetInput}>
+                <Icon name="close" size={16} />
+              </IconButton>
+            ) : null
+          }
+          onChange={handleInputChange}
+          sx={{
+            px: 2,
+            py: 1,
 
-          "& .MuiInput-input": {
-            px: 1,
-          },
-        }}
-      />
+            "& .MuiInput-input": {
+              px: 1,
+            },
+          }}
+        />
+      )}
 
       {status === "fetching" ? (
         <Box textAlign="center" p={2}>
@@ -377,7 +398,6 @@ const WMTSSelector = ({
       <TreeView
         sx={{ flexGrow: 1, overflow: "auto" }}
         ref={treeRef}
-        defaultSelected={undefined}
         expanded={expanded}
         onNodeToggle={handleNodeToggle}
         onNodeSelect={handleNodeSelect}
@@ -388,126 +408,4 @@ const WMTSSelector = ({
   );
 };
 
-/**
- * Could not use the CustomAttribute from maplibre gl, it was not updating properly
- */
-const CustomAttribution = ({ attribution }: { attribution: string }) => {
-  const mapRef = useMap();
-  const theme = useTheme();
-  useEffect(() => {
-    const map = mapRef.current as maplibregl.Map | undefined;
-    if (!map || !attribution) {
-      return;
-    }
-    const control = new maplibregl.AttributionControl({
-      // className was not working (?), so style is used. To revisit later if needed.
-      customAttribution: `<span style="color: ${theme.palette.error.main}">${attribution}</span>`,
-    });
-    // As of now, we cannot "update" the control, we need to add it and remove it
-    map.addControl(control, "bottom-right");
-    return () => {
-      map.removeControl(control);
-    };
-  }, [attribution, mapRef, theme]);
-  return null;
-};
-
-const WMTSPlayground = () => {
-  const [layers, setLayers] = useLocalState(
-    "storybook-wmts-playground",
-    [] as CustomLayer[]
-  );
-  const onLayerCheck = useEvent((layer: CustomLayer, checked: boolean) => {
-    setLayers((layers) =>
-      checked ? [...layers, layer] : layers.filter((l) => l != layer)
-    );
-  });
-
-  const mapStyle = useMapStyle({
-    locale: "en",
-    showBaseLayer: true,
-    showLabels: true,
-  });
-
-  const deckglLayers = useMemo(() => {
-    return layers.map((x) => {
-      return x.type === "wms"
-        ? getWMSTile({ wmsLayers: [x], customLayer: x })
-        : getWMTSTile({ wmtsLayers: [x], customLayer: x });
-    });
-  }, [layers]);
-
-  const attribution = useMemo(() => {
-    return Array.from(new Set(layers.map((x) => x.attribution))).join(", ");
-  }, [layers]);
-
-  return (
-    <LocaleProvider value="en">
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "500px 1fr",
-          border: "1px solid",
-          borderColor: "cobalt.500",
-        }}
-      >
-        <Box sx={{ p: "0.5rem" }}>
-          <WMTSSelector onLayerCheck={onLayerCheck} />
-          <Accordion defaultExpanded>
-            <AccordionSummary>Added Layers</AccordionSummary>
-            <AccordionDetails>
-              <List>
-                {layers.map((x) => {
-                  return (
-                    <ListItem
-                      key={x.id}
-                      secondaryAction={
-                        <IconButton
-                          edge="end"
-                          aria-label="delete"
-                          onClick={() =>
-                            setLayers((layers) => layers.filter((y) => x !== y))
-                          }
-                        >
-                          <Icon name="trash" />
-                        </IconButton>
-                      }
-                    >
-                      <Typography variant="body2">{x.title}</Typography>
-                    </ListItem>
-                  );
-                })}
-              </List>
-            </AccordionDetails>
-          </Accordion>
-        </Box>
-        <Box sx={{ position: "relative" }}>
-          <Map
-            mapLib={maplibregl}
-            mapStyle={mapStyle}
-            // Important so we can take a screenshot of the map
-            preserveDrawingBuffer
-            style={{
-              position: "absolute",
-              left: 0,
-              top: 0,
-              width: "100%",
-              height: "100%",
-            }}
-            dragPan
-            scrollZoom
-            doubleClickZoom
-            dragRotate={false}
-            touchZoomRotate
-            attributionControl={false}
-          >
-            <DeckGLOverlay layers={deckglLayers} />
-            <CustomAttribution attribution={attribution} />
-          </Map>
-        </Box>
-      </Box>
-    </LocaleProvider>
-  );
-};
-
-export default WMTSPlayground;
+export default WMTSSelector;

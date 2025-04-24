@@ -1,13 +1,14 @@
 import { t, Trans } from "@lingui/macro";
 import {
-  Autocomplete,
   Box,
-  MenuItem,
-  TextField,
+  Button,
+  DrawerProps,
+  IconButton,
   Typography,
   useEventCallback,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import uniq from "lodash/uniq";
+import { ReactNode, useMemo, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -15,10 +16,11 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 
-import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
-import { DEFAULT_WMS_URL, ParsedWMSLayer } from "@/charts/map/wms-utils";
-import { DEFAULT_WMTS_URL, ParsedWMTSLayer } from "@/charts/map/wmts-utils";
-import { Select, SelectOption, Switch } from "@/components/form";
+import { ParsedWMSLayer } from "@/charts/map/wms-utils";
+import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
+import WMTSSelector from "@/charts/map/wms-wmts-selector";
+import { ParsedWMTSLayer } from "@/charts/map/wmts-utils";
+import { Switch } from "@/components/form";
 import { MoveDragButton } from "@/components/move-drag-button";
 import { MapConfig, WMSCustomLayer, WMTSCustomLayer } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
@@ -27,30 +29,60 @@ import {
   ControlSectionContent,
   ControlSectionSkeleton,
   SectionTitle,
+  useSectionTitleStyles,
 } from "@/configurator/components/chart-controls/section";
+import { ConfiguratorDrawer } from "@/configurator/components/drawers";
 import {
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
-import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { truthy } from "@/domain/types";
+import { Icon } from "@/icons";
+
+const LeftDrawer = ({
+  children,
+  open,
+  onClose,
+  onExited,
+}: {
+  children: ReactNode;
+  open?: DrawerProps["open"];
+  onClose?: DrawerProps["onClose"];
+  onExited?: () => void;
+}) => {
+  return (
+    <ConfiguratorDrawer
+      anchor="left"
+      open={open}
+      variant="temporary"
+      onClose={onClose}
+      SlideProps={{
+        onExited: onExited,
+      }}
+      hideBackdrop
+    >
+      {children}
+    </ConfiguratorDrawer>
+  );
+};
 
 export const CustomLayersSelector = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state) as MapConfig;
   const customLayers = chartConfig.baseLayer.customLayers;
-  const [wmtsEndpoint] = useState(DEFAULT_WMTS_URL);
-  const [wmsEndpoint] = useState(DEFAULT_WMS_URL);
-  const { data: groupedLayers, error } = useWMTSorWMSLayers([
-    wmsEndpoint,
-    wmtsEndpoint,
-  ]);
+  const endpoints = useMemo(() => {
+    return uniq(customLayers.map((layer) => layer.endpoint)).filter(truthy);
+  }, [customLayers]);
+  const {
+    data: groupedLayers,
+    error,
+    status: layersStatus,
+  } = useWMTSorWMSLayers(endpoints);
   const { wms: wmsLayers, wmts: wmtsLayers } = groupedLayers ?? {
     wms: [],
     wmts: [],
   };
-  const options = useMemo(() => {
-    return getCustomLayerOptions({ wmsLayers, wmtsLayers });
-  }, [wmsLayers, wmtsLayers]);
+
   const handleDragEnd: OnDragEndResponder = useEventCallback((e) => {
     const oldIndex = e.source.index;
     const newIndex = e.destination?.index;
@@ -68,6 +100,87 @@ export const CustomLayersSelector = () => {
     });
   });
 
+  const handleCheckLayer = (
+    layer: ParsedWMSLayer | ParsedWMTSLayer | null,
+    checked: boolean
+  ) => {
+    const valueType = layer?.type;
+
+    if (!valueType) {
+      return;
+    }
+
+    if (!checked) {
+      dispatch({
+        type: "CUSTOM_LAYER_REMOVE",
+        value: {
+          type: valueType,
+          id: layer.id,
+        },
+      });
+      return;
+    } else {
+      switch (valueType) {
+        case "wms":
+          dispatch({
+            type: "CUSTOM_LAYER_ADD",
+            value: {
+              layer: {
+                type: "wms",
+                id: layer.id,
+                isBehindAreaLayer: false,
+                syncTemporalFilters: false,
+                endpoint: layer.endpoint,
+              },
+            },
+          });
+          break;
+        case "wmts":
+          dispatch({
+            type: "CUSTOM_LAYER_ADD",
+            value: {
+              layer: {
+                type: "wmts",
+                id: layer.id,
+                url: layer.url,
+                isBehindAreaLayer: false,
+                syncTemporalFilters: false,
+                endpoint: layer.endpoint,
+              },
+            },
+          });
+          break;
+        default:
+          const _exhaustiveCheck: never = valueType;
+          return _exhaustiveCheck;
+      }
+    }
+  };
+
+  const [addingLayer, setAddingLayer] = useState(false);
+  const getParsedLayer = useMemo(() => {
+    const getKey = ({
+      type,
+      id,
+    }: WMTSCustomLayer | WMSCustomLayer | ParsedWMSLayer | ParsedWMTSLayer) => {
+      return `${type}-${id}`;
+    };
+    const layersByKey: Record<string, ParsedWMSLayer | ParsedWMTSLayer> = {};
+    wmsLayers?.forEach((layer) => {
+      layersByKey[getKey(layer)] = layer;
+    });
+    wmtsLayers?.forEach((layer) => {
+      layersByKey[getKey(layer)] = layer;
+    });
+    return (configLayer: WMTSCustomLayer | WMSCustomLayer) => {
+      const key = getKey(configLayer);
+      return layersByKey[key];
+    };
+  }, [wmsLayers, wmtsLayers]);
+  const sectionTitleClasses = useSectionTitleStyles({
+    sectionOpen: true,
+    interactive: true,
+  });
   return error ? (
     <Typography mx={2} color="error">
       {error.message}
@@ -79,202 +192,118 @@ export const CustomLayersSelector = () => {
       <SectionTitle>
         <Trans id="chart.map.layers.custom-layers">Custom Layers</Trans>
       </SectionTitle>
+      <LeftDrawer open={addingLayer} onClose={() => setAddingLayer(false)}>
+        <div>
+          <div
+            className={sectionTitleClasses.root}
+            onClick={() => setAddingLayer(false)}
+          >
+            <Typography variant="h6" className={sectionTitleClasses.text}>
+              <Icon name="chevronLeft" />
+              <Trans id="wmts.custom-layer.section-title">
+                Add custom layer
+              </Trans>
+            </Typography>
+          </div>
+        </div>
+        <Box px={4}>
+          {addingLayer ? (
+            <WMTSSelector
+              onLayerCheck={(x, checked) => {
+                return handleCheckLayer(x, checked);
+              }}
+              selected={customLayers.map((layer) => {
+                return layer.id;
+              })}
+            />
+          ) : null}
+        </Box>
+      </LeftDrawer>
       <ControlSectionContent gap="large">
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="layers">
-            {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef}>
-                {customLayers.map((customLayer, i) => {
-                  return (
-                    <DraggableLayer
-                      key={`${customLayer.type}-${customLayer.id}`}
-                      customLayer={customLayer}
-                      options={options}
-                      index={i}
-                    />
-                  );
-                })}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-        <Autocomplete
-          key={customLayers.length}
-          options={options.filter(
-            (option) =>
-              !option.isNoneValue &&
-              !customLayers.some(
-                (layer) =>
-                  layer.type === option.type && layer.id === option.value
-              )
-          )}
-          getOptionLabel={(option) => option.label}
-          groupBy={(option) => option.type?.toUpperCase() ?? ""}
-          renderInput={(params) => {
-            return (
-              <TextField
-                {...params}
-                label={t({
-                  id: "chart.map.layers.base.add-layer",
-                  message: "Add layer",
-                })}
-              />
-            );
-          }}
-          renderOption={(props, option) => (
-            <MenuItem {...props} key={option.value}>
-              <Typography>{option.label}</Typography>
-            </MenuItem>
-          )}
-          onChange={(_, value) => {
-            const valueType = value?.type;
+        {customLayers.length === 0 && (
+          <Typography variant="body3" color="text.secondary">
+            <Trans id="chart.map.layers.no-layers">No custom layers</Trans>
+          </Typography>
+        )}
 
-            if (!valueType) {
-              return;
-            }
+        {layersStatus === "success" ? (
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="layers">
+              {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef}>
+                  {customLayers.map((configLayer, i) => {
+                    return (
+                      <DraggableLayer
+                        key={`${configLayer.type}-${configLayer.id}`}
+                        configLayer={configLayer}
+                        parsedLayer={getParsedLayer(configLayer)}
+                        index={i}
+                      />
+                    );
+                  })}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        ) : null}
 
-            switch (valueType) {
-              case "wms":
-                const wmsLayer = wmsLayers.find(
-                  (layer) => layer.id === value.value
-                );
+        {layersStatus === "fetching" ? (
+          <Box sx={{ width: "100%" }}>
+            <ControlSectionSkeleton />
+          </Box>
+        ) : null}
 
-                if (!wmsLayer) {
-                  return;
-                }
-
-                dispatch({
-                  type: "CUSTOM_LAYER_ADD",
-                  value: {
-                    layer: {
-                      type: "wms",
-                      id: wmsLayer.id,
-                      isBehindAreaLayer: false,
-                      syncTemporalFilters: false,
-                      endpoint: wmsLayer.endpoint,
-                    },
-                  },
-                });
-                break;
-              case "wmts":
-                const wmtsLayer = wmtsLayers.find(
-                  (layer) => layer.id === value.value
-                );
-
-                if (!wmtsLayer) {
-                  return;
-                }
-
-                dispatch({
-                  type: "CUSTOM_LAYER_ADD",
-                  value: {
-                    layer: {
-                      type: "wmts",
-                      id: wmtsLayer.id,
-                      url: wmtsLayer.url,
-                      isBehindAreaLayer: false,
-                      syncTemporalFilters: false,
-                      endpoint: wmtsLayer.endpoint,
-                    },
-                  },
-                });
-                break;
-              default:
-                const _exhaustiveCheck: never = valueType;
-                return _exhaustiveCheck;
-            }
-          }}
-        />
+        <Box>
+          <Button
+            variant="contained"
+            color="cobalt"
+            onClick={() => setAddingLayer(true)}
+          >
+            Add layer
+          </Button>
+        </Box>
       </ControlSectionContent>
     </ControlSection>
   );
 };
 
-type CustomLayerOption = SelectOption & { type?: "wms" | "wmts" };
-
-const getCustomLayerOptions = ({
-  wmsLayers,
-  wmtsLayers,
-}: {
-  wmsLayers?: ParsedWMSLayer[];
-  wmtsLayers?: ParsedWMTSLayer[];
-}): CustomLayerOption[] => {
-  if (!wmsLayers || !wmtsLayers) {
-    return [];
-  }
-
-  return [
-    {
-      label: t({ id: "controls.none", message: "None" }),
-      value: FIELD_VALUE_NONE,
-      isNoneValue: true,
-    },
-  ]
-    .concat(
-      wmtsLayers
-        .map((layer) => ({
-          type: "wmts" as const,
-          ...getBaseLayerOption(layer),
-        }))
-        .sort((a, b) => a.label.localeCompare(b.label))
-    )
-    .concat(
-      wmsLayers
-        .map((layer) => ({
-          type: "wms" as const,
-          ...getBaseLayerOption(layer),
-        }))
-        .sort((a, b) => a.label.localeCompare(b.label))
-    );
-};
-
-const getBaseLayerOption = (layer: ParsedWMSLayer | ParsedWMTSLayer) => {
-  return {
-    value: layer.id,
-    label: layer.title,
-    isNoneValue: false,
-  };
-};
-
-const defaultedEndpoint = (
-  endpoint: string | undefined,
-  type: "wms" | "wmts"
-) => {
-  return endpoint ?? (type === "wms" ? DEFAULT_WMS_URL : DEFAULT_WMTS_URL);
-};
-
 const DraggableLayer = ({
-  customLayer,
-  options,
+  configLayer,
   index,
+  parsedLayer,
 }: {
-  customLayer: WMSCustomLayer | WMTSCustomLayer;
-  options: CustomLayerOption[];
+  configLayer: WMSCustomLayer | WMTSCustomLayer;
   index: number;
+  parsedLayer: ParsedWMSLayer | ParsedWMTSLayer;
 }) => {
   const [_, dispatch] = useConfiguratorState(isConfiguring);
-  const value = customLayer.id;
-  const endpoint = customLayer.endpoint;
-  const { data: groupedLayers } = useWMTSorWMSLayers([
-    defaultedEndpoint(endpoint, customLayer.type),
-  ]);
+  const value = configLayer.id;
+
   const enableTemporalFiltering = useMemo(() => {
-    const wmtsLayers = groupedLayers?.wmts ?? [];
-    switch (customLayer.type) {
+    switch (configLayer.type) {
       case "wms":
         return false;
       case "wmts":
-        const wmtsLayer = wmtsLayers.find((l) => l.id === customLayer.id);
         return (
-          wmtsLayer?.availableDimensionValues &&
-          wmtsLayer.availableDimensionValues.length > 1
+          parsedLayer?.availableDimensionValues &&
+          parsedLayer.availableDimensionValues.length > 1
         );
       default:
-        const _exhaustiveCheck: never = customLayer;
+        const _exhaustiveCheck: never = configLayer;
         return _exhaustiveCheck;
     }
-  }, [customLayer, groupedLayers?.wmts]);
+  }, [configLayer, parsedLayer?.availableDimensionValues]);
+
+  const handleRemoveClick = () => {
+    dispatch({
+      type: "CUSTOM_LAYER_REMOVE",
+      value: {
+        type: configLayer.type,
+        id: configLayer.id,
+      },
+    });
+  };
 
   return (
     <Draggable key={value} draggableId={value} index={index}>
@@ -290,74 +319,57 @@ const DraggableLayer = ({
               display: "flex",
               alignItems: "center",
               gap: 1,
-              mb: 2,
             }}
           >
-            <Select
-              id={`layer-${value}`}
-              options={options.filter(
-                (o) =>
-                  (o.type === customLayer.type && o.value === customLayer.id) ||
-                  o.isNoneValue
-              )}
-              sortOptions={false}
-              onChange={(e) => {
-                const value = e.target.value as string;
-
-                if (value === FIELD_VALUE_NONE) {
-                  dispatch({
-                    type: "CUSTOM_LAYER_REMOVE",
-                    value: {
-                      type: customLayer.type,
-                      id: customLayer.id,
-                    },
-                  });
-                }
-              }}
-              value={value}
-              sx={{ maxWidth: 280 }}
-            />
+            <Typography variant="body3" sx={{ flexGrow: 1 }}>
+              {parsedLayer?.title ?? "Unknown layer"}
+            </Typography>
+            <IconButton onClick={handleRemoveClick}>
+              <Icon name="trash" />
+            </IconButton>
             <MoveDragButton />
           </Box>
-          <Switch
-            label={t({
-              id: "chart.map.layers.base.behind-area-layer",
-              message: "Behind area layer",
-            })}
-            checked={customLayer.isBehindAreaLayer}
-            onChange={(e) => {
-              dispatch({
-                type: "CUSTOM_LAYER_UPDATE",
-                value: {
-                  layer: {
-                    ...customLayer,
-                    isBehindAreaLayer: e.target.checked,
-                  },
-                },
-              });
-            }}
-          />
-          {customLayer.type === "wmts" ? (
+          <Box display="flex" flexDirection="column" width="100%" gap={1}>
             <Switch
               label={t({
-                id: "chart.map.layers.base.enable-temporal-filtering",
-                message: "Sync with temporal filters",
+                id: "chart.map.layers.base.behind-area-layer",
+                message: "Behind area layer",
               })}
-              checked={customLayer.syncTemporalFilters}
-              disabled={!enableTemporalFiltering}
+              checked={configLayer.isBehindAreaLayer}
               onChange={(e) => {
                 dispatch({
                   type: "CUSTOM_LAYER_UPDATE",
                   value: {
                     layer: {
-                      ...customLayer,
-                      syncTemporalFilters: e.target.checked,
+                      ...configLayer,
+                      isBehindAreaLayer: e.target.checked,
                     },
                   },
                 });
               }}
             />
-          ) : null}
+            {configLayer.type === "wmts" ? (
+              <Switch
+                label={t({
+                  id: "chart.map.layers.base.enable-temporal-filtering",
+                  message: "Sync with temporal filters",
+                })}
+                checked={configLayer.syncTemporalFilters}
+                disabled={!enableTemporalFiltering}
+                onChange={(e) => {
+                  dispatch({
+                    type: "CUSTOM_LAYER_UPDATE",
+                    value: {
+                      layer: {
+                        ...configLayer,
+                        syncTemporalFilters: e.target.checked,
+                      },
+                    },
+                  });
+                }}
+              />
+            ) : null}
+          </Box>
         </Box>
       )}
     </Draggable>

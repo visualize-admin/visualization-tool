@@ -106,6 +106,7 @@ const initFromHost = (host: string) => {
     isVercelPreviewHost(host);
 
   if (shouldSetDefaultFlags) {
+    flag("wmts-show-extra-info", true);
   }
 };
 

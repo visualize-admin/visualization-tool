@@ -6,11 +6,8 @@ const config: KnipConfig = {
     "@/*": ["./app/*"],
   },
   entry: [
-    "./app/pages/**/*.{ts,tsx,js,jsx}",
-    "./app/test/colored-console.ts",
-    // TODO Why do I have to put those two entries ?
-    "./app/charts/map/wmts-providers-autocomplete.tsx",
-    "./app/charts/map/wmts-playground.tsx",
+    './app/jest.setup.ts',
+    './app/utils/colored-console.ts'
   ],
   ignore: [
     ".github/**/*",
@@ -35,8 +32,7 @@ const config: KnipConfig = {
     "./app/typings/**/*",
     "./**/*.config.*",
     "./**/*.mock.ts",
-    "./**/*.setup.*",
-    "./**/*.spec.ts",
+    "./**/*.spec.ts"
   ],
   ignoreDependencies: [
     // Needed by eslint.

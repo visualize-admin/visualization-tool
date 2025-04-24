@@ -110,7 +110,10 @@ export const parseWMSContent = (content: string, endpoint: string) => {
     wmsData.WMS_Capabilities.Capability.Layer.Attribution?.Title ??
     wmsData.WMS_Capabilities.Service.Title;
 
-  return wmsData.WMS_Capabilities.Capability.Layer.Layer.map((l) =>
+  const layers = Array.isArray(wmsData.WMS_Capabilities.Capability.Layer.Layer)
+    ? wmsData.WMS_Capabilities.Capability.Layer.Layer
+    : [wmsData.WMS_Capabilities.Capability.Layer.Layer];
+  return layers.map((l) =>
     parseWMSLayer(l, {
       endpoint,
       dataUrl,
@@ -141,7 +144,14 @@ export const getWMSTile = ({
   return new DeckGLWMSLayer({
     id: `wms-layer-${customLayer.id}`,
     beforeId,
-    data: wmsLayer.dataUrl,
+    data: `${wmsLayer.dataUrl.replace(/\?$/, "")}`,
+    loadOptions: {
+      fetch: (url: string) => {
+        const parsedUrl = new URL(url);
+        parsedUrl.searchParams.set("TRANSPARENT", "TRUE");
+        return fetch(parsedUrl.toString());
+      },
+    },
     serviceType: "wms",
     layers: [wmsLayer.id],
   });

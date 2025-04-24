@@ -251,6 +251,11 @@ export const components: Components = {
       },
     },
   },
+  MuiDrawer: {
+    defaultProps: {
+      elevation: 1,
+    },
+  },
   MuiFormControlLabel: {
     styleOverrides: {
       root: {
@@ -604,6 +609,18 @@ export const components: Components = {
       rail: {
         backgroundColor: palette.monochrome[300],
         height: 4,
+        position: "relative",
+
+        "&:before": {
+          "--track-height": 48,
+          content: '" "',
+          height: "var(--track-height)",
+          width: "100%",
+          position: "absolute",
+          left: 0,
+          top: "calc(var(--track-height) / 2 * -1)",
+          zIndex: 1,
+        },
       },
       thumb: {
         width: 14,

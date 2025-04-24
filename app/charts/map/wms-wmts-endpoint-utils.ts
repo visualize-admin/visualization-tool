@@ -32,6 +32,17 @@ function isWmtsUrl(url: string) {
   return /wmts/i.test(url);
 }
 
+export const guessUrlType = (url: string) => {
+  if (isWmtsUrl(url)) {
+    return "wmts";
+  }
+  if (isWmsUrl(url)) {
+    return "wms";
+  }
+  // Default must be coherent with the default in guessExternalLayerUrl
+  return "wms";
+};
+
 /**
  * Guess the provider URL type and return URL with correct parameters if needed
  *
@@ -138,7 +149,7 @@ export const useWMTSorWMSLayers = (
       return { wmts: wmts as ParsedWMTSLayer[], wms: wms as ParsedWMSLayer[] };
     },
     options: {
-      pause,
+      pause: pause || !endpoints.length,
     },
   });
 };

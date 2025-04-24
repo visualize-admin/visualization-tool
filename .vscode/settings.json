@@ -23,5 +23,8 @@
     // during end-to-end tests
     "E2E_HAR": "true",
     "E2E_BASE_URL": "http://localhost:3000"
+  },
+  "[xml]": {
+    "editor.defaultFormatter": "redhat.vscode-xml"
   }
 }

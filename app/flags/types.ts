@@ -22,6 +22,10 @@ export const FLAGS = [
     description:
       "Enables experimental features, including dashboard text blocks, Markdown editor and bar charts.",
   },
+  {
+    name: "wmts-show-extra-info",
+    description: "Show extra debug info in WMTS provider autocomplete",
+  },
 ];
 export const FLAG_NAMES = FLAGS.map((flag) => flag.name);
 type Flag = (typeof FLAGS)[number];

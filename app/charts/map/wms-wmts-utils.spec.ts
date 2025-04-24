@@ -263,4 +263,32 @@ Object {
 }
 `);
   });
+
+  it("should parse WMTS capabilities XML content  (Topographic_Map_Switzerland)", async () => {
+    const xmlContent = (
+      await readFile(
+        join(__dirname, "./mocks/Topographic_Map_Switzerland.wmts.xml")
+      )
+    ).toString();
+
+    const endpoint = "http://example.com/wms";
+    const parsedLayers = await parseWMTSContent(xmlContent, endpoint);
+    expect(parsedLayers.length).toBe(1);
+    expect(parsedLayers[0]).toMatchInlineSnapshot(`
+Object {
+  "attribution": undefined,
+  "availableDimensionValues": undefined,
+  "defaultDimensionValue": undefined,
+  "description": undefined,
+  "dimensionIdentifier": undefined,
+  "endpoint": "http://example.com/wms",
+  "id": "Topographic_Map_Switzerland",
+  "legendUrl": undefined,
+  "path": "Topographic_Map_Switzerland",
+  "title": "Topographic_Map_Switzerland",
+  "type": "wmts",
+  "url": "https://tiles.arcgis.com/tiles/oPre3pOfRfefL8y0/arcgis/rest/services/Topographic_Map_Switzerland/MapServer/WMTS/tile/1.0.0/Topographic_Map_Switzerland/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpeg",
+}
+`);
+  });
 });
