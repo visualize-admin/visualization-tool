@@ -311,7 +311,6 @@ const DraggableLayer = ({
               display: "flex",
               alignItems: "center",
               gap: 1,
-              mb: 2,
             }}
           >
             <Typography variant="body3" sx={{ flexGrow: 1 }}>
@@ -322,45 +321,47 @@ const DraggableLayer = ({
             </IconButton>
             <MoveDragButton />
           </Box>
-          <Switch
-            label={t({
-              id: "chart.map.layers.base.behind-area-layer",
-              message: "Behind area layer",
-            })}
-            checked={configLayer.isBehindAreaLayer}
-            onChange={(e) => {
-              dispatch({
-                type: "CUSTOM_LAYER_UPDATE",
-                value: {
-                  layer: {
-                    ...configLayer,
-                    isBehindAreaLayer: e.target.checked,
-                  },
-                },
-              });
-            }}
-          />
-          {configLayer.type === "wmts" ? (
+          <Box display="flex" flexDirection="column" width="100%" gap={1}>
             <Switch
               label={t({
-                id: "chart.map.layers.base.enable-temporal-filtering",
-                message: "Sync with temporal filters",
+                id: "chart.map.layers.base.behind-area-layer",
+                message: "Behind area layer",
               })}
-              checked={configLayer.syncTemporalFilters}
-              disabled={!enableTemporalFiltering}
+              checked={configLayer.isBehindAreaLayer}
               onChange={(e) => {
                 dispatch({
                   type: "CUSTOM_LAYER_UPDATE",
                   value: {
                     layer: {
                       ...configLayer,
-                      syncTemporalFilters: e.target.checked,
+                      isBehindAreaLayer: e.target.checked,
                     },
                   },
                 });
               }}
             />
-          ) : null}
+            {configLayer.type === "wmts" ? (
+              <Switch
+                label={t({
+                  id: "chart.map.layers.base.enable-temporal-filtering",
+                  message: "Sync with temporal filters",
+                })}
+                checked={configLayer.syncTemporalFilters}
+                disabled={!enableTemporalFiltering}
+                onChange={(e) => {
+                  dispatch({
+                    type: "CUSTOM_LAYER_UPDATE",
+                    value: {
+                      layer: {
+                        ...configLayer,
+                        syncTemporalFilters: e.target.checked,
+                      },
+                    },
+                  });
+                }}
+              />
+            ) : null}
+          </Box>
         </Box>
       )}
     </Draggable>
