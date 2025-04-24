@@ -138,7 +138,7 @@ export const useWMTSorWMSLayers = (
       return { wmts: wmts as ParsedWMTSLayer[], wms: wms as ParsedWMSLayer[] };
     },
     options: {
-      pause,
+      pause: pause || !endpoints.length,
     },
   });
 };
