@@ -110,7 +110,10 @@ export const parseWMSContent = (content: string, endpoint: string) => {
     wmsData.WMS_Capabilities.Capability.Layer.Attribution?.Title ??
     wmsData.WMS_Capabilities.Service.Title;
 
-  return wmsData.WMS_Capabilities.Capability.Layer.Layer.map((l) =>
+  const layers = Array.isArray(wmsData.WMS_Capabilities.Capability.Layer.Layer)
+    ? wmsData.WMS_Capabilities.Capability.Layer.Layer
+    : [wmsData.WMS_Capabilities.Capability.Layer.Layer];
+  return layers.map((l) =>
     parseWMSLayer(l, {
       endpoint,
       dataUrl,
