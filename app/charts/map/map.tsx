@@ -20,6 +20,7 @@ import {
   FLY_TO_DURATION,
   RESET_DURATION,
 } from "@/charts/map/constants";
+import CustomAttribution from "@/charts/map/custom-attribution";
 import DashedScatterplotLayer from "@/charts/map/dashed-scatterplot-layer";
 import { useMapStyle } from "@/charts/map/get-base-layer-style";
 import {
@@ -49,7 +50,6 @@ import useEvent from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 import "maplibre-gl/dist/maplibre-gl.css";
-import CustomAttribution from "@/charts/map/custom-attribution";
 
 // supported was removed as of maplibre-gl v3.0.0, so we need to add it back
 const maplibregl = { ...maplibreglRaw, supported };
