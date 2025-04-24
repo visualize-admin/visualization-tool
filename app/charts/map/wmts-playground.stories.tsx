@@ -37,7 +37,6 @@ const WMTSPlayground = () => {
     [] as CustomLayer[]
   );
   const onLayerCheck = useEvent((layer: CustomLayer, checked: boolean) => {
-    console.log("onLayerCheck", layer, checked);
     setLayers((layers) =>
       checked ? [...layers, layer] : layers.filter((l) => l != layer)
     );
