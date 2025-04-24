@@ -49,6 +49,7 @@ import useEvent from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 import "maplibre-gl/dist/maplibre-gl.css";
+import CustomAttribution from "@/charts/map/custom-attribution";
 
 // supported was removed as of maplibre-gl v3.0.0, so we need to add it back
 const maplibregl = { ...maplibreglRaw, supported };
@@ -134,6 +135,13 @@ export const MapComponent = ({
     wms: [],
     wmts: [],
   };
+
+  const attribution = useMemo(() => {
+    return Array.from(
+      new Set([...wmtsLayers, ...wmsLayers].map((x) => x.attribution))
+    ).join(", ");
+  }, [wmsLayers, wmtsLayers]);
+
   const { behindAreaCustomLayers, afterAreaCustomLayers } = useMemo(() => {
     return {
       behindAreaCustomLayers: customLayers
@@ -593,6 +601,7 @@ export const MapComponent = ({
           }}
           onMove={onViewStateChange}
           onResize={handleResize}
+          attributionControl={false}
           {...viewState}
         >
           <div data-map-loaded={loaded} />
@@ -606,6 +615,7 @@ export const MapComponent = ({
               ...scatterplotLayers,
             ]}
           />
+          <CustomAttribution attribution={attribution} />
         </Map>
       ) : null}
     </>
