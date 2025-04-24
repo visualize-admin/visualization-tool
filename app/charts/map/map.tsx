@@ -112,19 +112,20 @@ export const MapComponent = ({
   const classes = useStyles();
   const locale = useLocale();
 
-  const { wmsCustomLayers, wmtsCustomLayers } = useMemo(() => {
+  const { wmsEndpoints, wmtsEndpoints } = useMemo(() => {
+    const wmsCustomLayers = getWMSCustomLayers(customLayers);
+    const wmtsCustomLayers = getWMTSCustomLayers(customLayers);
+
     return {
-      wmsCustomLayers: getWMSCustomLayers(customLayers),
-      wmtsCustomLayers: getWMTSCustomLayers(customLayers),
+      wmsEndpoints: uniq(
+        wmsCustomLayers.map((x) => x.endpoint ?? DEFAULT_WMS_URL)
+      ),
+      wmtsEndpoints: uniq(
+        wmtsCustomLayers.map((x) => x.endpoint ?? DEFAULT_WMTS_URL)
+      ),
     };
   }, [customLayers]);
 
-  const wmsEndpoints = uniq(
-    wmsCustomLayers.map((x) => x.endpoint ?? DEFAULT_WMS_URL)
-  );
-  const wmtsEndpoints = uniq(
-    wmtsCustomLayers.map((x) => x.endpoint ?? DEFAULT_WMTS_URL)
-  );
   const { data: groupedLayers } = useWMTSorWMSLayers([
     ...wmsEndpoints,
     ...wmtsEndpoints,
