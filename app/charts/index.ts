@@ -1034,8 +1034,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         dimensions,
         measures,
       }) => {
-        let newSegment: ColumnSegmentField | undefined;
-        let newColor: ColorField | undefined;
+        let newSegment: ColumnSegmentField;
+        let newColor: ColorField;
 
         const yMeasure = measures.find(
           (d) => d.id === newChartConfig.fields.y.componentId
@@ -1158,8 +1158,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         dimensions,
         measures,
       }) => {
-        let newSegment: ColumnSegmentField | undefined;
-        let newColor: ColorField | undefined;
+        let newSegment: ColumnSegmentField;
+        let newColor: ColorField;
 
         const xMeasure = measures.find(
           (d) => d.id === newChartConfig.fields.x.componentId
@@ -1289,8 +1289,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         dimensions,
         measures,
       }) => {
-        let newSegment: LineSegmentField | undefined;
-        let newColor: ColorField | undefined;
+        let newSegment: LineSegmentField;
+        let newColor: ColorField;
 
         if (oldChartConfig.chartType === "table") {
           const maybeSegmentAndColorFields =
@@ -1403,8 +1403,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         }
 
-        let newSegment: AreaSegmentField | undefined;
-        let newColor: ColorField | undefined;
+        let newSegment: AreaSegmentField;
+        let newColor: ColorField;
 
         if (oldChartConfig.chartType === "table") {
           const maybeSegmentAndColorFields =
@@ -1496,8 +1496,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         dimensions,
         measures,
       }) => {
-        let newSegment: ScatterPlotSegmentField | undefined;
-        let newColor: ColorField | undefined;
+        let newSegment: ScatterPlotSegmentField;
+        let newColor: ColorField;
 
         if (oldChartConfig.chartType === "table") {
           const maybeSegmentAndColorFields =
@@ -1567,8 +1567,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         dimensions,
         measures,
       }) => {
-        let newSegment: PieSegmentField | undefined;
-        let newColor: ColorField | undefined;
+        let newSegment: PieSegmentField;
+        let newColor: ColorField;
 
         if (oldChartConfig.chartType === "table") {
           const maybeSegmentAndColorFields =
@@ -1817,7 +1817,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         let leftMeasure = numericalMeasures.find(
           (d) => d.id === numericalMeasureIds[0]
         ) as NumericalMeasure;
-        let rightMeasureId: string | undefined;
+        let rightMeasureId: string;
         const getLeftMeasure = (preferredId: string) => {
           const preferredLeftMeasure = numericalMeasures.find(
             (d) => d.id === preferredId
@@ -1940,7 +1940,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         let leftMeasure = numericalMeasures.find(
           (d) => d.id === numericalMeasureIds[0]
         ) as NumericalMeasure;
-        let rightAxisMeasureId: string | undefined;
+        let rightAxisMeasureId: string;
         const getMeasure = (id: string) => {
           return numericalMeasures.find((d) => d.id === id) as NumericalMeasure;
         };
