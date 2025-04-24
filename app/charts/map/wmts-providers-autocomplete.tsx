@@ -5,6 +5,7 @@ import { useMemo } from "react";
 
 import wmtsProvidersExtra_ from "@/charts/map/wmts-providers-extra.json";
 import wmtsProviders from "@/charts/map/wmts-providers.json";
+import { useFlag } from "@/flags";
 
 const wmtsProvidersExtra = wmtsProvidersExtra_ as Record<
   string,
@@ -44,6 +45,7 @@ const ProviderAutocomplete = ({
 }) => {
   const classes = useStyles();
   const extraInfo = value ? wmtsProvidersExtra[value] : undefined;
+  const showExtraInfo = useFlag("wmts-show-extra-info");
   const options = useMemo(() => {
     return wmtsProviders
       .filter((p) => {
@@ -105,7 +107,7 @@ const ProviderAutocomplete = ({
           />
         )}
       />
-      {extraInfo && extraInfo.note && (
+      {extraInfo && extraInfo.note && showExtraInfo && (
         <Alert
           severity="orange"
           sx={{ mb: 2, boxShadow: "none", p: 1 }}
