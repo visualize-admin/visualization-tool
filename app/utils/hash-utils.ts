@@ -12,7 +12,9 @@ export const objectToHashString = (o: Object) => {
 
 /** Converts a URL-friendly hash string back into the original object. */
 export const hashStringToObject = (hashString: string) => {
-  return keyValuePairsToObject(hashString.slice(1).split(JOIN_SEPARATOR));
+  return keyValuePairsToObject(
+    decodeURIComponent(hashString.slice(1)).split(JOIN_SEPARATOR)
+  );
 };
 
 const objectToKeyValuePairs = (o: Object) => {
