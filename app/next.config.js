@@ -72,7 +72,7 @@ module.exports = withPreconstruct(
               `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net`,
               `font-src 'self'`,
               `form-action 'self'`,
-              `connect-src 'self' https://*.admin.ch https://*.sentry.io https://*.vercel.app https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com wss://*.pusher.com https://*.ldbar.ch https://api.mapbox.com https://api.maptiler.com`,
+              `connect-src 'self' *`,
               `img-src 'self' https://vercel.live https://vercel.com *.pusher.com *.pusherapp.com https://*.admin.ch https://*.opendataswiss.org https://*.google-analytics.com https://*.googletagmanager.com https://cdn.jsdelivr.net data: blob:`,
               `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://vercel.live https://vercel.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://api.mapbox.com https://cdn.jsdelivr.net`,
               `worker-src 'self' blob: https://*.admin.ch`,

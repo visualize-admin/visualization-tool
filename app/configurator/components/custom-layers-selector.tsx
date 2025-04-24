@@ -7,7 +7,7 @@ import {
   Typography,
   useEventCallback,
 } from "@mui/material";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -15,8 +15,9 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 
-import { ParsedWMSLayer, useWMSLayers } from "@/charts/map/wms-utils";
-import { ParsedWMTSLayer, useWMTSLayers } from "@/charts/map/wmts-utils";
+import { useWMTSorWMSLayers } from "@/charts/map/wms-endpoint-utils";
+import { DEFAULT_WMS_URL, ParsedWMSLayer } from "@/charts/map/wms-utils";
+import { DEFAULT_WMTS_URL, ParsedWMTSLayer } from "@/charts/map/wmts-utils";
 import { Select, SelectOption, Switch } from "@/components/form";
 import { MoveDragButton } from "@/components/move-drag-button";
 import { MapConfig, WMSCustomLayer, WMTSCustomLayer } from "@/config-types";
@@ -37,9 +38,16 @@ export const CustomLayersSelector = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state) as MapConfig;
   const customLayers = chartConfig.baseLayer.customLayers;
-  const { data: wmsLayers, error: wmsError } = useWMSLayers();
-  const { data: wmtsLayers, error: wmtsError } = useWMTSLayers();
-  const error = wmsError ?? wmtsError;
+  const [wmtsEndpoint] = useState(DEFAULT_WMTS_URL);
+  const [wmsEndpoint] = useState(DEFAULT_WMS_URL);
+  const { data: groupedLayers, error } = useWMTSorWMSLayers([
+    wmsEndpoint,
+    wmtsEndpoint,
+  ]);
+  const { wms: wmsLayers, wmts: wmtsLayers } = groupedLayers ?? {
+    wms: [],
+    wmts: [],
+  };
   const options = useMemo(() => {
     return getCustomLayerOptions({ wmsLayers, wmtsLayers });
   }, [wmsLayers, wmtsLayers]);
@@ -61,7 +69,9 @@ export const CustomLayersSelector = () => {
   });
 
   return error ? (
-    <Typography>{error.message}</Typography>
+    <Typography mx={2} color="error">
+      {error.message}
+    </Typography>
   ) : !wmsLayers || !wmtsLayers ? (
     <ControlSectionSkeleton />
   ) : (
@@ -79,7 +89,6 @@ export const CustomLayersSelector = () => {
                     <DraggableLayer
                       key={`${customLayer.type}-${customLayer.id}`}
                       customLayer={customLayer}
-                      wmtsLayers={wmtsLayers}
                       options={options}
                       index={i}
                     />
@@ -143,6 +152,7 @@ export const CustomLayersSelector = () => {
                       id: wmsLayer.id,
                       isBehindAreaLayer: false,
                       syncTemporalFilters: false,
+                      endpoint: wmsLayer.endpoint,
                     },
                   },
                 });
@@ -165,6 +175,7 @@ export const CustomLayersSelector = () => {
                       url: wmtsLayer.url,
                       isBehindAreaLayer: false,
                       syncTemporalFilters: false,
+                      endpoint: wmtsLayer.endpoint,
                     },
                   },
                 });
@@ -226,20 +237,30 @@ const getBaseLayerOption = (layer: ParsedWMSLayer | ParsedWMTSLayer) => {
   };
 };
 
+const defaultedEndpoint = (
+  endpoint: string | undefined,
+  type: "wms" | "wmts"
+) => {
+  return endpoint ?? (type === "wms" ? DEFAULT_WMS_URL : DEFAULT_WMTS_URL);
+};
+
 const DraggableLayer = ({
   customLayer,
-  wmtsLayers,
   options,
   index,
 }: {
   customLayer: WMSCustomLayer | WMTSCustomLayer;
-  wmtsLayers: ParsedWMTSLayer[];
   options: CustomLayerOption[];
   index: number;
 }) => {
   const [_, dispatch] = useConfiguratorState(isConfiguring);
   const value = customLayer.id;
+  const endpoint = customLayer.endpoint;
+  const { data: groupedLayers } = useWMTSorWMSLayers([
+    defaultedEndpoint(endpoint, customLayer.type),
+  ]);
   const enableTemporalFiltering = useMemo(() => {
+    const wmtsLayers = groupedLayers?.wmts ?? [];
     switch (customLayer.type) {
       case "wms":
         return false;
@@ -253,7 +274,7 @@ const DraggableLayer = ({
         const _exhaustiveCheck: never = customLayer;
         return _exhaustiveCheck;
     }
-  }, [customLayer, wmtsLayers]);
+  }, [customLayer, groupedLayers?.wmts]);
 
   return (
     <Draggable key={value} draggableId={value} index={index}>

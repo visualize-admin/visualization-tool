@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WMS_Capabilities version="1.3.0"
+    xmlns="http://www.opengis.net/wms"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:esri_wms="http://www.esri.com/wms"
+    xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd
+                        http://www.esri.com/wms https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?version=1.3.0%26service=WMS%26request=GetSchemaExtension">
+    <Service>
+        <Name><![CDATA[Ecosystem]]></Name>
+        <Title><![CDATA[EUNIS Ecosystems]]></Title>
+        <Abstract><![CDATA[The EUNIS habitat classification is a comprehensive pan-European system to facilitate the harmonised description and collection of data across Europe through the use of criteria for habitat identification. It is hierarchical and covers all types of habitat types from natural to artificial, from terrestrial to freshwater and marine.]]></Abstract>
+        <KeywordList>
+            <Keyword><![CDATA[[]]]></Keyword>
+        </KeywordList>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple"
+            xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?" />
+        <ContactInformation>
+            <ContactPersonPrimary>
+                <ContactPerson><![CDATA[]]></ContactPerson>
+                <ContactOrganization><![CDATA[EEA]]></ContactOrganization>
+            </ContactPersonPrimary>
+            <ContactPosition><![CDATA[]]></ContactPosition>
+            <ContactAddress>
+                <AddressType><![CDATA[]]></AddressType>
+                <Address><![CDATA[]]></Address>
+                <City><![CDATA[]]></City>
+                <StateOrProvince><![CDATA[]]></StateOrProvince>
+                <PostCode><![CDATA[]]></PostCode>
+                <Country><![CDATA[]]></Country>
+            </ContactAddress>
+            <ContactVoiceTelephone><![CDATA[]]></ContactVoiceTelephone>
+            <ContactFacsimileTelephone><![CDATA[]]></ContactFacsimileTelephone>
+            <ContactElectronicMailAddress><![CDATA[]]></ContactElectronicMailAddress>
+        </ContactInformation>
+        <Fees><![CDATA[]]></Fees>
+        <AccessConstraints><![CDATA[]]></AccessConstraints>
+        <MaxWidth>4096</MaxWidth>
+        <MaxHeight>4096</MaxHeight>
+    </Service>
+    <Capability>
+        <Request>
+            <GetCapabilities>
+                <Format>application/vnd.ogc.wms_xml</Format>
+                <Format>text/xml</Format>
+                <DCPType>
+                    <HTTP>
+                        <Get>
+                            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
+                                xlink:type="simple"
+                                xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?" />
+                        </Get>
+                    </HTTP>
+                </DCPType>
+            </GetCapabilities>
+            <GetMap>
+                <Format>image/bmp</Format>
+                <Format>image/jpeg</Format>
+                <Format>image/tiff</Format>
+                <Format>image/png</Format>
+                <Format>image/png8</Format>
+                <Format>image/png24</Format>
+                <Format>image/png32</Format>
+                <Format>image/gif</Format>
+                <Format>image/svg+xml</Format>
+                <DCPType>
+                    <HTTP>
+                        <Get>
+                            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
+                                xlink:type="simple"
+                                xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?" />
+                        </Get>
+                    </HTTP>
+                </DCPType>
+            </GetMap>
+            <GetFeatureInfo>
+                <Format>application/vnd.esri.wms_raw_xml</Format>
+                <Format>application/vnd.esri.wms_featureinfo_xml</Format>
+                <Format>application/vnd.ogc.wms_xml</Format>
+                <Format>application/geo+json</Format>
+                <Format>text/xml</Format>
+                <Format>text/html</Format>
+                <Format>text/plain</Format>
+                <DCPType>
+                    <HTTP>
+                        <Get>
+                            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
+                                xlink:type="simple"
+                                xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?" />
+                        </Get>
+                    </HTTP>
+                </DCPType>
+            </GetFeatureInfo>
+            <esri_wms:GetStyles>
+                <Format>application/vnd.ogc.sld+xml</Format>
+                <DCPType>
+                    <HTTP>
+                        <Get>
+                            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
+                                xlink:type="simple"
+                                xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?" />
+                        </Get>
+                    </HTTP>
+                </DCPType>
+            </esri_wms:GetStyles>
+        </Request>
+        <Exception>
+            <Format>application/vnd.ogc.se_xml</Format>
+            <Format>application/vnd.ogc.se_inimage</Format>
+            <Format>application/vnd.ogc.se_blank</Format>
+            <Format>text/xml</Format>
+            <Format>XML</Format>
+        </Exception>
+        <Layer>
+            <Title><![CDATA[Ecosystem]]></Title>
+            <CRS>CRS:84</CRS>
+            <CRS>EPSG:4326</CRS>
+            <CRS>EPSG:3035</CRS>
+            <EX_GeographicBoundingBox>
+                <westBoundLongitude>-79.506988</westBoundLongitude>
+                <eastBoundLongitude>95.938525</eastBoundLongitude>
+                <southBoundLatitude>21.837323</southBoundLatitude>
+                <northBoundLatitude>84.855360</northBoundLatitude>
+            </EX_GeographicBoundingBox>
+            <BoundingBox CRS="CRS:84" minx="-79.506988" miny="21.837323" maxx="95.938525"
+                maxy="84.855360" />
+            <BoundingBox CRS="EPSG:4326" minx="21.837323" miny="-79.506988" maxx="84.855360"
+                maxy="95.938525" />
+            <BoundingBox CRS="EPSG:3035" minx="756300.000000" miny="587500.000000"
+                maxx="6822800.000000" maxy="7400000.000000" />
+            <Layer queryable="1">
+                <Title><![CDATA[Terrestrial ecosystems]]></Title>
+                <Abstract><![CDATA[]]></Abstract>
+                <CRS>CRS:84</CRS>
+                <CRS>EPSG:4326</CRS>
+                <CRS>EPSG:3035</CRS>
+                <EX_GeographicBoundingBox>
+                    <westBoundLongitude>-79.506988</westBoundLongitude>
+                    <eastBoundLongitude>95.938525</eastBoundLongitude>
+                    <southBoundLatitude>21.837323</southBoundLatitude>
+                    <northBoundLatitude>84.855360</northBoundLatitude>
+                </EX_GeographicBoundingBox>
+                <BoundingBox CRS="CRS:84" minx="-79.506988" miny="21.837323" maxx="95.938525"
+                    maxy="84.855360" />
+                <BoundingBox CRS="EPSG:4326" minx="21.837323" miny="-79.506988" maxx="84.855360"
+                    maxy="95.938525" />
+                <BoundingBox CRS="EPSG:3035" minx="756300.000000" miny="587500.000000"
+                    maxx="6822800.000000" maxy="7400000.000000" />
+                <Layer queryable="1">
+                    <Name>1</Name>
+                    <Title><![CDATA[J - Constructed, industrial and other artificial habitats]]></Title>
+                    <Abstract><![CDATA[]]></Abstract>
+                    <CRS>CRS:84</CRS>
+                    <CRS>EPSG:4326</CRS>
+                    <CRS>EPSG:3035</CRS>
+                    <EX_GeographicBoundingBox>
+                        <westBoundLongitude>-79.506988</westBoundLongitude>
+                        <eastBoundLongitude>95.938525</eastBoundLongitude>
+                        <southBoundLatitude>21.837323</southBoundLatitude>
+                        <northBoundLatitude>84.855360</northBoundLatitude>
+                    </EX_GeographicBoundingBox>
+                    <BoundingBox CRS="CRS:84" minx="-79.506988" miny="21.837323" maxx="95.938525"
+                        maxy="84.855360" />
+                    <BoundingBox CRS="EPSG:4326" minx="21.837323" miny="-79.506988" maxx="84.855360"
+                        maxy="95.938525" />
+                    <BoundingBox CRS="EPSG:3035" minx="756300.000000" miny="587500.000000"
+                        maxx="6822800.000000" maxy="7400000.000000" />
+                    <Style>
+                        <Name>default</Name>
+                        <Title><![CDATA[J - Constructed, industrial and other artificial habitats]]></Title>
+                        <LegendURL width="408" height="126">
+                            <Format>image/png</Format>
+                            <OnlineResource
+                                xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?request=GetLegendGraphic%26version=1.3.0%26format=image/png%26layer=1"
+                                xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                        </LegendURL>
+                    </Style>
+                </Layer>
+                <Layer queryable="1">
+                    <Name>2</Name>
+                    <Title><![CDATA[I - Regularly or recently cultivated agricultural horticultural and domestic habitats]]></Title>
+                    <Abstract><![CDATA[]]></Abstract>
+                    <CRS>CRS:84</CRS>
+                    <CRS>EPSG:4326</CRS>
+                    <CRS>EPSG:3035</CRS>
+                    <EX_GeographicBoundingBox>
+                        <westBoundLongitude>-79.506988</westBoundLongitude>
+                        <eastBoundLongitude>95.938525</eastBoundLongitude>
+                        <southBoundLatitude>21.837323</southBoundLatitude>
+                        <northBoundLatitude>84.855360</northBoundLatitude>
+                    </EX_GeographicBoundingBox>
+                    <BoundingBox CRS="CRS:84" minx="-79.506988" miny="21.837323" maxx="95.938525"
+                        maxy="84.855360" />
+                    <BoundingBox CRS="EPSG:4326" minx="21.837323" miny="-79.506988" maxx="84.855360"
+                        maxy="95.938525" />
+                    <BoundingBox CRS="EPSG:3035" minx="756300.000000" miny="587500.000000"
+                        maxx="6822800.000000" maxy="7400000.000000" />
+                    <Style>
+                        <Name>default</Name>
+                        <Title><![CDATA[I - Regularly or recently cultivated agricultural horticultural and domestic habitats]]></Title>
+                        <LegendURL width="270" height="54">
+                            <Format>image/png</Format>
+                            <OnlineResource
+                                xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?request=GetLegendGraphic%26version=1.3.0%26format=image/png%26layer=2"
+                                xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                        </LegendURL>
+                    </Style>
+                </Layer>
+                <Layer queryable="1">
+                    <Name>3</Name>
+                    <Title><![CDATA[H - Inland unvegetated or sparsely vegetated habitats]]></Title>
+                    <Abstract><![CDATA[]]></Abstract>
+                    <CRS>CRS:84</CRS>
+                    <CRS>EPSG:4326</CRS>
+                    <CRS>EPSG:3035</CRS>
+                    <EX_GeographicBoundingBox>
+                        <westBoundLongitude>-79.506988</westBoundLongitude>
+                        <eastBoundLongitude>95.938525</eastBoundLongitude>
+                        <southBoundLatitude>21.837323</southBoundLatitude>
+                        <northBoundLatitude>84.855360</northBoundLatitude>
+                    </EX_GeographicBoundingBox>
+                    <BoundingBox CRS="CRS:84" minx="-79.506988" miny="21.837323" maxx="95.938525"
+                        maxy="84.855360" />
+                    <BoundingBox CRS="EPSG:4326" minx="21.837323" miny="-79.506988" maxx="84.855360"
+                        maxy="95.938525" />
+                    <BoundingBox CRS="EPSG:3035" minx="756300.000000" miny="587500.000000"
+                        maxx="6822800.000000" maxy="7400000.000000" />
+                    <Style>
+                        <Name>default</Name>
+                        <Title><![CDATA[H - Inland unvegetated or sparsely vegetated habitats]]></Title>
+                        <LegendURL width="426" height="90">
+                            <Format>image/png</Format>
+                            <OnlineResource
+                                xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?request=GetLegendGraphic%26version=1.3.0%26format=image/png%26layer=3"
+                                xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                        </LegendURL>
+                    </Style>
+                </Layer>
+                <Layer queryable="1">
+                    <Name>4</Name>
+                    <Title><![CDATA[G - Woodland, forest and other wooded land]]></Title>
+                    <Abstract><![CDATA[]]></Abstract>
+                    <CRS>CRS:84</CRS>
+                    <CRS>EPSG:4326</CRS>
+                    <CRS>EPSG:3035</CRS>
+                    <EX_GeographicBoundingBox>
+                        <westBoundLongitude>-79.506988</westBoundLongitude>
+                        <eastBoundLongitude>95.938525</eastBoundLongitude>
+                        <southBoundLatitude>21.837323</southBoundLatitude>
+                        <northBoundLatitude>84.855360</northBoundLatitude>
+                    </EX_GeographicBoundingBox>
+                    <BoundingBox CRS="CRS:84" minx="-79.506988" miny="21.837323" maxx="95.938525"
+                        maxy="84.855360" />
+                    <BoundingBox CRS="EPSG:4326" minx="21.837323" miny="-79.506988" maxx="84.855360"
+                        maxy="95.938525" />
+                    <BoundingBox CRS="EPSG:3035" minx="756300.000000" miny="587500.000000"
+                        maxx="6822800.000000" maxy="7400000.000000" />
+                    <Style>
+                        <Name>default</Name>
+                        <Title><![CDATA[G - Woodland, forest and other wooded land]]></Title>
+                        <LegendURL width="678" height="108">
+                            <Format>image/png</Format>
+                            <OnlineResource
+                                xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?request=GetLegendGraphic%26version=1.3.0%26format=image/png%26layer=4"
+                                xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                        </LegendURL>
+                    </Style>
+                </Layer>
+                <Layer queryable="1">
+                    <Name>5</Name>
+                    <Title><![CDATA[F - Heathland, scrub and tundra]]></Title>
+                    <Abstract><![CDATA[]]></Abstract>
+                    <CRS>CRS:84</CRS>
+                    <CRS>EPSG:4326</CRS>
+                    <CRS>EPSG:3035</CRS>
+                    <EX_GeographicBoundingBox>
+                        <westBoundLongitude>-79.506988</westBoundLongitude>
+                        <eastBoundLongitude>95.938525</eastBoundLongitude>
+                        <southBoundLatitude>21.837323</southBoundLatitude>
+                        <northBoundLatitude>84.855360</northBoundLatitude>
+                    </EX_GeographicBoundingBox>
+                    <BoundingBox CRS="CRS:84" minx="-79.506988" miny="21.837323" maxx="95.938525"
+                        maxy="84.855360" />
+                    <BoundingBox CRS="EPSG:4326" minx="21.837323" miny="-79.506988" maxx="84.855360"
+                        maxy="95.938525" />
+                    <BoundingBox CRS="EPSG:3035" minx="756300.000000" miny="587500.000000"
+                        maxx="6822800.000000" maxy="7400000.000000" />
+                    <Style>
+                        <Name>default</Name>
+                        <Title><![CDATA[F - Heathland, scrub and tundra]]></Title>
+                        <LegendURL width="594" height="198">
+                            <Format>image/png</Format>
+                            <OnlineResource
+                                xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?request=GetLegendGraphic%26version=1.3.0%26format=image/png%26layer=5"
+                                xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                        </LegendURL>
+                    </Style>
+                </Layer>
+                <Layer queryable="1">
+                    <Name>6</Name>
+                    <Title><![CDATA[E - Grasslands and land dominated by forbs, mosses or lichens]]></Title>
+                    <Abstract><![CDATA[]]></Abstract>
+                    <CRS>CRS:84</CRS>
+                    <CRS>EPSG:4326</CRS>
+                    <CRS>EPSG:3035</CRS>
+                    <EX_GeographicBoundingBox>
+                        <westBoundLongitude>-79.506988</westBoundLongitude>
+                        <eastBoundLongitude>95.938525</eastBoundLongitude>
+                        <southBoundLatitude>21.837323</southBoundLatitude>
+                        <northBoundLatitude>84.855360</northBoundLatitude>
+                    </EX_GeographicBoundingBox>
+                    <BoundingBox CRS="CRS:84" minx="-79.506988" miny="21.837323" maxx="95.938525"
+                        maxy="84.855360" />
+                    <BoundingBox CRS="EPSG:4326" minx="21.837323" miny="-79.506988" maxx="84.855360"
+                        maxy="95.938525" />
+                    <BoundingBox CRS="EPSG:3035" minx="756300.000000" miny="587500.000000"
+                        maxx="6822800.000000" maxy="7400000.000000" />
+                    <Style>
+                        <Name>default</Name>
+                        <Title><![CDATA[E - Grasslands and land dominated by forbs, mosses or lichens]]></Title>
+                        <LegendURL width="246" height="126">
+                            <Format>image/png</Format>
+                            <OnlineResource
+                                xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?request=GetLegendGraphic%26version=1.3.0%26format=image/png%26layer=6"
+                                xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                        </LegendURL>
+                    </Style>
+                </Layer>
+                <Layer queryable="1">
+                    <Name>7</Name>
+                    <Title><![CDATA[D - Mires, bogs and fens]]></Title>
+                    <Abstract><![CDATA[]]></Abstract>
+                    <CRS>CRS:84</CRS>
+                    <CRS>EPSG:4326</CRS>
+                    <CRS>EPSG:3035</CRS>
+                    <EX_GeographicBoundingBox>
+                        <westBoundLongitude>-79.506988</westBoundLongitude>
+                        <eastBoundLongitude>95.938525</eastBoundLongitude>
+                        <southBoundLatitude>21.837323</southBoundLatitude>
+                        <northBoundLatitude>84.855360</northBoundLatitude>
+                    </EX_GeographicBoundingBox>
+                    <BoundingBox CRS="CRS:84" minx="-79.506988" miny="21.837323" maxx="95.938525"
+                        maxy="84.855360" />
+                    <BoundingBox CRS="EPSG:4326" minx="21.837323" miny="-79.506988" maxx="84.855360"
+                        maxy="95.938525" />
+                    <BoundingBox CRS="EPSG:3035" minx="756300.000000" miny="587500.000000"
+                        maxx="6822800.000000" maxy="7400000.000000" />
+                    <Style>
+                        <Name>default</Name>
+                        <Title><![CDATA[D - Mires, bogs and fens]]></Title>
+                        <LegendURL width="384" height="126">
+                            <Format>image/png</Format>
+                            <OnlineResource
+                                xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?request=GetLegendGraphic%26version=1.3.0%26format=image/png%26layer=7"
+                                xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                        </LegendURL>
+                    </Style>
+                </Layer>
+            </Layer>
+            <Layer queryable="1">
+                <Title><![CDATA[Fresh water ecosystems]]></Title>
+                <Abstract><![CDATA[]]></Abstract>
+                <CRS>CRS:84</CRS>
+                <CRS>EPSG:4326</CRS>
+                <CRS>EPSG:3035</CRS>
+                <EX_GeographicBoundingBox>
+                    <westBoundLongitude>-79.506988</westBoundLongitude>
+                    <eastBoundLongitude>95.938525</eastBoundLongitude>
+                    <southBoundLatitude>21.837323</southBoundLatitude>
+                    <northBoundLatitude>84.855360</northBoundLatitude>
+                </EX_GeographicBoundingBox>
+                <BoundingBox CRS="CRS:84" minx="-79.506988" miny="21.837323" maxx="95.938525"
+                    maxy="84.855360" />
+                <BoundingBox CRS="EPSG:4326" minx="21.837323" miny="-79.506988" maxx="84.855360"
+                    maxy="95.938525" />
+                <BoundingBox CRS="EPSG:3035" minx="756300.000000" miny="587500.000000"
+                    maxx="6822800.000000" maxy="7400000.000000" />
+                <Layer queryable="1">
+                    <Name>9</Name>
+                    <Title><![CDATA[C - Inland surface waters]]></Title>
+                    <Abstract><![CDATA[]]></Abstract>
+                    <CRS>CRS:84</CRS>
+                    <CRS>EPSG:4326</CRS>
+                    <CRS>EPSG:3035</CRS>
+                    <EX_GeographicBoundingBox>
+                        <westBoundLongitude>-79.506988</westBoundLongitude>
+                        <eastBoundLongitude>95.938525</eastBoundLongitude>
+                        <southBoundLatitude>21.837323</southBoundLatitude>
+                        <northBoundLatitude>84.855360</northBoundLatitude>
+                    </EX_GeographicBoundingBox>
+                    <BoundingBox CRS="CRS:84" minx="-79.506988" miny="21.837323" maxx="95.938525"
+                        maxy="84.855360" />
+                    <BoundingBox CRS="EPSG:4326" minx="21.837323" miny="-79.506988" maxx="84.855360"
+                        maxy="95.938525" />
+                    <BoundingBox CRS="EPSG:3035" minx="756300.000000" miny="587500.000000"
+                        maxx="6822800.000000" maxy="7400000.000000" />
+                    <Style>
+                        <Name>default</Name>
+                        <Title><![CDATA[C - Inland surface waters]]></Title>
+                        <LegendURL width="306" height="72">
+                            <Format>image/png</Format>
+                            <OnlineResource
+                                xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?request=GetLegendGraphic%26version=1.3.0%26format=image/png%26layer=9"
+                                xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                        </LegendURL>
+                    </Style>
+                </Layer>
+            </Layer>
+            <Layer queryable="1">
+                <Title><![CDATA[Marine ecosystems ]]></Title>
+                <Abstract><![CDATA[]]></Abstract>
+                <CRS>CRS:84</CRS>
+                <CRS>EPSG:4326</CRS>
+                <CRS>EPSG:3035</CRS>
+                <EX_GeographicBoundingBox>
+                    <westBoundLongitude>-79.506988</westBoundLongitude>
+                    <eastBoundLongitude>95.938525</eastBoundLongitude>
+                    <southBoundLatitude>21.837323</southBoundLatitude>
+                    <northBoundLatitude>84.855360</northBoundLatitude>
+                </EX_GeographicBoundingBox>
+                <BoundingBox CRS="CRS:84" minx="-79.506988" miny="21.837323" maxx="95.938525"
+                    maxy="84.855360" />
+                <BoundingBox CRS="EPSG:4326" minx="21.837323" miny="-79.506988" maxx="84.855360"
+                    maxy="95.938525" />
+                <BoundingBox CRS="EPSG:3035" minx="756300.000000" miny="587500.000000"
+                    maxx="6822800.000000" maxy="7400000.000000" />
+                <Layer queryable="1">
+                    <Name>11</Name>
+                    <Title><![CDATA[B - Coastal habitats]]></Title>
+                    <Abstract><![CDATA[]]></Abstract>
+                    <CRS>CRS:84</CRS>
+                    <CRS>EPSG:4326</CRS>
+                    <CRS>EPSG:3035</CRS>
+                    <EX_GeographicBoundingBox>
+                        <westBoundLongitude>-79.506988</westBoundLongitude>
+                        <eastBoundLongitude>95.938525</eastBoundLongitude>
+                        <southBoundLatitude>21.837323</southBoundLatitude>
+                        <northBoundLatitude>84.855360</northBoundLatitude>
+                    </EX_GeographicBoundingBox>
+                    <BoundingBox CRS="CRS:84" minx="-79.506988" miny="21.837323" maxx="95.938525"
+                        maxy="84.855360" />
+                    <BoundingBox CRS="EPSG:4326" minx="21.837323" miny="-79.506988" maxx="84.855360"
+                        maxy="95.938525" />
+                    <BoundingBox CRS="EPSG:3035" minx="756300.000000" miny="587500.000000"
+                        maxx="6822800.000000" maxy="7400000.000000" />
+                    <Style>
+                        <Name>default</Name>
+                        <Title><![CDATA[B - Coastal habitats]]></Title>
+                        <LegendURL width="402" height="108">
+                            <Format>image/png</Format>
+                            <OnlineResource
+                                xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?request=GetLegendGraphic%26version=1.3.0%26format=image/png%26layer=11"
+                                xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                        </LegendURL>
+                    </Style>
+                </Layer>
+                <Layer queryable="1">
+                    <Name>12</Name>
+                    <Title><![CDATA[A - Marine habitats]]></Title>
+                    <Abstract><![CDATA[]]></Abstract>
+                    <CRS>CRS:84</CRS>
+                    <CRS>EPSG:4326</CRS>
+                    <CRS>EPSG:3035</CRS>
+                    <EX_GeographicBoundingBox>
+                        <westBoundLongitude>-79.506988</westBoundLongitude>
+                        <eastBoundLongitude>95.938525</eastBoundLongitude>
+                        <southBoundLatitude>21.837323</southBoundLatitude>
+                        <northBoundLatitude>84.855360</northBoundLatitude>
+                    </EX_GeographicBoundingBox>
+                    <BoundingBox CRS="CRS:84" minx="-79.506988" miny="21.837323" maxx="95.938525"
+                        maxy="84.855360" />
+                    <BoundingBox CRS="EPSG:4326" minx="21.837323" miny="-79.506988" maxx="84.855360"
+                        maxy="95.938525" />
+                    <BoundingBox CRS="EPSG:3035" minx="756300.000000" miny="587500.000000"
+                        maxx="6822800.000000" maxy="7400000.000000" />
+                    <Style>
+                        <Name>default</Name>
+                        <Title><![CDATA[A - Marine habitats]]></Title>
+                        <LegendURL width="498" height="270">
+                            <Format>image/png</Format>
+                            <OnlineResource
+                                xlink:href="https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?request=GetLegendGraphic%26version=1.3.0%26format=image/png%26layer=12"
+                                xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                        </LegendURL>
+                    </Style>
+                </Layer>
+            </Layer>
+        </Layer>
+    </Capability>
+</WMS_Capabilities>

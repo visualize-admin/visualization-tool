@@ -5,7 +5,13 @@ const config: KnipConfig = {
   paths: {
     "@/*": ["./app/*"],
   },
-  entry: ["./app/pages/**/*.{ts,tsx,js,jsx}", "./app/test/colored-console.ts"],
+  entry: [
+    "./app/pages/**/*.{ts,tsx,js,jsx}",
+    "./app/test/colored-console.ts",
+    // TODO Why do I have to put those two entries ?
+    "./app/charts/map/wmts-providers-autocomplete.tsx",
+    "./app/charts/map/wmts-playground.tsx",
+  ],
   ignore: [
     ".github/**/*",
     ".svgrrc.js",
