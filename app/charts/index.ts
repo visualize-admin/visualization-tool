@@ -42,7 +42,6 @@ import {
   isAreaConfig,
   isColorInConfig,
   isColumnConfig,
-  isComboChartConfig,
   isComboLineColumnConfig,
   isComboLineDualConfig,
   isComboLineSingleConfig,
@@ -1757,9 +1756,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           const paletteId = isColorInConfig(oldChartConfig)
             ? (oldChartConfig.fields.color.paletteId ??
               DEFAULT_CATEGORICAL_PALETTE_ID)
-            : isComboChartConfig(oldChartConfig)
-              ? oldChartConfig.fields.color.paletteId
-              : DEFAULT_CATEGORICAL_PALETTE_ID;
+            : DEFAULT_CATEGORICAL_PALETTE_ID;
 
           return produce(newChartConfig, (draft) => {
             draft.fields.y = {
@@ -1880,9 +1877,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         const paletteId = isColorInConfig(oldChartConfig)
           ? (oldChartConfig.fields.color.paletteId ??
             DEFAULT_CATEGORICAL_PALETTE_ID)
-          : isComboChartConfig(oldChartConfig)
-            ? oldChartConfig.fields.color.paletteId
-            : DEFAULT_CATEGORICAL_PALETTE_ID;
+          : DEFAULT_CATEGORICAL_PALETTE_ID;
 
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
@@ -1980,9 +1975,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         const paletteId = isColorInConfig(oldChartConfig)
           ? (oldChartConfig.fields.color.paletteId ??
             DEFAULT_CATEGORICAL_PALETTE_ID)
-          : isComboChartConfig(oldChartConfig)
-            ? oldChartConfig.fields.color.paletteId
-            : DEFAULT_CATEGORICAL_PALETTE_ID;
+          : DEFAULT_CATEGORICAL_PALETTE_ID;
 
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
