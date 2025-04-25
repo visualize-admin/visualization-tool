@@ -869,9 +869,9 @@ const getAdjustedChartConfig = ({
           const getChartConfigWithAdjustedField: FieldAdjuster<
             ChartConfig,
             unknown
-          > =
-            (override?.path && get(adjusters, override.path)) ||
-            get(adjusters, newPath);
+          > = override?.path
+            ? get(adjusters, override.path)
+            : get(adjusters, newPath);
 
           if (getChartConfigWithAdjustedField) {
             newChartConfig = getChartConfigWithAdjustedField({
@@ -2217,7 +2217,8 @@ const chartConfigsPathOverrides: {
       "fields.segment.componentId": { path: "fields.y.componentId" },
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.x.showValues": { path: "fields.y.showValues" },
-      "fields.y.componentId": { path: "fields.x.componentId" },
+      // We want to avoid running the logic for the y component twice.
+      "fields.y.componentId": { path: "SKIP" },
     },
     map: {
       "fields.areaLayer.componentId": { path: "fields.x.componentId" },
