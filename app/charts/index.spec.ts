@@ -412,13 +412,9 @@ describe("chart type switch", () => {
           componentId:
             "https://environment.ld.admin.ch/foen/ubd000502/werteNichtGerundet",
         },
-        segment: {
-          componentId: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
+        color: {
+          type: "segment",
           paletteId: "category10",
-          sorting: {
-            sortingType: "byAuto",
-            sortingOrder: "asc",
-          },
           colorMapping: {
             "1990": "#1f77b4",
             "1991": "#ff7f0e",
@@ -452,6 +448,13 @@ describe("chart type switch", () => {
             "2019": "#17becf",
             "2020": "#1f77b4",
             "2021": "#ff7f0e",
+          },
+        },
+        segment: {
+          componentId: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
+          sorting: {
+            sortingType: "byAuto",
+            sortingOrder: "asc",
           },
         },
       },
