@@ -2214,7 +2214,6 @@ const chartConfigsPathOverrides: {
   },
   pie: {
     bar: {
-      "fields.segment.componentId": { path: "fields.y.componentId" },
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.x.showValues": { path: "fields.y.showValues" },
       // We want to avoid running the logic for the y component twice.
