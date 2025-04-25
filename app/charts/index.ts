@@ -471,11 +471,11 @@ export const getInitialConfig = (
           timeRangeComponentId: barXComponentId,
         }),
         fields: {
+          x: { componentId: numericalMeasures[0].id },
           y: {
             componentId: barXComponentId,
             sorting: DEFAULT_SORTING,
           },
-          x: { componentId: numericalMeasures[0].id },
           color: {
             type: "single",
             paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
@@ -1004,7 +1004,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     fields: {
       x: {
         componentId: ({ oldValue, newChartConfig, dimensions }) => {
-          // When switching from a scatterplot, x is a measure.
+          // When switching from a bar chart or scatterplot, x is a measure.
           if (dimensions.find((d) => d.id === oldValue)) {
             return produce(newChartConfig, (draft) => {
               draft.fields.x.componentId = oldValue;
@@ -1471,17 +1471,45 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       });
     },
     fields: {
-      // x is not needed, as this is the only chart type with x-axis measures.
+      x: {
+        componentId: ({ oldValue, newChartConfig, measures }) => {
+          const numericalMeasures = measures.filter(isNumericalMeasure);
+
+          // If there is only one numerical measure then x & y are already filled correctly.
+          if (numericalMeasures.length > 1) {
+            if (numericalMeasures.map((d) => d.id).includes(oldValue)) {
+              return produce(newChartConfig, (draft) => {
+                draft.fields.x.componentId = oldValue;
+              });
+            }
+          }
+
+          return newChartConfig;
+        },
+      },
       y: {
         componentId: ({ oldValue, newChartConfig, measures }) => {
           const numericalMeasures = measures.filter(isNumericalMeasure);
 
           // If there is only one numerical measure then x & y are already filled correctly.
           if (numericalMeasures.length > 1) {
-            if (newChartConfig.fields.x.componentId !== oldValue) {
+            if (
+              numericalMeasures.map((d) => d.id).includes(oldValue) &&
+              newChartConfig.fields.x.componentId !== oldValue
+            ) {
               return produce(newChartConfig, (draft) => {
                 draft.fields.y.componentId = oldValue;
               });
+            } else {
+              const newMeasure = numericalMeasures.find(
+                (d) => d.id !== newChartConfig.fields.x.componentId
+              );
+
+              if (newMeasure) {
+                return produce(newChartConfig, (draft) => {
+                  draft.fields.y.componentId = newMeasure.id;
+                });
+              }
             }
           }
 
@@ -2062,10 +2090,6 @@ const chartConfigsPathOverrides: {
       "fields.y.componentId": { path: "fields.x.componentId" },
       "fields.y.showValues": { path: "fields.x.showValues" },
     },
-    scatterplot: {
-      "fields.x.componentId": { path: "fields.y.componentId" },
-      "fields.y.componentId": { path: "fields.x.componentId" },
-    },
     pie: {
       "fields.y.componentId": { path: "fields.x.componentId" },
       "fields.y.showValues": { path: "fields.x.showValues" },
@@ -2162,10 +2186,6 @@ const chartConfigsPathOverrides: {
     },
   },
   scatterplot: {
-    bar: {
-      "fields.x.componentId": { path: "fields.y.componentId" },
-      "fields.y.componentId": { path: "fields.x.componentId" },
-    },
     map: {
       "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
     },
@@ -2390,7 +2410,7 @@ const adjustSegmentSorting = ({
   segment: ChartSegmentField;
   acceptedValues: SortingType[];
   defaultValue: SortingType;
-}): SortingOption | undefined => {
+}): SortingOption => {
   const sorting = (segment as any).sorting as SortingOption | undefined;
   const sortingType = sorting?.sortingType;
   const newSorting = sorting
