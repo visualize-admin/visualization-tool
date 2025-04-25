@@ -11,7 +11,11 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Color settings are now persisted across chart type changes
+- Fixes
+  - Switching chart type from grouped table to regular chart doesn't result in
+    segmented charts with all blue segments anymore
 
 # [5.7.1] - 2025-04-25
 
