@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# [5.7.1] - 2025-04-25
+
 - Features
   - It's now possible to use triangle symbol for single-value limits
   - It's now possible to make single-value limit lines dashed when makes sense
