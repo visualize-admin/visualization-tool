@@ -4,6 +4,7 @@ import {
   ColumnConfig,
   ComboLineDualConfig,
   ScatterPlotConfig,
+  SegmentColorField,
   TableFields,
 } from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";
@@ -483,6 +484,126 @@ describe("chart type switch", () => {
     expect(newChartConfig.fields.segment).toBeUndefined();
     expect(newChartConfig.fields.x.componentId).not.toEqual(
       oldChartConfig.fields.x.componentId
+    );
+  });
+
+  it("should carry over colors", () => {
+    const oldChartConfig = {
+      key: "Mudrp4YuP8Ki",
+      version: "3.0.0",
+      meta: {
+        title: {
+          en: "",
+          de: "",
+          fr: "",
+          it: "",
+        },
+        description: {
+          en: "",
+          de: "",
+          fr: "",
+          it: "",
+        },
+      },
+      cubes: [
+        {
+          iri: "https://environment.ld.admin.ch/foen/ubd000502/4",
+          filters: {
+            "https://environment.ld.admin.ch/foen/ubd000502/gas": {
+              type: "single",
+              value: "https://ld.admin.ch/cube/dimension/testdimension/test1",
+            },
+            "https://environment.ld.admin.ch/foen/ubd000502/sektorid": {
+              type: "single",
+              value:
+                "https://environment.ld.admin.ch/vocabulary/ghg_emission_sectors_co2_ordinance/3",
+            },
+          },
+        },
+      ],
+      activeField: "segment",
+      chartType: "line",
+      interactiveFiltersConfig: {
+        legend: {
+          active: false,
+          componentId: "",
+        },
+        timeRange: {
+          active: false,
+          componentId: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
+          presets: {
+            type: "range",
+            from: "",
+            to: "",
+          },
+        },
+        dataFilters: {
+          active: false,
+          componentIds: [],
+        },
+        calculation: {
+          active: false,
+          type: "identity",
+        },
+      },
+      fields: {
+        x: {
+          componentId: "https://environment.ld.admin.ch/foen/ubd000502/jahr",
+        },
+        y: {
+          componentId:
+            "https://environment.ld.admin.ch/foen/ubd000502/werteNichtGerundet",
+        },
+        color: {
+          type: "segment",
+          paletteId: "myCustomPaletteId",
+          colorMapping: {
+            A: "#AAAAAA",
+            B: "#BBBBBB",
+            C: "#CCCCCC",
+          },
+        },
+        segment: {
+          componentId: "https://environment.ld.admin.ch/foen/ubd000502/gas",
+          sorting: {
+            sortingType: "byAuto",
+            sortingOrder: "asc",
+          },
+        },
+      },
+    } as any as ScatterPlotConfig;
+
+    const newChartConfig = getChartConfigAdjustedToChartType({
+      chartConfig: oldChartConfig,
+      newChartType: "column",
+      dimensions: [
+        { id: "https://environment.ld.admin.ch/foen/ubd000502/jahr" },
+        {
+          id: "https://environment.ld.admin.ch/foen/ubd000502/gas",
+          values: [{ value: "A" }, { value: "B" }, { value: "C" }],
+        },
+        { id: "https://environment.ld.admin.ch/foen/ubd000502/sektorid" },
+      ] as any as Dimension[],
+      measures: [
+        {
+          __typename: "NumericalMeasure",
+          id: "https://environment.ld.admin.ch/foen/ubd000502/werte",
+        },
+        {
+          __typename: "NumericalMeasure",
+          id: "https://environment.ld.admin.ch/foen/ubd000502/werteNichtGerundet",
+        },
+      ] as any as Measure[],
+    }) as ColumnConfig;
+
+    expect(newChartConfig.fields.color.paletteId).toEqual(
+      oldChartConfig.fields.color.paletteId
+    );
+    expect(newChartConfig.fields.color.type).toEqual("segment");
+    expect(
+      (newChartConfig.fields.color as SegmentColorField).colorMapping["A"]
+    ).toEqual(
+      (oldChartConfig.fields.color as SegmentColorField).colorMapping["A"]
     );
   });
 
