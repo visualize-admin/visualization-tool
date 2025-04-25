@@ -53,6 +53,7 @@ import {
   isMapConfig,
   isTableConfig,
   MapConfig,
+  RegularChartConfig,
   SortingType,
 } from "@/config-types";
 import {
@@ -556,7 +557,8 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
         <ChartLayoutOptions
           encoding={encoding}
           component={component}
-          chartConfig={chartConfig}
+          // Combo charts use their own drawer.
+          chartConfig={chartConfig as RegularChartConfig}
           components={components}
           hasColorPalette={hasColorPalette}
           hasSubOptions={!!hasSubOptions}
@@ -653,7 +655,7 @@ const ChartLayoutOptions = ({
 }: {
   encoding: EncodingSpec;
   component: Component | undefined;
-  chartConfig: ChartConfig;
+  chartConfig: RegularChartConfig;
   components: Component[];
   hasColorPalette: boolean;
   hasSubOptions: boolean;
