@@ -6,6 +6,7 @@ import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 
 import classes from "@/components/markdown.module.css";
+import { palette } from "@/themes/palette";
 
 const components: ComponentProps<typeof ReactMarkdown>["components"] = {
   h1: ({ children, style, ...props }) => (
@@ -44,7 +45,11 @@ const components: ComponentProps<typeof ReactMarkdown>["components"] = {
     </p>
   ),
   a: ({ children, style, ...props }) => (
-    <a target="_blank" style={{ ...style, marginTop: 0 }} {...props}>
+    <a
+      target="_blank"
+      style={{ ...style, marginTop: 0, color: palette.primary.main }}
+      {...props}
+    >
       {children}
     </a>
   ),
@@ -133,7 +138,7 @@ const componentsInheritFonts: ComponentProps<
     <a
       className={clsx(className, classes.inheritFonts)}
       target="_blank"
-      style={{ ...style, marginTop: 0 }}
+      style={{ ...style, marginTop: 0, color: palette.primary.main }}
       {...props}
     >
       {children}

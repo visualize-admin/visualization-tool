@@ -1,0 +1,13 @@
+{
+  "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer": {
+    "hidden": true,
+    "note": "Not working, also not working on geoadmin"
+  },
+  "https://copernicus.discomap.eea.europa.eu/arcgis/services/Corine/CLC2012_WM/MapServer/WMSServer": {
+    "note": "Only Corinne Land Cover 2012 raster works"
+  },
+  "https://geo.so.ch/api/wmts/1.0.0/WMTSCapabilities.xml": {
+    "note": "Does not work",
+    "hidden": true
+  }
+}

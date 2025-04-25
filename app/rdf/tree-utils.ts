@@ -4,11 +4,11 @@ import sortBy from "lodash/sortBy";
 import { HierarchyValue } from "@/domain/data";
 import { bfs } from "@/utils/bfs";
 
-export const mapTree = <T extends { children?: T[] | null }>(
-  tree: T[],
-  cb: (h: T) => T
+export const mapTree = <TIn extends { children?: TIn[] | null }, TOut>(
+  tree: TIn[],
+  cb: (h: TIn) => TOut
 ) => {
-  return tree.map((t): T => {
+  return tree.map((t): TOut => {
     return {
       ...cb(t),
       children: t.children ? mapTree(t.children, cb) : undefined,
@@ -69,10 +69,12 @@ export const sortHierarchy = (tree: HierarchyValue[]): HierarchyValue[] => {
 /**
  * Visits a hierarchy with depth first search
  */
-export const visitHierarchy = (
-  tree: HierarchyValue[],
+export const visitHierarchy = <
+  TNode extends { children?: TNode[] | undefined },
+>(
+  tree: TNode[],
   /** Will be run over all children. Return false to abort early */
-  visitor: (node: HierarchyValue) => void | false
+  visitor: (node: TNode) => void | false
 ) => {
   const q = [...tree];
   while (q.length > 0) {

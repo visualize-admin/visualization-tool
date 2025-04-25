@@ -10,6 +10,7 @@ import { hexToRgba } from "@uiw/react-color";
 import { geoArea } from "d3-geo";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
+import uniq from "lodash/uniq";
 import maplibreglRaw from "maplibre-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Map, { LngLatLike, MapboxEvent } from "react-map-gl";
@@ -19,6 +20,7 @@ import {
   FLY_TO_DURATION,
   RESET_DURATION,
 } from "@/charts/map/constants";
+import CustomAttribution from "@/charts/map/custom-attribution";
 import DashedScatterplotLayer from "@/charts/map/dashed-scatterplot-layer";
 import { useMapStyle } from "@/charts/map/get-base-layer-style";
 import {
@@ -29,8 +31,9 @@ import {
 import { MapState } from "@/charts/map/map-state";
 import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
 import { getMap, setMap } from "@/charts/map/ref";
-import { getWMSTile, useWMSLayers } from "@/charts/map/wms-utils";
-import { getWMTSTile, useWMTSLayers } from "@/charts/map/wmts-utils";
+import { DEFAULT_WMS_URL, getWMSTile } from "@/charts/map/wms-utils";
+import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
+import { DEFAULT_WMTS_URL, getWMTSTile } from "@/charts/map/wmts-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { useLimits } from "@/config-utils";
@@ -110,19 +113,35 @@ export const MapComponent = ({
   const classes = useStyles();
   const locale = useLocale();
 
-  const { wmsCustomLayers, wmtsCustomLayers } = useMemo(() => {
+  const { wmsEndpoints, wmtsEndpoints } = useMemo(() => {
+    const wmsCustomLayers = getWMSCustomLayers(customLayers);
+    const wmtsCustomLayers = getWMTSCustomLayers(customLayers);
+
     return {
-      wmsCustomLayers: getWMSCustomLayers(customLayers),
-      wmtsCustomLayers: getWMTSCustomLayers(customLayers),
+      wmsEndpoints: uniq(
+        wmsCustomLayers.map((x) => x.endpoint ?? DEFAULT_WMS_URL)
+      ),
+      wmtsEndpoints: uniq(
+        wmtsCustomLayers.map((x) => x.endpoint ?? DEFAULT_WMTS_URL)
+      ),
     };
   }, [customLayers]);
 
-  const { data: wmsLayers } = useWMSLayers({
-    pause: wmsCustomLayers.length === 0,
-  });
-  const { data: wmtsLayers } = useWMTSLayers({
-    pause: wmtsCustomLayers.length === 0,
-  });
+  const { data: groupedLayers } = useWMTSorWMSLayers([
+    ...wmsEndpoints,
+    ...wmtsEndpoints,
+  ]);
+  const { wms: wmsLayers, wmts: wmtsLayers } = groupedLayers ?? {
+    wms: [],
+    wmts: [],
+  };
+
+  const attribution = useMemo(() => {
+    return Array.from(
+      new Set([...wmtsLayers, ...wmsLayers].map((x) => x.attribution))
+    ).join(", ");
+  }, [wmsLayers, wmtsLayers]);
+
   const { behindAreaCustomLayers, afterAreaCustomLayers } = useMemo(() => {
     return {
       behindAreaCustomLayers: customLayers
@@ -582,6 +601,7 @@ export const MapComponent = ({
           }}
           onMove={onViewStateChange}
           onResize={handleResize}
+          attributionControl={false}
           {...viewState}
         >
           <div data-map-loaded={loaded} />
@@ -595,6 +615,7 @@ export const MapComponent = ({
               ...scatterplotLayers,
             ]}
           />
+          <CustomAttribution attribution={attribution} />
         </Map>
       ) : null}
     </>

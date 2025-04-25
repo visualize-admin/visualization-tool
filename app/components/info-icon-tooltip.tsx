@@ -26,7 +26,7 @@ export const InfoIconTooltip = (
       {...rest}
     >
       <div style={{ lineHeight: 0 }}>
-        <Icon name="warningCircle" size={size} />
+        <Icon name="infoCircle" size={size} />
       </div>
     </Tooltip>
   );

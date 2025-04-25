@@ -5,7 +5,10 @@ const config: KnipConfig = {
   paths: {
     "@/*": ["./app/*"],
   },
-  entry: ["./app/pages/**/*.{ts,tsx,js,jsx}", "./app/test/colored-console.ts"],
+  entry: [
+    './app/jest.setup.ts',
+    './app/utils/colored-console.ts'
+  ],
   ignore: [
     ".github/**/*",
     ".svgrrc.js",
@@ -29,8 +32,7 @@ const config: KnipConfig = {
     "./app/typings/**/*",
     "./**/*.config.*",
     "./**/*.mock.ts",
-    "./**/*.setup.*",
-    "./**/*.spec.ts",
+    "./**/*.spec.ts"
   ],
   ignoreDependencies: [
     // Needed by eslint.
