@@ -11,7 +11,9 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Disabled some UI options for Markdown formatting in title and description
+    fields
 
 # [5.7.1] - 2025-04-25
 
