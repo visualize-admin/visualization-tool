@@ -1106,6 +1106,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             colorMapping: mapValueIrisToColor({
               paletteId,
               dimensionValues: segmentDimension?.values ?? [],
+              colorMapping:
+                oldColor?.type === "segment"
+                  ? oldColor.colorMapping
+                  : undefined,
             }),
           };
         }
@@ -1246,6 +1250,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             colorMapping: mapValueIrisToColor({
               paletteId,
               dimensionValues: segmentDimension?.values ?? [],
+              colorMapping:
+                oldColor?.type === "segment"
+                  ? oldColor.colorMapping
+                  : undefined,
             }),
           };
         }
@@ -1382,6 +1390,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               colorMapping: mapValueIrisToColor({
                 paletteId,
                 dimensionValues: segmentDimension?.values ?? [],
+                colorMapping:
+                  oldColor?.type === "segment"
+                    ? oldColor.colorMapping
+                    : undefined,
               }),
             };
           }
@@ -1515,6 +1527,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               colorMapping: mapValueIrisToColor({
                 paletteId,
                 dimensionValues: segmentDimension?.values ?? [],
+                colorMapping:
+                  oldColor?.type === "segment"
+                    ? oldColor.colorMapping
+                    : undefined,
               }),
             };
           }
@@ -1609,6 +1625,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               colorMapping: mapValueIrisToColor({
                 paletteId,
                 dimensionValues: segmentDimension?.values ?? [],
+                colorMapping:
+                  oldColor?.type === "segment"
+                    ? oldColor.colorMapping
+                    : undefined,
               }),
             };
           }
@@ -1655,6 +1675,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             colorMapping: mapValueIrisToColor({
               paletteId,
               dimensionValues: segmentDimension?.values ?? [],
+              colorMapping:
+                oldColor?.type === "segment"
+                  ? oldColor.colorMapping
+                  : undefined,
             }),
           };
         }
@@ -1720,6 +1744,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               colorMapping: mapValueIrisToColor({
                 paletteId,
                 dimensionValues: segmentDimension?.values ?? [],
+                colorMapping:
+                  oldColor?.type === "segment"
+                    ? oldColor.colorMapping
+                    : undefined,
               }),
             };
           }
@@ -1777,6 +1805,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             colorMapping: mapValueIrisToColor({
               paletteId,
               dimensionValues: segmentDimension?.values ?? [],
+              colorMapping:
+                oldColor?.type === "segment"
+                  ? oldColor.colorMapping
+                  : undefined,
             }),
           };
         }
