@@ -2700,10 +2700,7 @@ const convertTableFieldsToSegmentAndColorFields = ({
       paletteId: paletteId,
       colorMapping: mapValueIrisToColor({
         paletteId: paletteId,
-        dimensionValues: [componentId].map((id) => ({
-          value: id,
-          label: id,
-        })),
+        dimensionValues: actualComponent.values,
       }),
     },
   };
