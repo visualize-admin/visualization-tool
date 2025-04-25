@@ -36,6 +36,7 @@ import {
   TableFields,
 } from "@/config-types";
 import { Dimension, Measure } from "@/domain/data";
+import { ComponentId } from "@/graphql/make-component-id";
 
 export type FieldAdjuster<
   NewChartConfigType extends ChartConfig,
@@ -62,7 +63,7 @@ type _InteractiveFiltersAdjusters = {
   legend: FieldAdjuster<ChartConfig, InteractiveFiltersLegend>;
   timeRange: {
     active: FieldAdjuster<ChartConfig, boolean>;
-    componentId: FieldAdjuster<ChartConfig, string>;
+    componentId: FieldAdjuster<ChartConfig, ComponentId>;
     presets: {
       type: FieldAdjuster<ChartConfig, "range">;
       from: FieldAdjuster<ChartConfig, string>;
@@ -81,9 +82,9 @@ type BaseAdjusters<NewChartConfigType extends ChartConfig> = {
 
 type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
   fields: {
-    x: { componentId: FieldAdjuster<ColumnConfig, string> };
+    x: { componentId: FieldAdjuster<ColumnConfig, ComponentId> };
     y: {
-      componentId: FieldAdjuster<ColumnConfig, string>;
+      componentId: FieldAdjuster<ColumnConfig, ComponentId>;
       showValues: FieldAdjuster<ColumnConfig, boolean>;
     };
     segment: FieldAdjuster<
@@ -102,10 +103,10 @@ type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
 type BarAdjusters = BaseAdjusters<BarConfig> & {
   fields: {
     x: {
-      componentId: FieldAdjuster<BarConfig, string>;
+      componentId: FieldAdjuster<BarConfig, ComponentId>;
       showValues: FieldAdjuster<BarConfig, boolean>;
     };
-    y: { componentId: FieldAdjuster<BarConfig, string> };
+    y: { componentId: FieldAdjuster<BarConfig, ComponentId> };
     segment: FieldAdjuster<
       BarConfig,
       | ColumnSegmentField
@@ -121,9 +122,9 @@ type BarAdjusters = BaseAdjusters<BarConfig> & {
 
 type LineAdjusters = BaseAdjusters<LineConfig> & {
   fields: {
-    x: { componentId: FieldAdjuster<LineConfig, string> };
+    x: { componentId: FieldAdjuster<LineConfig, ComponentId> };
     y: {
-      componentId: FieldAdjuster<LineConfig, string>;
+      componentId: FieldAdjuster<LineConfig, ComponentId>;
       showValues: FieldAdjuster<LineConfig, boolean>;
     };
     segment: FieldAdjuster<
@@ -140,9 +141,9 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
 
 type AreaAdjusters = BaseAdjusters<AreaConfig> & {
   fields: {
-    x: { componentId: FieldAdjuster<AreaConfig, string> };
+    x: { componentId: FieldAdjuster<AreaConfig, ComponentId> };
     y: {
-      componentId: FieldAdjuster<AreaConfig, string>;
+      componentId: FieldAdjuster<AreaConfig, ComponentId>;
       showValues: FieldAdjuster<AreaConfig, boolean>;
     };
     segment: FieldAdjuster<
@@ -159,7 +160,7 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
 
 type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
   fields: {
-    y: { componentId: FieldAdjuster<ScatterPlotConfig, string> };
+    y: { componentId: FieldAdjuster<ScatterPlotConfig, ComponentId> };
     segment: FieldAdjuster<
       ScatterPlotConfig,
       | ColumnSegmentField
@@ -176,7 +177,7 @@ type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
 type PieAdjusters = BaseAdjusters<PieConfig> & {
   fields: {
     y: {
-      componentId: FieldAdjuster<PieConfig, string>;
+      componentId: FieldAdjuster<PieConfig, ComponentId>;
       showValues: FieldAdjuster<PieConfig, boolean>;
     };
     segment: FieldAdjuster<
@@ -208,9 +209,9 @@ type TableAdjusters = {
 type MapAdjusters = BaseAdjusters<MapConfig> & {
   fields: {
     areaLayer: {
-      componentId: FieldAdjuster<MapConfig, string>;
+      componentId: FieldAdjuster<MapConfig, ComponentId>;
       color: {
-        componentId: FieldAdjuster<MapConfig, string>;
+        componentId: FieldAdjuster<MapConfig, ComponentId>;
       };
     };
     animation: FieldAdjuster<MapConfig, AnimationField | undefined>;
@@ -219,14 +220,14 @@ type MapAdjusters = BaseAdjusters<MapConfig> & {
 
 type ComboLineSingleAdjusters = BaseAdjusters<ComboLineSingleConfig> & {
   fields: {
-    x: { componentId: FieldAdjuster<ComboLineSingleConfig, string> };
-    y: { componentIds: FieldAdjuster<ComboLineSingleConfig, string> };
+    x: { componentId: FieldAdjuster<ComboLineSingleConfig, ComponentId> };
+    y: { componentIds: FieldAdjuster<ComboLineSingleConfig, ComponentId> };
   };
 };
 
 type ComboLineDualAdjusters = BaseAdjusters<ComboLineDualConfig> & {
   fields: {
-    x: { componentId: FieldAdjuster<ComboLineDualConfig, string> };
+    x: { componentId: FieldAdjuster<ComboLineDualConfig, ComponentId> };
     y: FieldAdjuster<
       ComboLineDualConfig,
       | AreaFields
@@ -245,7 +246,7 @@ type ComboLineDualAdjusters = BaseAdjusters<ComboLineDualConfig> & {
 
 type ComboLineColumnAdjusters = BaseAdjusters<ComboLineColumnConfig> & {
   fields: {
-    x: { componentId: FieldAdjuster<ComboLineColumnConfig, string> };
+    x: { componentId: FieldAdjuster<ComboLineColumnConfig, ComponentId> };
     y: FieldAdjuster<
       ComboLineColumnConfig,
       | AreaFields
