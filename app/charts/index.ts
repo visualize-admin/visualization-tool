@@ -54,11 +54,13 @@ import {
   MapAreaLayer,
   MapConfig,
   MapSymbolLayer,
+  MeasuresColorField,
   Meta,
   PieSegmentField,
   RegularChartType,
   ScatterPlotSegmentField,
   ShowValuesSegmentFieldExtension,
+  SingleColorField,
   SortingOrder,
   SortingType,
   TableColumn,
@@ -846,6 +848,7 @@ const getAdjustedChartConfig = ({
           isSegmentInConfig(newChartConfig)
         );
       case "filters":
+      case "fields.color":
       case "fields.segment":
       case "fields.animation":
       case "interactiveFiltersConfig.calculation":
@@ -1026,6 +1029,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
+      color: ({ oldValue, newChartConfig }) => {
+        return produce(newChartConfig, (draft) => {
+          // Segment color type is migrated in tandem with the segment field below.
+          if (oldValue.type !== "segment") {
+            draft.fields.color = getSingleColorField({
+              oldColorField: oldValue,
+            });
+          }
+        });
+      },
       segment: ({
         oldValue,
         oldChartConfig,
@@ -1065,6 +1078,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           newChartConfig.fields.x.componentId !== oldValue.componentId
         ) {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          const oldColor: ColorField | undefined = isColorInConfig(
+            oldChartConfig
+          )
+            ? oldChartConfig.fields.color
+            : undefined;
+          const segmentDimension = dimensions.find(
+            (d) => d.id === oldValue.componentId
+          );
+          const paletteId =
+            oldColor?.paletteId ?? DEFAULT_CATEGORICAL_PALETTE_ID;
           newSegment = {
             ...oldSegment,
             showValuesMapping: oldSegment.showValuesMapping ?? {},
@@ -1079,12 +1102,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           };
           newColor = {
             type: "segment",
-            paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
+            paletteId,
             colorMapping: mapValueIrisToColor({
-              paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-              dimensionValues:
-                dimensions.find((d) => d.id === oldValue.componentId)?.values ||
-                [],
+              paletteId,
+              dimensionValues: segmentDimension?.values ?? [],
             }),
           };
         }
@@ -1150,6 +1171,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           return newChartConfig;
         },
       },
+      color: ({ oldValue, newChartConfig }) => {
+        return produce(newChartConfig, (draft) => {
+          // Segment color type is migrated in tandem with the segment field below.
+          if (oldValue.type !== "segment") {
+            draft.fields.color = getSingleColorField({
+              oldColorField: oldValue,
+            });
+          }
+        });
+      },
       segment: ({
         oldValue,
         oldChartConfig,
@@ -1188,6 +1219,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           newChartConfig.fields.y.componentId !== oldValue.componentId
         ) {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          const oldColor: ColorField | undefined = isColorInConfig(
+            oldChartConfig
+          )
+            ? oldChartConfig.fields.color
+            : undefined;
+          const paletteId =
+            oldColor?.paletteId ?? DEFAULT_CATEGORICAL_PALETTE_ID;
+          const segmentDimension = dimensions.find(
+            (d) => d.id === oldValue.componentId
+          );
           newSegment = {
             ...oldSegment,
             // We could encounter byMeasure sorting type (Pie chart); we should
@@ -1201,12 +1242,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           };
           newColor = {
             type: "segment",
-            paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
+            paletteId,
             colorMapping: mapValueIrisToColor({
-              paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-              dimensionValues:
-                dimensions.find((d) => d.id === oldValue.componentId)?.values ||
-                [],
+              paletteId,
+              dimensionValues: segmentDimension?.values ?? [],
             }),
           };
         }
@@ -1281,6 +1320,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
+      color: ({ oldValue, newChartConfig }) => {
+        return produce(newChartConfig, (draft) => {
+          // Segment color type is migrated in tandem with the segment field below.
+          if (oldValue.type !== "segment") {
+            draft.fields.color = getSingleColorField({
+              oldColorField: oldValue,
+            });
+          }
+        });
+      },
       segment: ({
         oldValue,
         oldChartConfig,
@@ -1305,6 +1354,13 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
         } else {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          const oldColor: ColorField | undefined = isColorInConfig(
+            oldChartConfig
+          )
+            ? oldChartConfig.fields.color
+            : undefined;
+          const paletteId =
+            oldColor?.paletteId ?? DEFAULT_CATEGORICAL_PALETTE_ID;
           const segmentDimension = dimensions.find(
             (d) => d.id === oldValue.componentId
           );
@@ -1322,10 +1378,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             };
             newColor = {
               type: "segment",
-              paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
+              paletteId,
               colorMapping: mapValueIrisToColor({
-                paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-                dimensionValues: segmentDimension?.values || [],
+                paletteId,
+                dimensionValues: segmentDimension?.values ?? [],
               }),
             };
           }
@@ -1385,6 +1441,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
+      color: ({ oldValue, newChartConfig }) => {
+        return produce(newChartConfig, (draft) => {
+          // Segment color type is migrated in tandem with the segment field below.
+          if (oldValue.type !== "segment") {
+            draft.fields.color = getSingleColorField({
+              oldColorField: oldValue,
+            });
+          }
+        });
+      },
       segment: ({
         oldValue,
         oldChartConfig,
@@ -1422,6 +1488,13 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
         } else {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          const oldColor: ColorField | undefined = isColorInConfig(
+            oldChartConfig
+          )
+            ? oldChartConfig.fields.color
+            : undefined;
+          const paletteId =
+            oldColor?.paletteId ?? DEFAULT_CATEGORICAL_PALETTE_ID;
           const segmentDimension = dimensions.find(
             (d) => d.id === oldValue.componentId
           );
@@ -1438,10 +1511,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             };
             newColor = {
               type: "segment",
-              paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
+              paletteId,
               colorMapping: mapValueIrisToColor({
-                paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-                dimensionValues: segmentDimension?.values || [],
+                paletteId,
+                dimensionValues: segmentDimension?.values ?? [],
               }),
             };
           }
@@ -1516,6 +1589,31 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           return newChartConfig;
         },
       },
+      color: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
+        return produce(newChartConfig, (draft) => {
+          if (oldValue.type === "single") {
+            const oldColor: ColorField | undefined = isColorInConfig(
+              oldChartConfig
+            )
+              ? oldChartConfig.fields.color
+              : undefined;
+            const paletteId =
+              oldColor?.paletteId ?? DEFAULT_CATEGORICAL_PALETTE_ID;
+            const segmentDimension = dimensions.find(
+              (d) => d.id === newChartConfig.fields.segment?.componentId
+            );
+
+            draft.fields.color = {
+              type: "segment",
+              paletteId,
+              colorMapping: mapValueIrisToColor({
+                paletteId,
+                dimensionValues: segmentDimension?.values ?? [],
+              }),
+            };
+          }
+        });
+      },
       segment: ({
         oldValue,
         oldChartConfig,
@@ -1525,6 +1623,13 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       }) => {
         let newSegment: ScatterPlotSegmentField;
         let newColor: ColorField;
+        const oldColor: ColorField | undefined = isColorInConfig(oldChartConfig)
+          ? oldChartConfig.fields.color
+          : undefined;
+        const paletteId = oldColor?.paletteId ?? DEFAULT_CATEGORICAL_PALETTE_ID;
+        const segmentDimension = dimensions.find(
+          (d) => d.id === oldValue.componentId
+        );
 
         if (oldChartConfig.chartType === "table") {
           const maybeSegmentAndColorFields =
@@ -1543,6 +1648,14 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           newSegment = {
             componentId: oldSegment.componentId,
             showValuesMapping: oldSegment.showValuesMapping,
+          };
+          newColor = {
+            type: "segment",
+            paletteId,
+            colorMapping: mapValueIrisToColor({
+              paletteId,
+              dimensionValues: segmentDimension?.values ?? [],
+            }),
           };
         }
 
@@ -1587,6 +1700,31 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
+      color: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
+        return produce(newChartConfig, (draft) => {
+          if (oldValue.type === "single") {
+            const oldColor: ColorField | undefined = isColorInConfig(
+              oldChartConfig
+            )
+              ? oldChartConfig.fields.color
+              : undefined;
+            const paletteId =
+              oldColor?.paletteId ?? DEFAULT_CATEGORICAL_PALETTE_ID;
+            const segmentDimension = dimensions.find(
+              (d) => d.id === newChartConfig.fields.segment.componentId
+            );
+
+            draft.fields.color = {
+              type: "segment",
+              paletteId,
+              colorMapping: mapValueIrisToColor({
+                paletteId,
+                dimensionValues: segmentDimension?.values ?? [],
+              }),
+            };
+          }
+        });
+      },
       segment: ({
         oldValue,
         oldChartConfig,
@@ -1614,6 +1752,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
         } else {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          const oldColor: ColorField | undefined = isColorInConfig(
+            oldChartConfig
+          )
+            ? oldChartConfig.fields.color
+            : undefined;
+          const paletteId =
+            oldColor?.paletteId ?? DEFAULT_CATEGORICAL_PALETTE_ID;
+          const segmentDimension = dimensions.find(
+            (d) => d.id === oldSegment.componentId
+          );
           newSegment = {
             componentId: oldSegment.componentId,
             sorting: adjustSegmentSorting({
@@ -1625,12 +1773,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           };
           newColor = {
             type: "segment",
-            paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
+            paletteId,
             colorMapping: mapValueIrisToColor({
-              paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-              dimensionValues:
-                dimensions.find((d) => d.id === oldSegment.componentId)
-                  ?.values || [],
+              paletteId,
+              dimensionValues: segmentDimension?.values ?? [],
             }),
           };
         }
@@ -2658,6 +2804,21 @@ export const getFieldComponentId = (
 ): string | undefined => {
   // Multi axis charts have multiple component ids in the y field.
   return (fields as $IntentionalAny)[field]?.componentId;
+};
+
+const getSingleColorField = ({
+  oldColorField,
+}: {
+  oldColorField: SingleColorField | MeasuresColorField;
+}): SingleColorField => {
+  return {
+    type: "single",
+    paletteId: oldColorField.paletteId,
+    color:
+      oldColorField.type === "single"
+        ? oldColorField.color
+        : Object.values(oldColorField.colorMapping)[0],
+  };
 };
 
 const convertTableFieldsToSegmentAndColorFields = ({

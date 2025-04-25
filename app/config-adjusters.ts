@@ -7,6 +7,7 @@ import {
   BarFields,
   BarSegmentField,
   ChartConfig,
+  ColorField,
   ColumnConfig,
   ColumnFields,
   ColumnSegmentField,
@@ -87,6 +88,7 @@ type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
       componentId: FieldAdjuster<ColumnConfig, ComponentId>;
       showValues: FieldAdjuster<ColumnConfig, boolean>;
     };
+    color: FieldAdjuster<ColumnConfig, ColorField>;
     segment: FieldAdjuster<
       ColumnConfig,
       | BarSegmentField
@@ -107,6 +109,7 @@ type BarAdjusters = BaseAdjusters<BarConfig> & {
       showValues: FieldAdjuster<BarConfig, boolean>;
     };
     y: { componentId: FieldAdjuster<BarConfig, ComponentId> };
+    color: FieldAdjuster<BarConfig, ColorField>;
     segment: FieldAdjuster<
       BarConfig,
       | ColumnSegmentField
@@ -127,6 +130,7 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
       componentId: FieldAdjuster<LineConfig, ComponentId>;
       showValues: FieldAdjuster<LineConfig, boolean>;
     };
+    color: FieldAdjuster<LineConfig, ColorField>;
     segment: FieldAdjuster<
       LineConfig,
       | ColumnSegmentField
@@ -146,6 +150,7 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
       componentId: FieldAdjuster<AreaConfig, ComponentId>;
       showValues: FieldAdjuster<AreaConfig, boolean>;
     };
+    color: FieldAdjuster<AreaConfig, ColorField>;
     segment: FieldAdjuster<
       AreaConfig,
       | ColumnSegmentField
@@ -160,7 +165,9 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
 
 type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
   fields: {
+    x: { componentId: FieldAdjuster<ScatterPlotConfig, ComponentId> };
     y: { componentId: FieldAdjuster<ScatterPlotConfig, ComponentId> };
+    color: FieldAdjuster<ScatterPlotConfig, ColorField>;
     segment: FieldAdjuster<
       ScatterPlotConfig,
       | ColumnSegmentField
@@ -180,6 +187,7 @@ type PieAdjusters = BaseAdjusters<PieConfig> & {
       componentId: FieldAdjuster<PieConfig, ComponentId>;
       showValues: FieldAdjuster<PieConfig, boolean>;
     };
+    color: FieldAdjuster<PieConfig, ColorField>;
     segment: FieldAdjuster<
       PieConfig,
       | ColumnSegmentField
