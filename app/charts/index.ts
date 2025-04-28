@@ -1942,7 +1942,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         let leftMeasure = numericalMeasures.find(
           (d) => d.id === numericalMeasureIds[0]
         ) as NumericalMeasure;
-        let rightMeasureId: string;
+        let rightMeasureId: string | undefined;
         const getLeftMeasure = (preferredId: string) => {
           const preferredLeftMeasure = numericalMeasures.find(
             (d) => d.id === preferredId
