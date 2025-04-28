@@ -245,7 +245,7 @@ export type BaseDimension = Omit<BaseComponent, "id"> & {
   hierarchy?: HierarchyValue[] | null;
 } & (
     | {
-        id: string;
+        id: ComponentId;
         isJoinByDimension: true;
         originalIds: {
           cubeIri: string;

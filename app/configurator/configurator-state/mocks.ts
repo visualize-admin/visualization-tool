@@ -5,7 +5,7 @@ import {
   ConfiguratorStateConfiguringChart,
 } from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";
-import { stringifyComponentId } from "@/graphql/make-component-id";
+import { ComponentId, stringifyComponentId } from "@/graphql/make-component-id";
 import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
 import {
   CHART_CONFIG_VERSION,
@@ -1696,7 +1696,7 @@ export const dimensionsJoinedCubes: Dimension[] = [
     timeFormat: "%Y",
     timeUnit: TimeUnit.Year,
     cubeIri: "joinBy",
-    id: "joinBy__0",
+    id: "joinBy__0" as ComponentId,
     label: "Jahr der Vergütung, Period",
     description: "Jahr, in welchem die EIV ausbezahlt wurde",
     unit: "yr",
@@ -1754,7 +1754,7 @@ export const dimensionsJoinedCubes: Dimension[] = [
   {
     __typename: "GeoShapesDimension",
     cubeIri: "joinBy",
-    id: "joinBy__1",
+    id: "joinBy__1" as ComponentId,
     label: "Kanton, Canton",
     description: "Kanton, in welchem die geförderten Anlagen stehen",
     scaleType: ScaleType.Nominal,
