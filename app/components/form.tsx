@@ -42,6 +42,8 @@ import { useId } from "@reach/auto-id";
 import flatten from "lodash/flatten";
 import React, {
   ComponentProps,
+  FocusEventHandler,
+  KeyboardEventHandler,
   ReactNode,
   SyntheticEvent,
   useCallback,
@@ -518,15 +520,21 @@ export const Input = ({
   name,
   value,
   defaultValue,
+  onBlur,
+  onKeyDown,
   disabled,
   onChange,
   error,
+  errorMessage,
   sx,
 }: {
   label?: string | ReactNode;
   disabled?: boolean;
   defaultValue?: FieldProps["value"];
+  onBlur?: FocusEventHandler<HTMLInputElement>;
+  onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
   error?: boolean;
+  errorMessage?: string;
   sx?: SxProps;
 } & FieldProps) => (
   <Box sx={{ fontSize: "1rem", pb: 2 }}>
@@ -540,9 +548,20 @@ export const Input = ({
       value={value}
       defaultValue={defaultValue}
       disabled={disabled}
+      onBlur={onBlur}
       onChange={onChange}
+      onKeyDown={onKeyDown}
       sx={error ? { ...sx, borderColor: "error.main" } : sx}
     />
+    {error && errorMessage ? (
+      <Typography
+        variant="caption"
+        color="error.main"
+        sx={{ lineHeight: "1 !important" }}
+      >
+        {errorMessage}
+      </Typography>
+    ) : null}
   </Box>
 );
 
