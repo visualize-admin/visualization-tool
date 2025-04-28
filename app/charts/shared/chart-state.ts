@@ -34,6 +34,7 @@ import { TableChartState } from "@/charts/table/table-state";
 import { useLimits } from "@/config-utils";
 import {
   AreaFields,
+  BarFields,
   ChartConfig,
   ChartSegmentField,
   ChartType,
@@ -336,7 +337,7 @@ export type NumericalXVariables = {
 
 export const useNumericalXVariables = (
   chartType: "scatterplot" | "bar",
-  x: GenericField,
+  x: ScatterPlotFields["x"] | BarFields["x"],
   { measuresById }: { measuresById: MeasuresById }
 ): NumericalXVariables => {
   const xMeasure = measuresById[x.componentId];
