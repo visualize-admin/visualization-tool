@@ -14,8 +14,16 @@ You can also check the
 - Features
   - Color settings are now persisted across chart type changes
 - Fixes
+  - It's now again possible to download images
   - Switching chart type from grouped table to regular chart doesn't result in
     segmented charts with all blue segments anymore
+  - Disabled some UI options for Markdown formatting in title and description
+    fields
+
+# [5.7.2] - 2025-04-28
+
+- Fixes
+  - WMTS providers autocomplete could not be closed
 
 # [5.7.1] - 2025-04-25
 
