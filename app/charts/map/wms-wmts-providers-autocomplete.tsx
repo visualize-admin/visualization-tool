@@ -1,16 +1,24 @@
 import { t } from "@lingui/macro";
-import { Alert, Autocomplete, Chip, TextField, Theme } from "@mui/material";
+import { Autocomplete, TextField, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useMemo } from "react";
 
 import { guessUrlType } from "@/charts/map/wms-wmts-endpoint-utils";
+import ProviderInfoAlert from "@/charts/map/wms-wmts-provider-info";
 import wmsWmtsProvidersExtra_ from "@/charts/map/wms-wmts-providers-extra.json";
 import wmsWmtsProviders from "@/charts/map/wms-wmts-providers.json";
 import { useFlag } from "@/flags";
 
 const wmsWmtsProvidersExtra = wmsWmtsProvidersExtra_ as Record<
   string,
-  { hidden?: boolean; note?: string }
+  {
+    hidden?: boolean;
+    note?: string;
+    canListLayers?: boolean;
+    canDisplayLayers?: boolean;
+    canDisplayOnMapGeoAdmin?: boolean;
+    workingLayers?: string[];
+  }
 >;
 
 type ProviderUrl = string;
@@ -86,19 +94,7 @@ const ProviderAutocomplete = ({
         groupBy={(option) => option.group}
         // @ts-ignore
         getOptionLabel={(option) =>
-          typeof option === "string" ? (
-            option
-          ) : (
-            <>
-              <Chip
-                size="small"
-                label={option.type}
-                variant="outlined"
-                className={classes.chip}
-              />
-              {option.label}
-            </>
-          )
+          typeof option === "string" ? option : option.label
         }
         onChange={(_ev, newValue) =>
           onChange(
@@ -137,14 +133,8 @@ const ProviderAutocomplete = ({
           />
         )}
       />
-      {extraInfo && extraInfo.note && showExtraInfo && (
-        <Alert
-          severity="orange"
-          sx={{ mb: 2, boxShadow: "none", p: 1 }}
-          elevation={0}
-        >
-          {extraInfo.note}
-        </Alert>
+      {extraInfo && showExtraInfo && (
+        <ProviderInfoAlert extraInfo={extraInfo} />
       )}
     </>
   );

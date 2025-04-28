@@ -1,13 +1,93 @@
 {
-  "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer": {
-    "hidden": true,
-    "note": "Not working, also not working on geoadmin"
+  "https://geodienste.ch/db/av_situationsplan/deu": {
+    "canListLayers": true,
+    "canDisplayLayers": true,
+    "canDisplayOnMapGeoAdmin": true,
+    "workingLayers": ["Berzirkgrenzen", "Situationsplan", "Landeskarte"],
+    "note": ""
   },
-  "https://copernicus.discomap.eea.europa.eu/arcgis/services/Corine/CLC2012_WM/MapServer/WMSServer": {
-    "note": "Only Corinne Land Cover 2012 raster works"
+  "https://geodienste.ch/db/av_situationsplan/fra": {
+    "canListLayers": true,
+    "canDisplayLayers": true,
+    "canDisplayOnMapGeoAdmin": true,
+    "workingLayers": ["Disponibilite"],
+    "note": ""
   },
-  "https://geo.so.ch/api/wmts/1.0.0/WMTSCapabilities.xml": {
-    "note": "Does not work",
-    "hidden": true
+  "https://geodienste.ch/db/av/ita": {
+    "canListLayers": true,
+    "canDisplayLayers": false,
+    "canDisplayOnMapGeoAdmin": true,
+    "workingLayers": [],
+    "note": ""
+  },
+  "https://geodienste.ch/db/elektrische_anlagen_ueber_36kv/deu": {
+    "canListLayers": true,
+    "canDisplayLayers": true,
+    "canDisplayOnMapGeoAdmin": true,
+    "workingLayers": ["Leitung", "Station (punkt)"],
+    "note": "Station (fläsche) and Mast do not work and cannot be displayed on map.geo.admin.ch"
+  },
+  "https://geodienste.ch/db/fixpunkte/deu": {
+    "canListLayers": true,
+    "canDisplayLayers": true,
+    "canDisplayOnMapGeoAdmin": true,
+    "workingLayers": ["Lage und höhenfixpunkte LFP2 / HFP2"],
+    "note": ""
+  },
+  "https://geoserver.swissdatacube.org/geoserver/gwc/service/wmts?REQUEST=GetCapabilities": {
+    "canListLayers": true,
+    "canDisplayLayers": false,
+    "canDisplayOnMapGeoAdmin": true,
+    "workingLayers": [],
+    "note": "Layers load but cannot be displayed"
+  },
+  "https://osmlab.github.io/wmts-osm/WMTSCapabilities.xml": {
+    "canListLayers": true,
+    "canDisplayLayers": false,
+    "canDisplayOnMapGeoAdmin": true,
+    "workingLayers": [],
+    "note": "Display on map.geo.admin.ch seems buggy"
+  },
+  "https://geodienste.ch/db/waldreservate/deu": {
+    "canListLayers": true,
+    "canDisplayLayers": true,
+    "canDisplayOnMapGeoAdmin": true,
+    "workingLayers": ["Waldreservate", "Verfügbarkeit: Kantone"],
+    "note": "Verfügbarkeit: Beschriftungen does not work"
+  },
+  "https://geodienste.ch/db/kantonale_ausnahmetransportrouten/deu": {
+    "canListLayers": true,
+    "canDisplayLayers": true,
+    "canDisplayOnMapGeoAdmin": true,
+    "workingLayers": ["Routen"],
+    "note": ""
+  },
+  "https://p20.cosmos-project.ch/sd20alps_map/wmts?request=getcapabilities": {
+    "canListLayers": false,
+    "canDisplayLayers": false,
+    "canDisplayOnMapGeoAdmin": true,
+    "workingLayers": [],
+    "note": "403 Forbidden due to Referer restriction (must be map.geo.admin.ch)"
+  },
+  "https://services.geo.sg.ch/wss/service/SG00002_WMS/guest?": {
+    "canListLayers": false,
+    "canDisplayLayers": false,
+    "canDisplayOnMapGeoAdmin": true,
+    "workingLayers": [],
+    "note": "CORS Missing allow origin"
+  },
+  "https://www.basemap.at/wmts/1.0.0/WMTSCapabilities.xml": {
+    "canListLayers": false,
+    "canDisplayLayers": false,
+    "canDisplayOnMapGeoAdmin": true,
+    "workingLayers": [],
+    "note": "CORS Missing allow origin"
+  },
+  "https://www.ogd.stadt-zuerich.ch/mapproxy/wmts/1.0.0/WMTSCapabilities.xml": {
+    "canListLayers": true,
+    "canDisplayLayers": false,
+    "canDisplayOnMapGeoAdmin": true,
+    "workingLayers": [],
+    "note": "Loading layers works but no displayable layers"
   }
 }
