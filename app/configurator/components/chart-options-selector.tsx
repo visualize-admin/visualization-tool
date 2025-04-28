@@ -782,6 +782,8 @@ const ChartScaleDomain = ({
         <Flex justifyContent="space-between" gap={2}>
           <Input
             type="number"
+            name="adjust-scale-min-value"
+            label="min"
             value={domain[0]}
             onChange={(e) => {
               const value = +e.currentTarget.value;
@@ -791,6 +793,8 @@ const ChartScaleDomain = ({
           />
           <Input
             type="number"
+            name="adjust-scale-max-value"
+            label="max"
             value={domain[1]}
             onChange={(e) => {
               const value = +e.currentTarget.value;
