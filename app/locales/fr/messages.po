@@ -349,6 +349,18 @@ msgstr "Ajouter un autre graphique."
 msgid "controls.adjust-scale-domain"
 msgstr "Ajuster le domaine d'échelle"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.adjust-scale-domain.invalid-number-error"
+msgstr "Veuillez entrer un numéro valide"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.adjust-scale-domain.max-error"
+msgstr "Le maximum doit être plus grand que le minimum"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.adjust-scale-domain.min-error"
+msgstr "Le minimum doit être inférieur au maximum"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.animation"
 msgstr "Animation"

@@ -349,6 +349,18 @@ msgstr "Fügen Sie ein weiteres Diagramm hinzu."
 msgid "controls.adjust-scale-domain"
 msgstr "Skalierungsbereich anpassen"
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.adjust-scale-domain.invalid-number-error"
+msgstr "Bitte geben Sie eine gültige Nummer ein"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.adjust-scale-domain.max-error"
+msgstr "Max muss grösser sein als Min"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.adjust-scale-domain.min-error"
+msgstr "Min muss kleiner als Max sein"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.animation"
 msgstr "Animation"

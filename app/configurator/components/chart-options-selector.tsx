@@ -4,7 +4,7 @@ import { groups } from "d3-array";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
 import dynamic from "next/dynamic";
-import { ReactNode, useCallback, useEffect, useMemo } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentId } from "@/charts";
 import {
@@ -741,10 +741,13 @@ const ChartScaleDomain = ({
 }) => {
   const locale = useLocale();
   const [_, dispatch] = useConfiguratorState(isConfiguring);
-  const domain = get(chartConfig, `fields["${field}"].customDomain`);
+  const domain = get(chartConfig, `fields["${field}"].customDomain`) as
+    | [number, number]
+    | undefined;
   const checked = !!domain;
   const disabled =
     chartConfig.interactiveFiltersConfig?.calculation.type === "percent";
+
   const handleToggle = useEvent(() => {
     dispatch({
       type: "CHART_FIELD_UPDATED",
@@ -756,20 +759,21 @@ const ChartScaleDomain = ({
       },
     });
   });
-  const handleChange = useEvent((domain: [number, number]) => {
+
+  const handleChange = useEvent((newDomain: [number, number]) => {
     dispatch({
       type: "CHART_FIELD_UPDATED",
       value: {
         locale,
         field,
         path: "customDomain",
-        value: domain,
+        value: newDomain,
       },
     });
   });
 
   return (
-    <Stack gap={4} sx={disabled ? { opacity: 0.5, pointerEvents: "none" } : {}}>
+    <Stack gap={2} sx={disabled ? { opacity: 0.5, pointerEvents: "none" } : {}}>
       <Checkbox
         label={t({
           id: "controls.adjust-scale-domain",
@@ -780,37 +784,93 @@ const ChartScaleDomain = ({
       />
       {checked ? (
         <Flex justifyContent="space-between" gap={2}>
-          <Input
-            type="number"
-            name="adjust-scale-min-value"
+          <DomainInput
             label="min"
             value={domain[0]}
-            onChange={(e) => {
-              const value = +e.currentTarget.value;
-
-              if (value < domain[1]) {
-                handleChange([value, domain[1]]);
-              }
-            }}
-            sx={{ pr: 0 }}
+            validate={(d) => ({
+              error:
+                d < domain[1]
+                  ? null
+                  : t({
+                      id: "controls.adjust-scale-domain.min-error",
+                      message: "Min must be smaller than max",
+                    }),
+            })}
+            onCommit={(d) => handleChange([d, domain[1]])}
           />
-          <Input
-            type="number"
-            name="adjust-scale-max-value"
+          <DomainInput
             label="max"
             value={domain[1]}
-            onChange={(e) => {
-              const value = +e.currentTarget.value;
-
-              if (value > domain[0]) {
-                handleChange([domain[0], value]);
-              }
-            }}
-            sx={{ pr: 0 }}
+            validate={(d) => ({
+              error:
+                d > domain[0]
+                  ? null
+                  : t({
+                      id: "controls.adjust-scale-domain.max-error",
+                      message: "Max must be bigger than min",
+                    }),
+            })}
+            onCommit={(d) => handleChange([domain[0], d])}
           />
         </Flex>
       ) : null}
     </Stack>
+  );
+};
+
+const DomainInput = ({
+  label,
+  value,
+  onCommit,
+  validate,
+}: {
+  label: string;
+  value: number;
+  onCommit: (newValue: number) => void;
+  validate: (newValue: number) => { error: string | null };
+}) => {
+  const [inputValue, setInputValue] = useState(`${value}`);
+  const [error, setError] = useState<string | undefined>(undefined);
+
+  const handleCommit = () => {
+    const parsed = parseFloat(inputValue);
+    if (isNaN(parsed)) {
+      setError(
+        t({
+          id: "controls.adjust-scale-domain.invalid-number-error",
+          message: "Please enter a valid number",
+        })
+      );
+      return;
+    }
+
+    const { error } = validate(parsed);
+
+    if (error) {
+      setError(error);
+      return;
+    }
+
+    setError(undefined);
+    onCommit(parsed);
+  };
+
+  return (
+    <Input
+      type="number"
+      label={label}
+      name={label}
+      value={inputValue}
+      onChange={(e) => setInputValue(e.currentTarget.value)}
+      onBlur={handleCommit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          handleCommit();
+        }
+      }}
+      error={!!error}
+      errorMessage={error}
+    />
   );
 };
 
