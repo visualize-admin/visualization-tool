@@ -667,6 +667,7 @@ describe("CHART_FIELD_DELETED", () => {
           chartType: "column",
           cubes: [],
           fields: {
+            y: {},
             segment: {
               componentId: "segmentComponentId",
             },
