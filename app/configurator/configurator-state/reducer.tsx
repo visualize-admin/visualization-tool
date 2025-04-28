@@ -21,6 +21,7 @@ import {
 } from "@/charts";
 import {
   getChartFieldChangeSideEffect,
+  getChartFieldDeleteSideEffect,
   getChartFieldOptionChangeSideEffect,
 } from "@/charts/chart-config-ui-options";
 import {
@@ -434,40 +435,44 @@ export const handleChartFieldDeleted = (
   draft: ConfiguratorState,
   action: Extract<ConfiguratorStateAction, { type: "CHART_FIELD_DELETED" }>
 ) => {
-  if (isConfiguring(draft)) {
-    const chartConfig = getChartConfig(draft);
-    delete (chartConfig.fields as GenericFields)[action.value.field];
-    const dataCubesComponents = getCachedComponents({
-      locale: action.value.locale,
-      dataSource: draft.dataSource,
-      cubeFilters: chartConfig.cubes.map((cube) => ({
-        iri: cube.iri,
-        joinBy: cube.joinBy,
-      })),
-    });
-    const dimensions = dataCubesComponents?.dimensions ?? [];
-    const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
-    const index = draft.chartConfigs.findIndex(
-      (d) => d.key === chartConfig.key
-    );
-    draft.chartConfigs[index] = newConfig;
+  if (!isConfiguring(draft)) {
+    return draft;
+  }
 
-    if (action.value.field === "segment") {
-      if (chartConfig.interactiveFiltersConfig) {
-        chartConfig.interactiveFiltersConfig.calculation.active = false;
-        chartConfig.interactiveFiltersConfig.calculation.type = "identity";
-      }
+  const { locale, field } = action.value;
+  const chartConfig = getChartConfig(draft);
+  delete (chartConfig.fields as GenericFields)[field];
+  const dataCubesComponents = getCachedComponents({
+    locale,
+    dataSource: draft.dataSource,
+    cubeFilters: chartConfig.cubes.map((cube) => ({
+      iri: cube.iri,
+      joinBy: cube.joinBy,
+    })),
+  });
+  const dimensions = dataCubesComponents?.dimensions ?? [];
+  const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
+  const index = draft.chartConfigs.findIndex((d) => d.key === chartConfig.key);
+  draft.chartConfigs[index] = newConfig;
 
-      if (isColorInConfig(chartConfig)) {
-        const newColorField: SingleColorField = {
-          type: "single",
-          paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-          color: theme.palette.primary.main,
-        };
-        chartConfig.fields.color = newColorField;
-      }
+  if (action.value.field === "segment") {
+    if (chartConfig.interactiveFiltersConfig) {
+      chartConfig.interactiveFiltersConfig.calculation.active = false;
+      chartConfig.interactiveFiltersConfig.calculation.type = "identity";
+    }
+
+    if (isColorInConfig(chartConfig)) {
+      const newColorField: SingleColorField = {
+        type: "single",
+        paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
+        color: theme.palette.primary.main,
+      };
+      chartConfig.fields.color = newColorField;
     }
   }
+
+  const sideEffect = getChartFieldDeleteSideEffect(chartConfig, field);
+  sideEffect?.({ chartConfig });
 
   return draft;
 };

@@ -307,6 +307,7 @@ export interface EncodingSpec<
     >;
   };
   onChange?: OnEncodingChange<T, F>;
+  onDelete?: (options: { chartConfig: T }) => void;
   getDisabledState?: (
     chartConfig: T,
     components: Component[],
