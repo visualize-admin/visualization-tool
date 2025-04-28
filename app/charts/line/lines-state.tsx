@@ -155,40 +155,48 @@ const useLinesState = (
   const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
 
   // y
-  const minValue = getMinY(scalesData, (d) =>
-    getYErrorRange ? getYErrorRange(d)[0] : getY(d)
-  );
-  const maxValue =
-    max(scalesData, (d) => (getYErrorRange ? getYErrorRange(d)[1] : getY(d))) ??
-    0;
-  const shouldBeNice = !y.customDomain;
-  const yDomain = y.customDomain ?? [
-    minLimitValue !== undefined ? Math.min(minLimitValue, minValue) : minValue,
-    maxLimitValue !== undefined ? Math.max(maxLimitValue, maxValue) : maxValue,
-  ];
-  const yScale = scaleLinear().domain(yDomain);
+  const yScale = scaleLinear();
+  const paddingYScale = scaleLinear();
 
-  const paddingMinValue = getMinY(paddingData, (d) =>
-    getYErrorRange ? getYErrorRange(d)[0] : getY(d)
-  );
-  const paddingMaxValue =
-    max(paddingData, (d) =>
-      getYErrorRange ? getYErrorRange(d)[1] : getY(d)
-    ) ?? 0;
-  const paddingYScale = scaleLinear().domain(
-    y.customDomain ?? [
-      minLimitValue !== undefined
-        ? Math.min(minLimitValue, paddingMinValue)
-        : paddingMinValue,
-      maxLimitValue !== undefined
-        ? Math.max(maxLimitValue, paddingMaxValue)
-        : paddingMaxValue,
-    ]
-  );
+  if (y.customDomain) {
+    yScale.domain(y.customDomain);
+    paddingYScale.domain(y.customDomain);
+  } else {
+    const minValue = getMinY(scalesData, (d) => {
+      return getYErrorRange?.(d)[0] ?? getY(d);
+    });
+    const maxValue =
+      max(scalesData, (d) => {
+        return getYErrorRange?.(d)[1] ?? getY(d);
+      }) ?? 0;
+    yScale
+      .domain([
+        minLimitValue !== undefined
+          ? Math.min(minLimitValue, minValue)
+          : minValue,
+        maxLimitValue !== undefined
+          ? Math.max(maxLimitValue, maxValue)
+          : maxValue,
+      ])
+      .nice();
 
-  if (shouldBeNice) {
-    yScale.nice();
-    paddingYScale.nice();
+    const paddingMinValue = getMinY(paddingData, (d) => {
+      return getYErrorRange?.(d)[0] ?? getY(d);
+    });
+    const paddingMaxValue =
+      max(paddingData, (d) => {
+        return getYErrorRange?.(d)[1] ?? getY(d);
+      }) ?? 0;
+    paddingYScale
+      .domain([
+        minLimitValue !== undefined
+          ? Math.min(minLimitValue, paddingMinValue)
+          : paddingMinValue,
+        maxLimitValue !== undefined
+          ? Math.max(maxLimitValue, paddingMaxValue)
+          : paddingMaxValue,
+      ])
+      .nice();
   }
 
   // segments

@@ -259,34 +259,34 @@ const useBarsGroupedState = (
     const yScaleTimeRange = scaleTime().domain(yScaleTimeRangeDomain);
 
     // x
-    const shouldBeNice = !x.customDomain;
-    const minValue = getMinX(scalesData, (d) =>
-      getXErrorRange ? getXErrorRange(d)[0] : getX(d)
-    );
-    const maxValue = Math.max(
-      max(scalesData, (d) =>
-        getXErrorRange ? getXErrorRange(d)[1] : getX(d)
-      ) ?? 0,
-      0
-    );
-    const xScale = scaleLinear().domain(x.customDomain ?? [minValue, maxValue]);
+    const xScale = scaleLinear();
+    const paddingXScale = scaleLinear();
 
-    const minPaddingValue = getMinX(paddingData, (d) =>
-      getXErrorRange ? getXErrorRange(d)[0] : getX(d)
-    );
-    const maxPaddingValue = Math.max(
-      max(paddingData, (d) =>
-        getXErrorRange ? getXErrorRange(d)[1] : getX(d)
-      ) ?? 0,
-      0
-    );
-    const paddingXScale = scaleLinear().domain(
-      x.customDomain ?? [minPaddingValue, maxPaddingValue]
-    );
+    if (x.customDomain) {
+      xScale.domain(x.customDomain);
+      paddingXScale.domain(x.customDomain);
+    } else {
+      const minValue = getMinX(scalesData, (d) => {
+        return getXErrorRange?.(d)[0] ?? getX(d);
+      });
+      const maxValue = Math.max(
+        max(scalesData, (d) => {
+          return getXErrorRange?.(d)[1] ?? getX(d);
+        }) ?? 0,
+        0
+      );
+      xScale.domain([minValue, maxValue]).nice();
 
-    if (shouldBeNice) {
-      xScale.nice();
-      paddingXScale.nice();
+      const minPaddingValue = getMinX(paddingData, (d) => {
+        return getXErrorRange?.(d)[0] ?? getX(d);
+      });
+      const maxPaddingValue = Math.max(
+        max(paddingData, (d) => {
+          return getXErrorRange?.(d)[1] ?? getX(d);
+        }) ?? 0,
+        0
+      );
+      paddingXScale.domain([minPaddingValue, maxPaddingValue]).nice();
     }
 
     return {

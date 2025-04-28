@@ -261,34 +261,34 @@ const useColumnsGroupedState = (
     const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
 
     // y
-    const shouldBeNice = !y.customDomain;
-    const minValue = getMinY(scalesData, (d) =>
-      getYErrorRange ? getYErrorRange(d)[0] : getY(d)
-    );
-    const maxValue = Math.max(
-      max(scalesData, (d) =>
-        getYErrorRange ? getYErrorRange(d)[1] : getY(d)
-      ) ?? 0,
-      0
-    );
-    const yScale = scaleLinear().domain(y.customDomain ?? [minValue, maxValue]);
+    const yScale = scaleLinear();
+    const paddingYScale = scaleLinear();
 
-    const minPaddingValue = getMinY(paddingData, (d) =>
-      getYErrorRange ? getYErrorRange(d)[0] : getY(d)
-    );
-    const maxPaddingValue = Math.max(
-      max(paddingData, (d) =>
-        getYErrorRange ? getYErrorRange(d)[1] : getY(d)
-      ) ?? 0,
-      0
-    );
-    const paddingYScale = scaleLinear().domain(
-      y.customDomain ?? [minPaddingValue, maxPaddingValue]
-    );
+    if (y.customDomain) {
+      yScale.domain(y.customDomain);
+      paddingYScale.domain(y.customDomain);
+    } else {
+      const minValue = getMinY(scalesData, (d) => {
+        return getYErrorRange?.(d)[0] ?? getY(d);
+      });
+      const maxValue = Math.max(
+        max(scalesData, (d) => {
+          return getYErrorRange?.(d)[1] ?? getY(d);
+        }) ?? 0,
+        0
+      );
+      yScale.domain([minValue, maxValue]).nice();
 
-    if (shouldBeNice) {
-      yScale.nice();
-      paddingYScale.nice();
+      const minPaddingValue = getMinY(paddingData, (d) => {
+        return getYErrorRange?.(d)[0] ?? getY(d);
+      });
+      const maxPaddingValue = Math.max(
+        max(paddingData, (d) => {
+          return getYErrorRange?.(d)[1] ?? getY(d);
+        }) ?? 0,
+        0
+      );
+      paddingYScale.domain([minPaddingValue, maxPaddingValue]).nice();
     }
 
     return {
