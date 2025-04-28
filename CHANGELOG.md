@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - It's now again possible to download images
 
 # # [5.7.2] - 2025-04-28
 
