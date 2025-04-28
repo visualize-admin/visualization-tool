@@ -317,8 +317,17 @@ const useAreasState = (
       getY,
       minLimitValue,
       maxLimitValue,
+      customDomain: y.customDomain,
     });
-  }, [scalesData, normalize, getXAsString, getY, minLimitValue, maxLimitValue]);
+  }, [
+    scalesData,
+    normalize,
+    getXAsString,
+    getY,
+    minLimitValue,
+    maxLimitValue,
+    y.customDomain,
+  ]);
 
   const paddingYScale = useMemo(() => {
     //  When the user can toggle between absolute and relative values, we use the
@@ -331,6 +340,7 @@ const useAreasState = (
         getY,
         minLimitValue,
         maxLimitValue,
+        customDomain: y.customDomain,
       });
 
       if (scale.domain()[1] < 100 && scale.domain()[0] > -100) {
@@ -346,6 +356,7 @@ const useAreasState = (
       getY,
       minLimitValue,
       maxLimitValue,
+      customDomain: y.customDomain,
     });
   }, [
     interactiveFiltersConfig?.calculation.active,
@@ -355,6 +366,7 @@ const useAreasState = (
     getY,
     minLimitValue,
     maxLimitValue,
+    y.customDomain,
   ]);
 
   /** Dimensions */

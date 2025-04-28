@@ -133,6 +133,7 @@ const useBarsStackedState = (
     allData,
   } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { x } = fields;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -347,8 +348,9 @@ const useBarsStackedState = (
       getY,
       getX,
       getTime: getAnimation,
+      customDomain: x.customDomain,
     });
-  }, [scalesData, normalize, getX, getY, getAnimation]);
+  }, [scalesData, normalize, getX, getY, getAnimation, x.customDomain]);
 
   const paddingXScale = useMemo(() => {
     //  When the user can toggle between absolute and relative values, we use the
@@ -360,6 +362,7 @@ const useBarsStackedState = (
         getX,
         getY,
         getTime: getAnimation,
+        customDomain: x.customDomain,
       });
 
       if (scale.domain()[1] < 100 && scale.domain()[0] > -100) {
@@ -374,6 +377,7 @@ const useBarsStackedState = (
       getX,
       getY,
       getTime: getAnimation,
+      customDomain: x.customDomain,
     });
   }, [
     interactiveFiltersConfig?.calculation.active,
@@ -382,6 +386,7 @@ const useBarsStackedState = (
     getX,
     getY,
     getAnimation,
+    x.customDomain,
   ]);
 
   // stack order

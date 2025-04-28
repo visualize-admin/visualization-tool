@@ -161,11 +161,12 @@ const useLinesState = (
   const maxValue =
     max(scalesData, (d) => (getYErrorRange ? getYErrorRange(d)[1] : getY(d))) ??
     0;
-  const yDomain = [
+  const shouldBeNice = !y.customDomain;
+  const yDomain = y.customDomain ?? [
     minLimitValue !== undefined ? Math.min(minLimitValue, minValue) : minValue,
     maxLimitValue !== undefined ? Math.max(maxLimitValue, maxValue) : maxValue,
   ];
-  const yScale = scaleLinear().domain(yDomain).nice();
+  const yScale = scaleLinear().domain(yDomain);
 
   const paddingMinValue = getMinY(paddingData, (d) =>
     getYErrorRange ? getYErrorRange(d)[0] : getY(d)
@@ -174,16 +175,21 @@ const useLinesState = (
     max(paddingData, (d) =>
       getYErrorRange ? getYErrorRange(d)[1] : getY(d)
     ) ?? 0;
-  const paddingYScale = scaleLinear()
-    .domain([
+  const paddingYScale = scaleLinear().domain(
+    y.customDomain ?? [
       minLimitValue !== undefined
         ? Math.min(minLimitValue, paddingMinValue)
         : paddingMinValue,
       maxLimitValue !== undefined
         ? Math.max(maxLimitValue, paddingMaxValue)
         : paddingMaxValue,
-    ])
-    .nice();
+    ]
+  );
+
+  if (shouldBeNice) {
+    yScale.nice();
+    paddingYScale.nice();
+  }
 
   // segments
   const segmentFilter = segmentDimension?.id
