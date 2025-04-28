@@ -84,7 +84,6 @@ const ProviderAutocomplete = ({
         value={value}
         freeSolo
         groupBy={(option) => option.group}
-        open
         // @ts-ignore
         getOptionLabel={(option) =>
           typeof option === "string" ? (
