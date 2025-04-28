@@ -345,6 +345,10 @@ msgstr "Utiliser des abréviations"
 msgid "controls.add.chart"
 msgstr "Ajouter un autre graphique."
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.adjust-scale-domain"
+msgstr "Ajuster le domaine d'échelle"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.animation"
 msgstr "Animation"

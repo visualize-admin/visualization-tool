@@ -29,7 +29,7 @@ import { getMap } from "@/charts/map/ref";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
-import { RadioGroup } from "@/components/form";
+import { Checkbox, Input, RadioGroup } from "@/components/form";
 import {
   Label,
   Radio,
@@ -309,7 +309,16 @@ const makeGetFieldOptionGroups =
     });
   };
 
-interface EncodingOptionsPanelProps {
+const EncodingOptionsPanel = ({
+  encoding,
+  field,
+  chartConfig,
+  component,
+  dimensions,
+  measures,
+  observations,
+  cubesMetadata,
+}: {
   encoding: EncodingSpec;
   chartConfig: ChartConfig;
   field: EncodingFieldType;
@@ -318,20 +327,7 @@ interface EncodingOptionsPanelProps {
   measures: Measure[];
   observations: Observation[];
   cubesMetadata: DataCubeMetadata[];
-}
-
-const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
-  const {
-    encoding,
-    field,
-    chartConfig,
-    component,
-    dimensions,
-    measures,
-    observations,
-    cubesMetadata,
-  } = props;
-
+}) => {
   const { fields } = chartConfig;
   const fieldLabelHint: Record<EncodingFieldType, string> = {
     animation: t({
@@ -492,6 +488,15 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                   encoding.options.showValues.getDisabledState?.(chartConfig)
                     .disabled
                 }
+              />
+            ) : null}
+            {encoding.options?.adjustScaleDomain && fieldComponent ? (
+              <ChartScaleDomain
+                chartConfig={chartConfig}
+                field={field}
+                defaultDomain={encoding.options.adjustScaleDomain.getDefaultDomain(
+                  { chartConfig, observations }
+                )}
               />
             ) : null}
             {encoding.options?.showStandardError && hasStandardError && (
@@ -728,6 +733,78 @@ const ChartLayoutOptions = ({
       </ControlSectionContent>
     </ControlSection>
   ) : null;
+};
+
+const ChartScaleDomain = ({
+  chartConfig,
+  field,
+  defaultDomain,
+}: {
+  chartConfig: ChartConfig;
+  field: EncodingFieldType;
+  defaultDomain: [number, number];
+}) => {
+  const locale = useLocale();
+  const [_, dispatch] = useConfiguratorState(isConfiguring);
+  const domain = get(chartConfig, `fields["${field}"].customDomain`);
+  const checked = !!domain;
+  const handleToggle = useEvent(() => {
+    dispatch({
+      type: "CHART_FIELD_UPDATED",
+      value: {
+        locale,
+        field,
+        path: "customDomain",
+        value: checked ? FIELD_VALUE_NONE : defaultDomain,
+      },
+    });
+  });
+  const handleChange = useEvent((domain: [number, number]) => {
+    dispatch({
+      type: "CHART_FIELD_UPDATED",
+      value: {
+        locale,
+        field,
+        path: "customDomain",
+        value: domain,
+      },
+    });
+  });
+
+  return (
+    <>
+      <Checkbox
+        label={t({
+          id: "controls.adjust-scale-domain",
+          message: "Adjust scale domain",
+        })}
+        checked={checked}
+        onChange={handleToggle}
+      />
+      {checked ? (
+        <Flex justifyContent="space-between" gap={2}>
+          <Input
+            type="number"
+            value={domain[0]}
+            onChange={(e) => {
+              const value = +e.currentTarget.value;
+              handleChange([value, domain[1]]);
+            }}
+            sx={{ pr: 0 }}
+          />
+          <Input
+            type="number"
+            value={domain[1]}
+            onChange={(e) => {
+              const value = +e.currentTarget.value;
+              handleChange([domain[0], value]);
+            }}
+            sx={{ pr: 0 }}
+          />
+        </Flex>
+      ) : null}
+    </>
+  );
 };
 
 const ChartLimits = ({
