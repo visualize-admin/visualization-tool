@@ -52,7 +52,7 @@ const WMTSPlayground = () => {
     return layers.map((x) => {
       return x.type === "wms"
         ? getWMSTile({ wmsLayers: [x], customLayer: x })
-        : getWMTSTile({ wmtsLayers: [x], customLayer: x });
+        : getWMTSTile({ remoteWmtsLayers: [x], customLayer: x });
     });
   }, [layers]);
 

@@ -156,7 +156,7 @@ export const MapComponent = ({
               });
             case "wmts":
               return getWMTSTile({
-                wmtsLayers,
+                remoteWmtsLayers: wmtsLayers,
                 customLayer,
                 beforeId: "areaLayer",
                 value,
@@ -177,7 +177,7 @@ export const MapComponent = ({
               });
             case "wmts":
               return getWMTSTile({
-                wmtsLayers,
+                remoteWmtsLayers: wmtsLayers,
                 customLayer,
                 value,
               });

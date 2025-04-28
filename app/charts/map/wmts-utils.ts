@@ -8,6 +8,19 @@ type WMTSData = {
   Capabilities: {
     Contents: {
       Layer: WMTSLayer[];
+      TileMatrixSet?: {
+        "ows:Identifier": string;
+        "ows:SupportedCRS": string[] | string;
+        TileMatrix: {
+          "ows:Identifier": string;
+          ScaleDenominator: number;
+          TopLeftCorner: string;
+          TileWidth: number;
+          TileHeight: number;
+          MatrixWidth: number;
+          MatrixHeight: number;
+        }[];
+      };
     };
     "ows:ServiceProvider": {
       "ows:ProviderName": string;
@@ -67,6 +80,60 @@ export type RemoteWMTSLayer = {
   type: "wmts";
   children?: RemoteWMTSLayer[];
   attribution: string;
+  tileMatrixSet?: TileMatrixSet | undefined;
+};
+
+type TileMatrix = {
+  id: string;
+  scaleDenominator: number;
+  topLeftCorner: [number, number];
+  tileWidth: number;
+  tileHeight: number;
+  matrixWidth: number;
+  matrixHeight: number;
+};
+
+type TileMatrixSet = {
+  id: string;
+  supportedCRS: string[];
+  tileMatrixes: TileMatrix[];
+};
+
+const parseTileMatrixSets = (
+  _tileMatrixSet: WMTSData["Capabilities"]["Contents"]["TileMatrixSet"]
+): TileMatrixSet[] | null => {
+  if (!_tileMatrixSet) {
+    return null;
+  }
+  const tileMatrixSet = Array.isArray(_tileMatrixSet)
+    ? _tileMatrixSet
+    : [_tileMatrixSet];
+
+  const parsedTileMatrixSet = (
+    item: NonNullable<WMTSData["Capabilities"]["Contents"]["TileMatrixSet"]>
+  ) => {
+    const [x, y] = item.TileMatrix[0].TopLeftCorner.split(" ").map(Number);
+    const tileMatrixes = Array.isArray(item.TileMatrix)
+      ? item.TileMatrix
+      : [item.TileMatrix];
+    return {
+      id: item["ows:Identifier"],
+      supportedCRS: Array.isArray(item["ows:SupportedCRS"])
+        ? item["ows:SupportedCRS"]
+        : [item["ows:SupportedCRS"]],
+      tileMatrixes: tileMatrixes.map((tm) => ({
+        id: tm["ows:Identifier"],
+        scaleDenominator: tm.ScaleDenominator,
+        topLeftCorner: [x, y] as [number, number],
+        tileWidth: tm.TileWidth,
+        tileHeight: tm.TileHeight,
+        matrixWidth: tm.MatrixWidth,
+        matrixHeight: tm.MatrixHeight,
+      })),
+    };
+  };
+
+  return tileMatrixSet.map(parsedTileMatrixSet);
 };
 
 const parseWMTSLayer = (
@@ -74,7 +141,8 @@ const parseWMTSLayer = (
   attributes: {
     endpoint: string;
     attribution: string;
-  }
+  },
+  tileMatrixById: Record<string, TileMatrixSet> = {}
 ): RemoteWMTSLayer => {
   const res: RemoteWMTSLayer = {
     id: layer["ows:Identifier"],
@@ -92,6 +160,7 @@ const parseWMTSLayer = (
       : undefined,
     defaultDimensionValue: layer.Dimension?.Default,
     type: "wmts",
+    tileMatrixSet: tileMatrixById[layer.TileMatrixSetLink.TileMatrixSet],
     ...attributes,
   };
 
@@ -100,7 +169,7 @@ const parseWMTSLayer = (
     const children = layer.Layer
       ? layer.Layer instanceof Array
         ? layer.Layer.map((l) => parseWMTSLayer(l, attributes))
-        : [parseWMTSLayer(layer.Layer, attributes)]
+        : [parseWMTSLayer(layer.Layer, attributes, tileMatrixById)]
       : undefined;
     res.children = children;
   }
@@ -127,41 +196,62 @@ export const parseWMTSContent = (content: string, endpoint: string) => {
     attribution:
       parsed.Capabilities["ows:ServiceProvider"]?.["ows:ProviderName"],
   };
+  const tileMatrixSets = parseTileMatrixSets(
+    parsed.Capabilities.Contents.TileMatrixSet
+  );
+  const tileMatrixById = tileMatrixSets
+    ? Object.fromEntries(
+        tileMatrixSets.map((tileMatrix) => [tileMatrix.id, tileMatrix])
+      )
+    : {};
+  console.log({
+    tileMatrixById: Object.values(tileMatrixById).map((x) => x.supportedCRS),
+  });
   const Layer = parsed.Capabilities.Contents.Layer;
-  return mapArrayOrUnique(Layer, (l) => parseWMTSLayer(l, attributes));
+  return mapArrayOrUnique(Layer, (l) =>
+    parseWMTSLayer(l, attributes, tileMatrixById)
+  );
 };
 
 export const DEFAULT_WMTS_URL =
   "https://wmts.geo.admin.ch/EPSG/3857/1.0.0/WMTSCapabilities.xml";
 
 export const getWMTSTile = ({
-  wmtsLayers,
+  remoteWmtsLayers,
   customLayer,
   beforeId,
   value,
 }: {
-  wmtsLayers?: RemoteWMTSLayer[];
+  remoteWmtsLayers?: RemoteWMTSLayer[];
   customLayer?: WMTSCustomLayer | RemoteWMTSLayer;
   beforeId?: string;
   value?: number | string;
 }) => {
-  if (!customLayer || !isValidWMTSLayerUrl(customLayer.url)) {
-    console.warn("No custom layer or invalid wmts layer URL");
+  const url = customLayer?.url ?? customLayer?.endpoint;
+  if (!url) {
+    console.warn("No url");
+    return;
+  }
+  if (!customLayer) {
+    console.warn("No custom layer found");
     return;
   }
 
-  const wmtsLayer = wmtsLayers?.find((layer) => layer.id === customLayer.id);
+  const wmtsLayer = remoteWmtsLayers?.find(
+    (layer) => layer.id === customLayer.id
+  );
 
   if (!wmtsLayer) {
     console.warn("No wmts layer");
     return;
   }
 
+  console.log("wmtsLayer", wmtsLayer);
   return new TileLayer({
-    id: `tile-layer-${customLayer.url}`,
+    id: `tile-layer-${url}`,
     beforeId,
-    data: getWMTSLayerData(customLayer.url, {
-      // TODO, Understand the implications of the empty string here
+    data: getWMTSLayerData(url, {
+      tileMatrixSetId: wmtsLayer.tileMatrixSet?.id,
       identifier: wmtsLayer.dimensionIdentifier,
       value: getWMTSLayerValue({
         availableDimensionValues: wmtsLayer.availableDimensionValues ?? [],
@@ -187,21 +277,25 @@ export const getWMTSTile = ({
   });
 };
 
-const isValidWMTSLayerUrl = (url: string) => {
-  return url.includes("wmts.geo.admin.ch");
-};
-
 const getWMTSLayerData = (
   url: string,
   {
     identifier,
     value,
-  }: { identifier: string | undefined; value: string | number }
+    tileMatrixSetId,
+  }: {
+    identifier: string | undefined;
+    value: string | number;
+    tileMatrixSetId?: TileMatrixSet["id"];
+  }
 ) => {
   const identifierReplaced = identifier
     ? url.replace(`{${identifier}}`, `${value}`)
     : url;
-  return identifierReplaced
+  const tileMatrixSetReplaced = tileMatrixSetId
+    ? identifierReplaced.replace(`{TileMatrixSet}`, tileMatrixSetId)
+    : identifierReplaced;
+  return tileMatrixSetReplaced
     .replace("{TileMatrix}", "{z}")
     .replace("{TileCol}", "{x}")
     .replace("{TileRow}", "{y}");
