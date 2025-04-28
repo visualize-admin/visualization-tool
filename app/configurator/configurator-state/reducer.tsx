@@ -509,9 +509,9 @@ export const handleChartFieldUpdated = (
 
     if (value === FIELD_VALUE_NONE) {
       unset(chartConfig, updatePath);
+    } else {
+      setWith(chartConfig, updatePath, value, Object);
     }
-
-    setWith(chartConfig, updatePath, value, Object);
   }
 
   return draft;
