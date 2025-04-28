@@ -7,7 +7,8 @@ import { createClient, defaultExchanges } from "urql";
 
 import { GRAPHQL_ENDPOINT } from "@/domain/env";
 import * as ns from "@/rdf/namespace";
-import { logger } from "@/test/colored-console";
+
+import { logger } from "./utils/colored-console";
 
 jest.mock("@mapbox/tiny-sdf", () => {
   return {

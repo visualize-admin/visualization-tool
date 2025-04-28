@@ -290,7 +290,11 @@ const Limit = t.intersection([
     lineType: t.union([t.literal("dashed"), t.literal("solid")]),
   }),
   t.partial({
-    symbolType: t.union([t.literal("cross"), t.literal("circle")]),
+    symbolType: t.union([
+      t.literal("cross"),
+      t.literal("circle"),
+      t.literal("triangle"),
+    ]),
   }),
 ]);
 export type Limit = t.TypeOf<typeof Limit>;
@@ -871,12 +875,14 @@ const BaseCustomLayer = t.type({
   id: t.string,
   isBehindAreaLayer: t.boolean,
   syncTemporalFilters: t.boolean,
+  endpoint: t.union([t.string, t.undefined]),
 });
 export type BaseCustomLayer = t.TypeOf<typeof BaseCustomLayer>;
 
 const WMSCustomLayer = t.intersection([
   t.type({
     type: t.literal("wms"),
+    endpoint: t.string,
   }),
   BaseCustomLayer,
 ]);

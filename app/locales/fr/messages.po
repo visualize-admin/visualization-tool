@@ -268,10 +268,6 @@ msgid "chart.map.layers.base"
 msgstr "Couches de base"
 
 #: app/configurator/components/custom-layers-selector.tsx
-msgid "chart.map.layers.base.add-layer"
-msgstr "Ajouter une couche"
-
-#: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.base.behind-area-layer"
 msgstr "Derrière la couche de surface"
 
@@ -290,6 +286,10 @@ msgstr "Carte verrouillée"
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.custom-layers"
 msgstr "Couches personnalisées"
+
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.no-layers"
+msgstr "Aucune couche"
 
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.symbol"
@@ -931,7 +931,6 @@ msgstr "Retour à l'aperçu"
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
-#: app/configurator/components/custom-layers-selector.tsx
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.none"
@@ -1361,6 +1360,10 @@ msgstr "Croix"
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.symbol.dot"
 msgstr "Point"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.symbol.triangle"
+msgstr "Triangle"
 
 #: app/configurator/table/table-chart-options.tsx
 msgid "controls.table.column.group"
@@ -2007,6 +2010,21 @@ msgstr "Semaine"
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Year"
 msgstr "Année"
+
+msgstr "wmts-providers-autocomplete.placeholder"
+msgstr "Entrez l'URL d'un fournisseur WMTS"
+
+#: app/configurator/components/custom-layers-selector.tsx
+msgstr "wmts.custom-layer.section-title"
+msgstr "Ajouter un calque"
+
+#: app/charts/map/wmts-selector.tsx
+msgstr "wmts.legend-title"
+msgstr "Légende"
+
+#: app/charts/map/wmts-selector.tsx
+msgstr "wmts.search-placeholder"
+msgstr "Rechercher un fournisseur WMTS"
 
 #: app/components/confirmation-dialog.tsx
 msgid "yes"

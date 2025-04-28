@@ -33,8 +33,8 @@ class QueryCache {
 
   set(queryKey: QueryKey, value: QueryCacheValue<unknown>) {
     this.cache.set(stringifyVariables(queryKey), value);
-    this.fire(queryKey);
     this.version++;
+    this.fire(queryKey);
   }
 
   get(queryKey: QueryKey) {
@@ -108,6 +108,7 @@ export const useFetchData = <TData>({
 
     try {
       const result = await queryFn();
+
       const cacheEntry = {
         data: result,
         error: null,

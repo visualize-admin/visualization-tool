@@ -17,6 +17,7 @@ import {
   TextFieldProps,
   Theme,
   Typography,
+  useControlled,
   useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -247,6 +248,10 @@ export type SelectTreeProps = {
   onClose?: () => void;
   open?: boolean;
   id?: string;
+
+  // Controlled input value
+  inputValue?: string;
+  onChangeInputValue?: (value: string) => void;
 };
 
 const getFilteredOptions = (options: Tree, value: string) => {
@@ -260,31 +265,46 @@ const getFilteredOptions = (options: Tree, value: string) => {
       ) as Tree);
 };
 
-const SelectTree = ({
-  size = "sm",
-  label,
-  options,
+/**
+ * Manages business logic for a select tree with search functionality
+ *
+ * When searching, the tree is automatically expanded
+ */
+export const useSelectTree = ({
   value,
-  onChange,
-  disabled,
-  sideControls,
-  onOpen,
-  onClose,
-  open,
-  id,
-}: SelectTreeProps) => {
-  const [openState, setOpenState] = useState(false);
-  const [minMenuWidth, setMinMenuWidth] = useState<number>();
-  const [inputValue, setInputValue] = useState("");
-  const [filteredOptions, setFilteredOptions] = useState<Tree>([]);
+  options,
+  inputValue: controlledInputValue,
+  onChangeInputValue,
+}: Pick<
+  SelectTreeProps,
+  "value" | "options" | "inputValue" | "onChangeInputValue"
+>) => {
+  const [inputValue, setInputValue_] = useControlled({
+    name: "SelectTree",
+    state: "inputValue",
+    controlled: controlledInputValue,
+    default: "",
+  });
+
+  const setInputValue = useEvent((value: string) => {
+    setInputValue_(value);
+    onChangeInputValue?.(value);
+  });
+
+  const optionsRef = useRef(options);
+  const [filteredOptions_, setFilteredOptions] = useState<Tree>([]);
+
+  // Trick to get filteredOptions updated synchronously
+  const filteredOptions =
+    optionsRef.current !== options ? options : filteredOptions_;
+
+  optionsRef.current = options;
 
   useEffect(() => {
     setFilteredOptions(options);
   }, [options]);
 
   const parentsRef = useRef({} as Record<NodeId, NodeId>);
-  const menuRef = useRef<PopoverActions>(null);
-  const inputRef = useRef<HTMLDivElement>();
 
   const defaultExpanded = useMemo(() => {
     if (!value && options.length > 0) {
@@ -303,37 +323,6 @@ const SelectTree = ({
     return res;
   }, [value, options]);
   const [expanded, setExpanded] = useState(defaultExpanded);
-  const labelsByValue = useMemo(() => {
-    parentsRef.current = {} as Record<NodeId, NodeId>;
-    const res: Record<string, string> = {};
-    const registerNode = ({ value, label, children }: Tree[number]) => {
-      res[value] = label;
-      if (children && children.length > 0) {
-        for (let child of children) {
-          registerNode(child);
-          parentsRef.current[child.value as unknown as NodeId] = value;
-        }
-      }
-    };
-    for (let root of options) {
-      registerNode(root);
-    }
-    return res;
-  }, [options]);
-
-  const handleOpen = useEventCallback(() => {
-    setOpenState(true);
-    setMinMenuWidth(inputRef.current?.clientLeft);
-    onOpen?.();
-  });
-
-  const handleClose = useEventCallback(() => {
-    setOpenState(false);
-    setInputValue("");
-    setFilteredOptions(getFilteredOptions(options, ""));
-    setExpanded(defaultExpanded);
-    onClose?.();
-  });
 
   const handleInputChange: TextFieldProps["onChange"] = useEvent((ev) => {
     const value = ev.currentTarget.value;
@@ -353,6 +342,12 @@ const SelectTree = ({
     });
   });
 
+  const handleNodeToggle: TreeViewProps["onNodeToggle"] = useEvent(
+    (_ev, nodeIds) => {
+      setExpanded(nodeIds);
+    }
+  );
+
   const handleClickResetInput = useEvent(() => {
     const newValue = "";
     setInputValue(newValue);
@@ -360,11 +355,88 @@ const SelectTree = ({
     setExpanded(defaultExpanded);
   });
 
-  const handleNodeToggle: TreeViewProps["onNodeToggle"] = useEvent(
-    (_ev, nodeIds) => {
-      setExpanded(nodeIds);
+  return {
+    inputValue,
+    setInputValue,
+    filteredOptions,
+    setFilteredOptions,
+    expanded,
+    setExpanded,
+    handleInputChange,
+    parentsRef,
+    handleNodeToggle,
+    handleClickResetInput,
+    defaultExpanded,
+  };
+};
+
+const SelectTree = ({
+  size = "sm",
+  label,
+  options,
+  value,
+  onChange,
+  disabled,
+  sideControls,
+  onOpen,
+  onClose,
+  open,
+  id,
+}: SelectTreeProps) => {
+  const [openState, setOpenState] = useState(false);
+  const [minMenuWidth, setMinMenuWidth] = useState<number>();
+
+  const {
+    inputValue,
+    setInputValue,
+    filteredOptions,
+    setFilteredOptions,
+    parentsRef,
+    expanded,
+    setExpanded,
+    handleInputChange,
+    handleNodeToggle,
+    handleClickResetInput,
+    defaultExpanded,
+  } = useSelectTree({
+    value,
+    options,
+  });
+
+  const menuRef = useRef<PopoverActions>(null);
+  const inputRef = useRef<HTMLDivElement>();
+
+  const labelsByValue = useMemo(() => {
+    parentsRef.current = {} as Record<NodeId, NodeId>;
+    const res: Record<string, string> = {};
+    const registerNode = ({ value, label, children }: Tree[number]) => {
+      res[value] = label;
+      if (children && children.length > 0) {
+        for (let child of children) {
+          registerNode(child);
+          parentsRef.current[child.value as unknown as NodeId] = value;
+        }
+      }
+    };
+    for (let root of options) {
+      registerNode(root);
     }
-  );
+    return res;
+  }, [options, parentsRef]);
+
+  const handleOpen = useEventCallback(() => {
+    setOpenState(true);
+    setMinMenuWidth(inputRef.current?.clientLeft);
+    onOpen?.();
+  });
+
+  const handleClose = useEventCallback(() => {
+    setOpenState(false);
+    setInputValue("");
+    setFilteredOptions(getFilteredOptions(options, ""));
+    setExpanded(defaultExpanded);
+    onClose?.();
+  });
 
   const handleNodeSelect = useEventCallback((_ev, value: NodeId) => {
     onChange({ target: { value } });

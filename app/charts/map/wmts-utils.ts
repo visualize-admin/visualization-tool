@@ -3,13 +3,14 @@ import { BitmapLayer } from "@deck.gl/layers";
 import { XMLParser } from "fast-xml-parser";
 
 import { WMTSCustomLayer } from "@/config-types";
-import { useLocale } from "@/locales/use-locale";
-import { useFetchData } from "@/utils/use-fetch-data";
 
 type WMTSData = {
   Capabilities: {
     Contents: {
       Layer: WMTSLayer[];
+    };
+    "ows:ServiceProvider": {
+      "ows:ProviderName": string;
     };
   };
 };
@@ -47,64 +48,91 @@ type WMTSLayer = {
     "ows:LowerCorner": string;
     "ows:UpperCorner": string;
   };
+  Layer?: WMTSLayer[];
 };
 
 export type ParsedWMTSLayer = {
   id: string;
+  // Path is there to mirror WMS layer, but
+  // not sure this is necessary since I haven't seen nested layers
+  path: string;
   url: string;
   title: string;
   description?: string;
   legendUrl?: string;
-  dimensionIdentifier: string;
-  availableDimensionValues: (string | number)[];
+  dimensionIdentifier: string | undefined;
+  availableDimensionValues: (string | number)[] | undefined;
   defaultDimensionValue: string | number;
+  endpoint: string;
+  type: "wmts";
+  children?: ParsedWMTSLayer[];
+  attribution: string;
 };
 
-const parseWMTSLayer = (layer: WMTSLayer): ParsedWMTSLayer => {
-  return {
+const parseWMTSLayer = (
+  layer: WMTSLayer,
+  attributes: {
+    endpoint: string;
+    attribution: string;
+  }
+): ParsedWMTSLayer => {
+  const res: ParsedWMTSLayer = {
     id: layer["ows:Identifier"],
+    path: layer["ows:Identifier"],
     url: layer.ResourceURL.template,
     title: layer["ows:Title"],
     description: layer["ows:Abstract"],
     legendUrl: layer.Style.LegendURL?.["xlink:href"],
-    dimensionIdentifier: layer.Dimension["ows:Identifier"],
-    availableDimensionValues: Array.isArray(layer.Dimension.Value)
-      ? layer.Dimension.Value
-      : [layer.Dimension.Value],
-    defaultDimensionValue: layer.Dimension.Default,
+    /** @patrick: Not sure why but dimension can be missing (see zh.wmts.xml) */
+    dimensionIdentifier: layer.Dimension?.["ows:Identifier"],
+    availableDimensionValues: layer.Dimension
+      ? Array.isArray(layer.Dimension.Value)
+        ? layer.Dimension.Value
+        : [layer.Dimension.Value]
+      : undefined,
+    defaultDimensionValue: layer.Dimension?.Default,
+    type: "wmts",
+    ...attributes,
   };
+
+  /** @patrick: Haven't found any WMTS with nested layer yet */
+  if (layer.Layer) {
+    const children = layer.Layer
+      ? layer.Layer instanceof Array
+        ? layer.Layer.map((l) => parseWMTSLayer(l, attributes))
+        : [parseWMTSLayer(layer.Layer, attributes)]
+      : undefined;
+    res.children = children;
+  }
+
+  return res;
 };
 
-const WMTS_URL =
-  "https://wmts.geo.admin.ch/EPSG/3857/1.0.0/WMTSCapabilities.xml";
+const mapArrayOrUnique = <T, I>(arr: T | T[], cb: (item: T) => I): I[] => {
+  if (Array.isArray(arr)) {
+    return arr.map(cb);
+  }
+  return [cb(arr)];
+};
 
-export const useWMTSLayers = (
-  { pause }: { pause?: boolean } = { pause: false }
-) => {
-  const locale = useLocale();
-
-  return useFetchData<ParsedWMTSLayer[]>({
-    queryKey: ["custom-wmts-layers", locale],
-    queryFn: async () => {
-      return fetch(`${WMTS_URL}?lang=${locale}`).then(async (res) => {
-        const parser = new XMLParser({
-          ignoreAttributes: false,
-          attributeNamePrefix: "",
-          parseAttributeValue: true,
-        });
-
-        return res.text().then((text) => {
-          return (
-            parser.parse(text) as WMTSData
-          ).Capabilities.Contents.Layer.map(parseWMTSLayer);
-        });
-      });
-    },
-    options: {
-      pause,
-    },
+export const parseWMTSContent = (content: string, endpoint: string) => {
+  const parser = new XMLParser({
+    ignoreAttributes: false,
+    attributeNamePrefix: "",
+    parseAttributeValue: true,
   });
+  const parsed = parser.parse(content) as WMTSData;
+  const attributes = {
+    endpoint,
+    attribution:
+      parsed.Capabilities["ows:ServiceProvider"]?.["ows:ProviderName"],
+  };
+  const Layer = parsed.Capabilities.Contents.Layer;
+  return mapArrayOrUnique(Layer, (l) => parseWMTSLayer(l, attributes));
 };
+
+export const DEFAULT_WMTS_URL =
+  "https://wmts.geo.admin.ch/EPSG/3857/1.0.0/WMTSCapabilities.xml";
 
 export const getWMTSTile = ({
   wmtsLayers,
@@ -113,17 +141,19 @@ export const getWMTSTile = ({
   value,
 }: {
   wmtsLayers?: ParsedWMTSLayer[];
-  customLayer?: WMTSCustomLayer;
+  customLayer?: WMTSCustomLayer | ParsedWMTSLayer;
   beforeId?: string;
   value?: number | string;
 }) => {
   if (!customLayer || !isValidWMTSLayerUrl(customLayer.url)) {
+    console.warn("No custom layer or invalid wmts layer URL");
     return;
   }
 
   const wmtsLayer = wmtsLayers?.find((layer) => layer.id === customLayer.id);
 
   if (!wmtsLayer) {
+    console.warn("No wmts layer");
     return;
   }
 
@@ -131,9 +161,10 @@ export const getWMTSTile = ({
     id: `tile-layer-${customLayer.url}`,
     beforeId,
     data: getWMTSLayerData(customLayer.url, {
+      // TODO, Understand the implications of the empty string here
       identifier: wmtsLayer.dimensionIdentifier,
       value: getWMTSLayerValue({
-        availableDimensionValues: wmtsLayer.availableDimensionValues,
+        availableDimensionValues: wmtsLayer.availableDimensionValues ?? [],
         defaultDimensionValue: wmtsLayer.defaultDimensionValue,
         customLayer,
         value,
@@ -162,10 +193,15 @@ const isValidWMTSLayerUrl = (url: string) => {
 
 const getWMTSLayerData = (
   url: string,
-  { identifier, value }: { identifier: string; value: string | number }
+  {
+    identifier,
+    value,
+  }: { identifier: string | undefined; value: string | number }
 ) => {
-  return url
-    .replace(`{${identifier}}`, `${value}`)
+  const identifierReplaced = identifier
+    ? url.replace(`{${identifier}}`, `${value}`)
+    : url;
+  return identifierReplaced
     .replace("{TileMatrix}", "{z}")
     .replace("{TileCol}", "{x}")
     .replace("{TileRow}", "{y}");
@@ -179,10 +215,15 @@ export const getWMTSLayerValue = ({
 }: {
   availableDimensionValues: (string | number)[];
   defaultDimensionValue: string | number;
-  customLayer?: WMTSCustomLayer;
+  customLayer?: WMTSCustomLayer | ParsedWMTSLayer;
   value?: string | number;
 }) => {
-  if (!customLayer?.syncTemporalFilters) {
+  if (
+    !customLayer ||
+    (customLayer &&
+      "syncTemporalFilters" in customLayer &&
+      !customLayer.syncTemporalFilters)
+  ) {
     return defaultDimensionValue;
   }
 

@@ -11,15 +11,33 @@ You can also check the
 
 # Unreleased
 
+- Fixes
+  - It's now again possible to download images
+
+# # [5.7.2] - 2025-04-28
+
+- Fixes
+  - WMTS providers autocomplete could not be closed
+
+# [5.7.1] - 2025-04-25
+
 - Features
+  - It's now possible to use triangle symbol for single-value limits
+  - It's now possible to make single-value limit lines dashed when makes sense
   - Display of future limits is now compatible with area charts
   - Dimension unit labels are now fetched not only in English language, but
     others too – and we fall back to a regular string in case the label is not
     localized
+  - Value labels in segmented bar charts are now centered horizontally
+  - It's now possible to enter www links in text blocks link elements, instead
+    of having to always use https://
 - Fixes
   - Color palette can be changed again
   - Combo charts tooltips now work correctly again
   - Interactive 100% mode switch doesn't overlap with Y axis label anymore
+  - Chart preview using hash parameters now correctly deals with spacial
+    characters
+  - Value labels are not gray anymore when downloading an image
 
 # [5.7.0] - 2025-04-16
 
