@@ -787,7 +787,10 @@ const ChartScaleDomain = ({
             value={domain[0]}
             onChange={(e) => {
               const value = +e.currentTarget.value;
-              handleChange([value, domain[1]]);
+
+              if (value < domain[1]) {
+                handleChange([value, domain[1]]);
+              }
             }}
             sx={{ pr: 0 }}
           />
@@ -798,7 +801,10 @@ const ChartScaleDomain = ({
             value={domain[1]}
             onChange={(e) => {
               const value = +e.currentTarget.value;
-              handleChange([domain[0], value]);
+
+              if (value > domain[0]) {
+                handleChange([domain[0], value]);
+              }
             }}
             sx={{ pr: 0 }}
           />
