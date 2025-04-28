@@ -326,6 +326,13 @@ export type UncertaintyFieldExtension = t.TypeOf<
   typeof UncertaintyFieldExtension
 >;
 
+const CustomScaleDomainFieldExtension = t.partial({
+  customDomain: t.tuple([t.number, t.number]),
+});
+export type CustomScaleDomainFieldExtension = t.TypeOf<
+  typeof CustomScaleDomainFieldExtension
+>;
+
 const ChartSubType = t.union([t.literal("stacked"), t.literal("grouped")]);
 export type ChartSubType = t.TypeOf<typeof ChartSubType>;
 
@@ -345,6 +352,7 @@ const ColumnFields = t.intersection([
       GenericField,
       ShowValuesFieldExtension,
       UncertaintyFieldExtension,
+      CustomScaleDomainFieldExtension,
     ]),
     color: t.union([SegmentColorField, SingleColorField]),
   }),
@@ -379,7 +387,11 @@ export type BarSegmentField = t.TypeOf<typeof BarSegmentField>;
 
 const BarFields = t.intersection([
   t.type({
-    x: t.intersection([GenericField, ShowValuesFieldExtension]),
+    x: t.intersection([
+      GenericField,
+      ShowValuesFieldExtension,
+      CustomScaleDomainFieldExtension,
+    ]),
     y: t.intersection([GenericField, SortingField]),
     color: t.union([SegmentColorField, SingleColorField]),
   }),
@@ -418,6 +430,7 @@ const LineFields = t.intersection([
       GenericField,
       ShowValuesFieldExtension,
       UncertaintyFieldExtension,
+      CustomScaleDomainFieldExtension,
       t.partial({
         showDots: t.boolean,
         showDotsSize: t.union([
@@ -470,6 +483,7 @@ const AreaFields = t.intersection([
     y: t.intersection([
       GenericField,
       ShowValuesFieldExtension,
+      CustomScaleDomainFieldExtension,
       t.partial({ imputationType: ImputationType }),
     ]),
     color: t.union([SegmentColorField, SingleColorField]),
