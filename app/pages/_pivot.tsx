@@ -22,6 +22,7 @@ import {
   useDataCubesComponentsQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
+import { ComponentId } from "@/graphql/make-component-id";
 import { visitHierarchy } from "@/rdf/tree-utils";
 import useEvent from "@/utils/use-event";
 
@@ -215,10 +216,14 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
 
   const handleToggleIgnoredDimension = useEvent(
     (ev: ChangeEvent<HTMLInputElement>) => {
-      const dimensionIri = ev.currentTarget.getAttribute("name");
+      const dimensionIri = ev.currentTarget.getAttribute("name") as
+        | ComponentId
+        | undefined;
+
       if (!dimensionIri) {
         return;
       }
+
       setIgnoredDimensions((ignored) =>
         ignored ? { ...ignored, [dimensionIri]: !ignored[dimensionIri] } : {}
       );
