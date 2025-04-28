@@ -748,6 +748,8 @@ const ChartScaleDomain = ({
   const [_, dispatch] = useConfiguratorState(isConfiguring);
   const domain = get(chartConfig, `fields["${field}"].customDomain`);
   const checked = !!domain;
+  const disabled =
+    chartConfig.interactiveFiltersConfig?.calculation.type === "percent";
   const handleToggle = useEvent(() => {
     dispatch({
       type: "CHART_FIELD_UPDATED",
@@ -772,7 +774,7 @@ const ChartScaleDomain = ({
   });
 
   return (
-    <>
+    <Stack gap={4} sx={disabled ? { opacity: 0.5, pointerEvents: "none" } : {}}>
       <Checkbox
         label={t({
           id: "controls.adjust-scale-domain",
@@ -803,7 +805,7 @@ const ChartScaleDomain = ({
           />
         </Flex>
       ) : null}
-    </>
+    </Stack>
   );
 };
 
