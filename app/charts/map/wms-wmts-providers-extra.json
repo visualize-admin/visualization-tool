@@ -81,13 +81,13 @@
     "canDisplayLayers": false,
     "canDisplayOnMapGeoAdmin": true,
     "workingLayers": [],
-    "note": "CORS Missing allow origin"
+    "note": "CORS Missing allow origin. Projection system is EPSG:3857 so it should be possible to display it once we solve the CORS issue."
   },
   "https://www.ogd.stadt-zuerich.ch/mapproxy/wmts/1.0.0/WMTSCapabilities.xml": {
     "canListLayers": true,
     "canDisplayLayers": false,
     "canDisplayOnMapGeoAdmin": true,
     "workingLayers": [],
-    "note": "Loading layers works but no displayable layers"
+    "note": "Loading layers works but no displayable layers since projection is EPSG:2056"
   }
 }
