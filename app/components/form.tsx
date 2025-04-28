@@ -512,6 +512,7 @@ export const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
 };
 
 export const Input = ({
+  type,
   label,
   name,
   value,
@@ -528,6 +529,7 @@ export const Input = ({
   <Box sx={{ fontSize: "1rem", pb: 2 }}>
     {label && name && <Label htmlFor={name}>{label}</Label>}
     <MUIInput
+      type={type}
       id={name}
       size="sm"
       color="secondary"
