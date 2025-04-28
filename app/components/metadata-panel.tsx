@@ -776,8 +776,6 @@ const ComponentTabPanel = ({
     }
   }, [expanded, component, setSelectedComponent]);
 
-  console.log(fetchingComponents);
-
   return (
     <div>
       <Flex sx={{ justifyContent: "space-between" }}>

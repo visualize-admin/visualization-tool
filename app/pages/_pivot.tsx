@@ -435,7 +435,7 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
     useSortBy,
     useExpanded
   );
-  console.log(expandedDepth);
+
   useEffect(() => {
     if (!Object.keys(activeMeasures).length && measures) {
       setActiveMeasures(Object.fromEntries(measures.map((m) => [m.id, true])));

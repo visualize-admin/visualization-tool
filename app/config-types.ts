@@ -1165,13 +1165,7 @@ export const isSegmentInConfig = (
 
 export const isColorInConfig = (
   chartConfig: ChartConfig
-): chartConfig is
-  | AreaConfig
-  | ColumnConfig
-  | LineConfig
-  | PieConfig
-  | ScatterPlotConfig
-  | BarConfig => {
+): chartConfig is Exclude<ChartConfig, { chartType: "table" | "map" }> => {
   return !isTableConfig(chartConfig) && !isMapConfig(chartConfig);
 };
 
