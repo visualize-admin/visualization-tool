@@ -109,6 +109,7 @@ const useColumnsGroupedState = (
     allData,
   } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { y } = fields;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -260,6 +261,7 @@ const useColumnsGroupedState = (
     const xScaleTimeRange = scaleTime().domain(xScaleTimeRangeDomain);
 
     // y
+    const shouldBeNice = !y.customDomain;
     const minValue = getMinY(scalesData, (d) =>
       getYErrorRange ? getYErrorRange(d)[0] : getY(d)
     );
@@ -269,7 +271,7 @@ const useColumnsGroupedState = (
       ) ?? 0,
       0
     );
-    const yScale = scaleLinear().domain([minValue, maxValue]).nice();
+    const yScale = scaleLinear().domain(y.customDomain ?? [minValue, maxValue]);
 
     const minPaddingValue = getMinY(paddingData, (d) =>
       getYErrorRange ? getYErrorRange(d)[0] : getY(d)
@@ -280,9 +282,14 @@ const useColumnsGroupedState = (
       ) ?? 0,
       0
     );
-    const paddingYScale = scaleLinear()
-      .domain([minPaddingValue, maxPaddingValue])
-      .nice();
+    const paddingYScale = scaleLinear().domain(
+      y.customDomain ?? [minPaddingValue, maxPaddingValue]
+    );
+
+    if (shouldBeNice) {
+      yScale.nice();
+      paddingYScale.nice();
+    }
 
     return {
       colors,
@@ -316,6 +323,7 @@ const useColumnsGroupedState = (
     getYErrorRange,
     getY,
     getMinY,
+    y.customDomain,
   ]);
 
   // Group

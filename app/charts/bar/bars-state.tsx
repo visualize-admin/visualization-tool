@@ -126,9 +126,9 @@ const useBarsState = (
 
   const {
     xScale,
+    paddingXScale,
     yScale,
     minY,
-    paddingYScale,
     yScaleTimeRange,
     yScaleInteraction,
     yTimeRangeDomainLabels,
@@ -175,16 +175,16 @@ const useBarsState = (
       ) ?? 0,
       0
     );
-    const xScale = scaleLinear()
-      .domain([
-        minLimitValue !== undefined
-          ? Math.min(minLimitValue, minValue)
-          : minValue,
-        maxLimitValue !== undefined
-          ? Math.max(maxLimitValue, maxValue)
-          : maxValue,
-      ])
-      .nice();
+    const shouldBeNice = !x.customDomain;
+    const xDomain = x.customDomain ?? [
+      minLimitValue !== undefined
+        ? Math.min(minLimitValue, minValue)
+        : minValue,
+      maxLimitValue !== undefined
+        ? Math.max(maxLimitValue, maxValue)
+        : maxValue,
+    ];
+    const xScale = scaleLinear().domain(xDomain);
 
     const paddingMinValue = getMinX(paddingData, (d) =>
       getXErrorRange ? getXErrorRange(d)[0] : getX(d)
@@ -195,22 +195,27 @@ const useBarsState = (
       ) ?? 0,
       0
     );
-    const paddingYScale = scaleLinear()
-      .domain([
+    const paddingXScale = scaleLinear().domain(
+      x.customDomain ?? [
         minLimitValue !== undefined
           ? Math.min(minLimitValue, paddingMinValue)
           : paddingMinValue,
         maxLimitValue !== undefined
           ? Math.max(maxLimitValue, paddingMaxValue)
           : paddingMaxValue,
-      ])
-      .nice();
+      ]
+    );
+
+    if (shouldBeNice) {
+      xScale.nice();
+      paddingXScale.nice();
+    }
 
     return {
       xScale,
       yScale,
       minY: bandDomain[0],
-      paddingYScale,
+      paddingXScale,
       yScaleTimeRange,
       yScaleInteraction,
       yTimeRangeDomainLabels,
@@ -232,11 +237,12 @@ const useBarsState = (
     getYAsDate,
     getXErrorRange,
     getX,
+    x.customDomain,
   ]);
 
   const { top, left, bottom } = useChartPadding({
     xLabelPresent: !!xMeasure.label,
-    yScale: paddingYScale,
+    yScale: paddingXScale,
     width,
     height,
     interactiveFiltersConfig,

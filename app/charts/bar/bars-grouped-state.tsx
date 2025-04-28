@@ -109,6 +109,7 @@ const useBarsGroupedState = (
     allData,
   } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { x } = fields;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -189,7 +190,7 @@ const useBarsGroupedState = (
     yTimeRangeDomainLabels,
     colors,
     xScale,
-    paddingYScale,
+    paddingXScale,
     yScaleTimeRange,
     yScale,
     yScaleIn,
@@ -258,6 +259,7 @@ const useBarsGroupedState = (
     const yScaleTimeRange = scaleTime().domain(yScaleTimeRangeDomain);
 
     // x
+    const shouldBeNice = !x.customDomain;
     const minValue = getMinX(scalesData, (d) =>
       getXErrorRange ? getXErrorRange(d)[0] : getX(d)
     );
@@ -267,7 +269,7 @@ const useBarsGroupedState = (
       ) ?? 0,
       0
     );
-    const xScale = scaleLinear().domain([minValue, maxValue]).nice();
+    const xScale = scaleLinear().domain(x.customDomain ?? [minValue, maxValue]);
 
     const minPaddingValue = getMinX(paddingData, (d) =>
       getXErrorRange ? getXErrorRange(d)[0] : getX(d)
@@ -278,14 +280,19 @@ const useBarsGroupedState = (
       ) ?? 0,
       0
     );
-    const paddingYScale = scaleLinear()
-      .domain([minPaddingValue, maxPaddingValue])
-      .nice();
+    const paddingXScale = scaleLinear().domain(
+      x.customDomain ?? [minPaddingValue, maxPaddingValue]
+    );
+
+    if (shouldBeNice) {
+      xScale.nice();
+      paddingXScale.nice();
+    }
 
     return {
       colors,
       xScale,
-      paddingYScale,
+      paddingXScale,
       yScaleTimeRange,
       yScale,
       yScaleIn,
@@ -314,6 +321,7 @@ const useBarsGroupedState = (
     getXErrorRange,
     getX,
     getMinX,
+    x.customDomain,
   ]);
 
   // Group
@@ -346,7 +354,7 @@ const useBarsGroupedState = (
 
   const { top, left, bottom } = useChartPadding({
     xLabelPresent: !!xMeasure.label,
-    yScale: paddingYScale,
+    yScale: paddingXScale,
     width,
     height,
     interactiveFiltersConfig,

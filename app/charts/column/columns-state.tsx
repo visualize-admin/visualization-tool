@@ -181,16 +181,16 @@ const useColumnsState = (
       ) ?? 0,
       0
     );
-    const yScale = scaleLinear()
-      .domain([
-        minLimitValue !== undefined
-          ? Math.min(minValue, minLimitValue)
-          : minValue,
-        maxLimitValue !== undefined
-          ? Math.max(maxValue, maxLimitValue)
-          : maxValue,
-      ])
-      .nice();
+    const shouldBeNice = !y.customDomain;
+    const yDomain = y.customDomain ?? [
+      minLimitValue !== undefined
+        ? Math.min(minValue, minLimitValue)
+        : minValue,
+      maxLimitValue !== undefined
+        ? Math.max(maxValue, maxLimitValue)
+        : maxValue,
+    ];
+    const yScale = scaleLinear().domain(yDomain);
 
     const paddingMinValue = getMinY(paddingData, (d) =>
       getYErrorRange ? getYErrorRange(d)[0] : getY(d)
@@ -201,16 +201,21 @@ const useColumnsState = (
       ) ?? 0,
       0
     );
-    const paddingYScale = scaleLinear()
-      .domain([
+    const paddingYScale = scaleLinear().domain(
+      y.customDomain ?? [
         minLimitValue !== undefined
           ? Math.min(paddingMinValue, minLimitValue)
           : paddingMinValue,
         maxLimitValue !== undefined
           ? Math.max(paddingMaxValue, maxLimitValue)
           : paddingMaxValue,
-      ])
-      .nice();
+      ]
+    );
+
+    if (shouldBeNice) {
+      yScale.nice();
+      paddingYScale.nice();
+    }
 
     return {
       colors,
@@ -239,6 +244,7 @@ const useColumnsState = (
     getXAsDate,
     getYErrorRange,
     getY,
+    y.customDomain,
   ]);
 
   const { top, left, bottom } = useChartPadding({
