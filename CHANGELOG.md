@@ -11,10 +11,13 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - Disabled some UI options for Markdown formatting in title and description
+    fields
 - Fixes
   - It's now again possible to download images
 
-# # [5.7.2] - 2025-04-28
+# [5.7.2] - 2025-04-28
 
 - Fixes
   - WMTS providers autocomplete could not be closed
