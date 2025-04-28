@@ -147,7 +147,7 @@ const parseWMTSLayer = (
   const res: RemoteWMTSLayer = {
     id: layer["ows:Identifier"],
     path: layer["ows:Identifier"],
-    url: layer.ResourceURL.template,
+    url: layer.ResourceURL.template || attributes.endpoint,
     title: layer["ows:Title"],
     description: layer["ows:Abstract"],
     legendUrl: layer.Style.LegendURL?.["xlink:href"],
