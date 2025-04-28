@@ -11,10 +11,12 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - Added a way to set custom numerical scale domains
 - Fixes
   - It's now again possible to download images
 
-# # [5.7.2] - 2025-04-28
+# [5.7.2] - 2025-04-28
 
 - Fixes
   - WMTS providers autocomplete could not be closed
