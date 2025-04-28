@@ -12,22 +12,34 @@ const NORMALIZED_VALUE_DOMAIN = [0, 100];
 
 export const getStackedYScale = (
   data: Observation[],
-  options: {
+  {
+    normalize,
+    getX,
+    getY,
+    getTime,
+    minLimitValue,
+    maxLimitValue,
+    customDomain,
+  }: {
     normalize: boolean;
     getX: StringValueGetter;
     getY: NumericalValueGetter;
     getTime?: StringValueGetter;
     minLimitValue?: number;
     maxLimitValue?: number;
+    customDomain?: [number, number];
   }
 ): ScaleLinear<number, number> => {
-  const { normalize, getX, getY, getTime, minLimitValue, maxLimitValue } =
-    options;
   const yScale = scaleLinear();
 
   if (normalize) {
+    // We don't allow overwriting of 100% mode.
     yScale.domain(NORMALIZED_VALUE_DOMAIN);
   } else {
+    if (customDomain) {
+      return yScale.domain(customDomain);
+    }
+
     const grouped = group(data, (d) => getX(d) + getTime?.(d));
     let yMin = 0;
     let yMax = 0;
@@ -59,19 +71,30 @@ export const getStackedYScale = (
 
 export const getStackedXScale = (
   data: Observation[],
-  options: {
+  {
+    normalize,
+    getX,
+    getY,
+    getTime,
+    customDomain,
+  }: {
     normalize: boolean;
     getY: StringValueGetter;
     getX: NumericalValueGetter;
     getTime?: StringValueGetter;
+    customDomain?: [number, number];
   }
 ): ScaleLinear<number, number> => {
-  const { normalize, getX, getY, getTime } = options;
   const xScale = scaleLinear();
 
   if (normalize) {
+    // We don't allow overwriting of 100% mode.
     xScale.domain(NORMALIZED_VALUE_DOMAIN);
   } else {
+    if (customDomain) {
+      return xScale.domain(customDomain);
+    }
+
     const grouped = group(data, (d) => getY(d) + getTime?.(d));
     let xMin = 0;
     let xMax = 0;
