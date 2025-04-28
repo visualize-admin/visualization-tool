@@ -30,6 +30,7 @@ import {
   SliderProps,
   Stack,
   Switch as MUISwitch,
+  SxProps,
   Theme,
   Tooltip,
   Typography,
@@ -520,11 +521,13 @@ export const Input = ({
   disabled,
   onChange,
   error,
+  sx,
 }: {
   label?: string | ReactNode;
   disabled?: boolean;
   defaultValue?: FieldProps["value"];
   error?: boolean;
+  sx?: SxProps;
 } & FieldProps) => (
   <Box sx={{ fontSize: "1rem", pb: 2 }}>
     {label && name && <Label htmlFor={name}>{label}</Label>}
@@ -538,7 +541,7 @@ export const Input = ({
       defaultValue={defaultValue}
       disabled={disabled}
       onChange={onChange}
-      sx={error ? { borderColor: "error.main" } : {}}
+      sx={error ? { ...sx, borderColor: "error.main" } : sx}
     />
   </Box>
 );
