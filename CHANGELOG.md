@@ -13,8 +13,13 @@ You can also check the
 
 - Features
   - Added a way to set custom numerical scale domains
+  - Color settings are now persisted across chart type changes
 - Fixes
   - It's now again possible to download images
+  - Switching chart type from grouped table to regular chart doesn't result in
+    segmented charts with all blue segments anymore
+  - Disabled some UI options for Markdown formatting in title and description
+    fields
 
 # [5.7.2] - 2025-04-28
 

@@ -99,6 +99,11 @@ const AnnotationOptions = (props: AnnotationOptionsProps) => {
                 locale={locale}
                 label={getFieldLabel(locale)}
                 value={meta[activeField][locale]}
+                disableToolbar={{
+                  blockType: true,
+                  listToggles: activeField === "title",
+                  link: activeField === "title",
+                }}
               />
             </Box>
           ))}

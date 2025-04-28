@@ -33,7 +33,6 @@ const providers = [
     name: "credentials",
     credentials: {},
     authorize: async (): Promise<ExtendedUser | null> => {
-      console.log("sign in");
       let user = null;
       user = await prisma.user.findFirst({
         where: {

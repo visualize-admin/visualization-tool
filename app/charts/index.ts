@@ -42,7 +42,6 @@ import {
   isAreaConfig,
   isColorInConfig,
   isColumnConfig,
-  isComboChartConfig,
   isComboLineColumnConfig,
   isComboLineDualConfig,
   isComboLineSingleConfig,
@@ -55,11 +54,14 @@ import {
   MapAreaLayer,
   MapConfig,
   MapSymbolLayer,
+  MeasuresColorField,
   Meta,
   PieSegmentField,
   RegularChartType,
   ScatterPlotSegmentField,
+  SegmentColorField,
   ShowValuesSegmentFieldExtension,
+  SingleColorField,
   SortingOrder,
   SortingType,
   TableColumn,
@@ -472,11 +474,11 @@ export const getInitialConfig = (
           timeRangeComponentId: barXComponentId,
         }),
         fields: {
+          x: { componentId: numericalMeasures[0].id },
           y: {
             componentId: barXComponentId,
             sorting: DEFAULT_SORTING,
           },
-          x: { componentId: numericalMeasures[0].id },
           color: {
             type: "single",
             paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
@@ -847,6 +849,7 @@ const getAdjustedChartConfig = ({
           isSegmentInConfig(newChartConfig)
         );
       case "filters":
+      case "fields.color":
       case "fields.segment":
       case "fields.animation":
       case "interactiveFiltersConfig.calculation":
@@ -870,9 +873,9 @@ const getAdjustedChartConfig = ({
           const getChartConfigWithAdjustedField: FieldAdjuster<
             ChartConfig,
             unknown
-          > =
-            (override?.path && get(adjusters, override.path)) ||
-            get(adjusters, newPath);
+          > = override?.path
+            ? get(adjusters, override.path)
+            : get(adjusters, newPath);
 
           if (getChartConfigWithAdjustedField) {
             newChartConfig = getChartConfigWithAdjustedField({
@@ -1005,7 +1008,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     fields: {
       x: {
         componentId: ({ oldValue, newChartConfig, dimensions }) => {
-          // When switching from a scatterplot, x is a measure.
+          // When switching from a bar chart or scatterplot, x is a measure.
           if (dimensions.find((d) => d.id === oldValue)) {
             return produce(newChartConfig, (draft) => {
               draft.fields.x.componentId = oldValue;
@@ -1032,6 +1035,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
+      color: ({ oldValue, newChartConfig }) => {
+        return produce(newChartConfig, (draft) => {
+          // Segment color type is migrated in tandem with the segment field below.
+          if (oldValue.type !== "segment") {
+            draft.fields.color = getSingleColorField({
+              oldColorField: oldValue,
+            });
+          }
+        });
+      },
       segment: ({
         oldValue,
         oldChartConfig,
@@ -1039,8 +1052,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         dimensions,
         measures,
       }) => {
-        let newSegment: ColumnSegmentField | undefined;
-        let newColor: ColorField | undefined;
+        let newSegment: ColumnSegmentField;
+        let newColor: ColorField;
 
         const yMeasure = measures.find(
           (d) => d.id === newChartConfig.fields.y.componentId
@@ -1071,6 +1084,14 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           newChartConfig.fields.x.componentId !== oldValue.componentId
         ) {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          const oldColor: ColorField | undefined = isColorInConfig(
+            oldChartConfig
+          )
+            ? oldChartConfig.fields.color
+            : undefined;
+          const segmentDimension = dimensions.find(
+            (d) => d.id === oldValue.componentId
+          );
           newSegment = {
             ...oldSegment,
             showValuesMapping: oldSegment.showValuesMapping ?? {},
@@ -1083,16 +1104,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             }),
             type: disableStacked(yMeasure) ? "grouped" : "stacked",
           };
-          newColor = {
-            type: "segment",
-            paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-            colorMapping: mapValueIrisToColor({
-              paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-              dimensionValues:
-                dimensions.find((d) => d.id === oldValue.componentId)?.values ||
-                [],
-            }),
-          };
+          newColor = getSegmentColorField({
+            oldColorField: oldColor,
+            segmentDimension,
+          });
         }
 
         return produce(newChartConfig, (draft) => {
@@ -1161,6 +1176,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           return newChartConfig;
         },
       },
+      color: ({ oldValue, newChartConfig }) => {
+        return produce(newChartConfig, (draft) => {
+          // Segment color type is migrated in tandem with the segment field below.
+          if (oldValue.type !== "segment") {
+            draft.fields.color = getSingleColorField({
+              oldColorField: oldValue,
+            });
+          }
+        });
+      },
       segment: ({
         oldValue,
         oldChartConfig,
@@ -1168,8 +1193,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         dimensions,
         measures,
       }) => {
-        let newSegment: ColumnSegmentField | undefined;
-        let newColor: ColorField | undefined;
+        let newSegment: ColumnSegmentField;
+        let newColor: ColorField;
 
         const xMeasure = measures.find(
           (d) => d.id === newChartConfig.fields.x.componentId
@@ -1199,6 +1224,14 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           newChartConfig.fields.y.componentId !== oldValue.componentId
         ) {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          const oldColor: ColorField | undefined = isColorInConfig(
+            oldChartConfig
+          )
+            ? oldChartConfig.fields.color
+            : undefined;
+          const segmentDimension = dimensions.find(
+            (d) => d.id === oldValue.componentId
+          );
           newSegment = {
             ...oldSegment,
             // We could encounter byMeasure sorting type (Pie chart); we should
@@ -1210,16 +1243,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             }),
             type: disableStacked(xMeasure) ? "grouped" : "stacked",
           };
-          newColor = {
-            type: "segment",
-            paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-            colorMapping: mapValueIrisToColor({
-              paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-              dimensionValues:
-                dimensions.find((d) => d.id === oldValue.componentId)?.values ||
-                [],
-            }),
-          };
+          newColor = getSegmentColorField({
+            oldColorField: oldColor,
+            segmentDimension,
+          });
         }
 
         return produce(newChartConfig, (draft) => {
@@ -1297,6 +1324,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
+      color: ({ oldValue, newChartConfig }) => {
+        return produce(newChartConfig, (draft) => {
+          // Segment color type is migrated in tandem with the segment field below.
+          if (oldValue.type !== "segment") {
+            draft.fields.color = getSingleColorField({
+              oldColorField: oldValue,
+            });
+          }
+        });
+      },
       segment: ({
         oldValue,
         oldChartConfig,
@@ -1304,8 +1341,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         dimensions,
         measures,
       }) => {
-        let newSegment: LineSegmentField | undefined;
-        let newColor: ColorField | undefined;
+        let newSegment: LineSegmentField;
+        let newColor: ColorField;
 
         if (oldChartConfig.chartType === "table") {
           const maybeSegmentAndColorFields =
@@ -1321,6 +1358,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
         } else {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          const oldColor: ColorField | undefined = isColorInConfig(
+            oldChartConfig
+          )
+            ? oldChartConfig.fields.color
+            : undefined;
           const segmentDimension = dimensions.find(
             (d) => d.id === oldValue.componentId
           );
@@ -1336,14 +1378,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
                   : DEFAULT_SORTING,
               showValuesMapping: oldSegment.showValuesMapping,
             };
-            newColor = {
-              type: "segment",
-              paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-              colorMapping: mapValueIrisToColor({
-                paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-                dimensionValues: segmentDimension?.values || [],
-              }),
-            };
+            newColor = getSegmentColorField({
+              oldColorField: oldColor,
+              segmentDimension,
+            });
           }
         }
 
@@ -1406,6 +1444,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
+      color: ({ oldValue, newChartConfig }) => {
+        return produce(newChartConfig, (draft) => {
+          // Segment color type is migrated in tandem with the segment field below.
+          if (oldValue.type !== "segment") {
+            draft.fields.color = getSingleColorField({
+              oldColorField: oldValue,
+            });
+          }
+        });
+      },
       segment: ({
         oldValue,
         oldChartConfig,
@@ -1423,8 +1471,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         }
 
-        let newSegment: AreaSegmentField | undefined;
-        let newColor: ColorField | undefined;
+        let newSegment: AreaSegmentField;
+        let newColor: ColorField;
 
         if (oldChartConfig.chartType === "table") {
           const maybeSegmentAndColorFields =
@@ -1443,6 +1491,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
         } else {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          const oldColor: ColorField | undefined = isColorInConfig(
+            oldChartConfig
+          )
+            ? oldChartConfig.fields.color
+            : undefined;
           const segmentDimension = dimensions.find(
             (d) => d.id === oldValue.componentId
           );
@@ -1457,14 +1510,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               }),
               showValuesMapping: oldSegment.showValuesMapping,
             };
-            newColor = {
-              type: "segment",
-              paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-              colorMapping: mapValueIrisToColor({
-                paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-                dimensionValues: segmentDimension?.values || [],
-              }),
-            };
+            newColor = getSegmentColorField({
+              oldColorField: oldColor,
+              segmentDimension,
+            });
           }
         }
 
@@ -1492,22 +1541,69 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
       });
     },
     fields: {
-      // x is not needed, as this is the only chart type with x-axis measures.
-      y: {
+      x: {
         componentId: ({ oldValue, newChartConfig, measures }) => {
           const numericalMeasures = measures.filter(isNumericalMeasure);
 
           // If there is only one numerical measure then x & y are already filled correctly.
           if (numericalMeasures.length > 1) {
-            if (newChartConfig.fields.x.componentId !== oldValue) {
+            if (numericalMeasures.map((d) => d.id).includes(oldValue)) {
               return produce(newChartConfig, (draft) => {
-                draft.fields.y.componentId = oldValue;
+                draft.fields.x.componentId = oldValue;
               });
             }
           }
 
           return newChartConfig;
         },
+      },
+      y: {
+        componentId: ({ oldValue, newChartConfig, measures }) => {
+          const numericalMeasures = measures.filter(isNumericalMeasure);
+
+          // If there is only one numerical measure then x & y are already filled correctly.
+          if (numericalMeasures.length > 1) {
+            if (
+              numericalMeasures.map((d) => d.id).includes(oldValue) &&
+              newChartConfig.fields.x.componentId !== oldValue
+            ) {
+              return produce(newChartConfig, (draft) => {
+                draft.fields.y.componentId = oldValue;
+              });
+            } else {
+              const newMeasure = numericalMeasures.find(
+                (d) => d.id !== newChartConfig.fields.x.componentId
+              );
+
+              if (newMeasure) {
+                return produce(newChartConfig, (draft) => {
+                  draft.fields.y.componentId = newMeasure.id;
+                });
+              }
+            }
+          }
+
+          return newChartConfig;
+        },
+      },
+      color: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
+        return produce(newChartConfig, (draft) => {
+          if (oldValue.type === "single") {
+            const oldColor: ColorField | undefined = isColorInConfig(
+              oldChartConfig
+            )
+              ? oldChartConfig.fields.color
+              : undefined;
+            const segmentDimension = dimensions.find(
+              (d) => d.id === newChartConfig.fields.segment?.componentId
+            );
+
+            draft.fields.color = getSegmentColorField({
+              oldColorField: oldColor,
+              segmentDimension,
+            });
+          }
+        });
       },
       segment: ({
         oldValue,
@@ -1516,8 +1612,14 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         dimensions,
         measures,
       }) => {
-        let newSegment: ScatterPlotSegmentField | undefined;
-        let newColor: ColorField | undefined;
+        let newSegment: ScatterPlotSegmentField;
+        let newColor: ColorField;
+        const oldColor: ColorField | undefined = isColorInConfig(oldChartConfig)
+          ? oldChartConfig.fields.color
+          : undefined;
+        const segmentDimension = dimensions.find(
+          (d) => d.id === oldValue.componentId
+        );
 
         if (oldChartConfig.chartType === "table") {
           const maybeSegmentAndColorFields =
@@ -1537,6 +1639,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             componentId: oldSegment.componentId,
             showValuesMapping: oldSegment.showValuesMapping,
           };
+          newColor = getSegmentColorField({
+            oldColorField: oldColor,
+            segmentDimension,
+          });
         }
 
         return produce(newChartConfig, (draft) => {
@@ -1580,6 +1686,25 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           });
         },
       },
+      color: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
+        return produce(newChartConfig, (draft) => {
+          if (oldValue.type === "single") {
+            const oldColor: ColorField | undefined = isColorInConfig(
+              oldChartConfig
+            )
+              ? oldChartConfig.fields.color
+              : undefined;
+            const segmentDimension = dimensions.find(
+              (d) => d.id === newChartConfig.fields.segment.componentId
+            );
+
+            draft.fields.color = getSegmentColorField({
+              oldColorField: oldColor,
+              segmentDimension,
+            });
+          }
+        });
+      },
       segment: ({
         oldValue,
         oldChartConfig,
@@ -1587,8 +1712,8 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         dimensions,
         measures,
       }) => {
-        let newSegment: PieSegmentField | undefined;
-        let newColor: ColorField | undefined;
+        let newSegment: PieSegmentField;
+        let newColor: ColorField;
 
         if (oldChartConfig.chartType === "table") {
           const maybeSegmentAndColorFields =
@@ -1607,6 +1732,14 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
         } else {
           const oldSegment = oldValue as Exclude<typeof oldValue, TableFields>;
+          const oldColor: ColorField | undefined = isColorInConfig(
+            oldChartConfig
+          )
+            ? oldChartConfig.fields.color
+            : undefined;
+          const segmentDimension = dimensions.find(
+            (d) => d.id === oldSegment.componentId
+          );
           newSegment = {
             componentId: oldSegment.componentId,
             sorting: adjustSegmentSorting({
@@ -1616,16 +1749,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             }),
             showValuesMapping: oldSegment.showValuesMapping,
           };
-          newColor = {
-            type: "segment",
-            paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-            colorMapping: mapValueIrisToColor({
-              paletteId: DEFAULT_CATEGORICAL_PALETTE_ID,
-              dimensionValues:
-                dimensions.find((d) => d.id === oldSegment.componentId)
-                  ?.values || [],
-            }),
-          };
+          newColor = getSegmentColorField({
+            oldColorField: oldColor,
+            segmentDimension,
+          });
         }
 
         return produce(newChartConfig, (draft) => {
@@ -1777,9 +1904,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           const paletteId = isColorInConfig(oldChartConfig)
             ? (oldChartConfig.fields.color.paletteId ??
               DEFAULT_CATEGORICAL_PALETTE_ID)
-            : isComboChartConfig(oldChartConfig)
-              ? oldChartConfig.fields.color.paletteId
-              : DEFAULT_CATEGORICAL_PALETTE_ID;
+            : DEFAULT_CATEGORICAL_PALETTE_ID;
 
           return produce(newChartConfig, (draft) => {
             draft.fields.y = {
@@ -1900,9 +2025,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         const paletteId = isColorInConfig(oldChartConfig)
           ? (oldChartConfig.fields.color.paletteId ??
             DEFAULT_CATEGORICAL_PALETTE_ID)
-          : isComboChartConfig(oldChartConfig)
-            ? oldChartConfig.fields.color.paletteId
-            : DEFAULT_CATEGORICAL_PALETTE_ID;
+          : DEFAULT_CATEGORICAL_PALETTE_ID;
 
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
@@ -1960,7 +2083,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         let leftMeasure = numericalMeasures.find(
           (d) => d.id === numericalMeasureIds[0]
         ) as NumericalMeasure;
-        let rightAxisMeasureId: string | undefined;
+        let rightAxisMeasureId: string;
         const getMeasure = (id: string) => {
           return numericalMeasures.find((d) => d.id === id) as NumericalMeasure;
         };
@@ -2000,9 +2123,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         const paletteId = isColorInConfig(oldChartConfig)
           ? (oldChartConfig.fields.color.paletteId ??
             DEFAULT_CATEGORICAL_PALETTE_ID)
-          : isComboChartConfig(oldChartConfig)
-            ? oldChartConfig.fields.color.paletteId
-            : DEFAULT_CATEGORICAL_PALETTE_ID;
+          : DEFAULT_CATEGORICAL_PALETTE_ID;
 
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
@@ -2088,10 +2209,6 @@ const chartConfigsPathOverrides: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
       "fields.y.showValues": { path: "fields.x.showValues" },
-    },
-    scatterplot: {
-      "fields.x.componentId": { path: "fields.y.componentId" },
-      "fields.y.componentId": { path: "fields.x.componentId" },
     },
     pie: {
       "fields.y.componentId": { path: "fields.x.componentId" },
@@ -2189,10 +2306,6 @@ const chartConfigsPathOverrides: {
     },
   },
   scatterplot: {
-    bar: {
-      "fields.x.componentId": { path: "fields.y.componentId" },
-      "fields.y.componentId": { path: "fields.x.componentId" },
-    },
     map: {
       "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
     },
@@ -2221,10 +2334,10 @@ const chartConfigsPathOverrides: {
   },
   pie: {
     bar: {
-      "fields.segment.componentId": { path: "fields.y.componentId" },
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.x.showValues": { path: "fields.y.showValues" },
-      "fields.y.componentId": { path: "fields.x.componentId" },
+      // We want to avoid running the logic for the y component twice.
+      "fields.y.componentId": { path: "SKIP" },
     },
     map: {
       "fields.areaLayer.componentId": { path: "fields.x.componentId" },
@@ -2417,7 +2530,7 @@ const adjustSegmentSorting = ({
   segment: ChartSegmentField;
   acceptedValues: SortingType[];
   defaultValue: SortingType;
-}): SortingOption | undefined => {
+}): SortingOption => {
   const sorting = (segment as any).sorting as SortingOption | undefined;
   const sortingType = sorting?.sortingType;
   const newSorting = sorting
@@ -2667,6 +2780,44 @@ export const getFieldComponentId = (
   return (fields as $IntentionalAny)[field]?.componentId;
 };
 
+const getSingleColorField = ({
+  oldColorField,
+}: {
+  oldColorField: SingleColorField | MeasuresColorField;
+}): SingleColorField => {
+  return {
+    type: "single",
+    paletteId: oldColorField.paletteId,
+    color:
+      oldColorField.type === "single"
+        ? oldColorField.color
+        : Object.values(oldColorField.colorMapping)[0],
+  };
+};
+
+const getSegmentColorField = ({
+  oldColorField,
+  segmentDimension,
+}: {
+  oldColorField?: ColorField;
+  segmentDimension?: Dimension;
+}): SegmentColorField => {
+  const paletteId = oldColorField?.paletteId ?? DEFAULT_CATEGORICAL_PALETTE_ID;
+
+  return {
+    type: "segment",
+    paletteId,
+    colorMapping: mapValueIrisToColor({
+      paletteId,
+      dimensionValues: segmentDimension?.values ?? [],
+      colorMapping:
+        oldColorField?.type === "segment"
+          ? oldColorField.colorMapping
+          : undefined,
+    }),
+  };
+};
+
 const convertTableFieldsToSegmentAndColorFields = ({
   fields,
   dimensions,
@@ -2707,10 +2858,7 @@ const convertTableFieldsToSegmentAndColorFields = ({
       paletteId: paletteId,
       colorMapping: mapValueIrisToColor({
         paletteId: paletteId,
-        dimensionValues: [componentId].map((id) => ({
-          value: id,
-          label: id,
-        })),
+        dimensionValues: actualComponent.values,
       }),
     },
   };

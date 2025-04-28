@@ -101,7 +101,7 @@ const Palette = ({
 }) => {
   if (typeof value === "object") {
     const keys = Object.keys(value).sort(paletteKeyComparator);
-    console.log({ keys });
+
     return (
       <Box title={name} sx={{ p: 1 }}>
         <Box

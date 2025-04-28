@@ -551,8 +551,15 @@ export const MarkdownInput = ({
   name,
   value,
   onChange,
+  disableToolbar,
 }: {
   label?: string | ReactNode;
+  disableToolbar?: {
+    textStyles?: boolean;
+    blockType?: boolean;
+    listToggles?: boolean;
+    link?: boolean;
+  };
 } & FieldProps) => {
   const classes = useMarkdownInputStyles();
 
@@ -567,12 +574,22 @@ export const MarkdownInput = ({
             toolbarContents: () => (
               <div>
                 <Box sx={{ display: "flex", gap: 2 }}>
-                  <BoldItalicUnderlineToggles />
-                  <BlockTypeMenu />
-                  <Divider flexItem orientation="vertical" />
-                  <ListToggles />
-                  <Divider flexItem orientation="vertical" />
-                  <LinkDialogToggle />
+                  {disableToolbar?.textStyles ? null : (
+                    <BoldItalicUnderlineToggles />
+                  )}
+                  {disableToolbar?.blockType ? null : <BlockTypeMenu />}
+                  {disableToolbar?.listToggles ? null : (
+                    <>
+                      <Divider flexItem orientation="vertical" />
+                      <ListToggles />
+                    </>
+                  )}
+                  {disableToolbar?.link ? null : (
+                    <>
+                      <Divider flexItem orientation="vertical" />
+                      <LinkDialogToggle />
+                    </>
+                  )}
                 </Box>
                 {label && name ? <Label htmlFor={name}>{label}</Label> : null}
               </div>
