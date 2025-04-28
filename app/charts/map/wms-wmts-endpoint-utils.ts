@@ -1,8 +1,8 @@
 import groupBy from "lodash/groupBy";
 import sortBy from "lodash/sortBy";
 
-import { ParsedWMSLayer, parseWMSContent } from "@/charts/map/wms-utils";
-import { ParsedWMTSLayer, parseWMTSContent } from "@/charts/map/wmts-utils";
+import { RemoteWMSLayer, parseWMSContent } from "@/charts/map/wms-utils";
+import { RemoteWMTSLayer, parseWMTSContent } from "@/charts/map/wmts-utils";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
 import { useFetchData } from "@/utils/use-fetch-data";
@@ -105,7 +105,7 @@ function setWmsGetCapParams(url: URL, language: string) {
 const fetchWMSorWMSLayersFromEndpoint = async (
   endpoint: string,
   locale: Locale
-): Promise<(ParsedWMTSLayer | ParsedWMSLayer)[]> => {
+): Promise<(RemoteWMTSLayer | RemoteWMSLayer)[]> => {
   const { url, type } = guessExternalLayerUrl(endpoint, locale);
 
   try {
@@ -131,8 +131,8 @@ export const useWMTSorWMSLayers = (
   const locale = useLocale();
 
   return useFetchData<{
-    wmts: ParsedWMTSLayer[];
-    wms: ParsedWMSLayer[];
+    wmts: RemoteWMTSLayer[];
+    wms: RemoteWMSLayer[];
   }>({
     queryKey: [`custom-layers`, ...sortBy(endpoints), locale],
     queryFn: async () => {
@@ -146,7 +146,7 @@ export const useWMTSorWMSLayers = (
       const { wmts = [], wms = [] } = groupBy(allLayers, (x) => x.type);
 
       // Don't know why I need to "as" since the groupBy is correctly discriminating on type ?
-      return { wmts: wmts as ParsedWMTSLayer[], wms: wms as ParsedWMSLayer[] };
+      return { wmts: wmts as RemoteWMTSLayer[], wms: wms as RemoteWMSLayer[] };
     },
     options: {
       pause: pause || !endpoints.length,

@@ -51,7 +51,7 @@ type WMTSLayer = {
   Layer?: WMTSLayer[];
 };
 
-export type ParsedWMTSLayer = {
+export type RemoteWMTSLayer = {
   id: string;
   // Path is there to mirror WMS layer, but
   // not sure this is necessary since I haven't seen nested layers
@@ -65,7 +65,7 @@ export type ParsedWMTSLayer = {
   defaultDimensionValue: string | number;
   endpoint: string;
   type: "wmts";
-  children?: ParsedWMTSLayer[];
+  children?: RemoteWMTSLayer[];
   attribution: string;
 };
 
@@ -75,8 +75,8 @@ const parseWMTSLayer = (
     endpoint: string;
     attribution: string;
   }
-): ParsedWMTSLayer => {
-  const res: ParsedWMTSLayer = {
+): RemoteWMTSLayer => {
+  const res: RemoteWMTSLayer = {
     id: layer["ows:Identifier"],
     path: layer["ows:Identifier"],
     url: layer.ResourceURL.template,
@@ -140,8 +140,8 @@ export const getWMTSTile = ({
   beforeId,
   value,
 }: {
-  wmtsLayers?: ParsedWMTSLayer[];
-  customLayer?: WMTSCustomLayer | ParsedWMTSLayer;
+  wmtsLayers?: RemoteWMTSLayer[];
+  customLayer?: WMTSCustomLayer | RemoteWMTSLayer;
   beforeId?: string;
   value?: number | string;
 }) => {
@@ -215,7 +215,7 @@ export const getWMTSLayerValue = ({
 }: {
   availableDimensionValues: (string | number)[];
   defaultDimensionValue: string | number;
-  customLayer?: WMTSCustomLayer | ParsedWMTSLayer;
+  customLayer?: WMTSCustomLayer | RemoteWMTSLayer;
   value?: string | number;
 }) => {
   if (

@@ -1,4 +1,4 @@
-import { ParsedWMSLayer } from "./wms-utils";
-import { ParsedWMTSLayer } from "./wmts-utils";
+import { RemoteWMSLayer } from "./wms-utils";
+import { RemoteWMTSLayer } from "./wmts-utils";
 
-export type CustomLayer = ParsedWMSLayer | ParsedWMTSLayer;
+export type RemoteLayer = RemoteWMSLayer | RemoteWMTSLayer;

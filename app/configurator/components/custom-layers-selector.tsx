@@ -16,10 +16,10 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 
-import { ParsedWMSLayer } from "@/charts/map/wms-utils";
+import { RemoteWMSLayer } from "@/charts/map/wms-utils";
 import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
 import WMTSSelector from "@/charts/map/wms-wmts-selector";
-import { ParsedWMTSLayer } from "@/charts/map/wmts-utils";
+import { RemoteWMTSLayer } from "@/charts/map/wmts-utils";
 import { Switch } from "@/components/form";
 import { MoveDragButton } from "@/components/move-drag-button";
 import { MapConfig, WMSCustomLayer, WMTSCustomLayer } from "@/config-types";
@@ -101,7 +101,7 @@ export const CustomLayersSelector = () => {
   });
 
   const handleCheckLayer = (
-    layer: ParsedWMSLayer | ParsedWMTSLayer | null,
+    layer: RemoteWMSLayer | RemoteWMTSLayer | null,
     checked: boolean
   ) => {
     const valueType = layer?.type;
@@ -162,10 +162,10 @@ export const CustomLayersSelector = () => {
     const getKey = ({
       type,
       id,
-    }: WMTSCustomLayer | WMSCustomLayer | ParsedWMSLayer | ParsedWMTSLayer) => {
+    }: WMTSCustomLayer | WMSCustomLayer | RemoteWMSLayer | RemoteWMTSLayer) => {
       return `${type}-${id}`;
     };
-    const layersByKey: Record<string, ParsedWMSLayer | ParsedWMTSLayer> = {};
+    const layersByKey: Record<string, RemoteWMSLayer | RemoteWMTSLayer> = {};
     wmsLayers?.forEach((layer) => {
       layersByKey[getKey(layer)] = layer;
     });
@@ -275,7 +275,7 @@ const DraggableLayer = ({
 }: {
   configLayer: WMSCustomLayer | WMTSCustomLayer;
   index: number;
-  parsedLayer: ParsedWMSLayer | ParsedWMTSLayer;
+  parsedLayer: RemoteWMSLayer | RemoteWMTSLayer;
 }) => {
   const [_, dispatch] = useConfiguratorState(isConfiguring);
   const value = configLayer.id;

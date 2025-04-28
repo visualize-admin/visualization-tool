@@ -40,7 +40,7 @@ type WMSLayer = {
   Layer?: WMSLayer[];
 };
 
-export type ParsedWMSLayer = {
+export type RemoteWMSLayer = {
   /** id not unique */
   id: string;
   /** path should be unique */
@@ -52,7 +52,7 @@ export type ParsedWMSLayer = {
   defaultDimensionValue?: string | number;
   endpoint: string;
   type: "wms";
-  children?: ParsedWMSLayer[];
+  children?: RemoteWMSLayer[];
   dataUrl: string;
   attribution: string;
 };
@@ -65,9 +65,9 @@ const parseWMSLayer = (
     attribution: string;
   },
   parentPath = ""
-): ParsedWMSLayer => {
+): RemoteWMSLayer => {
   const currentPath = `${parentPath ?? ""}/${layer.Name ?? layer.Title}`;
-  const res: ParsedWMSLayer = {
+  const res: RemoteWMSLayer = {
     // Non unique
     id: layer.Name,
     // Unique
@@ -127,8 +127,8 @@ export const getWMSTile = ({
   customLayer,
   beforeId,
 }: {
-  wmsLayers?: ParsedWMSLayer[];
-  customLayer?: WMSCustomLayer | ParsedWMSLayer;
+  wmsLayers?: RemoteWMSLayer[];
+  customLayer?: WMSCustomLayer | RemoteWMSLayer;
   beforeId?: string;
 }) => {
   if (!customLayer) {

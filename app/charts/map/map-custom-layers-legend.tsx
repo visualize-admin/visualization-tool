@@ -2,12 +2,12 @@ import { Box, Typography } from "@mui/material";
 import uniq from "lodash/uniq";
 import NextImage from "next/image";
 
-import { DEFAULT_WMS_URL, ParsedWMSLayer } from "@/charts/map/wms-utils";
+import { DEFAULT_WMS_URL, RemoteWMSLayer } from "@/charts/map/wms-utils";
 import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
 import {
   DEFAULT_WMTS_URL,
   getWMTSLayerValue,
-  ParsedWMTSLayer,
+  RemoteWMTSLayer,
 } from "@/charts/map/wmts-utils";
 import { Error, InlineLoading } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
@@ -119,7 +119,7 @@ const useLegendsData = ({
       return (
         await Promise.all(
           customLayers.map(async (customLayer) => {
-            let layer: ParsedWMSLayer | ParsedWMTSLayer | undefined;
+            let layer: RemoteWMSLayer | RemoteWMTSLayer | undefined;
 
             switch (customLayer.type) {
               case "wms":
