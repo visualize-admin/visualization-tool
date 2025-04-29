@@ -3,7 +3,10 @@ import uniq from "lodash/uniq";
 import NextImage from "next/image";
 
 import { DEFAULT_WMS_URL, RemoteWMSLayer } from "@/charts/map/wms-utils";
-import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
+import {
+  getLayerKey,
+  useWMTSorWMSLayers,
+} from "@/charts/map/wms-wmts-endpoint-utils";
 import {
   DEFAULT_WMTS_URL,
   getWMTSLayerValue,
@@ -104,9 +107,14 @@ const useLegendsData = ({
     ...wmtsEndpoints,
     ...wmsEndpoints,
   ]);
-  const { wms: wmsLayers, wmts: wmtsLayers } = groupedLayers ?? {
+  const {
+    wms: wmsLayers,
+    wmts: wmtsLayers,
+    byKey: layersByKey,
+  } = groupedLayers ?? {
     wms: [],
     wmts: [],
+    byKey: {},
   };
   const { data: legendsData, error: legendsError } = useFetchData({
     queryKey: [
@@ -115,24 +123,14 @@ const useLegendsData = ({
       wmsLayers?.map((d) => d.id),
       wmtsLayers?.map((d) => d.id),
       locale,
+      1,
     ],
     queryFn: async () => {
       return (
         await Promise.all(
           configLayers.map(async (configLayer) => {
-            let remoteLayer: RemoteWMSLayer | RemoteWMTSLayer | undefined;
-
-            switch (configLayer.type) {
-              case "wms":
-                remoteLayer = wmsLayers?.find((l) => l.id === configLayer.id);
-                break;
-              case "wmts":
-                remoteLayer = wmtsLayers?.find((l) => l.id === configLayer.id);
-                break;
-              default:
-                const _exhaustiveCheck: never = configLayer;
-                return _exhaustiveCheck;
-            }
+            let remoteLayer: RemoteWMSLayer | RemoteWMTSLayer | undefined =
+              layersByKey[getLayerKey(configLayer)];
 
             if (!remoteLayer?.legendUrl) {
               return undefined;

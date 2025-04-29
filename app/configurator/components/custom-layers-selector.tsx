@@ -17,7 +17,10 @@ import {
 } from "react-beautiful-dnd";
 
 import { RemoteWMSLayer } from "@/charts/map/wms-utils";
-import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
+import {
+  getLayerKey,
+  useWMTSorWMSLayers,
+} from "@/charts/map/wms-wmts-endpoint-utils";
 import WMTSSelector from "@/charts/map/wms-wmts-selector";
 import { RemoteWMTSLayer } from "@/charts/map/wmts-utils";
 import { Switch } from "@/components/form";
@@ -38,7 +41,6 @@ import {
 } from "@/configurator/configurator-state";
 import { truthy } from "@/domain/types";
 import { Icon } from "@/icons";
-import { visitHierarchy } from "@/rdf/tree-utils";
 
 const LeftDrawer = ({
   children,
@@ -79,10 +81,11 @@ export const CustomLayersSelector = () => {
     error,
     status: layersStatus,
   } = useWMTSorWMSLayers(endpoints);
-  const { wms: wmsLayers, wmts: wmtsLayers } = groupedLayers ?? {
-    wms: [],
-    wmts: [],
-  };
+  const {
+    wms: wmsLayers,
+    wmts: wmtsLayers,
+    byKey: layersByKey,
+  } = groupedLayers!;
 
   const handleDragEnd: OnDragEndResponder = useEventCallback((e) => {
     const oldIndex = e.source.index;
@@ -160,24 +163,11 @@ export const CustomLayersSelector = () => {
 
   const [addingLayer, setAddingLayer] = useState(false);
   const getParsedLayer = useMemo(() => {
-    const getKey = ({
-      type,
-      id,
-    }: WMTSCustomLayer | WMSCustomLayer | RemoteWMSLayer | RemoteWMTSLayer) => {
-      return `${type}-${id}`;
-    };
-    const layersByKey: Record<string, RemoteWMSLayer | RemoteWMTSLayer> = {};
-    visitHierarchy(wmsLayers ?? [], (layer) => {
-      layersByKey[getKey(layer)] = layer;
-    });
-    visitHierarchy(wmtsLayers ?? [], (layer) => {
-      layersByKey[getKey(layer)] = layer;
-    });
     return (configLayer: WMTSCustomLayer | WMSCustomLayer) => {
-      const key = getKey(configLayer);
+      const key = getLayerKey(configLayer);
       return layersByKey[key];
     };
-  }, [wmsLayers, wmtsLayers]);
+  }, [layersByKey]);
   const sectionTitleClasses = useSectionTitleStyles({
     sectionOpen: true,
     interactive: true,
