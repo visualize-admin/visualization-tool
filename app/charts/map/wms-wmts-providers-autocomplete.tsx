@@ -1,5 +1,10 @@
 import { t } from "@lingui/macro";
-import { Autocomplete, TextField, Theme } from "@mui/material";
+import {
+  Autocomplete,
+  createFilterOptions,
+  TextField,
+  Theme,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import sortBy from "lodash/sortBy";
 import { useMemo } from "react";
@@ -89,12 +94,24 @@ const ProviderAutocomplete = ({
     // Need to sort by group to remove warning in the console
     return sortBy(options, (option) => option.group);
   }, []);
+
+  const filterOptions = useMemo(() => {
+    return createFilterOptions({
+      stringify: (option: (typeof options)[number]) => {
+        if (typeof option === "string") {
+          return option;
+        }
+        return `${option.url}`;
+      },
+    });
+  }, []);
   return (
     <>
       <Autocomplete
         options={options}
         value={value}
         freeSolo
+        filterOptions={filterOptions}
         groupBy={(option) => option.group}
         // @ts-ignore
         getOptionLabel={(option) =>
