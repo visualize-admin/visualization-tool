@@ -110,7 +110,7 @@ export type EncodingOptionChartSubType<T extends ChartConfig = ChartConfig> = {
   onChange: OnEncodingOptionChange<ChartSubType, T>;
 };
 
-type EncodingOption<T extends ChartConfig = ChartConfig> =
+export type EncodingOption<T extends ChartConfig = ChartConfig> =
   | EncodingOptionChartSubType<T>
   | {
       field: "calculation";

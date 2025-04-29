@@ -10,6 +10,7 @@ import { DEFAULT_SORTING, getFieldComponentId } from "@/charts";
 import {
   ANIMATION_FIELD_SPEC,
   EncodingFieldType,
+  EncodingOption,
   EncodingOptionChartSubType,
   EncodingSortingOption,
   EncodingSpec,
@@ -493,9 +494,10 @@ const EncodingOptionsPanel = ({
               <ChartScaleDomain
                 chartConfig={chartConfig}
                 field={field}
-                defaultDomain={encoding.options.adjustScaleDomain.getDefaultDomain(
-                  { chartConfig, observations }
-                )}
+                observations={observations}
+                getDefaultDomain={
+                  encoding.options.adjustScaleDomain.getDefaultDomain
+                }
               />
             ) : null}
             {encoding.options?.showStandardError && hasStandardError && (
@@ -738,11 +740,16 @@ const ChartLayoutOptions = ({
 const ChartScaleDomain = ({
   chartConfig,
   field,
-  defaultDomain,
+  observations,
+  getDefaultDomain,
 }: {
   chartConfig: ChartConfig;
   field: EncodingFieldType;
-  defaultDomain: [number, number];
+  observations: Observation[];
+  getDefaultDomain: Extract<
+    EncodingOption,
+    { field: "adjustScaleDomain" }
+  >["getDefaultDomain"];
 }) => {
   const locale = useLocale();
   const [_, dispatch] = useConfiguratorState(isConfiguring);
@@ -752,6 +759,10 @@ const ChartScaleDomain = ({
   const checked = !!domain;
   const disabled =
     chartConfig.interactiveFiltersConfig?.calculation.type === "percent";
+
+  const defaultDomain = useMemo(() => {
+    return getDefaultDomain({ chartConfig, observations });
+  }, [chartConfig, getDefaultDomain, observations]);
 
   const handleToggle = useEvent(() => {
     dispatch({
