@@ -204,9 +204,6 @@ export const parseWMTSContent = (content: string, endpoint: string) => {
         tileMatrixSets.map((tileMatrix) => [tileMatrix.id, tileMatrix])
       )
     : {};
-  console.log({
-    tileMatrixById: Object.values(tileMatrixById).map((x) => x.supportedCRS),
-  });
   const Layer = parsed.Capabilities.Contents.Layer;
   return mapArrayOrUnique(Layer, (l) =>
     parseWMTSLayer(l, attributes, tileMatrixById)
