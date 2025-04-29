@@ -67,7 +67,11 @@ export const MapCustomLayersLegend = ({
                 </Typography>
                 {layer.description ? (
                   <InfoIconTooltip
-                    title={layer.description}
+                    title={
+                      <div
+                        dangerouslySetInnerHTML={{ __html: layer.description }}
+                      />
+                    }
                     sx={{ width: "fit-content" }}
                   />
                 ) : null}
