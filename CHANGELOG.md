@@ -13,6 +13,13 @@ You can also check the
 
 Nothing yet.
 
+# 5.7.4
+
+- Smaller improvements
+  - OK button in "Text object" settings
+  - Better spacing/line-height for title & description of dashboards
+  - Better spacing for tick label of time animation slider
+
 # 5.7.3
 
 - Features
