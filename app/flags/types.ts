@@ -26,6 +26,10 @@ export const FLAGS = [
     name: "wmts-show-extra-info" as const,
     description: "Show extra debug info in WMTS provider autocomplete",
   },
+  {
+    name: "custom-scale-domain" as const,
+    description: "Allows users to set custom numerical scale domains.",
+  },
 ];
 export const FLAG_NAMES = FLAGS.map((flag) => flag.name);
 type Flag = (typeof FLAGS)[number];

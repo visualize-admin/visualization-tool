@@ -112,6 +112,7 @@ import {
   Observation,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
+import { useFlag } from "@/flags";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
@@ -448,6 +449,8 @@ const EncodingOptionsPanel = ({
         ? component
         : undefined;
 
+  const chartScaleDomainEnabled = useFlag("custom-scale-domain");
+
   return (
     <div
       key={`control-panel-${encoding.field}`}
@@ -484,7 +487,9 @@ const EncodingOptionsPanel = ({
                 }
               />
             ) : null}
-            {encoding.options?.adjustScaleDomain && fieldComponent ? (
+            {encoding.options?.adjustScaleDomain &&
+            fieldComponent &&
+            chartScaleDomainEnabled ? (
               <ChartScaleDomain
                 chartConfig={chartConfig}
                 field={field}
