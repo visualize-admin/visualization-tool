@@ -19,6 +19,10 @@ You can also check the
     segmented charts with all blue segments anymore
   - Disabled some UI options for Markdown formatting in title and description
     fields
+  - External WMS/WMTS providers can be better searched
+  - External WMS/WMTS layers are correctly named when they are nested layers
+  - External WMTS layers Tilematrix set are parsed and layers are not added if
+    its projection cannot be inferred to be ESPG:3857
 
 # [5.7.2] - 2025-04-28
 
