@@ -265,7 +265,6 @@ export const getWMTSTile = ({
     return;
   }
 
-  console.log("wmtsLayer", wmtsLayer);
   return new TileLayer({
     id: `tile-layer-${url}`,
     beforeId,
