@@ -1,6 +1,7 @@
 import { t } from "@lingui/macro";
 import { Autocomplete, TextField, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import sortBy from "lodash/sortBy";
 import { useMemo } from "react";
 
 import { guessUrlType } from "@/charts/map/wms-wmts-endpoint-utils";
@@ -68,7 +69,7 @@ const ProviderAutocomplete = ({
   const extraInfo = value ? wmsWmtsProvidersExtra[value] : undefined;
   const showExtraInfo = useFlag("wmts-show-extra-info");
   const options = useMemo(() => {
-    return wmsWmtsProviders
+    const options = wmsWmtsProviders
       .filter((p) => {
         return !wmsWmtsProvidersExtra[p] || !wmsWmtsProvidersExtra[p].hidden;
       })
@@ -84,6 +85,9 @@ const ProviderAutocomplete = ({
           type: guessUrlType(provider),
         };
       });
+
+    // Need to sort by group to remove warning in the console
+    return sortBy(options, (option) => option.group);
   }, []);
   return (
     <>
