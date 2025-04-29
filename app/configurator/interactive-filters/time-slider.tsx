@@ -156,6 +156,7 @@ export const TimeSlider = (props: TimeSliderProps) => {
 
 const Root = ({ showPlayButton }: { showPlayButton: boolean }) => {
   const timeline = useTimeline();
+  const [min, max] = timeline.formattedExtent;
 
   return (
     <Box
@@ -165,24 +166,25 @@ const Root = ({ showPlayButton }: { showPlayButton: boolean }) => {
         alignItems: "center",
         gap: 5,
         mb: 5,
-        mr: "10px",
+        mr: 2.5,
       }}
     >
       {showPlayButton && <PlayButton />}
-      <Box
-        sx={{
-          position: "relative",
-          width: "100%",
-        }}
-      >
+      <div style={{ position: "relative", width: "100%" }}>
         <Slider />
-        <Typography variant="caption" sx={{ position: "absolute", left: 0 }}>
-          {timeline.formattedExtent[0]}
+        <Typography
+          variant="caption"
+          sx={{ position: "absolute", left: 0, mt: 2 }}
+        >
+          {min}
         </Typography>
-        <Typography variant="caption" sx={{ position: "absolute", right: 0 }}>
-          {timeline.formattedExtent[1]}
+        <Typography
+          variant="caption"
+          sx={{ position: "absolute", right: 0, mt: 2 }}
+        >
+          {max}
         </Typography>
-      </Box>
+      </div>
     </Box>
   );
 };
