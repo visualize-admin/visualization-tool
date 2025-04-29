@@ -51,8 +51,8 @@ const WMTSPlayground = () => {
   const deckglLayers = useMemo(() => {
     return layers.map((x) => {
       return x.type === "wms"
-        ? getWMSTile({ wmsLayers: [x], customLayer: x })
-        : getWMTSTile({ remoteWmtsLayers: [x], customLayer: x });
+        ? getWMSTile({ wmsLayer: x, customLayer: x })
+        : getWMTSTile({ wmtsLayer: x, customLayer: x });
     });
   }, [layers]);
 
