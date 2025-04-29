@@ -54,6 +54,8 @@ export const AxisTime = () => {
     if (ref.current) {
       const axis = axisBottom(xScale)
         .ticks(ticks)
+        .tickSizeInner(hasNegativeValues ? -chartHeight : 6)
+        .tickPadding(hasNegativeValues ? 6 : 3)
         .tickFormat((x) => formatDateAuto(x as Date));
       const g = renderContainer(ref.current, {
         id: "axis-width-time",
