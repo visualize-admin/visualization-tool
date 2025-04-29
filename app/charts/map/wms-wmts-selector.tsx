@@ -351,8 +351,7 @@ const WMTSSelector = ({
     [
       treeItemClasses,
       defaultExpanded,
-      classes.treeRow,
-      classes.label,
+      classes,
       layersByPath,
       onLayerCheck,
       selectedSet,
