@@ -11,16 +11,22 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- WMTS / WMS layers
+  - Features
+    - Add a warning icon next to a layer if its CRS is unsupported (not CRS:84 /
+      ESPG:3857)
+  - Fixes on
+    - Nested layers appear on the map
+    - Attributions are no longer coming from all layers of the endpoint
 
-# 5.7.4
+# 5.7.4 - 2025-04-29
 
 - Smaller improvements
   - OK button in "Text object" settings
   - Better spacing/line-height for title & description of dashboards
   - Better spacing for tick label of time animation slider
 
-# 5.7.3
+# 5.7.3 - 2025-04-29
 
 - Features
   - Color settings are now persisted across chart type changes
