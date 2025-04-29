@@ -86,12 +86,9 @@ const AnnotationOptions = (props: AnnotationOptionsProps) => {
     >
       <ControlSection hideTopBorder>
         <SectionTitle closable>{getFieldLabel(activeField)}</SectionTitle>
-        <ControlSectionContent gap="none">
+        <ControlSectionContent>
           {orderedLocales.map((locale) => (
-            <Box
-              key={`${locale}-${activeField}`}
-              sx={{ ":not(:first-of-type)": { mt: 2 } }}
-            >
+            <div key={`${locale}-${activeField}`}>
               <MetaInputField
                 type={type}
                 inputType={activeField === "label" ? "text" : "markdown"}
@@ -105,12 +102,12 @@ const AnnotationOptions = (props: AnnotationOptionsProps) => {
                   link: activeField === "title",
                 }}
               />
-            </Box>
+            </div>
           ))}
           <Button
             size="sm"
             onClick={handleClosePanel}
-            sx={{ alignSelf: "flex-end", mt: 3, px: 5 }}
+            sx={{ alignSelf: "flex-end", mt: 2, px: 5 }}
           >
             <Typography component="span">Ok</Typography>
           </Button>

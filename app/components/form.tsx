@@ -559,59 +559,57 @@ export const MarkdownInput = ({
   const classes = useMarkdownInputStyles();
 
   return (
-    <Box sx={{ fontSize: "1rem", mb: 5 }}>
-      <MDXEditor
-        className={classes.root}
-        markdown={value ? `${value}` : ""}
-        plugins={[
-          toolbarPlugin({
-            toolbarClassName: classes.toolbar,
-            toolbarContents: () => (
-              <div>
-                <Box sx={{ display: "flex", gap: 2 }}>
-                  {disableToolbar?.textStyles ? null : (
-                    <BoldItalicUnderlineToggles />
-                  )}
-                  {disableToolbar?.blockType ? null : <BlockTypeMenu />}
-                  {disableToolbar?.listToggles ? null : (
-                    <>
-                      <Divider flexItem orientation="vertical" />
-                      <ListToggles />
-                    </>
-                  )}
-                  {disableToolbar?.link ? null : (
-                    <>
-                      <Divider flexItem orientation="vertical" />
-                      <LinkDialogToggle />
-                    </>
-                  )}
-                </Box>
-                {label && name ? <Label htmlFor={name}>{label}</Label> : null}
-              </div>
-            ),
-          }),
-          headingsPlugin(),
-          listsPlugin(),
-          linkPlugin(),
-          linkDialogPlugin(),
-          quotePlugin(),
-          markdownShortcutPlugin(),
-          thematicBreakPlugin(),
-        ]}
-        onChange={(newValue) => {
-          onChange?.({
-            currentTarget: {
-              value: newValue
-                // Remove backslashes from the string, as they are not supported in react-markdown
-                .replaceAll("\\", "")
-                // <u> is not supported in react-markdown we use for rendering.
-                .replaceAll("<u>", "<ins>")
-                .replace("</u>", "</ins>"),
-            },
-          } as any);
-        }}
-      />
-    </Box>
+    <MDXEditor
+      className={classes.root}
+      markdown={value ? `${value}` : ""}
+      plugins={[
+        toolbarPlugin({
+          toolbarClassName: classes.toolbar,
+          toolbarContents: () => (
+            <div>
+              <Box sx={{ display: "flex", gap: 2 }}>
+                {disableToolbar?.textStyles ? null : (
+                  <BoldItalicUnderlineToggles />
+                )}
+                {disableToolbar?.blockType ? null : <BlockTypeMenu />}
+                {disableToolbar?.listToggles ? null : (
+                  <>
+                    <Divider flexItem orientation="vertical" />
+                    <ListToggles />
+                  </>
+                )}
+                {disableToolbar?.link ? null : (
+                  <>
+                    <Divider flexItem orientation="vertical" />
+                    <LinkDialogToggle />
+                  </>
+                )}
+              </Box>
+              {label && name ? <Label htmlFor={name}>{label}</Label> : null}
+            </div>
+          ),
+        }),
+        headingsPlugin(),
+        listsPlugin(),
+        linkPlugin(),
+        linkDialogPlugin(),
+        quotePlugin(),
+        markdownShortcutPlugin(),
+        thematicBreakPlugin(),
+      ]}
+      onChange={(newValue) => {
+        onChange?.({
+          currentTarget: {
+            value: newValue
+              // Remove backslashes from the string, as they are not supported in react-markdown
+              .replaceAll("\\", "")
+              // <u> is not supported in react-markdown we use for rendering.
+              .replaceAll("<u>", "<ins>")
+              .replace("</u>", "</ins>"),
+          },
+        } as any);
+      }}
+    />
   );
 };
 
