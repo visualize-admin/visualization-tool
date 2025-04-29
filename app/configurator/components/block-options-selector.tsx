@@ -11,10 +11,12 @@ import { isLayouting } from "@/configurator/configurator-state";
 import { useOrderedLocales } from "@/locales/use-locale";
 import { useConfiguratorState } from "@/src";
 import { assert } from "@/utils/assert";
+import { Button, Typography } from "@mui/material";
+import useEvent from "@/utils/use-event";
 
 export const LayoutBlocksSelector = () => {
   const orderedLocales = useOrderedLocales();
-  const [state] = useConfiguratorState(isLayouting);
+  const [state, dispatch] = useConfiguratorState(isLayouting);
   const { layout } = state;
   const { blocks } = layout;
   const activeBlock = useMemo(() => {
@@ -30,6 +32,13 @@ export const LayoutBlocksSelector = () => {
     return activeBlock;
   }, [blocks, layout.activeField]);
 
+  const handleClosePanel = useEvent(() => {
+    dispatch({
+      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+      value: undefined,
+    });
+  });
+
   return activeBlock ? (
     <div
       key={activeBlock.key}
@@ -44,10 +53,17 @@ export const LayoutBlocksSelector = () => {
             Text object
           </Trans>
         </SectionTitle>
-        <ControlSectionContent gap="none">
+        <ControlSectionContent>
           {orderedLocales.map((locale) => (
             <TextBlockInputField key={locale} locale={locale} />
           ))}
+          <Button
+            size="sm"
+            onClick={handleClosePanel}
+            sx={{ alignSelf: "flex-end", mt: 2, px: 5 }}
+          >
+            <Typography component="span">Ok</Typography>
+          </Button>
         </ControlSectionContent>
       </ControlSection>
     </div>
