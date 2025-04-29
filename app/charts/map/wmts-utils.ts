@@ -8,6 +8,19 @@ type WMTSData = {
   Capabilities: {
     Contents: {
       Layer: WMTSLayer[];
+      TileMatrixSet?: {
+        "ows:Identifier": string;
+        "ows:SupportedCRS": string[] | string;
+        TileMatrix: {
+          "ows:Identifier": string;
+          ScaleDenominator: number;
+          TopLeftCorner: string;
+          TileWidth: number;
+          TileHeight: number;
+          MatrixWidth: number;
+          MatrixHeight: number;
+        }[];
+      };
     };
     "ows:ServiceProvider": {
       "ows:ProviderName": string;
@@ -51,7 +64,7 @@ type WMTSLayer = {
   Layer?: WMTSLayer[];
 };
 
-export type ParsedWMTSLayer = {
+export type RemoteWMTSLayer = {
   id: string;
   // Path is there to mirror WMS layer, but
   // not sure this is necessary since I haven't seen nested layers
@@ -65,8 +78,62 @@ export type ParsedWMTSLayer = {
   defaultDimensionValue: string | number;
   endpoint: string;
   type: "wmts";
-  children?: ParsedWMTSLayer[];
+  children?: RemoteWMTSLayer[];
   attribution: string;
+  tileMatrixSet?: TileMatrixSet | undefined;
+};
+
+type TileMatrix = {
+  id: string;
+  scaleDenominator: number;
+  topLeftCorner: [number, number];
+  tileWidth: number;
+  tileHeight: number;
+  matrixWidth: number;
+  matrixHeight: number;
+};
+
+type TileMatrixSet = {
+  id: string;
+  supportedCRS: string[];
+  tileMatrixes: TileMatrix[];
+};
+
+const parseTileMatrixSets = (
+  _tileMatrixSet: WMTSData["Capabilities"]["Contents"]["TileMatrixSet"]
+): TileMatrixSet[] | null => {
+  if (!_tileMatrixSet) {
+    return null;
+  }
+  const tileMatrixSet = Array.isArray(_tileMatrixSet)
+    ? _tileMatrixSet
+    : [_tileMatrixSet];
+
+  const parsedTileMatrixSet = (
+    item: NonNullable<WMTSData["Capabilities"]["Contents"]["TileMatrixSet"]>
+  ) => {
+    const [x, y] = item.TileMatrix[0].TopLeftCorner.split(" ").map(Number);
+    const tileMatrixes = Array.isArray(item.TileMatrix)
+      ? item.TileMatrix
+      : [item.TileMatrix];
+    return {
+      id: item["ows:Identifier"],
+      supportedCRS: Array.isArray(item["ows:SupportedCRS"])
+        ? item["ows:SupportedCRS"]
+        : [item["ows:SupportedCRS"]],
+      tileMatrixes: tileMatrixes.map((tm) => ({
+        id: tm["ows:Identifier"],
+        scaleDenominator: tm.ScaleDenominator,
+        topLeftCorner: [x, y] as [number, number],
+        tileWidth: tm.TileWidth,
+        tileHeight: tm.TileHeight,
+        matrixWidth: tm.MatrixWidth,
+        matrixHeight: tm.MatrixHeight,
+      })),
+    };
+  };
+
+  return tileMatrixSet.map(parsedTileMatrixSet);
 };
 
 const parseWMTSLayer = (
@@ -74,12 +141,13 @@ const parseWMTSLayer = (
   attributes: {
     endpoint: string;
     attribution: string;
-  }
-): ParsedWMTSLayer => {
-  const res: ParsedWMTSLayer = {
+  },
+  tileMatrixById: Record<string, TileMatrixSet> = {}
+): RemoteWMTSLayer => {
+  const res: RemoteWMTSLayer = {
     id: layer["ows:Identifier"],
     path: layer["ows:Identifier"],
-    url: layer.ResourceURL.template,
+    url: layer.ResourceURL.template || attributes.endpoint,
     title: layer["ows:Title"],
     description: layer["ows:Abstract"],
     legendUrl: layer.Style.LegendURL?.["xlink:href"],
@@ -92,6 +160,7 @@ const parseWMTSLayer = (
       : undefined,
     defaultDimensionValue: layer.Dimension?.Default,
     type: "wmts",
+    tileMatrixSet: tileMatrixById[layer.TileMatrixSetLink.TileMatrixSet],
     ...attributes,
   };
 
@@ -100,7 +169,7 @@ const parseWMTSLayer = (
     const children = layer.Layer
       ? layer.Layer instanceof Array
         ? layer.Layer.map((l) => parseWMTSLayer(l, attributes))
-        : [parseWMTSLayer(layer.Layer, attributes)]
+        : [parseWMTSLayer(layer.Layer, attributes, tileMatrixById)]
       : undefined;
     res.children = children;
   }
@@ -127,41 +196,81 @@ export const parseWMTSContent = (content: string, endpoint: string) => {
     attribution:
       parsed.Capabilities["ows:ServiceProvider"]?.["ows:ProviderName"],
   };
+  const tileMatrixSets = parseTileMatrixSets(
+    parsed.Capabilities.Contents.TileMatrixSet
+  );
+  const tileMatrixById = tileMatrixSets
+    ? Object.fromEntries(
+        tileMatrixSets.map((tileMatrix) => [tileMatrix.id, tileMatrix])
+      )
+    : {};
   const Layer = parsed.Capabilities.Contents.Layer;
-  return mapArrayOrUnique(Layer, (l) => parseWMTSLayer(l, attributes));
+  return mapArrayOrUnique(Layer, (l) =>
+    parseWMTSLayer(l, attributes, tileMatrixById)
+  );
 };
 
 export const DEFAULT_WMTS_URL =
   "https://wmts.geo.admin.ch/EPSG/3857/1.0.0/WMTSCapabilities.xml";
 
+/**
+ * Right now we only support EPSG:3857
+ * Maybe we could support other projections system but not sure if
+ * DeckGL TileLayer could support it or if we should tweak projection
+ * when querying or when displaying.
+ * @see https://github.com/visgl/deck.gl/discussions/6885#discussioncomment-2703052
+ */
+const isRemoteLayerCRSSupported = (remoteLayer: RemoteWMTSLayer) => {
+  const supportedCRS = remoteLayer?.tileMatrixSet?.supportedCRS;
+  if (!supportedCRS) {
+    return false;
+  }
+  return supportedCRS.some((crs) => crs.includes("EPSG:3857"));
+};
+
 export const getWMTSTile = ({
-  wmtsLayers,
+  remoteWmtsLayers,
   customLayer,
   beforeId,
   value,
 }: {
-  wmtsLayers?: ParsedWMTSLayer[];
-  customLayer?: WMTSCustomLayer | ParsedWMTSLayer;
+  remoteWmtsLayers?: RemoteWMTSLayer[];
+  customLayer?: WMTSCustomLayer | RemoteWMTSLayer;
   beforeId?: string;
   value?: number | string;
 }) => {
-  if (!customLayer || !isValidWMTSLayerUrl(customLayer.url)) {
-    console.warn("No custom layer or invalid wmts layer URL");
+  const url = customLayer?.url ?? customLayer?.endpoint;
+  if (!url) {
+    console.warn("No url");
+    return;
+  }
+  if (!customLayer) {
+    console.warn("No custom layer found");
     return;
   }
 
-  const wmtsLayer = wmtsLayers?.find((layer) => layer.id === customLayer.id);
+  const wmtsLayer = remoteWmtsLayers?.find(
+    (layer) => layer.id === customLayer.id
+  );
 
   if (!wmtsLayer) {
     console.warn("No wmts layer");
     return;
   }
 
+  if (!isRemoteLayerCRSSupported(wmtsLayer)) {
+    console.warn(
+      `The WMTS layer ${wmtsLayer.id} does not support EPSG:3857, skipping layer`
+    );
+    return;
+  }
+
+  console.log("wmtsLayer", wmtsLayer);
   return new TileLayer({
-    id: `tile-layer-${customLayer.url}`,
+    id: `tile-layer-${url}`,
     beforeId,
-    data: getWMTSLayerData(customLayer.url, {
-      // TODO, Understand the implications of the empty string here
+    data: getWMTSLayerData(url, {
+      tileMatrixSetId: wmtsLayer.tileMatrixSet?.id,
       identifier: wmtsLayer.dimensionIdentifier,
       value: getWMTSLayerValue({
         availableDimensionValues: wmtsLayer.availableDimensionValues ?? [],
@@ -187,21 +296,25 @@ export const getWMTSTile = ({
   });
 };
 
-const isValidWMTSLayerUrl = (url: string) => {
-  return url.includes("wmts.geo.admin.ch");
-};
-
 const getWMTSLayerData = (
   url: string,
   {
     identifier,
     value,
-  }: { identifier: string | undefined; value: string | number }
+    tileMatrixSetId,
+  }: {
+    identifier: string | undefined;
+    value: string | number;
+    tileMatrixSetId?: TileMatrixSet["id"];
+  }
 ) => {
   const identifierReplaced = identifier
     ? url.replace(`{${identifier}}`, `${value}`)
     : url;
-  return identifierReplaced
+  const tileMatrixSetReplaced = tileMatrixSetId
+    ? identifierReplaced.replace(`{TileMatrixSet}`, tileMatrixSetId)
+    : identifierReplaced;
+  return tileMatrixSetReplaced
     .replace("{TileMatrix}", "{z}")
     .replace("{TileCol}", "{x}")
     .replace("{TileRow}", "{y}");
@@ -215,7 +328,7 @@ export const getWMTSLayerValue = ({
 }: {
   availableDimensionValues: (string | number)[];
   defaultDimensionValue: string | number;
-  customLayer?: WMTSCustomLayer | ParsedWMTSLayer;
+  customLayer?: WMTSCustomLayer | RemoteWMTSLayer;
   value?: string | number;
 }) => {
   if (

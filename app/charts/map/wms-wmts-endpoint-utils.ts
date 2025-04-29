@@ -1,9 +1,11 @@
 import groupBy from "lodash/groupBy";
 import sortBy from "lodash/sortBy";
 
-import { ParsedWMSLayer, parseWMSContent } from "@/charts/map/wms-utils";
-import { ParsedWMTSLayer, parseWMTSContent } from "@/charts/map/wmts-utils";
+import { parseWMSContent, RemoteWMSLayer } from "@/charts/map/wms-utils";
+import { parseWMTSContent, RemoteWMTSLayer } from "@/charts/map/wmts-utils";
+import { WMSCustomLayer, WMTSCustomLayer } from "@/config-types";
 import { Locale } from "@/locales/locales";
+import { visitHierarchy } from "@/rdf/tree-utils";
 import { useLocale } from "@/src";
 import { useFetchData } from "@/utils/use-fetch-data";
 
@@ -105,7 +107,7 @@ function setWmsGetCapParams(url: URL, language: string) {
 const fetchWMSorWMSLayersFromEndpoint = async (
   endpoint: string,
   locale: Locale
-): Promise<(ParsedWMTSLayer | ParsedWMSLayer)[]> => {
+): Promise<(RemoteWMTSLayer | RemoteWMSLayer)[]> => {
   const { url, type } = guessExternalLayerUrl(endpoint, locale);
 
   try {
@@ -124,6 +126,30 @@ const fetchWMSorWMSLayersFromEndpoint = async (
   }
 };
 
+export const getLayerKey = ({
+  type,
+  id,
+}: WMTSCustomLayer | WMSCustomLayer | RemoteWMSLayer | RemoteWMTSLayer) => {
+  return `${type}-${id}`;
+};
+
+const indexByKey = ({
+  wmsLayers,
+  wmtsLayers,
+}: {
+  wmsLayers: RemoteWMSLayer[];
+  wmtsLayers: RemoteWMTSLayer[];
+}): Record<string, RemoteWMSLayer | RemoteWMTSLayer> => {
+  const layersByKey: Record<string, RemoteWMSLayer | RemoteWMTSLayer> = {};
+  visitHierarchy(wmsLayers ?? [], (layer) => {
+    layersByKey[getLayerKey(layer)] = layer;
+  });
+  visitHierarchy(wmtsLayers ?? [], (layer) => {
+    layersByKey[getLayerKey(layer)] = layer;
+  });
+  return layersByKey;
+};
+
 export const useWMTSorWMSLayers = (
   endpoints: string[],
   { pause }: { pause?: boolean } = { pause: false }
@@ -131,8 +157,9 @@ export const useWMTSorWMSLayers = (
   const locale = useLocale();
 
   return useFetchData<{
-    wmts: ParsedWMTSLayer[];
-    wms: ParsedWMSLayer[];
+    wmts: RemoteWMTSLayer[];
+    wms: RemoteWMSLayer[];
+    byKey: Record<string, RemoteWMSLayer | RemoteWMTSLayer>;
   }>({
     queryKey: [`custom-layers`, ...sortBy(endpoints), locale],
     queryFn: async () => {
@@ -144,12 +171,25 @@ export const useWMTSorWMSLayers = (
         )
       ).flat();
       const { wmts = [], wms = [] } = groupBy(allLayers, (x) => x.type);
+      const byKey = indexByKey({
+        wmsLayers: wms as RemoteWMSLayer[],
+        wmtsLayers: wmts as RemoteWMTSLayer[],
+      });
 
       // Don't know why I need to "as" since the groupBy is correctly discriminating on type ?
-      return { wmts: wmts as ParsedWMTSLayer[], wms: wms as ParsedWMSLayer[] };
+      return {
+        wmts: wmts as RemoteWMTSLayer[],
+        wms: wms as RemoteWMSLayer[],
+        byKey,
+      };
     },
     options: {
       pause: pause || !endpoints.length,
+      defaultData: {
+        wmts: [],
+        wms: [],
+        byKey: {},
+      },
     },
   });
 };

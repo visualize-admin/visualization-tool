@@ -17,7 +17,7 @@ import Map from "react-map-gl";
 import CustomAttribution from "@/charts/map/custom-attribution";
 import { useMapStyle } from "@/charts/map/get-base-layer-style";
 import { DeckGLOverlay } from "@/charts/map/helpers";
-import { CustomLayer } from "@/charts/map/types";
+import { RemoteLayer } from "@/charts/map/types";
 import { getWMSTile } from "@/charts/map/wms-utils";
 import WMTSSelector from "@/charts/map/wms-wmts-selector";
 import { getWMTSTile } from "@/charts/map/wmts-utils";
@@ -34,9 +34,9 @@ const maplibregl = { ...maplibreglRaw, supported };
 const WMTSPlayground = () => {
   const [layers, setLayers] = useLocalState(
     "storybook-wmts-playground",
-    [] as CustomLayer[]
+    [] as RemoteLayer[]
   );
-  const onLayerCheck = useEvent((layer: CustomLayer, checked: boolean) => {
+  const onLayerCheck = useEvent((layer: RemoteLayer, checked: boolean) => {
     setLayers((layers) =>
       checked ? [...layers, layer] : layers.filter((l) => l != layer)
     );
@@ -52,7 +52,7 @@ const WMTSPlayground = () => {
     return layers.map((x) => {
       return x.type === "wms"
         ? getWMSTile({ wmsLayers: [x], customLayer: x })
-        : getWMTSTile({ wmtsLayers: [x], customLayer: x });
+        : getWMTSTile({ remoteWmtsLayers: [x], customLayer: x });
     });
   }, [layers]);
 

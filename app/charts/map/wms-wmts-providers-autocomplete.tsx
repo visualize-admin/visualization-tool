@@ -1,16 +1,30 @@
 import { t } from "@lingui/macro";
-import { Alert, Autocomplete, Chip, TextField, Theme } from "@mui/material";
+import {
+  Autocomplete,
+  createFilterOptions,
+  TextField,
+  Theme,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import sortBy from "lodash/sortBy";
 import { useMemo } from "react";
 
 import { guessUrlType } from "@/charts/map/wms-wmts-endpoint-utils";
+import ProviderInfoAlert from "@/charts/map/wms-wmts-provider-info";
 import wmsWmtsProvidersExtra_ from "@/charts/map/wms-wmts-providers-extra.json";
 import wmsWmtsProviders from "@/charts/map/wms-wmts-providers.json";
 import { useFlag } from "@/flags";
 
 const wmsWmtsProvidersExtra = wmsWmtsProvidersExtra_ as Record<
   string,
-  { hidden?: boolean; note?: string }
+  {
+    hidden?: boolean;
+    note?: string;
+    canListLayers?: boolean;
+    canDisplayLayers?: boolean;
+    canDisplayOnMapGeoAdmin?: boolean;
+    workingLayers?: string[];
+  }
 >;
 
 type ProviderUrl = string;
@@ -60,7 +74,7 @@ const ProviderAutocomplete = ({
   const extraInfo = value ? wmsWmtsProvidersExtra[value] : undefined;
   const showExtraInfo = useFlag("wmts-show-extra-info");
   const options = useMemo(() => {
-    return wmsWmtsProviders
+    const options = wmsWmtsProviders
       .filter((p) => {
         return !wmsWmtsProvidersExtra[p] || !wmsWmtsProvidersExtra[p].hidden;
       })
@@ -76,6 +90,20 @@ const ProviderAutocomplete = ({
           type: guessUrlType(provider),
         };
       });
+
+    // Need to sort by group to remove warning in the console
+    return sortBy(options, (option) => option.group);
+  }, []);
+
+  const filterOptions = useMemo(() => {
+    return createFilterOptions({
+      stringify: (option: (typeof options)[number]) => {
+        if (typeof option === "string") {
+          return option;
+        }
+        return `${option.url}`;
+      },
+    });
   }, []);
   return (
     <>
@@ -83,22 +111,11 @@ const ProviderAutocomplete = ({
         options={options}
         value={value}
         freeSolo
+        filterOptions={filterOptions}
         groupBy={(option) => option.group}
         // @ts-ignore
         getOptionLabel={(option) =>
-          typeof option === "string" ? (
-            option
-          ) : (
-            <>
-              <Chip
-                size="small"
-                label={option.type}
-                variant="outlined"
-                className={classes.chip}
-              />
-              {option.label}
-            </>
-          )
+          typeof option === "string" ? option : option.label
         }
         onChange={(_ev, newValue) =>
           onChange(
@@ -137,14 +154,8 @@ const ProviderAutocomplete = ({
           />
         )}
       />
-      {extraInfo && extraInfo.note && showExtraInfo && (
-        <Alert
-          severity="orange"
-          sx={{ mb: 2, boxShadow: "none", p: 1 }}
-          elevation={0}
-        >
-          {extraInfo.note}
-        </Alert>
+      {extraInfo && showExtraInfo && (
+        <ProviderInfoAlert extraInfo={extraInfo} />
       )}
     </>
   );

@@ -2,12 +2,15 @@ import { Box, Typography } from "@mui/material";
 import uniq from "lodash/uniq";
 import NextImage from "next/image";
 
-import { DEFAULT_WMS_URL, ParsedWMSLayer } from "@/charts/map/wms-utils";
-import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
+import { DEFAULT_WMS_URL, RemoteWMSLayer } from "@/charts/map/wms-utils";
+import {
+  getLayerKey,
+  useWMTSorWMSLayers,
+} from "@/charts/map/wms-wmts-endpoint-utils";
 import {
   DEFAULT_WMTS_URL,
   getWMTSLayerValue,
-  ParsedWMTSLayer,
+  RemoteWMTSLayer,
 } from "@/charts/map/wmts-utils";
 import { Error, InlineLoading } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
@@ -32,64 +35,65 @@ export const MapCustomLayersLegend = ({
     <InlineLoading />
   ) : (
     <>
-      {legendsData.map(({ layer, dataUrl, width, height }) => {
-        const customLayer = customLayers.find((l) => l.id === layer.id);
+      {legendsData.map(
+        ({ remoteLayer: layer, configLayer, dataUrl, width, height }) => {
+          if (!configLayer) {
+            return null;
+          }
 
-        if (!customLayer) {
-          return null;
-        }
+          const layerValue =
+            configLayer.type === "wmts" && layer
+              ? getWMTSLayerValue({
+                  availableDimensionValues:
+                    layer.availableDimensionValues ?? [],
+                  defaultDimensionValue: layer.defaultDimensionValue ?? "",
+                  customLayer: configLayer,
+                  value,
+                })
+              : undefined;
 
-        const layerValue =
-          customLayer.type === "wmts" && layer
-            ? getWMTSLayerValue({
-                availableDimensionValues: layer.availableDimensionValues ?? [],
-                defaultDimensionValue: layer.defaultDimensionValue ?? "",
-                customLayer,
-                value,
-              })
-            : undefined;
-
-        return (
-          <Box
-            key={dataUrl}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 1,
-            }}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography component="p" variant="caption">
-                {layer.title} {layerValue ? `(${layerValue})` : ""}
-              </Typography>
-              {layer.description ? (
-                <InfoIconTooltip
-                  title={layer.description}
-                  sx={{ width: "fit-content" }}
-                />
-              ) : null}
+          return (
+            <Box
+              key={dataUrl}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography component="p" variant="caption">
+                  {layer.title} {layerValue ? `(${layerValue})` : ""}
+                </Typography>
+                {layer.description ? (
+                  <InfoIconTooltip
+                    title={layer.description}
+                    sx={{ width: "fit-content" }}
+                  />
+                ) : null}
+              </Box>
+              <NextImage
+                src={dataUrl}
+                alt={layer.title}
+                width={width}
+                height={height}
+              />
             </Box>
-            <NextImage
-              src={dataUrl}
-              alt={layer.title}
-              width={width}
-              height={height}
-            />
-          </Box>
-        );
-      })}
+          );
+        }
+      )}
     </>
   );
 };
 
 const useLegendsData = ({
-  customLayers,
+  customLayers: configLayers,
 }: {
   customLayers: BaseLayer["customLayers"];
 }) => {
   const locale = useLocale();
-  const wmsLayerConfigs = customLayers.filter((layer) => layer.type === "wms");
-  const wmtsLayerConfigs = customLayers.filter(
+  const wmsLayerConfigs = configLayers.filter((layer) => layer.type === "wms");
+  const wmtsLayerConfigs = configLayers.filter(
     (layer) => layer.type === "wmts"
   );
 
@@ -103,47 +107,45 @@ const useLegendsData = ({
     ...wmtsEndpoints,
     ...wmsEndpoints,
   ]);
-  const { wms: wmsLayers, wmts: wmtsLayers } = groupedLayers ?? {
+  const {
+    wms: wmsLayers,
+    wmts: wmtsLayers,
+    byKey: layersByKey,
+  } = groupedLayers ?? {
     wms: [],
     wmts: [],
+    byKey: {},
   };
   const { data: legendsData, error: legendsError } = useFetchData({
     queryKey: [
       "custom-layers-legends",
-      customLayers.map((d) => d.id),
+      configLayers.map((d) => d.id),
       wmsLayers?.map((d) => d.id),
       wmtsLayers?.map((d) => d.id),
       locale,
+      1,
     ],
     queryFn: async () => {
       return (
         await Promise.all(
-          customLayers.map(async (customLayer) => {
-            let layer: ParsedWMSLayer | ParsedWMTSLayer | undefined;
+          configLayers.map(async (configLayer) => {
+            let remoteLayer: RemoteWMSLayer | RemoteWMTSLayer | undefined =
+              layersByKey[getLayerKey(configLayer)];
 
-            switch (customLayer.type) {
-              case "wms":
-                layer = wmsLayers?.find((l) => l.id === customLayer.id);
-                break;
-              case "wmts":
-                layer = wmtsLayers?.find((l) => l.id === customLayer.id);
-                break;
-              default:
-                const _exhaustiveCheck: never = customLayer;
-                return _exhaustiveCheck;
-            }
-
-            if (!layer?.legendUrl) {
+            if (!remoteLayer?.legendUrl) {
               return undefined;
             }
 
-            const blob = await fetch(layer.legendUrl).then((res) => res.blob());
+            const blob = await fetch(remoteLayer.legendUrl).then((res) =>
+              res.blob()
+            );
             const bmp = await createImageBitmap(blob);
             const { width, height } = bmp;
             bmp.close();
 
             return {
-              layer,
+              remoteLayer,
+              configLayer,
               dataUrl: URL.createObjectURL(blob),
               width,
               height,

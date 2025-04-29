@@ -16,10 +16,13 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 
-import { ParsedWMSLayer } from "@/charts/map/wms-utils";
-import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
+import { RemoteWMSLayer } from "@/charts/map/wms-utils";
+import {
+  getLayerKey,
+  useWMTSorWMSLayers,
+} from "@/charts/map/wms-wmts-endpoint-utils";
 import WMTSSelector from "@/charts/map/wms-wmts-selector";
-import { ParsedWMTSLayer } from "@/charts/map/wmts-utils";
+import { RemoteWMTSLayer } from "@/charts/map/wmts-utils";
 import { Switch } from "@/components/form";
 import { MoveDragButton } from "@/components/move-drag-button";
 import { MapConfig, WMSCustomLayer, WMTSCustomLayer } from "@/config-types";
@@ -69,19 +72,20 @@ const LeftDrawer = ({
 export const CustomLayersSelector = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state) as MapConfig;
-  const customLayers = chartConfig.baseLayer.customLayers;
+  const configLayers = chartConfig.baseLayer.customLayers;
   const endpoints = useMemo(() => {
-    return uniq(customLayers.map((layer) => layer.endpoint)).filter(truthy);
-  }, [customLayers]);
+    return uniq(configLayers.map((layer) => layer.endpoint)).filter(truthy);
+  }, [configLayers]);
   const {
     data: groupedLayers,
     error,
     status: layersStatus,
   } = useWMTSorWMSLayers(endpoints);
-  const { wms: wmsLayers, wmts: wmtsLayers } = groupedLayers ?? {
-    wms: [],
-    wmts: [],
-  };
+  const {
+    wms: wmsLayers,
+    wmts: wmtsLayers,
+    byKey: layersByKey,
+  } = groupedLayers!;
 
   const handleDragEnd: OnDragEndResponder = useEventCallback((e) => {
     const oldIndex = e.source.index;
@@ -101,7 +105,7 @@ export const CustomLayersSelector = () => {
   });
 
   const handleCheckLayer = (
-    layer: ParsedWMSLayer | ParsedWMTSLayer | null,
+    layer: RemoteWMSLayer | RemoteWMTSLayer | null,
     checked: boolean
   ) => {
     const valueType = layer?.type;
@@ -159,24 +163,11 @@ export const CustomLayersSelector = () => {
 
   const [addingLayer, setAddingLayer] = useState(false);
   const getParsedLayer = useMemo(() => {
-    const getKey = ({
-      type,
-      id,
-    }: WMTSCustomLayer | WMSCustomLayer | ParsedWMSLayer | ParsedWMTSLayer) => {
-      return `${type}-${id}`;
-    };
-    const layersByKey: Record<string, ParsedWMSLayer | ParsedWMTSLayer> = {};
-    wmsLayers?.forEach((layer) => {
-      layersByKey[getKey(layer)] = layer;
-    });
-    wmtsLayers?.forEach((layer) => {
-      layersByKey[getKey(layer)] = layer;
-    });
     return (configLayer: WMTSCustomLayer | WMSCustomLayer) => {
-      const key = getKey(configLayer);
+      const key = getLayerKey(configLayer);
       return layersByKey[key];
     };
-  }, [wmsLayers, wmtsLayers]);
+  }, [layersByKey]);
   const sectionTitleClasses = useSectionTitleStyles({
     sectionOpen: true,
     interactive: true,
@@ -212,7 +203,7 @@ export const CustomLayersSelector = () => {
               onLayerCheck={(x, checked) => {
                 return handleCheckLayer(x, checked);
               }}
-              selected={customLayers.map((layer) => {
+              selected={configLayers.map((layer) => {
                 return layer.id;
               })}
             />
@@ -220,7 +211,7 @@ export const CustomLayersSelector = () => {
         </Box>
       </LeftDrawer>
       <ControlSectionContent gap="large">
-        {customLayers.length === 0 && (
+        {configLayers.length === 0 && (
           <Typography variant="body3" color="text.secondary">
             <Trans id="chart.map.layers.no-layers">No custom layers</Trans>
           </Typography>
@@ -231,7 +222,7 @@ export const CustomLayersSelector = () => {
             <Droppable droppableId="layers">
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {customLayers.map((configLayer, i) => {
+                  {configLayers.map((configLayer, i) => {
                     return (
                       <DraggableLayer
                         key={`${configLayer.type}-${configLayer.id}`}
@@ -275,7 +266,7 @@ const DraggableLayer = ({
 }: {
   configLayer: WMSCustomLayer | WMTSCustomLayer;
   index: number;
-  parsedLayer: ParsedWMSLayer | ParsedWMTSLayer;
+  parsedLayer: RemoteWMSLayer | RemoteWMTSLayer;
 }) => {
   const [_, dispatch] = useConfiguratorState(isConfiguring);
   const value = configLayer.id;

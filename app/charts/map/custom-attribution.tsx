@@ -11,12 +11,14 @@ const CustomAttribution = ({ attribution }: { attribution: string }) => {
   const theme = useTheme();
   useEffect(() => {
     const map = mapRef.current as maplibregl.Map | undefined;
-    if (!map || !attribution) {
+    if (!map) {
       return;
     }
     const control = new maplibregl.AttributionControl({
       // className was not working (?), so style is used. To revisit later if needed.
-      customAttribution: `<span style="color: ${theme.palette.error.main}">${attribution}</span>`,
+      customAttribution: attribution
+        ? `<span style="color: ${theme.palette.error.main}">${attribution}</span>`
+        : undefined,
     });
     // As of now, we cannot "update" the control, we need to add it and remove it
     map.addControl(control, "bottom-right");

@@ -17,11 +17,11 @@ import React from "react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import createStore from "zustand";
 
-import { CustomLayer } from "@/charts/map/types";
-import { ParsedWMSLayer } from "@/charts/map/wms-utils";
+import { RemoteLayer } from "@/charts/map/types";
+import { RemoteWMSLayer } from "@/charts/map/wms-utils";
 import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
 import ProviderAutocomplete from "@/charts/map/wms-wmts-providers-autocomplete";
-import { ParsedWMTSLayer } from "@/charts/map/wmts-utils";
+import { RemoteWMTSLayer } from "@/charts/map/wmts-utils";
 import { HintRed, Spinner } from "@/components/hint";
 import { Tree, useSelectTree } from "@/components/select-tree";
 import { Icon } from "@/icons";
@@ -93,7 +93,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
 const LegendButton = ({
   layer,
 }: {
-  layer: ParsedWMTSLayer | ParsedWMSLayer;
+  layer: RemoteWMTSLayer | RemoteWMSLayer;
 }) => {
   const [showLegend, setShowLegend] = useState<
     | {
@@ -152,13 +152,13 @@ const TreeRow = ({
   initialChecked,
   onCheck,
 }: {
-  layer: CustomLayer;
+  layer: RemoteLayer;
   className?: string;
   labelClassName?: string;
   label: string;
   value: string;
   initialChecked?: boolean;
-  onCheck: (layer: CustomLayer, checked: boolean) => void;
+  onCheck: (layer: RemoteLayer, checked: boolean) => void;
 }) => {
   const [checked, setChecked] = useState(initialChecked ?? false);
   const handleChangeCheckbox = useCallback(() => {
@@ -210,7 +210,7 @@ const WMTSSelector = ({
   onLayerCheck,
   selected,
 }: {
-  onLayerCheck: (layer: CustomLayer, checked: boolean) => void;
+  onLayerCheck: (layer: RemoteLayer, checked: boolean) => void;
   selected: string[];
 }) => {
   const treeItemClasses = useTreeItemStyles();
@@ -238,7 +238,7 @@ const WMTSSelector = ({
   );
 
   const layersByPath = useMemo(() => {
-    const res: Record<string, CustomLayer> = {};
+    const res: Record<string, RemoteLayer> = {};
     visitHierarchy(allLayers, (x) => {
       if (res[x.path]) {
         return;
