@@ -1,8 +1,8 @@
 import groupBy from "lodash/groupBy";
 import sortBy from "lodash/sortBy";
 
-import { RemoteWMSLayer, parseWMSContent } from "@/charts/map/wms-utils";
-import { RemoteWMTSLayer, parseWMTSContent } from "@/charts/map/wmts-utils";
+import { parseWMSContent, RemoteWMSLayer } from "@/charts/map/wms-utils";
+import { parseWMTSContent, RemoteWMTSLayer } from "@/charts/map/wmts-utils";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/src";
 import { useFetchData } from "@/utils/use-fetch-data";
