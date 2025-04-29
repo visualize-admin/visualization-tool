@@ -1,3 +1,8 @@
+.common {
+  margin-top: 0;
+  line-height: 1.2;
+}
+
 .inheritFonts {
   font-size: inherit;
   font-weight: inherit;
