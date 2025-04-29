@@ -2,6 +2,7 @@ import { TileLayer } from "@deck.gl/geo-layers";
 import { BitmapLayer } from "@deck.gl/layers";
 import { XMLParser } from "fast-xml-parser";
 
+import { isRemoteLayerCRSSupported } from "@/charts/map/wms-wmts-endpoint-utils";
 import { WMTSCustomLayer } from "@/config-types";
 
 type WMTSData = {
@@ -81,6 +82,7 @@ export type RemoteWMTSLayer = {
   children?: RemoteWMTSLayer[];
   attribution: string;
   tileMatrixSet?: TileMatrixSet | undefined;
+  crs: string[];
 };
 
 type TileMatrix = {
@@ -144,6 +146,7 @@ const parseWMTSLayer = (
   },
   tileMatrixById: Record<string, TileMatrixSet> = {}
 ): RemoteWMTSLayer => {
+  const tileMatrixSet = tileMatrixById[layer.TileMatrixSetLink.TileMatrixSet];
   const res: RemoteWMTSLayer = {
     id: layer["ows:Identifier"],
     path: layer["ows:Identifier"],
@@ -161,6 +164,7 @@ const parseWMTSLayer = (
     defaultDimensionValue: layer.Dimension?.Default,
     type: "wmts",
     tileMatrixSet: tileMatrixById[layer.TileMatrixSetLink.TileMatrixSet],
+    crs: tileMatrixSet?.supportedCRS ?? [],
     ...attributes,
   };
 
@@ -213,28 +217,13 @@ export const parseWMTSContent = (content: string, endpoint: string) => {
 export const DEFAULT_WMTS_URL =
   "https://wmts.geo.admin.ch/EPSG/3857/1.0.0/WMTSCapabilities.xml";
 
-/**
- * Right now we only support EPSG:3857
- * Maybe we could support other projections system but not sure if
- * DeckGL TileLayer could support it or if we should tweak projection
- * when querying or when displaying.
- * @see https://github.com/visgl/deck.gl/discussions/6885#discussioncomment-2703052
- */
-const isRemoteLayerCRSSupported = (remoteLayer: RemoteWMTSLayer) => {
-  const supportedCRS = remoteLayer?.tileMatrixSet?.supportedCRS;
-  if (!supportedCRS) {
-    return false;
-  }
-  return supportedCRS.some((crs) => crs.includes("EPSG:3857"));
-};
-
 export const getWMTSTile = ({
-  remoteWmtsLayers,
+  wmtsLayer,
   customLayer,
   beforeId,
   value,
 }: {
-  remoteWmtsLayers?: RemoteWMTSLayer[];
+  wmtsLayer?: RemoteWMTSLayer;
   customLayer?: WMTSCustomLayer | RemoteWMTSLayer;
   beforeId?: string;
   value?: number | string;
@@ -249,10 +238,6 @@ export const getWMTSTile = ({
     return;
   }
 
-  const wmtsLayer = remoteWmtsLayers?.find(
-    (layer) => layer.id === customLayer.id
-  );
-
   if (!wmtsLayer) {
     console.warn("No wmts layer");
     return;
@@ -260,7 +245,7 @@ export const getWMTSTile = ({
 
   if (!isRemoteLayerCRSSupported(wmtsLayer)) {
     console.warn(
-      `The WMTS layer ${wmtsLayer.id} does not support EPSG:3857, skipping layer`
+      `The WMTS layer ${wmtsLayer.id} does not have a supported CRS, skipping layer.`
     );
     return;
   }
