@@ -172,14 +172,17 @@ export const ChartPublished = ({
         <Box ref={ref}>
           {state.layout.type === "dashboard" ? (
             <Box className={publishedChartClasses.dashboardBoxWrapper}>
-              <Flex flexDirection="column">
-                {state.layout.meta.title[locale] && (
-                  <Title text={state.layout.meta.title[locale]} />
-                )}
-                {state.layout.meta.description[locale] && (
-                  <Description text={state.layout.meta.description[locale]} />
-                )}
-              </Flex>
+              {state.layout.meta.title[locale] ||
+              state.layout.meta.description[locale] ? (
+                <Flex flexDirection="column">
+                  {state.layout.meta.title[locale] && (
+                    <Title text={state.layout.meta.title[locale]} />
+                  )}
+                  {state.layout.meta.description[locale] && (
+                    <Description text={state.layout.meta.description[locale]} />
+                  )}
+                </Flex>
+              ) : null}
               <ChartPanelLayout
                 layoutType={state.layout.layout}
                 renderBlock={renderBlock}
