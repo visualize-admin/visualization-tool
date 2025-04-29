@@ -23,7 +23,7 @@ export const FLAGS = [
       "Enables experimental features, including dashboard text blocks, Markdown editor and bar charts.",
   },
   {
-    name: "wmts-show-extra-info",
+    name: "wmts-show-extra-info" as const,
     description: "Show extra debug info in WMTS provider autocomplete",
   },
 ];
