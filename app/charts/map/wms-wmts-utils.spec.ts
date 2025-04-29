@@ -60,6 +60,11 @@ Array [
     "children": Array [
       Object {
         "attribution": "EUNIS Ecosystems",
+        "crs": Array [
+          "CRS:84",
+          "EPSG:4326",
+          "EPSG:3035",
+        ],
         "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
@@ -71,6 +76,11 @@ Array [
       },
       Object {
         "attribution": "EUNIS Ecosystems",
+        "crs": Array [
+          "CRS:84",
+          "EPSG:4326",
+          "EPSG:3035",
+        ],
         "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
@@ -82,6 +92,11 @@ Array [
       },
       Object {
         "attribution": "EUNIS Ecosystems",
+        "crs": Array [
+          "CRS:84",
+          "EPSG:4326",
+          "EPSG:3035",
+        ],
         "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
@@ -93,6 +108,11 @@ Array [
       },
       Object {
         "attribution": "EUNIS Ecosystems",
+        "crs": Array [
+          "CRS:84",
+          "EPSG:4326",
+          "EPSG:3035",
+        ],
         "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
@@ -104,6 +124,11 @@ Array [
       },
       Object {
         "attribution": "EUNIS Ecosystems",
+        "crs": Array [
+          "CRS:84",
+          "EPSG:4326",
+          "EPSG:3035",
+        ],
         "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
@@ -115,6 +140,11 @@ Array [
       },
       Object {
         "attribution": "EUNIS Ecosystems",
+        "crs": Array [
+          "CRS:84",
+          "EPSG:4326",
+          "EPSG:3035",
+        ],
         "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
@@ -126,6 +156,11 @@ Array [
       },
       Object {
         "attribution": "EUNIS Ecosystems",
+        "crs": Array [
+          "CRS:84",
+          "EPSG:4326",
+          "EPSG:3035",
+        ],
         "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
@@ -135,6 +170,11 @@ Array [
         "title": "D - Mires, bogs and fens",
         "type": "wms",
       },
+    ],
+    "crs": Array [
+      "CRS:84",
+      "EPSG:4326",
+      "EPSG:3035",
     ],
     "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
     "description": "",
@@ -150,6 +190,11 @@ Array [
     "children": Array [
       Object {
         "attribution": "EUNIS Ecosystems",
+        "crs": Array [
+          "CRS:84",
+          "EPSG:4326",
+          "EPSG:3035",
+        ],
         "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
@@ -159,6 +204,11 @@ Array [
         "title": "C - Inland surface waters",
         "type": "wms",
       },
+    ],
+    "crs": Array [
+      "CRS:84",
+      "EPSG:4326",
+      "EPSG:3035",
     ],
     "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
     "description": "",
@@ -174,6 +224,11 @@ Array [
     "children": Array [
       Object {
         "attribution": "EUNIS Ecosystems",
+        "crs": Array [
+          "CRS:84",
+          "EPSG:4326",
+          "EPSG:3035",
+        ],
         "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
@@ -185,6 +240,11 @@ Array [
       },
       Object {
         "attribution": "EUNIS Ecosystems",
+        "crs": Array [
+          "CRS:84",
+          "EPSG:4326",
+          "EPSG:3035",
+        ],
         "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
         "description": "",
         "endpoint": "http://example.com/wms",
@@ -194,6 +254,11 @@ Array [
         "title": "A - Marine habitats",
         "type": "wms",
       },
+    ],
+    "crs": Array [
+      "CRS:84",
+      "EPSG:4326",
+      "EPSG:3035",
     ],
     "dataUrl": "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer?",
     "description": "",
@@ -238,6 +303,9 @@ describe("parseWMTSContent", () => {
 Object {
   "attribution": "GIS-Zentrum Stadt Zuerich",
   "availableDimensionValues": undefined,
+  "crs": Array [
+    "EPSG:2056",
+  ],
   "defaultDimensionValue": undefined,
   "description": "",
   "dimensionIdentifier": undefined,
@@ -406,6 +474,9 @@ Object {
   "attribution": "Federal Office of Topography swisstopo",
   "availableDimensionValues": Array [
     "current",
+  ],
+  "crs": Array [
+    "urn:ogc:def:crs:EPSG:3857",
   ],
   "defaultDimensionValue": "current",
   "description": "-",
@@ -647,6 +718,9 @@ Object {
 Object {
   "attribution": undefined,
   "availableDimensionValues": undefined,
+  "crs": Array [
+    "urn:ogc:def:crs:EPSG::2056",
+  ],
   "defaultDimensionValue": undefined,
   "description": undefined,
   "dimensionIdentifier": undefined,

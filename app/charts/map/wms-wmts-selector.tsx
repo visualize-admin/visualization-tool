@@ -8,6 +8,7 @@ import {
   Input,
   Popover,
   Theme,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -19,7 +20,10 @@ import createStore from "zustand";
 
 import { RemoteLayer } from "@/charts/map/types";
 import { RemoteWMSLayer } from "@/charts/map/wms-utils";
-import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
+import {
+  isRemoteLayerCRSSupported,
+  useWMTSorWMSLayers,
+} from "@/charts/map/wms-wmts-endpoint-utils";
 import ProviderAutocomplete from "@/charts/map/wms-wmts-providers-autocomplete";
 import { RemoteWMTSLayer } from "@/charts/map/wmts-utils";
 import { HintRed, Spinner } from "@/components/hint";
@@ -88,6 +92,9 @@ const useStyles = makeStyles<Theme>((theme) => ({
     whiteSpace: "nowrap",
     lineHeight: "1.5rem",
   },
+  warnIcon: {
+    color: theme.palette.warning.main,
+  },
 }));
 
 const LegendButton = ({
@@ -146,7 +153,7 @@ const LegendButton = ({
 const TreeRow = ({
   layer,
   className,
-  labelClassName,
+  classes,
   label,
   value,
   initialChecked,
@@ -154,7 +161,7 @@ const TreeRow = ({
 }: {
   layer: RemoteLayer;
   className?: string;
-  labelClassName?: string;
+  classes: ReturnType<typeof useStyles>;
   label: string;
   value: string;
   initialChecked?: boolean;
@@ -181,10 +188,22 @@ const TreeRow = ({
           checked={checked}
         />
       ) : null}
-      <div className={labelClassName} onClick={handleChangeCheckbox}>
+      <div className={classes.label} onClick={handleChangeCheckbox}>
         {label}
       </div>
       {layer && layer.legendUrl ? <LegendButton layer={layer} /> : null}
+      {isRemoteLayerCRSSupported(layer) ? null : (
+        <Tooltip
+          title={t({
+            id: "wmts.layer-not-supported-crs",
+            message: "Layer not supported, no supported CRS",
+          })}
+        >
+          <span>
+            <Icon name="warningCircleFilled" className={classes.warnIcon} />
+          </span>
+        </Tooltip>
+      )}
     </div>
   );
 };
@@ -303,7 +322,7 @@ const WMTSSelector = ({
                 label={
                   <TreeRow
                     className={classes.treeRow}
-                    labelClassName={classes.label}
+                    classes={classes}
                     layer={layersByPath[value]}
                     label={label}
                     value={value}
@@ -332,8 +351,7 @@ const WMTSSelector = ({
     [
       treeItemClasses,
       defaultExpanded,
-      classes.treeRow,
-      classes.label,
+      classes,
       layersByPath,
       onLayerCheck,
       selectedSet,

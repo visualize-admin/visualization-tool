@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import uniq from "lodash/uniq";
 import NextImage from "next/image";
 
@@ -28,7 +28,7 @@ export const MapCustomLayersLegend = ({
 }) => {
   const customLayers = chartConfig.baseLayer.customLayers;
   const { data: legendsData, error } = useLegendsData({ customLayers });
-
+  const theme = useTheme();
   return error ? (
     <Error>{error.message}</Error>
   ) : !legendsData ? (
@@ -67,7 +67,17 @@ export const MapCustomLayersLegend = ({
                 </Typography>
                 {layer.description ? (
                   <InfoIconTooltip
-                    title={layer.description}
+                    title={
+                      <Box
+                        sx={{
+                          "& > *": {
+                            // We do not let the tooltip HTML override the font size
+                            fontSize: `${theme.typography.caption.fontSize} !important`,
+                          },
+                        }}
+                        dangerouslySetInnerHTML={{ __html: layer.description }}
+                      />
+                    }
                     sx={{ width: "fit-content" }}
                   />
                 ) : null}

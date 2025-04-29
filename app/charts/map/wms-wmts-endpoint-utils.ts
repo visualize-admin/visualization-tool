@@ -150,6 +150,25 @@ const indexByKey = ({
   return layersByKey;
 };
 
+/**
+ * Right now we only support EPSG:3857 (same as CRS:84) for remote layers
+ * Maybe we could support other projections system but not sure if
+ * DeckGL TileLayer could support it or if we should tweak projection
+ * when querying or when displaying.
+ * @see https://github.com/visgl/deck.gl/discussions/6885#discussioncomment-2703052
+ */
+export const isRemoteLayerCRSSupported = (
+  remoteLayer: RemoteWMTSLayer | RemoteWMSLayer
+) => {
+  const supportedCRS = remoteLayer.crs;
+  if (!supportedCRS) {
+    return false;
+  }
+  return supportedCRS.some(
+    (crs) => crs.includes("EPSG:3857") || crs.includes("CRS:84")
+  );
+};
+
 export const useWMTSorWMSLayers = (
   endpoints: string[],
   { pause }: { pause?: boolean } = { pause: false }

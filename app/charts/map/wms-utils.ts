@@ -1,6 +1,7 @@
 import { _WMSLayer as DeckGLWMSLayer } from "@deck.gl/geo-layers";
 import { XMLParser } from "fast-xml-parser";
 
+import { isRemoteLayerCRSSupported } from "@/charts/map/wms-wmts-endpoint-utils";
 import { WMSCustomLayer } from "@/config-types";
 
 type WMSData = {
@@ -38,6 +39,7 @@ type WMSLayer = {
     "ows:Title": string;
   };
   Layer?: WMSLayer[];
+  CRS: string[] | string;
 };
 
 export type RemoteWMSLayer = {
@@ -54,6 +56,7 @@ export type RemoteWMSLayer = {
   type: "wms";
   children?: RemoteWMSLayer[];
   dataUrl: string;
+  crs: string[];
   attribution: string;
 };
 
@@ -76,6 +79,7 @@ const parseWMSLayer = (
     description: layer.Abstract ?? "",
     legendUrl: layer.Style?.LegendURL.OnlineResource["xlink:href"],
     type: "wms",
+    crs: layer.CRS ? (Array.isArray(layer.CRS) ? layer.CRS : [layer.CRS]) : [],
     ...attributes,
   };
   if (layer.Layer) {
@@ -123,11 +127,11 @@ export const parseWMSContent = (content: string, endpoint: string) => {
 };
 
 export const getWMSTile = ({
-  wmsLayers,
+  wmsLayer,
   customLayer,
   beforeId,
 }: {
-  wmsLayers?: RemoteWMSLayer[];
+  wmsLayer?: RemoteWMSLayer;
   customLayer?: WMSCustomLayer | RemoteWMSLayer;
   beforeId?: string;
 }) => {
@@ -135,9 +139,14 @@ export const getWMSTile = ({
     return;
   }
 
-  const wmsLayer = wmsLayers?.find((layer) => layer.id === customLayer.id);
-
   if (!wmsLayer) {
+    return;
+  }
+
+  if (!isRemoteLayerCRSSupported(wmsLayer)) {
+    console.warn(
+      `WMS layer ${wmsLayer.id} is not supported in this map projection`
+    );
     return;
   }
 

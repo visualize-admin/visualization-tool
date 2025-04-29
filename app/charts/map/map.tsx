@@ -31,9 +31,20 @@ import {
 import { MapState } from "@/charts/map/map-state";
 import { HoverObjectType, useMapTooltip } from "@/charts/map/map-tooltip";
 import { getMap, setMap } from "@/charts/map/ref";
-import { DEFAULT_WMS_URL, getWMSTile } from "@/charts/map/wms-utils";
-import { useWMTSorWMSLayers } from "@/charts/map/wms-wmts-endpoint-utils";
-import { DEFAULT_WMTS_URL, getWMTSTile } from "@/charts/map/wmts-utils";
+import {
+  DEFAULT_WMS_URL,
+  getWMSTile,
+  RemoteWMSLayer,
+} from "@/charts/map/wms-utils";
+import {
+  getLayerKey,
+  useWMTSorWMSLayers,
+} from "@/charts/map/wms-wmts-endpoint-utils";
+import {
+  DEFAULT_WMTS_URL,
+  getWMTSTile,
+  RemoteWMTSLayer,
+} from "@/charts/map/wmts-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { useLimits } from "@/config-utils";
@@ -42,6 +53,8 @@ import {
   BBox,
   getWMSCustomLayers,
   getWMTSCustomLayers,
+  WMSCustomLayer,
+  WMTSCustomLayer,
 } from "@/configurator";
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
@@ -131,63 +144,52 @@ export const MapComponent = ({
     ...wmsEndpoints,
     ...wmtsEndpoints,
   ]);
-  const { wms: wmsLayers, wmts: wmtsLayers } = groupedLayers ?? {
+  const { byKey: layersByKey } = groupedLayers ?? {
     wms: [],
     wmts: [],
   };
 
   const attribution = useMemo(() => {
-    return Array.from(
-      new Set([...wmtsLayers, ...wmsLayers].map((x) => x.attribution))
-    ).join(", ");
-  }, [wmsLayers, wmtsLayers]);
+    const attributions = customLayers.map(
+      (layer) => layersByKey?.[getLayerKey(layer)]?.attribution
+    );
+    return Array.from(new Set(attributions)).join(", ");
+  }, [customLayers, layersByKey]);
 
   const { behindAreaCustomLayers, afterAreaCustomLayers } = useMemo(() => {
+    const getDeckGLLayerBefore = (
+      customLayer: WMTSCustomLayer | WMSCustomLayer,
+      beforeId?: string | undefined
+    ) => {
+      const layer = layersByKey?.[getLayerKey(customLayer)];
+      switch (customLayer.type) {
+        case "wms":
+          return getWMSTile({
+            wmsLayer: layer as RemoteWMSLayer | undefined,
+            customLayer,
+            beforeId,
+          });
+        case "wmts":
+          return getWMTSTile({
+            wmtsLayer: layer as RemoteWMTSLayer | undefined,
+            customLayer,
+            beforeId,
+            value,
+          });
+        default:
+          const _exhaustiveCheck: never = customLayer;
+          return _exhaustiveCheck;
+      }
+    };
     return {
       behindAreaCustomLayers: customLayers
         .filter((customLayer) => customLayer.isBehindAreaLayer)
-        .map((customLayer) => {
-          switch (customLayer.type) {
-            case "wms":
-              return getWMSTile({
-                wmsLayers,
-                customLayer,
-                beforeId: "areaLayer",
-              });
-            case "wmts":
-              return getWMTSTile({
-                remoteWmtsLayers: wmtsLayers,
-                customLayer,
-                beforeId: "areaLayer",
-                value,
-              });
-            default:
-              const _exhaustiveCheck: never = customLayer;
-              return _exhaustiveCheck;
-          }
-        }),
+        .map((l) => getDeckGLLayerBefore(l, "areaLayer")),
       afterAreaCustomLayers: customLayers
         .filter((customLayer) => !customLayer.isBehindAreaLayer)
-        .map((customLayer) => {
-          switch (customLayer.type) {
-            case "wms":
-              return getWMSTile({
-                wmsLayers,
-                customLayer,
-              });
-            case "wmts":
-              return getWMTSTile({
-                remoteWmtsLayers: wmtsLayers,
-                customLayer,
-                value,
-              });
-            default:
-              const _exhaustiveCheck: never = customLayer;
-              return _exhaustiveCheck;
-          }
-        }),
+        .map((l) => getDeckGLLayerBefore(l)),
     };
-  }, [customLayers, value, wmsLayers, wmtsLayers]);
+  }, [customLayers, layersByKey, value]);
 
   const [{ interaction }, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
