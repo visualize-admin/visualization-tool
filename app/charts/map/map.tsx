@@ -131,16 +131,17 @@ export const MapComponent = ({
     ...wmsEndpoints,
     ...wmtsEndpoints,
   ]);
-  const { wms: wmsLayers, wmts: wmtsLayers } = groupedLayers ?? {
+  const { byKey: layersByKey } = groupedLayers ?? {
     wms: [],
     wmts: [],
   };
 
   const attribution = useMemo(() => {
-    return Array.from(
-      new Set([...wmtsLayers, ...wmsLayers].map((x) => x.attribution))
-    ).join(", ");
-  }, [wmsLayers, wmtsLayers]);
+    const attributions = customLayers.map(
+      (layer) => layersByKey?.[getLayerKey(layer)]?.attribution
+    );
+    return Array.from(new Set(attributions)).join(", ");
+  }, [customLayers, layersByKey]);
 
   const { behindAreaCustomLayers, afterAreaCustomLayers } = useMemo(() => {
     return {
