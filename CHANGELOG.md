@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# 5.7.3
+
 - Features
   - Color settings are now persisted across chart type changes
 - Fixes
