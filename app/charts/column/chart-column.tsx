@@ -61,7 +61,8 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear /> <AxisWidthBand />
-              <ColumnsStacked /> <AxisWidthBandDomain />
+              <AxisWidthBandDomain />
+              <ColumnsStacked />
               <InteractionColumns />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
@@ -90,9 +91,9 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
             <ChartSvg>
               <AxisHeightLinear />
               <AxisWidthBand />
+              <AxisWidthBandDomain />
               <ColumnsGrouped />
               <ErrorWhiskersGrouped />
-              <AxisWidthBandDomain />
               <InteractionColumns />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
@@ -121,10 +122,10 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
             <ChartSvg>
               <AxisHeightLinear />
               <AxisWidthBand />
+              <AxisWidthBandDomain />
               <Columns />
               <ErrorWhiskers />
               <VerticalLimits {...limits} />
-              <AxisWidthBandDomain />
               <InteractionColumns />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
