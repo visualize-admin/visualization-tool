@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/macro";
+import { Button, Typography } from "@mui/material";
 import { useMemo } from "react";
 
 import {
@@ -11,7 +12,6 @@ import { isLayouting } from "@/configurator/configurator-state";
 import { useOrderedLocales } from "@/locales/use-locale";
 import { useConfiguratorState } from "@/src";
 import { assert } from "@/utils/assert";
-import { Button, Typography } from "@mui/material";
 import useEvent from "@/utils/use-event";
 
 export const LayoutBlocksSelector = () => {
