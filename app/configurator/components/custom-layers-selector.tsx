@@ -38,6 +38,7 @@ import {
 } from "@/configurator/configurator-state";
 import { truthy } from "@/domain/types";
 import { Icon } from "@/icons";
+import { visitHierarchy } from "@/rdf/tree-utils";
 
 const LeftDrawer = ({
   children,
@@ -69,10 +70,10 @@ const LeftDrawer = ({
 export const CustomLayersSelector = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state) as MapConfig;
-  const customLayers = chartConfig.baseLayer.customLayers;
+  const configLayers = chartConfig.baseLayer.customLayers;
   const endpoints = useMemo(() => {
-    return uniq(customLayers.map((layer) => layer.endpoint)).filter(truthy);
-  }, [customLayers]);
+    return uniq(configLayers.map((layer) => layer.endpoint)).filter(truthy);
+  }, [configLayers]);
   const {
     data: groupedLayers,
     error,
@@ -166,10 +167,10 @@ export const CustomLayersSelector = () => {
       return `${type}-${id}`;
     };
     const layersByKey: Record<string, RemoteWMSLayer | RemoteWMTSLayer> = {};
-    wmsLayers?.forEach((layer) => {
+    visitHierarchy(wmsLayers ?? [], (layer) => {
       layersByKey[getKey(layer)] = layer;
     });
-    wmtsLayers?.forEach((layer) => {
+    visitHierarchy(wmtsLayers ?? [], (layer) => {
       layersByKey[getKey(layer)] = layer;
     });
     return (configLayer: WMTSCustomLayer | WMSCustomLayer) => {
@@ -212,7 +213,7 @@ export const CustomLayersSelector = () => {
               onLayerCheck={(x, checked) => {
                 return handleCheckLayer(x, checked);
               }}
-              selected={customLayers.map((layer) => {
+              selected={configLayers.map((layer) => {
                 return layer.id;
               })}
             />
@@ -220,7 +221,7 @@ export const CustomLayersSelector = () => {
         </Box>
       </LeftDrawer>
       <ControlSectionContent gap="large">
-        {customLayers.length === 0 && (
+        {configLayers.length === 0 && (
           <Typography variant="body3" color="text.secondary">
             <Trans id="chart.map.layers.no-layers">No custom layers</Trans>
           </Typography>
@@ -231,7 +232,7 @@ export const CustomLayersSelector = () => {
             <Droppable droppableId="layers">
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {customLayers.map((configLayer, i) => {
+                  {configLayers.map((configLayer, i) => {
                     return (
                       <DraggableLayer
                         key={`${configLayer.type}-${configLayer.id}`}
