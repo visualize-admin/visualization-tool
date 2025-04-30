@@ -18,6 +18,10 @@ You can also check the
   - Fixes on
     - Nested layers appear on the map
     - Attributions are no longer coming from all layers of the endpoint
+- Fixes
+  - It's now possible to add non-key dimensions when all key dimensions of a
+    cube are joined
+  - Improved cut-off and overlapping labels in combo charts
 
 # 5.7.4 - 2025-04-29
 
