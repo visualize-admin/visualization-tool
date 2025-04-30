@@ -95,6 +95,7 @@ import {
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
+import { isJoinByCube } from "@/graphql/join";
 import {
   PossibleFiltersDocument,
   PossibleFiltersQuery,
@@ -740,8 +741,15 @@ export const ChartConfigurator = ({
                 />
               </Box>
             )}
-            {Object.entries(filterDimensionsByCubeIri).map(
-              ([cubeIri, dims]) => {
+            {Object.entries(filterDimensionsByCubeIri)
+              .sort((a, b) =>
+                isJoinByCube(a[0])
+                  ? -1
+                  : isJoinByCube(b[0])
+                    ? 1
+                    : a[0].localeCompare(b[0])
+              )
+              .map(([cubeIri, dims]) => {
                 const cubeTitle = cubes?.find(
                   (cube) => cube.iri === cubeIri
                 )?.title;
@@ -809,8 +817,7 @@ export const ChartConfigurator = ({
                     ) : null}
                   </Fragment>
                 );
-              }
-            )}
+              })}
           </ControlSectionContent>
         </ControlSection>
       )}
