@@ -117,20 +117,28 @@ const getValueLabelTextAnchor = (rotate: boolean) => {
   return rotate ? "start" : "middle";
 };
 
-export const setSegmentValueLabelProps = <
+export const setSegmentWrapperValueLabelProps = <
   T extends { valueLabel?: string; valueLabelColor?: string },
 >(
   g: Selection<BaseType, T, SVGGElement, null>
 ) => {
   return g
     .attr(DISABLE_SCREENSHOT_COLOR_WIPE_KEY, true)
-    .style("overflow", "hidden")
     .style("display", "flex")
     .style("justify-content", "center")
     .style("align-items", "center")
     .style("width", "100%")
     .style("height", "100%")
-    .style("padding", "2px")
+    .style("padding", "2px");
+};
+
+export const setSegmentValueLabelProps = <
+  T extends { valueLabel?: string; valueLabelColor?: string },
+>(
+  g: Selection<BaseType, T, SVGGElement, null>
+) => {
+  return g
+    .style("overflow", "hidden")
     .style("font-size", "12px")
     .style("white-space", "nowrap")
     .style("text-overflow", "ellipsis");
