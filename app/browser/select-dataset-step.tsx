@@ -473,6 +473,8 @@ const SelectDatasetStepContent = ({
                           )
                         }
                         sx={
+                          // Could be extracted in case we have more
+                          // openData.swiss dependencies
                           odsIframe
                             ? {
                                 backgroundColor: "#009688",
