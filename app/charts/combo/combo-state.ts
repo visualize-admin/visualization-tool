@@ -149,11 +149,11 @@ type GetMarginsOptions = {
 };
 
 export const getMargins = (options: GetMarginsOptions) => {
-  const { left, top = 50, right = 40, bottom } = options;
+  const { left, top, right, bottom } = options;
 
   return {
-    top,
-    right,
+    top: top || 50,
+    right: right || 40,
     bottom,
     left,
   };
@@ -189,7 +189,7 @@ export const useDualAxisMargins = ({
   return getMargins({
     left,
     right,
-    bottom: bottom - SINGLE_LINE_AXIS_LABEL_HEIGHT / 2,
+    bottom,
     top,
   });
 };
