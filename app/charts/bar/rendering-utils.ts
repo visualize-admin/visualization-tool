@@ -66,14 +66,8 @@ export const renderBars = (
                 })
               )
               .append("xhtml:div")
-              .style("display", "flex")
-              .style("align-items", "center")
-              .style("width", "100%")
-              .style("height", "100%")
-              .append("xhtml:p")
               .call(setSegmentValueLabelProps)
-              .style("padding-left", "2px")
-              .style("padding-right", "2px")
+              .append("xhtml:p")
               .style("color", function (d) {
                 return d.valueLabelColor ?? select(this).style("color");
               })

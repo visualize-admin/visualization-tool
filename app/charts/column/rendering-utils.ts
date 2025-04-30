@@ -61,11 +61,9 @@ export const renderColumns = (
                   s: (g) => g.attr("y", (d) => d.y),
                 })
               )
-              .append("xhtml:p")
+              .append("xhtml:div")
               .call(setSegmentValueLabelProps)
-              .style("padding-top", "4px")
-              .style("padding-left", "2px")
-              .style("padding-right", "2px")
+              .append("xhtml:p")
               .style("color", function (d) {
                 return d.valueLabelColor ?? select(this).style("color");
               })
