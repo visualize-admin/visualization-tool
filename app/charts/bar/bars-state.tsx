@@ -126,9 +126,9 @@ const useBarsState = (
 
   const {
     xScale,
+    paddingXScale,
     yScale,
     minY,
-    paddingYScale,
     yScaleTimeRange,
     yScaleInteraction,
     yTimeRangeDomainLabels,
@@ -166,51 +166,59 @@ const useBarsState = (
 
     const yScaleTimeRange = scaleTime().domain(yScaleTimeRangeDomain);
 
-    const minValue = getMinX(scalesData, (d) =>
-      getXErrorRange ? getXErrorRange(d)[0] : getX(d)
-    );
-    const maxValue = Math.max(
-      max(scalesData, (d) =>
-        getXErrorRange ? getXErrorRange(d)[1] : getX(d)
-      ) ?? 0,
-      0
-    );
-    const xScale = scaleLinear()
-      .domain([
-        minLimitValue !== undefined
-          ? Math.min(minLimitValue, minValue)
-          : minValue,
-        maxLimitValue !== undefined
-          ? Math.max(maxLimitValue, maxValue)
-          : maxValue,
-      ])
-      .nice();
+    const xScale = scaleLinear();
+    const paddingXScale = scaleLinear();
 
-    const paddingMinValue = getMinX(paddingData, (d) =>
-      getXErrorRange ? getXErrorRange(d)[0] : getX(d)
-    );
-    const paddingMaxValue = Math.max(
-      max(paddingData, (d) =>
-        getXErrorRange ? getXErrorRange(d)[1] : getX(d)
-      ) ?? 0,
-      0
-    );
-    const paddingYScale = scaleLinear()
-      .domain([
-        minLimitValue !== undefined
-          ? Math.min(minLimitValue, paddingMinValue)
-          : paddingMinValue,
-        maxLimitValue !== undefined
-          ? Math.max(maxLimitValue, paddingMaxValue)
-          : paddingMaxValue,
-      ])
-      .nice();
+    if (x.customDomain) {
+      xScale.domain(x.customDomain);
+      paddingXScale.domain(x.customDomain);
+    } else {
+      const minValue = getMinX(scalesData, (d) => {
+        return getXErrorRange?.(d)[0] ?? getX(d);
+      });
+      const maxValue = Math.max(
+        max(scalesData, (d) => {
+          return getXErrorRange?.(d)[1] ?? getX(d);
+        }) ?? 0,
+        0
+      );
+      xScale
+        .domain([
+          minLimitValue !== undefined
+            ? Math.min(minLimitValue, minValue)
+            : minValue,
+          maxLimitValue !== undefined
+            ? Math.max(maxLimitValue, maxValue)
+            : maxValue,
+        ])
+        .nice();
+
+      const paddingMinValue = getMinX(paddingData, (d) => {
+        return getXErrorRange?.(d)[0] ?? getX(d);
+      });
+      const paddingMaxValue = Math.max(
+        max(paddingData, (d) => {
+          return getXErrorRange?.(d)[1] ?? getX(d);
+        }) ?? 0,
+        0
+      );
+      paddingXScale
+        .domain([
+          minLimitValue !== undefined
+            ? Math.min(minLimitValue, paddingMinValue)
+            : paddingMinValue,
+          maxLimitValue !== undefined
+            ? Math.max(maxLimitValue, paddingMaxValue)
+            : paddingMaxValue,
+        ])
+        .nice();
+    }
 
     return {
       xScale,
       yScale,
       minY: bandDomain[0],
-      paddingYScale,
+      paddingXScale,
       yScaleTimeRange,
       yScaleInteraction,
       yTimeRangeDomainLabels,
@@ -232,11 +240,12 @@ const useBarsState = (
     getYAsDate,
     getXErrorRange,
     getX,
+    x.customDomain,
   ]);
 
   const { top, left, bottom } = useChartPadding({
     xLabelPresent: !!xMeasure.label,
-    yScale: paddingYScale,
+    yScale: paddingXScale,
     width,
     height,
     interactiveFiltersConfig,

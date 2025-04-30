@@ -62,8 +62,8 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
             <ChartSvg>
               <AxisWidthLinear />
               <AxisHeightBand />
-              <BarsStacked />
               <AxisHeightBandDomain />
+              <BarsStacked />
               <InteractionBars />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
@@ -92,9 +92,9 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
             <ChartSvg>
               <AxisWidthLinear />
               <AxisHeightBand />
+              <AxisHeightBandDomain />
               <BarsGrouped />
               <ErrorWhiskersGrouped />
-              <AxisHeightBandDomain />
               <InteractionBars />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
@@ -123,10 +123,10 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
             <ChartSvg>
               <AxisWidthLinear />
               <AxisHeightBand />
+              <AxisHeightBandDomain />
               <Bars />
               <ErrorWhiskers />
               <HorizontalLimits {...limits} />
-              <AxisHeightBandDomain />
               <InteractionBars />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>

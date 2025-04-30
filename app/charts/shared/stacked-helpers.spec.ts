@@ -65,6 +65,26 @@ describe("getStackedYScales", () => {
 
     expect(normalizedYScale.domain()).toEqual([0, 100]);
   });
+
+  it("should favor custom domain, but only if not in normalized mode", () => {
+    const customYScale = getStackedYScale(scalesData, {
+      normalize: false,
+      getX,
+      getY,
+      customDomain: [-1, 1],
+    });
+
+    expect(customYScale.domain()).toEqual([-1, 1]);
+
+    const normalizedCustomYScale = getStackedYScale(scalesData, {
+      normalize: true,
+      getX,
+      getY,
+      customDomain: [-1, 1],
+    });
+
+    expect(normalizedCustomYScale.domain()).toEqual([0, 100]);
+  });
 });
 
 describe("getStackedTooltipValueFormatter", () => {

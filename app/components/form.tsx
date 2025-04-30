@@ -30,6 +30,7 @@ import {
   SliderProps,
   Stack,
   Switch as MUISwitch,
+  SxProps,
   Theme,
   Tooltip,
   Typography,
@@ -41,6 +42,8 @@ import { useId } from "@reach/auto-id";
 import flatten from "lodash/flatten";
 import React, {
   ComponentProps,
+  FocusEventHandler,
+  KeyboardEventHandler,
   ReactNode,
   SyntheticEvent,
   useCallback,
@@ -512,22 +515,32 @@ export const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
 };
 
 export const Input = ({
+  type,
   label,
   name,
   value,
   defaultValue,
+  onBlur,
+  onKeyDown,
   disabled,
   onChange,
   error,
+  errorMessage,
+  sx,
 }: {
   label?: string | ReactNode;
   disabled?: boolean;
   defaultValue?: FieldProps["value"];
+  onBlur?: FocusEventHandler<HTMLInputElement>;
+  onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
   error?: boolean;
+  errorMessage?: string;
+  sx?: SxProps;
 } & FieldProps) => (
   <Box sx={{ fontSize: "1rem", pb: 2 }}>
     {label && name && <Label htmlFor={name}>{label}</Label>}
     <MUIInput
+      type={type}
       id={name}
       size="sm"
       color="secondary"
@@ -535,9 +548,20 @@ export const Input = ({
       value={value}
       defaultValue={defaultValue}
       disabled={disabled}
+      onBlur={onBlur}
       onChange={onChange}
-      sx={error ? { borderColor: "error.main" } : {}}
+      onKeyDown={onKeyDown}
+      sx={error ? { ...sx, borderColor: "error.main" } : sx}
     />
+    {error && errorMessage ? (
+      <Typography
+        variant="caption"
+        color="error.main"
+        sx={{ lineHeight: "1 !important" }}
+      >
+        {errorMessage}
+      </Typography>
+    ) : null}
   </Box>
 );
 

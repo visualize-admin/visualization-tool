@@ -29,6 +29,7 @@ You can also check the
 # 5.7.3 - 2025-04-29
 
 - Features
+  - Added a way to set custom numerical scale domains
   - Color settings are now persisted across chart type changes
 - Fixes
   - It's now again possible to download images

@@ -11,6 +11,7 @@ import {
   ConfiguratorStatePublishing,
   Filters,
   MapConfig,
+  MapFields,
 } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import { getNewChartConfig } from "@/configurator/config-form";
@@ -34,6 +35,7 @@ import {
   setRangeFilter,
   updateColorMapping,
 } from "@/configurator/configurator-state/reducer";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Dimension, Measure, NominalDimension } from "@/domain/data";
 import { mkVersionedJoinBy } from "@/graphql/join";
 import { ComponentId, stringifyComponentId } from "@/graphql/make-component-id";
@@ -665,6 +667,7 @@ describe("CHART_FIELD_DELETED", () => {
           chartType: "column",
           cubes: [],
           fields: {
+            y: {},
             segment: {
               componentId: "segmentComponentId",
             },
@@ -1608,6 +1611,20 @@ describe("handleChartOptionChanged", () => {
     expect(Object.keys(state.chartConfigs[0].cubes[0].filters)).not.toContain(
       "areaLayerColorIri"
     );
+
+    handleChartFieldUpdated(state, {
+      type: "CHART_FIELD_UPDATED",
+      value: {
+        locale: "en",
+        field: "areaLayer",
+        path: "color.componentId",
+        value: FIELD_VALUE_NONE,
+      },
+    });
+
+    expect(
+      (state.chartConfigs[0].fields as MapFields).areaLayer?.color.componentId
+    ).toBeUndefined();
   });
 });
 

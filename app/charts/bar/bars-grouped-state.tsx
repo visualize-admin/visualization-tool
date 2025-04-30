@@ -109,6 +109,7 @@ const useBarsGroupedState = (
     allData,
   } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { x } = fields;
 
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
@@ -189,7 +190,7 @@ const useBarsGroupedState = (
     yTimeRangeDomainLabels,
     colors,
     xScale,
-    paddingYScale,
+    paddingXScale,
     yScaleTimeRange,
     yScale,
     yScaleIn,
@@ -258,34 +259,40 @@ const useBarsGroupedState = (
     const yScaleTimeRange = scaleTime().domain(yScaleTimeRangeDomain);
 
     // x
-    const minValue = getMinX(scalesData, (d) =>
-      getXErrorRange ? getXErrorRange(d)[0] : getX(d)
-    );
-    const maxValue = Math.max(
-      max(scalesData, (d) =>
-        getXErrorRange ? getXErrorRange(d)[1] : getX(d)
-      ) ?? 0,
-      0
-    );
-    const xScale = scaleLinear().domain([minValue, maxValue]).nice();
+    const xScale = scaleLinear();
+    const paddingXScale = scaleLinear();
 
-    const minPaddingValue = getMinX(paddingData, (d) =>
-      getXErrorRange ? getXErrorRange(d)[0] : getX(d)
-    );
-    const maxPaddingValue = Math.max(
-      max(paddingData, (d) =>
-        getXErrorRange ? getXErrorRange(d)[1] : getX(d)
-      ) ?? 0,
-      0
-    );
-    const paddingYScale = scaleLinear()
-      .domain([minPaddingValue, maxPaddingValue])
-      .nice();
+    if (x.customDomain) {
+      xScale.domain(x.customDomain);
+      paddingXScale.domain(x.customDomain);
+    } else {
+      const minValue = getMinX(scalesData, (d) => {
+        return getXErrorRange?.(d)[0] ?? getX(d);
+      });
+      const maxValue = Math.max(
+        max(scalesData, (d) => {
+          return getXErrorRange?.(d)[1] ?? getX(d);
+        }) ?? 0,
+        0
+      );
+      xScale.domain([minValue, maxValue]).nice();
+
+      const minPaddingValue = getMinX(paddingData, (d) => {
+        return getXErrorRange?.(d)[0] ?? getX(d);
+      });
+      const maxPaddingValue = Math.max(
+        max(paddingData, (d) => {
+          return getXErrorRange?.(d)[1] ?? getX(d);
+        }) ?? 0,
+        0
+      );
+      paddingXScale.domain([minPaddingValue, maxPaddingValue]).nice();
+    }
 
     return {
       colors,
       xScale,
-      paddingYScale,
+      paddingXScale,
       yScaleTimeRange,
       yScale,
       yScaleIn,
@@ -314,6 +321,7 @@ const useBarsGroupedState = (
     getXErrorRange,
     getX,
     getMinX,
+    x.customDomain,
   ]);
 
   // Group
@@ -346,7 +354,7 @@ const useBarsGroupedState = (
 
   const { top, left, bottom } = useChartPadding({
     xLabelPresent: !!xMeasure.label,
-    yScale: paddingYScale,
+    yScale: paddingXScale,
     width,
     height,
     interactiveFiltersConfig,

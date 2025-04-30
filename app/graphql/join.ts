@@ -144,7 +144,7 @@ export const joinDimensions = (options: {
             .sort(dimensionValueSorter),
           (x) => x.value
         ),
-        id: mkJoinById(Number(index)),
+        id: mkJoinById(Number(index)) as ComponentId,
         // Non-relevant, as we rely on the originalIris property.
         cubeIri: JOIN_BY_CUBE_IRI,
         // FIXME: adapt to design

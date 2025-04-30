@@ -85,6 +85,7 @@ export const AxisWidthBand = () => {
       g.selectAll(".tick text")
         .attr("transform", rotation ? "rotate(90)" : "rotate(0)")
         .attr("x", rotation ? fontSize : 0)
+        .attr("dy", hasNegativeValues ? fontSize + 1 : fontSize * 0.6)
         .attr("font-size", fontSize)
         .attr("font-family", fontFamily)
         .attr("fill", labelColor)

@@ -380,13 +380,17 @@ const makeUseParsedVariable =
     return useCallback((d: Observation) => parser(d[key]), [key]);
   };
 
-export const useOptionalNumericVariable = makeUseParsedVariable((x) =>
-  x !== null ? Number(x) : null
+export const parseOptionalNumericVariable = (d: ObservationValue) => {
+  return d !== null ? +d : null;
+};
+export const useOptionalNumericVariable = makeUseParsedVariable(
+  parseOptionalNumericVariable
 );
 
-export const useStringVariable = makeUseParsedVariable((x) =>
-  x !== null ? `${x}` : ""
-);
+export const parseStringVariable = (d: ObservationValue) => {
+  return d !== null ? `${d}` : "";
+};
+export const useStringVariable = makeUseParsedVariable(parseStringVariable);
 
 export const useTemporalVariable = makeUseParsedVariable((x) =>
   parseDate(`${x}`)

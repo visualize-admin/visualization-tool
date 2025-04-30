@@ -345,6 +345,22 @@ msgstr "Usa abbreviazioni"
 msgid "controls.add.chart"
 msgstr "Aggiungere un altro grafico."
 
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.adjust-scale-domain"
+msgstr "Regola il dominio della scala"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.adjust-scale-domain.invalid-number-error"
+msgstr "Inserisci un numero valido"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.adjust-scale-domain.max-error"
+msgstr "Il massimo deve essere maggiore del minimo"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.adjust-scale-domain.min-error"
+msgstr "Il minimo deve essere inferiore al massimo"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.animation"
 msgstr "Animazione"

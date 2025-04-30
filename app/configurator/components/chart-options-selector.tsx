@@ -4,12 +4,13 @@ import { groups } from "d3-array";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
 import dynamic from "next/dynamic";
-import { ReactNode, useCallback, useEffect, useMemo } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 
 import { DEFAULT_SORTING, getFieldComponentId } from "@/charts";
 import {
   ANIMATION_FIELD_SPEC,
   EncodingFieldType,
+  EncodingOption,
   EncodingOptionChartSubType,
   EncodingSortingOption,
   EncodingSpec,
@@ -23,7 +24,7 @@ import { getMap } from "@/charts/map/ref";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
-import { RadioGroup, Switch } from "@/components/form";
+import { Checkbox, Input, RadioGroup, Switch } from "@/components/form";
 import {
   Radio,
   Select,
@@ -112,6 +113,7 @@ import {
   Observation,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
+import { useFlag } from "@/flags";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
@@ -303,7 +305,16 @@ const makeGetFieldOptionGroups =
     });
   };
 
-interface EncodingOptionsPanelProps {
+const EncodingOptionsPanel = ({
+  encoding,
+  field,
+  chartConfig,
+  component,
+  dimensions,
+  measures,
+  observations,
+  cubesMetadata,
+}: {
   encoding: EncodingSpec;
   chartConfig: ChartConfig;
   field: EncodingFieldType;
@@ -312,20 +323,7 @@ interface EncodingOptionsPanelProps {
   measures: Measure[];
   observations: Observation[];
   cubesMetadata: DataCubeMetadata[];
-}
-
-const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
-  const {
-    encoding,
-    field,
-    chartConfig,
-    component,
-    dimensions,
-    measures,
-    observations,
-    cubesMetadata,
-  } = props;
-
+}) => {
   const { fields } = chartConfig;
   const fieldLabelHint: Record<EncodingFieldType, string> = {
     animation: t({
@@ -452,6 +450,8 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
         ? component
         : undefined;
 
+  const chartScaleDomainEnabled = useFlag("custom-scale-domain");
+
   return (
     <div
       key={`control-panel-${encoding.field}`}
@@ -466,7 +466,7 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
           <SectionTitle closable>
             {getFieldLabel(`${chartConfig.chartType}.${encoding.field}`)}
           </SectionTitle>
-          <ControlSectionContent>
+          <ControlSectionContent gap="large">
             {!encoding.customComponent && (
               <ChartFieldField
                 field={encoding.field}
@@ -485,6 +485,18 @@ const EncodingOptionsPanel = (props: EncodingOptionsPanelProps) => {
                 disabled={
                   encoding.options.showValues.getDisabledState?.(chartConfig)
                     .disabled
+                }
+              />
+            ) : null}
+            {encoding.options?.adjustScaleDomain &&
+            fieldComponent &&
+            chartScaleDomainEnabled ? (
+              <ChartScaleDomain
+                chartConfig={chartConfig}
+                field={field}
+                observations={observations}
+                getDefaultDomain={
+                  encoding.options.adjustScaleDomain.getDefaultDomain
                 }
               />
             ) : null}
@@ -723,6 +735,159 @@ const ChartLayoutOptions = ({
       </ControlSectionContent>
     </ControlSection>
   ) : null;
+};
+
+const ChartScaleDomain = ({
+  chartConfig,
+  field,
+  observations,
+  getDefaultDomain,
+}: {
+  chartConfig: ChartConfig;
+  field: EncodingFieldType;
+  observations: Observation[];
+  getDefaultDomain: Extract<
+    EncodingOption,
+    { field: "adjustScaleDomain" }
+  >["getDefaultDomain"];
+}) => {
+  const locale = useLocale();
+  const [_, dispatch] = useConfiguratorState(isConfiguring);
+  const domain = get(chartConfig, `fields["${field}"].customDomain`) as
+    | [number, number]
+    | undefined;
+  const checked = !!domain;
+  const disabled =
+    chartConfig.interactiveFiltersConfig?.calculation.type === "percent";
+
+  const defaultDomain = useMemo(() => {
+    return getDefaultDomain({ chartConfig, observations });
+  }, [chartConfig, getDefaultDomain, observations]);
+
+  const handleToggle = useEvent(() => {
+    dispatch({
+      type: "CHART_FIELD_UPDATED",
+      value: {
+        locale,
+        field,
+        path: "customDomain",
+        value: checked ? FIELD_VALUE_NONE : defaultDomain,
+      },
+    });
+  });
+
+  const handleChange = useEvent((newDomain: [number, number]) => {
+    dispatch({
+      type: "CHART_FIELD_UPDATED",
+      value: {
+        locale,
+        field,
+        path: "customDomain",
+        value: newDomain,
+      },
+    });
+  });
+
+  return (
+    <Stack gap={2} sx={disabled ? { opacity: 0.5, pointerEvents: "none" } : {}}>
+      <Checkbox
+        label={t({
+          id: "controls.adjust-scale-domain",
+          message: "Adjust scale domain",
+        })}
+        checked={checked}
+        onChange={handleToggle}
+      />
+      {checked ? (
+        <Flex justifyContent="space-between" gap={2}>
+          <DomainInput
+            label="min"
+            value={domain[0]}
+            validate={(d) => ({
+              error:
+                d < domain[1]
+                  ? null
+                  : t({
+                      id: "controls.adjust-scale-domain.min-error",
+                      message: "Min must be smaller than max",
+                    }),
+            })}
+            onCommit={(d) => handleChange([d, domain[1]])}
+          />
+          <DomainInput
+            label="max"
+            value={domain[1]}
+            validate={(d) => ({
+              error:
+                d > domain[0]
+                  ? null
+                  : t({
+                      id: "controls.adjust-scale-domain.max-error",
+                      message: "Max must be bigger than min",
+                    }),
+            })}
+            onCommit={(d) => handleChange([domain[0], d])}
+          />
+        </Flex>
+      ) : null}
+    </Stack>
+  );
+};
+
+const DomainInput = ({
+  label,
+  value,
+  onCommit,
+  validate,
+}: {
+  label: string;
+  value: number;
+  onCommit: (newValue: number) => void;
+  validate: (newValue: number) => { error: string | null };
+}) => {
+  const [inputValue, setInputValue] = useState(`${value}`);
+  const [error, setError] = useState<string | undefined>(undefined);
+
+  const handleCommit = () => {
+    const parsed = parseFloat(inputValue);
+    if (isNaN(parsed)) {
+      setError(
+        t({
+          id: "controls.adjust-scale-domain.invalid-number-error",
+          message: "Please enter a valid number",
+        })
+      );
+      return;
+    }
+
+    const { error } = validate(parsed);
+
+    if (error) {
+      setError(error);
+      return;
+    }
+
+    setError(undefined);
+    onCommit(parsed);
+  };
+
+  return (
+    <Input
+      type="number"
+      label={label}
+      name={label}
+      value={inputValue}
+      onChange={(e) => setInputValue(e.currentTarget.value)}
+      onBlur={handleCommit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          handleCommit();
+        }
+      }}
+      error={!!error}
+      errorMessage={error}
+    />
+  );
 };
 
 const ChartLimits = ({

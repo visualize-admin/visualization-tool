@@ -1029,6 +1029,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             draft.fields.y.showValues = oldValue;
           });
         },
+        customDomain: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.customDomain = oldValue;
+          });
+        },
       },
       color: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
@@ -1151,6 +1156,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         showValues: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.x.showValues = oldValue;
+          });
+        },
+        customDomain: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.customDomain = oldValue;
           });
         },
       },
@@ -1308,6 +1318,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             draft.fields.y.showValues = oldValue;
           });
         },
+        customDomain: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.customDomain = oldValue;
+          });
+        },
       },
       color: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
@@ -1421,6 +1436,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         showValues: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.y.showValues = oldValue;
+          });
+        },
+        customDomain: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.customDomain = oldValue;
           });
         },
       },

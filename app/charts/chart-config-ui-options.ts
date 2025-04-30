@@ -1,5 +1,6 @@
 import { t } from "@lingui/macro";
-import { group } from "d3-array";
+import { extent, group } from "d3-array";
+import { scaleLinear } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import get from "lodash/get";
 import setWith from "lodash/setWith";
@@ -14,7 +15,13 @@ import {
 import {
   checkForMissingValuesInSegments,
   getSegment,
+  parseOptionalNumericVariable,
+  parseStringVariable,
 } from "@/charts/shared/chart-helpers";
+import {
+  getStackedXScale,
+  getStackedYScale,
+} from "@/charts/shared/stacked-helpers";
 import {
   AreaConfig,
   BarConfig,
@@ -103,7 +110,7 @@ export type EncodingOptionChartSubType<T extends ChartConfig = ChartConfig> = {
   onChange: OnEncodingOptionChange<ChartSubType, T>;
 };
 
-type EncodingOption<T extends ChartConfig = ChartConfig> =
+export type EncodingOption<T extends ChartConfig = ChartConfig> =
   | EncodingOptionChartSubType<T>
   | {
       field: "calculation";
@@ -123,6 +130,13 @@ type EncodingOption<T extends ChartConfig = ChartConfig> =
         disabled: boolean;
         warnMessage?: string;
       };
+    }
+  | {
+      field: "adjustScaleDomain";
+      getDefaultDomain: (options: {
+        chartConfig: T;
+        observations: Observation[];
+      }) => [number, number];
     }
   | {
       field: "showStandardError";
@@ -307,6 +321,7 @@ export interface EncodingSpec<
     >;
   };
   onChange?: OnEncodingChange<T, F>;
+  onDelete?: (options: { chartConfig: T }) => void;
   getDisabledState?: (
     chartConfig: T,
     components: Component[],
@@ -570,6 +585,16 @@ const onMapFieldChange: OnEncodingChange<MapConfig> = (
   });
 };
 
+const getNonStackedDomain = (
+  observations: Observation[],
+  getValue: (o: Observation) => number
+) => {
+  return scaleLinear()
+    .domain(extent(observations.map(getValue)) as [number, number])
+    .nice()
+    .domain() as [number, number];
+};
+
 export const getChartSpec = <T extends ChartConfig>(
   chartConfig: T
 ): ChartSpec<T> => {
@@ -606,6 +631,33 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               };
             },
           },
+          adjustScaleDomain: {
+            getDefaultDomain: ({ chartConfig, observations }) => {
+              const { segment } = chartConfig.fields;
+              const getX = (o: Observation) => {
+                const x = o[chartConfig.fields.x.componentId];
+                return parseStringVariable(x);
+              };
+              const getY = (o: Observation) => {
+                const y = o[chartConfig.fields.y.componentId] ?? null;
+                return parseOptionalNumericVariable(y) ?? 0;
+              };
+
+              if (segment) {
+                const yScale = getStackedYScale(observations, {
+                  normalize:
+                    chartConfig.interactiveFiltersConfig?.calculation.type ===
+                    "percent",
+                  getX,
+                  getY,
+                });
+
+                return yScale.domain() as [number, number];
+              }
+
+              return getNonStackedDomain(observations, getY);
+            },
+          },
         },
       },
       {
@@ -622,7 +674,13 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_ENABLED_COMPONENTS,
         filters: true,
         sorting: AREA_SEGMENT_SORTING,
-        onChange: defaultSegmentOnChange,
+        onChange: (id, options) => {
+          defaultSegmentOnChange(id, options);
+          delete options.chartConfig.fields.y.customDomain;
+        },
+        onDelete: ({ chartConfig }) => {
+          delete chartConfig.fields.y.customDomain;
+        },
         getDisabledState: (chartConfig, components, data) => {
           const yId = chartConfig.fields.y.componentId;
           const yDimension = components.find((d) => d.id === yId);
@@ -716,6 +774,33 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           },
           showStandardError: {},
           showConfidenceInterval: {},
+          adjustScaleDomain: {
+            getDefaultDomain: ({ chartConfig, observations }) => {
+              const { segment } = chartConfig.fields;
+              const getX = (o: Observation) => {
+                const x = o[chartConfig.fields.x.componentId];
+                return parseStringVariable(x);
+              };
+              const getY = (o: Observation) => {
+                const y = o[chartConfig.fields.y.componentId] ?? null;
+                return parseOptionalNumericVariable(y) ?? 0;
+              };
+
+              if (segment && segment.type === "stacked") {
+                const yScale = getStackedYScale(observations, {
+                  normalize:
+                    chartConfig.interactiveFiltersConfig?.calculation.type ===
+                    "percent",
+                  getX,
+                  getY,
+                });
+
+                return yScale.domain() as [number, number];
+              }
+
+              return getNonStackedDomain(observations, getY);
+            },
+          },
         },
       },
       {
@@ -764,6 +849,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           const { chartConfig, dimensions, measures } = options;
           defaultSegmentOnChange(id, options);
           chartConfig.fields.y.showValues = false;
+          delete chartConfig.fields.y.customDomain;
 
           const components = [...dimensions, ...measures];
           const segment: ColumnSegmentField = get(
@@ -782,6 +868,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             },
             Object
           );
+        },
+        onDelete: ({ chartConfig }) => {
+          delete chartConfig.fields.y.customDomain;
         },
         options: {
           calculation: {
@@ -885,6 +974,33 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           },
           showStandardError: {},
           showConfidenceInterval: {},
+          adjustScaleDomain: {
+            getDefaultDomain: ({ chartConfig, observations }) => {
+              const { segment } = chartConfig.fields;
+              const getX = (o: Observation) => {
+                const x = o[chartConfig.fields.x.componentId] ?? null;
+                return parseOptionalNumericVariable(x) ?? 0;
+              };
+              const getY = (o: Observation) => {
+                const y = o[chartConfig.fields.y.componentId];
+                return parseStringVariable(y);
+              };
+
+              if (segment && segment.type === "stacked") {
+                const xScale = getStackedXScale(observations, {
+                  normalize:
+                    chartConfig.interactiveFiltersConfig?.calculation.type ===
+                    "percent",
+                  getX,
+                  getY,
+                });
+
+                return xScale.domain() as [number, number];
+              }
+
+              return getNonStackedDomain(observations, getX);
+            },
+          },
         },
       },
       {
@@ -933,6 +1049,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           const { chartConfig, dimensions, measures } = options;
           defaultSegmentOnChange(id, options);
           chartConfig.fields.x.showValues = false;
+          delete chartConfig.fields.x.customDomain;
 
           const components = [...dimensions, ...measures];
           const segment: ColumnSegmentField = get(
@@ -951,6 +1068,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             },
             Object
           );
+        },
+        onDelete: ({ chartConfig }) => {
+          delete chartConfig.fields.x.customDomain;
         },
         options: {
           calculation: {
@@ -1033,6 +1153,16 @@ const chartConfigOptionsUISpec: ChartSpecs = {
           },
           showStandardError: {},
           showConfidenceInterval: {},
+          adjustScaleDomain: {
+            getDefaultDomain: ({ chartConfig, observations }) => {
+              const getY = (o: Observation) => {
+                const y = o[chartConfig.fields.y.componentId] ?? null;
+                return parseOptionalNumericVariable(y) ?? 0;
+              };
+
+              return getNonStackedDomain(observations, getY);
+            },
+          },
           showDots: {},
           showDotsSize: {},
         },
@@ -1051,7 +1181,13 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         componentTypes: SEGMENT_ENABLED_COMPONENTS,
         filters: true,
         sorting: LINE_SEGMENT_SORTING,
-        onChange: defaultSegmentOnChange,
+        onChange: (id, options) => {
+          defaultSegmentOnChange(id, options);
+          delete options.chartConfig.fields.y.customDomain;
+        },
+        onDelete: ({ chartConfig }) => {
+          delete chartConfig.fields.y.customDomain;
+        },
         options: {
           colorPalette: {
             type: "single",
@@ -1372,6 +1508,16 @@ export const getChartFieldChangeSideEffect = (
   const encoding = chartSpec.encodings.find((d) => d.field === field);
 
   return encoding?.onChange;
+};
+
+export const getChartFieldDeleteSideEffect = (
+  chartConfig: ChartConfig,
+  field: EncodingFieldType
+): EncodingSpec["onDelete"] | undefined => {
+  const chartSpec = getChartSpec(chartConfig);
+  const encoding = chartSpec.encodings.find((d) => d.field === field);
+
+  return encoding?.onDelete;
 };
 
 export const getChartFieldOptionChangeSideEffect = (

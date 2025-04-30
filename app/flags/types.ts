@@ -23,8 +23,12 @@ export const FLAGS = [
       "Enables experimental features, including dashboard text blocks, Markdown editor and bar charts.",
   },
   {
-    name: "wmts-show-extra-info",
+    name: "wmts-show-extra-info" as const,
     description: "Show extra debug info in WMTS provider autocomplete",
+  },
+  {
+    name: "custom-scale-domain" as const,
+    description: "Allows users to set custom numerical scale domains.",
   },
 ];
 export const FLAG_NAMES = FLAGS.map((flag) => flag.name);

@@ -124,7 +124,7 @@ export type ConfiguratorStateAction =
       type: "CHART_FIELD_DELETED";
       value: {
         locale: Locale;
-        field: string;
+        field: EncodingFieldType;
       };
     }
   | {
