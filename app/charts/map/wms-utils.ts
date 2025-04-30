@@ -13,6 +13,19 @@ type WMSData = {
           Title: string;
         };
       };
+      Request: {
+        GetMap: {
+          DCPType: {
+            HTTP: {
+              Get: {
+                OnlineResource: {
+                  "xlink:href": string;
+                };
+              };
+            };
+          };
+        };
+      };
     };
     Service: {
       OnlineResource: {
@@ -109,7 +122,9 @@ export const parseWMSContent = (content: string, endpoint: string) => {
   });
 
   const wmsData = parser.parse(content) as WMSData;
-  const dataUrl = wmsData.WMS_Capabilities.Service.OnlineResource["xlink:href"];
+  const dataUrl =
+    wmsData.WMS_Capabilities.Capability.Request.GetMap.DCPType.HTTP.Get
+      .OnlineResource["xlink:href"];
   const attribution =
     wmsData.WMS_Capabilities.Capability.Layer.Attribution?.Title ??
     wmsData.WMS_Capabilities.Service.Title;
