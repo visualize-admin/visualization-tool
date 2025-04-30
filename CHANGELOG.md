@@ -18,6 +18,10 @@ You can also check the
   - Fixes on
     - Nested layers appear on the map
     - Attributions are no longer coming from all layers of the endpoint
+- Other features
+  - Value labels in bar and column charts are now centered both horizontally and
+    vertically
+  - ODS iframe dataset preview now uses official ODS color for new chart button
 
 # 5.7.4 - 2025-04-29
 
