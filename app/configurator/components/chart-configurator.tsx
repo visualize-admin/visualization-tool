@@ -15,6 +15,7 @@ import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
+import uniq from "lodash/uniq";
 import React, {
   Fragment,
   ReactNode,
@@ -496,6 +497,17 @@ const useFilterReorder = ({
       filterDimensions,
       (d) => d.cubeIri
     );
+    const allCubeIris = uniq(dimensions?.map((d) => d.cubeIri));
+
+    // Make sure we don't forget about merged cubes that have non-key-dimensions
+    // available, but no key dimension available (might be the case when merging)
+    // cubes by a lot of key dimensions that get joinBy cube iri then.
+    for (const iri of allCubeIris) {
+      if (!filterDimensionsByCubeIri[iri]) {
+        filterDimensionsByCubeIri[iri] = [];
+      }
+    }
+
     const addableDimensions =
       dimensions?.filter(
         (dim) =>
