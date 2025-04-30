@@ -564,8 +564,6 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
     },
   },
   addDimensionContainer: {
-    marginTop: theme.spacing(5),
-
     "& .menu-button": {
       background: "transparent",
       border: 0,
