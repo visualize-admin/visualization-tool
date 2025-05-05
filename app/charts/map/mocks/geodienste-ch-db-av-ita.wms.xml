@@ -1,0 +1,1127 @@
+<?xml version='1.0' encoding="UTF-8" standalone="no" ?>
+<WMS_Capabilities version="1.3.0"  xmlns="http://www.opengis.net/wms"   xmlns:sld="http://www.opengis.net/sld"   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   xmlns:ms="http://mapserver.gis.umn.edu/mapserver"   xsi:schemaLocation="http://www.opengis.net/wms https://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd  http://www.opengis.net/sld https://schemas.opengis.net/sld/1.1.0/sld_capabilities.xsd  http://mapserver.gis.umn.edu/mapserver https://wfs.geodienste.ch/av_0/ita?service=WMS&amp;version=1.3.0&amp;request=GetSchemaExtension">
+<Service>
+  <Name>WMS</Name>
+  <Title>geodienste.ch WMS MU: Standard</Title>
+  <Abstract>La misurazione ufficiale è un prodotto di rilevanza nazionale che fornisce dei dati geometrici a definizione della proprietà fondiaria e costituisce la base per altre geoinformazioni e applicativi geografici nel settore dell’economia, dell’amministrazione pubblica e della vita di tutti i giorni. MOpublic è il modello dati semplificato della misurazione ufficiale, l’implementazione dei geoservizi offerti si basa su questo modello (versione 1.2). L&#39;offerta « WMS MU: Standard (nero/bianco) » della misurazione ufficiale include il WMS basato sulle «Empfehlung für die Realisierung des AV-WMS» / « Recommandations pour la réalisation WMS-MO » . Il servizio mira a fornire una soluzione nazionale per la visualizzazione dei dati della misurazione ufficiale sotto forma di un WMS. I dati sono rappresentati in modo ottimale in una scala fino a 1:25’000.</Abstract>
+  <KeywordList>
+      <Keyword>geodienste.ch</Keyword>
+      <Keyword>misurazione ufficiale</Keyword>
+      <Keyword>MOpublic</Keyword>
+  </KeywordList>
+  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://wfs.geodienste.ch/av_0/ita?"/>
+  <ContactInformation>
+    <ContactPersonPrimary>
+      <ContactPerson>In caso di domande o problemi, contattare l&#39;assistenza all&#39;indirizzo support@geodienste.kgk-cgc.ch</ContactPerson>
+      <ContactOrganization>Conferenza dei servizi cantonali per la Geoinformazione e del Catasto</ContactOrganization>
+    </ContactPersonPrimary>
+  </ContactInformation>
+  <Fees>L&#39;abbonamento al geoservizio può prevedere il pagamento di emolumenti da parte dei Cantoni.</Fees>
+  <AccessConstraints>https://geodienste.ch/terms-of-use</AccessConstraints>
+  <MaxWidth>10000</MaxWidth>
+  <MaxHeight>10000</MaxHeight>
+</Service>
+
+<Capability>
+  <Request>
+    <GetCapabilities>
+      <Format>text/xml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://wfs.geodienste.ch/av_0/ita?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://wfs.geodienste.ch/av_0/ita?"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetCapabilities>
+    <GetMap>
+      <Format>image/png</Format>
+      <Format>image/png; mode=8bit</Format>
+      <Format>image/jpeg</Format>
+      <Format>image/vnd.jpeg-png</Format>
+      <Format>image/vnd.jpeg-png8</Format>
+      <Format>application/x-pdf</Format>
+      <Format>image/svg+xml</Format>
+      <Format>image/tiff</Format>
+      <Format>application/vnd.google-earth.kml+xml</Format>
+      <Format>application/vnd.google-earth.kmz</Format>
+      <Format>application/vnd.mapbox-vector-tile</Format>
+      <Format>application/x-protobuf</Format>
+      <Format>application/json</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://wfs.geodienste.ch/av_0/ita?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://wfs.geodienste.ch/av_0/ita?"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetMap>
+    <GetFeatureInfo>
+      <Format>text/html</Format>
+      <Format>application/vnd.ogc.gml</Format>
+      <Format>text/plain</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://wfs.geodienste.ch/av_0/ita?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://wfs.geodienste.ch/av_0/ita?"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetFeatureInfo>
+    <sld:DescribeLayer>
+      <Format>text/xml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://wfs.geodienste.ch/av_0/ita?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://wfs.geodienste.ch/av_0/ita?"/></Post>
+        </HTTP>
+      </DCPType>
+    </sld:DescribeLayer>
+    <sld:GetLegendGraphic>
+      <Format>image/png</Format>
+      <Format>image/png; mode=8bit</Format>
+      <Format>image/jpeg</Format>
+      <Format>image/vnd.jpeg-png</Format>
+      <Format>image/vnd.jpeg-png8</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://wfs.geodienste.ch/av_0/ita?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://wfs.geodienste.ch/av_0/ita?"/></Post>
+        </HTTP>
+      </DCPType>
+    </sld:GetLegendGraphic>
+    <ms:GetStyles>
+      <Format>text/xml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://wfs.geodienste.ch/av_0/ita?"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://wfs.geodienste.ch/av_0/ita?"/></Post>
+        </HTTP>
+      </DCPType>
+    </ms:GetStyles>
+  </Request>
+  <Exception>
+    <Format>XML</Format>
+    <Format>INIMAGE</Format>
+    <Format>BLANK</Format>
+  </Exception>
+  <sld:UserDefinedSymbolization SupportSLD="1" UserLayer="0" UserStyle="1" RemoteWFS="0" InlineFeature="0" RemoteWCS="0"/>
+  <Layer queryable="1">
+    <Name>Aggregierte_Amtliche_Vermessung</Name>
+    <Title>geodienste.ch WMS MU: Standard</Title>
+    <Abstract>La misurazione ufficiale è un prodotto di rilevanza nazionale che fornisce dei dati geometrici a definizione della proprietà fondiaria e costituisce la base per altre geoinformazioni e applicativi geografici nel settore dell’economia, dell’amministrazione pubblica e della vita di tutti i giorni. MOpublic è il modello dati semplificato della misurazione ufficiale, l’implementazione dei geoservizi offerti si basa su questo modello (versione 1.2). L&#39;offerta « WMS MU: Standard (nero/bianco) » della misurazione ufficiale include il WMS basato sulle «Empfehlung für die Realisierung des AV-WMS» / « Recommandations pour la réalisation WMS-MO » . Il servizio mira a fornire una soluzione nazionale per la visualizzazione dei dati della misurazione ufficiale sotto forma di un WMS. I dati sono rappresentati in modo ottimale in una scala fino a 1:25’000.</Abstract>
+    <KeywordList>
+        <Keyword>geodienste.ch</Keyword>
+        <Keyword>misurazione ufficiale</Keyword>
+        <Keyword>MOpublic</Keyword>
+    </KeywordList>
+    <CRS>EPSG:2056</CRS>
+    <CRS>EPSG:4326</CRS>
+    <CRS>EPSG:3857</CRS>
+    <EX_GeographicBoundingBox>
+        <westBoundLongitude>5.702107</westBoundLongitude>
+        <eastBoundLongitude>10.643213</eastBoundLongitude>
+        <southBoundLatitude>45.739229</southBoundLatitude>
+        <northBoundLatitude>47.850492</northBoundLatitude>
+    </EX_GeographicBoundingBox>
+    <Layer queryable="1">
+      <Name>dati</Name>
+      <Title>dati</Title>
+      <Layer queryable="1">
+        <Name>Condotte</Name>
+        <Title>Condotte</Title>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>PLNA</Name>
+        <Title>Condotte nomenclature</Title>
+        <Abstract>Condotte nomenclature</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=PLNA"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="119" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=PLNA&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2001</MaxScaleDenominator>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>PLSF</Name>
+        <Title>Condotte (superfici)</Title>
+        <Abstract>Condotte (superfici)</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=PLSF"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="107" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=PLSF&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2001</MaxScaleDenominator>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>PLLI</Name>
+        <Title>Condotte (linee)</Title>
+        <Abstract>Condotte (linee)</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=PLLI"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="92" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=PLLI&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2001</MaxScaleDenominator>
+        </Layer>
+      </Layer>
+      <Layer queryable="1">
+        <Name>Copertura_del_suolo</Name>
+        <Title>Copertura_del_suolo</Title>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>LCOBJ</Name>
+        <Title>CS_Numeri_Nomi</Title>
+        <Abstract>CS_Numeri_Nomi</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=LCOBJ"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="131" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=LCOBJ&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2001</MaxScaleDenominator>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>LCSF</Name>
+        <Title>Copertura del suolo bianco nero</Title>
+        <Abstract>Copertura del suolo bianco nero</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=LCSF"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="138" height="95">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=LCSF&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>LCSFPROJ</Name>
+        <Title>Copertura del suoloProg</Title>
+        <Abstract>Copertura del suoloProg</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=LCSFPROJ"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="147" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=LCSFPROJ&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>10001</MaxScaleDenominator>
+        </Layer>
+      </Layer>
+      <Layer queryable="1">
+        <Name>Oggetti_singoli</Name>
+        <Title>Oggetti_singoli</Title>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>SOOBJ</Name>
+        <Title>OS_Numeri_Nomi</Title>
+        <Abstract>OS_Numeri_Nomi</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=SOOBJ"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="76" height="35">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=SOOBJ&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2001</MaxScaleDenominator>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>SOLI</Name>
+        <Title>Oggetti singoli (linee)</Title>
+        <Abstract>Oggetti singoli (linee)</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=SOLI"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="202" height="50">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=SOLI&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>SOSF</Name>
+        <Title>Oggetti_singoli (superfici)</Title>
+        <Abstract>Oggetti_singoli (superfici)</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=SOSF"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="146" height="35">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=SOSF&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2001</MaxScaleDenominator>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>SOPT</Name>
+        <Title>Oggetti singoli (punti)</Title>
+        <Abstract>Oggetti singoli (punti)</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=SOPT"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="87" height="35">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=SOPT&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2001</MaxScaleDenominator>
+        </Layer>
+      </Layer>
+      <Layer queryable="1">
+        <Name>Indirizzi_degli_edifici</Name>
+        <Title>Indirizzi_degli_edifici</Title>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>LOCPOS</Name>
+        <Title>Localizzazione</Title>
+        <Abstract>Localizzazione</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=LOCPOS"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="85" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=LOCPOS&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2001</MaxScaleDenominator>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>HADR</Name>
+        <Title>Indirizzi degli edifici</Title>
+        <Abstract>Indirizzi degli edifici</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=HADR"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="82" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=HADR&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2001</MaxScaleDenominator>
+        </Layer>
+      </Layer>
+      <Layer queryable="1">
+        <Name>Nomenclatura</Name>
+        <Title>Nomenclatura</Title>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>LNNA</Name>
+        <Title>Nomenclatura</Title>
+        <Abstract>Nomenclatura</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=LNNA"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="93" height="50">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=LNNA&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2001</MaxScaleDenominator>
+        </Layer>
+      </Layer>
+      <Layer queryable="1">
+        <Name>Beni_immobili_progetto</Name>
+        <Title>Beni_immobili_progetto</Title>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>OSNRPROJ</Name>
+        <Title>Fondo Prog</Title>
+        <Abstract>Fondo Prog</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=OSNRPROJ"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="142" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=OSNRPROJ&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2001</MaxScaleDenominator>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>DPRSFPROJ</Name>
+        <Title>DPSSPProg</Title>
+        <Abstract>DPSSPProg</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=DPRSFPROJ"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="267" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=DPRSFPROJ&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>5001</MaxScaleDenominator>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>RESFPROJ</Name>
+        <Title>Bene immobileProg</Title>
+        <Abstract>Bene immobileProg</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=RESFPROJ"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="131" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=RESFPROJ&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>5001</MaxScaleDenominator>
+        </Layer>
+      </Layer>
+      <Layer queryable="1">
+        <Name>Beni_immobili</Name>
+        <Title>Beni_immobili</Title>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>OSNR</Name>
+        <Title>Numero fondo</Title>
+        <Abstract>Numero fondo</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=OSNR"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="99" height="35">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=OSNR&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2001</MaxScaleDenominator>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>DPRSF</Name>
+        <Title>DPSSP</Title>
+        <Abstract>DPSSP</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=DPRSF"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="187" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=DPRSF&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>5001</MaxScaleDenominator>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>RESF</Name>
+        <Title>Beni immobili</Title>
+        <Abstract>Beni immobili</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=RESF"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="89" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=RESF&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>5001</MaxScaleDenominator>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>OSBP</Name>
+        <Title>Punti di confine</Title>
+        <Abstract>Punti di confine</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=OSBP"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="114" height="80">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=OSBP&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2001</MaxScaleDenominator>
+        </Layer>
+      </Layer>
+      <Layer queryable="1">
+        <Name>Confini_giurisdizionali</Name>
+        <Title>Confini_giurisdizionali</Title>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>MBSF</Name>
+        <Title>Confini comunali</Title>
+        <Abstract>Confini_comunali</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=MBSF"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="99" height="20">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=MBSF&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>150001</MaxScaleDenominator>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>TBLI</Name>
+        <Title>Confini giurisdizionali</Title>
+        <Abstract>Confini giurisdizionali</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=TBLI"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="105" height="50">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=TBLI&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        </Layer>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>TBBP</Name>
+        <Title>Punti confini giurisdizionali</Title>
+        <Abstract>Punti confini giurisdizionali</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=TBBP"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="109" height="65">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=TBBP&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>1001</MaxScaleDenominator>
+        </Layer>
+      </Layer>
+      <Layer queryable="1">
+        <Name>Punti_fissi</Name>
+        <Title>Punti_fissi</Title>
+        <Layer queryable="1" opaque="0" cascaded="0">
+        <Name>CPPT</Name>
+        <Title>Punti fissi</Title>
+        <Abstract>Punti fissi</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+    <Attribution>
+        <Title>geocat.ch</Title>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://www.geocat.ch/geonetwork/srv/ita/catalog.search#/metadata/d929eef4-791d-4728-9d56-226b6952cf1f"/>
+    </Attribution>
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=CPPT"/>
+        </MetadataURL>
+        <DataURL>
+          <Format>text/html</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://www.geodienste.ch/downloads/av?data_format=wms"/>
+        </DataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="53" height="95">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=CPPT&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2001</MaxScaleDenominator>
+        </Layer>
+      </Layer>
+    </Layer>
+    <Layer>
+      <Name>disponibilita</Name>
+      <Title>disponibilita</Title>
+      <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>disponibilita_etichetta</Name>
+        <Title>Disponibilità: Etichetta</Title>
+        <Abstract>Disponibilità: Etichetta</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=disponibilita_etichetta"/>
+        </MetadataURL>
+        <MaxScaleDenominator>2.5e+06</MaxScaleDenominator>
+      </Layer>
+      <Layer queryable="0" opaque="0" cascaded="0">
+        <Name>disponibilita_cantone</Name>
+        <Title>Disponibilità: Cantone</Title>
+        <Abstract>Disponibilità: Cantone</Abstract>
+        <CRS>EPSG:2056</CRS>
+        <CRS>EPSG:4326</CRS>
+        <CRS>EPSG:3857</CRS>
+        <EX_GeographicBoundingBox>
+            <westBoundLongitude>5.702107</westBoundLongitude>
+            <eastBoundLongitude>10.643213</eastBoundLongitude>
+            <southBoundLatitude>45.739229</southBoundLatitude>
+            <northBoundLatitude>47.850492</northBoundLatitude>
+        </EX_GeographicBoundingBox>
+        <BoundingBox CRS="EPSG:2056"
+                    minx="2.47e+06" miny="1.07e+06" maxx="2.84e+06" maxy="1.3e+06" />
+        <MetadataURL type="TC211">
+          <Format>text/xml</Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?request=GetMetadata&amp;layer=disponibilita_cantone"/>
+        </MetadataURL>
+        <Style>
+          <Name>default</Name>
+          <Title>default</Title>
+          <LegendURL width="185" height="65">
+             <Format>image/png</Format>
+             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://wfs.geodienste.ch/av_0/ita?version=1.3.0&amp;service=WMS&amp;request=GetLegendGraphic&amp;sld_version=1.1.0&amp;layer=disponibilita_cantone&amp;format=image/png&amp;STYLE=default"/>
+          </LegendURL>
+        </Style>
+        <MinScaleDenominator>1</MinScaleDenominator>
+        <MaxScaleDenominator>2.5e+06</MaxScaleDenominator>
+      </Layer>
+    </Layer>
+  </Layer>
+</Capability>
+</WMS_Capabilities>

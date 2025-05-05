@@ -15,9 +15,12 @@ You can also check the
   - Features
     - Add a warning icon next to a layer if its CRS is unsupported (not CRS:84 /
       ESPG:3857)
-  - Fixes on
+  - Fixes
     - Nested layers appear on the map
     - Attributions are no longer coming from all layers of the endpoint
+    - WMS GetMap endpoint is correct in case it's not the same as the root
+      Service (wms.geo.ag.ch for example)
+      [#2292](https://github.com/visualize-admin/visualization-tool/issues/2292)
 - Other features
   - Value labels in bar and column charts are now centered both horizontally and
     vertically
