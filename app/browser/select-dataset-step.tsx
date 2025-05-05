@@ -1,6 +1,6 @@
 import { ContentWrapper } from "@interactivethings/swiss-federal-ci/dist/components";
 import { Trans } from "@lingui/macro";
-import { Box, Button, Theme, Typography } from "@mui/material";
+import { Box, Button, darken, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
 import sortBy from "lodash/sortBy";
@@ -471,6 +471,19 @@ const SelectDatasetStepContent = ({
                           ) : (
                             <Icon name="arrowRight" size={20} />
                           )
+                        }
+                        sx={
+                          // Could be extracted in case we have more
+                          // openData.swiss dependencies
+                          odsIframe
+                            ? {
+                                backgroundColor: "#009688",
+
+                                "&:hover": {
+                                  backgroundColor: darken("#009688", 0.2),
+                                },
+                              }
+                            : null
                         }
                       >
                         {!odsIframe ? (

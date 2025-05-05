@@ -1,6 +1,9 @@
 import { select, Selection } from "d3-selection";
 
-import { setSegmentValueLabelProps } from "@/charts/shared/render-value-labels";
+import {
+  setSegmentValueLabelProps,
+  setSegmentWrapperValueLabelProps,
+} from "@/charts/shared/render-value-labels";
 import {
   maybeTransition,
   RenderOptions,
@@ -61,11 +64,10 @@ export const renderColumns = (
                   s: (g) => g.attr("y", (d) => d.y),
                 })
               )
+              .append("xhtml:div")
+              .call(setSegmentWrapperValueLabelProps)
               .append("xhtml:p")
               .call(setSegmentValueLabelProps)
-              .style("padding-top", "4px")
-              .style("padding-left", "2px")
-              .style("padding-right", "2px")
               .style("color", function (d) {
                 return d.valueLabelColor ?? select(this).style("color");
               })
