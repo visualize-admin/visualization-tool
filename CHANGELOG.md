@@ -22,6 +22,10 @@ You can also check the
   - Value labels in bar and column charts are now centered both horizontally and
     vertically
   - ODS iframe dataset preview now uses official ODS color for new chart button
+- Fixes
+  - It's now possible to add non-key dimensions when all key dimensions of a
+    cube are joined
+  - Improved cut-off and overlapping labels in combo charts
 
 # 5.7.4 - 2025-04-29
 

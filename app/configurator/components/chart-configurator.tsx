@@ -15,6 +15,7 @@ import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
+import uniq from "lodash/uniq";
 import React, {
   Fragment,
   ReactNode,
@@ -94,6 +95,7 @@ import {
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
+import { isJoinByCube } from "@/graphql/join";
 import {
   PossibleFiltersDocument,
   PossibleFiltersQuery,
@@ -496,6 +498,17 @@ const useFilterReorder = ({
       filterDimensions,
       (d) => d.cubeIri
     );
+    const allCubeIris = uniq(dimensions?.map((d) => d.cubeIri));
+
+    // Make sure we don't forget about merged cubes that have non-key-dimensions
+    // available, but no key dimension available (might be the case when merging)
+    // cubes by a lot of key dimensions that get joinBy cube iri then.
+    for (const iri of allCubeIris) {
+      if (!filterDimensionsByCubeIri[iri]) {
+        filterDimensionsByCubeIri[iri] = [];
+      }
+    }
+
     const addableDimensions =
       dimensions?.filter(
         (dim) =>
@@ -564,8 +577,6 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
     },
   },
   addDimensionContainer: {
-    marginTop: theme.spacing(5),
-
     "& .menu-button": {
       background: "transparent",
       border: 0,
@@ -730,8 +741,15 @@ export const ChartConfigurator = ({
                 />
               </Box>
             )}
-            {Object.entries(filterDimensionsByCubeIri).map(
-              ([cubeIri, dims]) => {
+            {Object.entries(filterDimensionsByCubeIri)
+              .sort((a, b) =>
+                isJoinByCube(a[0])
+                  ? -1
+                  : isJoinByCube(b[0])
+                    ? 1
+                    : a[0].localeCompare(b[0])
+              )
+              .map(([cubeIri, dims]) => {
                 const cubeTitle = cubes?.find(
                   (cube) => cube.iri === cubeIri
                 )?.title;
@@ -799,8 +817,7 @@ export const ChartConfigurator = ({
                     ) : null}
                   </Fragment>
                 );
-              }
-            )}
+              })}
           </ControlSectionContent>
         </ControlSection>
       )}
