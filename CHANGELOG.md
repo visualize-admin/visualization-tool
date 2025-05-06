@@ -11,12 +11,15 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# 5.7.6 - 2025-05-06
+
 - WMTS / WMS layers
   - Features
     - Add a warning icon next to a layer if its CRS is unsupported (not CRS:84 /
       ESPG:3857)
   - Fixes
-    - Nested layers appear on the map
     - Attributions are no longer coming from all layers of the endpoint
     - WMS GetMap endpoint is correct in case it's not the same as the root
       Service (wms.geo.ag.ch for example)
@@ -29,6 +32,11 @@ You can also check the
   - It's now possible to add non-key dimensions when all key dimensions of a
     cube are joined
   - Improved cut-off and overlapping labels in combo charts
+
+# 5.7.5 - 2025-04-29
+
+- Fixes
+  - Nested layers appear on the map
 
 # 5.7.4 - 2025-04-29
 
