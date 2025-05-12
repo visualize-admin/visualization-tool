@@ -3,26 +3,27 @@ import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
+import useEvent from "@/utils/use-event";
 
 export const InteractionColumns = () => {
   const [, dispatch] = useInteraction();
-
-  const { chartData, bounds, getX, xScaleInteraction } = useChartState() as
-    | ColumnsState
-    | ComboLineColumnState;
-  const { margins, chartHeight } = bounds;
-
-  const showTooltip = (d: Observation) => {
+  const {
+    chartData,
+    bounds: { margins, chartHeight },
+    getX,
+    xScaleInteraction,
+  } = useChartState() as ColumnsState | ComboLineColumnState;
+  const showTooltip = useEvent((d: Observation) => {
     dispatch({
       type: "INTERACTION_UPDATE",
       value: { interaction: { visible: true, d } },
     });
-  };
-  const hideTooltip = () => {
+  });
+  const hideTooltip = useEvent(() => {
     dispatch({
       type: "INTERACTION_HIDE",
     });
-  };
+  });
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
       {chartData.map((d, i) => (
