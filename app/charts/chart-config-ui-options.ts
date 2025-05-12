@@ -589,8 +589,10 @@ const getNonStackedDomain = (
   observations: Observation[],
   getValue: (o: Observation) => number
 ) => {
+  const [min, max] = extent(observations.map(getValue)) as [number, number];
+
   return scaleLinear()
-    .domain(extent(observations.map(getValue)) as [number, number])
+    .domain([Math.min(min, 0), max])
     .nice()
     .domain() as [number, number];
 };
