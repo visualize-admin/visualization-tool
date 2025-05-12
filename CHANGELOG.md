@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Column line combo charts now work correctly with temporal entity X dimension
 
 # 5.7.6 - 2025-05-06
 
