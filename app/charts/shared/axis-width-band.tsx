@@ -13,7 +13,6 @@ import {
 } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
-import { useTimeFormatUnit } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
 
 export const AxisWidthBand = () => {
@@ -23,8 +22,9 @@ export const AxisWidthBand = () => {
     getXLabel,
     xDimension,
     xTimeUnit,
+    formatXDate,
     yScale,
-    bounds,
+    bounds: { chartHeight, chartWidth, margins },
     xAxisLabel,
     bottomAxisLabelSize,
   } = useChartState() as
@@ -34,11 +34,7 @@ export const AxisWidthBand = () => {
     | ComboLineColumnState;
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const formatDate = useTimeFormatUnit();
-  const { chartHeight, chartWidth, margins } = bounds;
-
   const xAxisTitleOffset = useXAxisTitleOffset(xScale, getXLabel, xTimeUnit);
-
   const {
     labelColor,
     gridColor,
@@ -60,7 +56,7 @@ export const AxisWidthBand = () => {
         .tickPadding(rotation ? -10 : 0);
 
       if (xTimeUnit) {
-        axis.tickFormat((d) => formatDate(d, xTimeUnit));
+        axis.tickFormat((d) => formatXDate(d));
       } else {
         axis.tickFormat((d) => getXLabel(d));
       }
@@ -96,7 +92,6 @@ export const AxisWidthBand = () => {
     domainColor,
     enableTransition,
     fontFamily,
-    formatDate,
     getXLabel,
     gridColor,
     labelColor,
@@ -107,6 +102,7 @@ export const AxisWidthBand = () => {
     xScale,
     xTimeUnit,
     yScale,
+    formatXDate,
   ]);
 
   return (

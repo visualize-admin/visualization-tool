@@ -16,7 +16,8 @@ const Columns = () => {
     chartData,
     bounds,
     xScale,
-    getX,
+    getXAsDate,
+    formatXDate,
     y,
     yOrientationScales,
     colors,
@@ -36,7 +37,8 @@ const Columns = () => {
   const renderData: RenderColumnDatum[] = useMemo(() => {
     return chartData.map((d) => {
       const key = getRenderingKey(d);
-      const xScaled = xScale(getX(d)) as number;
+      const xDate = getXAsDate(d);
+      const xScaled = xScale(formatXDate(xDate)) as number;
       const y = yColumn.getY(d) ?? NaN;
       const yScaled = yScale(y);
       const yRender = yScale(Math.max(y, 0));
@@ -57,7 +59,8 @@ const Columns = () => {
     chartData,
     getRenderingKey,
     xScale,
-    getX,
+    getXAsDate,
+    formatXDate,
     yColumn,
     yScale,
     y0,
@@ -87,8 +90,16 @@ const Columns = () => {
 };
 
 const Lines = () => {
-  const { chartData, xScale, getX, yOrientationScales, y, colors, bounds } =
-    useChartState() as ComboLineColumnState;
+  const {
+    chartData,
+    xScale,
+    getXAsDate,
+    formatXDate,
+    yOrientationScales,
+    y,
+    colors,
+    bounds,
+  } = useChartState() as ComboLineColumnState;
   const yLine = y.left.chartType === "line" ? y.left : y.right;
   const yScale =
     y.left.chartType === "line"
@@ -101,7 +112,11 @@ const Lines = () => {
       const y = yLine.getY(d);
       return y !== null && !isNaN(y);
     })
-    .x((d) => (xScale(getX(d)) as number) + xScale.bandwidth() * 0.5)
+    .x(
+      (d) =>
+        (xScale(formatXDate(getXAsDate(d))) as number) +
+        xScale.bandwidth() * 0.5
+    )
     .y((d) => yScale(yLine.getY(d) as number));
 
   return (
