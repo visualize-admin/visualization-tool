@@ -4,6 +4,7 @@ import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { ErrorWhiskers, Lines } from "@/charts/line/lines";
 import { LineChart } from "@/charts/line/lines-state";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
+import { AxisHideXOverflowRect } from "@/charts/shared/axis-hide-overflow-rect";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime, shouldShowBrush } from "@/charts/shared/brush";
 import {
@@ -43,7 +44,7 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
     <LineChart {...props} limits={limits}>
       <ChartContainer>
         <ChartSvg>
-          <AxisHeightLinear /> <AxisTime /> <AxisTimeDomain />
+          <AxisHeightLinear />
           <Lines
             dotSize={
               "showDots" in chartConfig.fields.y &&
@@ -53,6 +54,9 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
                 : undefined
             }
           />
+          <AxisHideXOverflowRect />
+          <AxisTime />
+          <AxisTimeDomain />
           <ErrorWhiskers />
           <VerticalLimits {...limits} />
           <InteractionHorizontal />
