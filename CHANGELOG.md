@@ -11,7 +11,12 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Default min custom scale domain value now defaults to 0 if no negative
+    values are present
+  - Chart area no longer overflows below X or Y axes when setting custom scale
+    domains
+  - Band axis ticks should now be aligned correctly
 
 # 5.7.6 - 2025-05-06
 
