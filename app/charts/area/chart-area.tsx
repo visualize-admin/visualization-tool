@@ -4,6 +4,7 @@ import { Areas } from "@/charts/area/areas";
 import { AreaChart } from "@/charts/area/areas-state";
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
+import { AxisHideXOverflowRect } from "@/charts/shared/axis-hide-overflow-rect";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
 import { BrushTime } from "@/charts/shared/brush";
 import {
@@ -40,8 +41,11 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
     <AreaChart {...props} limits={limits}>
       <ChartContainer>
         <ChartSvg>
-          <AxisTime /> <AxisTimeDomain /> <AxisHeightLinear />
+          <AxisHeightLinear />
           <Areas />
+          <AxisHideXOverflowRect />
+          <AxisTime />
+          <AxisTimeDomain />
           <VerticalLimits {...limits} />
           <InteractionHorizontal />
           {interactiveFiltersConfig?.timeRange.active === true && <BrushTime />}

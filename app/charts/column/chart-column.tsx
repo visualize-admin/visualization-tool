@@ -12,6 +12,7 @@ import { StackedColumnsChart } from "@/charts/column/columns-stacked-state";
 import { ColumnChart } from "@/charts/column/columns-state";
 import { InteractionColumns } from "@/charts/column/overlay-columns";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
+import { AxisHideXOverflowRect } from "@/charts/shared/axis-hide-overflow-rect";
 import {
   AxisWidthBand,
   AxisWidthBandDomain,
@@ -60,9 +61,11 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
         <StackedColumnsChart {...props}>
           <ChartContainer>
             <ChartSvg>
-              <AxisHeightLinear /> <AxisWidthBand />
-              <AxisWidthBandDomain />
+              <AxisHeightLinear />
               <ColumnsStacked />
+              <AxisHideXOverflowRect />
+              <AxisWidthBand />
+              <AxisWidthBandDomain />
               <InteractionColumns />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
@@ -90,9 +93,10 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear />
+              <ColumnsGrouped />
+              <AxisHideXOverflowRect />
               <AxisWidthBand />
               <AxisWidthBandDomain />
-              <ColumnsGrouped />
               <ErrorWhiskersGrouped />
               <InteractionColumns />
               {showTimeBrush && <BrushTime />}
@@ -121,9 +125,10 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear />
+              <Columns />
+              <AxisHideXOverflowRect />
               <AxisWidthBand />
               <AxisWidthBandDomain />
-              <Columns />
               <ErrorWhiskers />
               <VerticalLimits {...limits} />
               <InteractionColumns />

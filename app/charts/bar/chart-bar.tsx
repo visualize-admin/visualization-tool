@@ -15,6 +15,7 @@ import {
   AxisHeightBand,
   AxisHeightBandDomain,
 } from "@/charts/shared/axis-height-band";
+import { AxisHideYOverflowRect } from "@/charts/shared/axis-hide-overflow-rect";
 import { AxisWidthLinear } from "@/charts/shared/axis-width-linear";
 import { BrushTime, shouldShowBrush } from "@/charts/shared/brush";
 import {
@@ -61,9 +62,10 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisWidthLinear />
+              <BarsStacked />
+              <AxisHideYOverflowRect />
               <AxisHeightBand />
               <AxisHeightBandDomain />
-              <BarsStacked />
               <InteractionBars />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
@@ -91,9 +93,10 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisWidthLinear />
+              <BarsGrouped />
+              <AxisHideYOverflowRect />
               <AxisHeightBand />
               <AxisHeightBandDomain />
-              <BarsGrouped />
               <ErrorWhiskersGrouped />
               <InteractionBars />
               {showTimeBrush && <BrushTime />}
@@ -122,9 +125,10 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisWidthLinear />
+              <Bars />
+              <AxisHideYOverflowRect />
               <AxisHeightBand />
               <AxisHeightBandDomain />
-              <Bars />
               <ErrorWhiskers />
               <HorizontalLimits {...limits} />
               <InteractionBars />
