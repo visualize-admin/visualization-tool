@@ -347,6 +347,7 @@ export const useLimits = ({
   measures: Measure[];
 }): {
   axisDimension: Dimension | undefined;
+  limitMeasure: Measure | undefined;
   limits: {
     configLimit: ConfigLimit;
     measureLimit: Limit;
@@ -354,25 +355,27 @@ export const useLimits = ({
   }[];
 } => {
   const filters = useDefinitiveFilters();
-  const measure = getLimitMeasure({ chartConfig, measures });
+  const limitMeasure = getLimitMeasure({ chartConfig, measures });
   const axisDimension = getAxisDimension({ chartConfig, dimensions });
 
   return useMemo(() => {
-    if (!measure) {
+    if (!limitMeasure) {
       return {
         axisDimension,
+        limitMeasure,
         limits: [],
       };
     }
 
     return {
       axisDimension,
-      limits: measure.limits
+      limitMeasure,
+      limits: limitMeasure.limits
         .map((limit) => {
           const { limit: maybeLimit, relatedAxisDimensionValueLabel } =
             getMaybeValidChartConfigLimit({
               chartConfig,
-              measureId: measure.id,
+              measureId: limitMeasure.id,
               limit,
               axisDimension,
               filters,
@@ -395,7 +398,7 @@ export const useLimits = ({
         })
         .filter(truthy),
     };
-  }, [chartConfig, filters, measure, axisDimension]);
+  }, [chartConfig, filters, limitMeasure, axisDimension]);
 };
 
 export const getSupportsLimitSymbols = (chartConfig: ChartConfig) => {

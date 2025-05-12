@@ -136,7 +136,7 @@ export const LegendColor = memo(function LegendColor({
   interactive?: boolean;
   showTitle?: boolean;
   dimensionsById?: DimensionsById;
-  limits?: ReturnType<typeof useLimits>["limits"];
+  limits?: ReturnType<typeof useLimits>;
 }) {
   const { colors, getColorLabel } = useChartState() as ColorsChartState;
   const values =
@@ -164,7 +164,7 @@ export const LegendColor = memo(function LegendColor({
       )}
       <LegendColorContent
         groups={groups}
-        limits={limits?.map(({ configLimit, measureLimit }) => ({
+        limits={limits?.limits.map(({ configLimit, measureLimit }) => ({
           label: measureLimit.name,
           values:
             measureLimit.type === "single"
@@ -176,6 +176,7 @@ export const LegendColor = memo(function LegendColor({
               ? "dashed-line"
               : "line"
             : configLimit.symbolType,
+          unit: limits.limitMeasure?.unit,
         }))}
         getColor={colors}
         getLabel={getColorLabel}
@@ -272,6 +273,7 @@ const LegendColorContent = ({
     values: number[];
     color: string;
     symbol: LegendSymbol;
+    unit?: string;
   }[];
   getColor: (d: string) => string;
   getLabel: (d: string) => string;
@@ -355,10 +357,10 @@ const LegendColorContent = ({
                   );
                 })}
                 {isLastGroup && limits
-                  ? limits.map(({ label, values, color, symbol }, i) => (
+                  ? limits.map(({ label, values, color, symbol, unit }, i) => (
                       <LegendItem
                         key={i}
-                        label={`${label}: ${values.map(formatNumber).join("-")}`}
+                        label={`${label}: ${values.map(formatNumber).join("-")}${unit ? ` ${unit}` : ""}`}
                         color={color}
                         symbol={symbol}
                       />

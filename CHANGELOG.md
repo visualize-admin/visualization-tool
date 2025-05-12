@@ -11,6 +11,8 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - Limit values displayed in the legend now include the unit if it's available
 - Fixes
   - Default min custom scale domain value now defaults to 0 if no negative
     values are present

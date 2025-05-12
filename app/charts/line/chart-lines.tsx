@@ -77,7 +77,7 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
             symbol="line"
             interactive={interactiveFiltersConfig?.legend.active}
             showTitle={fields.segment?.showTitle}
-            limits={limits.limits}
+            limits={limits}
           />
         </ChartControlsContainer>
       )}

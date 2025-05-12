@@ -91,7 +91,11 @@ const ColumnsStory = {
         <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
           <Observer>
             <ColumnChart
-              limits={{ axisDimension: undefined, limits: [] }}
+              limits={{
+                axisDimension: undefined,
+                limitMeasure: undefined,
+                limits: [],
+              }}
               observations={columnObservations}
               measures={columnMeasures}
               measuresById={keyBy(columnMeasures, (d: Measure) => d.id)}
