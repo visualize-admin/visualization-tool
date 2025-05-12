@@ -171,16 +171,6 @@ export type BandYVariables = {
   getYAsDate: TemporalValueGetter;
 };
 
-export type BandXVariables = {
-  xAxisLabel: string;
-  xDimension: Dimension;
-  getX: StringValueGetter;
-  getXLabel: (d: string) => string;
-  getXAbbreviationOrLabel: (d: Observation) => string;
-  xTimeUnit: TimeUnit | undefined;
-  getXAsDate: TemporalValueGetter;
-};
-
 export const useBandYVariables = (
   y: GenericField,
   {
@@ -196,9 +186,10 @@ export const useBandYVariables = (
     throw Error(`No dimension <${y.componentId}> in cube! (useBandXVariables)`);
   }
 
-  const yTimeUnit = isTemporalDimension(yDimension)
-    ? yDimension.timeUnit
-    : undefined;
+  const yTimeUnit =
+    isTemporalDimension(yDimension) || isTemporalEntityDimension(yDimension)
+      ? yDimension.timeUnit
+      : undefined;
 
   const {
     getAbbreviationOrLabelByValue: getYAbbreviationOrLabel,
@@ -229,6 +220,16 @@ export const useBandYVariables = (
   };
 };
 
+export type BandXVariables = {
+  xAxisLabel: string;
+  xDimension: Dimension;
+  getX: StringValueGetter;
+  getXLabel: (d: string) => string;
+  getXAbbreviationOrLabel: (d: Observation) => string;
+  xTimeUnit: TimeUnit | undefined;
+  getXAsDate: TemporalValueGetter;
+};
+
 export const useBandXVariables = (
   x: GenericField,
   {
@@ -244,9 +245,10 @@ export const useBandXVariables = (
     throw Error(`No dimension <${x.componentId}> in cube! (useBandXVariables)`);
   }
 
-  const xTimeUnit = isTemporalDimension(xDimension)
-    ? xDimension.timeUnit
-    : undefined;
+  const xTimeUnit =
+    isTemporalDimension(xDimension) || isTemporalEntityDimension(xDimension)
+      ? xDimension.timeUnit
+      : undefined;
 
   const {
     getAbbreviationOrLabelByValue: getXAbbreviationOrLabel,
