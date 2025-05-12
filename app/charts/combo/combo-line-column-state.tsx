@@ -74,6 +74,7 @@ export type ComboLineColumnState = CommonChartState &
     maxRightTickWidth: number;
     leftAxisLabelSize: AxisLabelSizeVariables;
     bottomAxisLabelSize: AxisLabelSizeVariables;
+    bypassXAxisTickFormat: true;
   };
 
 const useComboLineColumnState = (
@@ -257,6 +258,10 @@ const useComboLineColumnState = (
       offset: Math.max(leftAxisLabelSize.offset, rightAxisLabelSize.offset),
     },
     bottomAxisLabelSize,
+    // We need to bypass the default formatting, as we already need
+    // to format the x-axis labels upfront in the scale domain for
+    // properly build "temporal band" axis.
+    bypassXAxisTickFormat: true,
     ...variables,
   };
 };

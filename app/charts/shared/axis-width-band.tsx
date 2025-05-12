@@ -32,6 +32,7 @@ export const AxisWidthBand = () => {
     | StackedColumnsState
     | GroupedColumnsState
     | ComboLineColumnState;
+  const { bypassXAxisTickFormat } = useChartState() as ComboLineColumnState;
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const xAxisTitleOffset = useXAxisTitleOffset(xScale, getXLabel, xTimeUnit);
@@ -55,10 +56,12 @@ export const AxisWidthBand = () => {
         .tickSizeInner(hasNegativeValues ? -chartHeight : 6)
         .tickPadding(rotation ? -10 : 0);
 
-      if (xTimeUnit) {
-        axis.tickFormat((d) => formatXDate(d));
-      } else {
-        axis.tickFormat((d) => getXLabel(d));
+      if (!bypassXAxisTickFormat) {
+        if (xTimeUnit) {
+          axis.tickFormat((d) => formatXDate(d));
+        } else {
+          axis.tickFormat((d) => getXLabel(d));
+        }
       }
 
       const g = renderContainer(ref.current, {
@@ -103,6 +106,7 @@ export const AxisWidthBand = () => {
     xTimeUnit,
     yScale,
     formatXDate,
+    bypassXAxisTickFormat,
   ]);
 
   return (
