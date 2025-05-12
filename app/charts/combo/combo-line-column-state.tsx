@@ -259,7 +259,7 @@ const useComboLineColumnState = (
     },
     bottomAxisLabelSize,
     // We need to bypass the default formatting, as we already need
-    // to format the x-axis labels upfront in the scale domain for
+    // to format the x-axis labels upfront in the scale domain to
     // properly build "temporal band" axis.
     bypassXAxisTickFormat: true,
     ...variables,
