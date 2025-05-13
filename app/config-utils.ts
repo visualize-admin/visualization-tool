@@ -341,10 +341,12 @@ export const useLimits = ({
   chartConfig,
   dimensions,
   measures,
+  unitOverride,
 }: {
   chartConfig: ChartConfig;
   dimensions: Dimension[];
   measures: Measure[];
+  unitOverride?: string;
 }): {
   axisDimension: Dimension | undefined;
   limitMeasure: Measure | undefined;
@@ -352,6 +354,7 @@ export const useLimits = ({
     configLimit: ConfigLimit;
     measureLimit: Limit;
     relatedAxisDimensionValueLabel: string | undefined;
+    limitUnit: string | undefined;
   }[];
 } => {
   const filters = useDefinitiveFilters();
@@ -393,12 +396,13 @@ export const useLimits = ({
                 },
                 measureLimit: limit,
                 relatedAxisDimensionValueLabel,
+                limitUnit: unitOverride ?? limitMeasure.unit,
               }
             : null;
         })
         .filter(truthy),
     };
-  }, [chartConfig, filters, limitMeasure, axisDimension]);
+  }, [limitMeasure, axisDimension, chartConfig, filters, unitOverride]);
 };
 
 export const getSupportsLimitSymbols = (chartConfig: ChartConfig) => {

@@ -30,7 +30,7 @@ import { ColumnConfig } from "@/config-types";
 import { useChartConfigFilters, useLimits } from "@/config-utils";
 import { hasChartConfigs } from "@/configurator";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
-import { useConfiguratorState } from "@/src";
+import { useConfiguratorState, useLocale } from "@/src";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -41,8 +41,10 @@ export const ChartColumnsVisualization = (
 };
 
 const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
+  const locale = useLocale();
   const { chartConfig, dimensions, measures, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { y } = fields;
   const filters = useChartConfigFilters(chartConfig);
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
   const showTimeBrush = shouldShowBrush(
@@ -53,6 +55,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
     chartConfig,
     dimensions,
     measures,
+    unitOverride: y.unitConversion?.labels[locale],
   });
 
   return (

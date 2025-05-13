@@ -19,6 +19,7 @@ import { VerticalLimits } from "@/charts/shared/limits";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { AreaConfig } from "@/config-types";
 import { useLimits } from "@/config-utils";
+import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -29,12 +30,15 @@ export const ChartAreasVisualization = (
 };
 
 const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
+  const locale = useLocale();
   const { chartConfig, dimensions, measures, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
+  const { y } = fields;
   const limits = useLimits({
     chartConfig,
     dimensions,
     measures,
+    unitOverride: y.unitConversion?.labels[locale],
   });
 
   return (
