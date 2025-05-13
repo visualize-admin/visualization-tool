@@ -8,20 +8,16 @@ import {
   TableRow,
   TableSortLabel,
   Theme,
-  TooltipProps,
-  Typography,
 } from "@mui/material";
 import { ascending, descending } from "d3-array";
 import { useCallback, useMemo, useRef, useState } from "react";
 
+import { ComponentLabel } from "@/browse/component-label";
 import {
   extractChartConfigComponentIds,
-  getLabelWithUnit,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
-import { MaybeTooltip } from "@/components/maybe-tooltip";
-import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import {
   ChartConfig,
   DashboardFiltersConfig,
@@ -271,37 +267,4 @@ export const getSortedComponents = (components: Component[]) => {
   return [...components].sort((a, b) => {
     return ascending(a.order ?? Infinity, b.order ?? Infinity);
   });
-};
-
-const ComponentLabel = ({
-  component,
-  tooltipProps,
-  linkToMetadataPanel,
-}: {
-  component: Component;
-  tooltipProps?: Omit<TooltipProps, "title" | "children">;
-  linkToMetadataPanel: boolean;
-}) => {
-  const label = getLabelWithUnit(component);
-  const labelNode = (
-    <Typography
-      variant="h6"
-      component="span"
-      sx={{ color: "monochrome.500", textTransform: "uppercase" }}
-    >
-      {label}
-    </Typography>
-  );
-
-  return linkToMetadataPanel ? (
-    <OpenMetadataPanelWrapper component={component}>
-      {labelNode}
-    </OpenMetadataPanelWrapper>
-  ) : component.description ? (
-    <MaybeTooltip title={component.description} tooltipProps={tooltipProps}>
-      {labelNode}
-    </MaybeTooltip>
-  ) : (
-    labelNode
-  );
 };
