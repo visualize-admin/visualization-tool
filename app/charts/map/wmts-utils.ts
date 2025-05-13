@@ -1,8 +1,10 @@
 import { TileLayer } from "@deck.gl/geo-layers";
 import { BitmapLayer } from "@deck.gl/layers";
 import { XMLParser } from "fast-xml-parser";
+import uniq from "lodash/uniq";
 
 import { isRemoteLayerCRSSupported } from "@/charts/map/wms-wmts-endpoint-utils";
+import { maybeArray, parseCrs } from "@/charts/map/wms-wmts-parse-utils";
 import { WMTSCustomLayer } from "@/config-types";
 
 type WMTSData = {
@@ -25,6 +27,18 @@ type WMTSData = {
     };
     "ows:ServiceProvider": {
       "ows:ProviderName": string;
+    };
+    "ows:OperationsMetadata": {
+      "ows:Operation": {
+        name: string;
+        "ows:DCP": {
+          "ows:HTTP": {
+            "ows:Get": {
+              "xlink:href": string;
+            };
+          };
+        };
+      }[];
     };
   };
 };
@@ -81,7 +95,7 @@ export type RemoteWMTSLayer = {
   type: "wmts";
   children?: RemoteWMTSLayer[];
   attribution: string;
-  tileMatrixSet?: TileMatrixSet | undefined;
+  tileMatrixSets?: TileMatrixSet[] | undefined;
   crs: string[];
 };
 
@@ -144,13 +158,17 @@ const parseWMTSLayer = (
     endpoint: string;
     attribution: string;
   },
-  tileMatrixById: Record<string, TileMatrixSet> = {}
+  tileMatrixById: Record<string, TileMatrixSet> = {},
+  getTileUrl: string | undefined
 ): RemoteWMTSLayer => {
-  const tileMatrixSet = tileMatrixById[layer.TileMatrixSetLink.TileMatrixSet];
+  const tileMatrixSetLinks = maybeArray(layer.TileMatrixSetLink) ?? [];
+  const tileMatrixSets = tileMatrixSetLinks.map(
+    (tl) => tileMatrixById[tl.TileMatrixSet]
+  );
   const res: RemoteWMTSLayer = {
     id: layer["ows:Identifier"],
     path: layer["ows:Identifier"],
-    url: layer.ResourceURL.template || attributes.endpoint,
+    url: layer.ResourceURL.template || getTileUrl || attributes.endpoint,
     title: layer["ows:Title"],
     description: layer["ows:Abstract"],
     legendUrl: layer.Style.LegendURL?.["xlink:href"],
@@ -163,8 +181,12 @@ const parseWMTSLayer = (
       : undefined,
     defaultDimensionValue: layer.Dimension?.Default,
     type: "wmts",
-    tileMatrixSet: tileMatrixById[layer.TileMatrixSetLink.TileMatrixSet],
-    crs: tileMatrixSet?.supportedCRS ?? [],
+    tileMatrixSets: tileMatrixSets,
+    crs: uniq(
+      tileMatrixSets
+        .map((ts) => (ts?.supportedCRS ?? []).map((crs) => parseCrs(crs)))
+        .flat()
+    ),
     ...attributes,
   };
 
@@ -172,8 +194,8 @@ const parseWMTSLayer = (
   if (layer.Layer) {
     const children = layer.Layer
       ? layer.Layer instanceof Array
-        ? layer.Layer.map((l) => parseWMTSLayer(l, attributes))
-        : [parseWMTSLayer(layer.Layer, attributes, tileMatrixById)]
+        ? layer.Layer.map((l) => parseWMTSLayer(l, attributes, {}, getTileUrl))
+        : [parseWMTSLayer(layer.Layer, attributes, tileMatrixById, getTileUrl)]
       : undefined;
     res.children = children;
   }
@@ -188,6 +210,10 @@ const mapArrayOrUnique = <T, I>(arr: T | T[], cb: (item: T) => I): I[] => {
   return [cb(arr)];
 };
 
+const formatGetTileUrl = (url: string) => {
+  return `${url.endsWith("?") ? url : `${url}?`}Service=WMTS&Request=GetTile&Transparent=true&Version=1.0.0&Format=image/png&tileMatrixSet={TileMatrixSet}&tileMatrix={TileMatrix}&tileRow={TileRow}&tileCol={TileCol}&layer={Layer}`;
+};
+
 export const parseWMTSContent = (content: string, endpoint: string) => {
   const parser = new XMLParser({
     ignoreAttributes: false,
@@ -200,6 +226,15 @@ export const parseWMTSContent = (content: string, endpoint: string) => {
     attribution:
       parsed.Capabilities["ows:ServiceProvider"]?.["ows:ProviderName"],
   };
+  const getTileOperation = parsed.Capabilities["ows:OperationsMetadata"]?.[
+    "ows:Operation"
+  ]?.find((operation) => operation["name"] === "GetTile");
+  const getTileUrlRaw =
+    getTileOperation?.["ows:DCP"]?.["ows:HTTP"]?.["ows:Get"]?.["xlink:href"];
+  const getTileUrl = getTileUrlRaw
+    ? formatGetTileUrl(getTileUrlRaw)
+    : undefined;
+
   const tileMatrixSets = parseTileMatrixSets(
     parsed.Capabilities.Contents.TileMatrixSet
   );
@@ -210,7 +245,7 @@ export const parseWMTSContent = (content: string, endpoint: string) => {
     : {};
   const Layer = parsed.Capabilities.Contents.Layer;
   return mapArrayOrUnique(Layer, (l) =>
-    parseWMTSLayer(l, attributes, tileMatrixById)
+    parseWMTSLayer(l, attributes, tileMatrixById, getTileUrl)
   );
 };
 
@@ -229,8 +264,8 @@ export const getWMTSTile = ({
   value?: number | string;
 }) => {
   const url = customLayer?.url ?? customLayer?.endpoint;
-  if (!url) {
-    console.warn("No url");
+  if (customLayer && customLayer.url === "undefined") {
+    console.warn("No url on layer, defaulted to endpoint");
     return;
   }
   if (!customLayer) {
@@ -243,6 +278,11 @@ export const getWMTSTile = ({
     return;
   }
 
+  if (!url) {
+    console.warn("No url found");
+    return;
+  }
+
   if (!isRemoteLayerCRSSupported(wmtsLayer)) {
     console.warn(
       `The WMTS layer ${wmtsLayer.id} does not have a supported CRS, skipping layer.`
@@ -250,19 +290,25 @@ export const getWMTSTile = ({
     return;
   }
 
+  const espg3857TileMatrixSet = wmtsLayer.tileMatrixSets?.find((tms) => {
+    return tms.id === "EPSG:3857";
+  });
+
+  const tileLayerDataUrl = getWMTSLayerData(url, {
+    tileMatrixSetId: espg3857TileMatrixSet?.id,
+    identifier: wmtsLayer.dimensionIdentifier,
+    layerId: wmtsLayer.id,
+    value: getWMTSLayerValue({
+      availableDimensionValues: wmtsLayer.availableDimensionValues ?? [],
+      defaultDimensionValue: wmtsLayer.defaultDimensionValue,
+      customLayer,
+      value,
+    }),
+  });
   return new TileLayer({
     id: `tile-layer-${url}`,
     beforeId,
-    data: getWMTSLayerData(url, {
-      tileMatrixSetId: wmtsLayer.tileMatrixSet?.id,
-      identifier: wmtsLayer.dimensionIdentifier,
-      value: getWMTSLayerValue({
-        availableDimensionValues: wmtsLayer.availableDimensionValues ?? [],
-        defaultDimensionValue: wmtsLayer.defaultDimensionValue,
-        customLayer,
-        value,
-      }),
-    }),
+    data: tileLayerDataUrl,
     tileSize: 256,
     renderSubLayers: (props) => {
       const { boundingBox } = props.tile;
@@ -286,10 +332,12 @@ const getWMTSLayerData = (
     identifier,
     value,
     tileMatrixSetId,
+    layerId,
   }: {
     identifier: string | undefined;
     value: string | number;
     tileMatrixSetId?: TileMatrixSet["id"];
+    layerId?: string;
   }
 ) => {
   const identifierReplaced = identifier
@@ -298,8 +346,11 @@ const getWMTSLayerData = (
   const tileMatrixSetReplaced = tileMatrixSetId
     ? identifierReplaced.replace(`{TileMatrixSet}`, tileMatrixSetId)
     : identifierReplaced;
-  return tileMatrixSetReplaced
-    .replace("{TileMatrix}", "{z}")
+  const layerReplaced = layerId
+    ? tileMatrixSetReplaced.replace(`{Layer}`, layerId)
+    : tileMatrixSetReplaced;
+  return layerReplaced
+    .replace("{TileMatrix}", tileMatrixSetId ? `${tileMatrixSetId}:{z}` : "{z}")
     .replace("{TileCol}", "{x}")
     .replace("{TileRow}", "{y}");
 };
