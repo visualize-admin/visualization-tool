@@ -851,6 +851,8 @@ const getAdjustedChartConfig = ({
       case "filters":
       case "fields.color":
       case "fields.segment":
+      case "fields.x.unitConversion":
+      case "fields.y.unitConversion":
       case "fields.animation":
       case "interactiveFiltersConfig.calculation":
       case "interactiveFiltersConfig.dataFilters":
@@ -1034,6 +1036,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             draft.fields.y.customDomain = oldValue;
           });
         },
+        unitConversion: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.unitConversion = oldValue;
+          });
+        },
       },
       color: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
@@ -1161,6 +1168,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         customDomain: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.x.customDomain = oldValue;
+          });
+        },
+        unitConversion: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.x.unitConversion = oldValue;
           });
         },
       },
@@ -1323,6 +1335,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             draft.fields.y.customDomain = oldValue;
           });
         },
+        unitConversion: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.unitConversion = oldValue;
+          });
+        },
       },
       color: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
@@ -1443,6 +1460,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             draft.fields.y.customDomain = oldValue;
           });
         },
+        unitConversion: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.unitConversion = oldValue;
+          });
+        },
       },
       color: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
@@ -1556,6 +1578,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
 
           return newChartConfig;
         },
+        unitConversion: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.x.unitConversion = oldValue;
+          });
+        },
       },
       y: {
         componentId: ({ oldValue, newChartConfig, measures }) => {
@@ -1584,6 +1611,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
 
           return newChartConfig;
+        },
+        unitConversion: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.unitConversion = oldValue;
+          });
         },
       },
       color: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
@@ -1683,6 +1715,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         showValues: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.y.showValues = oldValue;
+          });
+        },
+        unitConversion: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            draft.fields.y.unitConversion = oldValue;
           });
         },
       },
@@ -2166,6 +2203,7 @@ const chartConfigsPathOverrides: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.x.showValues": { path: "fields.y.showValues" },
       "fields.x.customDomain": { path: "fields.y.customDomain" },
+      "fields.x.unitConversion": { path: "fields.y.unitConversion" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
@@ -2201,22 +2239,26 @@ const chartConfigsPathOverrides: {
       "fields.y.componentId": { path: "fields.x.componentId" },
       "fields.y.showValues": { path: "fields.x.showValues" },
       "fields.y.customDomain": { path: "fields.x.customDomain" },
+      "fields.y.unitConversion": { path: "fields.x.unitConversion" },
     },
     line: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
       "fields.y.showValues": { path: "fields.x.showValues" },
       "fields.y.customDomain": { path: "fields.x.customDomain" },
+      "fields.y.unitConversion": { path: "fields.x.unitConversion" },
     },
     area: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
       "fields.y.showValues": { path: "fields.x.showValues" },
       "fields.y.customDomain": { path: "fields.x.customDomain" },
+      "fields.y.unitConversion": { path: "fields.x.unitConversion" },
     },
     pie: {
       "fields.y.componentId": { path: "fields.x.componentId" },
       "fields.y.showValues": { path: "fields.x.showValues" },
+      "fields.y.unitConversion": { path: "fields.x.unitConversion" },
     },
     map: {
       "fields.areaLayer.componentId": { path: "fields.y.componentId" },
@@ -2250,6 +2292,7 @@ const chartConfigsPathOverrides: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.x.showValues": { path: "fields.y.showValues" },
       "fields.x.customDomain": { path: "fields.y.customDomain" },
+      "fields.x.unitConversion": { path: "fields.y.unitConversion" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
@@ -2283,6 +2326,7 @@ const chartConfigsPathOverrides: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.x.showValues": { path: "fields.y.showValues" },
       "fields.x.customDomain": { path: "fields.y.customDomain" },
+      "fields.x.unitConversion": { path: "fields.y.unitConversion" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
@@ -2342,6 +2386,7 @@ const chartConfigsPathOverrides: {
     bar: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.x.showValues": { path: "fields.y.showValues" },
+      "fields.x.unitConversion": { path: "fields.y.unitConversion" },
       // We want to avoid running the logic for the y component twice.
       "fields.y.componentId": { path: "SKIP" },
     },

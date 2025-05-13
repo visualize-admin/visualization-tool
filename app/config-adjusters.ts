@@ -35,6 +35,7 @@ import {
   ScatterPlotSegmentField,
   TableConfig,
   TableFields,
+  UnitConversionFieldExtension,
 } from "@/config-types";
 import { Dimension, Measure } from "@/domain/data";
 import { ComponentId } from "@/graphql/make-component-id";
@@ -88,6 +89,10 @@ type ColumnAdjusters = BaseAdjusters<ColumnConfig> & {
       componentId: FieldAdjuster<ColumnConfig, ComponentId>;
       showValues: FieldAdjuster<ColumnConfig, boolean>;
       customDomain: FieldAdjuster<ColumnConfig, [number, number]>;
+      unitConversion: FieldAdjuster<
+        ColumnConfig,
+        UnitConversionFieldExtension["unitConversion"]
+      >;
     };
     color: FieldAdjuster<ColumnConfig, ColorField>;
     segment: FieldAdjuster<
@@ -109,6 +114,10 @@ type BarAdjusters = BaseAdjusters<BarConfig> & {
       componentId: FieldAdjuster<BarConfig, ComponentId>;
       showValues: FieldAdjuster<BarConfig, boolean>;
       customDomain: FieldAdjuster<BarConfig, [number, number]>;
+      unitConversion: FieldAdjuster<
+        BarConfig,
+        UnitConversionFieldExtension["unitConversion"]
+      >;
     };
     y: { componentId: FieldAdjuster<BarConfig, ComponentId> };
     color: FieldAdjuster<BarConfig, ColorField>;
@@ -132,6 +141,10 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
       componentId: FieldAdjuster<LineConfig, ComponentId>;
       showValues: FieldAdjuster<LineConfig, boolean>;
       customDomain: FieldAdjuster<LineConfig, [number, number]>;
+      unitConversion: FieldAdjuster<
+        LineConfig,
+        UnitConversionFieldExtension["unitConversion"]
+      >;
     };
     color: FieldAdjuster<LineConfig, ColorField>;
     segment: FieldAdjuster<
@@ -153,6 +166,10 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
       componentId: FieldAdjuster<AreaConfig, ComponentId>;
       showValues: FieldAdjuster<AreaConfig, boolean>;
       customDomain: FieldAdjuster<AreaConfig, [number, number]>;
+      unitConversion: FieldAdjuster<
+        AreaConfig,
+        UnitConversionFieldExtension["unitConversion"]
+      >;
     };
     color: FieldAdjuster<AreaConfig, ColorField>;
     segment: FieldAdjuster<
@@ -169,8 +186,20 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
 
 type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
   fields: {
-    x: { componentId: FieldAdjuster<ScatterPlotConfig, ComponentId> };
-    y: { componentId: FieldAdjuster<ScatterPlotConfig, ComponentId> };
+    x: {
+      componentId: FieldAdjuster<ScatterPlotConfig, ComponentId>;
+      unitConversion: FieldAdjuster<
+        ScatterPlotConfig,
+        UnitConversionFieldExtension["unitConversion"]
+      >;
+    };
+    y: {
+      componentId: FieldAdjuster<ScatterPlotConfig, ComponentId>;
+      unitConversion: FieldAdjuster<
+        ScatterPlotConfig,
+        UnitConversionFieldExtension["unitConversion"]
+      >;
+    };
     color: FieldAdjuster<ScatterPlotConfig, ColorField>;
     segment: FieldAdjuster<
       ScatterPlotConfig,
@@ -190,6 +219,10 @@ type PieAdjusters = BaseAdjusters<PieConfig> & {
     y: {
       componentId: FieldAdjuster<PieConfig, ComponentId>;
       showValues: FieldAdjuster<PieConfig, boolean>;
+      unitConversion: FieldAdjuster<
+        PieConfig,
+        UnitConversionFieldExtension["unitConversion"]
+      >;
     };
     color: FieldAdjuster<PieConfig, ColorField>;
     segment: FieldAdjuster<
