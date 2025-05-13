@@ -1,120 +1,21 @@
 import {
-  Box,
-  SxProps,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
   TableSortLabel,
-  Theme,
 } from "@mui/material";
 import { ascending, descending } from "d3-array";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { ComponentLabel } from "@/browse/component-label";
-import {
-  extractChartConfigComponentIds,
-  useQueryFilters,
-} from "@/charts/shared/chart-helpers";
-import { Loading } from "@/components/hint";
-import {
-  ChartConfig,
-  DashboardFiltersConfig,
-  DataSource,
-} from "@/config-types";
-import {
-  Component,
-  Dimension,
-  isNumericalMeasure,
-  Measure,
-  Observation,
-} from "@/domain/data";
+import { Component, isNumericalMeasure, Observation } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
-import {
-  useDataCubesComponentsQuery,
-  useDataCubesMetadataQuery,
-  useDataCubesObservationsQuery,
-} from "@/graphql/hooks";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
-import { useLocale } from "@/locales/use-locale";
 import { uniqueMapBy } from "@/utils/uniqueMapBy";
 
-export const ChartDataTablePreview = ({
-  dataSource,
-  chartConfig,
-  dashboardFilters,
-  sx,
-}: {
-  dataSource: DataSource;
-  chartConfig: ChartConfig;
-  dashboardFilters: DashboardFiltersConfig | undefined;
-  sx?: SxProps<Theme>;
-}) => {
-  const locale = useLocale();
-  const componentIds = extractChartConfigComponentIds({ chartConfig });
-  const commonQueryVariables = {
-    sourceType: dataSource.type,
-    sourceUrl: dataSource.url,
-    locale,
-  };
-  const [{ data: metadataData }] = useDataCubesMetadataQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
-    },
-  });
-  const [{ data: componentsData, fetching: fetchingComponents }] =
-    useDataCubesComponentsQuery({
-      variables: {
-        ...commonQueryVariables,
-        cubeFilters: chartConfig.cubes.map((cube) => ({
-          iri: cube.iri,
-          componentIds,
-          joinBy: cube.joinBy,
-        })),
-      },
-    });
-  const sortedComponents = useMemo(() => {
-    if (!componentsData?.dataCubesComponents) {
-      return [];
-    }
-
-    return getSortedComponents([
-      ...componentsData.dataCubesComponents.dimensions,
-      ...componentsData.dataCubesComponents.measures,
-    ]);
-  }, [componentsData?.dataCubesComponents]);
-  const queryFilters = useQueryFilters({
-    chartConfig,
-    dashboardFilters,
-    componentIds,
-  });
-  const [{ data: observationsData }] = useDataCubesObservationsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: queryFilters,
-    },
-    pause: fetchingComponents,
-  });
-
-  return metadataData?.dataCubesMetadata &&
-    componentsData?.dataCubesComponents &&
-    observationsData?.dataCubesObservations ? (
-    <Box sx={{ maxHeight: "600px", overflow: "auto", ...sx }}>
-      <ChartDataTablePreviewInner
-        title={metadataData.dataCubesMetadata.map((d) => d.title).join(", ")}
-        sortedComponents={sortedComponents}
-        observations={observationsData.dataCubesObservations.data}
-        linkToMetadataPanel
-      />
-    </Box>
-  ) : (
-    <Loading />
-  );
-};
-
-export const ChartDataTablePreviewInner = ({
+export const DataTablePreview = ({
   title,
   sortedComponents,
   observations,
@@ -156,11 +57,11 @@ export const ChartDataTablePreviewInner = ({
   }, []);
 
   const handleSort = useCallback(
-    (header: Component) => {
-      if (sortBy?.id === header.id) {
+    (component: Component) => {
+      if (sortBy?.id === component.id) {
         setSortDirection(sortDirection === "asc" ? "desc" : "asc");
       } else {
-        setSortBy(header);
+        setSortBy(component);
         setSortDirection("asc");
       }
     },
@@ -234,37 +135,4 @@ export const ChartDataTablePreviewInner = ({
       </Table>
     </div>
   );
-};
-
-export const CubeDataTablePreview = ({
-  title,
-  dimensions,
-  measures,
-  observations,
-}: {
-  title: string;
-  dimensions: Dimension[];
-  measures: Measure[];
-  observations: Observation[] | undefined;
-}) => {
-  const sortedComponents = useMemo(() => {
-    return getSortedComponents([...dimensions, ...measures]);
-  }, [dimensions, measures]);
-
-  return observations ? (
-    <ChartDataTablePreviewInner
-      title={title}
-      sortedComponents={sortedComponents}
-      observations={observations}
-      linkToMetadataPanel={false}
-    />
-  ) : (
-    <Loading />
-  );
-};
-
-export const getSortedComponents = (components: Component[]) => {
-  return [...components].sort((a, b) => {
-    return ascending(a.order ?? Infinity, b.order ?? Infinity);
-  });
 };
