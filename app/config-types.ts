@@ -337,6 +337,21 @@ export type CustomScaleDomainFieldExtension = t.TypeOf<
   typeof CustomScaleDomainFieldExtension
 >;
 
+const UnitConversionFieldExtension = t.partial({
+  unitConversion: t.type({
+    factor: t.number,
+    labels: t.type({
+      de: t.string,
+      fr: t.string,
+      it: t.string,
+      en: t.string,
+    }),
+  }),
+});
+export type UnitConversionFieldExtension = t.TypeOf<
+  typeof UnitConversionFieldExtension
+>;
+
 const ChartSubType = t.union([t.literal("stacked"), t.literal("grouped")]);
 export type ChartSubType = t.TypeOf<typeof ChartSubType>;
 
@@ -357,6 +372,7 @@ const ColumnFields = t.intersection([
       ShowValuesFieldExtension,
       UncertaintyFieldExtension,
       CustomScaleDomainFieldExtension,
+      UnitConversionFieldExtension,
     ]),
     color: t.union([SegmentColorField, SingleColorField]),
   }),
@@ -395,6 +411,7 @@ const BarFields = t.intersection([
       GenericField,
       ShowValuesFieldExtension,
       CustomScaleDomainFieldExtension,
+      UnitConversionFieldExtension,
     ]),
     y: t.intersection([GenericField, SortingField]),
     color: t.union([SegmentColorField, SingleColorField]),
@@ -430,11 +447,16 @@ export type LineSegmentField = t.TypeOf<typeof LineSegmentField>;
 const LineFields = t.intersection([
   t.type({
     x: GenericField,
+    // We need to have two intersections here because TypeScript breaks when
+    // we use more than 5 at once :)
     y: t.intersection([
-      GenericField,
-      ShowValuesFieldExtension,
-      UncertaintyFieldExtension,
-      CustomScaleDomainFieldExtension,
+      t.intersection([
+        GenericField,
+        ShowValuesFieldExtension,
+        UncertaintyFieldExtension,
+        CustomScaleDomainFieldExtension,
+        UnitConversionFieldExtension,
+      ]),
       t.partial({
         showDots: t.boolean,
         showDotsSize: t.union([
@@ -488,6 +510,7 @@ const AreaFields = t.intersection([
       GenericField,
       ShowValuesFieldExtension,
       CustomScaleDomainFieldExtension,
+      UnitConversionFieldExtension,
       t.partial({ imputationType: ImputationType }),
     ]),
     color: t.union([SegmentColorField, SingleColorField]),
@@ -520,8 +543,8 @@ export type ScatterPlotSegmentField = t.TypeOf<typeof ScatterPlotSegmentField>;
 
 const ScatterPlotFields = t.intersection([
   t.type({
-    x: GenericField,
-    y: GenericField,
+    x: t.intersection([GenericField, UnitConversionFieldExtension]),
+    y: t.intersection([GenericField, UnitConversionFieldExtension]),
     color: t.union([SegmentColorField, SingleColorField]),
   }),
   t.partial({
@@ -554,7 +577,11 @@ export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
 
 const PieFields = t.intersection([
   t.type({
-    y: t.intersection([GenericField, ShowValuesFieldExtension]),
+    y: t.intersection([
+      GenericField,
+      ShowValuesFieldExtension,
+      UnitConversionFieldExtension,
+    ]),
     segment: PieSegmentField,
     color: SegmentColorField,
   }),

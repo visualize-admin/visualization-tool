@@ -72,6 +72,7 @@ import {
   ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { ConvertUnit } from "@/configurator/components/chart-options-selector/convert-unit";
 import { CustomLayersSelector } from "@/configurator/components/custom-layers-selector";
 import {
   ChartFieldField,
@@ -558,6 +559,13 @@ const EncodingOptionsPanel = ({
             )}
           </ControlSectionContent>
         </ControlSection>
+      )}
+      {encoding.options?.convertUnit && component && (
+        <ConvertUnit
+          chartConfig={chartConfig}
+          field={field}
+          component={component}
+        />
       )}
       {encoding.options?.showDots && (
         <ChartShowDots fields={chartConfig.fields} field={field} />
