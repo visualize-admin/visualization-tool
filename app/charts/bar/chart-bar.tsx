@@ -140,7 +140,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
             <ChartControlsContainer>
               {limits.limits.length > 0 && (
                 <LegendColor
-                  limits={limits.limits}
+                  limits={limits}
                   dimensionsById={dimensionsById}
                   chartConfig={chartConfig}
                   symbol="square"

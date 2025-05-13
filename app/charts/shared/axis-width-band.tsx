@@ -13,7 +13,6 @@ import {
 } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
-import { useTimeFormatUnit } from "@/formatters";
 import { useTransitionStore } from "@/stores/transition";
 
 export const AxisWidthBand = () => {
@@ -23,8 +22,9 @@ export const AxisWidthBand = () => {
     getXLabel,
     xDimension,
     xTimeUnit,
+    formatXDate,
     yScale,
-    bounds,
+    bounds: { chartHeight, chartWidth, margins },
     xAxisLabel,
     bottomAxisLabelSize,
   } = useChartState() as
@@ -32,13 +32,10 @@ export const AxisWidthBand = () => {
     | StackedColumnsState
     | GroupedColumnsState
     | ComboLineColumnState;
+  const { bypassXAxisTickFormat } = useChartState() as ComboLineColumnState;
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const formatDate = useTimeFormatUnit();
-  const { chartHeight, chartWidth, margins } = bounds;
-
   const xAxisTitleOffset = useXAxisTitleOffset(xScale, getXLabel, xTimeUnit);
-
   const {
     labelColor,
     gridColor,
@@ -59,10 +56,12 @@ export const AxisWidthBand = () => {
         .tickSizeInner(hasNegativeValues ? -chartHeight : 6)
         .tickPadding(rotation ? -10 : 0);
 
-      if (xTimeUnit) {
-        axis.tickFormat((d) => formatDate(d, xTimeUnit));
-      } else {
-        axis.tickFormat((d) => getXLabel(d));
+      if (!bypassXAxisTickFormat) {
+        if (xTimeUnit) {
+          axis.tickFormat((d) => formatXDate(d));
+        } else {
+          axis.tickFormat((d) => getXLabel(d));
+        }
       }
 
       const g = renderContainer(ref.current, {
@@ -101,7 +100,6 @@ export const AxisWidthBand = () => {
     domainColor,
     enableTransition,
     fontFamily,
-    formatDate,
     getXLabel,
     gridColor,
     labelColor,
@@ -112,6 +110,8 @@ export const AxisWidthBand = () => {
     xScale,
     xTimeUnit,
     yScale,
+    formatXDate,
+    bypassXAxisTickFormat,
   ]);
 
   return (

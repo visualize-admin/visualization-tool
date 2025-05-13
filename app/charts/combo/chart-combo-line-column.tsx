@@ -36,7 +36,7 @@ const ChartComboLineColumn = memo(
             <AxisHeightLinearDual orientation="right" />
             <AxisWidthBand />
             <ComboLineColumn />
-            <InteractionColumns />
+            <InteractionColumns temporal />
             {shouldShowBrush(
               interactiveFiltersConfig,
               dashboardFilters?.timeRange

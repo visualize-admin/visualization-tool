@@ -61,7 +61,7 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
             interactive={interactiveFiltersConfig?.legend.active}
             showTitle={fields.segment?.showTitle}
             dimensionsById={dimensionsById}
-            limits={limits.limits}
+            limits={limits}
           />
         </ChartControlsContainer>
       )}

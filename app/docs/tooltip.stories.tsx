@@ -62,7 +62,11 @@ const TooltipBoxStory = () => (
   <ReactSpecimen>
     <InteractiveFiltersChartProvider chartConfigKey="column-chart">
       <ColumnChart
-        limits={{ axisDimension: undefined, limits: [] }}
+        limits={{
+          axisDimension: undefined,
+          limitMeasure: undefined,
+          limits: [],
+        }}
         observations={observations}
         measures={measures}
         measuresById={keyBy(measures, (d) => d.id)}
@@ -229,7 +233,11 @@ const TooltipContentStory = {
   render: () => (
     <InteractiveFiltersChartProvider chartConfigKey="column-chart">
       <ColumnChart
-        limits={{ axisDimension: undefined, limits: [] }}
+        limits={{
+          axisDimension: undefined,
+          limitMeasure: undefined,
+          limits: [],
+        }}
         observations={observations}
         measures={measures}
         measuresById={keyBy(measures, (d) => d.id)}
@@ -299,7 +307,11 @@ export const TooltipContentStory2 = {
   render: () => (
     <InteractiveFiltersChartProvider chartConfigKey="column-chart">
       <ColumnChart
-        limits={{ axisDimension: undefined, limits: [] }}
+        limits={{
+          axisDimension: undefined,
+          limitMeasure: undefined,
+          limits: [],
+        }}
         observations={observations}
         measures={measures}
         measuresById={keyBy(measures, (d) => d.id)}
