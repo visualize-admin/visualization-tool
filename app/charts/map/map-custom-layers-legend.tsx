@@ -96,6 +96,11 @@ export const MapCustomLayersLegend = ({
   );
 };
 
+const cachedLegendImages: Record<
+  string,
+  Promise<{ dataUrl: string; width: number; height: number } | undefined>
+> = {};
+
 const fetchLegendImage = async (
   remoteLayer: RemoteWMSLayer | RemoteWMTSLayer
 ) => {
@@ -113,6 +118,21 @@ const fetchLegendImage = async (
     width,
     height,
   };
+};
+
+const fetchLegendImageFromCache = async (
+  remoteLayer: RemoteWMSLayer | RemoteWMTSLayer
+) => {
+  if (!remoteLayer?.legendUrl) {
+    return undefined;
+  }
+  const cached = cachedLegendImages[remoteLayer.legendUrl];
+  if (cached) {
+    return cached;
+  }
+  const legendImage = fetchLegendImage(remoteLayer);
+  cachedLegendImages[remoteLayer.legendUrl] = legendImage;
+  return legendImage;
 };
 
 const useLegendsData = ({
@@ -160,7 +180,7 @@ const useLegendsData = ({
           configLayers.map(async (configLayer) => {
             let remoteLayer: RemoteWMSLayer | RemoteWMTSLayer | undefined =
               layersByKey[getLayerKey(configLayer)];
-            const legendImage = await fetchLegendImage(remoteLayer);
+            const legendImage = await fetchLegendImageFromCache(remoteLayer);
             if (!legendImage) {
               return undefined;
             }
