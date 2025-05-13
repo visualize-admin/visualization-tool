@@ -71,6 +71,7 @@ import {
 import { Has } from "@/domain/types";
 import { RelatedDimensionType } from "@/graphql/query-hooks";
 import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
+import { useLocale } from "@/locales/use-locale";
 import { Limit } from "@/rdf/limits";
 import {
   useChartInteractiveFilters,
@@ -340,6 +341,7 @@ export const useNumericalXVariables = (
   x: ScatterPlotFields["x"] | BarFields["x"],
   { measuresById }: { measuresById: MeasuresById }
 ): NumericalXVariables => {
+  const locale = useLocale();
   const xMeasure = measuresById[x.componentId];
   if (!xMeasure) {
     throw Error(
@@ -351,8 +353,23 @@ export const useNumericalXVariables = (
     throw Error(`Measure <${x.componentId}> is not numerical!`);
   }
 
-  const getX = useOptionalNumericVariable(x.componentId);
-  const xAxisLabel = getLabelWithUnit(xMeasure);
+  const getRawX = useOptionalNumericVariable(x.componentId);
+  const getX = useCallback(
+    (d: Observation) => {
+      const rawX = getRawX(d);
+
+      if (rawX === null) {
+        return null;
+      }
+
+      return rawX * (x.unitConversion?.factor ?? 1);
+    },
+    [getRawX, x.unitConversion?.factor]
+  );
+
+  const xAxisLabel = getLabelWithUnit(xMeasure, {
+    unitOverride: x.unitConversion?.labels[locale],
+  });
   const getMinX = useCallback(
     (data: Observation[], _getX: NumericalValueGetter) => {
       switch (chartType) {
@@ -398,6 +415,7 @@ export const useNumericalYVariables = (
     | ScatterPlotFields["y"],
   { measuresById }: { measuresById: MeasuresById }
 ): NumericalYVariables => {
+  const locale = useLocale();
   const yMeasure = measuresById[y.componentId];
 
   if (!yMeasure) {
@@ -410,8 +428,23 @@ export const useNumericalYVariables = (
     throw Error(`Measure <${y.componentId}> is not numerical!`);
   }
 
-  const getY = useOptionalNumericVariable(y.componentId);
-  const yAxisLabel = getLabelWithUnit(yMeasure);
+  const getRawY = useOptionalNumericVariable(y.componentId);
+  const getY = useCallback(
+    (d: Observation) => {
+      const rawY = getRawY(d);
+
+      if (rawY === null) {
+        return null;
+      }
+
+      return rawY * (y.unitConversion?.factor ?? 1);
+    },
+    [getRawY, y.unitConversion?.factor]
+  );
+
+  const yAxisLabel = getLabelWithUnit(yMeasure, {
+    unitOverride: y.unitConversion?.labels[locale],
+  });
   const getMinY = useCallback(
     (data: Observation[], _getY: NumericalValueGetter) => {
       switch (chartType) {
