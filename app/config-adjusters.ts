@@ -108,7 +108,7 @@ type BarAdjusters = BaseAdjusters<BarConfig> & {
     x: {
       componentId: FieldAdjuster<BarConfig, ComponentId>;
       showValues: FieldAdjuster<BarConfig, boolean>;
-      customDomain: FieldAdjuster<ColumnConfig, [number, number]>;
+      customDomain: FieldAdjuster<BarConfig, [number, number]>;
     };
     y: { componentId: FieldAdjuster<BarConfig, ComponentId> };
     color: FieldAdjuster<BarConfig, ColorField>;
@@ -131,7 +131,7 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
     y: {
       componentId: FieldAdjuster<LineConfig, ComponentId>;
       showValues: FieldAdjuster<LineConfig, boolean>;
-      customDomain: FieldAdjuster<ColumnConfig, [number, number]>;
+      customDomain: FieldAdjuster<LineConfig, [number, number]>;
     };
     color: FieldAdjuster<LineConfig, ColorField>;
     segment: FieldAdjuster<
@@ -152,7 +152,7 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
     y: {
       componentId: FieldAdjuster<AreaConfig, ComponentId>;
       showValues: FieldAdjuster<AreaConfig, boolean>;
-      customDomain: FieldAdjuster<ColumnConfig, [number, number]>;
+      customDomain: FieldAdjuster<AreaConfig, [number, number]>;
     };
     color: FieldAdjuster<AreaConfig, ColorField>;
     segment: FieldAdjuster<

@@ -1160,7 +1160,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         },
         customDomain: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
-            draft.fields.y.customDomain = oldValue;
+            draft.fields.x.customDomain = oldValue;
           });
         },
       },
@@ -2165,6 +2165,7 @@ const chartConfigsPathOverrides: {
     bar: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.x.showValues": { path: "fields.y.showValues" },
+      "fields.x.customDomain": { path: "fields.y.customDomain" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
@@ -2199,16 +2200,19 @@ const chartConfigsPathOverrides: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
       "fields.y.showValues": { path: "fields.x.showValues" },
+      "fields.y.customDomain": { path: "fields.x.customDomain" },
     },
     line: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
       "fields.y.showValues": { path: "fields.x.showValues" },
+      "fields.y.customDomain": { path: "fields.x.customDomain" },
     },
     area: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.y.componentId": { path: "fields.x.componentId" },
       "fields.y.showValues": { path: "fields.x.showValues" },
+      "fields.y.customDomain": { path: "fields.x.customDomain" },
     },
     pie: {
       "fields.y.componentId": { path: "fields.x.componentId" },
@@ -2245,6 +2249,7 @@ const chartConfigsPathOverrides: {
     bar: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.x.showValues": { path: "fields.y.showValues" },
+      "fields.x.customDomain": { path: "fields.y.customDomain" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
@@ -2277,6 +2282,7 @@ const chartConfigsPathOverrides: {
     bar: {
       "fields.x.componentId": { path: "fields.y.componentId" },
       "fields.x.showValues": { path: "fields.y.showValues" },
+      "fields.x.customDomain": { path: "fields.y.customDomain" },
       "fields.y.componentId": { path: "fields.x.componentId" },
     },
     map: {
