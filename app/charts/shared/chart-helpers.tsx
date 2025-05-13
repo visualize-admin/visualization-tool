@@ -622,10 +622,12 @@ export const normalizeData = (
 const SlugRe = /\W+/g;
 export const getSlugifiedId = (id: string) => id.replace(SlugRe, "_");
 
-export const getLabelWithUnit = (dimension: Component): string => {
-  return dimension.unit
-    ? `${dimension.label} (${dimension.unit})`
-    : dimension.label;
+export const getLabelWithUnit = (
+  component: Component,
+  { unitOverride }: { unitOverride?: string } = {}
+) => {
+  const unit = unitOverride ?? component.unit;
+  return unit ? `${component.label} (${unit})` : component.label;
 };
 
 export const checkForMissingValuesInSegments = (
