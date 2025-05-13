@@ -11,6 +11,8 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - Limit values displayed in the legend now include the unit if it's available
 - Fixes
   - Column line combo charts now work correctly with temporal entity X dimension
   - Default min custom scale domain value now defaults to 0 if no negative
