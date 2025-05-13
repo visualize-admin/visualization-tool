@@ -2,7 +2,7 @@ import { Paper } from "@mui/material";
 
 import { DataTablePreview } from "@/browse/data-table-preview";
 
-import { dimensions, observations } from "./preview-table.mock";
+import { dimensions, observations } from "./data-preview-table.mock";
 
 const meta = {
   title: "organisms / Data Preview Table",
