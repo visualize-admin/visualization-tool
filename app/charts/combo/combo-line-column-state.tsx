@@ -47,7 +47,6 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { ComboLineColumnConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { useFormatFullDateAuto } from "@/formatters";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { getTimeInterval } from "@/intervals";
 import { getTextWidth } from "@/utils/get-text-width";
@@ -75,6 +74,7 @@ export type ComboLineColumnState = CommonChartState &
     maxRightTickWidth: number;
     leftAxisLabelSize: AxisLabelSizeVariables;
     bottomAxisLabelSize: AxisLabelSizeVariables;
+    bypassXAxisTickFormat: true;
   };
 
 const useComboLineColumnState = (
@@ -83,7 +83,7 @@ const useComboLineColumnState = (
   data: ChartStateData
 ): ComboLineColumnState => {
   const { chartConfig } = chartProps;
-  const { getX, getXAsDate, xAxisLabel } = variables;
+  const { getX, getXAsDate, xAxisLabel, formatXDate } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const xKey = fields.x.componentId;
@@ -107,11 +107,10 @@ const useComboLineColumnState = (
   });
 
   // x
-  // We can only use TemporalDimension in ComboLineColumn chart (see UI encodings).
-  const interval = getTimeInterval(variables.xTimeUnit as TimeUnit);
-  const formatDate = useFormatFullDateAuto();
+  const xTimeUnit = variables.xTimeUnit as TimeUnit;
+  const interval = getTimeInterval(xTimeUnit);
   const [xMin, xMax] = xScaleTime.domain() as [Date, Date];
-  const xDomain = interval.range(xMin, xMax).concat(xMax).map(formatDate);
+  const xDomain = interval.range(xMin, xMax).concat(xMax).map(formatXDate);
   const xScale = scaleBand()
     .domain(xDomain)
     .paddingInner(PADDING_INNER)
@@ -195,15 +194,18 @@ const useComboLineColumnState = (
 
   // Tooltip
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
-    const x = getX(d);
-    const xScaled = (xScale(x) as number) + xScale.bandwidth() * 0.5;
+    const x = getXAsDate(d);
+    const xScaled =
+      (xScale(formatXDate(x)) as number) + xScale.bandwidth() * 0.5;
     const values = [variables.y.left, variables.y.right]
       .map(({ orientation, getY, id, label, chartType }) => {
         const y = getY(d);
         const yPos = yOrientationScales[orientation](y ?? 0);
+
         if (!Number.isFinite(y) || y === null) {
           return null;
         }
+
         return {
           label,
           value: `${y}`,
@@ -256,6 +258,10 @@ const useComboLineColumnState = (
       offset: Math.max(leftAxisLabelSize.offset, rightAxisLabelSize.offset),
     },
     bottomAxisLabelSize,
+    // We need to bypass the default formatting, as we already need
+    // to format the x-axis labels upfront in the scale domain to
+    // properly build "temporal band" axis.
+    bypassXAxisTickFormat: true,
     ...variables,
   };
 };

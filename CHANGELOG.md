@@ -12,6 +12,7 @@ You can also check the
 # Unreleased
 
 - Fixes
+  - Column line combo charts now work correctly with temporal entity X dimension
   - Default min custom scale domain value now defaults to 0 if no negative
     values are present
   - Chart area no longer overflows below X or Y axes when setting custom scale

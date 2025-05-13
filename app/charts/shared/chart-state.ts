@@ -69,6 +69,7 @@ import {
   TemporalEntityDimension,
 } from "@/domain/data";
 import { Has } from "@/domain/types";
+import { useTimeFormatUnit } from "@/formatters";
 import { RelatedDimensionType } from "@/graphql/query-hooks";
 import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
 import { Limit } from "@/rdf/limits";
@@ -171,16 +172,6 @@ export type BandYVariables = {
   getYAsDate: TemporalValueGetter;
 };
 
-export type BandXVariables = {
-  xAxisLabel: string;
-  xDimension: Dimension;
-  getX: StringValueGetter;
-  getXLabel: (d: string) => string;
-  getXAbbreviationOrLabel: (d: Observation) => string;
-  xTimeUnit: TimeUnit | undefined;
-  getXAsDate: TemporalValueGetter;
-};
-
 export const useBandYVariables = (
   y: GenericField,
   {
@@ -196,9 +187,10 @@ export const useBandYVariables = (
     throw Error(`No dimension <${y.componentId}> in cube! (useBandXVariables)`);
   }
 
-  const yTimeUnit = isTemporalDimension(yDimension)
-    ? yDimension.timeUnit
-    : undefined;
+  const yTimeUnit =
+    isTemporalDimension(yDimension) || isTemporalEntityDimension(yDimension)
+      ? yDimension.timeUnit
+      : undefined;
 
   const {
     getAbbreviationOrLabelByValue: getYAbbreviationOrLabel,
@@ -229,6 +221,17 @@ export const useBandYVariables = (
   };
 };
 
+export type BandXVariables = {
+  xAxisLabel: string;
+  xDimension: Dimension;
+  getX: StringValueGetter;
+  getXLabel: (d: string) => string;
+  getXAbbreviationOrLabel: (d: Observation) => string;
+  xTimeUnit: TimeUnit | undefined;
+  getXAsDate: TemporalValueGetter;
+  formatXDate: (d: Date | string) => string;
+};
+
 export const useBandXVariables = (
   x: GenericField,
   {
@@ -243,10 +246,6 @@ export const useBandXVariables = (
   if (!xDimension) {
     throw Error(`No dimension <${x.componentId}> in cube! (useBandXVariables)`);
   }
-
-  const xTimeUnit = isTemporalDimension(xDimension)
-    ? xDimension.timeUnit
-    : undefined;
 
   const {
     getAbbreviationOrLabelByValue: getXAbbreviationOrLabel,
@@ -264,6 +263,26 @@ export const useBandXVariables = (
 
   const xAxisLabel = getLabelWithUnit(xDimension);
 
+  const xTimeUnit =
+    isTemporalDimension(xDimension) || isTemporalEntityDimension(xDimension)
+      ? xDimension.timeUnit
+      : undefined;
+  const timeFormatUnit = useTimeFormatUnit();
+  const formatXDate = useCallback(
+    (d: Date | string) => {
+      if (xTimeUnit) {
+        return timeFormatUnit(d, xTimeUnit);
+      }
+
+      if (typeof d === "string") {
+        return d;
+      }
+
+      return d.toISOString();
+    },
+    [timeFormatUnit, xTimeUnit]
+  );
+
   return {
     xAxisLabel,
     xDimension,
@@ -274,6 +293,7 @@ export const useBandXVariables = (
     getXAsDate: isTemporalEntityDimension(xDimension)
       ? getXTemporalEntity
       : getXAsDate,
+    formatXDate,
   };
 };
 
