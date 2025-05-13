@@ -15,7 +15,7 @@ const PreviewTableStory = () => (
     <PreviewTable
       linkToMetadataPanel={false}
       title="My dataset preview"
-      headers={dimensions}
+      sortedComponents={dimensions}
       observations={observations["data"].slice(0, 10)}
     />
   </Paper>

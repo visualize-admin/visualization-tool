@@ -16,6 +16,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 
 import {
   extractChartConfigComponentIds,
+  getLabelWithUnit,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
 import { Loading } from "@/components/hint";
@@ -43,55 +44,94 @@ import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import { useLocale } from "@/locales/use-locale";
 import { uniqueMapBy } from "@/utils/uniqueMapBy";
 
-const ComponentLabel = ({
-  component,
-  tooltipProps,
-  linkToMetadataPanel,
+export const DataSetTable = ({
+  dataSource,
+  chartConfig,
+  dashboardFilters,
+  sx,
 }: {
-  component: Component;
-  tooltipProps?: Omit<TooltipProps, "title" | "children">;
-  linkToMetadataPanel: boolean;
+  dataSource: DataSource;
+  chartConfig: ChartConfig;
+  dashboardFilters: DashboardFiltersConfig | undefined;
+  sx?: SxProps<Theme>;
 }) => {
-  const label = `${component.label}${
-    component.unit ? ` (${component.unit})` : ""
-  }`;
-  const labelNode = (
-    <Typography
-      variant="h6"
-      component="span"
-      sx={{ color: "monochrome.500", textTransform: "uppercase" }}
-    >
-      {label}
-    </Typography>
-  );
+  const locale = useLocale();
+  const componentIds = extractChartConfigComponentIds({ chartConfig });
+  const commonQueryVariables = {
+    sourceType: dataSource.type,
+    sourceUrl: dataSource.url,
+    locale,
+  };
+  const [{ data: metadataData }] = useDataCubesMetadataQuery({
+    variables: {
+      ...commonQueryVariables,
+      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
+    },
+  });
+  const [{ data: componentsData, fetching: fetchingComponents }] =
+    useDataCubesComponentsQuery({
+      variables: {
+        ...commonQueryVariables,
+        cubeFilters: chartConfig.cubes.map((cube) => ({
+          iri: cube.iri,
+          componentIds,
+          joinBy: cube.joinBy,
+        })),
+      },
+    });
+  const sortedComponents = useMemo(() => {
+    if (!componentsData?.dataCubesComponents) {
+      return [];
+    }
 
-  return linkToMetadataPanel ? (
-    <OpenMetadataPanelWrapper component={component}>
-      {labelNode}
-    </OpenMetadataPanelWrapper>
-  ) : component.description ? (
-    <MaybeTooltip title={component.description} tooltipProps={tooltipProps}>
-      {labelNode}
-    </MaybeTooltip>
+    return getSortedComponents([
+      ...componentsData.dataCubesComponents.dimensions,
+      ...componentsData.dataCubesComponents.measures,
+    ]);
+  }, [componentsData?.dataCubesComponents]);
+  const queryFilters = useQueryFilters({
+    chartConfig,
+    dashboardFilters,
+    componentIds,
+  });
+  const [{ data: observationsData }] = useDataCubesObservationsQuery({
+    variables: {
+      ...commonQueryVariables,
+      cubeFilters: queryFilters,
+    },
+    pause: fetchingComponents,
+  });
+
+  return metadataData?.dataCubesMetadata &&
+    componentsData?.dataCubesComponents &&
+    observationsData?.dataCubesObservations ? (
+    <Box sx={{ maxHeight: "600px", overflow: "auto", ...sx }}>
+      <PreviewTable
+        title={metadataData.dataCubesMetadata.map((d) => d.title).join(", ")}
+        sortedComponents={sortedComponents}
+        observations={observationsData.dataCubesObservations.data}
+        linkToMetadataPanel
+      />
+    </Box>
   ) : (
-    labelNode
+    <Loading />
   );
 };
 
 export const PreviewTable = ({
   title,
-  headers,
+  sortedComponents,
   observations,
   linkToMetadataPanel,
 }: {
   title: string;
-  headers: Component[];
+  sortedComponents: Component[];
   observations: Observation[];
   linkToMetadataPanel: boolean;
 }) => {
   const [sortBy, setSortBy] = useState<Component>();
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">();
-  const formatters = useDimensionFormatters(headers);
+  const formatters = useDimensionFormatters(sortedComponents);
   const sortedObservations = useMemo(() => {
     if (!sortBy) {
       return observations;
@@ -142,20 +182,20 @@ export const PreviewTable = ({
           }}
         >
           <TableRow>
-            {headers.map((header) => {
+            {sortedComponents.map((component) => {
               return (
                 <TableCell
-                  key={header.id}
+                  key={component.id}
                   component="th"
                   role="columnheader"
-                  onClick={() => handleSort(header)}
+                  onClick={() => handleSort(component)}
                   sx={{
-                    textAlign: isNumericalMeasure(header) ? "right" : "left",
+                    textAlign: isNumericalMeasure(component) ? "right" : "left",
                     whiteSpace: "nowrap",
                   }}
                 >
                   <TableSortLabel
-                    active={!sortBy || sortBy.id === header.id}
+                    active={!sortBy || sortBy.id === component.id}
                     direction={!sortBy ? "desc" : sortDirection}
                     IconComponent={SvgIcChevronDown}
                     sx={{
@@ -165,7 +205,7 @@ export const PreviewTable = ({
                     }}
                   >
                     <ComponentLabel
-                      component={header}
+                      component={component}
                       tooltipProps={tooltipProps}
                       linkToMetadataPanel={linkToMetadataPanel}
                     />
@@ -179,20 +219,20 @@ export const PreviewTable = ({
           {sortedObservations.map((obs, i) => {
             return (
               <TableRow key={i}>
-                {headers.map((header) => {
-                  const format = formatters[header.id];
+                {sortedComponents.map((component) => {
+                  const format = formatters[component.id];
 
                   return (
                     <TableCell
-                      key={header.id}
+                      key={component.id}
                       component="td"
                       sx={{
-                        textAlign: isNumericalMeasure(header)
+                        textAlign: isNumericalMeasure(component)
                           ? "right"
                           : "left",
                       }}
                     >
-                      {format(obs[header.id])}
+                      {format(obs[component.id])}
                     </TableCell>
                   );
                 })}
@@ -216,14 +256,14 @@ export const DataSetPreviewTable = ({
   measures: Measure[];
   observations: Observation[] | undefined;
 }) => {
-  const headers = useMemo(() => {
-    return getSortedColumns([...dimensions, ...measures]);
+  const sortedComponents = useMemo(() => {
+    return getSortedComponents([...dimensions, ...measures]);
   }, [dimensions, measures]);
 
   return observations ? (
     <PreviewTable
       title={title}
-      headers={headers}
+      sortedComponents={sortedComponents}
       observations={observations}
       linkToMetadataPanel={false}
     />
@@ -232,83 +272,41 @@ export const DataSetPreviewTable = ({
   );
 };
 
-export const DataSetTable = ({
-  dataSource,
-  chartConfig,
-  dashboardFilters,
-  sx,
-}: {
-  dataSource: DataSource;
-  chartConfig: ChartConfig;
-  dashboardFilters: DashboardFiltersConfig | undefined;
-  sx?: SxProps<Theme>;
-}) => {
-  const locale = useLocale();
-  const componentIds = extractChartConfigComponentIds({ chartConfig });
-  const commonQueryVariables = {
-    sourceType: dataSource.type,
-    sourceUrl: dataSource.url,
-    locale,
-  };
-  const [{ data: metadataData }] = useDataCubesMetadataQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: chartConfig.cubes.map((cube) => ({ iri: cube.iri })),
-    },
-  });
-  const [{ data: componentsData, fetching: fetchingComponents }] =
-    useDataCubesComponentsQuery({
-      variables: {
-        ...commonQueryVariables,
-        cubeFilters: chartConfig.cubes.map((cube) => ({
-          iri: cube.iri,
-          componentIds,
-          joinBy: cube.joinBy,
-        })),
-      },
-    });
-  const headers = useMemo(() => {
-    if (!componentsData?.dataCubesComponents) {
-      return [];
-    }
-
-    return getSortedColumns([
-      ...componentsData.dataCubesComponents.dimensions,
-      ...componentsData.dataCubesComponents.measures,
-    ]);
-  }, [componentsData?.dataCubesComponents]);
-  const queryFilters = useQueryFilters({
-    chartConfig,
-    dashboardFilters,
-    componentIds,
-  });
-  const [{ data: observationsData }] = useDataCubesObservationsQuery({
-    variables: {
-      ...commonQueryVariables,
-      cubeFilters: queryFilters,
-    },
-    pause: fetchingComponents,
-  });
-
-  return metadataData?.dataCubesMetadata &&
-    componentsData?.dataCubesComponents &&
-    observationsData?.dataCubesObservations ? (
-    <Box sx={{ maxHeight: "600px", overflow: "auto", ...sx }}>
-      <PreviewTable
-        // FIXME: adapt to design
-        title={metadataData.dataCubesMetadata.map((d) => d.title).join(", ")}
-        headers={headers}
-        observations={observationsData.dataCubesObservations.data}
-        linkToMetadataPanel
-      />
-    </Box>
-  ) : (
-    <Loading />
-  );
-};
-
-export const getSortedColumns = (components: Component[]) => {
+export const getSortedComponents = (components: Component[]) => {
   return [...components].sort((a, b) => {
     return ascending(a.order ?? Infinity, b.order ?? Infinity);
   });
+};
+
+const ComponentLabel = ({
+  component,
+  tooltipProps,
+  linkToMetadataPanel,
+}: {
+  component: Component;
+  tooltipProps?: Omit<TooltipProps, "title" | "children">;
+  linkToMetadataPanel: boolean;
+}) => {
+  const label = getLabelWithUnit(component);
+  const labelNode = (
+    <Typography
+      variant="h6"
+      component="span"
+      sx={{ color: "monochrome.500", textTransform: "uppercase" }}
+    >
+      {label}
+    </Typography>
+  );
+
+  return linkToMetadataPanel ? (
+    <OpenMetadataPanelWrapper component={component}>
+      {labelNode}
+    </OpenMetadataPanelWrapper>
+  ) : component.description ? (
+    <MaybeTooltip title={component.description} tooltipProps={tooltipProps}>
+      {labelNode}
+    </MaybeTooltip>
+  ) : (
+    labelNode
+  );
 };
