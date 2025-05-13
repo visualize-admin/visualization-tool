@@ -96,6 +96,25 @@ export const MapCustomLayersLegend = ({
   );
 };
 
+const fetchLegendImage = async (
+  remoteLayer: RemoteWMSLayer | RemoteWMTSLayer
+) => {
+  if (!remoteLayer?.legendUrl) {
+    return undefined;
+  }
+
+  const blob = await fetch(remoteLayer.legendUrl).then((res) => res.blob());
+  const bmp = await createImageBitmap(blob);
+  const { width, height } = bmp;
+  bmp.close();
+
+  return {
+    dataUrl: URL.createObjectURL(blob),
+    width,
+    height,
+  };
+};
+
 const useLegendsData = ({
   customLayers: configLayers,
 }: {
@@ -141,22 +160,15 @@ const useLegendsData = ({
           configLayers.map(async (configLayer) => {
             let remoteLayer: RemoteWMSLayer | RemoteWMTSLayer | undefined =
               layersByKey[getLayerKey(configLayer)];
-
-            if (!remoteLayer?.legendUrl) {
+            const legendImage = await fetchLegendImage(remoteLayer);
+            if (!legendImage) {
               return undefined;
             }
-
-            const blob = await fetch(remoteLayer.legendUrl).then((res) =>
-              res.blob()
-            );
-            const bmp = await createImageBitmap(blob);
-            const { width, height } = bmp;
-            bmp.close();
-
+            const { width, height, dataUrl } = legendImage;
             return {
               remoteLayer,
               configLayer,
-              dataUrl: URL.createObjectURL(blob),
+              dataUrl,
               width,
               height,
             };
