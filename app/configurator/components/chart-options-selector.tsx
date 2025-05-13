@@ -452,6 +452,7 @@ const EncodingOptionsPanel = ({
         : undefined;
 
   const chartScaleDomainEnabled = useFlag("custom-scale-domain");
+  const unitConversionEnabled = useFlag("convert-units");
 
   return (
     <div
@@ -560,7 +561,7 @@ const EncodingOptionsPanel = ({
           </ControlSectionContent>
         </ControlSection>
       )}
-      {encoding.options?.convertUnit && component && (
+      {unitConversionEnabled && encoding.options?.convertUnit && component && (
         <ConvertUnit
           chartConfig={chartConfig}
           field={field}
