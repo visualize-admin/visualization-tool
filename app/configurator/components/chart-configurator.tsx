@@ -755,7 +755,7 @@ export const ChartConfigurator = ({
                 )?.title;
                 const cubeAddableDims = addableDimensionsByCubeIri[cubeIri];
 
-                return (
+                return dims.length > 0 ? (
                   <Fragment key={cubeIri}>
                     <Box sx={{ py: 2 }}>
                       {cubeTitle ? (
@@ -816,7 +816,7 @@ export const ChartConfigurator = ({
                       <AddFilterButton dims={cubeAddableDims} />
                     ) : null}
                   </Fragment>
-                );
+                ) : null;
               })}
           </ControlSectionContent>
         </ControlSection>
