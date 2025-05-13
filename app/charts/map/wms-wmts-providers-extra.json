@@ -36,10 +36,10 @@
   },
   "https://geoserver.swissdatacube.org/geoserver/gwc/service/wmts?REQUEST=GetCapabilities": {
     "canListLayers": true,
-    "canDisplayLayers": false,
+    "canDisplayLayers": true,
     "canDisplayOnMapGeoAdmin": true,
     "workingLayers": [],
-    "note": "Layers load but cannot be displayed"
+    "note": "Layers load and some work (Snow Cover 1995 - 2005, Bale_<year>, Switzerland Admin Level 1 & 2, & more...)"
   },
   "https://osmlab.github.io/wmts-osm/WMTSCapabilities.xml": {
     "canListLayers": true,
