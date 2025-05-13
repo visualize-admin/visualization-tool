@@ -273,7 +273,7 @@ Array [
 `);
   });
 
-  it("should parse WMTS capabilities XML content  (geo-admin)", async () => {
+  it("should parse WMS capabilities XML content  (geo-admin)", async () => {
     const xmlContent = (
       await readFile(join(__dirname, "./mocks/geo-admin.wms.xml"))
     ).toString();
@@ -288,7 +288,7 @@ Array [
     expect(ccsLayer?.children).toBeUndefined();
   });
 
-  it("should parse WMTS capabilities XML content  (geo-ag-ch)", async () => {
+  it("should parse WMS capabilities XML content  (geo-ag-ch)", async () => {
     const xmlContent = (
       await readFile(join(__dirname, "./mocks/wms-geo-ag-ch.wms.xml"))
     ).toString();
@@ -339,7 +339,7 @@ Der Datensatz \\"Wasserbauprojekte_Linienobjekte\\" beinhaltet folgende Werksart
 `);
   });
 
-  it("should parse WMTS capabilities XML content  (geodienste-ch-db-av-ita.wms.xml)", async () => {
+  it("should parse WMS capabilities XML content  (geodienste-ch-db-av-ita.wms.xml)", async () => {
     const xmlContent = (
       await readFile(join(__dirname, "./mocks/geodienste-ch-db-av-ita.wms.xml"))
     ).toString();
