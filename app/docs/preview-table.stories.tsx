@@ -1,6 +1,6 @@
 import { Paper } from "@mui/material";
 
-import { PreviewTable } from "@/browse/datatable";
+import { ChartDataTablePreviewInner } from "@/browse/datatable";
 
 import { dimensions, observations } from "./preview-table.mock";
 
@@ -12,7 +12,7 @@ export default meta;
 
 const PreviewTableStory = () => (
   <Paper>
-    <PreviewTable
+    <ChartDataTablePreviewInner
       linkToMetadataPanel={false}
       title="My dataset preview"
       sortedComponents={dimensions}

@@ -20,7 +20,7 @@ import {
   useState,
 } from "react";
 
-import { DataSetTable } from "@/browse/datatable";
+import { ChartDataTablePreview } from "@/browse/datatable";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { ActionElementsContainer } from "@/components/action-elements-container";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
@@ -590,7 +590,7 @@ const ChartPreviewInner = ({
                 />
                 <TablePreviewWrapper>
                   {isTable ? (
-                    <DataSetTable
+                    <ChartDataTablePreview
                       dataSource={dataSource}
                       chartConfig={chartConfig}
                       dashboardFilters={state.dashboardFilters}

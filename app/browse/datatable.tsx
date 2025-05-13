@@ -44,7 +44,7 @@ import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import { useLocale } from "@/locales/use-locale";
 import { uniqueMapBy } from "@/utils/uniqueMapBy";
 
-export const DataSetTable = ({
+export const ChartDataTablePreview = ({
   dataSource,
   chartConfig,
   dashboardFilters,
@@ -106,7 +106,7 @@ export const DataSetTable = ({
     componentsData?.dataCubesComponents &&
     observationsData?.dataCubesObservations ? (
     <Box sx={{ maxHeight: "600px", overflow: "auto", ...sx }}>
-      <PreviewTable
+      <ChartDataTablePreviewInner
         title={metadataData.dataCubesMetadata.map((d) => d.title).join(", ")}
         sortedComponents={sortedComponents}
         observations={observationsData.dataCubesObservations.data}
@@ -118,7 +118,7 @@ export const DataSetTable = ({
   );
 };
 
-export const PreviewTable = ({
+export const ChartDataTablePreviewInner = ({
   title,
   sortedComponents,
   observations,
@@ -138,11 +138,11 @@ export const PreviewTable = ({
     }
 
     const compare = sortDirection === "asc" ? ascending : descending;
-    const valuesIndex = uniqueMapBy(sortBy.values, (d) => d.label);
+    const valuesByLabel = uniqueMapBy(sortBy.values, (d) => d.label);
     const convert =
       isNumericalMeasure(sortBy) || sortBy.isNumerical
         ? (v: string) => +v
-        : (v: string) => valuesIndex.get(v)?.position ?? v;
+        : (v: string) => valuesByLabel.get(v)?.position ?? v;
 
     return [...observations].sort((a, b) =>
       compare(convert(a[sortBy.id] as string), convert(b[sortBy.id] as string))
@@ -175,12 +175,7 @@ export const PreviewTable = ({
     <div ref={tooltipContainerRef} style={{ width: "100%" }}>
       <Table>
         <caption style={{ display: "none" }}>{title}</caption>
-        <TableHead
-          sx={{
-            position: "sticky",
-            top: 0,
-          }}
-        >
+        <TableHead sx={{ position: "sticky", top: 0 }}>
           <TableRow>
             {sortedComponents.map((component) => {
               return (
@@ -245,7 +240,7 @@ export const PreviewTable = ({
   );
 };
 
-export const DataSetPreviewTable = ({
+export const CubeDataTablePreview = ({
   title,
   dimensions,
   measures,
@@ -261,7 +256,7 @@ export const DataSetPreviewTable = ({
   }, [dimensions, measures]);
 
   return observations ? (
-    <PreviewTable
+    <ChartDataTablePreviewInner
       title={title}
       sortedComponents={sortedComponents}
       observations={observations}
