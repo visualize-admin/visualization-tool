@@ -110,6 +110,7 @@ const useColumnsStackedState = (
     getXAbbreviationOrLabel,
     getXLabel,
     yMeasure,
+    yUnit,
     getY,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
@@ -468,7 +469,7 @@ const useColumnsStackedState = (
       const yValueFormatter = getStackedTooltipValueFormatter({
         normalize,
         measureId: yMeasure.id,
-        measureUnit: yMeasure.unit,
+        measureUnit: yUnit,
         formatters,
         formatNumber,
       });
@@ -509,7 +510,7 @@ const useColumnsStackedState = (
       segments,
       getSegment,
       yMeasure.id,
-      yMeasure.unit,
+      yUnit,
       formatters,
       formatNumber,
       getXAbbreviationOrLabel,

@@ -91,6 +91,7 @@ const useLinesState = (
     getX,
     getXAsString,
     yMeasure,
+    yUnit,
     getY,
     getYErrorRange,
     getFormattedYUncertainty,
@@ -336,7 +337,7 @@ const useLinesState = (
       formatNumberWithUnit(
         value,
         formatters[yMeasure.id] ?? formatNumber,
-        yMeasure.unit
+        yUnit
       );
 
     return {

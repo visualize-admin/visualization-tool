@@ -354,6 +354,8 @@ export type NumericalXVariables = {
   /** Depending on xMeasure's scale type, it can either be 0 or dynamically
    * based on available data. */
   getMinX: (data: Observation[], getX: NumericalValueGetter) => number;
+  /** Unit of the x measure, or the unit conversion if provided. */
+  xUnit: Measure["unit"];
 };
 
 export const useNumericalXVariables = (
@@ -373,6 +375,7 @@ export const useNumericalXVariables = (
     throw Error(`Measure <${x.componentId}> is not numerical!`);
   }
 
+  const xUnit = x.unitConversion?.labels[locale] ?? xMeasure.unit;
   const getRawX = useOptionalNumericVariable(x.componentId);
   const getX = useCallback(
     (d: Observation) => {
@@ -387,9 +390,7 @@ export const useNumericalXVariables = (
     [getRawX, x.unitConversion?.factor]
   );
 
-  const xAxisLabel = getLabelWithUnit(xMeasure, {
-    unitOverride: x.unitConversion?.labels[locale],
-  });
+  const xAxisLabel = getLabelWithUnit(xMeasure, { unitOverride: xUnit });
   const getMinX = useCallback(
     (data: Observation[], _getX: NumericalValueGetter) => {
       switch (chartType) {
@@ -412,6 +413,7 @@ export const useNumericalXVariables = (
     getX,
     xAxisLabel,
     getMinX,
+    xUnit,
   };
 };
 
@@ -422,6 +424,8 @@ export type NumericalYVariables = {
   /** Depending on yMeasure's scale type, it can either be 0 or dynamically
    * based on available data. */
   getMinY: (data: Observation[], getY: NumericalValueGetter) => number;
+  /** Unit of the y measure, or the unit conversion if provided. */
+  yUnit: Measure["unit"];
 };
 
 export const useNumericalYVariables = (
@@ -448,6 +452,7 @@ export const useNumericalYVariables = (
     throw Error(`Measure <${y.componentId}> is not numerical!`);
   }
 
+  const yUnit = y.unitConversion?.labels[locale] ?? yMeasure.unit;
   const getRawY = useOptionalNumericVariable(y.componentId);
   const getY = useCallback(
     (d: Observation) => {
@@ -462,9 +467,7 @@ export const useNumericalYVariables = (
     [getRawY, y.unitConversion?.factor]
   );
 
-  const yAxisLabel = getLabelWithUnit(yMeasure, {
-    unitOverride: y.unitConversion?.labels[locale],
-  });
+  const yAxisLabel = getLabelWithUnit(yMeasure, { unitOverride: yUnit });
   const getMinY = useCallback(
     (data: Observation[], _getY: NumericalValueGetter) => {
       switch (chartType) {
@@ -490,6 +493,7 @@ export const useNumericalYVariables = (
     getY,
     yAxisLabel,
     getMinY,
+    yUnit,
   };
 };
 

@@ -90,6 +90,7 @@ const useColumnsState = (
     getXLabel,
     xTimeUnit,
     yMeasure,
+    yUnit,
     getY,
     getMinY,
     getYErrorRange,
@@ -315,7 +316,7 @@ const useColumnsState = (
       formatNumberWithUnit(
         value,
         formatters[yMeasure.id] ?? formatNumber,
-        yMeasure.unit
+        yUnit
       );
 
     return {

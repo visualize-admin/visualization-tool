@@ -59,6 +59,7 @@ const usePieState = (
   const { chartConfig, dimensions, measures } = chartProps;
   const {
     yMeasure,
+    yUnit,
     getY,
     segmentDimension: _segmentDimension,
     segmentsByAbbreviationOrLabel,
@@ -210,7 +211,7 @@ const usePieState = (
     const formattedValue = formatNumberWithUnit(
       value,
       formatters[yMeasure.id] ?? formatNumber,
-      yMeasure.unit
+      yUnit
     );
     const percentage = value / ySum;
     const rounded = Math.round(percentage * 100);

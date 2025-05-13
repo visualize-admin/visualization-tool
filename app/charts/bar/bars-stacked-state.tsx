@@ -114,6 +114,7 @@ const useBarsStackedState = (
     getYAbbreviationOrLabel,
     getYLabel,
     xMeasure,
+    xUnit,
     getY,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
@@ -480,7 +481,7 @@ const useBarsStackedState = (
       const xValueFormatter = getStackedTooltipValueFormatter({
         normalize,
         measureId: xMeasure.id,
-        measureUnit: xMeasure.unit,
+        measureUnit: xUnit,
         formatters,
         formatNumber,
       });
@@ -522,7 +523,7 @@ const useBarsStackedState = (
       segments,
       getSegment,
       xMeasure.id,
-      xMeasure.unit,
+      xUnit,
       formatters,
       formatNumber,
       getYAbbreviationOrLabel,
