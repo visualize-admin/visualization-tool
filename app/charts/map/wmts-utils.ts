@@ -344,14 +344,10 @@ const getWMTSLayerData = (
   const identifierReplaced = identifier
     ? url.replace(`{${identifier}}`, `${value}`)
     : url;
-  const tileMatrixSetReplaced = tileMatrixSetId
-    ? identifierReplaced.replace(`{TileMatrixSet}`, tileMatrixSetId)
-    : identifierReplaced;
-  const layerReplaced = layerId
-    ? tileMatrixSetReplaced.replace(`{Layer}`, layerId)
-    : tileMatrixSetReplaced;
-  return layerReplaced
-    .replace("{TileMatrix}", tileMatrixSetId ? `${tileMatrixSetId}:{z}` : "{z}")
+  return identifierReplaced
+    .replace(`{TileMatrixSet}`, tileMatrixSetId ?? "{TileMatrixSet}")
+    .replace(`{Layer}`, layerId ?? "{Layer}")
+    .replace("{TileMatrix}", "{z}")
     .replace("{TileCol}", "{x}")
     .replace("{TileRow}", "{y}");
 };
