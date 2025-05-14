@@ -39,17 +39,7 @@ import {
   GenericField,
   GenericFields,
   InteractiveFiltersConfig,
-  isAreaConfig,
-  isBarConfig,
   isColorInConfig,
-  isColumnConfig,
-  isComboLineColumnConfig,
-  isComboLineDualConfig,
-  isComboLineSingleConfig,
-  isLineConfig,
-  isMapConfig,
-  isPieConfig,
-  isScatterPlotConfig,
   isSegmentInConfig,
   LineSegmentField,
   MapAreaLayer,
@@ -2059,46 +2049,64 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         let leftAxisUnitConversion: UnitConversion | undefined;
         let rightAxisUnitConversion: UnitConversion | undefined;
 
-        if (isComboLineColumnConfig(oldChartConfig)) {
-          const {
-            lineComponentId: lineId,
-            lineAxisOrientation: lineOrientation,
-            columnComponentId: columnId,
-          } = oldChartConfig.fields.y;
-          const leftAxisId = lineOrientation === "left" ? lineId : columnId;
-          rightMeasureId = lineOrientation === "left" ? columnId : lineId;
-          leftMeasure = getLeftMeasure(leftAxisId);
-          leftAxisUnitConversion =
-            lineOrientation === "left"
-              ? oldChartConfig.fields.y.lineUnitConversion
-              : oldChartConfig.fields.y.columnUnitConversion;
-          rightAxisUnitConversion =
-            lineOrientation === "left"
-              ? oldChartConfig.fields.y.columnUnitConversion
-              : oldChartConfig.fields.y.lineUnitConversion;
-        } else if (isComboLineSingleConfig(oldChartConfig)) {
-          leftMeasure = getLeftMeasure(oldChartConfig.fields.y.componentIds[0]);
-          leftAxisUnitConversion = oldChartConfig.fields.y.unitConversion;
-        } else if (
-          isAreaConfig(oldChartConfig) ||
-          isColumnConfig(oldChartConfig) ||
-          isLineConfig(oldChartConfig) ||
-          isPieConfig(oldChartConfig) ||
-          isScatterPlotConfig(oldChartConfig)
-        ) {
-          leftMeasure = getLeftMeasure(oldChartConfig.fields.y.componentId);
-          leftAxisUnitConversion = oldChartConfig.fields.y.unitConversion;
-        } else if (isMapConfig(oldChartConfig)) {
-          const { areaLayer, symbolLayer } = oldChartConfig.fields;
-          const leftAxisId =
-            areaLayer?.color.componentId ?? symbolLayer?.measureId;
-
-          if (leftAxisId) {
+        switch (oldChartConfig.chartType) {
+          case "comboLineColumn": {
+            const {
+              lineComponentId: lineId,
+              lineAxisOrientation: lineOrientation,
+              columnComponentId: columnId,
+            } = oldChartConfig.fields.y;
+            const leftAxisId = lineOrientation === "left" ? lineId : columnId;
+            rightMeasureId = lineOrientation === "left" ? columnId : lineId;
             leftMeasure = getLeftMeasure(leftAxisId);
+            leftAxisUnitConversion =
+              lineOrientation === "left"
+                ? oldChartConfig.fields.y.lineUnitConversion
+                : oldChartConfig.fields.y.columnUnitConversion;
+            rightAxisUnitConversion =
+              lineOrientation === "left"
+                ? oldChartConfig.fields.y.columnUnitConversion
+                : oldChartConfig.fields.y.lineUnitConversion;
+            break;
           }
-        } else if (isBarConfig(oldChartConfig)) {
-          leftMeasure = getLeftMeasure(oldChartConfig.fields.x.componentId);
-          leftAxisUnitConversion = oldChartConfig.fields.x.unitConversion;
+          case "comboLineSingle": {
+            leftMeasure = getLeftMeasure(
+              oldChartConfig.fields.y.componentIds[0]
+            );
+            leftAxisUnitConversion = oldChartConfig.fields.y.unitConversion;
+            break;
+          }
+          case "area":
+          case "column":
+          case "line":
+          case "pie":
+          case "scatterplot": {
+            leftMeasure = getLeftMeasure(oldChartConfig.fields.y.componentId);
+            leftAxisUnitConversion = oldChartConfig.fields.y.unitConversion;
+            break;
+          }
+          case "map": {
+            const { areaLayer, symbolLayer } = oldChartConfig.fields;
+            const leftAxisId =
+              areaLayer?.color.componentId ?? symbolLayer?.measureId;
+
+            if (leftAxisId) {
+              leftMeasure = getLeftMeasure(leftAxisId);
+            }
+
+            break;
+          }
+          case "bar": {
+            leftMeasure = getLeftMeasure(oldChartConfig.fields.x.componentId);
+            leftAxisUnitConversion = oldChartConfig.fields.x.unitConversion;
+            break;
+          }
+          case "comboLineDual":
+          case "table":
+            break;
+          default:
+            const _exhaustiveCheck: never = oldChartConfig;
+            return _exhaustiveCheck;
         }
 
         rightMeasureId = (
@@ -2180,35 +2188,53 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         let columnUnitConversion: UnitConversion | undefined;
         let lineUnitConversion: UnitConversion | undefined;
 
-        if (isComboLineDualConfig(oldChartConfig)) {
-          const leftAxisId = oldChartConfig.fields.y.leftAxisComponentId;
-          leftMeasure = getMeasure(leftAxisId);
-          rightAxisMeasureId = oldChartConfig.fields.y.rightAxisComponentId;
-          columnUnitConversion = oldChartConfig.fields.y.leftAxisUnitConversion;
-          lineUnitConversion = oldChartConfig.fields.y.rightAxisUnitConversion;
-        } else if (isComboLineSingleConfig(oldChartConfig)) {
-          leftMeasure = getMeasure(oldChartConfig.fields.y.componentIds[0]);
-          columnUnitConversion = oldChartConfig.fields.y.unitConversion;
-        } else if (
-          isAreaConfig(oldChartConfig) ||
-          isColumnConfig(oldChartConfig) ||
-          isLineConfig(oldChartConfig) ||
-          isPieConfig(oldChartConfig) ||
-          isScatterPlotConfig(oldChartConfig)
-        ) {
-          leftMeasure = getMeasure(oldChartConfig.fields.y.componentId);
-          columnUnitConversion = oldChartConfig.fields.y.unitConversion;
-        } else if (isMapConfig(oldChartConfig)) {
-          const { areaLayer, symbolLayer } = oldChartConfig.fields;
-          const leftAxisId =
-            areaLayer?.color.componentId ?? symbolLayer?.measureId;
-
-          if (leftAxisId) {
+        switch (oldChartConfig.chartType) {
+          case "comboLineDual": {
+            const leftAxisId = oldChartConfig.fields.y.leftAxisComponentId;
             leftMeasure = getMeasure(leftAxisId);
+            rightAxisMeasureId = oldChartConfig.fields.y.rightAxisComponentId;
+            columnUnitConversion =
+              oldChartConfig.fields.y.leftAxisUnitConversion;
+            lineUnitConversion =
+              oldChartConfig.fields.y.rightAxisUnitConversion;
+            break;
           }
-        } else if (isBarConfig(oldChartConfig)) {
-          leftMeasure = getMeasure(oldChartConfig.fields.x.componentId);
-          columnUnitConversion = oldChartConfig.fields.x.unitConversion;
+          case "comboLineSingle": {
+            leftMeasure = getMeasure(oldChartConfig.fields.y.componentIds[0]);
+            columnUnitConversion = oldChartConfig.fields.y.unitConversion;
+            break;
+          }
+          case "area":
+          case "column":
+          case "line":
+          case "pie":
+          case "scatterplot": {
+            leftMeasure = getMeasure(oldChartConfig.fields.y.componentId);
+            columnUnitConversion = oldChartConfig.fields.y.unitConversion;
+            break;
+          }
+          case "map": {
+            const { areaLayer, symbolLayer } = oldChartConfig.fields;
+            const leftAxisId =
+              areaLayer?.color.componentId ?? symbolLayer?.measureId;
+
+            if (leftAxisId) {
+              leftMeasure = getMeasure(leftAxisId);
+            }
+
+            break;
+          }
+          case "bar": {
+            leftMeasure = getMeasure(oldChartConfig.fields.x.componentId);
+            columnUnitConversion = oldChartConfig.fields.x.unitConversion;
+            break;
+          }
+          case "comboLineColumn":
+          case "table":
+            break;
+          default:
+            const _exhaustiveCheck: never = oldChartConfig;
+            return _exhaustiveCheck;
         }
 
         const lineComponentId = (
