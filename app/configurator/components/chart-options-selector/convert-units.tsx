@@ -47,16 +47,12 @@ export const ConvertUnits = ({
         (c) => c.id === (chartConfig.fields as any)[field].componentId
       );
 
-      if (!component?.unit) {
-        return null;
-      }
-
       return (
         <ConvertUnit
           chartConfig={chartConfig}
           field={field}
           path="unitConversion"
-          originalUnit={component.unit}
+          originalUnit={component?.unit}
         />
       );
     }
@@ -70,16 +66,12 @@ export const ConvertUnits = ({
           (chartConfig.fields as ComboLineSingleFields).y.componentIds[0]
       );
 
-      if (!component?.unit) {
-        return null;
-      }
-
       return (
         <ConvertUnit
           chartConfig={chartConfig}
           field="y"
           path="unitConversion"
-          originalUnit={component.unit}
+          originalUnit={component?.unit}
         />
       );
     }
@@ -102,7 +94,7 @@ export const ConvertUnit = ({
   chartConfig: ChartConfig;
   field: EncodingFieldType;
   path: string;
-  originalUnit: string;
+  originalUnit: string | undefined;
 }) => {
   const locale = useLocale();
   const orderedLocales = useOrderedLocales();
