@@ -338,6 +338,10 @@ export type CustomScaleDomainFieldExtension = t.TypeOf<
 >;
 
 const UnitConversion = t.type({
+  // Technically, the componentId is not needed, but it drastically helps
+  // when adjusting the config to carry over the unit conversion from the
+  // old measure to the new one.
+  componentId: t.string,
   factor: t.number,
   labels: t.type({
     de: t.string,

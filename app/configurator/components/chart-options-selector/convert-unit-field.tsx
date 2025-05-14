@@ -40,6 +40,11 @@ export const ConvertUnitField = ({
       const component = components.find(
         (c) => c.id === (chartConfig.fields as any)[field].componentId
       );
+
+      if (!component) {
+        return null;
+      }
+
       const unitConversion = chartConfig.fields.y.unitConversion;
 
       return (
@@ -47,14 +52,18 @@ export const ConvertUnitField = ({
           checked={!!unitConversion}
           field={field}
           unitConversions={[
-            { path: "unitConversion", originalUnit: component?.unit },
+            {
+              path: "unitConversion",
+              originalUnit: component.unit,
+              componentId: component.id,
+            },
           ]}
         >
           {unitConversion ? (
             <ConvertUnitInner
               field={field}
               path="unitConversion"
-              originalUnit={component?.unit}
+              originalUnit={component.unit}
               unitConversion={unitConversion}
             />
           ) : null}
@@ -65,6 +74,11 @@ export const ConvertUnitField = ({
       const component = components.find(
         (c) => c.id === (chartConfig.fields as any)[field].componentId
       );
+
+      if (!component) {
+        return null;
+      }
+
       const unitConversion = chartConfig.fields.x.unitConversion;
 
       return (
@@ -72,14 +86,18 @@ export const ConvertUnitField = ({
           checked={!!unitConversion}
           field={field}
           unitConversions={[
-            { path: "unitConversion", originalUnit: component?.unit },
+            {
+              path: "unitConversion",
+              originalUnit: component.unit,
+              componentId: component.id,
+            },
           ]}
         >
           {unitConversion ? (
             <ConvertUnitInner
               field={field}
               path="unitConversion"
-              originalUnit={component?.unit}
+              originalUnit={component.unit}
               unitConversion={unitConversion}
             />
           ) : null}
@@ -93,6 +111,11 @@ export const ConvertUnitField = ({
       const component = components.find(
         (c) => c.id === chartConfig.fields.y.componentIds[0]
       );
+
+      if (!component) {
+        return null;
+      }
+
       const unitConversion = chartConfig.fields.y.unitConversion;
 
       return (
@@ -100,14 +123,18 @@ export const ConvertUnitField = ({
           checked={!!unitConversion}
           field="y"
           unitConversions={[
-            { path: "unitConversion", originalUnit: component?.unit },
+            {
+              path: "unitConversion",
+              originalUnit: component.unit,
+              componentId: component.id,
+            },
           ]}
         >
           {unitConversion ? (
             <ConvertUnitInner
               field="y"
               path="unitConversion"
-              originalUnit={component?.unit}
+              originalUnit={component.unit}
               unitConversion={unitConversion}
             />
           ) : null}
@@ -118,9 +145,19 @@ export const ConvertUnitField = ({
       const lineComponent = components.find(
         (c) => c.id === chartConfig.fields.y.lineComponentId
       );
+
+      if (!lineComponent) {
+        return null;
+      }
+
       const columnComponent = components.find(
         (c) => c.id === chartConfig.fields.y.columnComponentId
       );
+
+      if (!columnComponent) {
+        return null;
+      }
+
       const lineUnitConversion = chartConfig.fields.y.lineUnitConversion;
       const columnUnitConversion = chartConfig.fields.y.columnUnitConversion;
 
@@ -129,20 +166,23 @@ export const ConvertUnitField = ({
           checked={!!lineUnitConversion || !!columnUnitConversion}
           field="y"
           unitConversions={[
-            { path: "lineUnitConversion", originalUnit: lineComponent?.unit },
+            {
+              path: "lineUnitConversion",
+              originalUnit: lineComponent.unit,
+              componentId: lineComponent.id,
+            },
             {
               path: "columnUnitConversion",
-              originalUnit: columnComponent?.unit,
+              originalUnit: columnComponent.unit,
+              componentId: columnComponent.id,
             },
           ]}
         >
           {columnUnitConversion ? (
             <div>
-              {columnComponent?.label && (
-                <Typography variant="body3" fontWeight="bold">
-                  {columnComponent.label}
-                </Typography>
-              )}
+              <Typography variant="body3" fontWeight="bold">
+                {columnComponent.label}
+              </Typography>
               <ConvertUnitInner
                 field="y"
                 path="columnUnitConversion"
@@ -153,11 +193,9 @@ export const ConvertUnitField = ({
           ) : null}
           {lineUnitConversion ? (
             <div>
-              {lineComponent?.label && (
-                <Typography variant="body3" fontWeight="bold">
-                  {lineComponent.label}
-                </Typography>
-              )}
+              <Typography variant="body3" fontWeight="bold">
+                {lineComponent.label}
+              </Typography>
               <ConvertUnitInner
                 field="y"
                 path="lineUnitConversion"
@@ -173,9 +211,19 @@ export const ConvertUnitField = ({
       const leftComponent = components.find(
         (c) => c.id === chartConfig.fields.y.leftAxisComponentId
       );
+
+      if (!leftComponent) {
+        return null;
+      }
+
       const rightComponent = components.find(
         (c) => c.id === chartConfig.fields.y.rightAxisComponentId
       );
+
+      if (!rightComponent) {
+        return null;
+      }
+
       const leftUnitConversion = chartConfig.fields.y.leftAxisUnitConversion;
       const rightUnitConversion = chartConfig.fields.y.rightAxisUnitConversion;
 
@@ -186,40 +234,38 @@ export const ConvertUnitField = ({
           unitConversions={[
             {
               path: "leftAxisUnitConversion",
-              originalUnit: leftComponent?.unit,
+              originalUnit: leftComponent.unit,
+              componentId: leftComponent.id,
             },
             {
               path: "rightAxisUnitConversion",
-              originalUnit: rightComponent?.unit,
+              originalUnit: rightComponent.unit,
+              componentId: rightComponent.id,
             },
           ]}
         >
           {leftUnitConversion ? (
             <div>
-              {leftComponent?.label && (
-                <Typography variant="body3" fontWeight="bold">
-                  {leftComponent.label}
-                </Typography>
-              )}
+              <Typography variant="body3" fontWeight="bold">
+                {leftComponent.label}
+              </Typography>
               <ConvertUnitInner
                 field="y"
                 path="leftAxisUnitConversion"
-                originalUnit={leftComponent?.unit}
+                originalUnit={leftComponent.unit}
                 unitConversion={leftUnitConversion}
               />
             </div>
           ) : null}
           {rightUnitConversion ? (
             <div>
-              {rightComponent?.label && (
-                <Typography variant="body3" fontWeight="bold">
-                  {rightComponent.label}
-                </Typography>
-              )}
+              <Typography variant="body3" fontWeight="bold">
+                {rightComponent.label}
+              </Typography>
               <ConvertUnitInner
                 field="y"
                 path="rightAxisUnitConversion"
-                originalUnit={rightComponent?.unit}
+                originalUnit={rightComponent.unit}
                 unitConversion={rightUnitConversion}
               />
             </div>
@@ -242,7 +288,11 @@ const ConvertUnitSection = ({
   children: ReactNode;
   checked: boolean;
   field: EncodingFieldType;
-  unitConversions: { path: string; originalUnit: string | undefined }[];
+  unitConversions: {
+    path: string;
+    originalUnit: string | undefined;
+    componentId: string;
+  }[];
 }) => {
   const locale = useLocale();
   const orderedLocales = useOrderedLocales();
@@ -250,7 +300,7 @@ const ConvertUnitSection = ({
 
   const handleToggle = useEvent(() => {
     if (!checked) {
-      unitConversions.forEach(({ path, originalUnit }) => {
+      unitConversions.forEach(({ path, originalUnit, componentId }) => {
         const defaultLabels = orderedLocales.reduce(
           (acc, locale) => {
             acc[locale] = originalUnit ?? "";
@@ -266,6 +316,7 @@ const ConvertUnitSection = ({
             field,
             path,
             value: {
+              componentId,
               factor: 1,
               labels: defaultLabels,
             },
@@ -332,6 +383,7 @@ const ConvertUnitInner = ({
           field,
           path,
           value: {
+            componentId: unitConversion.componentId,
             factor: newFactor,
             labels: unitConversion.labels,
           },
@@ -349,6 +401,7 @@ const ConvertUnitInner = ({
           field,
           path,
           value: {
+            componentId: unitConversion.componentId,
             factor: unitConversion.factor,
             labels: {
               ...unitConversion.labels,
