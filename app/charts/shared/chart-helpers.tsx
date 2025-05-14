@@ -197,7 +197,7 @@ const getMapChartConfigAdditionalFieldIds = ({ fields }: MapConfig) => {
   return additionalFields;
 };
 
-const getComboChartConfigAdditionalFields = (chartConfig: ComboChartConfig) => {
+const getComboChartComponentIds = (chartConfig: ComboChartConfig) => {
   switch (chartConfig.chartType) {
     case "comboLineSingle":
       return chartConfig.fields.y.componentIds;
@@ -243,7 +243,7 @@ export const extractChartConfigComponentIds = ({
     chartConfig.chartType === "map"
       ? getMapChartConfigAdditionalFieldIds(chartConfig)
       : isComboChartConfig(chartConfig)
-        ? getComboChartConfigAdditionalFields(chartConfig)
+        ? getComboChartComponentIds(chartConfig)
         : [];
   const filterIds = includeFilters
     ? getChartConfigFilterComponentIds(chartConfig)
