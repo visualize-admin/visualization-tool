@@ -991,9 +991,12 @@ export type MapConfig = t.TypeOf<typeof MapConfig>;
 
 const ComboLineSingleFields = t.type({
   x: GenericField,
-  y: t.type({
-    componentIds: t.array(t.string),
-  }),
+  y: t.intersection([
+    t.type({
+      componentIds: t.array(t.string),
+    }),
+    UnitConversionFieldExtension,
+  ]),
   color: MeasuresColorField,
 });
 export type ComboLineSingleFields = t.TypeOf<typeof ComboLineSingleFields>;
