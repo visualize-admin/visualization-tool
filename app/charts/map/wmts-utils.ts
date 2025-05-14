@@ -137,9 +137,7 @@ const parseTileMatrixSets = (
       : [item.TileMatrix];
     return {
       id: item["ows:Identifier"],
-      supportedCRS: Array.isArray(item["ows:SupportedCRS"])
-        ? item["ows:SupportedCRS"]
-        : [item["ows:SupportedCRS"]],
+      supportedCRS: maybeArray(item["ows:SupportedCRS"]) ?? [],
       tileMatrixes: tileMatrixes.map((tm) => ({
         id: tm["ows:Identifier"],
         scaleDenominator: tm.ScaleDenominator,
