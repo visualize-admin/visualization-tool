@@ -4,8 +4,6 @@ import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
 
-import { Component } from "@/domain/data";
-
 const DimensionType = t.union([
   t.literal("NominalDimension"),
   t.literal("OrdinalDimension"),
@@ -355,27 +353,56 @@ export type UnitConversionFieldExtension = t.TypeOf<
 >;
 
 export const getConversionUnitsByComponentId = ({
-  fields,
-  components,
+  chartConfig,
 }: {
-  fields: ChartConfig["fields"];
-  components: Component[];
-}) => {
-  return Object.values(fields).reduce(
-    (acc, field) => {
-      const componentId = field.componentId;
-      const component = components.find((c) => c.id === componentId);
-      const unitConversion =
-        "unitConversion" in field ? field.unitConversion : undefined;
-
-      if (component && unitConversion) {
-        acc[componentId] = unitConversion;
-      }
-
-      return acc;
-    },
-    {} as Record<string, UnitConversionFieldExtension["unitConversion"]>
-  );
+  chartConfig: ChartConfig;
+}): Record<string, UnitConversionFieldExtension["unitConversion"]> => {
+  switch (chartConfig.chartType) {
+    case "area":
+    case "column":
+    case "line":
+    case "pie":
+      return {
+        [chartConfig.fields.y.componentId]: chartConfig.fields.y.unitConversion,
+      };
+    case "bar":
+      return {
+        [chartConfig.fields.x.componentId]: chartConfig.fields.x.unitConversion,
+      };
+    case "scatterplot":
+      return {
+        [chartConfig.fields.x.componentId]: chartConfig.fields.x.unitConversion,
+        [chartConfig.fields.y.componentId]: chartConfig.fields.y.unitConversion,
+      };
+    case "comboLineSingle":
+      return chartConfig.fields.y.componentIds.reduce(
+        (acc, componentId) => {
+          acc[componentId] = chartConfig.fields.y.unitConversion;
+          return acc;
+        },
+        {} as Record<string, UnitConversionFieldExtension["unitConversion"]>
+      );
+    case "comboLineDual":
+      return {
+        [chartConfig.fields.y.leftAxisComponentId]:
+          chartConfig.fields.y.leftAxisUnitConversion,
+        [chartConfig.fields.y.rightAxisComponentId]:
+          chartConfig.fields.y.rightAxisUnitConversion,
+      } as Record<string, UnitConversionFieldExtension["unitConversion"]>;
+    case "comboLineColumn":
+      return {
+        [chartConfig.fields.y.columnComponentId]:
+          chartConfig.fields.y.columnUnitConversion,
+        [chartConfig.fields.y.lineComponentId]:
+          chartConfig.fields.y.lineUnitConversion,
+      } as Record<string, UnitConversionFieldExtension["unitConversion"]>;
+    case "map":
+    case "table":
+      return {};
+    default:
+      const _exhaustiveCheck: never = chartConfig;
+      return _exhaustiveCheck;
+  }
 };
 
 const ChartSubType = t.union([t.literal("stacked"), t.literal("grouped")]);
@@ -1016,10 +1043,16 @@ export type ComboLineSingleConfig = t.TypeOf<typeof ComboLineSingleConfig>;
 
 const ComboLineDualFields = t.type({
   x: GenericField,
-  y: t.type({
-    leftAxisComponentId: t.string,
-    rightAxisComponentId: t.string,
-  }),
+  y: t.intersection([
+    t.type({
+      leftAxisComponentId: t.string,
+      rightAxisComponentId: t.string,
+    }),
+    t.partial({
+      leftAxisUnitConversion: UnitConversionFieldExtension,
+      rightAxisUnitConversion: UnitConversionFieldExtension,
+    }),
+  ]),
   color: MeasuresColorField,
 });
 export type ComboLineDualFields = t.TypeOf<typeof ComboLineDualFields>;
@@ -1039,11 +1072,17 @@ export type ComboLineDualConfig = t.TypeOf<typeof ComboLineDualConfig>;
 
 const ComboLineColumnFields = t.type({
   x: GenericField,
-  y: t.type({
-    lineComponentId: t.string,
-    lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
-    columnComponentId: t.string,
-  }),
+  y: t.intersection([
+    t.type({
+      lineComponentId: t.string,
+      lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
+      columnComponentId: t.string,
+    }),
+    t.partial({
+      lineUnitConversion: UnitConversionFieldExtension,
+      columnUnitConversion: UnitConversionFieldExtension,
+    }),
+  ]),
   color: MeasuresColorField,
 });
 

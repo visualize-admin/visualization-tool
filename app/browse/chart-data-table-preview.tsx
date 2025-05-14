@@ -83,10 +83,9 @@ export const ChartDataTablePreview = ({
 
   const conversionUnitsByComponentId = useMemo(() => {
     return getConversionUnitsByComponentId({
-      fields: chartConfig.fields,
-      components: sortedComponents,
+      chartConfig,
     });
-  }, [chartConfig.fields, sortedComponents]);
+  }, [chartConfig]);
 
   return metadataData?.dataCubesMetadata &&
     componentsData?.dataCubesComponents &&
