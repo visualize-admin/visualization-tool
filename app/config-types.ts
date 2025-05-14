@@ -337,16 +337,19 @@ export type CustomScaleDomainFieldExtension = t.TypeOf<
   typeof CustomScaleDomainFieldExtension
 >;
 
-const UnitConversionFieldExtension = t.partial({
-  unitConversion: t.type({
-    factor: t.number,
-    labels: t.type({
-      de: t.string,
-      fr: t.string,
-      it: t.string,
-      en: t.string,
-    }),
+const UnitConversion = t.type({
+  factor: t.number,
+  labels: t.type({
+    de: t.string,
+    fr: t.string,
+    it: t.string,
+    en: t.string,
   }),
+});
+export type UnitConversion = t.TypeOf<typeof UnitConversion>;
+
+const UnitConversionFieldExtension = t.partial({
+  unitConversion: UnitConversion,
 });
 export type UnitConversionFieldExtension = t.TypeOf<
   typeof UnitConversionFieldExtension
@@ -1049,8 +1052,8 @@ const ComboLineDualFields = t.type({
       rightAxisComponentId: t.string,
     }),
     t.partial({
-      leftAxisUnitConversion: UnitConversionFieldExtension,
-      rightAxisUnitConversion: UnitConversionFieldExtension,
+      leftAxisUnitConversion: UnitConversion,
+      rightAxisUnitConversion: UnitConversion,
     }),
   ]),
   color: MeasuresColorField,
@@ -1079,8 +1082,8 @@ const ComboLineColumnFields = t.type({
       columnComponentId: t.string,
     }),
     t.partial({
-      lineUnitConversion: UnitConversionFieldExtension,
-      columnUnitConversion: UnitConversionFieldExtension,
+      lineUnitConversion: UnitConversion,
+      columnUnitConversion: UnitConversion,
     }),
   ]),
   color: MeasuresColorField,
