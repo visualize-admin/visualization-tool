@@ -3,7 +3,10 @@ import { BitmapLayer } from "@deck.gl/layers";
 import { XMLParser } from "fast-xml-parser";
 import uniq from "lodash/uniq";
 
-import { isRemoteLayerCRSSupported } from "@/charts/map/wms-wmts-endpoint-utils";
+import {
+  isCRSSupported,
+  isRemoteLayerCRSSupported,
+} from "@/charts/map/wms-wmts-endpoint-utils";
 import { maybeArray, parseCrs } from "@/charts/map/wms-wmts-parse-utils";
 import { WMTSCustomLayer } from "@/config-types";
 
@@ -291,7 +294,7 @@ export const getWMTSTile = ({
   }
 
   const espg3857TileMatrixSet = wmtsLayer.tileMatrixSets?.find((tms) => {
-    return tms.id === "EPSG:3857";
+    return tms.supportedCRS.some((crs) => isCRSSupported(crs));
   });
 
   const tileLayerDataUrl = getWMTSLayerData(url, {
