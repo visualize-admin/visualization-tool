@@ -1484,17 +1484,17 @@ const ChartComboLineSingleYField = ({
             <Trans id="controls.chart.combo.y.common-unit">Common unit</Trans>:{" "}
             <b>{unit ?? t({ id: "controls.none", message: "None" })}</b>
           </Typography>
-
-          {y.componentIds.map((id, index) => {
+          {y.componentIds.map((id, i) => {
             // If there are multiple measures, we allow the user to remove any measure.
             const allowNone = y.componentIds.length > 1;
             // If there is only one measure, we allow the user to select any measure.
-            const enableAll = index === 0 && y.componentIds.length === 1;
+            const enableAll = i === 0 && y.componentIds.length === 1;
             const options = getOptionGroups(id, { allowNone, enableAll });
 
             return (
               <Select
                 key={id}
+                size="sm"
                 id={`measure-${id}`}
                 hint={
                   !showAddNewMeasureButton && y.componentIds.length === 1
@@ -1516,7 +1516,7 @@ const ChartComboLineSingleYField = ({
                     newComponentIds = y.componentIds.filter((d) => d !== id);
                   } else {
                     newComponentIds = [...y.componentIds];
-                    newComponentIds.splice(index, 1, newId);
+                    newComponentIds.splice(i, 1, newId);
                   }
 
                   dispatch({
@@ -1623,8 +1623,8 @@ const ChartComboLineDualYField = ({
               Note that you can only combine measures of different units.
             </Trans>
           </Typography>
-
           <Select
+            size="sm"
             id={`measure-${y.leftAxisComponentId}`}
             options={[]}
             optionGroups={getOptionGroups("left")}
@@ -1648,9 +1648,9 @@ const ChartComboLineDualYField = ({
             }}
             sx={{ mb: 2 }}
           />
-
           <Select
             id={`measure-${y.rightAxisComponentId}`}
+            size="sm"
             options={[]}
             optionGroups={getOptionGroups("right")}
             sortOptions={false}
@@ -1738,9 +1738,9 @@ const ChartComboLineColumnYField = ({
               Note that you can only combine measures of different units.
             </Trans>
           </Typography>
-
           <Select
             id={`measure-${y.columnComponentId}`}
+            size="sm"
             options={[]}
             optionGroups={getOptionGroups("column")}
             sortOptions={false}
@@ -1763,9 +1763,9 @@ const ChartComboLineColumnYField = ({
             }}
             sx={{ mb: 2 }}
           />
-
           <Select
             id={`measure-${y.lineComponentId}`}
+            size="sm"
             options={[]}
             optionGroups={getOptionGroups("line")}
             sortOptions={false}
