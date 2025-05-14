@@ -6,7 +6,11 @@ import { ChangeEvent } from "react";
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import Flex from "@/components/flex";
 import { Checkbox, Input } from "@/components/form";
-import { ChartConfig, UnitConversionFieldExtension } from "@/config-types";
+import {
+  ChartConfig,
+  ComboLineSingleFields,
+  UnitConversionFieldExtension,
+} from "@/config-types";
 import {
   ControlSection,
   ControlSectionContent,
@@ -18,9 +22,76 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { Component } from "@/domain/data";
 import { Locale } from "@/locales/locales";
 import { useLocale, useOrderedLocales } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
+
+export const ConvertUnits = ({
+  chartConfig,
+  field,
+  components,
+}: {
+  chartConfig: ChartConfig;
+  field: EncodingFieldType;
+  components: Component[];
+}) => {
+  switch (chartConfig.chartType) {
+    case "area":
+    case "bar":
+    case "column":
+    case "line":
+    case "pie":
+    case "scatterplot": {
+      const component = components.find(
+        (c) => c.id === (chartConfig.fields as any)[field].componentId
+      );
+
+      if (!component?.unit) {
+        return null;
+      }
+
+      return (
+        <ConvertUnit
+          chartConfig={chartConfig}
+          field={field}
+          path="unitConversion"
+          originalUnit={component.unit}
+        />
+      );
+    }
+    case "map":
+    case "table":
+      return null;
+    case "comboLineSingle": {
+      const component = components.find(
+        (c) =>
+          c.id ===
+          (chartConfig.fields as ComboLineSingleFields).y.componentIds[0]
+      );
+
+      if (!component?.unit) {
+        return null;
+      }
+
+      return (
+        <ConvertUnit
+          chartConfig={chartConfig}
+          field="y"
+          path="unitConversion"
+          originalUnit={component.unit}
+        />
+      );
+    }
+    case "comboLineColumn":
+      return null;
+    case "comboLineDual":
+      return null;
+    default:
+      const _exhaustiveCheck: never = chartConfig;
+      return _exhaustiveCheck;
+  }
+};
 
 export const ConvertUnit = ({
   chartConfig,

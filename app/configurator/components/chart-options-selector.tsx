@@ -72,7 +72,7 @@ import {
   ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { ConvertUnit } from "@/configurator/components/chart-options-selector/convert-unit";
+import { ConvertUnits } from "@/configurator/components/chart-options-selector/convert-unit";
 import { CustomLayersSelector } from "@/configurator/components/custom-layers-selector";
 import {
   ChartFieldField,
@@ -561,20 +561,18 @@ const EncodingOptionsPanel = ({
           </ControlSectionContent>
         </ControlSection>
       )}
-      {unitConversionEnabled &&
-        encoding.options?.convertUnit &&
-        component?.unit && (
-          <ConvertUnit
-            chartConfig={chartConfig}
-            field={field}
-            originalUnit={component.unit}
-          />
-        )}
       {encoding.options?.showDots && (
         <ChartShowDots fields={chartConfig.fields} field={field} />
       )}
       {isComboChartConfig(chartConfig) && encoding.field === "y" && (
         <ChartComboYField chartConfig={chartConfig} measures={measures} />
+      )}
+      {unitConversionEnabled && encoding.options?.convertUnit && (
+        <ConvertUnits
+          chartConfig={chartConfig}
+          field={field}
+          components={components}
+        />
       )}
       {fieldComponent && (hasSubOptions || hasColorPalette) && (
         <ChartLayoutOptions
