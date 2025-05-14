@@ -25,10 +25,12 @@ import useEvent from "@/utils/use-event";
 export const ConvertUnit = ({
   chartConfig,
   field,
+  path,
   originalUnit,
 }: {
   chartConfig: ChartConfig;
   field: EncodingFieldType;
+  path: string;
   originalUnit: string;
 }) => {
   const locale = useLocale();
@@ -37,7 +39,7 @@ export const ConvertUnit = ({
 
   const unitConversion = get(
     chartConfig,
-    `fields["${field}"].unitConversion`
+    `fields["${field}"].${path}`
   ) as UnitConversionFieldExtension["unitConversion"];
 
   const handleToggle = useEvent(() => {
@@ -55,7 +57,7 @@ export const ConvertUnit = ({
         value: {
           locale,
           field,
-          path: "unitConversion",
+          path,
           value: {
             factor: 1,
             labels: defaultLabels,
@@ -68,7 +70,7 @@ export const ConvertUnit = ({
         value: {
           locale,
           field,
-          path: "unitConversion",
+          path,
           value: FIELD_VALUE_NONE,
         },
       });
@@ -84,7 +86,7 @@ export const ConvertUnit = ({
         value: {
           locale,
           field,
-          path: "unitConversion",
+          path,
           value: {
             factor: newFactor,
             labels: unitConversion.labels,
@@ -101,7 +103,7 @@ export const ConvertUnit = ({
         value: {
           locale,
           field,
-          path: "unitConversion",
+          path,
           value: {
             factor: unitConversion.factor,
             labels: {
