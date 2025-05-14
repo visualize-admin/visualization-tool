@@ -60,7 +60,9 @@ export const useComboLineSingleStateVariables = (
           d[id] !== null ? Number(d[id]) * unitConversionFactor : null,
         getMinY: (data) => {
           const minY =
-            min(data, (d) => (d[id] !== null ? Number(d[id]) : null)) ?? 0;
+            min(data, (d) =>
+              d[id] !== null ? Number(d[id]) * unitConversionFactor : null
+            ) ?? 0;
 
           return shouldUseDynamicMinScaleValue(measuresById[id].scaleType)
             ? minY
