@@ -1432,6 +1432,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               };
             },
           },
+          convertUnit: {},
         },
       },
       {
@@ -1503,6 +1504,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               };
             },
           },
+          convertUnit: {},
         },
       },
       {

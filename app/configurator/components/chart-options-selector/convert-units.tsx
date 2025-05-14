@@ -1,16 +1,11 @@
 import { t, Trans } from "@lingui/macro";
-import { Typography } from "@mui/material";
-import get from "lodash/get";
-import { ChangeEvent } from "react";
+import { Box, Typography } from "@mui/material";
+import { ChangeEvent, ReactNode } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import Flex from "@/components/flex";
 import { Checkbox, Input } from "@/components/form";
-import {
-  ChartConfig,
-  ComboLineSingleFields,
-  UnitConversionFieldExtension,
-} from "@/config-types";
+import { ChartConfig, UnitConversionFieldExtension } from "@/config-types";
 import {
   ControlSection,
   ControlSectionContent,
@@ -27,7 +22,7 @@ import { Locale } from "@/locales/locales";
 import { useLocale, useOrderedLocales } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
 
-export const ConvertUnits = ({
+export const ConvertUnitField = ({
   chartConfig,
   field,
   components,
@@ -38,7 +33,6 @@ export const ConvertUnits = ({
 }) => {
   switch (chartConfig.chartType) {
     case "area":
-    case "bar":
     case "column":
     case "line":
     case "pie":
@@ -46,14 +40,50 @@ export const ConvertUnits = ({
       const component = components.find(
         (c) => c.id === (chartConfig.fields as any)[field].componentId
       );
+      const unitConversion = chartConfig.fields.y.unitConversion;
 
       return (
-        <ConvertUnit
-          chartConfig={chartConfig}
+        <ConvertUnitSection
+          checked={!!unitConversion}
           field={field}
-          path="unitConversion"
-          originalUnit={component?.unit}
-        />
+          unitConversions={[
+            { path: "unitConversion", originalUnit: component?.unit },
+          ]}
+        >
+          {unitConversion ? (
+            <ConvertUnitInner
+              field={field}
+              path="unitConversion"
+              originalUnit={component?.unit}
+              unitConversion={unitConversion}
+            />
+          ) : null}
+        </ConvertUnitSection>
+      );
+    }
+    case "bar": {
+      const component = components.find(
+        (c) => c.id === (chartConfig.fields as any)[field].componentId
+      );
+      const unitConversion = chartConfig.fields.x.unitConversion;
+
+      return (
+        <ConvertUnitSection
+          checked={!!unitConversion}
+          field={field}
+          unitConversions={[
+            { path: "unitConversion", originalUnit: component?.unit },
+          ]}
+        >
+          {unitConversion ? (
+            <ConvertUnitInner
+              field={field}
+              path="unitConversion"
+              originalUnit={component?.unit}
+              unitConversion={unitConversion}
+            />
+          ) : null}
+        </ConvertUnitSection>
       );
     }
     case "map":
@@ -61,85 +91,236 @@ export const ConvertUnits = ({
       return null;
     case "comboLineSingle": {
       const component = components.find(
-        (c) =>
-          c.id ===
-          (chartConfig.fields as ComboLineSingleFields).y.componentIds[0]
+        (c) => c.id === chartConfig.fields.y.componentIds[0]
       );
+      const unitConversion = chartConfig.fields.y.unitConversion;
 
       return (
-        <ConvertUnit
-          chartConfig={chartConfig}
+        <ConvertUnitSection
+          checked={!!unitConversion}
           field="y"
-          path="unitConversion"
-          originalUnit={component?.unit}
-        />
+          unitConversions={[
+            { path: "unitConversion", originalUnit: component?.unit },
+          ]}
+        >
+          {unitConversion ? (
+            <ConvertUnitInner
+              field="y"
+              path="unitConversion"
+              originalUnit={component?.unit}
+              unitConversion={unitConversion}
+            />
+          ) : null}
+        </ConvertUnitSection>
       );
     }
-    case "comboLineColumn":
-      return null;
-    case "comboLineDual":
-      return null;
+    case "comboLineColumn": {
+      const lineComponent = components.find(
+        (c) => c.id === chartConfig.fields.y.lineComponentId
+      );
+      const columnComponent = components.find(
+        (c) => c.id === chartConfig.fields.y.columnComponentId
+      );
+      const lineUnitConversion = chartConfig.fields.y.lineUnitConversion;
+      const columnUnitConversion = chartConfig.fields.y.columnUnitConversion;
+
+      return (
+        <ConvertUnitSection
+          checked={!!lineUnitConversion || !!columnUnitConversion}
+          field="y"
+          unitConversions={[
+            { path: "lineUnitConversion", originalUnit: lineComponent?.unit },
+            {
+              path: "columnUnitConversion",
+              originalUnit: columnComponent?.unit,
+            },
+          ]}
+        >
+          {lineUnitConversion ? (
+            <div>
+              {lineComponent?.label && (
+                <Typography variant="body3" fontWeight="bold">
+                  {lineComponent.label}
+                </Typography>
+              )}
+              <ConvertUnitInner
+                field="y"
+                path="lineUnitConversion"
+                originalUnit={lineComponent?.unit}
+                unitConversion={lineUnitConversion}
+              />
+            </div>
+          ) : null}
+          {columnUnitConversion ? (
+            <div>
+              {columnComponent?.label && (
+                <Typography variant="body3" fontWeight="bold">
+                  {columnComponent.label}
+                </Typography>
+              )}
+              <ConvertUnitInner
+                field="y"
+                path="columnUnitConversion"
+                originalUnit={columnComponent?.unit}
+                unitConversion={columnUnitConversion}
+              />
+            </div>
+          ) : null}
+        </ConvertUnitSection>
+      );
+    }
+    case "comboLineDual": {
+      const leftComponent = components.find(
+        (c) => c.id === chartConfig.fields.y.leftAxisComponentId
+      );
+      const rightComponent = components.find(
+        (c) => c.id === chartConfig.fields.y.rightAxisComponentId
+      );
+      const leftUnitConversion = chartConfig.fields.y.leftAxisUnitConversion;
+      const rightUnitConversion = chartConfig.fields.y.rightAxisUnitConversion;
+
+      return (
+        <ConvertUnitSection
+          checked={!!leftUnitConversion || !!rightUnitConversion}
+          field="y"
+          unitConversions={[
+            {
+              path: "leftAxisUnitConversion",
+              originalUnit: leftComponent?.unit,
+            },
+            {
+              path: "rightAxisUnitConversion",
+              originalUnit: rightComponent?.unit,
+            },
+          ]}
+        >
+          {leftUnitConversion ? (
+            <div>
+              {leftComponent?.label && (
+                <Typography variant="body3" fontWeight="bold">
+                  {leftComponent.label}
+                </Typography>
+              )}
+              <ConvertUnitInner
+                field="y"
+                path="leftAxisUnitConversion"
+                originalUnit={leftComponent?.unit}
+                unitConversion={leftUnitConversion}
+              />
+            </div>
+          ) : null}
+          {rightUnitConversion ? (
+            <div>
+              {rightComponent?.label && (
+                <Typography variant="body3" fontWeight="bold">
+                  {rightComponent.label}
+                </Typography>
+              )}
+              <ConvertUnitInner
+                field="y"
+                path="rightAxisUnitConversion"
+                originalUnit={rightComponent?.unit}
+                unitConversion={rightUnitConversion}
+              />
+            </div>
+          ) : null}
+        </ConvertUnitSection>
+      );
+    }
     default:
       const _exhaustiveCheck: never = chartConfig;
       return _exhaustiveCheck;
   }
 };
 
-export const ConvertUnit = ({
-  chartConfig,
+const ConvertUnitSection = ({
+  children,
+  checked,
   field,
-  path,
-  originalUnit,
+  unitConversions,
 }: {
-  chartConfig: ChartConfig;
+  children: ReactNode;
+  checked: boolean;
   field: EncodingFieldType;
-  path: string;
-  originalUnit: string | undefined;
+  unitConversions: { path: string; originalUnit: string | undefined }[];
 }) => {
   const locale = useLocale();
   const orderedLocales = useOrderedLocales();
   const [_, dispatch] = useConfiguratorState(isConfiguring);
 
-  const unitConversion = get(
-    chartConfig,
-    `fields["${field}"].${path}`
-  ) as UnitConversionFieldExtension["unitConversion"];
-
   const handleToggle = useEvent(() => {
-    if (!unitConversion) {
-      const defaultLabels = orderedLocales.reduce(
-        (acc, locale) => {
-          acc[locale] = originalUnit ?? "";
-          return acc;
-        },
-        {} as Record<Locale, string>
-      );
-
-      dispatch({
-        type: "CHART_FIELD_UPDATED",
-        value: {
-          locale,
-          field,
-          path,
-          value: {
-            factor: 1,
-            labels: defaultLabels,
+    if (!checked) {
+      unitConversions.forEach(({ path, originalUnit }) => {
+        const defaultLabels = orderedLocales.reduce(
+          (acc, locale) => {
+            acc[locale] = originalUnit ?? "";
+            return acc;
           },
-        },
+          {} as Record<Locale, string>
+        );
+
+        dispatch({
+          type: "CHART_FIELD_UPDATED",
+          value: {
+            locale,
+            field,
+            path,
+            value: {
+              factor: 1,
+              labels: defaultLabels,
+            },
+          },
+        });
       });
     } else {
-      dispatch({
-        type: "CHART_FIELD_UPDATED",
-        value: {
-          locale,
-          field,
-          path,
-          value: FIELD_VALUE_NONE,
-        },
+      unitConversions.forEach(({ path }) => {
+        dispatch({
+          type: "CHART_FIELD_UPDATED",
+          value: {
+            locale,
+            field,
+            path,
+            value: FIELD_VALUE_NONE,
+          },
+        });
       });
     }
   });
 
+  return (
+    <ControlSection collapse defaultExpanded={checked}>
+      <SectionTitle iconName="balance">
+        <Trans id="controls.convert-unit">Unit Conversion</Trans>
+      </SectionTitle>
+      <ControlSectionContent gap="large">
+        <Checkbox
+          label={t({
+            id: "controls.convert-unit.enable",
+            message: "Enable unit conversion",
+          })}
+          checked={checked}
+          onChange={handleToggle}
+        />
+        {children}
+      </ControlSectionContent>
+    </ControlSection>
+  );
+};
+
+const ConvertUnitInner = ({
+  field,
+  path,
+  originalUnit,
+  unitConversion,
+}: {
+  field: EncodingFieldType;
+  path: string;
+  originalUnit: string | undefined;
+  unitConversion: NonNullable<UnitConversionFieldExtension["unitConversion"]>;
+}) => {
+  const locale = useLocale();
+  const orderedLocales = useOrderedLocales();
+  const [_, dispatch] = useConfiguratorState(isConfiguring);
   const handleFactorChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
     const newFactor = +e.target.value;
 
@@ -180,58 +361,41 @@ export const ConvertUnit = ({
   });
 
   return (
-    <ControlSection collapse defaultExpanded={!!unitConversion}>
-      <SectionTitle iconName="balance">
-        <Trans id="controls.convert-unit">Unit Conversion</Trans>
-      </SectionTitle>
-      <ControlSectionContent gap="large">
-        <Checkbox
+    <Box sx={{ mt: 2 }}>
+      <Flex sx={{ flexDirection: "column", gap: 2 }}>
+        <Typography variant="body3">
+          <Trans id="controls.convert-unit.original">
+            Original unit:{" "}
+            {originalUnit || t({ id: "controls.none", message: "None" })}
+          </Trans>
+        </Typography>
+        <Input
+          type="number"
           label={t({
-            id: "controls.convert-unit.enable",
-            message: "Enable unit conversion",
+            id: "controls.convert-unit.factor",
+            message: "Multiplying factor",
           })}
-          checked={!!unitConversion}
-          onChange={handleToggle}
+          name="unit-factor"
+          value={unitConversion.factor}
+          onChange={handleFactorChange}
         />
-        {unitConversion ? (
-          <Flex sx={{ flexDirection: "column", gap: 2, mt: 2 }}>
-            <Flex sx={{ flexDirection: "column", gap: 2 }}>
-              <Typography variant="body3">
-                <Trans id="controls.convert-unit.original">
-                  Original unit:{" "}
-                  {originalUnit || t({ id: "controls.none", message: "None" })}
-                </Trans>
-              </Typography>
-              <Input
-                type="number"
-                label={t({
-                  id: "controls.convert-unit.factor",
-                  message: "Multiplying factor",
-                })}
-                name="unit-factor"
-                value={unitConversion.factor}
-                onChange={handleFactorChange}
-              />
-            </Flex>
-            <Flex sx={{ flexDirection: "column", gap: 1 }}>
-              <Typography variant="body3">
-                <Trans id="controls.convert-unit.custom-labels">
-                  Custom unit labels
-                </Trans>
-              </Typography>
-              {orderedLocales.map((locale) => (
-                <Input
-                  key={locale}
-                  label={getFieldLabel(locale)}
-                  name={`unit-label-${locale}`}
-                  value={unitConversion.labels[locale]}
-                  onChange={(e) => handleLabelChange(locale, e.target.value)}
-                />
-              ))}
-            </Flex>
-          </Flex>
-        ) : null}
-      </ControlSectionContent>
-    </ControlSection>
+      </Flex>
+      <Flex sx={{ flexDirection: "column", gap: 1 }}>
+        <Typography variant="body3">
+          <Trans id="controls.convert-unit.custom-labels">
+            Custom unit labels
+          </Trans>
+        </Typography>
+        {orderedLocales.map((locale) => (
+          <Input
+            key={locale}
+            label={getFieldLabel(locale)}
+            name={`unit-label-${locale}`}
+            value={unitConversion.labels[locale]}
+            onChange={(e) => handleLabelChange(locale, e.target.value)}
+          />
+        ))}
+      </Flex>
+    </Box>
   );
 };
