@@ -72,7 +72,7 @@ import {
   ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { ConvertUnitField } from "@/configurator/components/chart-options-selector/convert-units";
+import { ConvertUnitField } from "@/configurator/components/chart-options-selector/convert-unit-field";
 import { CustomLayersSelector } from "@/configurator/components/custom-layers-selector";
 import {
   ChartFieldField,
