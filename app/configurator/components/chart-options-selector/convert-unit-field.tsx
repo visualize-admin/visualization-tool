@@ -136,21 +136,6 @@ export const ConvertUnitField = ({
             },
           ]}
         >
-          {lineUnitConversion ? (
-            <div>
-              {lineComponent?.label && (
-                <Typography variant="body3" fontWeight="bold">
-                  {lineComponent.label}
-                </Typography>
-              )}
-              <ConvertUnitInner
-                field="y"
-                path="lineUnitConversion"
-                originalUnit={lineComponent?.unit}
-                unitConversion={lineUnitConversion}
-              />
-            </div>
-          ) : null}
           {columnUnitConversion ? (
             <div>
               {columnComponent?.label && (
@@ -163,6 +148,21 @@ export const ConvertUnitField = ({
                 path="columnUnitConversion"
                 originalUnit={columnComponent?.unit}
                 unitConversion={columnUnitConversion}
+              />
+            </div>
+          ) : null}
+          {lineUnitConversion ? (
+            <div>
+              {lineComponent?.label && (
+                <Typography variant="body3" fontWeight="bold">
+                  {lineComponent.label}
+                </Typography>
+              )}
+              <ConvertUnitInner
+                field="y"
+                path="lineUnitConversion"
+                originalUnit={lineComponent?.unit}
+                unitConversion={lineUnitConversion}
               />
             </div>
           ) : null}
