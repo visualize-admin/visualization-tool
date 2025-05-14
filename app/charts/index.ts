@@ -40,6 +40,7 @@ import {
   GenericFields,
   InteractiveFiltersConfig,
   isAreaConfig,
+  isBarConfig,
   isColorInConfig,
   isColumnConfig,
   isComboLineColumnConfig,
@@ -2095,6 +2096,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           if (leftAxisId) {
             leftMeasure = getLeftMeasure(leftAxisId);
           }
+        } else if (isBarConfig(oldChartConfig)) {
+          leftMeasure = getLeftMeasure(oldChartConfig.fields.x.componentId);
+          leftAxisUnitConversion = oldChartConfig.fields.x.unitConversion;
         }
 
         rightMeasureId = (
@@ -2202,6 +2206,9 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           if (leftAxisId) {
             leftMeasure = getMeasure(leftAxisId);
           }
+        } else if (isBarConfig(oldChartConfig)) {
+          leftMeasure = getMeasure(oldChartConfig.fields.x.componentId);
+          columnUnitConversion = oldChartConfig.fields.x.unitConversion;
         }
 
         const lineComponentId = (
