@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# 5.7.7 - 2025-05-13
+
 - Features
   - Limit values displayed in the legend now include the unit if it's available
 - Fixes
