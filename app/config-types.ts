@@ -4,6 +4,8 @@ import { fold } from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
 
+import { Component } from "@/domain/data";
+
 const DimensionType = t.union([
   t.literal("NominalDimension"),
   t.literal("OrdinalDimension"),
@@ -351,6 +353,30 @@ const UnitConversionFieldExtension = t.partial({
 export type UnitConversionFieldExtension = t.TypeOf<
   typeof UnitConversionFieldExtension
 >;
+
+export const getConversionUnitsByComponentId = ({
+  fields,
+  components,
+}: {
+  fields: ChartConfig["fields"];
+  components: Component[];
+}) => {
+  return Object.values(fields).reduce(
+    (acc, field) => {
+      const componentId = field.componentId;
+      const component = components.find((c) => c.id === componentId);
+      const unitConversion =
+        "unitConversion" in field ? field.unitConversion : undefined;
+
+      if (component && unitConversion) {
+        acc[componentId] = unitConversion;
+      }
+
+      return acc;
+    },
+    {} as Record<string, UnitConversionFieldExtension["unitConversion"]>
+  );
+};
 
 const ChartSubType = t.union([t.literal("stacked"), t.literal("grouped")]);
 export type ChartSubType = t.TypeOf<typeof ChartSubType>;
