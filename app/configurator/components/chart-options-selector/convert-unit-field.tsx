@@ -5,7 +5,11 @@ import { ChangeEvent, ReactNode } from "react";
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import Flex from "@/components/flex";
 import { Checkbox, Input } from "@/components/form";
-import { ChartConfig, UnitConversionFieldExtension } from "@/config-types";
+import {
+  ChartConfig,
+  UnitConversion,
+  UnitConversionFieldExtension,
+} from "@/config-types";
 import {
   ControlSection,
   ControlSectionContent,
@@ -18,6 +22,7 @@ import {
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Component } from "@/domain/data";
+import { ComponentId } from "@/graphql/make-component-id";
 import { Locale } from "@/locales/locales";
 import { useLocale, useOrderedLocales } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
@@ -291,35 +296,23 @@ const ConvertUnitSection = ({
   unitConversions: {
     path: string;
     originalUnit: string | undefined;
-    componentId: string;
+    componentId: ComponentId;
   }[];
 }) => {
   const locale = useLocale();
-  const orderedLocales = useOrderedLocales();
   const [_, dispatch] = useConfiguratorState(isConfiguring);
-
   const handleToggle = useEvent(() => {
     if (!checked) {
       unitConversions.forEach(({ path, originalUnit, componentId }) => {
-        const defaultLabels = orderedLocales.reduce(
-          (acc, locale) => {
-            acc[locale] = originalUnit ?? "";
-            return acc;
-          },
-          {} as Record<Locale, string>
-        );
-
         dispatch({
           type: "CHART_FIELD_UPDATED",
           value: {
             locale,
             field,
             path,
-            value: {
-              componentId,
-              factor: 1,
-              labels: defaultLabels,
-            },
+            value: getDefaultConversionUnit(componentId, {
+              originalUnit,
+            }),
           },
         });
       });
@@ -451,4 +444,22 @@ const ConvertUnitInner = ({
       </Flex>
     </Box>
   );
+};
+
+const getDefaultConversionUnit = (
+  componentId: ComponentId,
+  { originalUnit }: { originalUnit: string | undefined }
+): UnitConversion => {
+  const label = originalUnit ?? "";
+
+  return {
+    componentId,
+    factor: 1,
+    labels: {
+      de: label,
+      fr: label,
+      it: label,
+      en: label,
+    },
+  };
 };
