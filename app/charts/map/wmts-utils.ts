@@ -137,7 +137,9 @@ const parseTileMatrixSets = (
       : [item.TileMatrix];
     return {
       id: item["ows:Identifier"],
-      supportedCRS: maybeArray(item["ows:SupportedCRS"]) ?? [],
+      supportedCRS: (maybeArray(item["ows:SupportedCRS"]) ?? []).map((crs) =>
+        parseCrs(crs)
+      ),
       tileMatrixes: tileMatrixes.map((tm) => ({
         id: tm["ows:Identifier"],
         scaleDenominator: tm.ScaleDenominator,
@@ -212,7 +214,13 @@ const mapArrayOrUnique = <T, I>(arr: T | T[], cb: (item: T) => I): I[] => {
 };
 
 const formatGetTileUrl = (url: string) => {
-  return `${url.endsWith("?") ? url : `${url}?`}Service=WMTS&Request=GetTile&Transparent=true&Version=1.0.0&Format=image/png&tileMatrixSet={TileMatrixSet}&tileMatrix={TileMatrix}&tileRow={TileRow}&tileCol={TileCol}&layer={Layer}`;
+  /**
+   * We use TileMatrixNamespaced here since when replaced in getDataUrl, we need to have the tileMatrix with the
+   * namespace.
+   * - This is for the getTile case (layer without resourceUrl).
+   * - When layer:resourceUrl is used, we do not need the namespace.
+   */
+  return `${url.endsWith("?") ? url : `${url}?`}Service=WMTS&Request=GetTile&Transparent=true&Version=1.0.0&Format=image/png&tileMatrixSet={TileMatrixSet}&tileMatrix={TileMatrixNamespaced}&tileRow={TileRow}&tileCol={TileCol}&layer={Layer}`;
 };
 
 export const parseWMTSContent = (content: string, endpoint: string) => {
@@ -346,6 +354,10 @@ const getWMTSLayerData = (
     : url;
   return identifierReplaced
     .replace(`{TileMatrixSet}`, tileMatrixSetId ?? "{TileMatrixSet}")
+    .replace(
+      "{TileMatrixNamespaced}",
+      tileMatrixSetId ? `${tileMatrixSetId}:{z}` : "{z}"
+    )
     .replace(`{Layer}`, layerId ?? "{Layer}")
     .replace("{TileMatrix}", "{z}")
     .replace("{TileCol}", "{x}")
