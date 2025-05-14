@@ -5,7 +5,7 @@ export type Timing = {
 
 export type TimingCallback = ({ start, end }: Timing, ...args: any[]) => void;
 
-export const timed = <T extends (...args: any) => any>(
+export const timed = <T extends (...args: any[]) => any>(
   fn: T,
   cb: TimingCallback
 ) => {
