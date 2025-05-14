@@ -1960,6 +1960,22 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             };
           });
         },
+        unitConversion: ({ oldValue, newChartConfig }) => {
+          return produce(newChartConfig, (draft) => {
+            // Only keep the unit conversion if new measures have
+            // the same unit as the old one.
+            if (
+              oldValue &&
+              draft.fields.y.componentIds.includes(oldValue.componentId)
+            ) {
+              return produce(newChartConfig, (draft) => {
+                draft.fields.y.unitConversion = oldValue;
+              });
+            }
+
+            return newChartConfig;
+          });
+        },
       },
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,
@@ -2272,6 +2288,7 @@ const chartConfigsPathOverrides: {
         path: "fields.x.componentId",
         oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
       },
+      "fields.y.unitConversion": { path: "fields.x.unitConversion" },
     },
     comboLineDual: {
       "fields.y.leftAxisComponentId": { path: "fields.x.componentId" },
@@ -2484,6 +2501,7 @@ const chartConfigsPathOverrides: {
     },
     bar: {
       "fields.x.componentId": { path: "fields.y.componentIds" },
+      "fields.x.unitConversion": { path: "fields.y.unitConversion" },
     },
     line: {
       "fields.y.componentId": { path: "fields.y.componentIds" },

@@ -266,7 +266,13 @@ type MapAdjusters = BaseAdjusters<MapConfig> & {
 type ComboLineSingleAdjusters = BaseAdjusters<ComboLineSingleConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<ComboLineSingleConfig, ComponentId> };
-    y: { componentIds: FieldAdjuster<ComboLineSingleConfig, ComponentId> };
+    y: {
+      componentIds: FieldAdjuster<ComboLineSingleConfig, ComponentId>;
+      unitConversion: FieldAdjuster<
+        ComboLineSingleConfig,
+        UnitConversionFieldExtension["unitConversion"]
+      >;
+    };
   };
 };
 
