@@ -869,25 +869,43 @@ const getAdjustedChartConfig = ({
       const newPath = path === "" ? k : `${path}.${k}`;
 
       if (v !== undefined) {
-        const override = pathOverrides?.[newPath];
+        const overrides = pathOverrides?.[newPath];
 
-        if (isConfigLeaf(newPath, v) || override) {
-          const getChartConfigWithAdjustedField: FieldAdjuster<
-            ChartConfig,
-            unknown
-          > = override?.path
-            ? get(adjusters, override.path)
-            : get(adjusters, newPath);
+        if (isConfigLeaf(newPath, v) || overrides) {
+          if (overrides) {
+            for (const override of overrides) {
+              const getChartConfigWithAdjustedField: FieldAdjuster<
+                ChartConfig,
+                unknown
+              > = get(adjusters, override.path);
 
-          if (getChartConfigWithAdjustedField) {
-            newChartConfig = getChartConfigWithAdjustedField({
-              oldValue: override?.oldValue ? override.oldValue(v) : v,
-              newChartConfig,
-              oldChartConfig,
-              dimensions,
-              measures,
-              isAddingNewCube,
-            });
+              if (getChartConfigWithAdjustedField) {
+                newChartConfig = getChartConfigWithAdjustedField({
+                  oldValue: override.oldValue ? override.oldValue(v) : v,
+                  newChartConfig,
+                  oldChartConfig,
+                  dimensions,
+                  measures,
+                  isAddingNewCube,
+                });
+              }
+            }
+          } else {
+            const getChartConfigWithAdjustedField: FieldAdjuster<
+              ChartConfig,
+              unknown
+            > = get(adjusters, newPath);
+
+            if (getChartConfigWithAdjustedField) {
+              newChartConfig = getChartConfigWithAdjustedField({
+                oldValue: v,
+                newChartConfig,
+                oldChartConfig,
+                dimensions,
+                measures,
+                isAddingNewCube,
+              });
+            }
           }
         } else {
           go({ path: newPath, field: v });
@@ -2210,381 +2228,417 @@ const chartConfigsPathOverrides: {
       [oldFieldToOverride: string]: {
         path: string;
         oldValue?: (d: any) => any;
-      };
+      }[];
     };
   };
 } = {
   column: {
     bar: {
-      "fields.x.componentId": { path: "fields.y.componentId" },
-      "fields.x.showValues": { path: "fields.y.showValues" },
-      "fields.x.customDomain": { path: "fields.y.customDomain" },
-      "fields.x.unitConversion": { path: "fields.y.unitConversion" },
-      "fields.y.componentId": { path: "fields.x.componentId" },
+      "fields.x.componentId": [{ path: "fields.y.componentId" }],
+      "fields.x.showValues": [{ path: "fields.y.showValues" }],
+      "fields.x.customDomain": [{ path: "fields.y.customDomain" }],
+      "fields.x.unitConversion": [{ path: "fields.y.unitConversion" }],
+      "fields.y.componentId": [{ path: "fields.x.componentId" }],
     },
     map: {
-      "fields.areaLayer.componentId": { path: "fields.x.componentId" },
-      "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
+      "fields.areaLayer.componentId": [{ path: "fields.x.componentId" }],
+      "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
     },
     table: {
-      fields: { path: "fields.segment" },
+      fields: [{ path: "fields.segment" }],
     },
     comboLineSingle: {
-      "fields.y.componentIds": {
-        path: "fields.y.componentId",
-        oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
-      },
+      "fields.y.componentIds": [
+        {
+          path: "fields.y.componentId",
+          oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
+        },
+      ],
     },
     comboLineDual: {
-      "fields.y.leftAxisComponentId": { path: "fields.y.componentId" },
+      "fields.y.leftAxisComponentId": [{ path: "fields.y.componentId" }],
     },
     comboLineColumn: {
-      "fields.y": {
-        path: "fields.y.componentId",
-        oldValue: (d: ComboLineColumnFields["y"]) => {
-          return d.lineAxisOrientation === "left"
-            ? d.lineComponentId
-            : d.columnComponentId;
+      "fields.y": [
+        {
+          path: "fields.y.componentId",
+          oldValue: (d: ComboLineColumnFields["y"]) => {
+            return d.lineAxisOrientation === "left"
+              ? d.lineComponentId
+              : d.columnComponentId;
+          },
         },
-      },
+      ],
     },
   },
   bar: {
     column: {
-      "fields.x.componentId": { path: "fields.y.componentId" },
-      "fields.y.componentId": { path: "fields.x.componentId" },
-      "fields.y.showValues": { path: "fields.x.showValues" },
-      "fields.y.customDomain": { path: "fields.x.customDomain" },
-      "fields.y.unitConversion": { path: "fields.x.unitConversion" },
+      "fields.x.componentId": [{ path: "fields.y.componentId" }],
+      "fields.y.componentId": [{ path: "fields.x.componentId" }],
+      "fields.y.showValues": [{ path: "fields.x.showValues" }],
+      "fields.y.customDomain": [{ path: "fields.x.customDomain" }],
+      "fields.y.unitConversion": [{ path: "fields.x.unitConversion" }],
     },
     line: {
-      "fields.x.componentId": { path: "fields.y.componentId" },
-      "fields.y.componentId": { path: "fields.x.componentId" },
-      "fields.y.showValues": { path: "fields.x.showValues" },
-      "fields.y.customDomain": { path: "fields.x.customDomain" },
-      "fields.y.unitConversion": { path: "fields.x.unitConversion" },
+      "fields.x.componentId": [{ path: "fields.y.componentId" }],
+      "fields.y.componentId": [{ path: "fields.x.componentId" }],
+      "fields.y.showValues": [{ path: "fields.x.showValues" }],
+      "fields.y.customDomain": [{ path: "fields.x.customDomain" }],
+      "fields.y.unitConversion": [{ path: "fields.x.unitConversion" }],
     },
     area: {
-      "fields.x.componentId": { path: "fields.y.componentId" },
-      "fields.y.componentId": { path: "fields.x.componentId" },
-      "fields.y.showValues": { path: "fields.x.showValues" },
-      "fields.y.customDomain": { path: "fields.x.customDomain" },
-      "fields.y.unitConversion": { path: "fields.x.unitConversion" },
+      "fields.x.componentId": [{ path: "fields.y.componentId" }],
+      "fields.y.componentId": [{ path: "fields.x.componentId" }],
+      "fields.y.showValues": [{ path: "fields.x.showValues" }],
+      "fields.y.customDomain": [{ path: "fields.x.customDomain" }],
+      "fields.y.unitConversion": [{ path: "fields.x.unitConversion" }],
     },
     pie: {
-      "fields.y.componentId": { path: "fields.x.componentId" },
-      "fields.y.showValues": { path: "fields.x.showValues" },
-      "fields.y.unitConversion": { path: "fields.x.unitConversion" },
+      "fields.y.componentId": [{ path: "fields.x.componentId" }],
+      "fields.y.showValues": [{ path: "fields.x.showValues" }],
+      "fields.y.unitConversion": [{ path: "fields.x.unitConversion" }],
     },
     map: {
-      "fields.areaLayer.componentId": { path: "fields.y.componentId" },
-      "fields.areaLayer.color.componentId": { path: "fields.x.componentId" },
+      "fields.areaLayer.componentId": [{ path: "fields.y.componentId" }],
+      "fields.areaLayer.color.componentId": [{ path: "fields.x.componentId" }],
     },
     table: {
-      fields: { path: "fields.segment" },
+      fields: [{ path: "fields.segment" }],
     },
     comboLineSingle: {
-      "fields.y.componentIds": {
-        path: "fields.x.componentId",
-        oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
-      },
-      "fields.y.unitConversion": { path: "fields.x.unitConversion" },
+      "fields.y.componentIds": [
+        {
+          path: "fields.x.componentId",
+          oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
+        },
+      ],
+      "fields.y.unitConversion": [{ path: "fields.x.unitConversion" }],
     },
     comboLineDual: {
-      "fields.y.leftAxisComponentId": { path: "fields.x.componentId" },
+      "fields.y.leftAxisComponentId": [{ path: "fields.x.componentId" }],
     },
     comboLineColumn: {
-      "fields.y": {
-        path: "fields.x.componentId",
-        oldValue: (d: ComboLineColumnFields["y"]) => {
-          return d.lineAxisOrientation === "left"
-            ? d.lineComponentId
-            : d.columnComponentId;
+      "fields.y": [
+        {
+          path: "fields.x.componentId",
+          oldValue: (d: ComboLineColumnFields["y"]) => {
+            return d.lineAxisOrientation === "left"
+              ? d.lineComponentId
+              : d.columnComponentId;
+          },
         },
-      },
+      ],
     },
   },
   line: {
     bar: {
-      "fields.x.componentId": { path: "fields.y.componentId" },
-      "fields.x.showValues": { path: "fields.y.showValues" },
-      "fields.x.customDomain": { path: "fields.y.customDomain" },
-      "fields.x.unitConversion": { path: "fields.y.unitConversion" },
-      "fields.y.componentId": { path: "fields.x.componentId" },
+      "fields.x.componentId": [{ path: "fields.y.componentId" }],
+      "fields.x.showValues": [{ path: "fields.y.showValues" }],
+      "fields.x.customDomain": [{ path: "fields.y.customDomain" }],
+      "fields.x.unitConversion": [{ path: "fields.y.unitConversion" }],
+      "fields.y.componentId": [{ path: "fields.x.componentId" }],
     },
     map: {
-      "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
+      "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
     },
     table: {
-      fields: { path: "fields.segment" },
+      fields: [{ path: "fields.segment" }],
     },
     comboLineSingle: {
-      "fields.y.componentIds": {
-        path: "fields.y.componentId",
-        oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
-      },
+      "fields.y.componentIds": [
+        {
+          path: "fields.y.componentId",
+          oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
+        },
+      ],
     },
     comboLineDual: {
-      "fields.y.leftAxisComponentId": { path: "fields.y.componentId" },
+      "fields.y.leftAxisComponentId": [{ path: "fields.y.componentId" }],
     },
     comboLineColumn: {
-      "fields.y": {
-        path: "fields.y.componentId",
-        oldValue: (d: ComboLineColumnFields["y"]) => {
-          return d.lineAxisOrientation === "left"
-            ? d.lineComponentId
-            : d.columnComponentId;
+      "fields.y": [
+        {
+          path: "fields.y.componentId",
+          oldValue: (d: ComboLineColumnFields["y"]) => {
+            return d.lineAxisOrientation === "left"
+              ? d.lineComponentId
+              : d.columnComponentId;
+          },
         },
-      },
+      ],
     },
   },
   area: {
     bar: {
-      "fields.x.componentId": { path: "fields.y.componentId" },
-      "fields.x.showValues": { path: "fields.y.showValues" },
-      "fields.x.customDomain": { path: "fields.y.customDomain" },
-      "fields.x.unitConversion": { path: "fields.y.unitConversion" },
-      "fields.y.componentId": { path: "fields.x.componentId" },
+      "fields.x.componentId": [{ path: "fields.y.componentId" }],
+      "fields.x.showValues": [{ path: "fields.y.showValues" }],
+      "fields.x.customDomain": [{ path: "fields.y.customDomain" }],
+      "fields.x.unitConversion": [{ path: "fields.y.unitConversion" }],
+      "fields.y.componentId": [{ path: "fields.x.componentId" }],
     },
     map: {
-      "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
+      "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
     },
     table: {
-      fields: { path: "fields.segment" },
+      fields: [{ path: "fields.segment" }],
     },
     comboLineSingle: {
-      "fields.y.componentIds": {
-        path: "fields.y.componentId",
-        oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
-      },
+      "fields.y.componentIds": [
+        {
+          path: "fields.y.componentId",
+          oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
+        },
+      ],
     },
     comboLineDual: {
-      "fields.y.leftAxisComponentId": { path: "fields.y.componentId" },
+      "fields.y.leftAxisComponentId": [{ path: "fields.y.componentId" }],
     },
     comboLineColumn: {
-      "fields.y": {
-        path: "fields.y.componentId",
-        oldValue: (d: ComboLineColumnFields["y"]) => {
-          return d.lineAxisOrientation === "left"
-            ? d.lineComponentId
-            : d.columnComponentId;
+      "fields.y": [
+        {
+          path: "fields.y.componentId",
+          oldValue: (d: ComboLineColumnFields["y"]) => {
+            return d.lineAxisOrientation === "left"
+              ? d.lineComponentId
+              : d.columnComponentId;
+          },
         },
-      },
+      ],
     },
   },
   scatterplot: {
     map: {
-      "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
+      "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
     },
     table: {
-      fields: { path: "fields.segment" },
+      fields: [{ path: "fields.segment" }],
     },
     comboLineSingle: {
-      "fields.y.componentIds": {
-        path: "fields.y.componentId",
-        oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
-      },
+      "fields.y.componentIds": [
+        {
+          path: "fields.y.componentId",
+          oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
+        },
+      ],
     },
     comboLineDual: {
-      "fields.y.leftAxisComponentId": { path: "fields.y.componentId" },
+      "fields.y.leftAxisComponentId": [{ path: "fields.y.componentId" }],
     },
     comboLineColumn: {
-      "fields.y": {
-        path: "fields.y.componentId",
-        oldValue: (d: ComboLineColumnFields["y"]) => {
-          return d.lineAxisOrientation === "left"
-            ? d.lineComponentId
-            : d.columnComponentId;
+      "fields.y": [
+        {
+          path: "fields.y.componentId",
+          oldValue: (d: ComboLineColumnFields["y"]) => {
+            return d.lineAxisOrientation === "left"
+              ? d.lineComponentId
+              : d.columnComponentId;
+          },
         },
-      },
+      ],
     },
   },
   pie: {
     bar: {
-      "fields.x.componentId": { path: "fields.y.componentId" },
-      "fields.x.showValues": { path: "fields.y.showValues" },
-      "fields.x.unitConversion": { path: "fields.y.unitConversion" },
+      "fields.x.componentId": [{ path: "fields.y.componentId" }],
+      "fields.x.showValues": [{ path: "fields.y.showValues" }],
+      "fields.x.unitConversion": [{ path: "fields.y.unitConversion" }],
       // We want to avoid running the logic for the y component twice.
-      "fields.y.componentId": { path: "SKIP" },
+      "fields.y.componentId": [{ path: "SKIP" }],
     },
     map: {
-      "fields.areaLayer.componentId": { path: "fields.x.componentId" },
-      "fields.areaLayer.color.componentId": { path: "fields.y.componentId" },
+      "fields.areaLayer.componentId": [{ path: "fields.x.componentId" }],
+      "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
     },
     table: {
-      fields: { path: "fields.segment" },
+      fields: [{ path: "fields.segment" }],
     },
     comboLineSingle: {
-      "fields.y.componentIds": {
-        path: "fields.y.componentId",
-        oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
-      },
+      "fields.y.componentIds": [
+        {
+          path: "fields.y.componentId",
+          oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
+        },
+      ],
     },
     comboLineDual: {
-      "fields.y.leftAxisComponentId": { path: "fields.y.componentId" },
+      "fields.y.leftAxisComponentId": [{ path: "fields.y.componentId" }],
     },
     comboLineColumn: {
-      "fields.y": {
-        path: "fields.y.componentId",
-        oldValue: (d: ComboLineColumnFields["y"]) => {
-          return d.lineAxisOrientation === "left"
-            ? d.lineComponentId
-            : d.columnComponentId;
+      "fields.y": [
+        {
+          path: "fields.y.componentId",
+          oldValue: (d: ComboLineColumnFields["y"]) => {
+            return d.lineAxisOrientation === "left"
+              ? d.lineComponentId
+              : d.columnComponentId;
+          },
         },
-      },
+      ],
     },
   },
   table: {
     column: {
-      "fields.segment": { path: "fields" },
+      "fields.segment": [{ path: "fields" }],
     },
     line: {
-      "fields.segment": { path: "fields" },
+      "fields.segment": [{ path: "fields" }],
     },
     area: {
-      "fields.segment": { path: "fields" },
+      "fields.segment": [{ path: "fields" }],
     },
     scatterplot: {
-      "fields.segment": { path: "fields" },
+      "fields.segment": [{ path: "fields" }],
     },
     pie: {
-      "fields.segment": { path: "fields" },
+      "fields.segment": [{ path: "fields" }],
     },
   },
   map: {
     column: {
-      "fields.x.componentId": { path: "fields.areaLayer.componentId" },
-      "fields.y.componentId": { path: "fields.areaLayer.color.componentId" },
+      "fields.x.componentId": [{ path: "fields.areaLayer.componentId" }],
+      "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
     },
     bar: {
-      "fields.x.componentId": { path: "fields.areaLayer.color.componentId" },
-      "fields.y.componentId": { path: "fields.areaLayer.componentId" },
+      "fields.x.componentId": [{ path: "fields.areaLayer.color.componentId" }],
+      "fields.y.componentId": [{ path: "fields.areaLayer.componentId" }],
     },
     line: {
-      "fields.y.componentId": { path: "fields.areaLayer.color.componentId" },
+      "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
     },
     area: {
-      "fields.y.componentId": { path: "fields.areaLayer.color.componentId" },
+      "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
     },
     scatterplot: {
-      "fields.y.componentId": { path: "fields.areaLayer.color.componentId" },
+      "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
     },
     pie: {
-      "fields.x.componentId": { path: "fields.areaLayer.componentId" },
-      "fields.y.componentId": { path: "fields.areaLayer.color.componentId" },
+      "fields.x.componentId": [{ path: "fields.areaLayer.componentId" }],
+      "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
     },
     comboLineSingle: {
-      "fields.y.componentIds": {
-        path: "fields.areaLayer.color.componentId",
-        oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
-      },
+      "fields.y.componentIds": [
+        {
+          path: "fields.areaLayer.color.componentId",
+          oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
+        },
+      ],
     },
     comboLineDual: {
-      "fields.y.leftAxisComponentId": {
-        path: "fields.areaLayer.color.componentId",
-      },
+      "fields.y.leftAxisComponentId": [
+        {
+          path: "fields.areaLayer.color.componentId",
+        },
+      ],
     },
     comboLineColumn: {
-      "fields.y": {
-        path: "fields.areaLayer.color.componentId",
-        oldValue: (d: ComboLineColumnFields["y"]) => {
-          return d.lineAxisOrientation === "left"
-            ? d.lineComponentId
-            : d.columnComponentId;
+      "fields.y": [
+        {
+          path: "fields.areaLayer.color.componentId",
+          oldValue: (d: ComboLineColumnFields["y"]) => {
+            return d.lineAxisOrientation === "left"
+              ? d.lineComponentId
+              : d.columnComponentId;
+          },
         },
-      },
+      ],
     },
   },
   comboLineSingle: {
     column: {
-      "fields.y.componentId": { path: "fields.y.componentIds" },
+      "fields.y.componentId": [{ path: "fields.y.componentIds" }],
     },
     bar: {
-      "fields.x.componentId": { path: "fields.y.componentIds" },
-      "fields.x.unitConversion": { path: "fields.y.unitConversion" },
+      "fields.x.componentId": [{ path: "fields.y.componentIds" }],
+      "fields.x.unitConversion": [{ path: "fields.y.unitConversion" }],
     },
     line: {
-      "fields.y.componentId": { path: "fields.y.componentIds" },
+      "fields.y.componentId": [{ path: "fields.y.componentIds" }],
     },
     area: {
-      "fields.y.componentId": { path: "fields.y.componentIds" },
+      "fields.y.componentId": [{ path: "fields.y.componentIds" }],
     },
     scatterplot: {
-      "fields.y.componentId": { path: "fields.y.componentIds" },
+      "fields.y.componentId": [{ path: "fields.y.componentIds" }],
     },
     pie: {
-      "fields.y.componentId": { path: "fields.y.componentIds" },
+      "fields.y.componentId": [{ path: "fields.y.componentIds" }],
     },
     map: {
-      "fields.areaLayer.color.componentId": {
-        path: "fields.y.componentIds",
-      },
+      "fields.areaLayer.color.componentId": [
+        {
+          path: "fields.y.componentIds",
+        },
+      ],
     },
     comboLineDual: {
-      "fields.y.leftAxisComponentId": {
-        path: "fields.y.componentIds",
-      },
+      "fields.y.leftAxisComponentId": [
+        {
+          path: "fields.y.componentIds",
+        },
+      ],
+      "fields.y.leftAxisUnitConversion": [{ path: "fields.y.unitConversion" }],
     },
     comboLineColumn: {
-      "fields.y.lineComponentId": { path: "fields.y.componentIds" },
+      "fields.y.lineComponentId": [{ path: "fields.y.componentIds" }],
+      "fields.y.columnUnitConversion": [{ path: "fields.y.unitConversion" }],
     },
   },
   comboLineDual: {
     column: {
-      "fields.y": { path: "fields.y" },
+      "fields.y": [{ path: "fields.y" }],
     },
     bar: {
-      "fields.x": { path: "fields.y" },
+      "fields.x": [{ path: "fields.y" }],
     },
     line: {
-      "fields.y": { path: "fields.y" },
+      "fields.y": [{ path: "fields.y" }],
     },
     area: {
-      "fields.y": { path: "fields.y" },
+      "fields.y": [{ path: "fields.y" }],
     },
     scatterplot: {
-      "fields.y": { path: "fields.y" },
+      "fields.y": [{ path: "fields.y" }],
     },
     pie: {
-      "fields.y": { path: "fields.y" },
+      "fields.y": [{ path: "fields.y" }],
     },
     map: {
-      "fields.areaLayer": { path: "fields.y" },
+      "fields.areaLayer": [{ path: "fields.y" }],
     },
     comboLineSingle: {
-      "fields.y": { path: "fields.y" },
+      "fields.y": [{ path: "fields.y" }],
     },
     comboLineColumn: {
-      "fields.y": { path: "fields.y" },
+      "fields.y": [{ path: "fields.y" }],
     },
   },
   comboLineColumn: {
     column: {
-      "fields.y": { path: "fields.y" },
+      "fields.y": [{ path: "fields.y" }],
     },
     bar: {
-      "fields.x": { path: "fields.y" },
+      "fields.x": [{ path: "fields.y" }],
     },
     line: {
-      "fields.y": { path: "fields.y" },
+      "fields.y": [{ path: "fields.y" }],
     },
     area: {
-      "fields.y": { path: "fields.y" },
+      "fields.y": [{ path: "fields.y" }],
     },
     scatterplot: {
-      "fields.y": { path: "fields.y" },
+      "fields.y": [{ path: "fields.y" }],
     },
     pie: {
-      "fields.y": { path: "fields.y" },
+      "fields.y": [{ path: "fields.y" }],
     },
     map: {
-      "fields.areaLayer": { path: "fields.y" },
+      "fields.areaLayer": [{ path: "fields.y" }],
     },
     comboLineSingle: {
-      "fields.y": { path: "fields.y" },
+      "fields.y": [{ path: "fields.y" }],
     },
     comboLineDual: {
-      "fields.y": { path: "fields.y" },
+      "fields.y": [{ path: "fields.y" }],
     },
   },
 };
