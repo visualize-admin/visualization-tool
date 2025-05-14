@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Added a way to set custom conversion units for numerical measures
 
 # 5.7.7 - 2025-05-13
 
