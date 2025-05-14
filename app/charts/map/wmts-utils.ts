@@ -315,7 +315,7 @@ export const getWMTSTile = ({
     }),
   });
   return new TileLayer({
-    id: `tile-layer-${url}`,
+    id: `tile-layer-${url}-${wmtsLayer.id}`,
     beforeId,
     data: tileLayerDataUrl,
     tileSize: 256,
