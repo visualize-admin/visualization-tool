@@ -12,6 +12,7 @@ import {
   ChartConfig,
   DashboardFiltersConfig,
   DataSource,
+  getConversionUnitsByComponentId,
 } from "@/config-types";
 import {
   useDataCubesComponentsQuery,
@@ -56,13 +57,15 @@ export const ChartDataTablePreview = ({
       },
     });
   const sortedComponents = useMemo(() => {
-    if (!componentsData?.dataCubesComponents) {
+    const components = componentsData?.dataCubesComponents;
+
+    if (!components) {
       return [];
     }
 
     return getSortedComponents([
-      ...componentsData.dataCubesComponents.dimensions,
-      ...componentsData.dataCubesComponents.measures,
+      ...components.dimensions,
+      ...components.measures,
     ]);
   }, [componentsData?.dataCubesComponents]);
   const queryFilters = useQueryFilters({
@@ -78,15 +81,23 @@ export const ChartDataTablePreview = ({
     pause: fetchingComponents,
   });
 
+  const conversionUnitsByComponentId = useMemo(() => {
+    return getConversionUnitsByComponentId({
+      fields: chartConfig.fields,
+      components: sortedComponents,
+    });
+  }, [chartConfig.fields, sortedComponents]);
+
   return metadataData?.dataCubesMetadata &&
     componentsData?.dataCubesComponents &&
     observationsData?.dataCubesObservations ? (
-    <Box sx={{ maxHeight: "600px", overflow: "auto", ...sx }}>
+    <Box sx={{ maxHeight: 600, overflow: "auto", ...sx }}>
       <DataTablePreview
         title={metadataData.dataCubesMetadata.map((d) => d.title).join(", ")}
         sortedComponents={sortedComponents}
         observations={observationsData.dataCubesObservations.data}
         linkToMetadataPanel
+        conversionUnitsByComponentId={conversionUnitsByComponentId}
       />
     </Box>
   ) : (

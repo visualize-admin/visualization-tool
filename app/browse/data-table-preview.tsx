@@ -10,6 +10,7 @@ import { ascending, descending } from "d3-array";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { ComponentLabel } from "@/browse/component-label";
+import { UnitConversionFieldExtension } from "@/config-types";
 import { Component, isNumericalMeasure, Observation } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
@@ -20,11 +21,16 @@ export const DataTablePreview = ({
   sortedComponents,
   observations,
   linkToMetadataPanel,
+  conversionUnitsByComponentId,
 }: {
   title: string;
   sortedComponents: Component[];
   observations: Observation[];
   linkToMetadataPanel: boolean;
+  conversionUnitsByComponentId?: Record<
+    string,
+    UnitConversionFieldExtension["unitConversion"]
+  >;
 }) => {
   const [sortBy, setSortBy] = useState<Component>();
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">();
@@ -100,6 +106,9 @@ export const DataTablePreview = ({
                       component={component}
                       tooltipProps={tooltipProps}
                       linkToMetadataPanel={linkToMetadataPanel}
+                      unitConversion={
+                        conversionUnitsByComponentId?.[component.id]
+                      }
                     />
                   </TableSortLabel>
                 </TableCell>
@@ -111,20 +120,19 @@ export const DataTablePreview = ({
           {sortedObservations.map((obs, i) => {
             return (
               <TableRow key={i}>
-                {sortedComponents.map((component) => {
-                  const format = formatters[component.id];
+                {sortedComponents.map((c) => {
+                  const numerical = isNumericalMeasure(c);
+                  const format = formatters[c.id];
+                  const cu = conversionUnitsByComponentId?.[c.id];
+                  const v = obs[c.id];
 
                   return (
                     <TableCell
-                      key={component.id}
+                      key={c.id}
                       component="td"
-                      sx={{
-                        textAlign: isNumericalMeasure(component)
-                          ? "right"
-                          : "left",
-                      }}
+                      sx={{ textAlign: numerical ? "right" : "left" }}
                     >
-                      {format(obs[component.id])}
+                      {format(numerical && cu && v ? +v * cu.factor : v)}
                     </TableCell>
                   );
                 })}
