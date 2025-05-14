@@ -18,7 +18,6 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { Component } from "@/domain/data";
 import { Locale } from "@/locales/locales";
 import { useLocale, useOrderedLocales } from "@/locales/use-locale";
 import useEvent from "@/utils/use-event";
@@ -26,11 +25,11 @@ import useEvent from "@/utils/use-event";
 export const ConvertUnit = ({
   chartConfig,
   field,
-  component,
+  originalUnit,
 }: {
   chartConfig: ChartConfig;
   field: EncodingFieldType;
-  component: Component;
+  originalUnit: string;
 }) => {
   const locale = useLocale();
   const orderedLocales = useOrderedLocales();
@@ -45,7 +44,7 @@ export const ConvertUnit = ({
     if (!unitConversion) {
       const defaultLabels = orderedLocales.reduce(
         (acc, locale) => {
-          acc[locale] = component.unit ?? "";
+          acc[locale] = originalUnit ?? "";
           return acc;
         },
         {} as Record<Locale, string>
@@ -135,8 +134,7 @@ export const ConvertUnit = ({
               <Typography variant="body3">
                 <Trans id="controls.convert-unit.original">
                   Original unit:{" "}
-                  {component.unit ||
-                    t({ id: "controls.none", message: "None" })}
+                  {originalUnit || t({ id: "controls.none", message: "None" })}
                 </Trans>
               </Typography>
               <Input

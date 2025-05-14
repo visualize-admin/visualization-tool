@@ -561,13 +561,15 @@ const EncodingOptionsPanel = ({
           </ControlSectionContent>
         </ControlSection>
       )}
-      {unitConversionEnabled && encoding.options?.convertUnit && component && (
-        <ConvertUnit
-          chartConfig={chartConfig}
-          field={field}
-          component={component}
-        />
-      )}
+      {unitConversionEnabled &&
+        encoding.options?.convertUnit &&
+        component?.unit && (
+          <ConvertUnit
+            chartConfig={chartConfig}
+            field={field}
+            originalUnit={component.unit}
+          />
+        )}
       {encoding.options?.showDots && (
         <ChartShowDots fields={chartConfig.fields} field={field} />
       )}
