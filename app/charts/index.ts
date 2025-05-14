@@ -59,6 +59,7 @@ import {
   TableFields,
   UnitConversion,
 } from "@/config-types";
+import { getDefaultConversionUnit } from "@/configurator/components/chart-options-selector/convert-unit-field";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
@@ -82,6 +83,7 @@ import {
   SEGMENT_ENABLED_COMPONENTS,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
+import { ComponentId } from "@/graphql/make-component-id";
 import {
   DEFAULT_CATEGORICAL_PALETTE_ID,
   getDefaultCategoricalPaletteId,
@@ -2109,13 +2111,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             return _exhaustiveCheck;
         }
 
-        rightMeasureId = (
-          numericalMeasures.find((d) =>
-            rightMeasureId
-              ? d.id === rightMeasureId
-              : d.unit !== leftMeasure.unit
-          ) as NumericalMeasure
-        ).id;
+        const rightMeasure = numericalMeasures.find((d) =>
+          rightMeasureId ? d.id === rightMeasureId : d.unit !== leftMeasure.unit
+        ) as NumericalMeasure;
+        rightMeasureId = rightMeasure.id;
         leftMeasure = getLeftMeasure(leftMeasure.id);
 
         const paletteId = isColorInConfig(oldChartConfig)
@@ -2123,12 +2122,27 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             DEFAULT_CATEGORICAL_PALETTE_ID)
           : DEFAULT_CATEGORICAL_PALETTE_ID;
 
+        const unitConversionPresent =
+          leftAxisUnitConversion || rightAxisUnitConversion;
+        const defaultLeftAxisUnitConversion = getDefaultConversionUnit(
+          leftMeasure.id,
+          { originalUnit: leftMeasure.unit }
+        );
+        const defaultRightAxisUnitConversion = getDefaultConversionUnit(
+          rightMeasureId as ComponentId,
+          { originalUnit: rightMeasure.unit }
+        );
+
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
             leftAxisComponentId: leftMeasure.id,
             rightAxisComponentId: rightMeasureId as string,
-            leftAxisUnitConversion,
-            rightAxisUnitConversion,
+            leftAxisUnitConversion: unitConversionPresent
+              ? (leftAxisUnitConversion ?? defaultLeftAxisUnitConversion)
+              : defaultLeftAxisUnitConversion,
+            rightAxisUnitConversion: unitConversionPresent
+              ? (rightAxisUnitConversion ?? defaultRightAxisUnitConversion)
+              : defaultRightAxisUnitConversion,
           };
           draft.fields.color = {
             type: "measures",
@@ -2181,7 +2195,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         let leftMeasure = numericalMeasures.find(
           (d) => d.id === numericalMeasureIds[0]
         ) as NumericalMeasure;
-        let rightAxisMeasureId: string;
+        let rightMeasureId: string;
         const getMeasure = (id: string) => {
           return numericalMeasures.find((d) => d.id === id) as NumericalMeasure;
         };
@@ -2192,7 +2206,7 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           case "comboLineDual": {
             const leftAxisId = oldChartConfig.fields.y.leftAxisComponentId;
             leftMeasure = getMeasure(leftAxisId);
-            rightAxisMeasureId = oldChartConfig.fields.y.rightAxisComponentId;
+            rightMeasureId = oldChartConfig.fields.y.rightAxisComponentId;
             columnUnitConversion =
               oldChartConfig.fields.y.leftAxisUnitConversion;
             lineUnitConversion =
@@ -2237,26 +2251,38 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             return _exhaustiveCheck;
         }
 
-        const lineComponentId = (
-          numericalMeasures.find((d) =>
-            rightAxisMeasureId
-              ? d.id === rightAxisMeasureId
-              : d.unit !== leftMeasure.unit
-          ) as NumericalMeasure
-        ).id;
+        const rightMeasure = numericalMeasures.find((d) =>
+          rightMeasureId ? d.id === rightMeasureId : d.unit !== leftMeasure.unit
+        ) as NumericalMeasure;
+        const lineComponentId = rightMeasure.id;
 
         const paletteId = isColorInConfig(oldChartConfig)
           ? (oldChartConfig.fields.color.paletteId ??
             DEFAULT_CATEGORICAL_PALETTE_ID)
           : DEFAULT_CATEGORICAL_PALETTE_ID;
 
+        const unitConversionPresent =
+          columnUnitConversion || lineUnitConversion;
+        const defaultColumnUnitConversion = getDefaultConversionUnit(
+          leftMeasure.id,
+          { originalUnit: leftMeasure.unit }
+        );
+        const defaultLineUnitConversion = getDefaultConversionUnit(
+          rightMeasure.id,
+          { originalUnit: rightMeasure.unit }
+        );
+
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
             columnComponentId: leftMeasure.id,
             lineComponentId,
             lineAxisOrientation: "right",
-            columnUnitConversion,
-            lineUnitConversion,
+            columnUnitConversion: unitConversionPresent
+              ? (columnUnitConversion ?? defaultColumnUnitConversion)
+              : defaultColumnUnitConversion,
+            lineUnitConversion: unitConversionPresent
+              ? (lineUnitConversion ?? defaultLineUnitConversion)
+              : defaultLineUnitConversion,
           };
           draft.fields.color = {
             type: "measures",

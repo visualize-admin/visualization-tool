@@ -446,7 +446,7 @@ const ConvertUnitInner = ({
   );
 };
 
-const getDefaultConversionUnit = (
+export const getDefaultConversionUnit = (
   componentId: ComponentId,
   { originalUnit }: { originalUnit: string | undefined }
 ): UnitConversion => {
