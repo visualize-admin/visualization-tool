@@ -1211,7 +1211,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
     encodings: [
       // Should this even be an encoding when it's not mapped to a component?
       {
-        idAttributes: ["componentId"],
+        idAttributes: [],
         field: "baseLayer",
         optional: true,
         componentTypes: [],
@@ -1270,7 +1270,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         },
       },
       {
-        idAttributes: ["componentId"],
+        idAttributes: [],
         field: "customLayers",
         optional: true,
         componentTypes: [],
