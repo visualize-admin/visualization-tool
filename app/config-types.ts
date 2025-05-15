@@ -908,11 +908,14 @@ const CategoricalColorField = t.intersection([
 export type CategoricalColorField = t.TypeOf<typeof CategoricalColorField>;
 
 const NumericalColorField = t.intersection([
-  t.type({
-    type: t.literal("numerical"),
-    componentId: t.string,
-    paletteId: t.string,
-  }),
+  t.intersection([
+    t.type({
+      type: t.literal("numerical"),
+      componentId: t.string,
+      paletteId: t.string,
+    }),
+    UnitConversionFieldExtension,
+  ]),
   t.partial({
     paletteType: t.union([t.literal("sequential"), t.literal("diverging")]),
     colors: t.array(t.string),
@@ -944,18 +947,25 @@ export type MapColorField =
 
 const MapAreaLayer = t.type({
   componentId: t.string,
-  // FIXME:  convert to new color field type
+  // FIXME: convert to new color field type
   color: t.union([CategoricalColorField, NumericalColorField]),
 });
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
-const MapSymbolLayer = t.type({
-  componentId: t.string,
-  /** symbol radius (size) */
-  measureId: t.string,
-  // FIXME:  convert to new color field type
-  color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
-});
+const MapSymbolLayer = t.intersection([
+  t.type({
+    componentId: t.string,
+    /** Symbol radius (size) */
+    measureId: t.string,
+    // FIXME: convert to new color field type
+    color: t.union([
+      FixedColorField,
+      CategoricalColorField,
+      NumericalColorField,
+    ]),
+  }),
+  UnitConversionFieldExtension,
+]);
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 
 const BaseCustomLayer = t.type({

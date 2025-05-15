@@ -1240,6 +1240,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             onComponentIdChange: onColorComponentIdChange,
             onScaleTypeChange: onColorComponentScaleTypeChange,
           },
+          convertUnit: {},
         },
       },
       {
@@ -1270,6 +1271,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             componentTypes: ["NumericalMeasure"],
             optional: true,
           },
+          convertUnit: {},
         },
       },
       ANIMATION_FIELD_SPEC,

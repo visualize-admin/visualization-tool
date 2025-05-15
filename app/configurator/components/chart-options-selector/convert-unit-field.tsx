@@ -110,7 +110,125 @@ export const ConvertUnitField = ({
         </ConvertUnitSection>
       );
     }
-    case "map":
+    case "map": {
+      const activeField = field as keyof typeof chartConfig.fields;
+
+      switch (activeField) {
+        case "areaLayer": {
+          const areaLayer = chartConfig.fields.areaLayer;
+          const color = areaLayer?.color;
+          const numericalColor =
+            color?.type === "numerical" ? color : undefined;
+          const colorComponent = components.find(
+            (c) => c.id === numericalColor?.componentId
+          );
+
+          if (!colorComponent) {
+            return null;
+          }
+
+          const unitConversion = numericalColor?.unitConversion;
+          const checked = !!unitConversion;
+
+          return (
+            <ConvertUnitSection
+              checked={checked}
+              field="areaLayer"
+              unitConversions={[
+                {
+                  path: "color.unitConversion",
+                  originalUnit: colorComponent.unit,
+                  componentId: colorComponent.id,
+                },
+              ]}
+            >
+              {checked ? (
+                <ConvertUnitInner
+                  field="areaLayer"
+                  path="color.unitConversion"
+                  originalUnit={colorComponent.unit}
+                  unitConversion={unitConversion}
+                />
+              ) : null}
+            </ConvertUnitSection>
+          );
+        }
+        case "symbolLayer": {
+          const symbolLayer = chartConfig.fields.symbolLayer;
+          const sizeComponent = components.find(
+            (c) => c.id === symbolLayer?.measureId
+          );
+          const color = symbolLayer?.color;
+          const numericalColor =
+            color?.type === "numerical" ? color : undefined;
+          const colorComponent = components.find(
+            (c) => c.id === numericalColor?.componentId
+          );
+
+          if (!sizeComponent && !colorComponent) {
+            return null;
+          }
+
+          const sizeUnitConversion = symbolLayer?.unitConversion;
+          const colorUnitConversion = numericalColor?.unitConversion;
+          const unitConversions = [
+            {
+              path: "unitConversion",
+              originalUnit: sizeComponent?.unit,
+              componentId: sizeComponent?.id,
+            },
+            {
+              path: "color.unitConversion",
+              originalUnit: colorComponent?.unit,
+              componentId: colorComponent?.id,
+            },
+          ];
+          const checked = !!sizeUnitConversion || !!colorUnitConversion;
+
+          return (
+            <ConvertUnitSection
+              checked={checked}
+              field="symbolLayer"
+              unitConversions={unitConversions}
+            >
+              {checked && sizeComponent ? (
+                <div>
+                  <Typography variant="body3" fontWeight="bold">
+                    <Trans id="controls.size">Size</Trans>:{" "}
+                    {sizeComponent.label}
+                  </Typography>
+                  <ConvertUnitInner
+                    field="symbolLayer"
+                    path="unitConversion"
+                    originalUnit={sizeComponent.unit}
+                    unitConversion={sizeUnitConversion}
+                  />
+                </div>
+              ) : null}
+              {checked && colorComponent ? (
+                <div>
+                  <Typography variant="body3" fontWeight="bold">
+                    <Trans id="controls.color">Color</Trans>:{" "}
+                    {colorComponent.label}
+                  </Typography>
+                  <ConvertUnitInner
+                    field="symbolLayer"
+                    path="color.unitConversion"
+                    originalUnit={colorComponent.unit}
+                    unitConversion={colorUnitConversion}
+                  />
+                </div>
+              ) : null}
+            </ConvertUnitSection>
+          );
+        }
+        case "animation":
+          return null;
+        default:
+          const _exhaustiveCheck: never = activeField;
+          return _exhaustiveCheck;
+      }
+    }
     case "table":
       return null;
     case "comboLineSingle": {
