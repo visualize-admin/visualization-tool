@@ -68,6 +68,7 @@ export const ConvertUnitField = ({
             <ConvertUnitInner
               field={field}
               path="unitConversion"
+              componentId={component.id}
               originalUnit={component.unit}
               unitConversion={unitConversion}
             />
@@ -103,6 +104,7 @@ export const ConvertUnitField = ({
             <ConvertUnitInner
               field={field}
               path="unitConversion"
+              componentId={component.id}
               originalUnit={component.unit}
               unitConversion={unitConversion}
             />
@@ -146,6 +148,7 @@ export const ConvertUnitField = ({
                 <ConvertUnitInner
                   field="areaLayer"
                   path="color.unitConversion"
+                  componentId={colorComponent.id}
                   originalUnit={colorComponent.unit}
                   unitConversion={unitConversion}
                 />
@@ -200,6 +203,7 @@ export const ConvertUnitField = ({
                   <ConvertUnitInner
                     field="symbolLayer"
                     path="unitConversion"
+                    componentId={sizeComponent.id}
                     originalUnit={sizeComponent.unit}
                     unitConversion={sizeUnitConversion}
                   />
@@ -214,6 +218,7 @@ export const ConvertUnitField = ({
                   <ConvertUnitInner
                     field="symbolLayer"
                     path="color.unitConversion"
+                    componentId={colorComponent.id}
                     originalUnit={colorComponent.unit}
                     unitConversion={colorUnitConversion}
                   />
@@ -259,6 +264,7 @@ export const ConvertUnitField = ({
             <ConvertUnitInner
               field="y"
               path="unitConversion"
+              componentId={component.id}
               originalUnit={component.unit}
               unitConversion={unitConversion}
             />
@@ -311,6 +317,7 @@ export const ConvertUnitField = ({
               <ConvertUnitInner
                 field="y"
                 path="columnUnitConversion"
+                componentId={columnComponent.id}
                 originalUnit={columnComponent.unit}
                 unitConversion={columnUnitConversion}
               />
@@ -324,6 +331,7 @@ export const ConvertUnitField = ({
               <ConvertUnitInner
                 field="y"
                 path="lineUnitConversion"
+                componentId={lineComponent.id}
                 originalUnit={lineComponent.unit}
                 unitConversion={lineUnitConversion}
               />
@@ -378,6 +386,7 @@ export const ConvertUnitField = ({
               <ConvertUnitInner
                 field="y"
                 path="leftAxisUnitConversion"
+                componentId={leftComponent.id}
                 originalUnit={leftComponent.unit}
                 unitConversion={leftUnitConversion}
               />
@@ -391,6 +400,7 @@ export const ConvertUnitField = ({
               <ConvertUnitInner
                 field="y"
                 path="rightAxisUnitConversion"
+                componentId={rightComponent.id}
                 originalUnit={rightComponent.unit}
                 unitConversion={rightUnitConversion}
               />
@@ -477,21 +487,25 @@ const ConvertUnitSection = ({
 const ConvertUnitInner = ({
   field,
   path,
+  componentId,
   originalUnit,
   unitConversion,
 }: {
   field: EncodingFieldType;
   path: string;
+  componentId: ComponentId;
   originalUnit: string | undefined;
   unitConversion: UnitConversionFieldExtension["unitConversion"];
 }) => {
   const locale = useLocale();
   const orderedLocales = useOrderedLocales();
   const [_, dispatch] = useConfiguratorState(isConfiguring);
+  const definedUnitConversion =
+    unitConversion ?? getDefaultConversionUnit(componentId, { originalUnit });
   const handleFactorChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
     const newFactor = +e.target.value;
 
-    if (!isNaN(newFactor) && newFactor > 0 && unitConversion) {
+    if (!isNaN(newFactor) && newFactor > 0) {
       dispatch({
         type: "CHART_FIELD_UPDATED",
         value: {
@@ -499,9 +513,9 @@ const ConvertUnitInner = ({
           field,
           path,
           value: {
-            componentId: unitConversion.componentId,
+            componentId,
             factor: newFactor,
-            labels: unitConversion.labels,
+            labels: definedUnitConversion.labels,
           },
         },
       });
@@ -509,24 +523,22 @@ const ConvertUnitInner = ({
   });
 
   const handleLabelChange = useEvent((locale: Locale, value: string) => {
-    if (unitConversion) {
-      dispatch({
-        type: "CHART_FIELD_UPDATED",
+    dispatch({
+      type: "CHART_FIELD_UPDATED",
+      value: {
+        locale,
+        field,
+        path,
         value: {
-          locale,
-          field,
-          path,
-          value: {
-            componentId: unitConversion.componentId,
-            factor: unitConversion.factor,
-            labels: {
-              ...unitConversion.labels,
-              [locale]: value,
-            },
+          componentId,
+          factor: definedUnitConversion.factor,
+          labels: {
+            ...definedUnitConversion.labels,
+            [locale]: value,
           },
         },
-      });
-    }
+      },
+    });
   });
 
   return (
@@ -545,7 +557,7 @@ const ConvertUnitInner = ({
             message: "Multiplying factor",
           })}
           name="unit-factor"
-          value={unitConversion?.factor ?? 1}
+          value={definedUnitConversion.factor}
           onChange={handleFactorChange}
         />
       </Flex>
@@ -560,7 +572,7 @@ const ConvertUnitInner = ({
             key={locale}
             label={getFieldLabel(locale)}
             name={`unit-label-${locale}`}
-            value={unitConversion?.labels[locale] ?? ""}
+            value={definedUnitConversion.labels[locale]}
             onChange={(e) => handleLabelChange(locale, e.target.value)}
           />
         ))}
