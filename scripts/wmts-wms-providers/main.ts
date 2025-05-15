@@ -14,18 +14,9 @@ const knownGoodEndpoints = [
 
 async function fetchAllowList() {
   /** fetches https://rdataflow.github.io/WMS-monitor/result.txt & https://rdataflow.github.io/WTMS-monitor/result.txt */
-  const urls = [
-    "https://rdataflow.github.io/WMS-monitor/result.txt",
-    "https://rdataflow.github.io/WTMS-monitor/result.txt",
-  ];
+  const urls = ["https://rdataflow.github.io/WMTS-WMS-monitor/result.json"];
   const results = await Promise.all(
-    urls.map((url) =>
-      fetch(url)
-        .then((x) => x.text())
-        .then((text) => {
-          return text.split("\n");
-        })
-    )
+    urls.map((url) => fetch(url).then((x) => x.json()))
   );
   return new Set(
     results
