@@ -21,7 +21,6 @@ import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { LineConfig } from "@/config-types";
 import { useLimits } from "@/config-utils";
 import { hasChartConfigs, useConfiguratorState } from "@/configurator";
-import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -32,7 +31,6 @@ export const ChartLinesVisualization = (
 };
 
 const ChartLines = memo((props: ChartProps<LineConfig>) => {
-  const locale = useLocale();
   const { chartConfig, dimensions, measures, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const { y } = fields;
@@ -41,7 +39,7 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
     chartConfig,
     dimensions,
     measures,
-    unitOverride: y.unitConversion?.labels[locale],
+    unitConversion: y.unitConversion,
   });
 
   return (

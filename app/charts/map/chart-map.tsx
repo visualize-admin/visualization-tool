@@ -184,7 +184,6 @@ export type ChartMapProps = ChartProps<MapConfig> & {
 };
 
 const ChartMap = memo((props: ChartMapProps) => {
-  const locale = useLocale();
   const { chartConfig, dimensions, measures, observations } = props;
   const { fields } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
@@ -194,7 +193,7 @@ const ChartMap = memo((props: ChartMapProps) => {
     dimensions,
     measures,
     // We can only display limits with symbols.
-    unitOverride: fields.symbolLayer?.unitConversion?.labels[locale],
+    unitConversion: fields.symbolLayer?.unitConversion,
   });
 
   return (

@@ -12,6 +12,7 @@ import {
   getAnimationField,
   Limit as ConfigLimit,
   SingleFilters,
+  UnitConversion,
 } from "@/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import {
@@ -23,6 +24,7 @@ import {
 import { truthy } from "@/domain/types";
 import { useTimeFormatUnit } from "@/formatters";
 import { mkJoinById } from "@/graphql/join";
+import { useLocale } from "@/locales/use-locale";
 import { Limit } from "@/rdf/limits";
 import {
   useChartInteractiveFilters,
@@ -341,12 +343,12 @@ export const useLimits = ({
   chartConfig,
   dimensions,
   measures,
-  unitOverride,
+  unitConversion,
 }: {
   chartConfig: ChartConfig;
   dimensions: Dimension[];
   measures: Measure[];
-  unitOverride?: string;
+  unitConversion?: UnitConversion;
 }): {
   axisDimension: Dimension | undefined;
   limitMeasure: Measure | undefined;
@@ -357,6 +359,7 @@ export const useLimits = ({
     limitUnit: string | undefined;
   }[];
 } => {
+  const locale = useLocale();
   const filters = useDefinitiveFilters();
   const limitMeasure = getLimitMeasure({ chartConfig, measures });
   const axisDimension = getAxisDimension({ chartConfig, dimensions });
@@ -396,13 +399,20 @@ export const useLimits = ({
                 },
                 measureLimit: limit,
                 relatedAxisDimensionValueLabel,
-                limitUnit: unitOverride ?? limitMeasure.unit,
+                limitUnit: unitConversion?.labels[locale] ?? limitMeasure.unit,
               }
             : null;
         })
         .filter(truthy),
     };
-  }, [limitMeasure, axisDimension, chartConfig, filters, unitOverride]);
+  }, [
+    limitMeasure,
+    axisDimension,
+    chartConfig,
+    filters,
+    unitConversion?.labels,
+    locale,
+  ]);
 };
 
 export const getSupportsLimitSymbols = (chartConfig: ChartConfig) => {

@@ -30,7 +30,7 @@ import { BarConfig } from "@/config-types";
 import { useChartConfigFilters, useLimits } from "@/config-utils";
 import { hasChartConfigs } from "@/configurator";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
-import { useConfiguratorState, useLocale } from "@/src";
+import { useConfiguratorState } from "@/src";
 
 import { ChartProps, VisualizationProps } from "../shared/ChartProps";
 
@@ -41,7 +41,6 @@ export const ChartBarsVisualization = (
 };
 
 const ChartBars = memo((props: ChartProps<BarConfig>) => {
-  const locale = useLocale();
   const { chartConfig, dimensions, dimensionsById, measures } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const { x } = fields;
@@ -55,7 +54,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
     chartConfig,
     dimensions,
     measures,
-    unitOverride: x.unitConversion?.labels[locale],
+    unitConversion: x.unitConversion,
   });
 
   return (
