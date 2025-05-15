@@ -51,10 +51,10 @@ export const ConvertUnitField = ({
       }
 
       const unitConversion = chartConfig.fields.y.unitConversion;
-
+      const checked = !!unitConversion;
       return (
         <ConvertUnitSection
-          checked={!!unitConversion}
+          checked={checked}
           field={field}
           unitConversions={[
             {
@@ -64,7 +64,7 @@ export const ConvertUnitField = ({
             },
           ]}
         >
-          {unitConversion ? (
+          {checked ? (
             <ConvertUnitInner
               field={field}
               path="unitConversion"
@@ -85,10 +85,11 @@ export const ConvertUnitField = ({
       }
 
       const unitConversion = chartConfig.fields.x.unitConversion;
+      const checked = !!unitConversion;
 
       return (
         <ConvertUnitSection
-          checked={!!unitConversion}
+          checked={checked}
           field={field}
           unitConversions={[
             {
@@ -98,7 +99,7 @@ export const ConvertUnitField = ({
             },
           ]}
         >
-          {unitConversion ? (
+          {checked ? (
             <ConvertUnitInner
               field={field}
               path="unitConversion"
@@ -122,10 +123,11 @@ export const ConvertUnitField = ({
       }
 
       const unitConversion = chartConfig.fields.y.unitConversion;
+      const checked = !!unitConversion;
 
       return (
         <ConvertUnitSection
-          checked={!!unitConversion}
+          checked={checked}
           field="y"
           unitConversions={[
             {
@@ -135,7 +137,7 @@ export const ConvertUnitField = ({
             },
           ]}
         >
-          {unitConversion ? (
+          {checked ? (
             <ConvertUnitInner
               field="y"
               path="unitConversion"
@@ -165,10 +167,10 @@ export const ConvertUnitField = ({
 
       const lineUnitConversion = chartConfig.fields.y.lineUnitConversion;
       const columnUnitConversion = chartConfig.fields.y.columnUnitConversion;
-
+      const checked = !!lineUnitConversion || !!columnUnitConversion;
       return (
         <ConvertUnitSection
-          checked={!!lineUnitConversion || !!columnUnitConversion}
+          checked={checked}
           field="y"
           unitConversions={[
             {
@@ -183,7 +185,7 @@ export const ConvertUnitField = ({
             },
           ]}
         >
-          {columnUnitConversion ? (
+          {checked && columnComponent ? (
             <div>
               <Typography variant="body3" fontWeight="bold">
                 {columnComponent.label}
@@ -191,12 +193,12 @@ export const ConvertUnitField = ({
               <ConvertUnitInner
                 field="y"
                 path="columnUnitConversion"
-                originalUnit={columnComponent?.unit}
+                originalUnit={columnComponent.unit}
                 unitConversion={columnUnitConversion}
               />
             </div>
           ) : null}
-          {lineUnitConversion ? (
+          {checked && lineComponent ? (
             <div>
               <Typography variant="body3" fontWeight="bold">
                 {lineComponent.label}
@@ -204,7 +206,7 @@ export const ConvertUnitField = ({
               <ConvertUnitInner
                 field="y"
                 path="lineUnitConversion"
-                originalUnit={lineComponent?.unit}
+                originalUnit={lineComponent.unit}
                 unitConversion={lineUnitConversion}
               />
             </div>
@@ -231,10 +233,11 @@ export const ConvertUnitField = ({
 
       const leftUnitConversion = chartConfig.fields.y.leftAxisUnitConversion;
       const rightUnitConversion = chartConfig.fields.y.rightAxisUnitConversion;
+      const checked = !!leftUnitConversion || !!rightUnitConversion;
 
       return (
         <ConvertUnitSection
-          checked={!!leftUnitConversion || !!rightUnitConversion}
+          checked={checked}
           field="y"
           unitConversions={[
             {
@@ -249,7 +252,7 @@ export const ConvertUnitField = ({
             },
           ]}
         >
-          {leftUnitConversion ? (
+          {checked && leftComponent ? (
             <div>
               <Typography variant="body3" fontWeight="bold">
                 {leftComponent.label}
@@ -262,7 +265,7 @@ export const ConvertUnitField = ({
               />
             </div>
           ) : null}
-          {rightUnitConversion ? (
+          {checked && rightComponent ? (
             <div>
               <Typography variant="body3" fontWeight="bold">
                 {rightComponent.label}
@@ -296,7 +299,7 @@ const ConvertUnitSection = ({
   unitConversions: {
     path: string;
     originalUnit: string | undefined;
-    componentId: ComponentId;
+    componentId: ComponentId | undefined;
   }[];
 }) => {
   const locale = useLocale();
@@ -304,17 +307,19 @@ const ConvertUnitSection = ({
   const handleToggle = useEvent(() => {
     if (!checked) {
       unitConversions.forEach(({ path, originalUnit, componentId }) => {
-        dispatch({
-          type: "CHART_FIELD_UPDATED",
-          value: {
-            locale,
-            field,
-            path,
-            value: getDefaultConversionUnit(componentId, {
-              originalUnit,
-            }),
-          },
-        });
+        if (componentId) {
+          dispatch({
+            type: "CHART_FIELD_UPDATED",
+            value: {
+              locale,
+              field,
+              path,
+              value: getDefaultConversionUnit(componentId, {
+                originalUnit,
+              }),
+            },
+          });
+        }
       });
     } else {
       unitConversions.forEach(({ path }) => {
@@ -360,7 +365,7 @@ const ConvertUnitInner = ({
   field: EncodingFieldType;
   path: string;
   originalUnit: string | undefined;
-  unitConversion: NonNullable<UnitConversionFieldExtension["unitConversion"]>;
+  unitConversion: UnitConversionFieldExtension["unitConversion"];
 }) => {
   const locale = useLocale();
   const orderedLocales = useOrderedLocales();
@@ -422,7 +427,7 @@ const ConvertUnitInner = ({
             message: "Multiplying factor",
           })}
           name="unit-factor"
-          value={unitConversion.factor}
+          value={unitConversion?.factor ?? 1}
           onChange={handleFactorChange}
         />
       </Flex>
@@ -437,7 +442,7 @@ const ConvertUnitInner = ({
             key={locale}
             label={getFieldLabel(locale)}
             name={`unit-label-${locale}`}
-            value={unitConversion.labels[locale]}
+            value={unitConversion?.labels[locale] ?? ""}
             onChange={(e) => handleLabelChange(locale, e.target.value)}
           />
         ))}
