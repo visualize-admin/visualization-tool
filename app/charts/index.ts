@@ -2573,7 +2573,7 @@ const chartConfigsPathOverrides: {
       "fields.y.componentId": [{ path: "SKIP" }],
     },
     map: {
-      "fields.areaLayer.componentId": [{ path: "fields.x.componentId" }],
+      "fields.areaLayer.componentId": [{ path: "fields.segment.componentId" }],
       "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
     },
     table: {
