@@ -929,7 +929,9 @@ const ChartFields = ({
               key={field}
               value={field}
               icon="customLayers"
-              label={<Trans id="chart.map.layers.custom">Custom Layers</Trans>}
+              label={
+                <Trans id="chart.map.layers.custom-layers">Custom Layers</Trans>
+              }
               active={
                 chartConfig.baseLayer.show &&
                 chartConfig.baseLayer.customLayers.length > 0

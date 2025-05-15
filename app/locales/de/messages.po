@@ -283,6 +283,7 @@ msgstr "Weltkarte anzeigen"
 msgid "chart.map.layers.base.view.locked"
 msgstr "Gesperrte Ansicht"
 
+#: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.custom-layers"
 msgstr "Benutzerdefinierte Ebenen"
@@ -1257,6 +1258,7 @@ msgstr "Schriftstil"
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.dimension"
 msgstr "Dimension auswählen"
 
@@ -1882,6 +1884,26 @@ msgstr "Nein"
 msgid "profile.chart.rename-dialog.title"
 msgstr "Benennen Sie die Visualisierung um"
 
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.can-display-layers"
+msgstr "Kann die Layer anzeigen"
+
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.can-display-on-map-geo-admin"
+msgstr "Kann auf der Geo Admin Karte angezeigt werden"
+
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.can-list-layers"
+msgstr "Kann die Layer auflisten"
+
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.title"
+msgstr "Anbieter-Informationen"
+
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.working-layers"
+msgstr "Funktionierende Layer"
+
 #: app/components/publish-actions.tsx
 msgid "publication.embed.advanced-settings"
 msgstr "Erweiterte Einstellungen"
@@ -2023,20 +2045,23 @@ msgstr "Woche"
 msgid "time-units.Year"
 msgstr "Jahr"
 
-#: app/charts/map/wmts-providers-autocomplete.tsx
+#: app/charts/map/wms-wmts-providers-autocomplete.tsx
 msgid "wmts-providers-autocomplete.placeholder"
 msgstr "Geben Sie die URL eines WMTS-Anbieters ein"
 
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "wmts.custom-layer.section-title"
-#  Add custom layer
-msgstr "Add custom layer"
+msgstr "Benutzerdefinierte Layer"
 
-#: app/charts/map/wmts-selector.tsx
+#: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.layer-not-supported-crs"
+msgstr "Dieser Layer wird nicht unterstützt, da er nicht im EPSG:3857-Koordinatensystem vorliegt."
+
+#: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.legend-title"
 msgstr "Legende"
 
-#: app/charts/map/wmts-selector.tsx
+#: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.search-placeholder"
 msgstr "Suche nach WMTS-Provider"
 
