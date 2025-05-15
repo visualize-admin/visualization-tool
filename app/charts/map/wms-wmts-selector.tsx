@@ -22,6 +22,7 @@ import { RemoteLayer } from "@/charts/map/types";
 import { RemoteWMSLayer } from "@/charts/map/wms-utils";
 import {
   isRemoteLayerCRSSupported,
+  makeKey,
   useWMTSorWMSLayers,
 } from "@/charts/map/wms-wmts-endpoint-utils";
 import ProviderAutocomplete from "@/charts/map/wms-wmts-providers-autocomplete";
@@ -327,7 +328,9 @@ const WMTSSelector = ({
                     label={label}
                     value={value}
                     onCheck={onLayerCheck}
-                    initialChecked={selectedSet.has(layersByPath[value].id)}
+                    initialChecked={selectedSet.has(
+                      makeKey(layersByPath[value])
+                    )}
                   />
                 }
                 expandIcon={

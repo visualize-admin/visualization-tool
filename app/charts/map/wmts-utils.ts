@@ -193,15 +193,10 @@ const parseWMTSLayer = (
     ...attributes,
   };
 
-  /** @patrick: Haven't found any WMTS with nested layer yet */
-  if (layer.Layer) {
-    const children = layer.Layer
-      ? layer.Layer instanceof Array
-        ? layer.Layer.map((l) => parseWMTSLayer(l, attributes, {}, getTileUrl))
-        : [parseWMTSLayer(layer.Layer, attributes, tileMatrixById, getTileUrl)]
-      : undefined;
-    res.children = children;
-  }
+  // No children at Layer level, if we want to support it, we need to do this
+  // via the Themes property
+  // @see https://portal.ogc.org/files/?artifact_id=35326
+  // Section7.1.1.1.3
 
   return res;
 };

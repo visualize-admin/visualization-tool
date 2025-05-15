@@ -214,3 +214,9 @@ export const useWMTSorWMSLayers = (
     },
   });
 };
+
+export const makeKey = (
+  layer: RemoteWMSLayer | RemoteWMTSLayer | WMSCustomLayer | WMTSCustomLayer
+) => {
+  return `${layer.endpoint}/${layer.id}`;
+};

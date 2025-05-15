@@ -19,6 +19,7 @@ import {
 import { RemoteWMSLayer } from "@/charts/map/wms-utils";
 import {
   getLayerKey,
+  makeKey,
   useWMTSorWMSLayers,
 } from "@/charts/map/wms-wmts-endpoint-utils";
 import WMTSSelector from "@/charts/map/wms-wmts-selector";
@@ -204,7 +205,7 @@ export const CustomLayersSelector = () => {
                 return handleCheckLayer(x, checked);
               }}
               selected={configLayers.map((layer) => {
-                return layer.id;
+                return makeKey(layer);
               })}
             />
           ) : null}
