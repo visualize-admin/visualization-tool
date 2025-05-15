@@ -19,6 +19,30 @@ import { truthy } from "@/domain/types";
 import { useLocale } from "@/locales/use-locale";
 import { useFetchData } from "@/utils/use-fetch-data";
 
+/** Constrain size, keeping aspect ratio */
+const constrainSize = ({
+  width,
+  height,
+  maxWidth,
+  maxHeight,
+}: {
+  width: number;
+  height: number;
+  maxWidth: number;
+  maxHeight: number;
+}) => {
+  const aspectRatio = width / height;
+  if (width > maxWidth) {
+    width = maxWidth;
+    height = Math.round(maxWidth / aspectRatio);
+  }
+  if (height > maxHeight) {
+    height = maxHeight;
+    width = Math.round(maxHeight * aspectRatio);
+  }
+  return { width, height };
+};
+
 export const MapCustomLayersLegend = ({
   chartConfig,
   value,
@@ -51,6 +75,13 @@ export const MapCustomLayersLegend = ({
                   value,
                 })
               : undefined;
+
+          const { width: swidth, height: sheight } = constrainSize({
+            width,
+            height,
+            maxWidth: 400,
+            maxHeight: 400,
+          });
 
           return (
             <Box
@@ -85,8 +116,8 @@ export const MapCustomLayersLegend = ({
               <NextImage
                 src={dataUrl}
                 alt={layer.title}
-                width={width}
-                height={height}
+                width={swidth}
+                height={sheight}
               />
             </Box>
           );
@@ -94,6 +125,45 @@ export const MapCustomLayersLegend = ({
       )}
     </>
   );
+};
+
+const cachedLegendImages: Record<
+  string,
+  Promise<{ dataUrl: string; width: number; height: number } | undefined>
+> = {};
+
+const fetchLegendImage = async (
+  remoteLayer: RemoteWMSLayer | RemoteWMTSLayer
+) => {
+  if (!remoteLayer?.legendUrl) {
+    return undefined;
+  }
+
+  const blob = await fetch(remoteLayer.legendUrl).then((res) => res.blob());
+  const bmp = await createImageBitmap(blob);
+  const { width, height } = bmp;
+  bmp.close();
+
+  return {
+    dataUrl: URL.createObjectURL(blob),
+    width,
+    height,
+  };
+};
+
+const fetchLegendImageFromCache = async (
+  remoteLayer: RemoteWMSLayer | RemoteWMTSLayer
+) => {
+  if (!remoteLayer?.legendUrl) {
+    return undefined;
+  }
+  const cached = cachedLegendImages[remoteLayer.legendUrl];
+  if (cached) {
+    return cached;
+  }
+  const legendImage = fetchLegendImage(remoteLayer);
+  cachedLegendImages[remoteLayer.legendUrl] = legendImage;
+  return legendImage;
 };
 
 const useLegendsData = ({
@@ -141,22 +211,15 @@ const useLegendsData = ({
           configLayers.map(async (configLayer) => {
             let remoteLayer: RemoteWMSLayer | RemoteWMTSLayer | undefined =
               layersByKey[getLayerKey(configLayer)];
-
-            if (!remoteLayer?.legendUrl) {
+            const legendImage = await fetchLegendImageFromCache(remoteLayer);
+            if (!legendImage) {
               return undefined;
             }
-
-            const blob = await fetch(remoteLayer.legendUrl).then((res) =>
-              res.blob()
-            );
-            const bmp = await createImageBitmap(blob);
-            const { width, height } = bmp;
-            bmp.close();
-
+            const { width, height, dataUrl } = legendImage;
             return {
               remoteLayer,
               configLayer,
-              dataUrl: URL.createObjectURL(blob),
+              dataUrl,
               width,
               height,
             };

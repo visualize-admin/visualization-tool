@@ -1,7 +1,9 @@
 import { _WMSLayer as DeckGLWMSLayer } from "@deck.gl/geo-layers";
 import { XMLParser } from "fast-xml-parser";
+import uniq from "lodash/uniq";
 
 import { isRemoteLayerCRSSupported } from "@/charts/map/wms-wmts-endpoint-utils";
+import { maybeArray, parseCrs } from "@/charts/map/wms-wmts-parse-utils";
 import { WMSCustomLayer } from "@/config-types";
 
 type WMSData = {
@@ -75,36 +77,44 @@ export type RemoteWMSLayer = {
 
 const parseWMSLayer = (
   layer: WMSLayer,
-  attributes: {
+  parentAttributes: {
     endpoint: string;
     dataUrl: string;
     attribution: string;
+    crs: string[];
   },
   parentPath = ""
 ): RemoteWMSLayer => {
-  const currentPath = `${parentPath ?? ""}/${layer.Name ?? layer.Title}`;
+  const currentPath = `${parentPath ?? parentAttributes.endpoint}/${layer.Name ?? layer.Title}`;
+  const layerCrs = (maybeArray(layer.CRS) ?? []).map((c) => parseCrs(c));
+
+  /**
+   *  CRS is inherited with behavior "add", see Table 7 — Inheritance of Layer properties from the spec
+   * @see https://www.ogc.org/standards/wms/ "OpenGIS Web Map Service (WMS) Implementation Specification"
+   */
+  const crs = uniq([...parentAttributes.crs, ...layerCrs]);
+
   const res: RemoteWMSLayer = {
-    // Non unique
+    // Non unique across layers
     id: layer.Name,
-    // Unique
+    // Unique across layers
     path: `${currentPath}`,
     title: layer.Title,
     description: layer.Abstract ?? "",
     legendUrl: layer.Style?.LegendURL.OnlineResource["xlink:href"],
     type: "wms",
-    crs: layer.CRS ? (Array.isArray(layer.CRS) ? layer.CRS : [layer.CRS]) : [],
-    ...attributes,
+    ...parentAttributes,
+    crs,
   };
+
   if (layer.Layer) {
-    const children = layer.Layer
-      ? layer.Layer instanceof Array
-        ? layer.Layer.map((l) => parseWMSLayer(l, attributes, currentPath))
-        : [parseWMSLayer(layer.Layer, attributes, currentPath)]
-      : undefined;
+    const children = maybeArray(layer.Layer)?.map((l) =>
+      parseWMSLayer(l, parentAttributes, currentPath)
+    );
     res.children = children;
   }
 
-  // Hoist single children with same id as parent
+  // Hoist single children with same id as parent, this is for UI purposes
   if (res.children?.length === 1 && res.children[0]!.id === res.id) {
     return res.children[0];
   }
@@ -137,6 +147,7 @@ export const parseWMSContent = (content: string, endpoint: string) => {
       endpoint,
       dataUrl,
       attribution,
+      crs: [],
     })
   );
 };

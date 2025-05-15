@@ -222,6 +222,8 @@ export const getIconName = (name: string): IconName => {
       return "columnLineChart";
     case "baseLayer":
       return "map";
+    case "customLayers":
+      return "layoutSingle";
     case "areaLayer":
       return "mapRegions";
     case "symbolLayer":

@@ -157,15 +157,17 @@ const indexByKey = ({
  * when querying or when displaying.
  * @see https://github.com/visgl/deck.gl/discussions/6885#discussioncomment-2703052
  */
+export const isCRSSupported = (crs: string | undefined) => {
+  return crs && crs.includes("EPSG:3857");
+};
+
 export const isRemoteLayerCRSSupported = (
-  remoteLayer: RemoteWMTSLayer | RemoteWMSLayer
+  layer: RemoteWMSLayer | RemoteWMTSLayer
 ) => {
-  const supportedCRS = remoteLayer.crs;
-  if (!supportedCRS) {
-    return false;
-  }
-  return supportedCRS.some(
-    (crs) => crs.includes("EPSG:3857") || crs.includes("CRS:84")
+  return (
+    layer.crs &&
+    layer.crs.length > 0 &&
+    layer.crs.some((crs) => isCRSSupported(crs))
   );
 };
 
@@ -211,4 +213,10 @@ export const useWMTSorWMSLayers = (
       },
     },
   });
+};
+
+export const makeKey = (
+  layer: RemoteWMSLayer | RemoteWMTSLayer | WMSCustomLayer | WMTSCustomLayer
+) => {
+  return `${layer.endpoint}/${layer.id}`;
 };

@@ -358,6 +358,10 @@ const EncodingOptionsPanel = ({
       id: "controls.select.dimension",
       message: "Select a dimension",
     }),
+    customLayers: t({
+      id: "controls.select.dimension",
+      message: "Select a dimension",
+    }),
   };
   const otherFields = Object.keys(fields).filter(
     (f) => (fields as any)[f].hasOwnProperty("componentId") && field !== f
@@ -587,11 +591,9 @@ const EncodingOptionsPanel = ({
       )}
       {/* FIXME: should be generic or shouldn't be a field at all */}
       {field === "baseLayer" && (
-        <>
-          <ChartMapBaseLayerSettings chartConfig={chartConfig as MapConfig} />
-          <CustomLayersSelector />
-        </>
+        <ChartMapBaseLayerSettings chartConfig={chartConfig as MapConfig} />
       )}
+      {field === "customLayers" && <CustomLayersSelector />}
       {encoding.sorting &&
         component &&
         CUSTOM_SORT_ENABLED_COMPONENTS.includes(component.__typename) && (

@@ -913,6 +913,8 @@ const ChartFields = ({
             .map((cId) => components.find((d) => cId === d.id))
             .filter(truthy);
           const baseLayer = isMapConfig(chartConfig) && field === "baseLayer";
+          const customLayers =
+            isMapConfig(chartConfig) && field === "customLayers";
 
           return baseLayer ? (
             <OnOffControlTabField
@@ -921,6 +923,19 @@ const ChartFields = ({
               icon="baseLayer"
               label={<Trans id="chart.map.layers.base">Base Layers</Trans>}
               active={chartConfig.baseLayer.show}
+            />
+          ) : customLayers ? (
+            <OnOffControlTabField
+              key={field}
+              value={field}
+              icon="customLayers"
+              label={
+                <Trans id="chart.map.layers.custom-layers">Custom Layers</Trans>
+              }
+              active={
+                chartConfig.baseLayer.show &&
+                chartConfig.baseLayer.customLayers.length > 0
+              }
             />
           ) : (
             <ControlTabField
