@@ -158,7 +158,7 @@ const indexByKey = ({
  * @see https://github.com/visgl/deck.gl/discussions/6885#discussioncomment-2703052
  */
 export const isCRSSupported = (crs: string | undefined) => {
-  return crs && (crs.includes("EPSG:3857") || crs.includes("EPSG:4326"));
+  return crs && crs.includes("EPSG:3857");
 };
 
 export const isRemoteLayerCRSSupported = (

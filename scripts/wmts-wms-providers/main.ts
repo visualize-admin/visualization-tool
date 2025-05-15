@@ -7,11 +7,6 @@ const normalizeUrl = (url: string): string => {
   return url.split("?")[0].split("#")[0].trim();
 };
 
-const knownGoodEndpoints = [
-  "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer",
-  "https://geoserver.swissdatacube.org/geoserver/gwc/service/wmts?REQUEST=GetCapabilities",
-];
-
 async function fetchAllowList() {
   /** fetches https://rdataflow.github.io/WMS-monitor/result.txt & https://rdataflow.github.io/WTMS-monitor/result.txt */
   const urls = ["https://rdataflow.github.io/WMTS-WMS-monitor/result.json"];
@@ -22,7 +17,6 @@ async function fetchAllowList() {
     results
       .flat()
       .filter((x) => x.trim() !== "")
-      .concat(knownGoodEndpoints)
       .map((x) => normalizeUrl(x.trim()))
   );
 }
