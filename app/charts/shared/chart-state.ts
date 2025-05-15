@@ -350,6 +350,8 @@ export const shouldUseDynamicMinScaleValue = (scaleType?: ScaleType) => {
 export type NumericalXVariables = {
   xMeasure: NumericalMeasure;
   getX: NumericalValueGetter;
+  /** The original value of the x measure, before any unit conversion. */
+  getOriginalX: NumericalValueGetter;
   xAxisLabel: string;
   /** Depending on xMeasure's scale type, it can either be 0 or dynamically
    * based on available data. */
@@ -376,18 +378,18 @@ export const useNumericalXVariables = (
   }
 
   const xUnit = x.unitConversion?.labels[locale] ?? xMeasure.unit;
-  const getRawX = useOptionalNumericVariable(x.componentId);
+  const getOriginalX = useOptionalNumericVariable(x.componentId);
   const getX = useCallback(
     (d: Observation) => {
-      const rawX = getRawX(d);
+      const originalX = getOriginalX(d);
 
-      if (rawX === null) {
+      if (originalX === null) {
         return null;
       }
 
-      return rawX * (x.unitConversion?.factor ?? 1);
+      return originalX * (x.unitConversion?.factor ?? 1);
     },
-    [getRawX, x.unitConversion?.factor]
+    [getOriginalX, x.unitConversion?.factor]
   );
 
   const xAxisLabel = getLabelWithUnit(xMeasure, { unitOverride: xUnit });
@@ -411,6 +413,7 @@ export const useNumericalXVariables = (
   return {
     xMeasure,
     getX,
+    getOriginalX,
     xAxisLabel,
     getMinX,
     xUnit,
@@ -420,6 +423,8 @@ export const useNumericalXVariables = (
 export type NumericalYVariables = {
   yMeasure: NumericalMeasure;
   getY: NumericalValueGetter;
+  /** The original value of the y measure, before any unit conversion. */
+  getOriginalY: NumericalValueGetter;
   yAxisLabel: string;
   /** Depending on yMeasure's scale type, it can either be 0 or dynamically
    * based on available data. */
@@ -453,20 +458,19 @@ export const useNumericalYVariables = (
   }
 
   const yUnit = y.unitConversion?.labels[locale] ?? yMeasure.unit;
-  const getRawY = useOptionalNumericVariable(y.componentId);
+  const getOriginalY = useOptionalNumericVariable(y.componentId);
   const getY = useCallback(
     (d: Observation) => {
-      const rawY = getRawY(d);
+      const originalY = getOriginalY(d);
 
-      if (rawY === null) {
+      if (originalY === null) {
         return null;
       }
 
-      return rawY * (y.unitConversion?.factor ?? 1);
+      return originalY * (y.unitConversion?.factor ?? 1);
     },
-    [getRawY, y.unitConversion?.factor]
+    [getOriginalY, y.unitConversion?.factor]
   );
-
   const yAxisLabel = getLabelWithUnit(yMeasure, { unitOverride: yUnit });
   const getMinY = useCallback(
     (data: Observation[], _getY: NumericalValueGetter) => {
@@ -491,6 +495,7 @@ export const useNumericalYVariables = (
   return {
     yMeasure,
     getY,
+    getOriginalY,
     yAxisLabel,
     getMinY,
     yUnit,

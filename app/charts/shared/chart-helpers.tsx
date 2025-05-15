@@ -600,20 +600,27 @@ export const normalizeData = (
   {
     key,
     getAxisValue,
+    getOriginalAxisValue,
     getTotalGroupValue,
   }: {
     key: string;
     getAxisValue: (d: Observation) => number | null;
+    getOriginalAxisValue: (d: Observation) => number | null;
     getTotalGroupValue: (d: Observation) => number;
   }
 ): Observation[] => {
   return sortedData.map((d) => {
     const totalGroupValue = getTotalGroupValue(d);
     const axisValue = getAxisValue(d);
+    const originalAxisValue = getOriginalAxisValue(d);
 
     return {
       ...d,
-      [key]: 100 * (axisValue ? axisValue / totalGroupValue : (axisValue ?? 0)),
+      [key]:
+        100 *
+        (originalAxisValue
+          ? originalAxisValue / totalGroupValue
+          : (originalAxisValue ?? 0)),
       [getIdentityId(key)]: axisValue,
     };
   });

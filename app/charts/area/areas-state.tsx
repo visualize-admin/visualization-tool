@@ -104,6 +104,7 @@ const useAreasState = (
     getXAsString,
     yMeasure,
     getY,
+    getOriginalY,
     yUnit,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
@@ -211,6 +212,7 @@ const useAreasState = (
         normalizeData(chartData, {
           key: yMeasure.id,
           getAxisValue: getY,
+          getOriginalAxisValue: getOriginalY,
           getTotalGroupValue: (d) => {
             return sumsByX[getXAsString(d)];
           },
@@ -220,7 +222,15 @@ const useAreasState = (
     }
 
     return group(chartData, getXAsString);
-  }, [chartData, getXAsString, sumsByX, getY, yMeasure.id, normalize]);
+  }, [
+    normalize,
+    chartData,
+    getXAsString,
+    yMeasure.id,
+    getY,
+    getOriginalY,
+    sumsByX,
+  ]);
 
   const chartWideData = useMemo(() => {
     return getWideData({

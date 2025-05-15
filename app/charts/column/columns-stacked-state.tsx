@@ -112,6 +112,7 @@ const useColumnsStackedState = (
     yMeasure,
     yUnit,
     getY,
+    getOriginalY,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
@@ -207,6 +208,7 @@ const useColumnsStackedState = (
         normalizeData(chartData, {
           key: yMeasure.id,
           getAxisValue: getY,
+          getOriginalAxisValue: getOriginalY,
           getTotalGroupValue: (d) => sumsByX[getX(d)],
         }),
         getX
@@ -214,7 +216,7 @@ const useColumnsStackedState = (
     }
 
     return group(chartData, getX);
-  }, [chartData, getX, sumsByX, getY, yMeasure.id, normalize]);
+  }, [normalize, chartData, getX, yMeasure.id, getY, getOriginalY, sumsByX]);
 
   const chartWideData = useMemo(() => {
     return getWideData({
