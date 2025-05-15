@@ -46,6 +46,7 @@ export const makeUseQuery =
   >({
     fetch,
     check,
+    transform,
   }: {
     check?: (variables: T["variables"]) => void;
     fetch: (
@@ -57,10 +58,14 @@ export const makeUseQuery =
       error?: Error;
       fetching: boolean;
     }>;
+    transform?: (
+      data: { data?: V | null; error?: Error; fetching: boolean },
+      options: T
+    ) => { data?: V | null; error?: Error; fetching: boolean };
   }) =>
   (options: T & { keepPreviousData?: boolean }) => {
     const client = useClient();
-    const [result, setResult] = useState<{
+    const [rawResult, setRawResult] = useState<{
       queryKey: string | null;
       data?: V | null;
       error?: Error;
@@ -72,9 +77,10 @@ export const makeUseQuery =
     if (!options.pause && check) {
       check(options.variables);
     }
+
     const executeQuery = useCallback(
       async (options: T) => {
-        setResult((prev) => ({
+        setRawResult((prev) => ({
           ...prev,
           fetching: false,
           data:
@@ -85,12 +91,12 @@ export const makeUseQuery =
           check(options.variables);
         }
         const result = await fetch(client, options.variables, () => {
-          setResult((prev) => ({
+          setRawResult((prev) => ({
             ...prev,
             fetching: true,
           }));
         });
-        setResult({ ...result, queryKey });
+        setRawResult({ ...result, queryKey });
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [queryKey]
@@ -104,6 +110,14 @@ export const makeUseQuery =
       executeQuery(options);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [queryKey, options.pause]);
+
+    const result = useMemo(() => {
+      if (!transform) {
+        return rawResult;
+      }
+
+      return transform(rawResult, options);
+    }, [rawResult, options]);
 
     return [result, executeQuery] as const;
   };
