@@ -386,6 +386,7 @@ export const useLimits = ({
               axisDimension,
               filters,
             });
+          const conversionFactor = unitConversion?.factor ?? 1;
 
           return maybeLimit
             ? {
@@ -397,7 +398,17 @@ export const useLimits = ({
                       ? (maybeLimit.symbolType ?? "circle")
                       : undefined,
                 },
-                measureLimit: limit,
+                measureLimit:
+                  limit.type === "single"
+                    ? {
+                        ...limit,
+                        value: limit.value * conversionFactor,
+                      }
+                    : {
+                        ...limit,
+                        from: limit.from * conversionFactor,
+                        to: limit.to * conversionFactor,
+                      },
                 relatedAxisDimensionValueLabel,
                 limitUnit: unitConversion?.labels[locale] ?? limitMeasure.unit,
               }
@@ -410,6 +421,7 @@ export const useLimits = ({
     axisDimension,
     chartConfig,
     filters,
+    unitConversion?.factor,
     unitConversion?.labels,
     locale,
   ]);
