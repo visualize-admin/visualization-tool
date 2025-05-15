@@ -229,7 +229,7 @@ export const MapLegend = ({
         )}
 
         {limits.map((limit) => {
-          const { configLimit, measureLimit } = limit;
+          const { configLimit, measureLimit, limitUnit } = limit;
 
           switch (measureLimit.type) {
             case "single":
@@ -237,6 +237,7 @@ export const MapLegend = ({
                 <Box>
                   <Typography component="div" variant="caption">
                     {measureLimit.name}
+                    {limitUnit ? ` (${limitUnit})` : ""}
                   </Typography>
                   <LimitLegend
                     maxValue={measureLimit.value}
