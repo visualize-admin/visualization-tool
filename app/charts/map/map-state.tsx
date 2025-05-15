@@ -47,6 +47,7 @@ import { useSize } from "@/charts/shared/use-size";
 import {
   BBox,
   ColorScaleInterpolationType,
+  MapAreaLayer,
   MapSymbolLayer,
   NumericalColorField,
 } from "@/config-types";
@@ -106,6 +107,7 @@ const useMapState = (
   const { areaLayer, symbolLayer } = fields;
 
   const areaLayerState = useLayerState({
+    field: areaLayer,
     componentId: fields.areaLayer?.componentId,
     measureId: fields.areaLayer?.color.componentId,
     data: scalesData,
@@ -135,6 +137,7 @@ const useMapState = (
   }, [areaColors, areaLayer, areaLayerState]);
 
   const symbolLayerState = useLayerState({
+    field: symbolLayer,
     componentId: symbolLayer?.componentId,
     measureId: symbolLayer?.measureId,
     data: scalesData,
@@ -414,14 +417,16 @@ const useNumericalColors = (
 ) => {
   const componentId =
     colorSpec?.type === "numerical" ? colorSpec.componentId : "";
+  const conversionFactor =
+    colorSpec?.type === "numerical"
+      ? (colorSpec.unitConversion?.factor ?? 1)
+      : 1;
   const getValue = useCallback(
     (d: Observation) =>
-      componentId
-        ? d[componentId] !== null
-          ? Number(d[componentId])
-          : null
+      d[componentId] !== null
+        ? Number(d[componentId]) * conversionFactor
         : null,
-    [componentId]
+    [componentId, conversionFactor]
   );
   const { getFormattedYUncertainty } = useNumericalYErrorVariables(
     { componentId },
@@ -433,13 +438,11 @@ const useNumericalColors = (
       return;
     }
 
-    const component = measures.find(
-      (d) => d.id === colorSpec.componentId
-    ) as Measure;
-    const domain = extent(
-      data.map((d) => d[colorSpec.componentId]),
-      (d) => +d!
-    ) as [number, number];
+    const component = measures.find((d) => d.id === componentId) as Measure;
+    const domain = extent(data.map(getValue).filter(truthy)) as [
+      number,
+      number,
+    ];
     const colorScale = getNumericalColorScale({
       color: colorSpec,
       getValue,
@@ -455,10 +458,14 @@ const useNumericalColors = (
       interpolationType: colorSpec.interpolationType,
       getValue,
       getColor: (d: Observation) => {
-        const c = colorScale(+d[colorSpec.componentId]!);
+        const value = getValue(d);
 
-        if (c) {
-          return colorToRgbArray(c, colorSpec.opacity * 2.55);
+        if (value !== null) {
+          const c = colorScale(value);
+
+          if (c) {
+            return colorToRgbArray(c, colorSpec.opacity * 2.55);
+          }
         }
 
         return [0, 0, 0, 255 * 0.1];
@@ -466,7 +473,14 @@ const useNumericalColors = (
       getFormattedError: getFormattedYUncertainty,
       domain,
     };
-  }, [colorSpec, data, getFormattedYUncertainty, getValue, measures]);
+  }, [
+    colorSpec,
+    componentId,
+    data,
+    getFormattedYUncertainty,
+    getValue,
+    measures,
+  ]);
 };
 
 const useColors = ({
@@ -550,6 +564,7 @@ const usePreparedData = ({
 };
 
 const useLayerState = ({
+  field,
   componentId = "",
   measureId = "",
   data,
@@ -557,6 +572,7 @@ const useLayerState = ({
   dimensions,
   measures,
 }: {
+  field: MapAreaLayer | MapSymbolLayer | undefined;
   componentId: string | undefined;
   measureId: string | undefined;
   data: Observation[];
@@ -565,7 +581,21 @@ const useLayerState = ({
   measures: Measure[];
 }) => {
   const getLabel = useStringVariable(componentId);
-  const getValue = useOptionalNumericVariable(measureId);
+  const getRawValue = useOptionalNumericVariable(measureId);
+  const unitConversion =
+    field && "unitConversion" in field ? field.unitConversion : undefined;
+  const getValue = useCallback(
+    (d: Observation) => {
+      const rawValue = getRawValue(d);
+
+      if (rawValue === null) {
+        return null;
+      }
+
+      return unitConversion ? rawValue * unitConversion.factor : rawValue;
+    },
+    [getRawValue, unitConversion]
+  );
   const measureDimension = measures.find((d) => d.id === measureId);
 
   const { showYUncertainty, getFormattedYUncertainty } =
