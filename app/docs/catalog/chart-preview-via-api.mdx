@@ -32,9 +32,9 @@ especially helpful to programmatically generate charts based on many different
 configuration options. Visualize offers a way to preview charts without
 publishing them, by using a custom API or iframe hash parameter.
 
-## iframe preview via query parameter
+## iframe preview via query parameters
 
-**Demo**: Visit <a href="/_preview" target="_blank">`/_preview`</a> to see a
+**Demo:** Visit <a href="/_preview" target="_blank">`/_preview`</a> to see a
 page with two iframes containing chart previews. The first iframe gets the chart
 state via hash parameters.
 
@@ -53,9 +53,13 @@ function.
 />
 ```
 
+**Note:** If you manually change the parameters and switch from a Line/Column Chart
+to a Bar chart (or vice versa), you will need to change the axis configurations for x-
+and y-axes accordingly.
+
 ## iframe preview via API
 
-**Demo**: Visit <a href="/_preview" target="_blank">`/_preview`</a> to see a
+**Demo:** Visit <a href="/_preview" target="_blank">`/_preview`</a> to see a
 page with two iframes containing chart previews. The second iframe gets the
 chart state from posting a message to the iframe window.
 
@@ -93,7 +97,7 @@ You can set the desired language for the chart preview by adding a `/de`, `/fr`,
 
 ## POST request
 
-**Demo**: Visit <a href="/_preview_post" target="_blank">`/_preview_post`</a> to
+**Demo:** Visit <a href="/_preview_post" target="_blank">`/_preview_post`</a> to
 see a page with two buttons that open a new page with a chart preview after
 clicking.
 
