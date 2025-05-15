@@ -567,13 +567,6 @@ const EncodingOptionsPanel = ({
       {isComboChartConfig(chartConfig) && encoding.field === "y" && (
         <ChartComboYField chartConfig={chartConfig} measures={measures} />
       )}
-      {unitConversionEnabled && encoding.options?.convertUnit && (
-        <ConvertUnitField
-          chartConfig={chartConfig}
-          field={field}
-          components={components}
-        />
-      )}
       {fieldComponent && (hasSubOptions || hasColorPalette) && (
         <ChartLayoutOptions
           encoding={encoding}
@@ -641,6 +634,13 @@ const EncodingOptionsPanel = ({
             encoding.options.colorComponent.enableUseAbbreviations
           }
           getFieldOptionGroups={getFieldOptionGroups}
+        />
+      )}
+      {unitConversionEnabled && encoding.options?.convertUnit && (
+        <ConvertUnitField
+          chartConfig={chartConfig}
+          field={field}
+          components={components}
         />
       )}
       <ChartFieldMultiFilter
