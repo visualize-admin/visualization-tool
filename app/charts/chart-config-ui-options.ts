@@ -75,7 +75,11 @@ import { getDefaultCategoricalPaletteId, getPalette } from "@/palettes";
  */
 
 type BaseEncodingFieldType = "animation";
-type MapEncodingFieldType = "baseLayer" | "areaLayer" | "symbolLayer";
+type MapEncodingFieldType =
+  | "baseLayer"
+  | "areaLayer"
+  | "symbolLayer"
+  | "customLayers";
 type RegularChartEncodingType = "x" | "y" | "segment" | "color";
 export type EncodingFieldType =
   | BaseEncodingFieldType
@@ -1264,6 +1268,13 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             optional: true,
           },
         },
+      },
+      {
+        idAttributes: ["componentId"],
+        field: "customLayers",
+        optional: true,
+        componentTypes: [],
+        filters: false,
       },
       ANIMATION_FIELD_SPEC,
     ],

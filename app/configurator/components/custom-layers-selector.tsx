@@ -179,8 +179,8 @@ export const CustomLayersSelector = () => {
   ) : !wmsLayers || !wmtsLayers ? (
     <ControlSectionSkeleton />
   ) : (
-    <ControlSection collapse>
-      <SectionTitle>
+    <ControlSection hideTopBorder>
+      <SectionTitle closable>
         <Trans id="chart.map.layers.custom-layers">Custom Layers</Trans>
       </SectionTitle>
       <LeftDrawer open={addingLayer} onClose={() => setAddingLayer(false)}>
