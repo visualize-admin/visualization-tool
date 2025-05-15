@@ -257,6 +257,10 @@ type MapAdjusters = BaseAdjusters<MapConfig> & {
       componentId: FieldAdjuster<MapConfig, ComponentId>;
       color: {
         componentId: FieldAdjuster<MapConfig, ComponentId>;
+        unitConversion: FieldAdjuster<
+          MapConfig,
+          UnitConversionFieldExtension["unitConversion"]
+        >;
       };
     };
     animation: FieldAdjuster<MapConfig, AnimationField | undefined>;

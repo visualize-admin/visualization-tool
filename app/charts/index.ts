@@ -1895,6 +1895,13 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               }
             });
           },
+          unitConversion: ({ oldValue, newChartConfig }) => {
+            return produce(newChartConfig, (draft) => {
+              if (draft.fields.areaLayer?.color.type === "numerical") {
+                draft.fields.areaLayer.color.unitConversion = oldValue;
+              }
+            });
+          },
         },
       },
       animation: ({ oldValue, newChartConfig }) => {
@@ -2096,6 +2103,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               leftMeasure = getLeftMeasure(leftAxisId);
             }
 
+            leftAxisUnitConversion =
+              areaLayer?.color.type === "numerical"
+                ? areaLayer.color.unitConversion
+                : undefined;
+
             break;
           }
           case "bar": {
@@ -2236,6 +2248,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               leftMeasure = getMeasure(leftAxisId);
             }
 
+            columnUnitConversion =
+              areaLayer?.color.type === "numerical"
+                ? areaLayer.color.unitConversion
+                : undefined;
+
             break;
           }
           case "bar": {
@@ -2325,6 +2342,9 @@ const chartConfigsPathOverrides: {
     map: {
       "fields.areaLayer.componentId": [{ path: "fields.x.componentId" }],
       "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
+      "fields.areaLayer.color.unitConversion": [
+        { path: "fields.y.unitConversion" },
+      ],
     },
     table: {
       fields: [{ path: "fields.segment" }],
@@ -2392,6 +2412,9 @@ const chartConfigsPathOverrides: {
     map: {
       "fields.areaLayer.componentId": [{ path: "fields.y.componentId" }],
       "fields.areaLayer.color.componentId": [{ path: "fields.x.componentId" }],
+      "fields.areaLayer.color.unitConversion": [
+        { path: "fields.x.unitConversion" },
+      ],
     },
     table: {
       fields: [{ path: "fields.segment" }],
@@ -2440,6 +2463,9 @@ const chartConfigsPathOverrides: {
     },
     map: {
       "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
+      "fields.areaLayer.color.unitConversion": [
+        { path: "fields.y.unitConversion" },
+      ],
     },
     table: {
       fields: [{ path: "fields.segment" }],
@@ -2487,6 +2513,9 @@ const chartConfigsPathOverrides: {
     },
     map: {
       "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
+      "fields.areaLayer.color.unitConversion": [
+        { path: "fields.y.unitConversion" },
+      ],
     },
     table: {
       fields: [{ path: "fields.segment" }],
@@ -2527,6 +2556,9 @@ const chartConfigsPathOverrides: {
   scatterplot: {
     map: {
       "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
+      "fields.areaLayer.color.unitConversion": [
+        { path: "fields.y.unitConversion" },
+      ],
     },
     table: {
       fields: [{ path: "fields.segment" }],
@@ -2575,6 +2607,9 @@ const chartConfigsPathOverrides: {
     map: {
       "fields.areaLayer.componentId": [{ path: "fields.segment.componentId" }],
       "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
+      "fields.areaLayer.color.unitConversion": [
+        { path: "fields.y.unitConversion" },
+      ],
     },
     table: {
       fields: [{ path: "fields.segment" }],
@@ -2633,23 +2668,41 @@ const chartConfigsPathOverrides: {
     column: {
       "fields.x.componentId": [{ path: "fields.areaLayer.componentId" }],
       "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
+      "fields.y.unitConversion": [
+        { path: "fields.areaLayer.color.unitConversion" },
+      ],
     },
     bar: {
       "fields.x.componentId": [{ path: "fields.areaLayer.color.componentId" }],
+      "fields.x.unitConversion": [
+        { path: "fields.areaLayer.color.unitConversion" },
+      ],
       "fields.y.componentId": [{ path: "fields.areaLayer.componentId" }],
     },
     line: {
       "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
+      "fields.y.unitConversion": [
+        { path: "fields.areaLayer.color.unitConversion" },
+      ],
     },
     area: {
       "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
+      "fields.y.unitConversion": [
+        { path: "fields.areaLayer.color.unitConversion" },
+      ],
     },
     scatterplot: {
       "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
+      "fields.y.unitConversion": [
+        { path: "fields.areaLayer.color.unitConversion" },
+      ],
     },
     pie: {
       "fields.x.componentId": [{ path: "fields.areaLayer.componentId" }],
       "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
+      "fields.y.unitConversion": [
+        { path: "fields.areaLayer.color.unitConversion" },
+      ],
     },
     comboLineSingle: {
       "fields.y.componentIds": [
@@ -2658,12 +2711,18 @@ const chartConfigsPathOverrides: {
           oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
         },
       ],
+      "fields.y.unitConversion": [
+        { path: "fields.areaLayer.color.unitConversion" },
+      ],
     },
     comboLineDual: {
       "fields.y.leftAxisComponentId": [
         {
           path: "fields.areaLayer.color.componentId",
         },
+      ],
+      "fields.y.leftAxisUnitConversion": [
+        { path: "fields.areaLayer.color.unitConversion" },
       ],
     },
     comboLineColumn: {
@@ -2674,6 +2733,14 @@ const chartConfigsPathOverrides: {
             return d.lineAxisOrientation === "left"
               ? d.lineComponentId
               : d.columnComponentId;
+          },
+        },
+        {
+          path: "fields.areaLayer.color.unitConversion",
+          oldValue: (d: ComboLineColumnFields["y"]) => {
+            return d.lineAxisOrientation === "left"
+              ? d.lineUnitConversion
+              : d.columnUnitConversion;
           },
         },
       ],
@@ -2704,6 +2771,9 @@ const chartConfigsPathOverrides: {
         {
           path: "fields.y.componentIds",
         },
+      ],
+      "fields.areaLayer.color.unitConversion": [
+        { path: "fields.y.unitConversion" },
       ],
     },
     comboLineDual: {
