@@ -170,6 +170,7 @@ export type BandYVariables = {
   getYAbbreviationOrLabel: (d: Observation) => string;
   yTimeUnit: TimeUnit | undefined;
   getYAsDate: TemporalValueGetter;
+  formatYDate: (d: Date | string) => string;
 };
 
 export const useBandYVariables = (
@@ -191,6 +192,21 @@ export const useBandYVariables = (
     isTemporalDimension(yDimension) || isTemporalEntityDimension(yDimension)
       ? yDimension.timeUnit
       : undefined;
+  const timeFormatUnit = useTimeFormatUnit();
+  const formatYDate = useCallback(
+    (d: Date | string) => {
+      if (yTimeUnit) {
+        return timeFormatUnit(d, yTimeUnit);
+      }
+
+      if (typeof d === "string") {
+        return d;
+      }
+
+      return d.toISOString();
+    },
+    [timeFormatUnit, yTimeUnit]
+  );
 
   const {
     getAbbreviationOrLabelByValue: getYAbbreviationOrLabel,
@@ -218,6 +234,7 @@ export const useBandYVariables = (
     getYAsDate: isTemporalEntityDimension(yDimension)
       ? getYTemporalEntity
       : getYAsDate,
+    formatYDate,
   };
 };
 
