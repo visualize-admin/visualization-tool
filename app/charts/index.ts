@@ -57,9 +57,7 @@ import {
   SortingType,
   TableColumn,
   TableFields,
-  UnitConversion,
 } from "@/config-types";
-import { getDefaultConversionUnit } from "@/configurator/components/chart-options-selector/convert-unit-field";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
@@ -83,7 +81,6 @@ import {
   SEGMENT_ENABLED_COMPONENTS,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { ComponentId } from "@/graphql/make-component-id";
 import {
   DEFAULT_CATEGORICAL_PALETTE_ID,
   getDefaultCategoricalPaletteId,
@@ -390,6 +387,7 @@ export const getInitialConfig = (
         }
       }),
       limits: {},
+      conversionUnitsByComponentId: {},
       activeField: undefined,
     };
 
@@ -845,13 +843,12 @@ const getAdjustedChartConfig = ({
       case "filters":
       case "fields.color":
       case "fields.segment":
-      case "fields.x.unitConversion":
-      case "fields.y.unitConversion":
       case "fields.animation":
       case "interactiveFiltersConfig.calculation":
       case "interactiveFiltersConfig.dataFilters":
       case "interactiveFiltersConfig.legend":
       case "limits":
+      case "conversionUnitsByComponentId":
         return true;
       default:
         return false;
@@ -1019,6 +1016,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         );
       });
     },
+    conversionUnitsByComponentId: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.conversionUnitsByComponentId = oldValue;
+      });
+    },
     fields: {
       x: {
         componentId: ({ oldValue, newChartConfig, dimensions }) => {
@@ -1046,11 +1048,6 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         customDomain: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.y.customDomain = oldValue;
-          });
-        },
-        unitConversion: ({ oldValue, newChartConfig }) => {
-          return produce(newChartConfig, (draft) => {
-            draft.fields.y.unitConversion = oldValue;
           });
         },
       },
@@ -1161,6 +1158,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         );
       });
     },
+    conversionUnitsByComponentId: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.conversionUnitsByComponentId = oldValue;
+      });
+    },
     fields: {
       x: {
         componentId: ({ oldValue, newChartConfig, measures }) => {
@@ -1180,11 +1182,6 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         customDomain: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.x.customDomain = oldValue;
-          });
-        },
-        unitConversion: ({ oldValue, newChartConfig }) => {
-          return produce(newChartConfig, (draft) => {
-            draft.fields.x.unitConversion = oldValue;
           });
         },
       },
@@ -1315,6 +1312,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         );
       });
     },
+    conversionUnitsByComponentId: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.conversionUnitsByComponentId = oldValue;
+      });
+    },
     fields: {
       x: {
         componentId: ({ oldValue, newChartConfig, dimensions }) => {
@@ -1345,11 +1347,6 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         customDomain: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.y.customDomain = oldValue;
-          });
-        },
-        unitConversion: ({ oldValue, newChartConfig }) => {
-          return produce(newChartConfig, (draft) => {
-            draft.fields.y.unitConversion = oldValue;
           });
         },
       },
@@ -1440,6 +1437,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         );
       });
     },
+    conversionUnitsByComponentId: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.conversionUnitsByComponentId = oldValue;
+      });
+    },
     fields: {
       x: {
         componentId: ({ oldValue, newChartConfig, dimensions }) => {
@@ -1470,11 +1472,6 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         customDomain: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.y.customDomain = oldValue;
-          });
-        },
-        unitConversion: ({ oldValue, newChartConfig }) => {
-          return produce(newChartConfig, (draft) => {
-            draft.fields.y.unitConversion = oldValue;
           });
         },
       },
@@ -1574,6 +1571,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         );
       });
     },
+    conversionUnitsByComponentId: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.conversionUnitsByComponentId = oldValue;
+      });
+    },
     fields: {
       x: {
         componentId: ({ oldValue, newChartConfig, measures }) => {
@@ -1589,11 +1591,6 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
 
           return newChartConfig;
-        },
-        unitConversion: ({ oldValue, newChartConfig }) => {
-          return produce(newChartConfig, (draft) => {
-            draft.fields.x.unitConversion = oldValue;
-          });
         },
       },
       y: {
@@ -1623,11 +1620,6 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           }
 
           return newChartConfig;
-        },
-        unitConversion: ({ oldValue, newChartConfig }) => {
-          return produce(newChartConfig, (draft) => {
-            draft.fields.y.unitConversion = oldValue;
-          });
         },
       },
       color: ({ oldValue, oldChartConfig, newChartConfig, dimensions }) => {
@@ -1717,6 +1709,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         );
       });
     },
+    conversionUnitsByComponentId: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.conversionUnitsByComponentId = oldValue;
+      });
+    },
     fields: {
       y: {
         componentId: ({ oldValue, newChartConfig }) => {
@@ -1727,11 +1724,6 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         showValues: ({ oldValue, newChartConfig }) => {
           return produce(newChartConfig, (draft) => {
             draft.fields.y.showValues = oldValue;
-          });
-        },
-        unitConversion: ({ oldValue, newChartConfig }) => {
-          return produce(newChartConfig, (draft) => {
-            draft.fields.y.unitConversion = oldValue;
           });
         },
       },
@@ -1866,6 +1858,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         );
       });
     },
+    conversionUnitsByComponentId: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.conversionUnitsByComponentId = oldValue;
+      });
+    },
     fields: {
       areaLayer: {
         componentId: ({ oldValue, newChartConfig, dimensions }) => {
@@ -1895,13 +1892,6 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               }
             });
           },
-          unitConversion: ({ oldValue, newChartConfig }) => {
-            return produce(newChartConfig, (draft) => {
-              if (draft.fields.areaLayer?.color.type === "numerical") {
-                draft.fields.areaLayer.color.unitConversion = oldValue;
-              }
-            });
-          },
         },
       },
       animation: ({ oldValue, newChartConfig }) => {
@@ -1923,6 +1913,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         draft.limits = mapValues(oldValue, (limits) =>
           limits.map(({ symbolType, ...rest }) => rest)
         );
+      });
+    },
+    conversionUnitsByComponentId: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.conversionUnitsByComponentId = oldValue;
       });
     },
     fields: {
@@ -1979,22 +1974,6 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             };
           });
         },
-        unitConversion: ({ oldValue, newChartConfig }) => {
-          return produce(newChartConfig, (draft) => {
-            // Only keep the unit conversion if new measures have
-            // the same unit as the old one.
-            if (
-              oldValue &&
-              draft.fields.y.componentIds.includes(oldValue.componentId)
-            ) {
-              return produce(newChartConfig, (draft) => {
-                draft.fields.y.unitConversion = oldValue;
-              });
-            }
-
-            return newChartConfig;
-          });
-        },
       },
     },
     interactiveFiltersConfig: interactiveFiltersAdjusters,
@@ -2010,6 +1989,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         draft.limits = mapValues(oldValue, (limits) =>
           limits.map(({ symbolType, ...rest }) => rest)
         );
+      });
+    },
+    conversionUnitsByComponentId: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.conversionUnitsByComponentId = oldValue;
       });
     },
     fields: {
@@ -2055,8 +2039,6 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             return preferredLeftMeasure;
           }
         };
-        let leftAxisUnitConversion: UnitConversion | undefined;
-        let rightAxisUnitConversion: UnitConversion | undefined;
 
         switch (oldChartConfig.chartType) {
           case "comboLineColumn": {
@@ -2068,21 +2050,12 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             const leftAxisId = lineOrientation === "left" ? lineId : columnId;
             rightMeasureId = lineOrientation === "left" ? columnId : lineId;
             leftMeasure = getLeftMeasure(leftAxisId);
-            leftAxisUnitConversion =
-              lineOrientation === "left"
-                ? oldChartConfig.fields.y.lineUnitConversion
-                : oldChartConfig.fields.y.columnUnitConversion;
-            rightAxisUnitConversion =
-              lineOrientation === "left"
-                ? oldChartConfig.fields.y.columnUnitConversion
-                : oldChartConfig.fields.y.lineUnitConversion;
             break;
           }
           case "comboLineSingle": {
             leftMeasure = getLeftMeasure(
               oldChartConfig.fields.y.componentIds[0]
             );
-            leftAxisUnitConversion = oldChartConfig.fields.y.unitConversion;
             break;
           }
           case "area":
@@ -2091,7 +2064,6 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           case "pie":
           case "scatterplot": {
             leftMeasure = getLeftMeasure(oldChartConfig.fields.y.componentId);
-            leftAxisUnitConversion = oldChartConfig.fields.y.unitConversion;
             break;
           }
           case "map": {
@@ -2103,16 +2075,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               leftMeasure = getLeftMeasure(leftAxisId);
             }
 
-            leftAxisUnitConversion =
-              areaLayer?.color.type === "numerical"
-                ? areaLayer.color.unitConversion
-                : undefined;
-
             break;
           }
           case "bar": {
             leftMeasure = getLeftMeasure(oldChartConfig.fields.x.componentId);
-            leftAxisUnitConversion = oldChartConfig.fields.x.unitConversion;
             break;
           }
           case "comboLineDual":
@@ -2134,27 +2100,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             DEFAULT_CATEGORICAL_PALETTE_ID)
           : DEFAULT_CATEGORICAL_PALETTE_ID;
 
-        const unitConversionPresent =
-          leftAxisUnitConversion || rightAxisUnitConversion;
-        const defaultLeftAxisUnitConversion = getDefaultConversionUnit(
-          leftMeasure.id,
-          { originalUnit: leftMeasure.unit }
-        );
-        const defaultRightAxisUnitConversion = getDefaultConversionUnit(
-          rightMeasureId as ComponentId,
-          { originalUnit: rightMeasure.unit }
-        );
-
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
             leftAxisComponentId: leftMeasure.id,
             rightAxisComponentId: rightMeasureId as string,
-            leftAxisUnitConversion: unitConversionPresent
-              ? (leftAxisUnitConversion ?? defaultLeftAxisUnitConversion)
-              : defaultLeftAxisUnitConversion,
-            rightAxisUnitConversion: unitConversionPresent
-              ? (rightAxisUnitConversion ?? defaultRightAxisUnitConversion)
-              : defaultRightAxisUnitConversion,
           };
           draft.fields.color = {
             type: "measures",
@@ -2185,6 +2134,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         );
       });
     },
+    conversionUnitsByComponentId: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.conversionUnitsByComponentId = oldValue;
+      });
+    },
     fields: {
       x: {
         componentId: ({ oldValue, newChartConfig, dimensions }) => {
@@ -2211,23 +2165,16 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         const getMeasure = (id: string) => {
           return numericalMeasures.find((d) => d.id === id) as NumericalMeasure;
         };
-        let columnUnitConversion: UnitConversion | undefined;
-        let lineUnitConversion: UnitConversion | undefined;
 
         switch (oldChartConfig.chartType) {
           case "comboLineDual": {
             const leftAxisId = oldChartConfig.fields.y.leftAxisComponentId;
             leftMeasure = getMeasure(leftAxisId);
             rightMeasureId = oldChartConfig.fields.y.rightAxisComponentId;
-            columnUnitConversion =
-              oldChartConfig.fields.y.leftAxisUnitConversion;
-            lineUnitConversion =
-              oldChartConfig.fields.y.rightAxisUnitConversion;
             break;
           }
           case "comboLineSingle": {
             leftMeasure = getMeasure(oldChartConfig.fields.y.componentIds[0]);
-            columnUnitConversion = oldChartConfig.fields.y.unitConversion;
             break;
           }
           case "area":
@@ -2236,7 +2183,6 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
           case "pie":
           case "scatterplot": {
             leftMeasure = getMeasure(oldChartConfig.fields.y.componentId);
-            columnUnitConversion = oldChartConfig.fields.y.unitConversion;
             break;
           }
           case "map": {
@@ -2248,16 +2194,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
               leftMeasure = getMeasure(leftAxisId);
             }
 
-            columnUnitConversion =
-              areaLayer?.color.type === "numerical"
-                ? areaLayer.color.unitConversion
-                : undefined;
-
             break;
           }
           case "bar": {
             leftMeasure = getMeasure(oldChartConfig.fields.x.componentId);
-            columnUnitConversion = oldChartConfig.fields.x.unitConversion;
             break;
           }
           case "comboLineColumn":
@@ -2278,28 +2218,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
             DEFAULT_CATEGORICAL_PALETTE_ID)
           : DEFAULT_CATEGORICAL_PALETTE_ID;
 
-        const unitConversionPresent =
-          columnUnitConversion || lineUnitConversion;
-        const defaultColumnUnitConversion = getDefaultConversionUnit(
-          leftMeasure.id,
-          { originalUnit: leftMeasure.unit }
-        );
-        const defaultLineUnitConversion = getDefaultConversionUnit(
-          rightMeasure.id,
-          { originalUnit: rightMeasure.unit }
-        );
-
         return produce(newChartConfig, (draft) => {
           draft.fields.y = {
             columnComponentId: leftMeasure.id,
             lineComponentId,
             lineAxisOrientation: "right",
-            columnUnitConversion: unitConversionPresent
-              ? (columnUnitConversion ?? defaultColumnUnitConversion)
-              : defaultColumnUnitConversion,
-            lineUnitConversion: unitConversionPresent
-              ? (lineUnitConversion ?? defaultLineUnitConversion)
-              : defaultLineUnitConversion,
           };
           draft.fields.color = {
             type: "measures",
@@ -2336,15 +2259,11 @@ const chartConfigsPathOverrides: {
       "fields.x.componentId": [{ path: "fields.y.componentId" }],
       "fields.x.showValues": [{ path: "fields.y.showValues" }],
       "fields.x.customDomain": [{ path: "fields.y.customDomain" }],
-      "fields.x.unitConversion": [{ path: "fields.y.unitConversion" }],
       "fields.y.componentId": [{ path: "fields.x.componentId" }],
     },
     map: {
       "fields.areaLayer.componentId": [{ path: "fields.x.componentId" }],
       "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
-      "fields.areaLayer.color.unitConversion": [
-        { path: "fields.y.unitConversion" },
-      ],
     },
     table: {
       fields: [{ path: "fields.segment" }],
@@ -2359,7 +2278,6 @@ const chartConfigsPathOverrides: {
     },
     comboLineDual: {
       "fields.y.leftAxisComponentId": [{ path: "fields.y.componentId" }],
-      "fields.y.leftAxisUnitConversion": [{ path: "fields.y.unitConversion" }],
     },
     comboLineColumn: {
       "fields.y": [
@@ -2369,14 +2287,6 @@ const chartConfigsPathOverrides: {
             return d.lineAxisOrientation === "left"
               ? d.lineComponentId
               : d.columnComponentId;
-          },
-        },
-        {
-          path: "fields.y.unitConversion",
-          oldValue: (d: ComboLineColumnFields["y"]) => {
-            return d.lineAxisOrientation === "left"
-              ? d.lineUnitConversion
-              : d.columnUnitConversion;
           },
         },
       ],
@@ -2388,33 +2298,26 @@ const chartConfigsPathOverrides: {
       "fields.y.componentId": [{ path: "fields.x.componentId" }],
       "fields.y.showValues": [{ path: "fields.x.showValues" }],
       "fields.y.customDomain": [{ path: "fields.x.customDomain" }],
-      "fields.y.unitConversion": [{ path: "fields.x.unitConversion" }],
     },
     line: {
       "fields.x.componentId": [{ path: "fields.y.componentId" }],
       "fields.y.componentId": [{ path: "fields.x.componentId" }],
       "fields.y.showValues": [{ path: "fields.x.showValues" }],
       "fields.y.customDomain": [{ path: "fields.x.customDomain" }],
-      "fields.y.unitConversion": [{ path: "fields.x.unitConversion" }],
     },
     area: {
       "fields.x.componentId": [{ path: "fields.y.componentId" }],
       "fields.y.componentId": [{ path: "fields.x.componentId" }],
       "fields.y.showValues": [{ path: "fields.x.showValues" }],
       "fields.y.customDomain": [{ path: "fields.x.customDomain" }],
-      "fields.y.unitConversion": [{ path: "fields.x.unitConversion" }],
     },
     pie: {
       "fields.y.componentId": [{ path: "fields.x.componentId" }],
       "fields.y.showValues": [{ path: "fields.x.showValues" }],
-      "fields.y.unitConversion": [{ path: "fields.x.unitConversion" }],
     },
     map: {
       "fields.areaLayer.componentId": [{ path: "fields.y.componentId" }],
       "fields.areaLayer.color.componentId": [{ path: "fields.x.componentId" }],
-      "fields.areaLayer.color.unitConversion": [
-        { path: "fields.x.unitConversion" },
-      ],
     },
     table: {
       fields: [{ path: "fields.segment" }],
@@ -2426,11 +2329,9 @@ const chartConfigsPathOverrides: {
           oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
         },
       ],
-      "fields.y.unitConversion": [{ path: "fields.x.unitConversion" }],
     },
     comboLineDual: {
       "fields.y.leftAxisComponentId": [{ path: "fields.x.componentId" }],
-      "fields.y.leftAxisUnitConversion": [{ path: "fields.x.unitConversion" }],
     },
     comboLineColumn: {
       "fields.y": [
@@ -2440,14 +2341,6 @@ const chartConfigsPathOverrides: {
             return d.lineAxisOrientation === "left"
               ? d.lineComponentId
               : d.columnComponentId;
-          },
-        },
-        {
-          path: "fields.x.unitConversion",
-          oldValue: (d: ComboLineColumnFields["y"]) => {
-            return d.lineAxisOrientation === "left"
-              ? d.lineUnitConversion
-              : d.columnUnitConversion;
           },
         },
       ],
@@ -2458,14 +2351,10 @@ const chartConfigsPathOverrides: {
       "fields.x.componentId": [{ path: "fields.y.componentId" }],
       "fields.x.showValues": [{ path: "fields.y.showValues" }],
       "fields.x.customDomain": [{ path: "fields.y.customDomain" }],
-      "fields.x.unitConversion": [{ path: "fields.y.unitConversion" }],
       "fields.y.componentId": [{ path: "fields.x.componentId" }],
     },
     map: {
       "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
-      "fields.areaLayer.color.unitConversion": [
-        { path: "fields.y.unitConversion" },
-      ],
     },
     table: {
       fields: [{ path: "fields.segment" }],
@@ -2480,7 +2369,6 @@ const chartConfigsPathOverrides: {
     },
     comboLineDual: {
       "fields.y.leftAxisComponentId": [{ path: "fields.y.componentId" }],
-      "fields.y.leftAxisUnitConversion": [{ path: "fields.y.unitConversion" }],
     },
     comboLineColumn: {
       "fields.y": [
@@ -2490,14 +2378,6 @@ const chartConfigsPathOverrides: {
             return d.lineAxisOrientation === "left"
               ? d.lineComponentId
               : d.columnComponentId;
-          },
-        },
-        {
-          path: "fields.y.unitConversion",
-          oldValue: (d: ComboLineColumnFields["y"]) => {
-            return d.lineAxisOrientation === "left"
-              ? d.lineUnitConversion
-              : d.columnUnitConversion;
           },
         },
       ],
@@ -2508,14 +2388,10 @@ const chartConfigsPathOverrides: {
       "fields.x.componentId": [{ path: "fields.y.componentId" }],
       "fields.x.showValues": [{ path: "fields.y.showValues" }],
       "fields.x.customDomain": [{ path: "fields.y.customDomain" }],
-      "fields.x.unitConversion": [{ path: "fields.y.unitConversion" }],
       "fields.y.componentId": [{ path: "fields.x.componentId" }],
     },
     map: {
       "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
-      "fields.areaLayer.color.unitConversion": [
-        { path: "fields.y.unitConversion" },
-      ],
     },
     table: {
       fields: [{ path: "fields.segment" }],
@@ -2530,7 +2406,6 @@ const chartConfigsPathOverrides: {
     },
     comboLineDual: {
       "fields.y.leftAxisComponentId": [{ path: "fields.y.componentId" }],
-      "fields.y.leftAxisUnitConversion": [{ path: "fields.y.unitConversion" }],
     },
     comboLineColumn: {
       "fields.y": [
@@ -2540,14 +2415,6 @@ const chartConfigsPathOverrides: {
             return d.lineAxisOrientation === "left"
               ? d.lineComponentId
               : d.columnComponentId;
-          },
-        },
-        {
-          path: "fields.y.unitConversion",
-          oldValue: (d: ComboLineColumnFields["y"]) => {
-            return d.lineAxisOrientation === "left"
-              ? d.lineUnitConversion
-              : d.columnUnitConversion;
           },
         },
       ],
@@ -2556,9 +2423,6 @@ const chartConfigsPathOverrides: {
   scatterplot: {
     map: {
       "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
-      "fields.areaLayer.color.unitConversion": [
-        { path: "fields.y.unitConversion" },
-      ],
     },
     table: {
       fields: [{ path: "fields.segment" }],
@@ -2573,7 +2437,6 @@ const chartConfigsPathOverrides: {
     },
     comboLineDual: {
       "fields.y.leftAxisComponentId": [{ path: "fields.y.componentId" }],
-      "fields.y.leftAxisUnitConversion": [{ path: "fields.y.unitConversion" }],
     },
     comboLineColumn: {
       "fields.y": [
@@ -2583,14 +2446,6 @@ const chartConfigsPathOverrides: {
             return d.lineAxisOrientation === "left"
               ? d.lineComponentId
               : d.columnComponentId;
-          },
-        },
-        {
-          path: "fields.y.unitConversion",
-          oldValue: (d: ComboLineColumnFields["y"]) => {
-            return d.lineAxisOrientation === "left"
-              ? d.lineUnitConversion
-              : d.columnUnitConversion;
           },
         },
       ],
@@ -2600,16 +2455,12 @@ const chartConfigsPathOverrides: {
     bar: {
       "fields.x.componentId": [{ path: "fields.y.componentId" }],
       "fields.x.showValues": [{ path: "fields.y.showValues" }],
-      "fields.x.unitConversion": [{ path: "fields.y.unitConversion" }],
       // We want to avoid running the logic for the y component twice.
       "fields.y.componentId": [{ path: "SKIP" }],
     },
     map: {
       "fields.areaLayer.componentId": [{ path: "fields.segment.componentId" }],
       "fields.areaLayer.color.componentId": [{ path: "fields.y.componentId" }],
-      "fields.areaLayer.color.unitConversion": [
-        { path: "fields.y.unitConversion" },
-      ],
     },
     table: {
       fields: [{ path: "fields.segment" }],
@@ -2624,7 +2475,6 @@ const chartConfigsPathOverrides: {
     },
     comboLineDual: {
       "fields.y.leftAxisComponentId": [{ path: "fields.y.componentId" }],
-      "fields.y.leftAxisUnitConversion": [{ path: "fields.y.unitConversion" }],
     },
     comboLineColumn: {
       "fields.y": [
@@ -2634,14 +2484,6 @@ const chartConfigsPathOverrides: {
             return d.lineAxisOrientation === "left"
               ? d.lineComponentId
               : d.columnComponentId;
-          },
-        },
-        {
-          path: "fields.y.unitConversion",
-          oldValue: (d: ComboLineColumnFields["y"]) => {
-            return d.lineAxisOrientation === "left"
-              ? d.lineUnitConversion
-              : d.columnUnitConversion;
           },
         },
       ],
@@ -2668,41 +2510,23 @@ const chartConfigsPathOverrides: {
     column: {
       "fields.x.componentId": [{ path: "fields.areaLayer.componentId" }],
       "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
-      "fields.y.unitConversion": [
-        { path: "fields.areaLayer.color.unitConversion" },
-      ],
     },
     bar: {
       "fields.x.componentId": [{ path: "fields.areaLayer.color.componentId" }],
-      "fields.x.unitConversion": [
-        { path: "fields.areaLayer.color.unitConversion" },
-      ],
       "fields.y.componentId": [{ path: "fields.areaLayer.componentId" }],
     },
     line: {
       "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
-      "fields.y.unitConversion": [
-        { path: "fields.areaLayer.color.unitConversion" },
-      ],
     },
     area: {
       "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
-      "fields.y.unitConversion": [
-        { path: "fields.areaLayer.color.unitConversion" },
-      ],
     },
     scatterplot: {
       "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
-      "fields.y.unitConversion": [
-        { path: "fields.areaLayer.color.unitConversion" },
-      ],
     },
     pie: {
       "fields.x.componentId": [{ path: "fields.areaLayer.componentId" }],
       "fields.y.componentId": [{ path: "fields.areaLayer.color.componentId" }],
-      "fields.y.unitConversion": [
-        { path: "fields.areaLayer.color.unitConversion" },
-      ],
     },
     comboLineSingle: {
       "fields.y.componentIds": [
@@ -2711,18 +2535,10 @@ const chartConfigsPathOverrides: {
           oldValue: (d: ComboLineSingleFields["y"]["componentIds"]) => d[0],
         },
       ],
-      "fields.y.unitConversion": [
-        { path: "fields.areaLayer.color.unitConversion" },
-      ],
     },
     comboLineDual: {
       "fields.y.leftAxisComponentId": [
-        {
-          path: "fields.areaLayer.color.componentId",
-        },
-      ],
-      "fields.y.leftAxisUnitConversion": [
-        { path: "fields.areaLayer.color.unitConversion" },
+        { path: "fields.areaLayer.color.componentId" },
       ],
     },
     comboLineColumn: {
@@ -2735,14 +2551,6 @@ const chartConfigsPathOverrides: {
               : d.columnComponentId;
           },
         },
-        {
-          path: "fields.areaLayer.color.unitConversion",
-          oldValue: (d: ComboLineColumnFields["y"]) => {
-            return d.lineAxisOrientation === "left"
-              ? d.lineUnitConversion
-              : d.columnUnitConversion;
-          },
-        },
       ],
     },
   },
@@ -2752,7 +2560,6 @@ const chartConfigsPathOverrides: {
     },
     bar: {
       "fields.x.componentId": [{ path: "fields.y.componentIds" }],
-      "fields.x.unitConversion": [{ path: "fields.y.unitConversion" }],
     },
     line: {
       "fields.y.componentId": [{ path: "fields.y.componentIds" }],
@@ -2772,9 +2579,6 @@ const chartConfigsPathOverrides: {
           path: "fields.y.componentIds",
         },
       ],
-      "fields.areaLayer.color.unitConversion": [
-        { path: "fields.y.unitConversion" },
-      ],
     },
     comboLineDual: {
       "fields.y.leftAxisComponentId": [
@@ -2782,11 +2586,9 @@ const chartConfigsPathOverrides: {
           path: "fields.y.componentIds",
         },
       ],
-      "fields.y.leftAxisUnitConversion": [{ path: "fields.y.unitConversion" }],
     },
     comboLineColumn: {
       "fields.y.lineComponentId": [{ path: "fields.y.componentIds" }],
-      "fields.y.columnUnitConversion": [{ path: "fields.y.unitConversion" }],
     },
   },
   comboLineDual: {
