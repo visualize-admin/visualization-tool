@@ -338,6 +338,7 @@ const ChartPublishedInnerImpl = ({
   const metadata = metadataData?.dataCubesMetadata;
   const componentIds = extractChartConfigsComponentIds(state.chartConfigs);
   const [{ data: componentsData }] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       ...commonQueryVariables,
       cubeFilters: chartConfig.cubes.map((cube) => ({

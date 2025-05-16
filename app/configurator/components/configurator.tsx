@@ -146,6 +146,7 @@ const NextStepButton = ({ children }: PropsWithChildren<{}>) => {
   const chartConfig = getChartConfig(state);
   const componentIds = extractChartConfigComponentIds({ chartConfig });
   const [{ data: components }] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,

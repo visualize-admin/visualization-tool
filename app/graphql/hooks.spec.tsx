@@ -3,6 +3,7 @@ import { renderHook } from "@testing-library/react-hooks";
 import { useMemo } from "react";
 import { Client, Provider } from "urql";
 
+import { ChartConfig } from "@/config-types";
 import { useDataCubesComponentsQueryVariables } from "@/graphql/hooks.mock";
 import { Response } from "@/test/utils";
 
@@ -158,6 +159,9 @@ describe("useComponentsQuery - keepPreviousData", () => {
       // Load for two cubes
       const hook = renderHook((props) => useDataCubesComponentsQuery(props), {
         initialProps: {
+          chartConfig: {
+            conversionUnitsByComponentId: {},
+          } as ChartConfig,
           variables: useDataCubesComponentsQueryVariables.twoCubes,
         },
       });
@@ -215,6 +219,9 @@ Array [
 `);
 
       hook.rerender({
+        chartConfig: {
+          conversionUnitsByComponentId: {},
+        } as ChartConfig,
         variables: useDataCubesComponentsQueryVariables.oneCube,
       });
       expect(hook.result.current[0].data).toBe(null);
@@ -246,6 +253,9 @@ Array [
       // Load for two cubes
       const hook = renderHook((props) => useDataCubesComponentsQuery(props), {
         initialProps: {
+          chartConfig: {
+            conversionUnitsByComponentId: {},
+          } as ChartConfig,
           variables: useDataCubesComponentsQueryVariables.twoCubes,
           keepPreviousData: true,
         },
@@ -300,6 +310,9 @@ Array [
 `);
 
       hook.rerender({
+        chartConfig: {
+          conversionUnitsByComponentId: {},
+        } as ChartConfig,
         variables: useDataCubesComponentsQueryVariables.oneCube,
         keepPreviousData: true,
       });

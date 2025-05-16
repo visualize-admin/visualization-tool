@@ -282,6 +282,7 @@ const DataFilter = ({
     return getInteractiveQueryFilters({ filters, interactiveFilters });
   }, [filters, interactiveFilters]);
   const [{ data, fetching }] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,

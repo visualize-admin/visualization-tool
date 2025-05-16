@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Client, useClient } from "urql";
 
-import { ConfiguratorState, hasChartConfigs } from "@/configurator";
+import {
+  ChartConfig,
+  ConfiguratorState,
+  hasChartConfigs,
+} from "@/configurator";
 import {
   DataCubeComponents,
   DataCubeMetadata,
@@ -292,7 +296,7 @@ export const executeDataCubesComponentsQuery = async (
 
 /** Fetches components/dimensions along with the values */
 export const useDataCubesComponentsQuery = makeUseQuery<
-  DataCubesComponentsOptions,
+  DataCubesComponentsOptions & { chartConfig: ChartConfig },
   DataCubesComponentsData
 >({
   fetch: executeDataCubesComponentsQuery,
@@ -376,7 +380,7 @@ export const executeDataCubesObservationsQuery = async (
 };
 
 export const useDataCubesObservationsQuery = makeUseQuery<
-  DataCubesObservationsOptions,
+  DataCubesObservationsOptions & { chartConfig: ChartConfig },
   DataCubesObservationsData
 >({
   fetch: executeDataCubesObservationsQuery,

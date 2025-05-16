@@ -155,6 +155,7 @@ export const ChartOptionsSelector = ({
   const cubesMetadata = metadataData?.dataCubesMetadata;
   const [{ data: componentsData, fetching: fetchingComponents }] =
     useDataCubesComponentsQuery({
+      chartConfig,
       variables: {
         sourceType: dataSource.type,
         sourceUrl: dataSource.url,
@@ -175,6 +176,7 @@ export const ChartOptionsSelector = ({
   });
   const [{ data: observationsData, fetching: fetchingObservations }] =
     useDataCubesObservationsQuery({
+      chartConfig,
       variables: {
         sourceType: dataSource.type,
         sourceUrl: dataSource.url,

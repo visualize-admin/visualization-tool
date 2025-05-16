@@ -452,6 +452,7 @@ const ChartPreviewInner = ({
   });
   const componentIds = undefined;
   const [{ data: components }] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       ...commonQueryVariables,
       cubeFilters: chartConfig.cubes.map((cube) => ({

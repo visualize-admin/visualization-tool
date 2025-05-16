@@ -186,9 +186,11 @@ export const JoinBy = () => {
 
   const [{ data: componentsData, fetching: fetchingComponents }] =
     useDataCubesComponentsQuery({
+      chartConfig: {
+        conversionUnitsByComponentId: {},
+      } as ChartConfig,
       variables: {
         ...commonQueryVariables,
-
         cubeFilters: combination.cubes.map((cube) => ({
           iri: cube.iri,
           joinBy: cube.joinBy,
@@ -211,9 +213,11 @@ export const JoinBy = () => {
 
   const [{ data: observationsData, fetching: fetchingObservations }] =
     useDataCubesObservationsQuery({
+      chartConfig: {
+        conversionUnitsByComponentId: {},
+      } as ChartConfig,
       variables: {
         ...commonQueryVariables,
-
         cubeFilters: combination.cubes.map((cube) => ({
           iri: cube.iri,
           joinBy: cube.joinBy,

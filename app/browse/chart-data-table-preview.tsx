@@ -47,6 +47,7 @@ export const ChartDataTablePreview = ({
   });
   const [{ data: componentsData, fetching: fetchingComponents }] =
     useDataCubesComponentsQuery({
+      chartConfig,
       variables: {
         ...commonQueryVariables,
         cubeFilters: chartConfig.cubes.map((cube) => ({
@@ -74,6 +75,7 @@ export const ChartDataTablePreview = ({
     componentIds,
   });
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
+    chartConfig,
     variables: {
       ...commonQueryVariables,
       cubeFilters: queryFilters,
