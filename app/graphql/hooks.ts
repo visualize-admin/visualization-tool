@@ -300,6 +300,59 @@ export const useDataCubesComponentsQuery = makeUseQuery<
   DataCubesComponentsData
 >({
   fetch: executeDataCubesComponentsQuery,
+  transform: (data, options) => {
+    const {
+      chartConfig: { conversionUnitsByComponentId },
+      variables: { locale },
+    } = options;
+
+    if (
+      !data.data ||
+      !conversionUnitsByComponentId ||
+      Object.keys(conversionUnitsByComponentId).length === 0
+    ) {
+      return data;
+    }
+
+    return {
+      ...data,
+      data: {
+        ...data.data,
+        dataCubesComponents: {
+          ...data.data.dataCubesComponents,
+          measures: data.data.dataCubesComponents.measures.map((measure) => {
+            const conversionUnit = conversionUnitsByComponentId[measure.id];
+
+            if (!conversionUnit) {
+              return measure;
+            }
+
+            return {
+              ...measure,
+              unit: conversionUnit.labels[locale as Locale] ?? measure.unit,
+              values: measure.values.map((value) => {
+                if (typeof value.value === "number") {
+                  return {
+                    ...value,
+                    value: value.value * conversionUnit.multiplier,
+                  };
+                }
+
+                if (typeof value.value === "string") {
+                  return {
+                    ...value,
+                    value: Number(value.value) * conversionUnit.multiplier,
+                  };
+                }
+
+                return value;
+              }),
+            };
+          }),
+        },
+      },
+    };
+  },
 });
 
 type DataCubesObservationsOptions = {
@@ -384,6 +437,47 @@ export const useDataCubesObservationsQuery = makeUseQuery<
   DataCubesObservationsData
 >({
   fetch: executeDataCubesObservationsQuery,
+  transform: (data, options) => {
+    const {
+      chartConfig: { conversionUnitsByComponentId },
+    } = options;
+
+    if (
+      !data.data ||
+      !conversionUnitsByComponentId ||
+      Object.keys(conversionUnitsByComponentId).length === 0
+    ) {
+      return data;
+    }
+
+    return {
+      ...data,
+      data: {
+        dataCubesObservations: {
+          ...data.data.dataCubesObservations,
+          data: data.data.dataCubesObservations.data.map((observation) => {
+            const newObservation = { ...observation };
+
+            Object.entries(conversionUnitsByComponentId).forEach(
+              ([componentId, { multiplier }]) => {
+                if (componentId in newObservation) {
+                  const value = newObservation[componentId];
+
+                  if (typeof value === "number") {
+                    newObservation[componentId] = value * multiplier;
+                  } else if (typeof value === "string") {
+                    newObservation[componentId] = Number(value) * multiplier;
+                  }
+                }
+              }
+            );
+
+            return newObservation;
+          }),
+        },
+      },
+    };
+  },
 });
 
 type FetchAllUsedCubeComponentsOptions = {
