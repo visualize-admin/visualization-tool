@@ -241,12 +241,12 @@ export const CustomLayersSelector = () => {
         ) : null}
 
         {layersStatus === "fetching" ? (
-          <Box sx={{ width: "100%" }}>
+          <div style={{ width: "100%" }}>
             <ControlSectionSkeleton />
-          </Box>
+          </div>
         ) : null}
 
-        <Box>
+        <div>
           <Button
             variant="contained"
             color="cobalt"
@@ -254,7 +254,7 @@ export const CustomLayersSelector = () => {
           >
             Add layer
           </Button>
-        </Box>
+        </div>
       </ControlSectionContent>
     </ControlSection>
   );
