@@ -45,12 +45,8 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { useLimits } from "@/config-utils";
 import { ColumnConfig } from "@/configurator";
-import { Observation } from "@/domain/data";
-import {
-  formatNumberWithUnit,
-  useFormatNumber,
-  useTimeFormatUnit,
-} from "@/formatters";
+import { isTemporalDimension, Observation } from "@/domain/data";
+import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import {
   getSortingOrders,
@@ -74,6 +70,7 @@ export type ColumnsState = CommonChartState &
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
+    formatXAxisTick?: (d: string) => string;
   };
 
 const useColumnsState = (
@@ -88,7 +85,7 @@ const useColumnsState = (
     getXAsDate,
     getXAbbreviationOrLabel,
     getXLabel,
-    xTimeUnit,
+    formatXDate,
     yMeasure,
     getY,
     getMinY,
@@ -107,7 +104,6 @@ const useColumnsState = (
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
-  const timeFormatUnit = useTimeFormatUnit();
 
   const sumsByX = useMemo(() => {
     return Object.fromEntries(
@@ -322,7 +318,7 @@ const useColumnsState = (
       xAnchor,
       yAnchor,
       placement,
-      value: xTimeUnit ? timeFormatUnit(xLabel, xTimeUnit) : xLabel,
+      value: isTemporalDimension(xDimension) ? formatXDate(xLabel) : xLabel,
       datum: {
         label: undefined,
         value: y !== null && isNaN(y) ? "-" : `${yValueUnitFormatter(getY(d))}`,
@@ -348,6 +344,9 @@ const useColumnsState = (
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
+    formatXAxisTick: isTemporalDimension(xDimension)
+      ? (tick) => formatXDate(tick)
+      : undefined,
     ...showValuesVariables,
     ...variables,
   };

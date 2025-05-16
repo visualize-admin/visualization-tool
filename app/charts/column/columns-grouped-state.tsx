@@ -45,7 +45,7 @@ import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { ColumnConfig } from "@/configurator";
-import { Observation } from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
@@ -73,6 +73,7 @@ export type GroupedColumnsState = CommonChartState &
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
+    formatXAxisTick?: (d: string) => string;
   };
 
 const useColumnsGroupedState = (
@@ -87,6 +88,7 @@ const useColumnsGroupedState = (
     getXAsDate,
     getXAbbreviationOrLabel,
     getXLabel,
+    formatXDate,
     yMeasure,
     getY,
     getMinY,
@@ -425,12 +427,13 @@ const useColumnsGroupedState = (
           xAnchor: xAnchorRaw,
           topAnchor: !fields.segment,
         });
+    const xLabel = getXAbbreviationOrLabel(datum);
 
     return {
       xAnchor: xAnchorRaw + (placement.x === "right" ? 0.5 : -0.5) * bw,
       yAnchor,
       placement,
-      value: getXAbbreviationOrLabel(datum),
+      value: isTemporalDimension(xDimension) ? formatXDate(xLabel) : xLabel,
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
@@ -466,6 +469,9 @@ const useColumnsGroupedState = (
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
+    formatXAxisTick: isTemporalDimension(xDimension)
+      ? (tick) => formatXDate(tick)
+      : undefined,
     ...variables,
   };
 };
