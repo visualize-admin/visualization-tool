@@ -347,6 +347,7 @@ export function transformDataCubesComponents(
           return {
             ...measure,
             unit: conversionUnit.labels[locale as Locale] ?? measure.unit,
+            originalUnit: measure.unit,
             limits: measure.limits.map((limit) => {
               switch (limit.type) {
                 case "single":

@@ -48,19 +48,18 @@ export const ConversionUnitsField = ({
 
       const conversionUnit =
         chartConfig.conversionUnitsByComponentId[component.id];
+      const originalUnit = component.originalUnit;
       const checked = !!conversionUnit;
 
       return (
         <ConversionUnitSection
           checked={checked}
-          conversionUnits={[
-            { componentId: component.id, originalUnit: component.unit },
-          ]}
+          conversionUnits={[{ componentId: component.id, originalUnit }]}
         >
           {checked ? (
             <ConversionUnitContent
               componentId={component.id}
-              originalUnit={component.unit}
+              originalUnit={originalUnit}
               conversionUnit={conversionUnit}
             />
           ) : null}
@@ -78,19 +77,18 @@ export const ConversionUnitsField = ({
 
       const conversionUnit =
         chartConfig.conversionUnitsByComponentId[component.id];
+      const originalUnit = component.originalUnit;
       const checked = !!conversionUnit;
 
       return (
         <ConversionUnitSection
           checked={checked}
-          conversionUnits={[
-            { componentId: component.id, originalUnit: component.unit },
-          ]}
+          conversionUnits={[{ componentId: component.id, originalUnit }]}
         >
           {checked ? (
             <ConversionUnitContent
               componentId={component.id}
-              originalUnit={component.unit}
+              originalUnit={originalUnit}
               conversionUnit={conversionUnit}
             />
           ) : null}
@@ -116,22 +114,20 @@ export const ConversionUnitsField = ({
 
           const conversionUnit =
             chartConfig.conversionUnitsByComponentId[colorComponent.id];
+          const originalUnit = colorComponent.unit;
           const checked = !!conversionUnit;
 
           return (
             <ConversionUnitSection
               checked={checked}
               conversionUnits={[
-                {
-                  componentId: colorComponent.id,
-                  originalUnit: colorComponent.unit,
-                },
+                { componentId: colorComponent.id, originalUnit },
               ]}
             >
               {checked ? (
                 <ConversionUnitContent
                   componentId={colorComponent.id}
-                  originalUnit={colorComponent.unit}
+                  originalUnit={originalUnit}
                   conversionUnit={conversionUnit}
                 />
               ) : null}
@@ -156,8 +152,10 @@ export const ConversionUnitsField = ({
 
           const sizeConversionUnit =
             chartConfig.conversionUnitsByComponentId[sizeComponent?.id ?? ""];
+          const originalSizeUnit = sizeComponent?.unit;
           const colorConversionUnit =
             chartConfig.conversionUnitsByComponentId[colorComponent?.id ?? ""];
+          const originalColorUnit = colorComponent?.unit;
           const checked = !!sizeConversionUnit || !!colorConversionUnit;
 
           return (
@@ -166,11 +164,11 @@ export const ConversionUnitsField = ({
               conversionUnits={[
                 {
                   componentId: sizeComponent?.id,
-                  originalUnit: sizeComponent?.unit,
+                  originalUnit: originalSizeUnit,
                 },
                 {
                   componentId: colorComponent?.id,
-                  originalUnit: colorComponent?.unit,
+                  originalUnit: originalColorUnit,
                 },
               ]}
             >
@@ -182,7 +180,7 @@ export const ConversionUnitsField = ({
                   </Typography>
                   <ConversionUnitContent
                     componentId={sizeComponent.id}
-                    originalUnit={sizeComponent.unit}
+                    originalUnit={originalSizeUnit}
                     conversionUnit={sizeConversionUnit}
                   />
                 </div>
@@ -195,7 +193,7 @@ export const ConversionUnitsField = ({
                   </Typography>
                   <ConversionUnitContent
                     componentId={colorComponent.id}
-                    originalUnit={colorComponent.unit}
+                    originalUnit={originalColorUnit}
                     conversionUnit={colorConversionUnit}
                   />
                 </div>
@@ -223,19 +221,18 @@ export const ConversionUnitsField = ({
 
       const conversionUnit =
         chartConfig.conversionUnitsByComponentId[component.id];
+      const originalUnit = component.unit;
       const checked = !!conversionUnit;
 
       return (
         <ConversionUnitSection
           checked={checked}
-          conversionUnits={[
-            { componentId: component.id, originalUnit: component.unit },
-          ]}
+          conversionUnits={[{ componentId: component.id, originalUnit }]}
         >
           {checked ? (
             <ConversionUnitContent
               componentId={component.id}
-              originalUnit={component.unit}
+              originalUnit={originalUnit}
               conversionUnit={conversionUnit}
             />
           ) : null}
@@ -261,21 +258,20 @@ export const ConversionUnitsField = ({
 
       const lineConversionUnit =
         chartConfig.conversionUnitsByComponentId[lineComponent.id];
+      const originalLineUnit = lineComponent.unit;
       const columnConversionUnit =
         chartConfig.conversionUnitsByComponentId[columnComponent.id];
+      const originalColumnUnit = columnComponent.unit;
       const checked = !!lineConversionUnit || !!columnConversionUnit;
 
       return (
         <ConversionUnitSection
           checked={checked}
           conversionUnits={[
-            {
-              componentId: lineComponent.id,
-              originalUnit: lineComponent.unit,
-            },
+            { componentId: lineComponent.id, originalUnit: originalLineUnit },
             {
               componentId: columnComponent.id,
-              originalUnit: columnComponent.unit,
+              originalUnit: originalColumnUnit,
             },
           ]}
         >
@@ -286,7 +282,7 @@ export const ConversionUnitsField = ({
               </Typography>
               <ConversionUnitContent
                 componentId={columnComponent.id}
-                originalUnit={columnComponent.unit}
+                originalUnit={originalColumnUnit}
                 conversionUnit={columnConversionUnit}
               />
             </div>
@@ -298,7 +294,7 @@ export const ConversionUnitsField = ({
               </Typography>
               <ConversionUnitContent
                 componentId={lineComponent.id}
-                originalUnit={lineComponent.unit}
+                originalUnit={originalLineUnit}
                 conversionUnit={lineConversionUnit}
               />
             </div>
@@ -325,22 +321,18 @@ export const ConversionUnitsField = ({
 
       const leftConversionUnit =
         chartConfig.conversionUnitsByComponentId[leftComponent.id];
+      const originalLeftUnit = leftComponent.unit;
       const rightConversionUnit =
         chartConfig.conversionUnitsByComponentId[rightComponent.id];
+      const originalRightUnit = rightComponent.unit;
       const checked = !!leftConversionUnit || !!rightConversionUnit;
 
       return (
         <ConversionUnitSection
           checked={checked}
           conversionUnits={[
-            {
-              componentId: leftComponent.id,
-              originalUnit: leftComponent.unit,
-            },
-            {
-              componentId: rightComponent.id,
-              originalUnit: rightComponent.unit,
-            },
+            { componentId: leftComponent.id, originalUnit: originalLeftUnit },
+            { componentId: rightComponent.id, originalUnit: originalRightUnit },
           ]}
         >
           {checked && leftComponent ? (
@@ -350,7 +342,7 @@ export const ConversionUnitsField = ({
               </Typography>
               <ConversionUnitContent
                 componentId={leftComponent.id}
-                originalUnit={leftComponent.unit}
+                originalUnit={originalLeftUnit}
                 conversionUnit={leftConversionUnit}
               />
             </div>
@@ -362,7 +354,7 @@ export const ConversionUnitsField = ({
               </Typography>
               <ConversionUnitContent
                 componentId={rightComponent.id}
-                originalUnit={rightComponent.unit}
+                originalUnit={originalRightUnit}
                 conversionUnit={rightConversionUnit}
               />
             </div>
