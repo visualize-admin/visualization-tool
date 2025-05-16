@@ -9,7 +9,7 @@ import {
   scaleTime,
 } from "d3-scale";
 import orderBy from "lodash/orderBy";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   ColumnsStateVariables,
@@ -292,6 +292,13 @@ const useColumnsState = (
   yScale.range([chartHeight, 0]);
   const isMobile = useIsMobile();
 
+  const maybeFormatDate = useCallback(
+    (tick: string) => {
+      return isTemporalDimension(xDimension) ? formatXDate(tick) : tick;
+    },
+    [xDimension, formatXDate]
+  );
+
   // Tooltip
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const xAnchor = (xScale(getX(d)) as number) + xScale.bandwidth() * 0.5;
@@ -318,7 +325,7 @@ const useColumnsState = (
       xAnchor,
       yAnchor,
       placement,
-      value: isTemporalDimension(xDimension) ? formatXDate(xLabel) : xLabel,
+      value: maybeFormatDate(xLabel),
       datum: {
         label: undefined,
         value: y !== null && isNaN(y) ? "-" : `${yValueUnitFormatter(getY(d))}`,
@@ -344,9 +351,7 @@ const useColumnsState = (
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
-    formatXAxisTick: isTemporalDimension(xDimension)
-      ? (tick) => formatXDate(tick)
-      : undefined,
+    formatXAxisTick: maybeFormatDate,
     ...showValuesVariables,
     ...variables,
   };

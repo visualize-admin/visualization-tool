@@ -10,7 +10,7 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import {
   BarsGroupedStateVariables,
@@ -394,6 +394,13 @@ const useBarsGroupedState = (
 
   const isMobile = useIsMobile();
 
+  const maybeFormatDate = useCallback(
+    (tick: string) => {
+      return isTemporalDimension(yDimension) ? formatYDate(tick) : tick;
+    },
+    [yDimension, formatYDate]
+  );
+
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const bw = yScale.bandwidth();
@@ -432,7 +439,7 @@ const useBarsGroupedState = (
       yAnchor: yAnchorRaw + (placement.y === "bottom" ? 0.5 : -0.5) * bw,
       xAnchor,
       placement,
-      value: isTemporalDimension(yDimension) ? formatYDate(yLabel) : yLabel,
+      value: maybeFormatDate(yLabel),
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: xValueFormatter(getX(datum)),
@@ -468,9 +475,7 @@ const useBarsGroupedState = (
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
-    formatYAxisTick: isTemporalDimension(yDimension)
-      ? (tick) => formatYDate(tick)
-      : undefined,
+    formatYAxisTick: maybeFormatDate,
     ...variables,
   };
 };

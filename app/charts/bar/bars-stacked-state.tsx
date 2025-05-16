@@ -465,6 +465,13 @@ const useBarsStackedState = (
 
   const isMobile = useIsMobile();
 
+  const maybeFormatDate = useCallback(
+    (tick: string) => {
+      return isTemporalDimension(yDimension) ? formatYDate(tick) : tick;
+    },
+    [yDimension, formatYDate]
+  );
+
   // Tooltips
   const getAnnotationInfo = useCallback(
     (datum: Observation): TooltipInfo => {
@@ -505,7 +512,7 @@ const useBarsStackedState = (
         yAnchor: yAnchorRaw + (placement.y === "top" ? 0.5 : -0.5) * bw,
         xAnchor,
         placement,
-        value: isTemporalDimension(yDimension) ? formatYDate(yLabel) : yLabel,
+        value: maybeFormatDate(yLabel),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
           value: xValueFormatter(getX(datum), getIdentityX(datum)),
@@ -539,8 +546,7 @@ const useBarsStackedState = (
       isMobile,
       normalize,
       yScale,
-      formatYDate,
-      yDimension,
+      maybeFormatDate,
     ]
   );
 
@@ -573,9 +579,7 @@ const useBarsStackedState = (
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     valueLabelFormatter,
-    formatYAxisTick: isTemporalDimension(yDimension)
-      ? (tick) => formatYDate(tick)
-      : undefined,
+    formatYAxisTick: maybeFormatDate,
     ...variables,
   };
 };

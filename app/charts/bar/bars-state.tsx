@@ -9,7 +9,7 @@ import {
   scaleTime,
 } from "d3-scale";
 import orderBy from "lodash/orderBy";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   BarsStateVariables,
@@ -293,6 +293,13 @@ const useBarsState = (
 
   const isMobile = useIsMobile();
 
+  const maybeFormatDate = useCallback(
+    (tick: string) => {
+      return isTemporalDimension(yDimension) ? formatYDate(tick) : tick;
+    },
+    [yDimension, formatYDate]
+  );
+
   // Tooltip
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const yAnchor = (yScale(getY(d)) as number) + yScale.bandwidth() * 0.5;
@@ -322,7 +329,7 @@ const useBarsState = (
       xAnchor,
       yAnchor,
       placement,
-      value: isTemporalDimension(yDimension) ? formatYDate(yLabel) : yLabel,
+      value: maybeFormatDate(yLabel),
       datum: {
         label: undefined,
         value: x !== null && isNaN(x) ? "-" : `${xValueFormatter(getX(d))}`,
@@ -365,9 +372,7 @@ const useBarsState = (
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
-    formatYAxisTick: isTemporalDimension(yDimension)
-      ? (tick) => formatYDate(tick)
-      : undefined,
+    formatYAxisTick: maybeFormatDate,
     ...showValuesVariables,
     ...variables,
   };
