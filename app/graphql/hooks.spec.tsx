@@ -418,6 +418,7 @@ describe("useDataCubesComponentsQuery", () => {
         id: measure1Id,
         label: "Measure 1",
         unit: "lbs",
+        originalUnit: "kg",
         cubeIri: "http://example.com/cube1",
         isNumerical: true,
         isKeyDimension: false,
