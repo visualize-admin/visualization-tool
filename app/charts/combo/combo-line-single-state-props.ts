@@ -36,7 +36,7 @@ export const useComboLineSingleStateVariables = (
 ): ComboLineSingleStateVariables => {
   const { chartConfig, dimensionsById, measuresById } = props;
   const { fields } = chartConfig;
-  const { x, y } = fields;
+  const { x } = fields;
 
   const baseVariables = useBaseVariables(chartConfig);
   const temporalXVariables = useTemporalXVariables(x, {
@@ -47,8 +47,6 @@ export const useComboLineSingleStateVariables = (
     { dimensionsById }
   );
 
-  const unitConversionFactor = y.unitConversion?.factor ?? 1;
-
   const numericalYVariables: NumericalYComboLineSingleVariables = {
     y: {
       lines: chartConfig.fields.y.componentIds.map((id) => ({
@@ -56,13 +54,10 @@ export const useComboLineSingleStateVariables = (
         id,
         label: measuresById[id].label,
         color: fields.color.colorMapping[id],
-        getY: (d) =>
-          d[id] !== null ? Number(d[id]) * unitConversionFactor : null,
+        getY: (d) => (d[id] !== null ? Number(d[id]) : null),
         getMinY: (data) => {
           const minY =
-            min(data, (d) =>
-              d[id] !== null ? Number(d[id]) * unitConversionFactor : null
-            ) ?? 0;
+            min(data, (d) => (d[id] !== null ? Number(d[id]) : null)) ?? 0;
 
           return shouldUseDynamicMinScaleValue(measuresById[id].scaleType)
             ? minY

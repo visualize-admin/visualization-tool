@@ -104,8 +104,6 @@ const useAreasState = (
     getXAsString,
     yMeasure,
     getY,
-    getOriginalY,
-    yUnit,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
@@ -212,7 +210,6 @@ const useAreasState = (
         normalizeData(chartData, {
           key: yMeasure.id,
           getAxisValue: getY,
-          getOriginalAxisValue: getOriginalY,
           getTotalGroupValue: (d) => {
             return sumsByX[getXAsString(d)];
           },
@@ -222,15 +219,7 @@ const useAreasState = (
     }
 
     return group(chartData, getXAsString);
-  }, [
-    normalize,
-    chartData,
-    getXAsString,
-    yMeasure.id,
-    getY,
-    getOriginalY,
-    sumsByX,
-  ]);
+  }, [normalize, chartData, getXAsString, yMeasure.id, getY, sumsByX]);
 
   const chartWideData = useMemo(() => {
     return getWideData({
@@ -439,7 +428,7 @@ const useAreasState = (
       const yValueFormatter = getStackedTooltipValueFormatter({
         normalize,
         measureId: yMeasure.id,
-        measureUnit: yUnit,
+        measureUnit: yMeasure.unit,
         formatters,
         formatNumber,
       });
@@ -495,12 +484,12 @@ const useAreasState = (
       xDimension.timeUnit,
       xScale,
       yMeasure.id,
+      yMeasure.unit,
       normalize,
       getIdentityY,
       chartWidth,
       chartHeight,
       isMobile,
-      yUnit,
     ]
   );
 

@@ -72,7 +72,6 @@ import { Has } from "@/domain/types";
 import { useTimeFormatUnit } from "@/formatters";
 import { RelatedDimensionType } from "@/graphql/query-hooks";
 import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
-import { useLocale } from "@/locales/use-locale";
 import { Limit } from "@/rdf/limits";
 import {
   useChartInteractiveFilters,
@@ -350,14 +349,10 @@ export const shouldUseDynamicMinScaleValue = (scaleType?: ScaleType) => {
 export type NumericalXVariables = {
   xMeasure: NumericalMeasure;
   getX: NumericalValueGetter;
-  /** The original value of the x measure, before any unit conversion. */
-  getOriginalX: NumericalValueGetter;
   xAxisLabel: string;
   /** Depending on xMeasure's scale type, it can either be 0 or dynamically
    * based on available data. */
   getMinX: (data: Observation[], getX: NumericalValueGetter) => number;
-  /** Unit of the x measure, or the unit conversion if provided. */
-  xUnit: Measure["unit"];
 };
 
 export const useNumericalXVariables = (
@@ -365,7 +360,6 @@ export const useNumericalXVariables = (
   x: ScatterPlotFields["x"] | BarFields["x"],
   { measuresById }: { measuresById: MeasuresById }
 ): NumericalXVariables => {
-  const locale = useLocale();
   const xMeasure = measuresById[x.componentId];
   if (!xMeasure) {
     throw Error(
@@ -377,22 +371,8 @@ export const useNumericalXVariables = (
     throw Error(`Measure <${x.componentId}> is not numerical!`);
   }
 
-  const xUnit = x.unitConversion?.labels[locale] ?? xMeasure.unit;
-  const getOriginalX = useOptionalNumericVariable(x.componentId);
-  const getX = useCallback(
-    (d: Observation) => {
-      const originalX = getOriginalX(d);
-
-      if (originalX === null) {
-        return null;
-      }
-
-      return originalX * (x.unitConversion?.factor ?? 1);
-    },
-    [getOriginalX, x.unitConversion?.factor]
-  );
-
-  const xAxisLabel = getLabelWithUnit(xMeasure, { unitOverride: xUnit });
+  const getX = useOptionalNumericVariable(x.componentId);
+  const xAxisLabel = getLabelWithUnit(xMeasure);
   const getMinX = useCallback(
     (data: Observation[], _getX: NumericalValueGetter) => {
       switch (chartType) {
@@ -413,24 +393,18 @@ export const useNumericalXVariables = (
   return {
     xMeasure,
     getX,
-    getOriginalX,
     xAxisLabel,
     getMinX,
-    xUnit,
   };
 };
 
 export type NumericalYVariables = {
   yMeasure: NumericalMeasure;
   getY: NumericalValueGetter;
-  /** The original value of the y measure, before any unit conversion. */
-  getOriginalY: NumericalValueGetter;
   yAxisLabel: string;
   /** Depending on yMeasure's scale type, it can either be 0 or dynamically
    * based on available data. */
   getMinY: (data: Observation[], getY: NumericalValueGetter) => number;
-  /** Unit of the y measure, or the unit conversion if provided. */
-  yUnit: Measure["unit"];
 };
 
 export const useNumericalYVariables = (
@@ -444,7 +418,6 @@ export const useNumericalYVariables = (
     | ScatterPlotFields["y"],
   { measuresById }: { measuresById: MeasuresById }
 ): NumericalYVariables => {
-  const locale = useLocale();
   const yMeasure = measuresById[y.componentId];
 
   if (!yMeasure) {
@@ -457,21 +430,8 @@ export const useNumericalYVariables = (
     throw Error(`Measure <${y.componentId}> is not numerical!`);
   }
 
-  const yUnit = y.unitConversion?.labels[locale] ?? yMeasure.unit;
-  const getOriginalY = useOptionalNumericVariable(y.componentId);
-  const getY = useCallback(
-    (d: Observation) => {
-      const originalY = getOriginalY(d);
-
-      if (originalY === null) {
-        return null;
-      }
-
-      return originalY * (y.unitConversion?.factor ?? 1);
-    },
-    [getOriginalY, y.unitConversion?.factor]
-  );
-  const yAxisLabel = getLabelWithUnit(yMeasure, { unitOverride: yUnit });
+  const getY = useOptionalNumericVariable(y.componentId);
+  const yAxisLabel = getLabelWithUnit(yMeasure);
   const getMinY = useCallback(
     (data: Observation[], _getY: NumericalValueGetter) => {
       switch (chartType) {
@@ -495,10 +455,8 @@ export const useNumericalYVariables = (
   return {
     yMeasure,
     getY,
-    getOriginalY,
     yAxisLabel,
     getMinY,
-    yUnit,
   };
 };
 

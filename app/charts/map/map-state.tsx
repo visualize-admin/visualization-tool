@@ -47,7 +47,6 @@ import { useSize } from "@/charts/shared/use-size";
 import {
   BBox,
   ColorScaleInterpolationType,
-  MapAreaLayer,
   MapSymbolLayer,
   NumericalColorField,
 } from "@/config-types";
@@ -107,7 +106,6 @@ const useMapState = (
   const { areaLayer, symbolLayer } = fields;
 
   const areaLayerState = useLayerState({
-    field: areaLayer,
     componentId: fields.areaLayer?.componentId,
     measureId: fields.areaLayer?.color.componentId,
     data: scalesData,
@@ -137,7 +135,6 @@ const useMapState = (
   }, [areaColors, areaLayer, areaLayerState]);
 
   const symbolLayerState = useLayerState({
-    field: symbolLayer,
     componentId: symbolLayer?.componentId,
     measureId: symbolLayer?.measureId,
     data: scalesData,
@@ -417,16 +414,10 @@ const useNumericalColors = (
 ) => {
   const componentId =
     colorSpec?.type === "numerical" ? colorSpec.componentId : "";
-  const conversionFactor =
-    colorSpec?.type === "numerical"
-      ? (colorSpec.unitConversion?.factor ?? 1)
-      : 1;
   const getValue = useCallback(
     (d: Observation) =>
-      d[componentId] !== null
-        ? Number(d[componentId]) * conversionFactor
-        : null,
-    [componentId, conversionFactor]
+      d[componentId] !== null ? Number(d[componentId]) : null,
+    [componentId]
   );
   const { getFormattedYUncertainty } = useNumericalYErrorVariables(
     { componentId },
@@ -564,7 +555,6 @@ const usePreparedData = ({
 };
 
 const useLayerState = ({
-  field,
   componentId = "",
   measureId = "",
   data,
@@ -572,7 +562,6 @@ const useLayerState = ({
   dimensions,
   measures,
 }: {
-  field: MapAreaLayer | MapSymbolLayer | undefined;
   componentId: string | undefined;
   measureId: string | undefined;
   data: Observation[];
@@ -581,21 +570,7 @@ const useLayerState = ({
   measures: Measure[];
 }) => {
   const getLabel = useStringVariable(componentId);
-  const getRawValue = useOptionalNumericVariable(measureId);
-  const unitConversion =
-    field && "unitConversion" in field ? field.unitConversion : undefined;
-  const getValue = useCallback(
-    (d: Observation) => {
-      const rawValue = getRawValue(d);
-
-      if (rawValue === null) {
-        return null;
-      }
-
-      return unitConversion ? rawValue * unitConversion.factor : rawValue;
-    },
-    [getRawValue, unitConversion]
-  );
+  const getValue = useOptionalNumericVariable(measureId);
   const measureDimension = measures.find((d) => d.id === measureId);
 
   const { showYUncertainty, getFormattedYUncertainty } =

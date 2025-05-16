@@ -3,11 +3,9 @@ import merge from "lodash/merge";
 
 import {
   extractChartConfigComponentIds,
-  normalizeData,
   prepareCubeQueryFilters,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
-import { useNumericalYVariables } from "@/charts/shared/chart-state";
 import {
   ChartConfig,
   ChartType,
@@ -15,10 +13,7 @@ import {
   InteractiveFiltersConfig,
 } from "@/configurator";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { Observation } from "@/domain/data";
 import { mkJoinById } from "@/graphql/join";
-import { ComponentId } from "@/graphql/make-component-id";
-import { ScaleType } from "@/graphql/resolver-types";
 import {
   InteractiveFiltersState,
   useChartInteractiveFilters,
@@ -27,10 +22,6 @@ import map1Fixture from "@/test/__fixtures/config/int/map-nfi.json";
 import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
 import dualLine1Fixture from "@/test/__fixtures/config/test/chartConfig-photovoltaik-und-gebaudeprogramm.json";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
-
-jest.mock("@/locales/use-locale", () => ({
-  useLocale: () => "en",
-}));
 
 jest.mock("../../rdf/extended-cube", () => ({
   ExtendedCube: jest.fn(),
@@ -353,75 +344,5 @@ describe("getChartConfigComponentsIds", () => {
       )
     ).toBe(true);
     expect(componentIds.includes(mkJoinById(0))).toBe(false);
-  });
-});
-
-describe("normalizeData", () => {
-  it("should normalize data with unit conversion and maintain 0-100% range", () => {
-    const componentId = "testMeasure" as ComponentId;
-    const mockMeasure = {
-      id: componentId,
-      __typename: "NumericalMeasure",
-      iri: "test/measure",
-      label: "Test Measure",
-      unit: "kg",
-      scaleType: ScaleType.Ratio,
-      values: [],
-      relatedLimitValues: [],
-      limits: [],
-      isNumerical: true,
-      isKeyDimension: false,
-      cubeIri: "test/cube",
-    } as any;
-    const measuresById = {
-      [componentId]: mockMeasure,
-    };
-    const yField = {
-      componentId,
-      unitConversion: {
-        factor: 1000,
-        labels: { en: "g" },
-      },
-    } as any;
-    const mockData: Observation[] = [
-      { [componentId]: 0.1 },
-      { [componentId]: 0.2 },
-      { [componentId]: 0.7 },
-    ];
-    const {
-      result: {
-        current: { getY, getOriginalY, yUnit },
-      },
-    } = renderHook(() =>
-      useNumericalYVariables("line", yField, { measuresById })
-    );
-
-    expect(getY(mockData[0])).toBe(100);
-    expect(getOriginalY(mockData[0])).toBe(0.1);
-    expect(yUnit).toBe("g");
-
-    const totalValue = mockData.reduce(
-      (acc, d) => acc + (d[componentId] as number),
-      0
-    );
-    const normalizedData = normalizeData(mockData, {
-      key: componentId,
-      getAxisValue: getY,
-      getOriginalAxisValue: getOriginalY,
-      getTotalGroupValue: () => totalValue,
-    });
-
-    expect(normalizedData[0][componentId]).toBe(10);
-    expect(normalizedData[1][componentId]).toBe(20);
-    expect(normalizedData[2][componentId]).toBe(70);
-
-    expect(normalizedData[0][`${componentId}/__identity__`]).toBe(100);
-    expect(normalizedData[1][`${componentId}/__identity__`]).toBe(200);
-    expect(normalizedData[2][`${componentId}/__identity__`]).toBe(700);
-
-    normalizedData.forEach((item) => {
-      expect(item[componentId]).toBeGreaterThanOrEqual(0);
-      expect(item[componentId]).toBeLessThanOrEqual(100);
-    });
   });
 });

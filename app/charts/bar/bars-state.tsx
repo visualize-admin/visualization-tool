@@ -95,7 +95,6 @@ const useBarsState = (
     getYLabel,
     yTimeUnit,
     xMeasure,
-    xUnit,
     getY,
     getMinX,
     getXErrorRange,
@@ -318,7 +317,7 @@ const useBarsState = (
       formatNumberWithUnit(
         value,
         formatters[xMeasure.id] ?? formatNumber,
-        xUnit
+        xMeasure.unit
       );
 
     const x = getX(d);

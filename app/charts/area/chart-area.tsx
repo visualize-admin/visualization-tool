@@ -31,12 +31,10 @@ export const ChartAreasVisualization = (
 const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
   const { chartConfig, dimensions, measures, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const { y } = fields;
   const limits = useLimits({
     chartConfig,
     dimensions,
     measures,
-    unitConversion: y.unitConversion,
   });
 
   return (

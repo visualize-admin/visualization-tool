@@ -36,7 +36,6 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { ComboLineSingleConfig } from "@/configurator";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { useLocale } from "@/locales/use-locale";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
 import { ChartProps } from "../shared/ChartProps";
@@ -63,12 +62,10 @@ const useComboLineSingleState = (
   variables: ComboLineSingleStateVariables,
   data: ChartStateData
 ): ComboLineSingleState => {
-  const locale = useLocale();
   const { chartConfig, measuresById } = chartProps;
   const { xDimension, getX, getXAsString, xAxisLabel } = variables;
   const { chartData, scalesData, timeRangeData, paddingData, allData } = data;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const { y } = fields;
 
   const yUnits = Array.from(
     new Set(
@@ -82,7 +79,7 @@ const useComboLineSingleState = (
     throw Error("Multiple units are not supported in ComboLineSingle chart!");
   }
 
-  const yAxisLabel = y.unitConversion?.labels[locale] ?? yUnits[0] ?? "";
+  const yAxisLabel = yUnits[0] ?? "";
 
   const xKey = fields.x.componentId;
   const {

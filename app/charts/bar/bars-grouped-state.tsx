@@ -88,7 +88,6 @@ const useBarsGroupedState = (
     getYAbbreviationOrLabel,
     getYLabel,
     xMeasure,
-    xUnit,
     getY,
     getMinX,
     getXErrorRange,
@@ -411,7 +410,7 @@ const useBarsGroupedState = (
       return formatNumberWithUnit(
         value,
         formatters[xMeasure.id] ?? formatNumber,
-        xUnit
+        xMeasure.unit
       );
     };
 
@@ -439,8 +438,8 @@ const useBarsGroupedState = (
       },
       values: sortedTooltipValues.map((td) => ({
         label: getSegmentAbbreviationOrLabel(td),
-        value: xUnit
-          ? `${formatNumber(getX(td))} ${xUnit}`
+        value: xMeasure.unit
+          ? `${formatNumber(getX(td))} ${xMeasure.unit}`
           : formatNumber(getX(td)),
         error: getFormattedXUncertainty(td),
         color: colors(getSegment(td)) as string,

@@ -12,7 +12,6 @@ import {
   getAnimationField,
   Limit as ConfigLimit,
   SingleFilters,
-  UnitConversion,
 } from "@/config-types";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import {
@@ -24,7 +23,6 @@ import {
 import { truthy } from "@/domain/types";
 import { useTimeFormatUnit } from "@/formatters";
 import { mkJoinById } from "@/graphql/join";
-import { useLocale } from "@/locales/use-locale";
 import { Limit } from "@/rdf/limits";
 import {
   useChartInteractiveFilters,
@@ -343,12 +341,10 @@ export const useLimits = ({
   chartConfig,
   dimensions,
   measures,
-  unitConversion,
 }: {
   chartConfig: ChartConfig;
   dimensions: Dimension[];
   measures: Measure[];
-  unitConversion?: UnitConversion;
 }): {
   axisDimension: Dimension | undefined;
   limitMeasure: Measure | undefined;
@@ -359,7 +355,6 @@ export const useLimits = ({
     limitUnit: string | undefined;
   }[];
 } => {
-  const locale = useLocale();
   const filters = useDefinitiveFilters();
   const limitMeasure = getLimitMeasure({ chartConfig, measures });
   const axisDimension = getAxisDimension({ chartConfig, dimensions });
@@ -386,7 +381,6 @@ export const useLimits = ({
               axisDimension,
               filters,
             });
-          const conversionFactor = unitConversion?.factor ?? 1;
 
           return maybeLimit
             ? {
@@ -398,33 +392,15 @@ export const useLimits = ({
                       ? (maybeLimit.symbolType ?? "circle")
                       : undefined,
                 },
-                measureLimit:
-                  limit.type === "single"
-                    ? {
-                        ...limit,
-                        value: limit.value * conversionFactor,
-                      }
-                    : {
-                        ...limit,
-                        from: limit.from * conversionFactor,
-                        to: limit.to * conversionFactor,
-                      },
+                measureLimit: limit,
                 relatedAxisDimensionValueLabel,
-                limitUnit: unitConversion?.labels[locale] ?? limitMeasure.unit,
+                limitUnit: limitMeasure.unit,
               }
             : null;
         })
         .filter(truthy),
     };
-  }, [
-    limitMeasure,
-    axisDimension,
-    chartConfig,
-    filters,
-    unitConversion?.factor,
-    unitConversion?.labels,
-    locale,
-  ]);
+  }, [limitMeasure, axisDimension, chartConfig, filters]);
 };
 
 export const getSupportsLimitSymbols = (chartConfig: ChartConfig) => {

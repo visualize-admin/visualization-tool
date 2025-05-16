@@ -33,13 +33,11 @@ export const ChartLinesVisualization = (
 const ChartLines = memo((props: ChartProps<LineConfig>) => {
   const { chartConfig, dimensions, measures, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const { y } = fields;
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
   const limits = useLimits({
     chartConfig,
     dimensions,
     measures,
-    unitConversion: y.unitConversion,
   });
 
   return (

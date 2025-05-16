@@ -194,8 +194,6 @@ const ChartMap = memo((props: ChartMapProps) => {
     chartConfig,
     dimensions,
     measures,
-    // We can only display limits with symbols.
-    unitConversion: fields.symbolLayer?.unitConversion,
   });
 
   return (

@@ -19,7 +19,6 @@ import {
   useTemporalXVariables,
 } from "@/charts/shared/chart-state";
 import { ComboLineDualConfig } from "@/configurator";
-import { useLocale } from "@/locales/use-locale";
 
 import { ChartProps } from "../shared/ChartProps";
 
@@ -43,7 +42,6 @@ export const useComboLineDualStateVariables = (
   const { fields } = chartConfig;
   const { x } = fields;
 
-  const locale = useLocale();
   const baseVariables = useBaseVariables(chartConfig);
   const temporalXVariables = useTemporalXVariables(x, {
     dimensionsById,
@@ -54,32 +52,20 @@ export const useComboLineDualStateVariables = (
   );
 
   const leftId = chartConfig.fields.y.leftAxisComponentId;
-  const leftUnitConversion = chartConfig.fields.y.leftAxisUnitConversion;
-  const leftUnitConversionFactor = leftUnitConversion?.factor ?? 1;
   const rightId = chartConfig.fields.y.rightAxisComponentId;
-  const rightUnitConversion = chartConfig.fields.y.rightAxisUnitConversion;
-  const rightUnitConversionFactor = rightUnitConversion?.factor ?? 1;
   const numericalYVariables: NumericalYComboLineDualVariables = {
     y: {
       left: {
         orientation: "left",
         dimension: measuresById[leftId],
         id: leftId,
-        label: getLabelWithUnit(measuresById[leftId], {
-          unitOverride: leftUnitConversion?.labels[locale],
-        }),
+        label: getLabelWithUnit(measuresById[leftId]),
         color: fields.color.colorMapping[leftId],
-        getY: (d) =>
-          d[leftId] !== null
-            ? Number(d[leftId]) * leftUnitConversionFactor
-            : null,
+        getY: (d) => (d[leftId] !== null ? Number(d[leftId]) : null),
         getMinY: (data) => {
           const minY =
-            min(data, (d) =>
-              d[leftId] !== null
-                ? Number(d[leftId]) * leftUnitConversionFactor
-                : null
-            ) ?? 0;
+            min(data, (d) => (d[leftId] !== null ? Number(d[leftId]) : null)) ??
+            0;
 
           return shouldUseDynamicMinScaleValue(measuresById[leftId].scaleType)
             ? minY
@@ -90,20 +76,13 @@ export const useComboLineDualStateVariables = (
         orientation: "right",
         dimension: measuresById[rightId],
         id: rightId,
-        label: getLabelWithUnit(measuresById[rightId], {
-          unitOverride: rightUnitConversion?.labels[locale],
-        }),
+        label: getLabelWithUnit(measuresById[rightId]),
         color: fields.color.colorMapping[rightId],
-        getY: (d) =>
-          d[rightId] !== null
-            ? Number(d[rightId]) * rightUnitConversionFactor
-            : null,
+        getY: (d) => (d[rightId] !== null ? Number(d[rightId]) : null),
         getMinY: (data) => {
           const minY =
             min(data, (d) =>
-              d[rightId] !== null
-                ? Number(d[rightId]) * rightUnitConversionFactor
-                : null
+              d[rightId] !== null ? Number(d[rightId]) : null
             ) ?? 0;
 
           return shouldUseDynamicMinScaleValue(measuresById[rightId].scaleType)

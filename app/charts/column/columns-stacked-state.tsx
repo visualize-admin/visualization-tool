@@ -110,9 +110,7 @@ const useColumnsStackedState = (
     getXAbbreviationOrLabel,
     getXLabel,
     yMeasure,
-    yUnit,
     getY,
-    getOriginalY,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
@@ -208,7 +206,6 @@ const useColumnsStackedState = (
         normalizeData(chartData, {
           key: yMeasure.id,
           getAxisValue: getY,
-          getOriginalAxisValue: getOriginalY,
           getTotalGroupValue: (d) => sumsByX[getX(d)],
         }),
         getX
@@ -216,7 +213,7 @@ const useColumnsStackedState = (
     }
 
     return group(chartData, getX);
-  }, [normalize, chartData, getX, yMeasure.id, getY, getOriginalY, sumsByX]);
+  }, [normalize, chartData, getX, yMeasure.id, getY, sumsByX]);
 
   const chartWideData = useMemo(() => {
     return getWideData({
@@ -471,7 +468,7 @@ const useColumnsStackedState = (
       const yValueFormatter = getStackedTooltipValueFormatter({
         normalize,
         measureId: yMeasure.id,
-        measureUnit: yUnit,
+        measureUnit: yMeasure.unit,
         formatters,
         formatNumber,
       });
@@ -512,7 +509,7 @@ const useColumnsStackedState = (
       segments,
       getSegment,
       yMeasure.id,
-      yUnit,
+      yMeasure.unit,
       formatters,
       formatNumber,
       getXAbbreviationOrLabel,

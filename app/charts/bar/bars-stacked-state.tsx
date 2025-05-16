@@ -109,13 +109,11 @@ const useBarsStackedState = (
   const { chartConfig, dimensions, measures } = chartProps;
   const {
     yDimension,
+    xMeasure,
     getX,
-    getOriginalX,
     getYAsDate,
     getYAbbreviationOrLabel,
     getYLabel,
-    xMeasure,
-    xUnit,
     getY,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
@@ -212,7 +210,6 @@ const useBarsStackedState = (
         normalizeData(chartData, {
           key: xMeasure.id,
           getAxisValue: getX,
-          getOriginalAxisValue: getOriginalX,
           getTotalGroupValue: (d) => sumsByY[getY(d)],
         }),
         getY
@@ -220,7 +217,7 @@ const useBarsStackedState = (
     }
 
     return group(chartData, getY);
-  }, [normalize, chartData, getY, xMeasure.id, getX, getOriginalX, sumsByY]);
+  }, [normalize, chartData, getY, xMeasure.id, getX, sumsByY]);
 
   const chartWideData = useMemo(() => {
     return getWideData({
@@ -483,7 +480,7 @@ const useBarsStackedState = (
       const xValueFormatter = getStackedTooltipValueFormatter({
         normalize,
         measureId: xMeasure.id,
-        measureUnit: xUnit,
+        measureUnit: xMeasure.unit,
         formatters,
         formatNumber,
       });
@@ -525,7 +522,7 @@ const useBarsStackedState = (
       segments,
       getSegment,
       xMeasure.id,
-      xUnit,
+      xMeasure.unit,
       formatters,
       formatNumber,
       getYAbbreviationOrLabel,

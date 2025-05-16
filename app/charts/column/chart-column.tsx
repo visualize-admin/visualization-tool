@@ -43,7 +43,6 @@ export const ChartColumnsVisualization = (
 const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
   const { chartConfig, dimensions, measures, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
-  const { y } = fields;
   const filters = useChartConfigFilters(chartConfig);
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
   const showTimeBrush = shouldShowBrush(
@@ -54,7 +53,6 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
     chartConfig,
     dimensions,
     measures,
-    unitConversion: y.unitConversion,
   });
 
   return (

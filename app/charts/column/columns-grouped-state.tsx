@@ -88,7 +88,6 @@ const useColumnsGroupedState = (
     getXAbbreviationOrLabel,
     getXLabel,
     yMeasure,
-    yUnit,
     getY,
     getMinY,
     getYErrorRange,
@@ -412,7 +411,7 @@ const useColumnsGroupedState = (
       return formatNumberWithUnit(
         value,
         formatters[yMeasure.id] ?? formatNumber,
-        yUnit
+        yMeasure.unit
       );
     };
 
@@ -440,8 +439,8 @@ const useColumnsGroupedState = (
       },
       values: sortedTooltipValues.map((td) => ({
         label: getSegmentAbbreviationOrLabel(td),
-        value: yUnit
-          ? `${formatNumber(getY(td))} ${yUnit}`
+        value: yMeasure.unit
+          ? `${formatNumber(getY(td))} ${yMeasure.unit}`
           : formatNumber(getY(td)),
         error: getFormattedYUncertainty(td),
         color: colors(getSegment(td)) as string,

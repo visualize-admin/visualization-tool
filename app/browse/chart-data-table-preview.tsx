@@ -12,7 +12,6 @@ import {
   ChartConfig,
   DashboardFiltersConfig,
   DataSource,
-  getConversionUnitsByComponentId,
 } from "@/config-types";
 import {
   useDataCubesComponentsQuery,
@@ -83,12 +82,6 @@ export const ChartDataTablePreview = ({
     pause: fetchingComponents,
   });
 
-  const conversionUnitsByComponentId = useMemo(() => {
-    return getConversionUnitsByComponentId({
-      chartConfig,
-    });
-  }, [chartConfig]);
-
   return metadataData?.dataCubesMetadata &&
     componentsData?.dataCubesComponents &&
     observationsData?.dataCubesObservations ? (
@@ -98,7 +91,6 @@ export const ChartDataTablePreview = ({
         sortedComponents={sortedComponents}
         observations={observationsData.dataCubesObservations.data}
         linkToMetadataPanel
-        conversionUnitsByComponentId={conversionUnitsByComponentId}
       />
     </Box>
   ) : (

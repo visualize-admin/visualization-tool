@@ -31,7 +31,6 @@ import {
   useFormatInteger,
   useFormatNumber,
 } from "@/formatters";
-import { useLocale } from "@/locales/use-locale";
 import { getColorInterpolator } from "@/palettes";
 import { getTextWidth } from "@/utils/get-text-width";
 
@@ -87,7 +86,6 @@ export const MapLegend = ({
   observations: Observation[];
   limits: ReturnType<typeof useLimits>["limits"];
 }) => {
-  const locale = useLocale();
   const { areaLayer, symbolLayer } = useChartState() as MapState;
   const showAreaLegend =
     areaLayer &&
@@ -103,24 +101,12 @@ export const MapLegend = ({
       : undefined,
   ].filter(truthy);
   const formatters = useDimensionFormatters(measureDimensions);
-  const areaColorUnitConversion =
-    chartConfig.fields.areaLayer?.color.type === "numerical"
-      ? chartConfig.fields.areaLayer.color.unitConversion
-      : undefined;
-  const areaColorUnit =
-    areaColorUnitConversion?.labels[locale] ?? areaLayer?.colors.component.unit;
-  const symbolUnitConversion = chartConfig.fields.symbolLayer?.unitConversion;
-  const symbolUnit =
-    symbolUnitConversion?.labels[locale] ?? symbolLayer?.measureDimension?.unit;
-  const symbolColorUnitConversion =
-    chartConfig.fields.symbolLayer?.color.type === "numerical"
-      ? chartConfig.fields.symbolLayer.color.unitConversion
-      : undefined;
+  const areaColorUnit = areaLayer?.colors.component.unit;
+  const symbolUnit = symbolLayer?.measureDimension?.unit;
   const symbolColorUnit =
-    symbolColorUnitConversion?.labels[locale] ??
-    (symbolLayer?.colors.type === "continuous"
+    symbolLayer?.colors.type === "continuous"
       ? symbolLayer?.colors.component.unit
-      : undefined);
+      : undefined;
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>

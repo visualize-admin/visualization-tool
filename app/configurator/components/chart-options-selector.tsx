@@ -72,7 +72,7 @@ import {
   ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { ConvertUnitField } from "@/configurator/components/chart-options-selector/convert-unit-field";
+import { ConversionUnitsField } from "@/configurator/components/chart-options-selector/conversion-units-field";
 import { CustomLayersSelector } from "@/configurator/components/custom-layers-selector";
 import {
   ChartFieldField,
@@ -639,7 +639,7 @@ const EncodingOptionsPanel = ({
         />
       )}
       {unitConversionEnabled && encoding.options?.convertUnit && (
-        <ConvertUnitField
+        <ConversionUnitsField
           chartConfig={chartConfig}
           field={field}
           components={components}
