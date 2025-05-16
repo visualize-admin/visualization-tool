@@ -299,12 +299,24 @@ const Limit = t.intersection([
 ]);
 export type Limit = t.TypeOf<typeof Limit>;
 
+const ConversionUnit = t.type({
+  multiplier: t.number,
+  labels: t.type({
+    de: t.string,
+    fr: t.string,
+    it: t.string,
+    en: t.string,
+  }),
+});
+export type ConversionUnit = t.TypeOf<typeof ConversionUnit>;
+
 const GenericChartConfig = t.type({
   key: t.string,
   version: t.string,
   meta: Meta,
   cubes: t.array(Cube),
   limits: t.record(t.string, t.array(Limit)),
+  conversionUnitsByComponentId: t.record(t.string, ConversionUnit),
   activeField: t.union([t.string, t.undefined]),
 });
 
@@ -337,81 +349,6 @@ export type CustomScaleDomainFieldExtension = t.TypeOf<
   typeof CustomScaleDomainFieldExtension
 >;
 
-const UnitConversion = t.type({
-  // Technically, the componentId is not needed, but it drastically helps
-  // when adjusting the config to carry over the unit conversion from the
-  // old measure to the new one.
-  componentId: t.string,
-  factor: t.number,
-  labels: t.type({
-    de: t.string,
-    fr: t.string,
-    it: t.string,
-    en: t.string,
-  }),
-});
-export type UnitConversion = t.TypeOf<typeof UnitConversion>;
-
-const UnitConversionFieldExtension = t.partial({
-  unitConversion: UnitConversion,
-});
-export type UnitConversionFieldExtension = t.TypeOf<
-  typeof UnitConversionFieldExtension
->;
-
-export const getConversionUnitsByComponentId = ({
-  chartConfig,
-}: {
-  chartConfig: ChartConfig;
-}): Record<string, UnitConversionFieldExtension["unitConversion"]> => {
-  switch (chartConfig.chartType) {
-    case "area":
-    case "column":
-    case "line":
-    case "pie":
-      return {
-        [chartConfig.fields.y.componentId]: chartConfig.fields.y.unitConversion,
-      };
-    case "bar":
-      return {
-        [chartConfig.fields.x.componentId]: chartConfig.fields.x.unitConversion,
-      };
-    case "scatterplot":
-      return {
-        [chartConfig.fields.x.componentId]: chartConfig.fields.x.unitConversion,
-        [chartConfig.fields.y.componentId]: chartConfig.fields.y.unitConversion,
-      };
-    case "comboLineSingle":
-      return chartConfig.fields.y.componentIds.reduce(
-        (acc, componentId) => {
-          acc[componentId] = chartConfig.fields.y.unitConversion;
-          return acc;
-        },
-        {} as Record<string, UnitConversionFieldExtension["unitConversion"]>
-      );
-    case "comboLineDual":
-      return {
-        [chartConfig.fields.y.leftAxisComponentId]:
-          chartConfig.fields.y.leftAxisUnitConversion,
-        [chartConfig.fields.y.rightAxisComponentId]:
-          chartConfig.fields.y.rightAxisUnitConversion,
-      } as Record<string, UnitConversionFieldExtension["unitConversion"]>;
-    case "comboLineColumn":
-      return {
-        [chartConfig.fields.y.columnComponentId]:
-          chartConfig.fields.y.columnUnitConversion,
-        [chartConfig.fields.y.lineComponentId]:
-          chartConfig.fields.y.lineUnitConversion,
-      } as Record<string, UnitConversionFieldExtension["unitConversion"]>;
-    case "map":
-    case "table":
-      return {};
-    default:
-      const _exhaustiveCheck: never = chartConfig;
-      return _exhaustiveCheck;
-  }
-};
-
 const ChartSubType = t.union([t.literal("stacked"), t.literal("grouped")]);
 export type ChartSubType = t.TypeOf<typeof ChartSubType>;
 
@@ -432,7 +369,6 @@ const ColumnFields = t.intersection([
       ShowValuesFieldExtension,
       UncertaintyFieldExtension,
       CustomScaleDomainFieldExtension,
-      UnitConversionFieldExtension,
     ]),
     color: t.union([SegmentColorField, SingleColorField]),
   }),
@@ -471,7 +407,6 @@ const BarFields = t.intersection([
       GenericField,
       ShowValuesFieldExtension,
       CustomScaleDomainFieldExtension,
-      UnitConversionFieldExtension,
     ]),
     y: t.intersection([GenericField, SortingField]),
     color: t.union([SegmentColorField, SingleColorField]),
@@ -507,16 +442,11 @@ export type LineSegmentField = t.TypeOf<typeof LineSegmentField>;
 const LineFields = t.intersection([
   t.type({
     x: GenericField,
-    // We need to have two intersections here because TypeScript breaks when
-    // we use more than 5 at once :)
     y: t.intersection([
-      t.intersection([
-        GenericField,
-        ShowValuesFieldExtension,
-        UncertaintyFieldExtension,
-        CustomScaleDomainFieldExtension,
-        UnitConversionFieldExtension,
-      ]),
+      GenericField,
+      ShowValuesFieldExtension,
+      UncertaintyFieldExtension,
+      CustomScaleDomainFieldExtension,
       t.partial({
         showDots: t.boolean,
         showDotsSize: t.union([
@@ -570,7 +500,6 @@ const AreaFields = t.intersection([
       GenericField,
       ShowValuesFieldExtension,
       CustomScaleDomainFieldExtension,
-      UnitConversionFieldExtension,
       t.partial({ imputationType: ImputationType }),
     ]),
     color: t.union([SegmentColorField, SingleColorField]),
@@ -603,8 +532,8 @@ export type ScatterPlotSegmentField = t.TypeOf<typeof ScatterPlotSegmentField>;
 
 const ScatterPlotFields = t.intersection([
   t.type({
-    x: t.intersection([GenericField, UnitConversionFieldExtension]),
-    y: t.intersection([GenericField, UnitConversionFieldExtension]),
+    x: GenericField,
+    y: GenericField,
     color: t.union([SegmentColorField, SingleColorField]),
   }),
   t.partial({
@@ -637,11 +566,7 @@ export type PieSegmentField = t.TypeOf<typeof PieSegmentField>;
 
 const PieFields = t.intersection([
   t.type({
-    y: t.intersection([
-      GenericField,
-      ShowValuesFieldExtension,
-      UnitConversionFieldExtension,
-    ]),
+    y: t.intersection([GenericField, ShowValuesFieldExtension]),
     segment: PieSegmentField,
     color: SegmentColorField,
   }),
@@ -908,14 +833,11 @@ const CategoricalColorField = t.intersection([
 export type CategoricalColorField = t.TypeOf<typeof CategoricalColorField>;
 
 const NumericalColorField = t.intersection([
-  t.intersection([
-    t.type({
-      type: t.literal("numerical"),
-      componentId: t.string,
-      paletteId: t.string,
-    }),
-    UnitConversionFieldExtension,
-  ]),
+  t.type({
+    type: t.literal("numerical"),
+    componentId: t.string,
+    paletteId: t.string,
+  }),
   t.partial({
     paletteType: t.union([t.literal("sequential"), t.literal("diverging")]),
     colors: t.array(t.string),
@@ -952,20 +874,13 @@ const MapAreaLayer = t.type({
 });
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
-const MapSymbolLayer = t.intersection([
-  t.type({
-    componentId: t.string,
-    /** Symbol radius (size) */
-    measureId: t.string,
-    // FIXME: convert to new color field type
-    color: t.union([
-      FixedColorField,
-      CategoricalColorField,
-      NumericalColorField,
-    ]),
-  }),
-  UnitConversionFieldExtension,
-]);
+const MapSymbolLayer = t.type({
+  componentId: t.string,
+  /** Symbol radius (size) */
+  measureId: t.string,
+  // FIXME: convert to new color field type
+  color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
+});
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 
 const BaseCustomLayer = t.type({
@@ -1035,12 +950,9 @@ export type MapConfig = t.TypeOf<typeof MapConfig>;
 
 const ComboLineSingleFields = t.type({
   x: GenericField,
-  y: t.intersection([
-    t.type({
-      componentIds: t.array(t.string),
-    }),
-    UnitConversionFieldExtension,
-  ]),
+  y: t.type({
+    componentIds: t.array(t.string),
+  }),
   color: MeasuresColorField,
 });
 export type ComboLineSingleFields = t.TypeOf<typeof ComboLineSingleFields>;
@@ -1060,16 +972,10 @@ export type ComboLineSingleConfig = t.TypeOf<typeof ComboLineSingleConfig>;
 
 const ComboLineDualFields = t.type({
   x: GenericField,
-  y: t.intersection([
-    t.type({
-      leftAxisComponentId: t.string,
-      rightAxisComponentId: t.string,
-    }),
-    t.partial({
-      leftAxisUnitConversion: UnitConversion,
-      rightAxisUnitConversion: UnitConversion,
-    }),
-  ]),
+  y: t.type({
+    leftAxisComponentId: t.string,
+    rightAxisComponentId: t.string,
+  }),
   color: MeasuresColorField,
 });
 export type ComboLineDualFields = t.TypeOf<typeof ComboLineDualFields>;
@@ -1089,17 +995,11 @@ export type ComboLineDualConfig = t.TypeOf<typeof ComboLineDualConfig>;
 
 const ComboLineColumnFields = t.type({
   x: GenericField,
-  y: t.intersection([
-    t.type({
-      lineComponentId: t.string,
-      lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
-      columnComponentId: t.string,
-    }),
-    t.partial({
-      lineUnitConversion: UnitConversion,
-      columnUnitConversion: UnitConversion,
-    }),
-  ]),
+  y: t.type({
+    lineComponentId: t.string,
+    lineAxisOrientation: t.union([t.literal("left"), t.literal("right")]),
+    columnComponentId: t.string,
+  }),
   color: MeasuresColorField,
 });
 
