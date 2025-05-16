@@ -330,6 +330,24 @@ export const useDataCubesComponentsQuery = makeUseQuery<
             return {
               ...measure,
               unit: conversionUnit.labels[locale as Locale] ?? measure.unit,
+              limits: measure.limits.map((limit) => {
+                switch (limit.type) {
+                  case "single":
+                    return {
+                      ...limit,
+                      value: limit.value * conversionUnit.multiplier,
+                    };
+                  case "range":
+                    return {
+                      ...limit,
+                      from: limit.from * conversionUnit.multiplier,
+                      to: limit.to * conversionUnit.multiplier,
+                    };
+                  default:
+                    const _exhaustiveCheck: never = limit;
+                    return _exhaustiveCheck;
+                }
+              }),
               values: measure.values.map((value) => {
                 if (typeof value.value === "number") {
                   return {
