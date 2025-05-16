@@ -11,7 +11,9 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - X and Y band axes have now correctly formatted ticks in case of being based
+    on temporal entity dimension
 
 # 5.7.7 - 2025-05-13
 
