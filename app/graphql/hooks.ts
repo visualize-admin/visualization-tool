@@ -79,7 +79,7 @@ export const makeUseQuery =
     }
 
     const executeQuery = useCallback(
-      async (options: T) => {
+      async (options: { variables: T["variables"] }) => {
         setRawResult((prev) => ({
           ...prev,
           fetching: false,
