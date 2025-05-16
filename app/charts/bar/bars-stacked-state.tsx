@@ -66,7 +66,7 @@ import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { BarConfig } from "@/configurator";
-import { Observation } from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
@@ -99,6 +99,7 @@ export type StackedBarsState = CommonChartState &
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
     valueLabelFormatter: ValueLabelFormatter;
+    formatYAxisTick?: (tick: string) => string;
   };
 
 const useBarsStackedState = (
@@ -115,6 +116,7 @@ const useBarsStackedState = (
     getYLabel,
     xMeasure,
     getY,
+    formatYDate,
     segmentDimension,
     segmentsByAbbreviationOrLabel,
     getSegment,
@@ -497,12 +499,13 @@ const useBarsStackedState = (
             xAnchor,
             topAnchor: !fields.segment,
           });
+      const yLabel = getYAbbreviationOrLabel(datum);
 
       return {
         yAnchor: yAnchorRaw + (placement.y === "top" ? 0.5 : -0.5) * bw,
         xAnchor,
         placement,
-        value: getYAbbreviationOrLabel(datum),
+        value: isTemporalDimension(yDimension) ? formatYDate(yLabel) : yLabel,
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
           value: xValueFormatter(getX(datum), getIdentityX(datum)),
@@ -536,6 +539,8 @@ const useBarsStackedState = (
       isMobile,
       normalize,
       yScale,
+      formatYDate,
+      yDimension,
     ]
   );
 
@@ -568,6 +573,9 @@ const useBarsStackedState = (
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     valueLabelFormatter,
+    formatYAxisTick: isTemporalDimension(yDimension)
+      ? (tick) => formatYDate(tick)
+      : undefined,
     ...variables,
   };
 };
