@@ -11,7 +11,9 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Reversed the order of custom layers in the custom layers selector, so that
+    the topmost layer is displayed first
 
 # 5.7.7 - 2025-05-13
 
