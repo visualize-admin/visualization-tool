@@ -4,10 +4,19 @@ import { useMemo } from "react";
 import { Client, Provider } from "urql";
 
 import { ChartConfig } from "@/config-types";
+import { DataCubeComponents, DataCubesObservations } from "@/domain/data";
 import { useDataCubesComponentsQueryVariables } from "@/graphql/hooks.mock";
+import { ComponentId } from "@/graphql/make-component-id";
 import { Response } from "@/test/utils";
 
-import { makeUseQuery, useDataCubesComponentsQuery } from "./hooks"; // Assuming your makeUseQuery function is in a separate file
+import {
+  DataCubesComponentsOptions,
+  DataCubesObservationsOptions,
+  makeUseQuery,
+  transformDataCubesComponents,
+  transformDataCubesObservations,
+  useDataCubesComponentsQuery,
+} from "./hooks";
 
 describe("makeUseQuery", () => {
   const mockQuery = jest.fn().mockImplementation(() => {
@@ -338,6 +347,230 @@ Array [
           measures: [],
         },
       });
+    });
+  });
+});
+
+describe("useDataCubesComponentsQuery", () => {
+  describe("transformDataCubesComponents", () => {
+    const measure1Id = "measure1" as ComponentId;
+    const measure2Id = "measure2" as ComponentId;
+
+    const mockData = {
+      data: {
+        dataCubesComponents: {
+          dimensions: [],
+          measures: [
+            {
+              id: measure1Id,
+              label: "Measure 1",
+              unit: "kg",
+              cubeIri: "http://example.com/cube1",
+              isNumerical: true,
+              isKeyDimension: false,
+              relatedLimitValues: [],
+              values: [{ value: 100 }, { value: 200 }],
+              limits: [
+                { type: "single", value: 50 },
+                { type: "range", from: 10, to: 20 },
+              ],
+            },
+            {
+              id: measure2Id,
+              label: "Measure 2",
+              unit: "m",
+              cubeIri: "http://example.com/cube1",
+              isNumerical: true,
+              isKeyDimension: false,
+              relatedLimitValues: [],
+              values: [{ value: 30 }],
+              limits: [],
+            },
+          ],
+        } as unknown as DataCubeComponents,
+      },
+      fetching: false,
+    };
+
+    const mockOptions: DataCubesComponentsOptions & {
+      chartConfig: ChartConfig;
+    } = {
+      chartConfig: {
+        conversionUnitsByComponentId: {
+          [measure1Id]: {
+            multiplier: 2,
+            labels: { en: "lbs", de: "pfund", fr: "livres", it: "libbre" },
+          },
+        },
+      } as unknown as ChartConfig,
+      variables: {
+        locale: "en",
+        sourceType: "sparql",
+        sourceUrl: "http://example.com",
+        cubeFilters: [],
+      },
+    };
+
+    it("should transform measure values and limits with conversion units", () => {
+      const result = transformDataCubesComponents(mockData, mockOptions);
+
+      expect(result.data?.dataCubesComponents.measures[0]).toEqual({
+        id: measure1Id,
+        label: "Measure 1",
+        unit: "lbs",
+        cubeIri: "http://example.com/cube1",
+        isNumerical: true,
+        isKeyDimension: false,
+        relatedLimitValues: [],
+        values: [{ value: 200 }, { value: 400 }],
+        limits: [
+          { type: "single", value: 100 },
+          { type: "range", from: 20, to: 40 },
+        ],
+      });
+
+      expect(result.data?.dataCubesComponents.measures[1]).toEqual(
+        mockData.data.dataCubesComponents.measures[1]
+      );
+    });
+
+    it("should return unchanged data when no conversion units are provided", () => {
+      const optionsWithoutConversion = {
+        ...mockOptions,
+        chartConfig: {
+          ...mockOptions.chartConfig,
+          conversionUnitsByComponentId: {},
+        },
+      };
+
+      const result = transformDataCubesComponents(
+        mockData,
+        optionsWithoutConversion
+      );
+      expect(result).toEqual(mockData);
+    });
+
+    it("should return unchanged data when data is null", () => {
+      const result = transformDataCubesComponents(
+        { data: null, fetching: false },
+        mockOptions
+      );
+      expect(result).toEqual({ data: null, fetching: false });
+    });
+
+    it("should return unchanged data when data is undefined", () => {
+      const result = transformDataCubesComponents(
+        { data: undefined, fetching: false },
+        mockOptions
+      );
+      expect(result).toEqual({ data: undefined, fetching: false });
+    });
+  });
+
+  it("should respect the conversion units in values", async () => {});
+  it("should respect the conversion units in limits", async () => {});
+});
+
+describe("useDataCubesObservationsQuery", () => {
+  describe("transformDataCubesObservations", () => {
+    const measure1Id = "measure1" as ComponentId;
+    const measure2Id = "measure2" as ComponentId;
+
+    const mockData = {
+      data: {
+        dataCubesObservations: {
+          data: [
+            {
+              [measure1Id]: 100,
+              [measure2Id]: "200",
+              measure3: 300,
+              dimension1: "value1",
+            },
+            {
+              [measure1Id]: "50",
+              [measure2Id]: 75,
+              measure3: "25",
+              dimension1: "value2",
+            },
+          ],
+          sparqlEditorUrls: [],
+        } as unknown as DataCubesObservations,
+      },
+      fetching: false,
+    };
+
+    const mockOptions: DataCubesObservationsOptions & {
+      chartConfig: ChartConfig;
+    } = {
+      chartConfig: {
+        conversionUnitsByComponentId: {
+          [measure1Id]: {
+            multiplier: 2,
+            labels: { en: "lbs", de: "pfund", fr: "livres", it: "libbre" },
+          },
+          [measure2Id]: {
+            multiplier: 3,
+            labels: { en: "lbs", de: "pfund", fr: "livres", it: "libbre" },
+          },
+        },
+      } as unknown as ChartConfig,
+      variables: {
+        locale: "en",
+        sourceType: "sparql",
+        sourceUrl: "http://example.com",
+        cubeFilters: [],
+      },
+    };
+
+    it("should transform observation values with conversion units", () => {
+      const result = transformDataCubesObservations(mockData, mockOptions);
+
+      expect(result.data?.dataCubesObservations.data).toEqual([
+        {
+          [measure1Id]: 200,
+          [measure2Id]: 600,
+          measure3: 300,
+          dimension1: "value1",
+        },
+        {
+          [measure1Id as unknown as string]: 100,
+          [measure2Id as unknown as string]: 225,
+          measure3: "25",
+          dimension1: "value2",
+        },
+      ]);
+    });
+
+    it("should return unchanged data when no conversion units are provided", () => {
+      const optionsWithoutConversion = {
+        ...mockOptions,
+        chartConfig: {
+          ...mockOptions.chartConfig,
+          conversionUnitsByComponentId: {},
+        },
+      };
+
+      const result = transformDataCubesObservations(
+        mockData,
+        optionsWithoutConversion
+      );
+      expect(result).toEqual(mockData);
+    });
+
+    it("should return unchanged data when data is null", () => {
+      const result = transformDataCubesObservations(
+        { data: null, fetching: false },
+        mockOptions
+      );
+      expect(result).toEqual({ data: null, fetching: false });
+    });
+
+    it("should return unchanged data when data is undefined", () => {
+      const result = transformDataCubesObservations(
+        { data: undefined, fetching: false },
+        mockOptions
+      );
+      expect(result).toEqual({ data: undefined, fetching: false });
     });
   });
 });
