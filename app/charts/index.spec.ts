@@ -269,6 +269,7 @@ describe("chart type switch", () => {
         { iri: "https://environment.ld.admin.ch/foen/ubd0104", filters: {} },
       ],
       limits: {},
+      conversionUnitsByComponentId: {},
       meta: {
         title: {
           en: "",
