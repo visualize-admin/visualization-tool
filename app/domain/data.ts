@@ -227,6 +227,7 @@ export type BaseComponent = {
   id: ComponentId;
   label: string;
   description?: string;
+  /** Unit of the component. Could be overridden by the conversion unit. */
   unit?: string;
   scaleType?: ScaleType;
   dataType?: string;
@@ -243,6 +244,8 @@ export type BaseComponent = {
 
 export type BaseDimension = Omit<BaseComponent, "id"> & {
   hierarchy?: HierarchyValue[] | null;
+  /** Original unit of the component. */
+  originalUnit?: string;
 } & (
     | {
         id: ComponentId;
@@ -352,6 +355,8 @@ type BaseMeasure = BaseComponent & {
   currencyExponent?: number;
   resolution?: number;
   limits: Limit[];
+  /** Original unit of the component. */
+  originalUnit?: string;
 };
 
 export type NumericalMeasure = BaseMeasure & {

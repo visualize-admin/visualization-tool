@@ -213,7 +213,7 @@ const useColumnsStackedState = (
     }
 
     return group(chartData, getX);
-  }, [chartData, getX, sumsByX, getY, yMeasure.id, normalize]);
+  }, [normalize, chartData, getX, yMeasure.id, getY, sumsByX]);
 
   const chartWideData = useMemo(() => {
     return getWideData({

@@ -84,7 +84,7 @@ export type ConfiguratorStateAction =
           | string
           | number
           | boolean
-          | Record<string, string | number | boolean | string[]>
+          | Record<any, any>
           | (string | number | boolean)[]
           | (string | number | boolean)[][]
           | undefined;

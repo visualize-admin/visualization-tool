@@ -37,6 +37,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
   const { fields } = chartConfig;
   const locale = useLocale();
   const [componentsQuery] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
@@ -99,6 +100,7 @@ export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
       fetching: fetchingGeoCoordinatesDimension,
     },
   ] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       cubeFilters: [
         {

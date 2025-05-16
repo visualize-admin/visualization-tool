@@ -85,6 +85,7 @@ export const chartConfig: ScatterPlotConfig = {
   },
   cubes: [{ iri: "", filters: {} }],
   limits: {},
+  conversionUnitsByComponentId: {},
   chartType: "scatterplot",
   interactiveFiltersConfig,
   fields: scatterplotFields,

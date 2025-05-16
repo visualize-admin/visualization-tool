@@ -93,6 +93,7 @@ export const chartConfig: LineConfig = {
   },
   cubes: [{ iri: "", filters: {} }],
   limits: {},
+  conversionUnitsByComponentId: {},
   chartType: "line",
   interactiveFiltersConfig,
   fields,

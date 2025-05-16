@@ -164,20 +164,22 @@ export const LegendColor = memo(function LegendColor({
       )}
       <LegendColorContent
         groups={groups}
-        limits={limits?.limits.map(({ configLimit, measureLimit }) => ({
-          label: measureLimit.name,
-          values:
-            measureLimit.type === "single"
-              ? [measureLimit.value]
-              : [measureLimit.from, measureLimit.to],
-          color: configLimit.color,
-          symbol: !configLimit.symbolType
-            ? configLimit.lineType === "dashed"
-              ? "dashed-line"
-              : "line"
-            : configLimit.symbolType,
-          unit: limits.limitMeasure?.unit,
-        }))}
+        limits={limits?.limits.map(
+          ({ configLimit, measureLimit, limitUnit }) => ({
+            label: measureLimit.name,
+            values:
+              measureLimit.type === "single"
+                ? [measureLimit.value]
+                : [measureLimit.from, measureLimit.to],
+            color: configLimit.color,
+            symbol: !configLimit.symbolType
+              ? configLimit.lineType === "dashed"
+                ? "dashed-line"
+                : "line"
+              : configLimit.symbolType,
+            unit: limitUnit,
+          })
+        )}
         getColor={colors}
         getLabel={getColorLabel}
         getItemDimension={getLegendItemDimension}

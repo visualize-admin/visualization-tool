@@ -618,6 +618,26 @@ msgstr "raggruppate"
 msgid "controls.column.stacked"
 msgstr "impilate"
 
+#: app/configurator/components/chart-options-selector/convert-unit.tsx
+msgid "controls.convert-unit"
+msgstr "Conversione di unità"
+
+#: app/configurator/components/chart-options-selector/convert-unit.tsx
+msgid "controls.convert-unit.custom-labels"
+msgstr "Etichette unità personalizzate"
+
+#: app/configurator/components/chart-options-selector/convert-unit.tsx
+msgid "controls.convert-unit.enable"
+msgstr "Abilita conversione unità"
+
+#: app/configurator/components/chart-options-selector/convert-unit.tsx
+msgid "controls.convert-unit.factor"
+msgstr "Fattore moltiplicativo"
+
+#: app/configurator/components/chart-options-selector/convert-unit.tsx
+msgid "controls.convert-unit.original"
+msgstr "Unità originale: {0}"
+
 #: app/configurator/components/chart-controls/color-palette.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
@@ -942,6 +962,7 @@ msgstr "Torniamo alla modifica"
 msgid "controls.nav.back-to-preview"
 msgstr "Torna all'anteprima"
 
+#: app/configurator/components/chart-options-selector/convert-unit.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field.tsx

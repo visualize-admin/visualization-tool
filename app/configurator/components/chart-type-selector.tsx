@@ -37,6 +37,7 @@ export const ChartTypeSelector = ({
   const locale = useLocale();
   const chartConfig = getChartConfig(state);
   const [{ data }] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,

@@ -23,7 +23,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FirstTenRowsCaption } from "@/browser/dataset-preview";
 import { Error as ErrorHint, Loading } from "@/components/hint";
 import Tag from "@/components/tag";
-import { DataSource } from "@/config-types";
+import { ChartConfig, DataSource } from "@/config-types";
 import { SearchOptions } from "@/configurator/components/add-dataset-drawer/types";
 import {
   Dimension,
@@ -64,6 +64,7 @@ const NewAnnotation = (props: TypographyProps) => {
 };
 
 const PreviewDataTable = ({
+  chartConfig,
   dataSource,
   existingCubes,
   currentComponents,
@@ -73,6 +74,7 @@ const PreviewDataTable = ({
   onConfirm,
   addingDataset,
 }: {
+  chartConfig: ChartConfig;
   dataSource: DataSource;
   existingCubes: { iri: string }[];
   currentComponents:
@@ -110,13 +112,14 @@ const PreviewDataTable = ({
   const cubeFilters = getCubeFiltersFromVersionedJoinBy(inferredJoinBy);
 
   const [observations] = useDataCubesObservationsQuery({
-    pause: isQueryPaused,
+    chartConfig,
     variables: {
       locale,
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       cubeFilters,
     },
+    pause: isQueryPaused,
   });
   const [currentCubes] = useDataCubesMetadataQuery({
     variables: {

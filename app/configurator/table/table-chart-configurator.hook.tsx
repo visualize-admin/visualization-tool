@@ -18,6 +18,7 @@ export const useTableChartController = (
   const [, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const [{ data: components }] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,

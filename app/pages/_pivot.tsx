@@ -17,6 +17,7 @@ import { Inspector } from "react-inspector";
 import { Column, useExpanded, useSortBy, useTable } from "react-table";
 
 import { Loading } from "@/components/hint";
+import { ChartConfig } from "@/config-types";
 import { Dimension, HierarchyValue, Measure } from "@/domain/data";
 import {
   useDataCubesComponentsQuery,
@@ -167,6 +168,9 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
 
   const [{ data: componentsData, fetching: fetchingComponents }] =
     useDataCubesComponentsQuery({
+      chartConfig: {
+        conversionUnitsByComponentId: {},
+      } as ChartConfig,
       variables: {
         ...intDatasource,
         locale: "en",
@@ -175,6 +179,9 @@ const PivotTable = ({ dataset }: { dataset: (typeof datasets)[string] }) => {
     });
   const [{ data: observationsData, fetching: fetchingObservations }] =
     useDataCubesObservationsQuery({
+      chartConfig: {
+        conversionUnitsByComponentId: {},
+      } as ChartConfig,
       variables: {
         ...intDatasource,
         locale: "en",

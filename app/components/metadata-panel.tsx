@@ -50,11 +50,13 @@ import {
   useMetadataPanelStoreActions,
 } from "@/components/metadata-panel-store";
 import { MotionBox } from "@/components/presence";
+import { getChartConfig } from "@/config-utils";
 import {
   BackButton,
   ChartConfig,
   DashboardFiltersConfig,
   DataSource,
+  useConfiguratorState,
 } from "@/configurator";
 import { DRAWER_WIDTH } from "@/configurator/components/drawers";
 import {
@@ -451,6 +453,7 @@ const CubesPanel = ({
   const [
     { data: dataCubesObservationsData, error: dataCubesObservationsError },
   ] = useDataCubesObservationsQuery({
+    chartConfig,
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
@@ -711,6 +714,8 @@ const ComponentTabPanel = ({
   expanded: boolean;
   cubeIri?: string;
 }) => {
+  const [state] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
   const classes = useOtherStyles();
   const { setSelectedComponent } = useMetadataPanelStoreActions();
   const label = useMemo(
@@ -745,7 +750,7 @@ const ComponentTabPanel = ({
   );
   const [{ data: componentsData, fetching: fetchingComponents }] =
     useDataCubesComponentsQuery({
-      pause: !expanded,
+      chartConfig,
       variables: {
         cubeFilters: [
           {
@@ -758,6 +763,7 @@ const ComponentTabPanel = ({
         sourceType: dataSource.type,
         sourceUrl: dataSource.url,
       },
+      pause: !expanded,
     });
   const loadedComponent = useMemo(() => {
     return [

@@ -618,6 +618,26 @@ msgstr "Grouped"
 msgid "controls.column.stacked"
 msgstr "Stacked"
 
+#: app/configurator/components/chart-options-selector/convert-unit.tsx
+msgid "controls.convert-unit"
+msgstr "Unit Conversion"
+
+#: app/configurator/components/chart-options-selector/convert-unit.tsx
+msgid "controls.convert-unit.custom-labels"
+msgstr "Custom unit labels"
+
+#: app/configurator/components/chart-options-selector/convert-unit.tsx
+msgid "controls.convert-unit.enable"
+msgstr "Enable unit conversion"
+
+#: app/configurator/components/chart-options-selector/convert-unit.tsx
+msgid "controls.convert-unit.factor"
+msgstr "Multiplying factor"
+
+#: app/configurator/components/chart-options-selector/convert-unit.tsx
+msgid "controls.convert-unit.original"
+msgstr "Original unit: {0}"
+
 #: app/configurator/components/chart-controls/color-palette.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
@@ -942,6 +962,7 @@ msgstr "Back to editing"
 msgid "controls.nav.back-to-preview"
 msgstr "Back to preview"
 
+#: app/configurator/components/chart-options-selector/convert-unit.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field.tsx

@@ -27,6 +27,7 @@ export const InteractiveFiltersConfigurator = ({
   const { fields } = chartConfig;
   const locale = useLocale();
   const [{ data }] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,

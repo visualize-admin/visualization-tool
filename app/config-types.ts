@@ -299,12 +299,24 @@ const Limit = t.intersection([
 ]);
 export type Limit = t.TypeOf<typeof Limit>;
 
+const ConversionUnit = t.type({
+  multiplier: t.number,
+  labels: t.type({
+    de: t.string,
+    fr: t.string,
+    it: t.string,
+    en: t.string,
+  }),
+});
+export type ConversionUnit = t.TypeOf<typeof ConversionUnit>;
+
 const GenericChartConfig = t.type({
   key: t.string,
   version: t.string,
   meta: Meta,
   cubes: t.array(Cube),
   limits: t.record(t.string, t.array(Limit)),
+  conversionUnitsByComponentId: t.record(t.string, ConversionUnit),
   activeField: t.union([t.string, t.undefined]),
 });
 
@@ -857,16 +869,16 @@ export type MapColorField =
 
 const MapAreaLayer = t.type({
   componentId: t.string,
-  // FIXME:  convert to new color field type
+  // FIXME: convert to new color field type
   color: t.union([CategoricalColorField, NumericalColorField]),
 });
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
 const MapSymbolLayer = t.type({
   componentId: t.string,
-  /** symbol radius (size) */
+  /** Symbol radius (size) */
   measureId: t.string,
-  // FIXME:  convert to new color field type
+  // FIXME: convert to new color field type
   color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
 });
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;

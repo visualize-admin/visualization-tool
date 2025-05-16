@@ -219,7 +219,7 @@ const useAreasState = (
     }
 
     return group(chartData, getXAsString);
-  }, [chartData, getXAsString, sumsByX, getY, yMeasure.id, normalize]);
+  }, [normalize, chartData, getXAsString, yMeasure.id, getY, sumsByX]);
 
   const chartWideData = useMemo(() => {
     return getWideData({

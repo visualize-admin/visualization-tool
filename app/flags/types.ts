@@ -30,6 +30,10 @@ export const FLAGS = [
     name: "custom-scale-domain" as const,
     description: "Allows users to set custom numerical scale domains.",
   },
+  {
+    name: "convert-units" as const,
+    description: "Enables unit conversion.",
+  },
 ];
 export const FLAG_NAMES = FLAGS.map((flag) => flag.name);
 type Flag = (typeof FLAGS)[number];

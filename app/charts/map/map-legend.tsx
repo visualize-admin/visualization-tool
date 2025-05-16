@@ -101,6 +101,12 @@ export const MapLegend = ({
       : undefined,
   ].filter(truthy);
   const formatters = useDimensionFormatters(measureDimensions);
+  const areaColorUnit = areaLayer?.colors.component.unit;
+  const symbolUnit = symbolLayer?.measureDimension?.unit;
+  const symbolColorUnit =
+    symbolLayer?.colors.type === "continuous"
+      ? symbolLayer?.colors.component.unit
+      : undefined;
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -113,28 +119,26 @@ export const MapLegend = ({
               sx={{ marginLeft: `${MARGIN.left}px` }}
             >
               {areaLayer.colors.component.label}
-              {areaLayer.colors.component.unit
-                ? ` (${areaLayer.colors.component.unit})`
-                : ""}
+              {areaColorUnit ? ` (${areaColorUnit})` : ""}
             </Typography>
             {areaLayer.colors.type === "continuous" ? (
               areaLayer.colors.interpolationType === "linear" ? (
                 <ContinuousColorLegend
                   paletteId={areaLayer.colors.paletteId}
-                  domain={areaLayer.dataDomain}
+                  domain={areaLayer.colors.domain}
                   getValue={areaLayer.colors.getValue}
                   valueFormatter={formatters[areaLayer.colors.component.id]}
                 />
               ) : areaLayer.colors.interpolationType === "quantize" ? (
                 <QuantizeColorLegend
                   colorScale={areaLayer.colors.scale as ScaleQuantize<string>}
-                  domain={areaLayer.dataDomain}
+                  domain={areaLayer.colors.domain}
                   getValue={areaLayer.colors.getValue}
                 />
               ) : areaLayer.colors.interpolationType === "quantile" ? (
                 <QuantileColorLegend
                   colorScale={areaLayer.colors.scale as ScaleQuantile<string>}
-                  domain={areaLayer.dataDomain}
+                  domain={areaLayer.colors.domain}
                   getValue={areaLayer.colors.getValue}
                 />
               ) : areaLayer.colors.interpolationType === "jenks" ? (
@@ -142,7 +146,7 @@ export const MapLegend = ({
                   colorScale={
                     areaLayer.colors.scale as ScaleThreshold<number, string>
                   }
-                  domain={areaLayer.dataDomain}
+                  domain={areaLayer.colors.domain}
                   getValue={areaLayer.colors.getValue}
                 />
               ) : null
@@ -156,9 +160,7 @@ export const MapLegend = ({
               <Box>
                 <Typography component="div" variant="caption">
                   {symbolLayer.colors.component.label}
-                  {symbolLayer.colors.component.unit
-                    ? ` (${symbolLayer.colors.component.unit})`
-                    : ""}
+                  {symbolColorUnit ? ` (${symbolColorUnit})` : ""}
                 </Typography>
                 {symbolLayer.colors.interpolationType === "linear" ? (
                   <ContinuousColorLegend
@@ -202,9 +204,7 @@ export const MapLegend = ({
               <Box>
                 <Typography component="div" variant="caption">
                   {symbolLayer.measureLabel}
-                  {symbolLayer.measureDimension.unit
-                    ? ` (${symbolLayer.measureDimension.unit})`
-                    : ""}
+                  {symbolUnit ? ` (${symbolUnit})` : ""}
                 </Typography>
                 <CircleLegend
                   valueFormatter={formatters[symbolLayer.measureDimension.id]}
@@ -215,7 +215,7 @@ export const MapLegend = ({
         )}
 
         {limits.map((limit) => {
-          const { configLimit, measureLimit } = limit;
+          const { configLimit, measureLimit, limitUnit } = limit;
 
           switch (measureLimit.type) {
             case "single":
@@ -223,6 +223,7 @@ export const MapLegend = ({
                 <Box>
                   <Typography component="div" variant="caption">
                     {measureLimit.name}
+                    {limitUnit ? ` (${limitUnit})` : ""}
                   </Typography>
                   <LimitLegend
                     maxValue={measureLimit.value}

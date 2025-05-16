@@ -8,6 +8,7 @@ import { default as ArrowLeft } from "./IcArrowLeft";
 import { default as ArrowRight } from "./IcArrowRight";
 import { default as ArrowUp } from "./IcArrowUp";
 import { default as ArrowUpRight } from "./IcArrowUpRight";
+import { default as Balance } from "./IcBalance";
 import { default as Bar } from "./IcBar";
 import { default as Bold } from "./IcBold";
 import { default as Bookmark } from "./IcBookmark";
@@ -170,6 +171,7 @@ export const Icons = {
   arrowRight: ArrowRight,
   arrowUp: ArrowUp,
   arrowUpRight: ArrowUpRight,
+  balance: Balance,
   bookmark: Bookmark,
   building: Building,
   calendar: Calendar,

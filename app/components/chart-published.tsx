@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
 import { useStore } from "zustand";
 
-import { DataSetTable } from "@/browse/datatable";
+import { ChartDataTablePreview } from "@/browse/chart-data-table-preview";
 import { extractChartConfigsComponentIds } from "@/charts/shared/chart-helpers";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
@@ -338,6 +338,7 @@ const ChartPublishedInnerImpl = ({
   const metadata = metadataData?.dataCubesMetadata;
   const componentIds = extractChartConfigsComponentIds(state.chartConfigs);
   const [{ data: componentsData }] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       ...commonQueryVariables,
       cubeFilters: chartConfig.cubes.map((cube) => ({
@@ -467,7 +468,7 @@ const ChartPublishedInnerImpl = ({
             />
             <TablePreviewWrapper>
               {isTable ? (
-                <DataSetTable
+                <ChartDataTablePreview
                   dataSource={dataSource}
                   chartConfig={chartConfig}
                   dashboardFilters={state.dashboardFilters}

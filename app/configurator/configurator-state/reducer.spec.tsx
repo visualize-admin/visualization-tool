@@ -495,6 +495,7 @@ describe("deriveFiltersFromFields", () => {
       Object {
         "activeField": undefined,
         "chartType": "pie",
+        "conversionUnitsByComponentId": Object {},
         "cubes": Array [
           Object {
             "filters": Object {
@@ -614,7 +615,7 @@ describe("deriveFiltersFromFields", () => {
             "it": "",
           },
         },
-        "version": "4.4.0",
+        "version": "4.5.0",
       }
     `);
   });

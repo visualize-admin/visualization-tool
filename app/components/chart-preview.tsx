@@ -20,7 +20,7 @@ import {
   useState,
 } from "react";
 
-import { DataSetTable } from "@/browse/datatable";
+import { ChartDataTablePreview } from "@/browse/chart-data-table-preview";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { ActionElementsContainer } from "@/components/action-elements-container";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
@@ -452,6 +452,7 @@ const ChartPreviewInner = ({
   });
   const componentIds = undefined;
   const [{ data: components }] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       ...commonQueryVariables,
       cubeFilters: chartConfig.cubes.map((cube) => ({
@@ -590,7 +591,7 @@ const ChartPreviewInner = ({
                 />
                 <TablePreviewWrapper>
                   {isTable ? (
-                    <DataSetTable
+                    <ChartDataTablePreview
                       dataSource={dataSource}
                       chartConfig={chartConfig}
                       dashboardFilters={state.dashboardFilters}

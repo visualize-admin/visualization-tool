@@ -143,6 +143,9 @@ export type EncodingOption<T extends ChartConfig = ChartConfig> =
       }) => [number, number];
     }
   | {
+      field: "convertUnit";
+    }
+  | {
       field: "showStandardError";
     }
   | {
@@ -664,6 +667,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               return getNonStackedDomain(observations, getY);
             },
           },
+          convertUnit: {},
         },
       },
       {
@@ -807,6 +811,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               return getNonStackedDomain(observations, getY);
             },
           },
+          convertUnit: {},
         },
       },
       {
@@ -1007,6 +1012,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               return getNonStackedDomain(observations, getX);
             },
           },
+          convertUnit: {},
         },
       },
       {
@@ -1169,6 +1175,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               return getNonStackedDomain(observations, getY);
             },
           },
+          convertUnit: {},
           showDots: {},
           showDotsSize: {},
         },
@@ -1237,6 +1244,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             onComponentIdChange: onColorComponentIdChange,
             onScaleTypeChange: onColorComponentScaleTypeChange,
           },
+          convertUnit: {},
         },
       },
       {
@@ -1267,6 +1275,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             componentTypes: ["NumericalMeasure"],
             optional: true,
           },
+          convertUnit: {},
         },
       },
       {
@@ -1291,6 +1300,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         filters: false,
         options: {
           showValues: {},
+          convertUnit: {},
         },
       },
       {
@@ -1323,6 +1333,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
+        options: {
+          convertUnit: {},
+        },
       },
       {
         idAttributes: ["componentId"],
@@ -1330,6 +1343,9 @@ const chartConfigOptionsUISpec: ChartSpecs = {
         optional: false,
         componentTypes: ["NumericalMeasure"],
         filters: false,
+        options: {
+          convertUnit: {},
+        },
       },
       {
         idAttributes: ["componentId"],
@@ -1381,6 +1397,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               chartConfig.fields.color.colorMapping = newColorMapping;
             },
           },
+          convertUnit: {},
         },
       },
       {
@@ -1428,6 +1445,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               };
             },
           },
+          convertUnit: {},
         },
       },
       {
@@ -1499,6 +1517,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               };
             },
           },
+          convertUnit: {},
         },
       },
       {

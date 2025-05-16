@@ -78,6 +78,10 @@ type _InteractiveFiltersAdjusters = {
 type BaseAdjusters<NewChartConfigType extends ChartConfig> = {
   cubes: FieldAdjuster<NewChartConfigType, GenericChartConfig["cubes"]>;
   limits: FieldAdjuster<NewChartConfigType, GenericChartConfig["limits"]>;
+  conversionUnitsByComponentId: FieldAdjuster<
+    NewChartConfigType,
+    GenericChartConfig["conversionUnitsByComponentId"]
+  >;
   interactiveFiltersConfig: InteractiveFiltersAdjusters;
 };
 
@@ -108,7 +112,7 @@ type BarAdjusters = BaseAdjusters<BarConfig> & {
     x: {
       componentId: FieldAdjuster<BarConfig, ComponentId>;
       showValues: FieldAdjuster<BarConfig, boolean>;
-      customDomain: FieldAdjuster<ColumnConfig, [number, number]>;
+      customDomain: FieldAdjuster<BarConfig, [number, number]>;
     };
     y: { componentId: FieldAdjuster<BarConfig, ComponentId> };
     color: FieldAdjuster<BarConfig, ColorField>;
@@ -131,7 +135,7 @@ type LineAdjusters = BaseAdjusters<LineConfig> & {
     y: {
       componentId: FieldAdjuster<LineConfig, ComponentId>;
       showValues: FieldAdjuster<LineConfig, boolean>;
-      customDomain: FieldAdjuster<ColumnConfig, [number, number]>;
+      customDomain: FieldAdjuster<LineConfig, [number, number]>;
     };
     color: FieldAdjuster<LineConfig, ColorField>;
     segment: FieldAdjuster<
@@ -152,7 +156,7 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
     y: {
       componentId: FieldAdjuster<AreaConfig, ComponentId>;
       showValues: FieldAdjuster<AreaConfig, boolean>;
-      customDomain: FieldAdjuster<ColumnConfig, [number, number]>;
+      customDomain: FieldAdjuster<AreaConfig, [number, number]>;
     };
     color: FieldAdjuster<AreaConfig, ColorField>;
     segment: FieldAdjuster<
@@ -169,8 +173,12 @@ type AreaAdjusters = BaseAdjusters<AreaConfig> & {
 
 type ScatterPlotAdjusters = BaseAdjusters<ScatterPlotConfig> & {
   fields: {
-    x: { componentId: FieldAdjuster<ScatterPlotConfig, ComponentId> };
-    y: { componentId: FieldAdjuster<ScatterPlotConfig, ComponentId> };
+    x: {
+      componentId: FieldAdjuster<ScatterPlotConfig, ComponentId>;
+    };
+    y: {
+      componentId: FieldAdjuster<ScatterPlotConfig, ComponentId>;
+    };
     color: FieldAdjuster<ScatterPlotConfig, ColorField>;
     segment: FieldAdjuster<
       ScatterPlotConfig,
@@ -233,7 +241,9 @@ type MapAdjusters = BaseAdjusters<MapConfig> & {
 type ComboLineSingleAdjusters = BaseAdjusters<ComboLineSingleConfig> & {
   fields: {
     x: { componentId: FieldAdjuster<ComboLineSingleConfig, ComponentId> };
-    y: { componentIds: FieldAdjuster<ComboLineSingleConfig, ComponentId> };
+    y: {
+      componentIds: FieldAdjuster<ComboLineSingleConfig, ComponentId>;
+    };
   };
 };
 

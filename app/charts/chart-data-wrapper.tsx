@@ -93,6 +93,7 @@ const ChartDataWrapperInner = <
     keepPreviousData: true,
   });
   const [componentsQuery] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       ...commonQueryVariables,
       cubeFilters: chartConfig.cubes.map((cube) => ({
@@ -105,6 +106,7 @@ const ChartDataWrapperInner = <
     keepPreviousData: true,
   });
   const [observationsQuery] = useDataCubesObservationsQuery({
+    chartConfig,
     variables: {
       ...commonQueryVariables,
       cubeFilters: observationQueryFilters,

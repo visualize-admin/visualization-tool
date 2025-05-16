@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Client, useClient } from "urql";
 
-import { ConfiguratorState, hasChartConfigs } from "@/configurator";
+import {
+  ChartConfig,
+  ConfiguratorState,
+  hasChartConfigs,
+} from "@/configurator";
 import {
   DataCubeComponents,
   DataCubeMetadata,
@@ -46,6 +50,7 @@ export const makeUseQuery =
   >({
     fetch,
     check,
+    transform,
   }: {
     check?: (variables: T["variables"]) => void;
     fetch: (
@@ -57,10 +62,14 @@ export const makeUseQuery =
       error?: Error;
       fetching: boolean;
     }>;
+    transform?: (
+      data: { data?: V | null; error?: Error; fetching: boolean },
+      options: T
+    ) => { data?: V | null; error?: Error; fetching: boolean };
   }) =>
   (options: T & { keepPreviousData?: boolean }) => {
     const client = useClient();
-    const [result, setResult] = useState<{
+    const [rawResult, setRawResult] = useState<{
       queryKey: string | null;
       data?: V | null;
       error?: Error;
@@ -72,9 +81,10 @@ export const makeUseQuery =
     if (!options.pause && check) {
       check(options.variables);
     }
+
     const executeQuery = useCallback(
-      async (options: T) => {
-        setResult((prev) => ({
+      async (options: { variables: T["variables"] }) => {
+        setRawResult((prev) => ({
           ...prev,
           fetching: false,
           data:
@@ -85,12 +95,12 @@ export const makeUseQuery =
           check(options.variables);
         }
         const result = await fetch(client, options.variables, () => {
-          setResult((prev) => ({
+          setRawResult((prev) => ({
             ...prev,
             fetching: true,
           }));
         });
-        setResult({ ...result, queryKey });
+        setRawResult({ ...result, queryKey });
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [queryKey]
@@ -104,6 +114,14 @@ export const makeUseQuery =
       executeQuery(options);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [queryKey, options.pause]);
+
+    const result = useMemo(() => {
+      if (!transform) {
+        return rawResult;
+      }
+
+      return transform(rawResult, options);
+    }, [rawResult, options]);
 
     return [result, executeQuery] as const;
   };
@@ -278,13 +296,101 @@ export const executeDataCubesComponentsQuery = async (
 
 /** Fetches components/dimensions along with the values */
 export const useDataCubesComponentsQuery = makeUseQuery<
-  DataCubesComponentsOptions,
+  DataCubesComponentsOptions & { chartConfig: ChartConfig },
   DataCubesComponentsData
 >({
   fetch: executeDataCubesComponentsQuery,
+  transform: transformDataCubesComponents,
 });
 
-type DataCubesObservationsOptions = {
+/**
+ * Transforms the data from the data cubes components query.
+ *
+ * @param data - The data from the data cubes components query.
+ * @param options - The options for the data cubes components query.
+ * @returns The transformed data.
+ */
+export function transformDataCubesComponents(
+  data: {
+    data?: DataCubesComponentsData | null;
+    error?: Error;
+    fetching: boolean;
+  },
+  options: DataCubesComponentsOptions & { chartConfig: ChartConfig }
+) {
+  const {
+    chartConfig: { conversionUnitsByComponentId },
+    variables: { locale },
+  } = options;
+
+  if (
+    !data.data ||
+    !conversionUnitsByComponentId ||
+    Object.keys(conversionUnitsByComponentId).length === 0
+  ) {
+    return data;
+  }
+
+  return {
+    ...data,
+    data: {
+      ...data.data,
+      dataCubesComponents: {
+        ...data.data.dataCubesComponents,
+        measures: data.data.dataCubesComponents.measures.map((measure) => {
+          const conversionUnit = conversionUnitsByComponentId[measure.id];
+
+          if (!conversionUnit) {
+            return measure;
+          }
+
+          return {
+            ...measure,
+            unit: conversionUnit.labels[locale as Locale] ?? measure.unit,
+            originalUnit: measure.unit,
+            limits: measure.limits.map((limit) => {
+              switch (limit.type) {
+                case "single":
+                  return {
+                    ...limit,
+                    value: limit.value * conversionUnit.multiplier,
+                  };
+                case "range":
+                  return {
+                    ...limit,
+                    from: limit.from * conversionUnit.multiplier,
+                    to: limit.to * conversionUnit.multiplier,
+                  };
+                default:
+                  const _exhaustiveCheck: never = limit;
+                  return _exhaustiveCheck;
+              }
+            }),
+            values: measure.values.map((value) => {
+              if (typeof value.value === "number") {
+                return {
+                  ...value,
+                  value: value.value * conversionUnit.multiplier,
+                };
+              }
+
+              if (typeof value.value === "string") {
+                return {
+                  ...value,
+                  value: Number(value.value) * conversionUnit.multiplier,
+                };
+              }
+
+              return value;
+            }),
+          };
+        }),
+      },
+    },
+  };
+}
+
+export type DataCubesObservationsOptions = {
   variables: Omit<DataCubeComponentsQueryVariables, "cubeFilter"> & {
     cubeFilters: DataCubeObservationFilter[];
   };
@@ -362,11 +468,68 @@ export const executeDataCubesObservationsQuery = async (
 };
 
 export const useDataCubesObservationsQuery = makeUseQuery<
-  DataCubesObservationsOptions,
+  DataCubesObservationsOptions & { chartConfig: ChartConfig },
   DataCubesObservationsData
 >({
   fetch: executeDataCubesObservationsQuery,
+  transform: transformDataCubesObservations,
 });
+
+/**
+ * Transforms the data from the data cubes observations query.
+ *
+ * @param data - The data from the data cubes observations query.
+ * @param options - The options for the data cubes observations query.
+ * @returns The transformed data.
+ */
+export function transformDataCubesObservations(
+  data: {
+    data?: DataCubesObservationsData | null;
+    error?: Error;
+    fetching: boolean;
+  },
+  options: DataCubesObservationsOptions & { chartConfig: ChartConfig }
+) {
+  const {
+    chartConfig: { conversionUnitsByComponentId },
+  } = options;
+
+  if (
+    !data.data ||
+    !conversionUnitsByComponentId ||
+    Object.keys(conversionUnitsByComponentId).length === 0
+  ) {
+    return data;
+  }
+
+  return {
+    ...data,
+    data: {
+      dataCubesObservations: {
+        ...data.data.dataCubesObservations,
+        data: data.data.dataCubesObservations.data.map((observation) => {
+          const newObservation = { ...observation };
+
+          Object.entries(conversionUnitsByComponentId).forEach(
+            ([componentId, { multiplier }]) => {
+              if (componentId in newObservation) {
+                const value = newObservation[componentId];
+
+                if (typeof value === "number") {
+                  newObservation[componentId] = value * multiplier;
+                } else if (typeof value === "string") {
+                  newObservation[componentId] = Number(value) * multiplier;
+                }
+              }
+            }
+          );
+
+          return newObservation;
+        }),
+      },
+    },
+  };
+}
 
 type FetchAllUsedCubeComponentsOptions = {
   state: ConfiguratorState;

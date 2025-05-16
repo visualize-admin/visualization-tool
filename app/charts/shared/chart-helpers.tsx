@@ -197,7 +197,7 @@ const getMapChartConfigAdditionalFieldIds = ({ fields }: MapConfig) => {
   return additionalFields;
 };
 
-const getComboChartConfigAdditionalFields = (chartConfig: ComboChartConfig) => {
+const getComboChartComponentIds = (chartConfig: ComboChartConfig) => {
   switch (chartConfig.chartType) {
     case "comboLineSingle":
       return chartConfig.fields.y.componentIds;
@@ -243,7 +243,7 @@ export const extractChartConfigComponentIds = ({
     chartConfig.chartType === "map"
       ? getMapChartConfigAdditionalFieldIds(chartConfig)
       : isComboChartConfig(chartConfig)
-        ? getComboChartConfigAdditionalFields(chartConfig)
+        ? getComboChartComponentIds(chartConfig)
         : [];
   const filterIds = includeFilters
     ? getChartConfigFilterComponentIds(chartConfig)
@@ -622,10 +622,10 @@ export const normalizeData = (
 const SlugRe = /\W+/g;
 export const getSlugifiedId = (id: string) => id.replace(SlugRe, "_");
 
-export const getLabelWithUnit = (dimension: Component): string => {
-  return dimension.unit
-    ? `${dimension.label} (${dimension.unit})`
-    : dimension.label;
+export const getLabelWithUnit = (component: Component) => {
+  return component.unit
+    ? `${component.label} (${component.unit})`
+    : component.label;
 };
 
 export const checkForMissingValuesInSegments = (
