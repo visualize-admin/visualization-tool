@@ -10,7 +10,7 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import {
   ColumnsGroupedStateVariables,
@@ -45,7 +45,7 @@ import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { ColumnConfig } from "@/configurator";
-import { Observation } from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
@@ -73,6 +73,7 @@ export type GroupedColumnsState = CommonChartState &
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
+    formatXAxisTick?: (d: string) => string;
   };
 
 const useColumnsGroupedState = (
@@ -87,6 +88,7 @@ const useColumnsGroupedState = (
     getXAsDate,
     getXAbbreviationOrLabel,
     getXLabel,
+    formatXDate,
     yMeasure,
     getY,
     getMinY,
@@ -393,6 +395,13 @@ const useColumnsGroupedState = (
 
   const isMobile = useIsMobile();
 
+  const maybeFormatDate = useCallback(
+    (tick: string) => {
+      return isTemporalDimension(xDimension) ? formatXDate(tick) : tick;
+    },
+    [xDimension, formatXDate]
+  );
+
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const bw = xScale.bandwidth();
@@ -425,12 +434,13 @@ const useColumnsGroupedState = (
           xAnchor: xAnchorRaw,
           topAnchor: !fields.segment,
         });
+    const xLabel = getXAbbreviationOrLabel(datum);
 
     return {
       xAnchor: xAnchorRaw + (placement.x === "right" ? 0.5 : -0.5) * bw,
       yAnchor,
       placement,
-      value: getXAbbreviationOrLabel(datum),
+      value: maybeFormatDate(xLabel),
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
@@ -466,6 +476,7 @@ const useColumnsGroupedState = (
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
+    formatXAxisTick: maybeFormatDate,
     ...variables,
   };
 };

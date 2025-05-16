@@ -62,7 +62,7 @@ import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { ColumnConfig } from "@/configurator";
-import { Observation } from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
@@ -95,6 +95,7 @@ export type StackedColumnsState = CommonChartState &
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
     valueLabelFormatter: ValueLabelFormatter;
+    formatXAxisTick?: (d: string) => string;
   };
 
 const useColumnsStackedState = (
@@ -109,6 +110,7 @@ const useColumnsStackedState = (
     getXAsDate,
     getXAbbreviationOrLabel,
     getXLabel,
+    formatXDate,
     yMeasure,
     getY,
     segmentDimension,
@@ -451,6 +453,13 @@ const useColumnsStackedState = (
 
   const isMobile = useIsMobile();
 
+  const maybeFormatDate = useCallback(
+    (tick: string) => {
+      return isTemporalDimension(xDimension) ? formatXDate(tick) : tick;
+    },
+    [xDimension, formatXDate]
+  );
+
   // Tooltips
   const getAnnotationInfo = useCallback(
     (datum: Observation): TooltipInfo => {
@@ -484,12 +493,13 @@ const useColumnsStackedState = (
             xAnchor: xAnchorRaw,
             topAnchor: !fields.segment,
           });
+      const xLabel = getXAbbreviationOrLabel(datum);
 
       return {
         xAnchor: xAnchorRaw + (placement.x === "right" ? 0.5 : -0.5) * bw,
         yAnchor,
         placement,
-        value: getXAbbreviationOrLabel(datum),
+        value: maybeFormatDate(xLabel),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
           value: yValueFormatter(getY(datum), getIdentityY(datum)),
@@ -523,6 +533,7 @@ const useColumnsStackedState = (
       isMobile,
       normalize,
       yScale,
+      maybeFormatDate,
     ]
   );
 
@@ -552,6 +563,7 @@ const useColumnsStackedState = (
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     valueLabelFormatter,
+    formatXAxisTick: maybeFormatDate,
     ...variables,
   };
 };

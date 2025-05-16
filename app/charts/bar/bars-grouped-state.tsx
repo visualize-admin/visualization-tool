@@ -10,7 +10,7 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import {
   BarsGroupedStateVariables,
@@ -45,7 +45,7 @@ import useChartFormatters from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { BarConfig } from "@/configurator";
-import { Observation } from "@/domain/data";
+import { isTemporalDimension, Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import { sortByIndex } from "@/utils/array";
@@ -73,6 +73,7 @@ export type GroupedBarsState = CommonChartState &
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
+    formatYAxisTick?: (tick: string) => string;
   };
 
 const useBarsGroupedState = (
@@ -89,6 +90,7 @@ const useBarsGroupedState = (
     getYLabel,
     xMeasure,
     getY,
+    formatYDate,
     getMinX,
     getXErrorRange,
     getFormattedXUncertainty,
@@ -392,6 +394,13 @@ const useBarsGroupedState = (
 
   const isMobile = useIsMobile();
 
+  const maybeFormatDate = useCallback(
+    (tick: string) => {
+      return isTemporalDimension(yDimension) ? formatYDate(tick) : tick;
+    },
+    [yDimension, formatYDate]
+  );
+
   // Tooltip
   const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const bw = yScale.bandwidth();
@@ -424,12 +433,13 @@ const useBarsGroupedState = (
           xAnchor,
           topAnchor: !fields.segment,
         });
+    const yLabel = getYAbbreviationOrLabel(datum);
 
     return {
       yAnchor: yAnchorRaw + (placement.y === "bottom" ? 0.5 : -0.5) * bw,
       xAnchor,
       placement,
-      value: getYAbbreviationOrLabel(datum),
+      value: maybeFormatDate(yLabel),
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: xValueFormatter(getX(datum)),
@@ -465,6 +475,7 @@ const useBarsGroupedState = (
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
+    formatYAxisTick: maybeFormatDate,
     ...variables,
   };
 };

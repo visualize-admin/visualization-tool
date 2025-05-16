@@ -25,6 +25,7 @@ export const AxisHeightBand = () => {
     yDimension,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop,
+    formatYAxisTick,
   } = useChartState() as BarsState | GroupedBarsState | StackedBarsState;
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
@@ -46,13 +47,8 @@ export const AxisHeightBand = () => {
       const hasNegativeValues = xScale.domain()[0] < 0;
       const axis = axisLeft(yScale)
         .tickSizeOuter(0)
-        .tickSizeInner(hasNegativeValues ? -chartHeight : 6);
-
-      if (yTimeUnit) {
-        axis.tickFormat((d) => formatDate(d, yTimeUnit));
-      } else {
-        axis.tickFormat((d) => getYLabel(d));
-      }
+        .tickSizeInner(hasNegativeValues ? -chartHeight : 6)
+        .tickFormat(formatYAxisTick ?? ((tick) => tick));
 
       const g = renderContainer(ref.current, {
         id: "axis-height-band",
@@ -94,6 +90,7 @@ export const AxisHeightBand = () => {
     yTimeUnit,
     yScale,
     fontSize,
+    formatYAxisTick,
   ]);
 
   return (

@@ -56,10 +56,52 @@ export const mergeSearchCubes = (
   a: SearchCube | undefined,
   b: SearchCube
 ): SearchCube => {
+  const deduplicateDimensions = (dimensions: SearchCube["dimensions"] = []) => {
+    const seen = new Set<string>();
+
+    return dimensions.filter((d) => {
+      if (seen.has(d.id)) {
+        return false;
+      }
+
+      seen.add(d.id);
+
+      return true;
+    });
+  };
+
+  const deduplicateTermsets = (termsets: { iri: string; label: string }[]) => {
+    const seen = new Set<string>();
+
+    return termsets.filter((termset) => {
+      if (seen.has(termset.iri)) {
+        return false;
+      }
+
+      seen.add(termset.iri);
+
+      return true;
+    });
+  };
+
+  const mergedDimensions = deduplicateDimensions([
+    ...(a?.dimensions ?? []),
+    ...(b.dimensions ?? []),
+  ]).map((d) => ({
+    ...d,
+    termsets: deduplicateTermsets(d.termsets),
+  }));
+
+  const mergedTermsets = deduplicateTermsets([
+    ...(a?.termsets ?? []),
+    ...(b.termsets ?? []),
+  ]);
+
   return {
     ...a,
     ...b,
-    dimensions: [...(a?.dimensions ?? []), ...(b.dimensions ?? [])],
+    dimensions: mergedDimensions,
+    termsets: mergedTermsets,
   };
 };
 
