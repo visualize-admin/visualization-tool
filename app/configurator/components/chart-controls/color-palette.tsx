@@ -510,6 +510,7 @@ const ColorPaletteControls = ({
         dimensionId: component.id,
         values: component.values,
         random: true,
+        customPalette,
       },
     });
   });
