@@ -99,8 +99,8 @@ export const CustomLayersSelector = () => {
     dispatch({
       type: "CUSTOM_LAYER_SWAP",
       value: {
-        oldIndex,
-        newIndex,
+        oldIndex: configLayers.length - 1 - oldIndex,
+        newIndex: configLayers.length - 1 - newIndex,
       },
     });
   });
@@ -223,7 +223,7 @@ export const CustomLayersSelector = () => {
             <Droppable droppableId="layers">
               {(provided) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {configLayers.map((configLayer, i) => {
+                  {[...configLayers].reverse().map((configLayer, i) => {
                     return (
                       <DraggableLayer
                         key={`${configLayer.type}-${configLayer.id}`}
@@ -241,12 +241,12 @@ export const CustomLayersSelector = () => {
         ) : null}
 
         {layersStatus === "fetching" ? (
-          <Box sx={{ width: "100%" }}>
+          <div style={{ width: "100%" }}>
             <ControlSectionSkeleton />
-          </Box>
+          </div>
         ) : null}
 
-        <Box>
+        <div>
           <Button
             variant="contained"
             color="cobalt"
@@ -254,7 +254,7 @@ export const CustomLayersSelector = () => {
           >
             Add layer
           </Button>
-        </Box>
+        </div>
       </ControlSectionContent>
     </ControlSection>
   );
