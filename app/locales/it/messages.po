@@ -283,6 +283,7 @@ msgstr "Mostra mappa del mondo"
 msgid "chart.map.layers.base.view.locked"
 msgstr "Vista bloccata"
 
+#: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.custom-layers"
 msgstr "Livelli personalizzati"
@@ -1278,6 +1279,7 @@ msgstr "Stile del testo"
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.dimension"
 msgstr "Seleziona una dimensione"
 
@@ -1903,6 +1905,26 @@ msgstr "No"
 msgid "profile.chart.rename-dialog.title"
 msgstr "Rinomina la visualizzazione"
 
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.can-display-layers"
+msgstr "Può visualizzare i livelli"
+
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.can-display-on-map-geo-admin"
+msgstr "Può visualizzare i livelli sulla mappa map.geo.admin.ch"
+
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.can-list-layers"
+msgstr "Può elencare i livelli"
+
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.title"
+msgstr "Informazioni sul provider"
+
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.working-layers"
+msgstr "Livelli che funzionano"
+
 #: app/components/publish-actions.tsx
 msgid "publication.embed.advanced-settings"
 msgstr "Impostazioni avanzate"
@@ -2044,21 +2066,25 @@ msgstr "Settimana"
 msgid "time-units.Year"
 msgstr "Anno"
 
-#: app/charts/map/wmts-providers-autocomplete.tsx
-msgstr "wmts-providers-autocomplete.placeholder"
-msgstr "Inserisci l'URL di un provider WMTS"
+#: app/charts/map/wms-wmts-providers-autocomplete.tsx
+msgid "wmts-providers-autocomplete.placeholder"
+msgstr "Cerca provider..."
 
 #: app/configurator/components/custom-layers-selector.tsx
-msgstr "wmts.custom-layer.section-title"
-msgstr "Aggiungi un livello"
+msgid "wmts.custom-layer.section-title"
+msgstr "Livelli personalizzati"
 
-#: app/charts/map/wmts-selector.tsx
-msgstr "wmts.legend-title"
-msgstr "Leggenda"
+#: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.layer-not-supported-crs"
+msgstr "Il livello non supporta il sistema di riferimento EPSG:3857."
 
-#: app/charts/map/wmts-selector.tsx
-msgstr "wmts.search-placeholder"
-msgstr "Cerca un provider WMTS"
+#: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.legend-title"
+msgstr "Legenda"
+
+#: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.search-placeholder"
+msgstr "Cerca livelli..."
 
 #: app/components/confirmation-dialog.tsx
 msgid "yes"

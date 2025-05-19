@@ -283,6 +283,7 @@ msgstr "Show Worldmap"
 msgid "chart.map.layers.base.view.locked"
 msgstr "Locked view"
 
+#: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.custom-layers"
 msgstr "Custom Layers"
@@ -1278,6 +1279,7 @@ msgstr "Text Style"
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.dimension"
 msgstr "Select a dimension"
 
@@ -1903,6 +1905,26 @@ msgstr "No"
 msgid "profile.chart.rename-dialog.title"
 msgstr "Rename the visualization"
 
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.can-display-layers"
+msgstr "Can display layers"
+
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.can-display-on-map-geo-admin"
+msgstr "Can display on map.geo.admin.ch"
+
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.can-list-layers"
+msgstr "Can list layers"
+
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.title"
+msgstr "The WMS / WMTS support is currently in beta and there are some limitations with this provider, please see the following information."
+
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.working-layers"
+msgstr "Working layers"
+
 #: app/components/publish-actions.tsx
 msgid "publication.embed.advanced-settings"
 msgstr "Advanced settings"
@@ -2044,7 +2066,7 @@ msgstr "Week"
 msgid "time-units.Year"
 msgstr "Year"
 
-#: app/charts/map/wmts-providers-autocomplete.tsx
+#: app/charts/map/wms-wmts-providers-autocomplete.tsx
 msgid "wmts-providers-autocomplete.placeholder"
 msgstr "Enter a WMTS provider URL"
 
@@ -2052,11 +2074,15 @@ msgstr "Enter a WMTS provider URL"
 msgid "wmts.custom-layer.section-title"
 msgstr "Add custom layer"
 
-#: app/charts/map/wmts-selector.tsx
+#: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.layer-not-supported-crs"
+msgstr "Layer not supported, no supported CRS"
+
+#: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.legend-title"
 msgstr "Legend"
 
-#: app/charts/map/wmts-selector.tsx
+#: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.search-placeholder"
 msgstr "Search custom layers"
 

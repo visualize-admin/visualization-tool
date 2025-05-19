@@ -13,6 +13,8 @@ You can also check the
 
 - Features
   - Added a way to set custom conversion units for numerical measures
+  - Reversed the order of custom layers in the custom layers selector, so that
+    the topmost layer is displayed first
 
 # 5.7.7 - 2025-05-13
 
@@ -25,6 +27,10 @@ You can also check the
   - Chart area no longer overflows below X or Y axes when setting custom scale
     domains
   - Band axis ticks should now be aligned correctly
+  - Support of urn CRS in WMTS / WMS layers (enabled are ESPG:3857)
+  - Support for getTile operation on WMTS / WMS
+  - Update providers list according to
+    https://rdataflow.github.io/WMTS-WMS-monitor
 
 # 5.7.6 - 2025-05-06
 
