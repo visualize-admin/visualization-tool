@@ -108,7 +108,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
   root: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-end",
     width: "100%",
     gap: theme.spacing(1),
     textAlign: "left",
