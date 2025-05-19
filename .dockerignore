@@ -3,5 +3,6 @@
 *Dockerfile*
 # Ignore node_modules to prevent issues with wrong binaries (e.g. sentry cli)
 node_modules
+app/node_modules
 .DS_Store
 *.log
