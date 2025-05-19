@@ -19,6 +19,8 @@ You can also check the
     on temporal entity dimension
   - Dimensions with multiple termsets are now displayed correctly in the dataset
     browse view (no more duplicates)
+  - Resetting and shuffling custom color palettes shouldn't use default colors
+    anymore
 
 # 5.7.7 - 2025-05-13
 
