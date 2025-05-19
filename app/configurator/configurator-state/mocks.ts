@@ -39,6 +39,7 @@ export const configStateMock = {
         activeField: "",
         cubes: [{ iri: "https://first-dataset", filters: {} }],
         limits: {},
+        conversionUnitsByComponentId: {},
         fields: {
           areaLayer: {
             componentId: "year-period-1",
@@ -136,6 +137,7 @@ export const configStateMock = {
           },
         ],
         limits: {},
+        conversionUnitsByComponentId: {},
         chartType: "column",
         interactiveFiltersConfig: {
           legend: {
@@ -1240,6 +1242,7 @@ export const configJoinedCubes: Partial<
       },
     ],
     limits: {},
+    conversionUnitsByComponentId: {},
     chartType: "table",
     settings: { showSearch: true, showAllRows: false },
     sorting: [],
@@ -1617,6 +1620,7 @@ export const configJoinedCubes: Partial<
       },
     ],
     limits: {},
+    conversionUnitsByComponentId: {},
     chartType: "pie",
     interactiveFiltersConfig: {
       legend: { active: false, componentId: "" },

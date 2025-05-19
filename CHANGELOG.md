@@ -12,6 +12,7 @@ You can also check the
 # Unreleased
 
 - Features
+  - Added a way to set custom conversion units for numerical measures
   - Reversed the order of custom layers in the custom layers selector, so that
     the topmost layer is displayed first
 - Fixes

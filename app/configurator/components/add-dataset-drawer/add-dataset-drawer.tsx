@@ -177,7 +177,7 @@ const useMergeDatasetsData = ({
 
   // Getting cube dimensions, to find temporal dimensions
   const [cubesComponentQuery] = useDataCubesComponentsQuery({
-    pause: pause,
+    chartConfig: activeChartConfig,
     variables: {
       ...commonQueryVariables,
       cubeFilters: currentCubes.map((cube) => ({
@@ -185,12 +185,13 @@ const useMergeDatasetsData = ({
         joinBy: cube.joinBy,
       })),
     },
+    pause,
   });
 
   // Getting cube termsets, to then search for cubes with at least one matching termset
   // TODO The cube filters should use all of the cubes and not just the first one
   const [cubeComponentTermsets] = useDataCubesComponentTermsetsQuery({
-    pause: pause,
+    pause,
     variables: {
       locale,
       sourceType: state.dataSource.type,
@@ -606,6 +607,7 @@ export const AddDatasetDrawer = ({
       {otherCube && inferredJoinBy ? (
         <PreviewDataTable
           key={otherCube.iri}
+          chartConfig={activeChartConfig}
           dataSource={state.dataSource}
           currentComponents={components}
           existingCubes={currentCubes}

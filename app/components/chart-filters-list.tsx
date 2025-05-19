@@ -52,6 +52,7 @@ export const ChartFiltersList = ({
   }, [queryFilters, cubeIri]);
   // TODO: Refactor to somehow access current filter labels instead of fetching them again
   const [{ data, fetching }] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,

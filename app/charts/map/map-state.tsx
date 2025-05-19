@@ -416,11 +416,7 @@ const useNumericalColors = (
     colorSpec?.type === "numerical" ? colorSpec.componentId : "";
   const getValue = useCallback(
     (d: Observation) =>
-      componentId
-        ? d[componentId] !== null
-          ? Number(d[componentId])
-          : null
-        : null,
+      d[componentId] !== null ? Number(d[componentId]) : null,
     [componentId]
   );
   const { getFormattedYUncertainty } = useNumericalYErrorVariables(
@@ -433,13 +429,11 @@ const useNumericalColors = (
       return;
     }
 
-    const component = measures.find(
-      (d) => d.id === colorSpec.componentId
-    ) as Measure;
-    const domain = extent(
-      data.map((d) => d[colorSpec.componentId]),
-      (d) => +d!
-    ) as [number, number];
+    const component = measures.find((d) => d.id === componentId) as Measure;
+    const domain = extent(data.map(getValue).filter(truthy)) as [
+      number,
+      number,
+    ];
     const colorScale = getNumericalColorScale({
       color: colorSpec,
       getValue,
@@ -455,10 +449,14 @@ const useNumericalColors = (
       interpolationType: colorSpec.interpolationType,
       getValue,
       getColor: (d: Observation) => {
-        const c = colorScale(+d[colorSpec.componentId]!);
+        const value = getValue(d);
 
-        if (c) {
-          return colorToRgbArray(c, colorSpec.opacity * 2.55);
+        if (value !== null) {
+          const c = colorScale(value);
+
+          if (c) {
+            return colorToRgbArray(c, colorSpec.opacity * 2.55);
+          }
         }
 
         return [0, 0, 0, 255 * 0.1];
@@ -466,7 +464,14 @@ const useNumericalColors = (
       getFormattedError: getFormattedYUncertainty,
       domain,
     };
-  }, [colorSpec, data, getFormattedYUncertainty, getValue, measures]);
+  }, [
+    colorSpec,
+    componentId,
+    data,
+    getFormattedYUncertainty,
+    getValue,
+    measures,
+  ]);
 };
 
 const useColors = ({
