@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import get from "lodash/get";
-import { MouseEventHandler, useCallback, useState } from "react";
+import { MouseEventHandler, useMemo, useState } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { hasDimensionColors } from "@/charts/shared/colors";
@@ -342,6 +342,7 @@ export const ColorPalette = ({
           component={component}
           state={state}
           colorConfigPath={colorConfigPath}
+          customColorPalettes={customColorPalettes}
         />
       )}
       <ConfiguratorDrawer open={!!anchorEl} hideBackdrop>
@@ -455,11 +456,13 @@ const ColorPaletteControls = ({
   colorConfigPath,
   component,
   state,
+  customColorPalettes,
 }: {
   field: string;
   colorConfigPath?: string;
   component: Component;
   state: ConfiguratorStateConfiguringChart;
+  customColorPalettes: CustomPaletteType[] | undefined;
 }) => {
   const [, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
@@ -471,6 +474,9 @@ const ColorPaletteControls = ({
         `fields["${field}"].${colorConfigPath ? `${colorConfigPath}.` : ""}paletteId`,
         DEFAULT_CATEGORICAL_PALETTE_ID
       ) as string);
+  const customPalette = useMemo(() => {
+    return customColorPalettes?.find((p) => p.paletteId === paletteId);
+  }, [customColorPalettes, paletteId]);
 
   const colorMapping = isColorInConfig(chartConfig)
     ? get(chartConfig, `fields.color.colorMapping`)
@@ -481,26 +487,39 @@ const ColorPaletteControls = ({
         }colorMapping`
       ) as Record<string, string> | undefined);
 
-  const resetColorPalette = useCallback(
-    () =>
-      dispatch({
-        type: "CHART_PALETTE_RESET",
-        value: {
-          field: isColorInConfig(chartConfig) ? "color" : field,
-          colorConfigPath,
-          colorMapping: mapValueIrisToColor({
-            paletteId,
-            dimensionValues: component.values,
-          }),
-        },
-      }),
-    [colorConfigPath, component, dispatch, field, paletteId, chartConfig]
-  );
+  const resetColorPalette = useEvent(() => {
+    dispatch({
+      type: "CHART_PALETTE_RESET",
+      value: {
+        field: isColorInConfig(chartConfig) ? "color" : field,
+        colorConfigPath,
+        colorMapping: mapValueIrisToColor({
+          paletteId,
+          dimensionValues: component.values,
+          customPalette,
+        }),
+      },
+    });
+  });
+  const shuffleColors = useEvent(() => {
+    dispatch({
+      type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
+      value: {
+        field: isColorInConfig(chartConfig) ? "color" : field,
+        colorConfigPath,
+        dimensionId: component.id,
+        values: component.values,
+        random: true,
+      },
+    });
+  });
 
   if (colorMapping) {
-    const currentPalette = getPalette({ paletteId });
+    const currentPalette = getPalette({
+      paletteId,
+      fallbackPalette: customPalette?.colors,
+    });
     const colorMappingColors = Object.values(colorMapping);
-
     const nbMatchedColors = colorMappingColors.length;
     const matchedColorsInPalette = currentPalette.slice(0, nbMatchedColors);
     const same =
@@ -526,23 +545,7 @@ const ColorPaletteControls = ({
           <Trans id="controls.color.palette.reset">Reset color palette</Trans>
         </Button>
         •
-        <Button
-          variant="text"
-          color="blue"
-          size="xs"
-          onClick={() => {
-            return dispatch({
-              type: "CHART_CONFIG_UPDATE_COLOR_MAPPING",
-              value: {
-                field: isColorInConfig(chartConfig) ? "color" : field,
-                colorConfigPath,
-                dimensionId: component.id,
-                values: component.values,
-                random: true,
-              },
-            });
-          }}
-        >
+        <Button variant="text" color="blue" size="xs" onClick={shuffleColors}>
           <Trans id="controls.filters.select.refresh-colors">
             Shuffle colors
           </Trans>
