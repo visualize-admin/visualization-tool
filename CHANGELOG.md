@@ -20,6 +20,9 @@ You can also check the
     on temporal entity dimension
   - Dimensions with multiple termsets are now displayed correctly in the dataset
     browse view (no more duplicates)
+- Styles
+  - Common CI / CD components (Header, Logo, TopBar) should now have correct
+    styling
 
 # 5.7.7 - 2025-05-13
 
