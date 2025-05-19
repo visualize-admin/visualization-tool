@@ -1,5 +1,6 @@
 import { descending } from "d3-array";
 import groupBy from "lodash/groupBy";
+import uniqBy from "lodash/uniqBy";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { SearchCube } from "@/domain/data";
@@ -56,46 +57,18 @@ export const mergeSearchCubes = (
   a: SearchCube | undefined,
   b: SearchCube
 ): SearchCube => {
-  const deduplicateDimensions = (dimensions: SearchCube["dimensions"] = []) => {
-    const seen = new Set<string>();
-
-    return dimensions.filter((d) => {
-      if (seen.has(d.id)) {
-        return false;
-      }
-
-      seen.add(d.id);
-
-      return true;
-    });
-  };
-
-  const deduplicateTermsets = (termsets: { iri: string; label: string }[]) => {
-    const seen = new Set<string>();
-
-    return termsets.filter((termset) => {
-      if (seen.has(termset.iri)) {
-        return false;
-      }
-
-      seen.add(termset.iri);
-
-      return true;
-    });
-  };
-
-  const mergedDimensions = deduplicateDimensions([
-    ...(a?.dimensions ?? []),
-    ...(b.dimensions ?? []),
-  ]).map((d) => ({
+  const mergedDimensions = uniqBy(
+    [...(a?.dimensions ?? []), ...(b.dimensions ?? [])],
+    "id"
+  ).map((d) => ({
     ...d,
-    termsets: deduplicateTermsets(d.termsets),
+    termsets: uniqBy(d.termsets, "iri"),
   }));
 
-  const mergedTermsets = deduplicateTermsets([
-    ...(a?.termsets ?? []),
-    ...(b.termsets ?? []),
-  ]);
+  const mergedTermsets = uniqBy(
+    [...(a?.termsets ?? []), ...(b.termsets ?? [])],
+    "iri"
+  );
 
   return {
     ...a,
