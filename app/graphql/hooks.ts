@@ -43,7 +43,8 @@ const useQueryKey = (options: object) => {
 export const makeUseQuery =
   <
     T extends {
-      variables: object;
+      chartConfig?: ChartConfig;
+      variables: object & { locale: string };
       pause?: boolean;
     },
     V,
@@ -64,7 +65,10 @@ export const makeUseQuery =
     }>;
     transform?: (
       data: { data?: V | null; error?: Error; fetching: boolean },
-      options: T
+      options: {
+        locale: string;
+        conversionUnitsByComponentId: ChartConfig["conversionUnitsByComponentId"];
+      }
     ) => { data?: V | null; error?: Error; fetching: boolean };
   }) =>
   (options: T & { keepPreviousData?: boolean }) => {
@@ -116,12 +120,20 @@ export const makeUseQuery =
     }, [queryKey, options.pause]);
 
     const result = useMemo(() => {
-      if (!transform) {
+      if (!transform || !options.chartConfig?.conversionUnitsByComponentId) {
         return rawResult;
       }
 
-      return transform(rawResult, options);
-    }, [rawResult, options]);
+      return transform(rawResult, {
+        locale: options.variables.locale,
+        conversionUnitsByComponentId:
+          options.chartConfig.conversionUnitsByComponentId,
+      });
+    }, [
+      rawResult,
+      options.variables.locale,
+      options.chartConfig?.conversionUnitsByComponentId,
+    ]);
 
     return [result, executeQuery] as const;
   };
@@ -304,7 +316,8 @@ export const useDataCubesComponentsQuery = makeUseQuery<
 });
 
 /**
- * Transforms the data from the data cubes components query.
+ * Transforms the data from the data cubes components query, converting
+ * the values to the overridden unit.
  *
  * @param data - The data from the data cubes components query.
  * @param options - The options for the data cubes components query.
@@ -316,12 +329,12 @@ export function transformDataCubesComponents(
     error?: Error;
     fetching: boolean;
   },
-  options: DataCubesComponentsOptions & { chartConfig: ChartConfig }
+  options: {
+    locale: string;
+    conversionUnitsByComponentId: ChartConfig["conversionUnitsByComponentId"];
+  }
 ) {
-  const {
-    chartConfig: { conversionUnitsByComponentId },
-    variables: { locale },
-  } = options;
+  const { locale, conversionUnitsByComponentId } = options;
 
   if (
     !data.data ||
@@ -476,7 +489,8 @@ export const useDataCubesObservationsQuery = makeUseQuery<
 });
 
 /**
- * Transforms the data from the data cubes observations query.
+ * Transforms the data from the data cubes observations query, converting
+ * the values to the overridden unit.
  *
  * @param data - The data from the data cubes observations query.
  * @param options - The options for the data cubes observations query.
@@ -488,11 +502,12 @@ export function transformDataCubesObservations(
     error?: Error;
     fetching: boolean;
   },
-  options: DataCubesObservationsOptions & { chartConfig: ChartConfig }
+  options: {
+    locale: string;
+    conversionUnitsByComponentId: ChartConfig["conversionUnitsByComponentId"];
+  }
 ) {
-  const {
-    chartConfig: { conversionUnitsByComponentId },
-  } = options;
+  const { conversionUnitsByComponentId } = options;
 
   if (
     !data.data ||

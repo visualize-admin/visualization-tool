@@ -412,7 +412,11 @@ describe("useDataCubesComponentsQuery", () => {
     };
 
     it("should transform measure values and limits with conversion units", () => {
-      const result = transformDataCubesComponents(mockData, mockOptions);
+      const result = transformDataCubesComponents(mockData, {
+        locale: mockOptions.variables.locale,
+        conversionUnitsByComponentId:
+          mockOptions.chartConfig.conversionUnitsByComponentId,
+      });
 
       expect(result.data?.dataCubesComponents.measures[0]).toEqual({
         id: measure1Id,
@@ -437,11 +441,8 @@ describe("useDataCubesComponentsQuery", () => {
 
     it("should return unchanged data when no conversion units are provided", () => {
       const optionsWithoutConversion = {
-        ...mockOptions,
-        chartConfig: {
-          ...mockOptions.chartConfig,
-          conversionUnitsByComponentId: {},
-        },
+        locale: mockOptions.variables.locale,
+        conversionUnitsByComponentId: {},
       };
 
       const result = transformDataCubesComponents(
@@ -454,7 +455,11 @@ describe("useDataCubesComponentsQuery", () => {
     it("should return unchanged data when data is null", () => {
       const result = transformDataCubesComponents(
         { data: null, fetching: false },
-        mockOptions
+        {
+          locale: mockOptions.variables.locale,
+          conversionUnitsByComponentId:
+            mockOptions.chartConfig.conversionUnitsByComponentId,
+        }
       );
       expect(result).toEqual({ data: null, fetching: false });
     });
@@ -462,7 +467,11 @@ describe("useDataCubesComponentsQuery", () => {
     it("should return unchanged data when data is undefined", () => {
       const result = transformDataCubesComponents(
         { data: undefined, fetching: false },
-        mockOptions
+        {
+          locale: mockOptions.variables.locale,
+          conversionUnitsByComponentId:
+            mockOptions.chartConfig.conversionUnitsByComponentId,
+        }
       );
       expect(result).toEqual({ data: undefined, fetching: false });
     });
@@ -524,7 +533,11 @@ describe("useDataCubesObservationsQuery", () => {
     };
 
     it("should transform observation values with conversion units", () => {
-      const result = transformDataCubesObservations(mockData, mockOptions);
+      const result = transformDataCubesObservations(mockData, {
+        locale: mockOptions.variables.locale,
+        conversionUnitsByComponentId:
+          mockOptions.chartConfig.conversionUnitsByComponentId,
+      });
 
       expect(result.data?.dataCubesObservations.data).toEqual([
         {
@@ -544,11 +557,8 @@ describe("useDataCubesObservationsQuery", () => {
 
     it("should return unchanged data when no conversion units are provided", () => {
       const optionsWithoutConversion = {
-        ...mockOptions,
-        chartConfig: {
-          ...mockOptions.chartConfig,
-          conversionUnitsByComponentId: {},
-        },
+        locale: mockOptions.variables.locale,
+        conversionUnitsByComponentId: {},
       };
 
       const result = transformDataCubesObservations(
@@ -561,7 +571,11 @@ describe("useDataCubesObservationsQuery", () => {
     it("should return unchanged data when data is null", () => {
       const result = transformDataCubesObservations(
         { data: null, fetching: false },
-        mockOptions
+        {
+          locale: mockOptions.variables.locale,
+          conversionUnitsByComponentId:
+            mockOptions.chartConfig.conversionUnitsByComponentId,
+        }
       );
       expect(result).toEqual({ data: null, fetching: false });
     });
@@ -569,7 +583,11 @@ describe("useDataCubesObservationsQuery", () => {
     it("should return unchanged data when data is undefined", () => {
       const result = transformDataCubesObservations(
         { data: undefined, fetching: false },
-        mockOptions
+        {
+          locale: mockOptions.variables.locale,
+          conversionUnitsByComponentId:
+            mockOptions.chartConfig.conversionUnitsByComponentId,
+        }
       );
       expect(result).toEqual({ data: undefined, fetching: false });
     });
