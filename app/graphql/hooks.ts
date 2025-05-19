@@ -13,6 +13,7 @@ import {
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { Locale } from "@/locales/locales";
+import { Limit } from "@/rdf/limits";
 import { assert } from "@/utils/assert";
 
 import { joinDimensions, mergeObservations } from "./join";
@@ -361,24 +362,9 @@ export function transformDataCubesComponents(
             ...measure,
             unit: conversionUnit.labels[locale as Locale] ?? measure.unit,
             originalUnit: measure.unit,
-            limits: measure.limits.map((limit) => {
-              switch (limit.type) {
-                case "single":
-                  return {
-                    ...limit,
-                    value: limit.value * conversionUnit.multiplier,
-                  };
-                case "range":
-                  return {
-                    ...limit,
-                    from: limit.from * conversionUnit.multiplier,
-                    to: limit.to * conversionUnit.multiplier,
-                  };
-                default:
-                  const _exhaustiveCheck: never = limit;
-                  return _exhaustiveCheck;
-              }
-            }),
+            limits: measure.limits.map((limit) =>
+              overrideLimitUnit(limit, conversionUnit.multiplier)
+            ),
             values: measure.values.map((value) => {
               if (typeof value.value === "number") {
                 return {
@@ -402,6 +388,25 @@ export function transformDataCubesComponents(
     },
   };
 }
+
+const overrideLimitUnit = (limit: Limit, multiplier: number) => {
+  switch (limit.type) {
+    case "single":
+      return {
+        ...limit,
+        value: limit.value * multiplier,
+      };
+    case "range":
+      return {
+        ...limit,
+        from: limit.from * multiplier,
+        to: limit.to * multiplier,
+      };
+    default:
+      const _exhaustiveCheck: never = limit;
+      return _exhaustiveCheck;
+  }
+};
 
 export type DataCubesObservationsOptions = {
   variables: Omit<DataCubeComponentsQueryVariables, "cubeFilter"> & {
