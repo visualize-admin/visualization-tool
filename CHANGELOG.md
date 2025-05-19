@@ -11,6 +11,9 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - Reversed the order of custom layers in the custom layers selector, so that
+    the topmost layer is displayed first
 - Fixes
   - X and Y band axes have now correctly formatted ticks in case of being based
     on temporal entity dimension
