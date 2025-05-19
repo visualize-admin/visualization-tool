@@ -27,7 +27,7 @@
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
     "@graphql-tools/schema": "^7.1.5",
-    "@interactivethings/swiss-federal-ci": "^3.0.3",
+    "@interactivethings/swiss-federal-ci": "^3.1.0",
     "@juggle/resize-observer": "^3.4.0",
     "@lexical/link": "0.17.1",
     "@lexical/rich-text": "0.17.1",
