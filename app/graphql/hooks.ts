@@ -4,6 +4,7 @@ import { Client, useClient } from "urql";
 import {
   ChartConfig,
   ConfiguratorState,
+  ConversionUnit,
   hasChartConfigs,
 } from "@/configurator";
 import {
@@ -13,7 +14,6 @@ import {
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { Locale } from "@/locales/locales";
-import { Limit } from "@/rdf/limits";
 import { assert } from "@/utils/assert";
 
 import { joinDimensions, mergeObservations } from "./join";
@@ -362,21 +362,36 @@ export function transformDataCubesComponents(
             ...measure,
             unit: conversionUnit.labels[locale as Locale] ?? measure.unit,
             originalUnit: measure.unit,
-            limits: measure.limits.map((limit) =>
-              overrideLimitUnit(limit, conversionUnit.multiplier)
-            ),
+            limits: measure.limits.map((limit) => {
+              switch (limit.type) {
+                case "single":
+                  return {
+                    ...limit,
+                    value: convertValue(limit.value, conversionUnit),
+                  };
+                case "range":
+                  return {
+                    ...limit,
+                    from: convertValue(limit.from, conversionUnit),
+                    to: convertValue(limit.to, conversionUnit),
+                  };
+                default:
+                  const _exhaustiveCheck: never = limit;
+                  return _exhaustiveCheck;
+              }
+            }),
             values: measure.values.map((value) => {
               if (typeof value.value === "number") {
                 return {
                   ...value,
-                  value: value.value * conversionUnit.multiplier,
+                  value: convertValue(value.value, conversionUnit),
                 };
               }
 
               if (typeof value.value === "string") {
                 return {
                   ...value,
-                  value: Number(value.value) * conversionUnit.multiplier,
+                  value: convertValue(Number(value.value), conversionUnit),
                 };
               }
 
@@ -389,23 +404,8 @@ export function transformDataCubesComponents(
   };
 }
 
-const overrideLimitUnit = (limit: Limit, multiplier: number) => {
-  switch (limit.type) {
-    case "single":
-      return {
-        ...limit,
-        value: limit.value * multiplier,
-      };
-    case "range":
-      return {
-        ...limit,
-        from: limit.from * multiplier,
-        to: limit.to * multiplier,
-      };
-    default:
-      const _exhaustiveCheck: never = limit;
-      return _exhaustiveCheck;
-  }
+const convertValue = (value: number, conversionUnit: ConversionUnit) => {
+  return value * conversionUnit.multiplier;
 };
 
 export type DataCubesObservationsOptions = {
@@ -531,14 +531,20 @@ export function transformDataCubesObservations(
           const newObservation = { ...observation };
 
           Object.entries(conversionUnitsByComponentId).forEach(
-            ([componentId, { multiplier }]) => {
+            ([componentId, conversionUnit]) => {
               if (componentId in newObservation) {
                 const value = newObservation[componentId];
 
                 if (typeof value === "number") {
-                  newObservation[componentId] = value * multiplier;
+                  newObservation[componentId] = convertValue(
+                    value,
+                    conversionUnit
+                  );
                 } else if (typeof value === "string") {
-                  newObservation[componentId] = Number(value) * multiplier;
+                  newObservation[componentId] = convertValue(
+                    Number(value),
+                    conversionUnit
+                  );
                 }
               }
             }
