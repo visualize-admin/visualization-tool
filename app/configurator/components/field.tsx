@@ -250,7 +250,7 @@ export const DataFilterSelect = ({
   if (hierarchy && hierarchyOptions) {
     return (
       <SelectTree
-        label={<FieldLabel label={label} optional={optional} />}
+        label={<FieldLabel label={label} />}
         id={id}
         options={hierarchyOptions}
         onClose={handleClose}
@@ -289,7 +289,7 @@ export const DataFilterSelect = ({
             }
           />
         ) : (
-          <FieldLabel label={label} optional={optional} />
+          <FieldLabel label={label} />
         )
       }
       disabled={disabled || usesMostRecentValue}
@@ -905,23 +905,16 @@ export const LoadingIndicator = () => {
 
 export const FieldLabel = ({
   label,
-  optional,
   isFetching,
 }: {
   label: ReactNode;
-  optional?: boolean;
   isFetching?: boolean;
 }) => {
   const classes = useStyles();
-  const optionalLabel = t({
-    id: "controls.select.optional",
-    message: "optional",
-  });
 
   return (
     <Typography className={classes.root} variant="caption">
       {label}
-      {optional ? ` (${optionalLabel})` : null}
       {isFetching ? <LoadingIndicator /> : null}
     </Typography>
   );
@@ -1001,7 +994,7 @@ export const ChartFieldField = ({
     <Select
       key={`select-${field}-dimension`}
       id={field}
-      label={<FieldLabel optional={optional} label={label} />}
+      label={<FieldLabel label={label} />}
       size="sm"
       disabled={disabled}
       options={allOptions}
@@ -1165,9 +1158,7 @@ export const ChartOptionSelectField = <V extends {} = string>(
       id={id}
       disabled={disabled}
       size="sm"
-      label={
-        <FieldLabel optional={optional} isFetching={false} label={label} />
-      }
+      label={<FieldLabel isFetching={false} label={label} />}
       options={allOptions}
       optionGroups={allOptionGroups}
       {...fieldProps}
