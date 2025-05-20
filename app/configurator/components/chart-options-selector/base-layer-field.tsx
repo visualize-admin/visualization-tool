@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-undef */
 import { t, Trans } from "@lingui/macro";
 import { useEffect } from "react";
 
