@@ -14,11 +14,11 @@ Additional attributes:
 - Spacing
 - Font sizes
 
-The technical implementation of the Visualization Tool is based on https://styled-system.com which in turn implements the concepts described in https://system-ui.com/theme. This ensures a flexible and interoperable theming approach which integrates well with the codebase.
+The technical implementation of Visualize is based on https://styled-system.com which in turn implements the concepts described in https://system-ui.com/theme. This ensures a flexible and interoperable theming approach which integrates well with the codebase.
 
-## Theming the Visualization Tool
+## Theming Visualize
 
-The Visualization Tool will initially only need to support one theme which implements the Federal brand guidelines.
+Visualize will initially only need to support one theme which implements the Federal brand guidelines.
 
 The code is structured in a way that will allow for future themes to be added with relatively low effort. More concretely, the theme definition files will be separated from functional code, so the theme can be chosen at instance configuration time and different (sub-)domains can have different themes.
 
@@ -29,13 +29,13 @@ For example:
 
 ## Theming Charts
 
-By default, published charts will use the same theme as the Visualization Tool instance they were created with.
+By default, published charts will use the same theme as Visualize instance they were created with.
 
 There may be a need to apply a different theme (fonts, colors) to charts. For example, BAFU could have their own color palettes that adhere to BAFU brand guidelines.
 
 
 
-> Chart-specific theming will not be implemented in the initial version of the Visualization Tool.
+> Chart-specific theming will not be implemented in the initial version of Visualize.
 
 
 ### Option 1: User-selectable theme during chart creation.
