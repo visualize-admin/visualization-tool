@@ -16,6 +16,8 @@ You can also check the
 - Styles
   - Header of data preview table is now sticky
   - Data preview table should now be aligned with the design
+- Maintenance
+  - Split the chart options selector into multiple files
 
 # 5.8.0 - 2025-05-20
 
