@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# 5.8.0 - 2025-05-20
+
 - Features
   - Added a way to set custom conversion units for numerical measures
   - Reversed the order of custom layers in the custom layers selector, so that
