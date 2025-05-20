@@ -54,6 +54,7 @@ import { LayoutField } from "@/configurator/components/chart-options-selector/la
 import { LimitsField } from "@/configurator/components/chart-options-selector/limits-field";
 import { ScaleDomain } from "@/configurator/components/chart-options-selector/scale-domain";
 import { ShowDotsField } from "@/configurator/components/chart-options-selector/show-dots-field";
+import { SizeField } from "@/configurator/components/chart-options-selector/size-field";
 import { SortingField } from "@/configurator/components/chart-options-selector/sorting-field";
 import { makeGetFieldOptionGroups } from "@/configurator/components/chart-options-selector/utils";
 import { CustomLayersSelector } from "@/configurator/components/custom-layers-selector";
@@ -540,7 +541,7 @@ const EncodingOptionsPanel = ({
           />
         )}
       {encoding.options?.size && component && (
-        <ChartFieldSize
+        <SizeField
           chartConfig={chartConfig}
           field={field}
           componentTypes={encoding.options.size.componentTypes}
@@ -656,74 +657,6 @@ const ChartFieldMultiFilter = ({
       </ControlSectionContent>
     </ControlSection>
   ) : null;
-};
-
-const ChartFieldSize = ({
-  chartConfig,
-  field,
-  componentTypes,
-  dimensions,
-  measures,
-  getFieldOptionGroups,
-  optional,
-}: {
-  chartConfig: ChartConfig;
-  field: EncodingFieldType;
-  componentTypes: ComponentType[];
-  dimensions: Dimension[];
-  measures: Measure[];
-  getFieldOptionGroups: ReturnType<typeof makeGetFieldOptionGroups>;
-  optional: boolean;
-}) => {
-  const fieldComponents = useMemo(() => {
-    return getComponentsFilteredByType({
-      dimensionTypes: componentTypes,
-      dimensions,
-      measures,
-    });
-  }, [componentTypes, dimensions, measures]);
-  const getOption = useCallback(
-    (c: Component) => ({ value: c.id, label: c.label }),
-    []
-  );
-  const options = useMemo(() => {
-    return chartConfig.cubes.length === 1 ? fieldComponents.map(getOption) : [];
-  }, [chartConfig.cubes.length, fieldComponents, getOption]);
-  const optionGroups = useMemo(() => {
-    return chartConfig.cubes.length > 1
-      ? getFieldOptionGroups({ fieldComponents, getOption })
-      : undefined;
-  }, [
-    chartConfig.cubes.length,
-    fieldComponents,
-    getFieldOptionGroups,
-    getOption,
-  ]);
-
-  return (
-    <ControlSection collapse>
-      <SectionTitle iconName="size">
-        {t({
-          id: "controls.size",
-          message: "Size",
-        })}
-      </SectionTitle>
-      <ControlSectionContent>
-        <ChartOptionSelectField
-          id="size-measure"
-          label={t({
-            id: "controls.select.measure",
-            message: "Select a measure",
-          })}
-          field={field}
-          path="measureId"
-          options={options}
-          optionGroups={optionGroups}
-          optional={optional}
-        />
-      </ControlSectionContent>
-    </ControlSection>
-  );
 };
 
 const ChartFieldColorComponent = ({
