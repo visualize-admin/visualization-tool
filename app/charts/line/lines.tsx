@@ -11,7 +11,7 @@ import {
 } from "@/charts/shared/rendering-utils";
 import { useRenderTemporalValueLabelsData } from "@/charts/shared/show-values-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
-import { LineConfig, LineFields } from "@/config-types";
+import { ShowDotsSize } from "@/config-types";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useTransitionStore } from "@/stores/transition";
@@ -89,11 +89,7 @@ export const ErrorWhiskers = () => {
   return <g ref={ref} />;
 };
 
-export const Lines = ({
-  dotSize,
-}: {
-  dotSize?: LineFields["y"]["showDotsSize"];
-}) => {
+export const Lines = ({ dotSize }: { dotSize?: ShowDotsSize }) => {
   const { getX, xScale, getY, yScale, grouped, colors, bounds } =
     useChartState() as LinesState;
   const { margins } = bounds;
@@ -159,7 +155,7 @@ const Line = memo(function Line({
   return <path data-testid="chart-line" d={path} stroke={color} fill="none" />;
 });
 
-const getPointRadius = (dotSize: LineConfig["fields"]["y"]["showDotsSize"]) => {
+const getPointRadius = (dotSize: ShowDotsSize) => {
   switch (dotSize) {
     case "Small":
       return 2;
@@ -170,12 +166,12 @@ const getPointRadius = (dotSize: LineConfig["fields"]["y"]["showDotsSize"]) => {
     case undefined:
       return 2;
     default:
-      const _check: never = dotSize;
-      return _check;
+      const _exhaustiveCheck: never = dotSize;
+      return _exhaustiveCheck;
   }
 };
 
-const Points = ({ dotSize }: { dotSize: LineFields["y"]["showDotsSize"] }) => {
+const Points = ({ dotSize }: { dotSize?: ShowDotsSize }) => {
   const { getX, xScale, getY, yScale, bounds, chartData, getSegment, colors } =
     useChartState() as LinesState;
   const { chartHeight, width } = bounds;
