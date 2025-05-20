@@ -26,7 +26,6 @@ import {
   SelectOptionGroup,
 } from "@/components/form";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
-import { MaybeTooltip } from "@/components/maybe-tooltip";
 import {
   AnimationField,
   ChartConfig,
@@ -56,6 +55,7 @@ import {
 } from "@/configurator/components/chart-controls/section";
 import { Abbreviations } from "@/configurator/components/chart-options-selector/abbreviations";
 import { BaseLayerField } from "@/configurator/components/chart-options-selector/base-layer-field";
+import { CalculationField } from "@/configurator/components/chart-options-selector/calculation-field";
 import { ComboYField } from "@/configurator/components/chart-options-selector/combo-y-field";
 import { ConversionUnitsField } from "@/configurator/components/chart-options-selector/conversion-units-field";
 import { LayoutField } from "@/configurator/components/chart-options-selector/layout-field";
@@ -554,7 +554,7 @@ const EncodingOptionsPanel = ({
         <ChartImputation chartConfig={chartConfig} />
       )}
       {encoding.options?.calculation && get(fields, "segment") && (
-        <ChartFieldCalculation
+        <CalculationField
           {...encoding.options.calculation.getDisabledState?.(chartConfig)}
         />
       )}
@@ -801,61 +801,6 @@ const ChartFieldMultiFilter = ({
       </ControlSectionContent>
     </ControlSection>
   ) : null;
-};
-
-const ChartFieldCalculation = ({
-  disabled,
-  warnMessage,
-}: {
-  disabled?: boolean;
-  warnMessage?: string;
-}) => {
-  return (
-    <ControlSection collapse>
-      <SectionTitle iconName="normalize" warnMessage={warnMessage}>
-        <Trans id="controls.select.calculation.mode">Chart mode</Trans>
-      </SectionTitle>
-      <ControlSectionContent>
-        <RadioGroup>
-          <ChartOptionRadioField
-            label={getFieldLabel("identity")}
-            field={null}
-            path="interactiveFiltersConfig.calculation.type"
-            value="identity"
-            disabled={disabled}
-          />
-          <ChartOptionRadioField
-            label={getFieldLabel("percent")}
-            field={null}
-            path="interactiveFiltersConfig.calculation.type"
-            value="percent"
-            disabled={disabled}
-          />
-        </RadioGroup>
-        <ChartOptionSwitchField
-          label={
-            <MaybeTooltip
-              tooltipProps={{ enterDelay: 600 }}
-              title={
-                <Trans id="controls.filters.interactive.calculation">
-                  Allow users to change chart mode
-                </Trans>
-              }
-            >
-              <div>
-                <Trans id="controls.filters.interactive.toggle">
-                  Interactive
-                </Trans>
-              </div>
-            </MaybeTooltip>
-          }
-          field={null}
-          path="interactiveFiltersConfig.calculation.active"
-          disabled={disabled}
-        />
-      </ControlSectionContent>
-    </ControlSection>
-  );
 };
 
 const ChartFieldSorting = ({
