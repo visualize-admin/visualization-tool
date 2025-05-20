@@ -58,6 +58,7 @@ import {
   ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { Abbreviations } from "@/configurator/components/chart-options-selector/abbreviations";
 import { BaseLayerField } from "@/configurator/components/chart-options-selector/base-layer-field";
 import { ComboYField } from "@/configurator/components/chart-options-selector/combo-y-field";
 import { ConversionUnitsField } from "@/configurator/components/chart-options-selector/conversion-units-field";
@@ -79,10 +80,7 @@ import {
   DimensionValuesMultiFilter,
   TimeFilter,
 } from "@/configurator/components/filters";
-import {
-  canUseAbbreviations,
-  getComponentLabel,
-} from "@/configurator/components/ui-helpers";
+import { getComponentLabel } from "@/configurator/components/ui-helpers";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
@@ -533,10 +531,7 @@ const EncodingOptionsPanel = ({
                 </Box>
               )}
             {encoding.options?.useAbbreviations && (
-              <ChartFieldAbbreviations
-                field={field}
-                component={fieldComponent}
-              />
+              <Abbreviations field={field} component={fieldComponent} />
             )}
           </ControlSectionContent>
         </ControlSection>
@@ -721,30 +716,6 @@ const ChartLayoutOptions = ({
       </ControlSectionContent>
     </ControlSection>
   ) : null;
-};
-
-const ChartFieldAbbreviations = ({
-  field,
-  path,
-  component,
-}: {
-  field: EncodingFieldType;
-  path?: string;
-  component: Component | undefined;
-}) => {
-  const disabled = useMemo(() => {
-    return !canUseAbbreviations(component);
-  }, [component]);
-
-  return (
-    <ChartOptionCheckboxField
-      data-testid="use-abbreviations"
-      label={getFieldLabel("abbreviations")}
-      field={field}
-      path={path ? `${path}.useAbbreviations` : "useAbbreviations"}
-      disabled={disabled}
-    />
-  );
 };
 
 const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
@@ -1309,7 +1280,7 @@ const ChartFieldColorComponent = ({
         />
         {enableUseAbbreviations && (
           <Box sx={{ mt: 1 }}>
-            <ChartFieldAbbreviations
+            <Abbreviations
               field={field}
               path="color"
               component={colorComponent}
