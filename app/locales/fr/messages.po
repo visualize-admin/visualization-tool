@@ -262,7 +262,7 @@ msgid "chart.map.layers.area"
 msgstr "Zones"
 
 #: app/configurator/components/chart-configurator.tsx
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/base-layer-field.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.base"
 msgstr "Couches de base"
@@ -275,11 +275,11 @@ msgstr "Derrière la couche de surface"
 msgid "chart.map.layers.base.enable-temporal-filtering"
 msgstr "Synchronisation avec les filtres temporels"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/base-layer-field.tsx
 msgid "chart.map.layers.base.show"
 msgstr "Afficher la carte du monde"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/base-layer-field.tsx
 msgid "chart.map.layers.base.view.locked"
 msgstr "Carte verrouillée"
 
@@ -346,19 +346,19 @@ msgstr "Utiliser des abréviations"
 msgid "controls.add.chart"
 msgstr "Ajouter un autre graphique."
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain"
 msgstr "Ajuster le domaine d'échelle"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.invalid-number-error"
 msgstr "Veuillez entrer un numéro valide"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.max-error"
 msgstr "Le maximum doit être plus grand que le minimum"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.min-error"
 msgstr "Le minimum doit être inférieur au maximum"
 
