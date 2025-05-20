@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Text of locale switcher select options is now visible on Windows machines
 
 # 5.8.0 - 2025-05-20
 
