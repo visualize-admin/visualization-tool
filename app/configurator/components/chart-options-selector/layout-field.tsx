@@ -125,7 +125,7 @@ const ChartSubType = ({
   const values = chartSubType.getValues(chartConfig, components);
 
   return (
-    <Flex flexDirection="column" style={{ gap: 1 }}>
+    <Flex flexDirection="column" sx={{ gap: 1 }}>
       <Typography variant="caption">
         <Trans id="controls.select.column.layout">Column layout</Trans>
       </Typography>

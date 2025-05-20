@@ -426,7 +426,7 @@ const EncodingOptionsPanel = ({
               />
             ) : null}
             {encoding.options?.showStandardError && hasStandardError && (
-              <Flex alignItems="center" style={{ gap: 1 }}>
+              <Flex alignItems="center" sx={{ gap: 1 }}>
                 <ChartOptionSwitchField
                   path="showStandardError"
                   field={encoding.field}
