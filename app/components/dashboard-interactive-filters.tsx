@@ -332,6 +332,7 @@ const DataFilter = ({ componentId }: { componentId: string }) => {
   const cubeIri = cubeIris[0];
 
   const [{ data }] = useDataCubesComponentsQuery({
+    chartConfig: relevantChartConfigs[0],
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,

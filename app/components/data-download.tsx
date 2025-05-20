@@ -23,7 +23,7 @@ import {
 } from "react";
 import { useClient } from "urql";
 
-import { getSortedColumns } from "@/browse/datatable";
+import { getSortedComponents } from "@/browse/utils";
 import { ArrowMenuBottomTop } from "@/components/arrow-menu";
 import { DataSource, SortingField } from "@/config-types";
 import {
@@ -98,7 +98,7 @@ const prepareData = ({
   observations: Observation[];
   dimensionParsers: DimensionParsers;
 }) => {
-  const sortedComponents = getSortedColumns(components);
+  const sortedComponents = getSortedComponents(components);
   const columns = keyBy(sortedComponents, (d) => d.id);
   // Sort the data from left to right, keeping the order of the columns.
   const sorting: SortingField["sorting"] = {

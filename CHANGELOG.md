@@ -11,7 +11,18 @@ You can also check the
 
 # Unreleased
 
+- Fixes
+  - Text of locale switcher select options is now visible on Windows machines
+- Styles
+  - Header of data preview table is now sticky
+  - Data preview table should now be aligned with the design
+- Maintenance
+  - Split the chart options selector into multiple files
+
+# 5.8.0 - 2025-05-20
+
 - Features
+  - Added a way to set custom conversion units for numerical measures
   - Reversed the order of custom layers in the custom layers selector, so that
     the topmost layer is displayed first
 - Fixes
@@ -21,6 +32,9 @@ You can also check the
     browse view (no more duplicates)
   - Resetting and shuffling custom color palettes shouldn't use default colors
     anymore
+- Styles
+  - Common CI / CD components (Header, Logo, TopBar) should now have correct
+    styling
 
 # 5.7.7 - 2025-05-13
 
