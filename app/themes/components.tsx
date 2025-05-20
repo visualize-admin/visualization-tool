@@ -726,6 +726,11 @@ export const components: Components = {
       },
     },
   },
+  MuiTable: {
+    defaultProps: {
+      stickyHeader: true,
+    },
+  },
   MuiTableCell: {
     styleOverrides: {
       // @ts-ignore
