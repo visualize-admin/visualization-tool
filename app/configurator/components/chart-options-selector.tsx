@@ -8,7 +8,6 @@ import { DEFAULT_SORTING, getFieldComponentId } from "@/charts";
 import {
   ANIMATION_FIELD_SPEC,
   EncodingFieldType,
-  EncodingOptionChartSubType,
   EncodingSortingOption,
   EncodingSpec,
   getChartSpec,
@@ -18,7 +17,6 @@ import {
   DEFAULT_OTHER_COLOR_FIELD_OPACITY,
 } from "@/charts/map/constants";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
-import { LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
 import { RadioGroup } from "@/components/form";
 import {
@@ -40,8 +38,6 @@ import {
   ImputationType,
   imputationTypes,
   isAnimationInConfig,
-  isBarConfig,
-  isColorInConfig,
   isComboChartConfig,
   isMapConfig,
   isTableConfig,
@@ -62,6 +58,7 @@ import { Abbreviations } from "@/configurator/components/chart-options-selector/
 import { BaseLayerField } from "@/configurator/components/chart-options-selector/base-layer-field";
 import { ComboYField } from "@/configurator/components/chart-options-selector/combo-y-field";
 import { ConversionUnitsField } from "@/configurator/components/chart-options-selector/conversion-units-field";
+import { LayoutField } from "@/configurator/components/chart-options-selector/layout-field";
 import { LimitsField } from "@/configurator/components/chart-options-selector/limits-field";
 import { ScaleDomain } from "@/configurator/components/chart-options-selector/scale-domain";
 import { ShowDotsField } from "@/configurator/components/chart-options-selector/show-dots-field";
@@ -419,8 +416,7 @@ const EncodingOptionsPanel = ({
   }, [components, component]);
 
   const hasColorPalette = !!encoding.options?.colorPalette;
-
-  const hasSubOptions = encoding.options?.chartSubType ?? false;
+  const hasSubType = !!encoding.options?.chartSubType;
 
   const limitMeasure =
     isMapConfig(chartConfig) && chartConfig.activeField === "symbolLayer"
@@ -542,15 +538,15 @@ const EncodingOptionsPanel = ({
       {isComboChartConfig(chartConfig) && encoding.field === "y" && (
         <ComboYField chartConfig={chartConfig} measures={measures} />
       )}
-      {fieldComponent && (hasSubOptions || hasColorPalette) && (
-        <ChartLayoutOptions
+      {fieldComponent && (hasSubType || hasColorPalette) && (
+        <LayoutField
           encoding={encoding}
           component={component}
           // Combo charts use their own drawer.
           chartConfig={chartConfig as RegularChartConfig}
           components={components}
           hasColorPalette={hasColorPalette}
-          hasSubOptions={!!hasSubOptions}
+          hasSubType={hasSubType}
           measures={measures}
         />
       )}
@@ -635,87 +631,6 @@ const EncodingOptionsPanel = ({
 
 const SwitchWrapper = ({ children }: { children: ReactNode }) => {
   return <Flex sx={{ alignItems: "center", gap: 1 }}>{children}</Flex>;
-};
-
-const ChartLayoutOptions = ({
-  encoding,
-  component,
-  chartConfig,
-  components,
-  hasColorPalette,
-  hasSubOptions,
-  measures,
-}: {
-  encoding: EncodingSpec;
-  component: Component | undefined;
-  chartConfig: RegularChartConfig;
-  components: Component[];
-  hasColorPalette: boolean;
-  hasSubOptions: boolean;
-  measures: Measure[];
-}) => {
-  const activeField = chartConfig.activeField as EncodingFieldType | undefined;
-
-  if (!activeField) {
-    return null;
-  }
-
-  const hasColorField = isColorInConfig(chartConfig);
-  const values: { id: string; symbol: LegendSymbol }[] = hasColorField
-    ? chartConfig.fields.color.type === "single"
-      ? [
-          {
-            id: isBarConfig(chartConfig)
-              ? chartConfig.fields.x.componentId
-              : chartConfig.fields.y.componentId,
-            symbol: "line",
-          },
-        ]
-      : Object.keys(chartConfig.fields.color.colorMapping).map((key) => ({
-          id: key,
-          symbol: "line",
-        }))
-    : [];
-
-  return encoding.options || hasColorPalette ? (
-    <ControlSection collapse>
-      <SectionTitle iconName="swatch">
-        <Trans id="controls.section.layout-options">Layout options</Trans>
-      </SectionTitle>
-      <ControlSectionContent gap="large">
-        {hasSubOptions && (
-          <ChartFieldOptions
-            encoding={encoding}
-            chartConfig={chartConfig}
-            components={components}
-            disabled={!component}
-          />
-        )}
-        <ColorPalette
-          field={activeField}
-          // Faking a component here, because we don't have a real one.
-          // We use measure iris as dimension values, because that's how
-          // the color mapping is done.
-          component={
-            {
-              __typename: "",
-              values: values.map(({ id }) => ({
-                value: id,
-                label: id,
-              })),
-            } as any as Component
-          }
-        />
-        {hasColorField && chartConfig.fields.color.type === "single" && (
-          <ColorPickerField
-            field="color"
-            path="color"
-            label={measures.find((d) => d.id === values[0].id)!.label}
-          />
-        )}
-      </ControlSectionContent>
-    </ControlSection>
-  ) : null;
 };
 
 const ChartFieldAnimation = ({ field }: { field: AnimationField }) => {
@@ -886,43 +801,6 @@ const ChartFieldMultiFilter = ({
       </ControlSectionContent>
     </ControlSection>
   ) : null;
-};
-
-const ChartFieldOptions = ({
-  encoding,
-  chartConfig,
-  components,
-  disabled,
-}: {
-  encoding: EncodingSpec;
-  chartConfig: ChartConfig;
-  components: Component[];
-  disabled?: boolean;
-}) => {
-  const chartSubType = encoding.options
-    ?.chartSubType as EncodingOptionChartSubType;
-  const values = chartSubType.getValues(chartConfig, components);
-
-  return (
-    <Flex sx={{ flexDirection: "column", gap: 1 }}>
-      <Typography variant="caption">
-        <Trans id="controls.select.column.layout">Column layout</Trans>
-      </Typography>
-      <RadioGroup>
-        {values.map((d) => (
-          <ChartOptionRadioField
-            key={d.value}
-            label={getFieldLabel(d.value)}
-            field={encoding.field}
-            path="type"
-            value={d.value}
-            disabled={disabled || d.disabled}
-            warnMessage={d.warnMessage}
-          />
-        ))}
-      </RadioGroup>
-    </Flex>
-  );
 };
 
 const ChartFieldCalculation = ({
