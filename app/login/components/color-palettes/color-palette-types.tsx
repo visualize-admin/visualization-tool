@@ -1,5 +1,4 @@
-import { t } from "@lingui/macro";
-import { Trans } from "@lingui/react";
+import { t, Trans } from "@lingui/macro";
 import { Box, Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import dynamic from "next/dynamic";
