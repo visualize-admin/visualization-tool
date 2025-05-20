@@ -383,7 +383,7 @@ export const removeDatasetInConfig = function (
   const index = draft.chartConfigs.findIndex((d) => d.key === chartConfig.key);
   const withFilters = deriveFiltersFromFields(newConfig, { dimensions });
 
-  // Reput the join by inside the cubes
+  // Re-put the join by inside the cubes
   const joinByByCubes = Object.fromEntries(
     chartConfig.cubes.map((cube) => [cube.iri, cube.joinBy] as const)
   );

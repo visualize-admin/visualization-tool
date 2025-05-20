@@ -439,6 +439,13 @@ const LineSegmentField = t.intersection([
 ]);
 export type LineSegmentField = t.TypeOf<typeof LineSegmentField>;
 
+const ShowDotsSize = t.union([
+  t.literal("Small"),
+  t.literal("Medium"),
+  t.literal("Large"),
+]);
+export type ShowDotsSize = t.TypeOf<typeof ShowDotsSize>;
+
 const LineFields = t.intersection([
   t.type({
     x: GenericField,
@@ -449,11 +456,7 @@ const LineFields = t.intersection([
       CustomScaleDomainFieldExtension,
       t.partial({
         showDots: t.boolean,
-        showDotsSize: t.union([
-          t.literal("Small"),
-          t.literal("Medium"),
-          t.literal("Large"),
-        ]),
+        showDotsSize: ShowDotsSize,
       }),
     ]),
     color: t.union([SegmentColorField, SingleColorField]),
@@ -491,7 +494,7 @@ const ImputationType = t.union([
   t.literal("linear"),
 ]);
 export type ImputationType = t.TypeOf<typeof ImputationType>;
-export const imputationTypes: ImputationType[] = ["none", "zeros", "linear"];
+export const IMPUTATION_TYPES: ImputationType[] = ["none", "zeros", "linear"];
 
 const AreaFields = t.intersection([
   t.type({
