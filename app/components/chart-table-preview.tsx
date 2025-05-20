@@ -98,7 +98,11 @@ export const ChartTablePreviewProvider = ({
 
 export const TABLE_PREVIEW_WRAPPER_CLASS_NAME = "table-preview-wrapper";
 
-export const TablePreviewWrapper = ({ children }: { children: ReactNode }) => {
+export const ChartTablePreviewWrapper = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const { containerRef, containerHeight } = useChartTablePreview();
 
   return (
