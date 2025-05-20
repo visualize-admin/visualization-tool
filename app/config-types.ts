@@ -494,7 +494,7 @@ const ImputationType = t.union([
   t.literal("linear"),
 ]);
 export type ImputationType = t.TypeOf<typeof ImputationType>;
-export const imputationTypes: ImputationType[] = ["none", "zeros", "linear"];
+export const IMPUTATION_TYPES: ImputationType[] = ["none", "zeros", "linear"];
 
 const AreaFields = t.intersection([
   t.type({
