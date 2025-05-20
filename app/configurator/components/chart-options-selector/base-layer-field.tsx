@@ -19,11 +19,7 @@ import {
 } from "@/configurator/configurator-state";
 import { useLocale } from "@/locales/use-locale";
 
-export const BaseLayerSettings = ({
-  chartConfig,
-}: {
-  chartConfig: MapConfig;
-}) => {
+export const BaseLayerField = ({ chartConfig }: { chartConfig: MapConfig }) => {
   const locale = useLocale();
   const [_, dispatch] = useConfiguratorState(isConfiguring);
   const locked = chartConfig.baseLayer.locked;

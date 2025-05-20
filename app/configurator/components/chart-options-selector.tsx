@@ -71,7 +71,7 @@ import {
   ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { BaseLayerSettings } from "@/configurator/components/chart-options-selector/base-layer-settings";
+import { BaseLayerField } from "@/configurator/components/chart-options-selector/base-layer-field";
 import { ConversionUnitsField } from "@/configurator/components/chart-options-selector/conversion-units-field";
 import { CustomLayersSelector } from "@/configurator/components/custom-layers-selector";
 import {
@@ -593,9 +593,8 @@ const EncodingOptionsPanel = ({
           {...encoding.options.calculation.getDisabledState?.(chartConfig)}
         />
       )}
-      {/* FIXME: should be generic or shouldn't be a field at all */}
       {field === "baseLayer" && (
-        <BaseLayerSettings chartConfig={chartConfig as MapConfig} />
+        <BaseLayerField chartConfig={chartConfig as MapConfig} />
       )}
       {field === "customLayers" && <CustomLayersSelector />}
       {encoding.sorting &&
