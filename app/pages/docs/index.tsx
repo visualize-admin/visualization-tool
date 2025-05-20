@@ -82,11 +82,6 @@ const pages: ConfigPageOrGroup[] = [
         title: "RDF to visualize",
         content: require("@/docs/catalog/rdf-to-visualize.mdx"),
       },
-      // {
-      //   path: "/charts/preview-via-api",
-      //   title: "Previewing charts",
-      //   content: require("@/docs/catalog/chart-preview-via-api.mdx"),
-      // },
     ],
   },
   {
@@ -95,14 +90,9 @@ const pages: ConfigPageOrGroup[] = [
     content: require("@/docs/catalog/chart-preview-via-api.mdx"),
   },
   {
+    path: "/components",
     title: "Components",
-    pages: [
-      {
-        path: "/components/intro",
-        title: "Introduction",
-        content: require("@/docs/catalog/components"),
-      },
-    ],
+    content: require("@/docs/catalog/components"),
   },
   {
     path: "/testing",
