@@ -21,7 +21,7 @@ import {
 } from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
-  TablePreviewWrapper,
+  ChartTablePreviewWrapper,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import { ChartWithFilters } from "@/components/chart-with-filters";
@@ -466,7 +466,7 @@ const ChartPublishedInnerImpl = ({
                     }
               }
             />
-            <TablePreviewWrapper>
+            <ChartTablePreviewWrapper>
               {isTable ? (
                 <ChartDataTablePreview
                   dataSource={dataSource}
@@ -483,7 +483,7 @@ const ChartPublishedInnerImpl = ({
                   embedParams={embedParams}
                 />
               )}
-            </TablePreviewWrapper>
+            </ChartTablePreviewWrapper>
             <ChartFootnotes
               configKey={configKey}
               dataSource={dataSource}

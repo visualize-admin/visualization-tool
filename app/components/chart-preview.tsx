@@ -37,7 +37,7 @@ import {
 } from "@/components/chart-shared";
 import {
   ChartTablePreviewProvider,
-  TablePreviewWrapper,
+  ChartTablePreviewWrapper,
   useChartTablePreview,
 } from "@/components/chart-table-preview";
 import { ChartWithFilters } from "@/components/chart-with-filters";
@@ -589,7 +589,7 @@ const ChartPreviewInner = ({
                     top: HEADER_HEIGHT_CSS_VAR,
                   }}
                 />
-                <TablePreviewWrapper>
+                <ChartTablePreviewWrapper>
                   {isTable ? (
                     <ChartDataTablePreview
                       dataSource={dataSource}
@@ -605,7 +605,7 @@ const ChartPreviewInner = ({
                       dashboardFilters={state.dashboardFilters}
                     />
                   )}
-                </TablePreviewWrapper>
+                </ChartTablePreviewWrapper>
                 <ChartFootnotes
                   dataSource={dataSource}
                   chartConfig={chartConfig}
