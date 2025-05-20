@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Documentation
+  - Aligned and updated for new Parametrized URLs functionality
 
 # 5.7.7 - 2025-05-13
 
