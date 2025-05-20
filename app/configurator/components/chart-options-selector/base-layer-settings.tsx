@@ -26,23 +26,27 @@ export const BaseLayerSettings = ({
 }) => {
   const locale = useLocale();
   const [_, dispatch] = useConfiguratorState(isConfiguring);
+  const locked = chartConfig.baseLayer.locked;
 
   useEffect(() => {
-    const map = getMap();
+    if (locked) {
+      const map = getMap();
 
-    if (chartConfig.baseLayer.locked) {
-      if (map !== null) {
-        dispatch({
-          type: "CHART_FIELD_UPDATED",
-          value: {
-            locale,
-            field: null,
-            // FIXME: shouldn't be a field if not mapped to a component
-            path: "baseLayer.bbox",
-            value: map.getBounds().toArray(),
-          },
-        });
+      if (!map) {
+        return;
       }
+
+      const bbox = map.getBounds().toArray();
+
+      dispatch({
+        type: "CHART_FIELD_UPDATED",
+        value: {
+          locale,
+          field: null,
+          path: "baseLayer.bbox",
+          value: bbox,
+        },
+      });
     } else {
       dispatch({
         type: "CHART_FIELD_UPDATED",
@@ -54,7 +58,7 @@ export const BaseLayerSettings = ({
         },
       });
     }
-  }, [chartConfig.baseLayer.locked, dispatch, locale]);
+  }, [dispatch, locale, locked]);
 
   return (
     <ControlSection hideTopBorder>
