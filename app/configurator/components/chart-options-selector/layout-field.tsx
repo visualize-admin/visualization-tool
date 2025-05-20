@@ -9,8 +9,12 @@ import {
 import { LegendSymbol } from "@/charts/shared/legend-color";
 import Flex from "@/components/flex";
 import { RadioGroup } from "@/components/form";
-import { ChartConfig, RegularChartConfig } from "@/config-types";
-import { isBarConfig, isColorInConfig } from "@/config-types";
+import {
+  ChartConfig,
+  isBarConfig,
+  isColorInConfig,
+  RegularChartConfig,
+} from "@/config-types";
 import { ColorPalette } from "@/configurator/components/chart-controls/color-palette";
 import {
   ControlSection,
