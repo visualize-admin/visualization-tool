@@ -1,7 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import { Box } from "@mui/material";
 import get from "lodash/get";
-import { ReactNode, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { getFieldComponentId } from "@/charts";
 import {
@@ -428,7 +428,7 @@ const EncodingOptionsPanel = ({
               />
             ) : null}
             {encoding.options?.showStandardError && hasStandardError && (
-              <SwitchWrapper>
+              <Flex alignItems="center" style={{ gap: 1 }}>
                 <ChartOptionSwitchField
                   path="showStandardError"
                   field={encoding.field}
@@ -445,7 +445,7 @@ const EncodingOptionsPanel = ({
                     </Trans>
                   }
                 />
-              </SwitchWrapper>
+              </Flex>
             )}
             {encoding.options?.showConfidenceInterval &&
               hasConfidenceInterval && (
@@ -578,10 +578,6 @@ const EncodingOptionsPanel = ({
         )}
     </div>
   );
-};
-
-const SwitchWrapper = ({ children }: { children: ReactNode }) => {
-  return <Flex sx={{ alignItems: "center", gap: 1 }}>{children}</Flex>;
 };
 
 const ChartImputation = ({ chartConfig }: { chartConfig: ChartConfig }) => {
