@@ -4,11 +4,10 @@ import get from "lodash/get";
 import groupBy from "lodash/groupBy";
 import { ReactNode, useCallback, useMemo } from "react";
 
-import { DEFAULT_SORTING, getFieldComponentId } from "@/charts";
+import { getFieldComponentId } from "@/charts";
 import {
   ANIMATION_FIELD_SPEC,
   EncodingFieldType,
-  EncodingSortingOption,
   EncodingSpec,
   getChartSpec,
 } from "@/charts/chart-config-ui-options";
@@ -19,12 +18,7 @@ import {
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
 import { RadioGroup } from "@/components/form";
-import {
-  Radio,
-  Select,
-  SelectOption,
-  SelectOptionGroup,
-} from "@/components/form";
+import { Select, SelectOption, SelectOptionGroup } from "@/components/form";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import {
   AnimationField,
@@ -42,7 +36,6 @@ import {
   isTableConfig,
   MapConfig,
   RegularChartConfig,
-  SortingType,
 } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import { ColorPalette } from "@/configurator/components/chart-controls/color-palette";
@@ -62,6 +55,7 @@ import { LayoutField } from "@/configurator/components/chart-options-selector/la
 import { LimitsField } from "@/configurator/components/chart-options-selector/limits-field";
 import { ScaleDomain } from "@/configurator/components/chart-options-selector/scale-domain";
 import { ShowDotsField } from "@/configurator/components/chart-options-selector/show-dots-field";
+import { SortingField } from "@/configurator/components/chart-options-selector/sorting-field";
 import { CustomLayersSelector } from "@/configurator/components/custom-layers-selector";
 import {
   ChartFieldField,
@@ -565,7 +559,7 @@ const EncodingOptionsPanel = ({
       {encoding.sorting &&
         component &&
         CUSTOM_SORT_ENABLED_COMPONENTS.includes(component.__typename) && (
-          <ChartFieldSorting
+          <SortingField
             chartConfig={chartConfig}
             field={field}
             encodingSortingOptions={encoding.sorting}
@@ -801,137 +795,6 @@ const ChartFieldMultiFilter = ({
       </ControlSectionContent>
     </ControlSection>
   ) : null;
-};
-
-const ChartFieldSorting = ({
-  chartConfig,
-  field,
-  encodingSortingOptions,
-  disabled = false,
-}: {
-  chartConfig: ChartConfig;
-  field: EncodingFieldType;
-  encodingSortingOptions: EncodingSortingOption[];
-  disabled?: boolean;
-}) => {
-  const locale = useLocale();
-  const [, dispatch] = useConfiguratorState();
-
-  const getSortingTypeLabel = (type: SortingType): string => {
-    switch (type) {
-      case "byDimensionLabel":
-        return t({ id: "controls.sorting.byDimensionLabel", message: "Name" });
-      case "byMeasure":
-        return t({ id: "controls.sorting.byMeasure", message: "Measure" });
-      case "byTotalSize":
-        return t({ id: "controls.sorting.byTotalSize", message: "Total size" });
-      case "byAuto":
-        return t({ id: "controls.sorting.byAuto", message: "Automatic" });
-      default:
-        const _exhaustiveCheck: never = type;
-        return _exhaustiveCheck;
-    }
-  };
-
-  const updateSortingOption = useCallback<
-    (args: {
-      sortingType: EncodingSortingOption["sortingType"];
-      sortingOrder: "asc" | "desc";
-    }) => void
-  >(
-    ({ sortingType, sortingOrder }) => {
-      dispatch({
-        type: "CHART_FIELD_UPDATED",
-        value: {
-          locale,
-          field,
-          path: "sorting",
-          value: { sortingType, sortingOrder },
-        },
-      });
-    },
-    [locale, dispatch, field]
-  );
-
-  const activeSortingType = get(
-    chartConfig,
-    ["fields", field, "sorting", "sortingType"],
-    DEFAULT_SORTING["sortingType"]
-  );
-
-  // FIXME: Remove this once it's properly encoded in chart-config-ui-options
-  const sortingOrderOptions = encodingSortingOptions.find(
-    (o) => o.sortingType === activeSortingType
-  )?.sortingOrder;
-  const activeSortingOrder = get(
-    chartConfig,
-    ["fields", field, "sorting", "sortingOrder"],
-    sortingOrderOptions?.[0] ?? "asc"
-  );
-
-  return (
-    <ControlSection collapse>
-      <SectionTitle disabled={disabled} iconName="sort">
-        <Trans id="controls.section.sorting">Sort</Trans>
-      </SectionTitle>
-      <ControlSectionContent>
-        <Select
-          id="sort-by"
-          size="sm"
-          label={getFieldLabel("sortBy")}
-          options={encodingSortingOptions?.map((d) => {
-            const disabledState = d.getDisabledState?.(chartConfig);
-
-            return {
-              value: d.sortingType,
-              label: getSortingTypeLabel(d.sortingType),
-              ...disabledState,
-            };
-          })}
-          value={activeSortingType}
-          disabled={disabled}
-          onChange={(e) => {
-            updateSortingOption({
-              sortingType: e.target
-                .value as EncodingSortingOption["sortingType"],
-              sortingOrder: activeSortingOrder,
-            });
-          }}
-        />
-        <RadioGroup>
-          {sortingOrderOptions &&
-            sortingOrderOptions.map((sortingOrder) => {
-              const subType = get(
-                chartConfig,
-                ["fields", "segment", "type"],
-                ""
-              );
-              const chartSubType = `${chartConfig.chartType}.${subType}`;
-
-              return (
-                <Radio
-                  key={sortingOrder}
-                  label={getFieldLabel(
-                    `${chartSubType}.${activeSortingType}.${sortingOrder}`
-                  )}
-                  value={sortingOrder}
-                  checked={sortingOrder === activeSortingOrder}
-                  disabled={disabled}
-                  onChange={(e) => {
-                    if (e.currentTarget.checked) {
-                      updateSortingOption({
-                        sortingType: activeSortingType,
-                        sortingOrder,
-                      });
-                    }
-                  }}
-                />
-              );
-            })}
-        </RadioGroup>
-      </ControlSectionContent>
-    </ControlSection>
-  );
 };
 
 const ChartFieldSize = ({
