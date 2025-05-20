@@ -1,7 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { Box, Stack, Typography } from "@mui/material";
 import get from "lodash/get";
-import groupBy from "lodash/groupBy";
 import { ReactNode, useCallback, useMemo } from "react";
 
 import { getFieldComponentId } from "@/charts";
@@ -18,7 +17,7 @@ import {
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
 import { RadioGroup } from "@/components/form";
-import { Select, SelectOption, SelectOptionGroup } from "@/components/form";
+import { Select, SelectOption } from "@/components/form";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import {
   ChartConfig,
@@ -56,6 +55,7 @@ import { LimitsField } from "@/configurator/components/chart-options-selector/li
 import { ScaleDomain } from "@/configurator/components/chart-options-selector/scale-domain";
 import { ShowDotsField } from "@/configurator/components/chart-options-selector/show-dots-field";
 import { SortingField } from "@/configurator/components/chart-options-selector/sorting-field";
+import { makeGetFieldOptionGroups } from "@/configurator/components/chart-options-selector/utils";
 import { CustomLayersSelector } from "@/configurator/components/custom-layers-selector";
 import {
   ChartFieldField,
@@ -93,7 +93,6 @@ import {
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
-import { isJoinByCube } from "@/graphql/join";
 import { useLocale } from "@/locales/use-locale";
 
 export const ChartOptionsSelector = ({
@@ -245,30 +244,6 @@ const ActiveFieldSwitch = ({
     />
   );
 };
-
-const makeGetFieldOptionGroups =
-  ({ cubesMetadata }: { cubesMetadata: DataCubeMetadata[] }) =>
-  ({
-    fieldComponents,
-    getOption,
-  }: {
-    fieldComponents: Component[];
-    getOption: (dim: Component) => SelectOption;
-  }): SelectOptionGroup[] => {
-    const fieldComponentsByCubeIri = groupBy(fieldComponents, (d) => d.cubeIri);
-
-    return Object.entries(fieldComponentsByCubeIri).map(([cubeIri, dims]) => {
-      return [
-        {
-          label: isJoinByCube(cubeIri)
-            ? t({ id: "dimension.joined" })
-            : cubesMetadata.find((d) => d.iri === cubeIri)?.title,
-          value: cubeIri,
-        },
-        dims.map(getOption),
-      ];
-    });
-  };
 
 const EncodingOptionsPanel = ({
   encoding,
