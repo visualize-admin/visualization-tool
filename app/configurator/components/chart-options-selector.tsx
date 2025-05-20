@@ -43,6 +43,7 @@ import { ComboYField } from "@/configurator/components/chart-options-selector/co
 import { ConversionUnitsField } from "@/configurator/components/chart-options-selector/conversion-units-field";
 import { LayoutField } from "@/configurator/components/chart-options-selector/layout-field";
 import { LimitsField } from "@/configurator/components/chart-options-selector/limits-field";
+import { MultiFilterField } from "@/configurator/components/chart-options-selector/multi-filter-field";
 import { ScaleDomain } from "@/configurator/components/chart-options-selector/scale-domain";
 import { ShowDotsField } from "@/configurator/components/chart-options-selector/show-dots-field";
 import { SizeField } from "@/configurator/components/chart-options-selector/size-field";
@@ -55,10 +56,6 @@ import {
   ChartOptionSwitchField,
 } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
-import {
-  DimensionValuesMultiFilter,
-  TimeFilter,
-} from "@/configurator/components/filters";
 import { getComponentLabel } from "@/configurator/components/ui-helpers";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
@@ -70,8 +67,6 @@ import {
   getComponentsFilteredByType,
   isMeasure,
   isStandardErrorDimension,
-  isTemporalDimension,
-  isTemporalEntityDimension,
   Measure,
   Observation,
 } from "@/domain/data";
@@ -567,7 +562,7 @@ const EncodingOptionsPanel = ({
           components={components}
         />
       )}
-      <ChartFieldMultiFilter
+      <MultiFilterField
         chartConfig={chartConfig}
         component={component}
         encoding={encoding}
@@ -587,63 +582,6 @@ const EncodingOptionsPanel = ({
 
 const SwitchWrapper = ({ children }: { children: ReactNode }) => {
   return <Flex sx={{ alignItems: "center", gap: 1 }}>{children}</Flex>;
-};
-
-const ChartFieldMultiFilter = ({
-  chartConfig,
-  component,
-  encoding,
-  field,
-  dimensions,
-  measures,
-}: {
-  chartConfig: ChartConfig;
-  component: Component | undefined;
-  encoding: EncodingSpec;
-  field: EncodingFieldType;
-  dimensions: Dimension[];
-  measures: Measure[];
-}) => {
-  const colorComponentId = get(
-    chartConfig,
-    isMapConfig(chartConfig)
-      ? `fields["${field}"].color.componentId`
-      : `fields.segment.componentId`
-  );
-  const colorComponent = [...dimensions, ...measures].find(
-    (d) => d.id === colorComponentId
-  );
-
-  return encoding.filters && component ? (
-    <ControlSection data-testid="chart-edition-multi-filters" collapse>
-      <SectionTitle disabled={!component} iconName="filter">
-        <Trans id="controls.section.filter">Filter</Trans>
-      </SectionTitle>
-      <ControlSectionContent component="fieldset" gap="none">
-        <legend style={{ display: "none" }}>
-          <Trans id="controls.section.filter">Filter</Trans>
-        </legend>
-        {/* For temporal-based segments, we want to treat values as nominal. */}
-        {(isTemporalDimension(component) ||
-          isTemporalEntityDimension(component)) &&
-        field !== "segment" ? (
-          <TimeFilter
-            dimension={component}
-            disableInteractiveFilters={encoding.disableInteractiveFilters}
-          />
-        ) : (
-          component &&
-          !isMeasure(component) && (
-            <DimensionValuesMultiFilter
-              dimension={component}
-              field={field}
-              colorComponent={colorComponent}
-            />
-          )
-        )}
-      </ControlSectionContent>
-    </ControlSection>
-  ) : null;
 };
 
 const ChartImputation = ({ chartConfig }: { chartConfig: ChartConfig }) => {
