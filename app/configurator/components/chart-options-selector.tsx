@@ -12,14 +12,12 @@ import {
 } from "@/charts/chart-config-ui-options";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import Flex from "@/components/flex";
-import { Select, SelectOption } from "@/components/form";
+import { SelectOption } from "@/components/form";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
   GenericField,
-  ImputationType,
-  imputationTypes,
   isAnimationInConfig,
   isComboChartConfig,
   isMapConfig,
@@ -41,6 +39,7 @@ import { CalculationField } from "@/configurator/components/chart-options-select
 import { ColorComponentField } from "@/configurator/components/chart-options-selector/color-component-field";
 import { ComboYField } from "@/configurator/components/chart-options-selector/combo-y-field";
 import { ConversionUnitsField } from "@/configurator/components/chart-options-selector/conversion-units-field";
+import { ImputationField } from "@/configurator/components/chart-options-selector/imputation-field";
 import { LayoutField } from "@/configurator/components/chart-options-selector/layout-field";
 import { LimitsField } from "@/configurator/components/chart-options-selector/limits-field";
 import { MultiFilterField } from "@/configurator/components/chart-options-selector/multi-filter-field";
@@ -57,7 +56,6 @@ import {
 } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getComponentLabel } from "@/configurator/components/ui-helpers";
-import { useConfiguratorState } from "@/configurator/configurator-state";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
   Component,
@@ -502,7 +500,7 @@ const EncodingOptionsPanel = ({
         />
       )}
       {encoding.options?.imputation?.shouldShow(chartConfig, observations) && (
-        <ChartImputation chartConfig={chartConfig} />
+        <ImputationField chartConfig={chartConfig} />
       )}
       {encoding.options?.calculation && get(fields, "segment") && (
         <CalculationField
@@ -577,81 +575,5 @@ const EncodingOptionsPanel = ({
           <AnimationField field={chartConfig.fields.animation} />
         )}
     </div>
-  );
-};
-
-const ChartImputation = ({ chartConfig }: { chartConfig: ChartConfig }) => {
-  const [, dispatch] = useConfiguratorState();
-  const getImputationTypeLabel = (type: ImputationType) => {
-    switch (type) {
-      case "none":
-        return t({
-          id: "controls.imputation.type.none",
-          message: "-",
-        });
-      case "zeros":
-        return t({
-          id: "controls.imputation.type.zeros",
-          message: "Zeros",
-        });
-      case "linear":
-        return t({
-          id: "controls.imputation.type.linear",
-          message: "Linear interpolation",
-        });
-      default:
-        const _exhaustiveCheck: never = type;
-        return _exhaustiveCheck;
-    }
-  };
-  const updateImputationType = useCallback<(type: ImputationType) => void>(
-    (type) => {
-      dispatch({
-        type: "IMPUTATION_TYPE_CHANGED",
-        value: {
-          type,
-        },
-      });
-    },
-    [dispatch]
-  );
-
-  const imputationType: ImputationType = get(
-    chartConfig,
-    ["fields", "y", "imputationType"],
-    "none"
-  );
-
-  return (
-    <ControlSection collapse>
-      <SectionTitle
-        iconName="infoCircle"
-        warnMessage={
-          imputationType === "none"
-            ? t({
-                id: "controls.section.imputation.explanation",
-                message:
-                  "For this chart type, replacement values should be assigned to missing values. Decide on the imputation logic or switch to another chart type.",
-              })
-            : undefined
-        }
-      >
-        <Trans id="controls.section.imputation">Missing values</Trans>
-      </SectionTitle>
-      <ControlSectionContent component="fieldset" gap="none">
-        <Select
-          id="imputation-type"
-          label={getFieldLabel("imputation")}
-          options={imputationTypes.map((d) => ({
-            value: d,
-            label: getImputationTypeLabel(d),
-          }))}
-          value={imputationType}
-          onChange={(e) => {
-            updateImputationType(e.target.value as ImputationType);
-          }}
-        />
-      </ControlSectionContent>
-    </ControlSection>
   );
 };
