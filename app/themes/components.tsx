@@ -730,12 +730,25 @@ export const components: Components = {
     defaultProps: {
       stickyHeader: true,
     },
+    styleOverrides: {
+      root: {
+        borderLeft: `1px solid ${palette.monochrome[300]}`,
+        borderRight: `1px solid ${palette.monochrome[300]}`,
+      },
+      stickyHeader: {
+        "& .MuiTableHead-root": {
+          borderTop: `1px solid ${palette.monochrome[300]}`,
+          borderBottom: `1px solid ${palette.monochrome[300]}`,
+        },
+      },
+    },
   },
   MuiTableCell: {
     styleOverrides: {
       // @ts-ignore
       root: {
         padding: "16px 24px",
+        borderBottom: `1px solid ${palette.monochrome[300]}`,
         color: palette.monochrome[600],
         whiteSpace: "nowrap",
         maxWidth: "unset !important",
@@ -746,18 +759,11 @@ export const components: Components = {
   MuiTableHead: {
     styleOverrides: {
       root: {
-        display: "contents",
-
         "& .MuiTableCell-root": {
+          borderTop: `1px solid ${palette.monochrome[300]}`,
+          borderBottom: `1px solid ${palette.monochrome[300]}`,
           backgroundColor: palette.cobalt[50],
         },
-      },
-    },
-  },
-  MuiTableRow: {
-    styleOverrides: {
-      root: {
-        border: `1px solid ${palette.monochrome[300]}`,
       },
     },
   },
