@@ -189,7 +189,6 @@ const useMergeDatasetsData = ({
   });
 
   // Getting cube termsets, to then search for cubes with at least one matching termset
-  // TODO The cube filters should use all of the cubes and not just the first one
   const [cubeComponentTermsets] = useDataCubesComponentTermsetsQuery({
     pause,
     variables: {
