@@ -535,6 +535,7 @@ msgstr "Scatterplot"
 msgid "controls.chart.type.table"
 msgstr "Table"
 
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.color"
@@ -618,23 +619,23 @@ msgstr "Grouped"
 msgid "controls.column.stacked"
 msgstr "Stacked"
 
-#: app/configurator/components/chart-options-selector/convert-unit.tsx
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit"
 msgstr "Unit Conversion"
 
-#: app/configurator/components/chart-options-selector/convert-unit.tsx
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.custom-labels"
 msgstr "Custom unit labels"
 
-#: app/configurator/components/chart-options-selector/convert-unit.tsx
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.enable"
 msgstr "Enable unit conversion"
 
-#: app/configurator/components/chart-options-selector/convert-unit.tsx
-msgid "controls.convert-unit.factor"
-msgstr "Multiplying factor"
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.multiplier"
+msgstr "Multiplier"
 
-#: app/configurator/components/chart-options-selector/convert-unit.tsx
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.original"
 msgstr "Original unit: {0}"
 
@@ -962,7 +963,7 @@ msgstr "Back to editing"
 msgid "controls.nav.back-to-preview"
 msgstr "Back to preview"
 
-#: app/configurator/components/chart-options-selector/convert-unit.tsx
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field.tsx
@@ -1308,6 +1309,7 @@ msgstr "For best results, do not select more than 7 values in the visualization.
 msgid "controls.set-values-apply"
 msgstr "Apply filters"
 
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.size"
 msgstr "Size"

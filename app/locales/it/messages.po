@@ -535,6 +535,7 @@ msgstr "Scatterplot"
 msgid "controls.chart.type.table"
 msgstr "Tabella"
 
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.color"
@@ -618,23 +619,23 @@ msgstr "raggruppate"
 msgid "controls.column.stacked"
 msgstr "impilate"
 
-#: app/configurator/components/chart-options-selector/convert-unit.tsx
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit"
 msgstr "Conversione di unità"
 
-#: app/configurator/components/chart-options-selector/convert-unit.tsx
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.custom-labels"
 msgstr "Etichette unità personalizzate"
 
-#: app/configurator/components/chart-options-selector/convert-unit.tsx
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.enable"
 msgstr "Abilita conversione unità"
 
-#: app/configurator/components/chart-options-selector/convert-unit.tsx
-msgid "controls.convert-unit.factor"
-msgstr "Fattore moltiplicativo"
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.multiplier"
+msgstr "Moltiplicatore"
 
-#: app/configurator/components/chart-options-selector/convert-unit.tsx
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.original"
 msgstr "Unità originale: {0}"
 
@@ -962,7 +963,7 @@ msgstr "Torniamo alla modifica"
 msgid "controls.nav.back-to-preview"
 msgstr "Torna all'anteprima"
 
-#: app/configurator/components/chart-options-selector/convert-unit.tsx
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field.tsx
@@ -1308,6 +1309,7 @@ msgstr "Pour de meilleurs résultats, ne sélectionnez pas plus de 7 valeurs dan
 msgid "controls.set-values-apply"
 msgstr "Appliquer les filtres"
 
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.size"
 msgstr "Grandezza"
