@@ -11,6 +11,8 @@ You can also check the
 
 # Unreleased
 
+- Documentation
+  - Aligned and updated for new Parametrized URLs functionality
 - Fixes
   - Text of locale switcher select options is now visible on Windows machines
   - Total value labels do not overlap with error bars anymore

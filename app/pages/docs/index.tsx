@@ -34,31 +34,31 @@ const pages: ConfigPageOrGroup[] = [
     title: "Branding",
     content: require("@/docs/catalog/branding.mdx"),
   },
-  {
-    path: "/accessibility",
-    title: "Accessibility",
-    content: require("@/docs/catalog/accessibility.mdx"),
-  },
-  {
-    title: "Theming",
-    pages: [
-      {
-        path: "/theming",
-        title: "Overview",
-        content: require("@/docs/catalog/theming.mdx"),
-      },
-      {
-        path: "/colors",
-        title: "Colors",
-        content: require("@/docs/catalog/colors.mdx"),
-      },
-      {
-        path: "/layout",
-        title: "Layout",
-        content: require("@/docs/catalog/layout.mdx"),
-      },
-    ],
-  },
+  // {
+  //   path: "/accessibility",
+  //   title: "Accessibility",
+  //   content: require("@/docs/catalog/accessibility.mdx"),
+  // },
+  // {
+  //   title: "Theming",
+  //   pages: [
+  //     {
+  //       path: "/theming",
+  //       title: "Overview",
+  //       content: require("@/docs/catalog/theming.mdx"),
+  //     },
+  //     {
+  //       path: "/colors",
+  //       title: "Colors",
+  //       content: require("@/docs/catalog/colors.mdx"),
+  //     },
+  //     {
+  //       path: "/layout",
+  //       title: "Layout",
+  //       content: require("@/docs/catalog/layout.mdx"),
+  //     },
+  //   ],
+  // },
   {
     title: "Design Concept",
     pages: [
@@ -82,22 +82,17 @@ const pages: ConfigPageOrGroup[] = [
         title: "RDF to visualize",
         content: require("@/docs/catalog/rdf-to-visualize.mdx"),
       },
-      {
-        path: "/charts/preview-via-api",
-        title: "Previewing charts",
-        content: require("@/docs/catalog/chart-preview-via-api.mdx"),
-      },
     ],
   },
   {
+    path: "/api",
+    title: "API",
+    content: require("@/docs/catalog/chart-preview-via-api.mdx"),
+  },
+  {
+    path: "/components",
     title: "Components",
-    pages: [
-      {
-        path: "/components/intro",
-        title: "Introduction",
-        content: require("@/docs/catalog/components"),
-      },
-    ],
+    content: require("@/docs/catalog/components"),
   },
   {
     path: "/testing",
@@ -190,7 +185,7 @@ export default () => {
         <Catalog
           basePath="/docs"
           useBrowserHistory
-          title="Visualization Tool"
+          title="Visualize"
           pages={pages}
           theme={{
             brandColor: "#333",

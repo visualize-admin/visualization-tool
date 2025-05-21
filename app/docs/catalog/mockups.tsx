@@ -80,13 +80,13 @@ const chartBuilderMockups = [
 
 const Doc = () =>
   markdown`
-> The design mockups illustrate an exemplary user flow through the _Visualization Tool_.
+> The design mockups illustrate an exemplary user flow through _Visualize_.
 
 ## Home
 
-The user's first contact with the _Visualization Tool_. In addition to a description of the tool and it's purpose, several entrypoints are available. A prominent call-to-action invites to go to the Chart Builder directly. 
+The user's first contact with _Visualize_. In addition to a description of the tool and it's purpose, several entrypoints are available. A prominent call-to-action invites to go to the Chart Builder directly.
 
-The homepage includes a short tutorial section that describies the different steps needed to create a visualization, as well as some example charts that explain different features of the charts created with the tool and which invite the users to create their own visualizations based on the examples. The examples are followed by a section about which kind of data is available via the _Visualization Tool_, followed by a call-to-action for other potential data-providers.
+The homepage includes a short tutorial section that describies the different steps needed to create a visualization, as well as some example charts that explain different features of the charts created with the tool and which invite the users to create their own visualizations based on the examples. The examples are followed by a section about which kind of data is available via _Visualize_, followed by a call-to-action for other potential data-providers.
 
 ~~~image
 plain: true
@@ -113,9 +113,9 @@ description: "[Open full-size image](./static/docs/design/mockups/1.1_s_chart-ma
 
 ## Chart Landing Page
 
-Each chart built with the _Visualization Tool_ is assignened a dedicated Chart-URL. As soon as a chart has been published, a dedicated «Landing Page» can be accessed by anyone using the appropriate URL. This page should also be made available on mobile devices (responisve design). 
+Each chart built with _Visualize_ is assignened a dedicated Chart-URL. As soon as a chart has been published, a dedicated «Landing Page» can be accessed by anyone using the appropriate URL. This page should also be made available on mobile devices (responisve design).
 
-The landing page includes the chart itself, as well as the header & footer of the _Visualization Tool_ and a set of dedicated actions such as image download, sharing, or embedding. At the bottom of the page, the user is presented with the option to create a new visualization from scratch.
+The landing page includes the chart itself, as well as the header & footer of _Visualize_ and a set of dedicated actions such as image download, sharing, or embedding. At the bottom of the page, the user is presented with the option to create a new visualization from scratch.
 
 ~~~image
 plain: true
@@ -162,7 +162,7 @@ description: "[Open full-size image](./static/docs/design/mockups/1.8.3_s_shared
 
 ## Chart Builder
 
-The Chart Builder is the core of the _Visualization Tool_. It guides the user through an easy to understand process from selecting the right dataset to customizing a visualization, and finally publishing it.
+The Chart Builder is the core of _Visualize_. It guides the user through an easy to understand process from selecting the right dataset to customizing a visualization, and finally publishing it.
 
 ${Object.entries(chartBuilderMockups)
   .map(
