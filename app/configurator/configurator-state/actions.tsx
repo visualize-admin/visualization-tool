@@ -6,6 +6,7 @@ import {
   ColorField,
   ColorMapping,
   ConfiguratorState,
+  CustomPaletteType,
   DashboardFiltersConfig,
   DataSource,
   Filters,
@@ -218,6 +219,7 @@ export type ConfiguratorStateAction =
         dimensionId: string;
         values: DimensionValue[];
         random: boolean;
+        customPalette?: CustomPaletteType;
       };
     }
   | {

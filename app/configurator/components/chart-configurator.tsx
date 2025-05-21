@@ -176,7 +176,12 @@ export const DataFilterSelectGeneric = ({
         >
           <InteractiveDataFilterToggle id={dimension.id} />
           {dimension.isKeyDimension ? null : (
-            <IconButton disabled={disabled} size="small" onClick={onRemove}>
+            <IconButton
+              disabled={disabled}
+              size="small"
+              onClick={onRemove}
+              sx={{ p: 0, transform: "translateY(-5%)" }}
+            >
               <Icon name="trash" size={16} />
             </IconButton>
           )}

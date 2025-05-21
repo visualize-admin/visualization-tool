@@ -536,6 +536,7 @@ export const updateColorMapping = (
       colorMapping: oldColorMapping,
       values,
       random,
+      customPalette,
     } = action.value;
     const chartConfig = getChartConfig(draft);
     const path = colorConfigPath
@@ -555,6 +556,7 @@ export const updateColorMapping = (
           dimensionValues: values,
           colorMapping: oldColorMapping,
           random,
+          customPalette,
         });
       }
     } else {
@@ -564,6 +566,7 @@ export const updateColorMapping = (
         dimensionValues: values,
         colorMapping: oldColorMapping,
         random,
+        customPalette,
       });
     }
 
