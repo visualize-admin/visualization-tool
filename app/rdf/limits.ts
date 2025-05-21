@@ -15,15 +15,15 @@ type BaseLimit = {
   } & Pick<DimensionValue, "label" | "position">)[];
 };
 
-type LimitSingle = BaseLimit & {
+export type LimitSingle = BaseLimit & {
   type: "single";
   value: number;
 };
 
-type LimitRange = BaseLimit & {
+export type LimitRange = BaseLimit & {
   type: "range";
-  from: number;
-  to: number;
+  min: number;
+  max: number;
 };
 
 export type Limit = LimitSingle | LimitRange;
@@ -100,8 +100,8 @@ export const getDimensionLimits = async (
           limit: {
             type: "range" as const,
             name,
-            from: +minValue,
-            to: +maxValue,
+            min: +minValue,
+            max: +maxValue,
           },
         };
       }

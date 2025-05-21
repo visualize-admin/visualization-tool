@@ -501,12 +501,12 @@ export const MapComponent = ({
             return [
               new DashedScatterplotLayer({
                 id: `symbolLayerLimit-${i}-from`,
-                getRadius: mkGetLimitRadius(measureLimit.from),
+                getRadius: mkGetLimitRadius(measureLimit.min),
                 ...baseLayerProps,
               }),
               new DashedScatterplotLayer({
                 id: `symbolLayerLimit-${i}-to`,
-                getRadius: mkGetLimitRadius(measureLimit.to),
+                getRadius: mkGetLimitRadius(measureLimit.max),
                 ...baseLayerProps,
               }),
             ];

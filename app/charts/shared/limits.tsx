@@ -34,11 +34,11 @@ export const HorizontalLimits = ({
           x1:
             measureLimit.type === "single"
               ? measureLimit.value
-              : measureLimit.from,
+              : measureLimit.min,
           x2:
             measureLimit.type === "single"
               ? measureLimit.value
-              : measureLimit.to,
+              : measureLimit.max,
           ...configLimit,
           relatedAxisDimensionValueLabel,
         };
@@ -138,11 +138,11 @@ export const VerticalLimits = ({
           y1:
             measureLimit.type === "single"
               ? measureLimit.value
-              : measureLimit.from,
+              : measureLimit.min,
           y2:
             measureLimit.type === "single"
               ? measureLimit.value
-              : measureLimit.to,
+              : measureLimit.max,
           ...configLimit,
           relatedAxisDimensionValueLabel,
         };

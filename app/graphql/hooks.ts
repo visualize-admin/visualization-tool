@@ -14,6 +14,7 @@ import {
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { Locale } from "@/locales/locales";
+import { LimitRange, LimitSingle } from "@/rdf/limits";
 import { assert } from "@/utils/assert";
 
 import { joinDimensions, mergeObservations } from "./join";
@@ -365,16 +366,20 @@ export function transformDataCubesComponents(
             limits: measure.limits.map((limit) => {
               switch (limit.type) {
                 case "single":
-                  return {
+                  const singleLimit: LimitSingle = {
                     ...limit,
                     value: convertValue(limit.value, conversionUnit),
                   };
+
+                  return singleLimit;
                 case "range":
-                  return {
+                  const rangeLimit: LimitRange = {
                     ...limit,
-                    from: convertValue(limit.from, conversionUnit),
-                    to: convertValue(limit.to, conversionUnit),
+                    min: convertValue(limit.min, conversionUnit),
+                    max: convertValue(limit.max, conversionUnit),
                   };
+
+                  return rangeLimit;
                 default:
                   const _exhaustiveCheck: never = limit;
                   return _exhaustiveCheck;

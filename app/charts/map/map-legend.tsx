@@ -238,8 +238,8 @@ export const MapLegend = ({
                     {measureLimit.name}
                   </Typography>
                   <LimitLegend
-                    minValue={measureLimit.from}
-                    maxValue={measureLimit.to}
+                    minValue={measureLimit.min}
+                    maxValue={measureLimit.max}
                     color={configLimit.color}
                   />
                 </Box>

@@ -805,7 +805,7 @@ export const useLimitsVariables = (limits: ReturnType<typeof useLimits>) => {
       case "single":
         return d.measureLimit.value;
       case "range":
-        return [d.measureLimit.from, d.measureLimit.to];
+        return [d.measureLimit.min, d.measureLimit.max];
       default:
         const _exhaustiveCheck: never = d.measureLimit;
         return _exhaustiveCheck;

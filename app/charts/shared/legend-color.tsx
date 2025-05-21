@@ -170,7 +170,7 @@ export const LegendColor = memo(function LegendColor({
             values:
               measureLimit.type === "single"
                 ? [measureLimit.value]
-                : [measureLimit.from, measureLimit.to],
+                : [measureLimit.min, measureLimit.max],
             color: configLimit.color,
             symbol: !configLimit.symbolType
               ? configLimit.lineType === "dashed"
