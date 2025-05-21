@@ -17,6 +17,7 @@ export const useBarValueLabelsData = () => {
     yScale,
     getY,
     valueLabelFormatter,
+    getValueOffset,
   } = useChartState() as BarsState;
   const bandwidth = yScale.bandwidth();
   const valueLabelsData: RenderTotalValueLabelDatum[] = useMemo(() => {
@@ -35,10 +36,11 @@ export const useBarValueLabelsData = () => {
         const value = valueRaw === null || isNaN(valueRaw) ? 0 : valueRaw;
         const xScaled = xScale(Math.max(value, 0));
         const yRender = yScale(getY(d)) as number;
+        const valueOffset = getValueOffset(d);
 
         return {
           key,
-          x: xScaled,
+          x: xScaled + valueOffset,
           y: yRender + bandwidth / 2,
           valueLabel: valueLabelFormatter(value),
         };
@@ -57,6 +59,7 @@ export const useBarValueLabelsData = () => {
     getY,
     bandwidth,
     valueLabelFormatter,
+    getValueOffset,
   ]);
 
   return valueLabelsData;

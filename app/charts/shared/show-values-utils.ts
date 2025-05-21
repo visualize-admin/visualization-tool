@@ -1,9 +1,12 @@
+import { ScaleLinear } from "d3-scale";
 import { useCallback, useMemo } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
 import {
   NumericalValueGetter,
+  NumericalXErrorVariables,
+  NumericalYErrorVariables,
   useChartState,
 } from "@/charts/shared/chart-state";
 import { RenderTotalValueLabelDatum } from "@/charts/shared/render-value-labels";
@@ -22,6 +25,7 @@ import { getTextWidth } from "@/utils/get-text-width";
 
 export type ShowBandValueLabelsVariables = {
   offset: number;
+  getValueOffset: (observation: Observation) => number;
   showValues: boolean;
   rotateValues: boolean;
   renderEveryNthValue: number;
@@ -35,12 +39,18 @@ export const useShowBandValueLabelsVariables = (
     dimensions,
     measures,
     getValue,
+    getErrorRange,
+    scale,
     bandwidth,
   }: {
     chartData: Observation[];
     dimensions: Dimension[];
     measures: Measure[];
     getValue: NumericalValueGetter;
+    getErrorRange?:
+      | NumericalXErrorVariables["getXErrorRange"]
+      | NumericalYErrorVariables["getYErrorRange"];
+    scale: ScaleLinear<number, number>;
     bandwidth?: number;
   }
 ): ShowBandValueLabelsVariables => {
@@ -54,6 +64,7 @@ export const useShowBandValueLabelsVariables = (
   }
 
   const disableRotation = !bandwidth;
+  const horizontal = disableRotation;
   const { labelFontSize: fontSize } = useChartTheme();
   const renderEveryNthValue =
     disableRotation || bandwidth > fontSize
@@ -66,6 +77,30 @@ export const useShowBandValueLabelsVariables = (
     measures,
   });
 
+  const getValueOffset: ShowBandValueLabelsVariables["getValueOffset"] =
+    useCallback(
+      (observation: Observation) => {
+        const value = getValue(observation);
+
+        if (value === null) {
+          return 0;
+        }
+
+        const errorEnd = getErrorRange?.(observation)[1];
+
+        if (errorEnd === undefined) {
+          return 0;
+        }
+
+        if (horizontal) {
+          return scale(errorEnd - value);
+        }
+
+        return scale(errorEnd) - scale(value);
+      },
+      [getValue, getErrorRange, horizontal, scale]
+    );
+
   const { offset, rotateValues } = useMemo(() => {
     let offset = 0;
     let rotateValues = false;
@@ -74,7 +109,8 @@ export const useShowBandValueLabelsVariables = (
       let maxWidth = 0;
 
       chartData.forEach((d) => {
-        const formattedValue = valueLabelFormatter(getValue(d));
+        const value = getValue(d);
+        const formattedValue = valueLabelFormatter(value);
         const width = getTextWidth(formattedValue, { fontSize });
 
         if (!disableRotation && width - 2 > bandwidth) {
@@ -101,14 +137,15 @@ export const useShowBandValueLabelsVariables = (
     showValues,
     chartData,
     disableRotation,
-    valueLabelFormatter,
     getValue,
+    valueLabelFormatter,
     fontSize,
     bandwidth,
   ]);
 
   return {
     offset,
+    getValueOffset,
     showValues,
     rotateValues,
     renderEveryNthValue,

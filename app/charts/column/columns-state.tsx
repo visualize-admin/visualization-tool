@@ -278,6 +278,8 @@ const useColumnsState = (
       dimensions,
       measures,
       getValue: getY,
+      getErrorRange: getYErrorRange,
+      scale: yScale,
       bandwidth: xScale.bandwidth(),
     });
   const margins = {
