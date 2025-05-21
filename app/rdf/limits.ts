@@ -45,27 +45,43 @@ export const getDimensionLimits = async (
         .map((ctx) => {
           const dimensionIri = ctx.out(ns.sh.path).value;
           const value = ctx.out(ns.sh.hasValue).value;
+          const minInclusive = ctx.out(ns.sh.minInclusive).value;
+          const maxInclusive = ctx.out(ns.sh.maxInclusive).value;
 
-          if (!dimensionIri || !value) {
+          if (!dimensionIri) {
             return null;
           }
 
           return {
+            ctx,
+            dimensionIri,
             dimensionId: stringifyComponentId({
               unversionedCubeIri,
               unversionedComponentIri: dimensionIri,
             }),
             value,
+            minInclusive,
+            maxInclusive,
           };
         })
         .filter(truthy);
 
+      // We do not support range limits yet.
+      if (related.some((r) => !!r.minInclusive || !!r.maxInclusive)) {
+        return null;
+      }
+
       const value = a.out(ns.schema.value).value;
+
+      // Temporary, until we support range limits.
+      const relatedWithoutInclusive = related.map(
+        ({ minInclusive, maxInclusive, ...r }) => r
+      );
 
       if (!!value) {
         return {
           index,
-          related,
+          related: relatedWithoutInclusive,
           limit: {
             type: "single" as const,
             name,
@@ -80,7 +96,7 @@ export const getDimensionLimits = async (
       if (!!minValue && !!maxValue) {
         return {
           index,
-          related,
+          related: relatedWithoutInclusive,
           limit: {
             type: "range" as const,
             name,
@@ -100,15 +116,15 @@ export const getDimensionLimits = async (
   if (baseRelated.length > 0) {
     const allRelatedQuery = `PREFIX schema: <http://schema.org/>
 
-    SELECT ?index ?dimensionId ?value ?label ?position WHERE {
-      VALUES (?index ?dimensionId ?value) { ${baseLimits
+    SELECT ?index ?dimensionIri ?value ?label ?position WHERE {
+      VALUES (?index ?dimensionIri ?value) { ${baseLimits
         .flatMap((l) => l.related.map((r) => ({ ...r, index: l.index })))
-        .map((r) => `(${r.index} <${r.dimensionId}> <${r.value}>)`)
+        .map((r) => `(${r.index} <${r.dimensionIri}> <${r.value}>)`)
         .join(" ")} }
         ${buildLocalizedSubQuery("value", "schema:name", "label", {
           locale,
         })}
-        ?value schema:position ?position .
+        OPTIONAL { ?value schema:position ?position . }
     }`;
 
     const allRelated = (
@@ -117,14 +133,17 @@ export const getDimensionLimits = async (
       })
     ).map((d) => {
       const index = +d.index.value;
-      const dimensionId = d.dimensionId.value;
+      const dimensionIri = d.dimensionIri.value;
       const value = d.value.value;
       const label = d.label.value;
-      const position = d.position.value;
+      const position = d.position?.value;
 
       return {
         index,
-        dimensionId,
+        dimensionId: stringifyComponentId({
+          unversionedCubeIri,
+          unversionedComponentIri: dimensionIri,
+        }),
         value,
         label,
         position,

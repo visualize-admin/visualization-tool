@@ -16,6 +16,7 @@ You can also check the
 - Fixes
   - Text of locale switcher select options is now visible on Windows machines
   - Total value labels do not overlap with error bars anymore
+  - Fixed the issue of "tandem toggle" of some limits
 - Styles
   - Header of data preview table is now sticky
   - Data preview table should now be aligned with the design
