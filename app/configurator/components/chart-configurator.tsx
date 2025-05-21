@@ -130,6 +130,7 @@ export const DataFilterSelectGeneric = ({
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const [{ data, fetching }] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
@@ -175,7 +176,12 @@ export const DataFilterSelectGeneric = ({
         >
           <InteractiveDataFilterToggle id={dimension.id} />
           {dimension.isKeyDimension ? null : (
-            <IconButton disabled={disabled} size="small" onClick={onRemove}>
+            <IconButton
+              disabled={disabled}
+              size="small"
+              onClick={onRemove}
+              sx={{ p: 0, transform: "translateY(-5%)" }}
+            >
               <Icon name="trash" size={16} />
             </IconButton>
           )}
@@ -381,6 +387,7 @@ const useFilterReorder = ({
     { data: componentsData, fetching: componentsFetching },
     executeComponentsQuery,
   ] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       sourceType: state.dataSource.type,
       sourceUrl: state.dataSource.url,
@@ -755,7 +762,7 @@ export const ChartConfigurator = ({
                 )?.title;
                 const cubeAddableDims = addableDimensionsByCubeIri[cubeIri];
 
-                return (
+                return dims.length > 0 ? (
                   <Fragment key={cubeIri}>
                     <Box sx={{ py: 2 }}>
                       {cubeTitle ? (
@@ -816,7 +823,7 @@ export const ChartConfigurator = ({
                       <AddFilterButton dims={cubeAddableDims} />
                     ) : null}
                   </Fragment>
-                );
+                ) : null;
               })}
           </ControlSectionContent>
         </ControlSection>
@@ -888,6 +895,7 @@ const ChartFields = ({
   const queryFilters = useQueryFilters({ chartConfig, dashboardFilters });
   const locale = useLocale();
   const [{ data: observationsData }] = useDataCubesObservationsQuery({
+    chartConfig,
     variables: {
       locale,
       sourceType: dataSource.type,

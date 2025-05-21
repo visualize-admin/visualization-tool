@@ -299,12 +299,24 @@ const Limit = t.intersection([
 ]);
 export type Limit = t.TypeOf<typeof Limit>;
 
+const ConversionUnit = t.type({
+  multiplier: t.number,
+  labels: t.type({
+    de: t.string,
+    fr: t.string,
+    it: t.string,
+    en: t.string,
+  }),
+});
+export type ConversionUnit = t.TypeOf<typeof ConversionUnit>;
+
 const GenericChartConfig = t.type({
   key: t.string,
   version: t.string,
   meta: Meta,
   cubes: t.array(Cube),
   limits: t.record(t.string, t.array(Limit)),
+  conversionUnitsByComponentId: t.record(t.string, ConversionUnit),
   activeField: t.union([t.string, t.undefined]),
 });
 
@@ -427,6 +439,13 @@ const LineSegmentField = t.intersection([
 ]);
 export type LineSegmentField = t.TypeOf<typeof LineSegmentField>;
 
+const ShowDotsSize = t.union([
+  t.literal("Small"),
+  t.literal("Medium"),
+  t.literal("Large"),
+]);
+export type ShowDotsSize = t.TypeOf<typeof ShowDotsSize>;
+
 const LineFields = t.intersection([
   t.type({
     x: GenericField,
@@ -437,11 +456,7 @@ const LineFields = t.intersection([
       CustomScaleDomainFieldExtension,
       t.partial({
         showDots: t.boolean,
-        showDotsSize: t.union([
-          t.literal("Small"),
-          t.literal("Medium"),
-          t.literal("Large"),
-        ]),
+        showDotsSize: ShowDotsSize,
       }),
     ]),
     color: t.union([SegmentColorField, SingleColorField]),
@@ -479,7 +494,7 @@ const ImputationType = t.union([
   t.literal("linear"),
 ]);
 export type ImputationType = t.TypeOf<typeof ImputationType>;
-export const imputationTypes: ImputationType[] = ["none", "zeros", "linear"];
+export const IMPUTATION_TYPES: ImputationType[] = ["none", "zeros", "linear"];
 
 const AreaFields = t.intersection([
   t.type({
@@ -857,16 +872,16 @@ export type MapColorField =
 
 const MapAreaLayer = t.type({
   componentId: t.string,
-  // FIXME:  convert to new color field type
+  // FIXME: convert to new color field type
   color: t.union([CategoricalColorField, NumericalColorField]),
 });
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
 const MapSymbolLayer = t.type({
   componentId: t.string,
-  /** symbol radius (size) */
+  /** Symbol radius (size) */
   measureId: t.string,
-  // FIXME:  convert to new color field type
+  // FIXME: convert to new color field type
   color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
 });
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;

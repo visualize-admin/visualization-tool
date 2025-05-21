@@ -1,5 +1,6 @@
 import { descending } from "d3-array";
 import groupBy from "lodash/groupBy";
+import uniqBy from "lodash/uniqBy";
 import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { SearchCube } from "@/domain/data";
@@ -56,10 +57,24 @@ export const mergeSearchCubes = (
   a: SearchCube | undefined,
   b: SearchCube
 ): SearchCube => {
+  const mergedDimensions = uniqBy(
+    [...(a?.dimensions ?? []), ...(b.dimensions ?? [])],
+    "id"
+  ).map((d) => ({
+    ...d,
+    termsets: uniqBy(d.termsets, "iri"),
+  }));
+
+  const mergedTermsets = uniqBy(
+    [...(a?.termsets ?? []), ...(b.termsets ?? [])],
+    "iri"
+  );
+
   return {
     ...a,
     ...b,
-    dimensions: [...(a?.dimensions ?? []), ...(b.dimensions ?? [])],
+    dimensions: mergedDimensions,
+    termsets: mergedTermsets,
   };
 };
 

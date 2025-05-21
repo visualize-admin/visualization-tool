@@ -262,7 +262,7 @@ msgid "chart.map.layers.area"
 msgstr "Aree"
 
 #: app/configurator/components/chart-configurator.tsx
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/base-layer-field.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.base"
 msgstr "Strati di base"
@@ -275,11 +275,11 @@ msgstr "Dietro lo strato dell'area"
 msgid "chart.map.layers.base.enable-temporal-filtering"
 msgstr "Sincronizzazione con filtri temporali"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/base-layer-field.tsx
 msgid "chart.map.layers.base.show"
 msgstr "Mostra mappa del mondo"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/base-layer-field.tsx
 msgid "chart.map.layers.base.view.locked"
 msgstr "Vista bloccata"
 
@@ -346,19 +346,19 @@ msgstr "Usa abbreviazioni"
 msgid "controls.add.chart"
 msgstr "Aggiungere un altro grafico."
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain"
 msgstr "Regola il dominio della scala"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.invalid-number-error"
 msgstr "Inserisci un numero valido"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.max-error"
 msgstr "Il massimo deve essere maggiore del minimo"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.min-error"
 msgstr "Il minimo deve essere inferiore al massimo"
 
@@ -535,6 +535,7 @@ msgstr "Scatterplot"
 msgid "controls.chart.type.table"
 msgstr "Tabella"
 
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.color"
@@ -617,6 +618,26 @@ msgstr "raggruppate"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.column.stacked"
 msgstr "impilate"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit"
+msgstr "Conversione di unità"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.custom-labels"
+msgstr "Etichette unità personalizzate"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.enable"
+msgstr "Abilita conversione unità"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.multiplier"
+msgstr "Moltiplicatore"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.original"
+msgstr "Unità originale: {0}"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx
@@ -942,6 +963,7 @@ msgstr "Torniamo alla modifica"
 msgid "controls.nav.back-to-preview"
 msgstr "Torna all'anteprima"
 
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field.tsx
@@ -1287,6 +1309,7 @@ msgstr "Pour de meilleurs résultats, ne sélectionnez pas plus de 7 valeurs dan
 msgid "controls.set-values-apply"
 msgstr "Appliquer les filtres"
 
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.size"
 msgstr "Grandezza"

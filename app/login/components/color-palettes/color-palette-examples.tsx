@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/react";
+import { Trans } from "@lingui/macro";
 import { interpolatePurples, interpolateRdYlGn } from "d3-scale-chromatic";
 import { ReactNode } from "react";
 

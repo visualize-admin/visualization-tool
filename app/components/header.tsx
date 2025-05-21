@@ -81,7 +81,9 @@ export const Header = ({
             }}
           >
             {localeConfig.locales.map((locale) => (
-              <option key={locale} value={locale}>
+              // Color override is needed to make sure the text is visible on
+              // Windows machines.
+              <option key={locale} value={locale} style={{ color: "initial" }}>
                 {locale.toUpperCase()}
               </option>
             ))}

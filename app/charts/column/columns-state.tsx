@@ -9,7 +9,7 @@ import {
   scaleTime,
 } from "d3-scale";
 import orderBy from "lodash/orderBy";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   ColumnsStateVariables,
@@ -45,12 +45,8 @@ import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { useLimits } from "@/config-utils";
 import { ColumnConfig } from "@/configurator";
-import { Observation } from "@/domain/data";
-import {
-  formatNumberWithUnit,
-  useFormatNumber,
-  useTimeFormatUnit,
-} from "@/formatters";
+import { isTemporalDimension, Observation } from "@/domain/data";
+import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import {
   getSortingOrders,
@@ -74,6 +70,7 @@ export type ColumnsState = CommonChartState &
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
+    formatXAxisTick?: (d: string) => string;
   };
 
 const useColumnsState = (
@@ -88,7 +85,7 @@ const useColumnsState = (
     getXAsDate,
     getXAbbreviationOrLabel,
     getXLabel,
-    xTimeUnit,
+    formatXDate,
     yMeasure,
     getY,
     getMinY,
@@ -107,7 +104,6 @@ const useColumnsState = (
   const { width, height } = useSize();
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
-  const timeFormatUnit = useTimeFormatUnit();
 
   const sumsByX = useMemo(() => {
     return Object.fromEntries(
@@ -282,6 +278,8 @@ const useColumnsState = (
       dimensions,
       measures,
       getValue: getY,
+      getErrorRange: getYErrorRange,
+      scale: yScale,
       bandwidth: xScale.bandwidth(),
     });
   const margins = {
@@ -295,6 +293,13 @@ const useColumnsState = (
   const { chartHeight } = bounds;
   yScale.range([chartHeight, 0]);
   const isMobile = useIsMobile();
+
+  const maybeFormatDate = useCallback(
+    (tick: string) => {
+      return isTemporalDimension(xDimension) ? formatXDate(tick) : tick;
+    },
+    [xDimension, formatXDate]
+  );
 
   // Tooltip
   const getAnnotationInfo = (d: Observation): TooltipInfo => {
@@ -322,7 +327,7 @@ const useColumnsState = (
       xAnchor,
       yAnchor,
       placement,
-      value: xTimeUnit ? timeFormatUnit(xLabel, xTimeUnit) : xLabel,
+      value: maybeFormatDate(xLabel),
       datum: {
         label: undefined,
         value: y !== null && isNaN(y) ? "-" : `${yValueUnitFormatter(getY(d))}`,
@@ -348,6 +353,7 @@ const useColumnsState = (
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
+    formatXAxisTick: maybeFormatDate,
     ...showValuesVariables,
     ...variables,
   };

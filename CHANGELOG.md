@@ -13,6 +13,31 @@ You can also check the
 
 - Documentation
   - Aligned and updated for new Parametrized URLs functionality
+- Fixes
+  - Text of locale switcher select options is now visible on Windows machines
+  - Total value labels do not overlap with error bars anymore
+- Styles
+  - Header of data preview table is now sticky
+  - Data preview table should now be aligned with the design
+- Maintenance
+  - Split the chart options selector into multiple files
+
+# 5.8.0 - 2025-05-20
+
+- Features
+  - Added a way to set custom conversion units for numerical measures
+  - Reversed the order of custom layers in the custom layers selector, so that
+    the topmost layer is displayed first
+- Fixes
+  - X and Y band axes have now correctly formatted ticks in case of being based
+    on temporal entity dimension
+  - Dimensions with multiple termsets are now displayed correctly in the dataset
+    browse view (no more duplicates)
+  - Resetting and shuffling custom color palettes shouldn't use default colors
+    anymore
+- Styles
+  - Common CI / CD components (Header, Logo, TopBar) should now have correct
+    styling
 
 # 5.7.7 - 2025-05-13
 

@@ -273,7 +273,7 @@ const Statistics = (props: Serialized<PageProps>) => {
         <CardGrid>
           <BaseStatsCard
             title={`Visualize users created ${formatInteger(sum(charts.countByChartType, (d) => d.count))} individual* charts`}
-            subtitle="*Dashboards contain multiple charts; here we count them individually."
+            subtitle="*Dashboards contain multiple charts; here we show them all."
             data={charts.countByChartType.map(({ type, count }) => [
               type,
               {

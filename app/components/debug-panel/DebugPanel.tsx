@@ -16,7 +16,7 @@ import { useState } from "react";
 import { Inspector } from "react-inspector";
 
 import { getChartConfig } from "@/config-utils";
-import { DataSource, useConfiguratorState } from "@/configurator";
+import { ChartConfig, DataSource, useConfiguratorState } from "@/configurator";
 import { dataSourceToSparqlEditorUrl } from "@/domain/datasource";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
@@ -48,13 +48,16 @@ const DebugInteractiveFilters = () => {
 const CubeMetadata = ({
   datasetIri,
   dataSource,
+  chartConfig,
 }: {
   datasetIri: string;
   dataSource: DataSource;
+  chartConfig: ChartConfig;
 }) => {
   const locale = useLocale();
   const [expanded, setExpanded] = useState(false);
   const [{ data, fetching }] = useDataCubesComponentsQuery({
+    chartConfig,
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
@@ -143,6 +146,7 @@ const DebugConfigurator = () => {
           <CubeMetadata
             datasetIri={cube.iri}
             dataSource={configuratorState.dataSource}
+            chartConfig={chartConfig}
           />
         </Stack>
       ))}

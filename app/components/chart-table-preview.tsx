@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import {
   createContext,
   Dispatch,
@@ -98,21 +99,26 @@ export const ChartTablePreviewProvider = ({
 
 export const TABLE_PREVIEW_WRAPPER_CLASS_NAME = "table-preview-wrapper";
 
-export const TablePreviewWrapper = ({ children }: { children: ReactNode }) => {
+export const ChartTablePreviewWrapper = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const { containerRef, containerHeight } = useChartTablePreview();
 
   return (
-    <div
+    <Box
       ref={containerRef}
       className={TABLE_PREVIEW_WRAPPER_CLASS_NAME}
-      style={{
+      sx={{
         minWidth: 0,
         height: containerHeight,
-        marginTop: 16,
+        marginTop: 4,
+        marginBottom: 2,
         flexGrow: 1,
       }}
     >
       {children}
-    </div>
+    </Box>
   );
 };
