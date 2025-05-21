@@ -11,8 +11,8 @@ You can also check the
 
 # Unreleased
 
-- Documentation
-  - Aligned and updated for new Parametrized URLs functionality
+- Features
+  - Pie charts now display the "Y" axis title
 - Fixes
   - Text of locale switcher select options is now visible on Windows machines
   - Total value labels do not overlap with error bars anymore
@@ -21,6 +21,8 @@ You can also check the
   - Data preview table should now be aligned with the design
 - Maintenance
   - Split the chart options selector into multiple files
+- Documentation
+  - Aligned and updated for new Parametrized URLs functionality
 
 # 5.8.0 - 2025-05-20
 
