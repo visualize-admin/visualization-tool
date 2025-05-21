@@ -146,7 +146,10 @@ export const LimitsField = ({
                   flexDirection="column"
                   sx={{
                     gap: 4,
-                    mb: limit.type === "range" || supportsLimitSymbols ? 4 : 0,
+                    mb:
+                      limit.type === "vertical-range" || supportsLimitSymbols
+                        ? 4
+                        : 0,
                   }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
@@ -265,7 +268,7 @@ export const LimitsField = ({
                     </RadioGroup>
                   </div>
                 ) : null}
-                {limit.type === "range" ||
+                {limit.type === "vertical-range" ||
                 !supportsLimitSymbols ||
                 hasNoAxisDimension ? (
                   <div>

@@ -497,7 +497,7 @@ export const MapComponent = ({
                 ...baseLayerProps,
               }),
             ];
-          case "range":
+          case "vertical-range":
             return [
               new DashedScatterplotLayer({
                 id: `symbolLayerLimit-${i}-from`,

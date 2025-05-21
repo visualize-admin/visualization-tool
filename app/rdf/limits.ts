@@ -20,13 +20,13 @@ export type LimitSingle = BaseLimit & {
   value: number;
 };
 
-export type LimitRange = BaseLimit & {
-  type: "range";
+export type LimitVerticalRange = BaseLimit & {
+  type: "vertical-range";
   min: number;
   max: number;
 };
 
-export type Limit = LimitSingle | LimitRange;
+export type Limit = LimitSingle | LimitVerticalRange;
 
 export const getDimensionLimits = async (
   dim: CubeDimension,
@@ -98,7 +98,7 @@ export const getDimensionLimits = async (
           index,
           related: relatedWithoutInclusive,
           limit: {
-            type: "range" as const,
+            type: "vertical-range" as const,
             name,
             min: +minValue,
             max: +maxValue,

@@ -231,7 +231,7 @@ export const MapLegend = ({
                   />
                 </Box>
               );
-            case "range":
+            case "vertical-range":
               return (
                 <Box>
                   <Typography component="div" variant="caption">
