@@ -9,6 +9,7 @@ import type { ColumnsState } from "@/charts/column/columns-state";
 import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import type { LinesState } from "@/charts/line/lines-state";
 import type { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
+import { AxisHeightTitle } from "@/charts/shared/axis-height-title";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   maybeTransition,
@@ -16,31 +17,25 @@ import {
 } from "@/charts/shared/rendering-utils";
 import { getTickNumber } from "@/charts/shared/ticks";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
-import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { useFormatNumber } from "@/formatters";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 
+export type AxisHeightLinearChartState =
+  | AreasState
+  | ColumnsState
+  | GroupedColumnsState
+  | StackedColumnsState
+  | LinesState
+  | ScatterplotState
+  | ComboLineSingleState;
+
 export const TICK_PADDING = 6;
 
 export const AxisHeightLinear = () => {
-  const { gridColor, labelColor, axisLabelFontSize } = useChartTheme();
+  const { gridColor, labelColor } = useChartTheme();
   const [ref, setRef] = useState<SVGGElement | null>(null);
-  const {
-    yScale,
-    bounds,
-    yAxisLabel,
-    leftAxisLabelSize,
-    leftAxisLabelOffsetTop,
-    ...rest
-  } = useChartState() as
-    | AreasState
-    | ColumnsState
-    | GroupedColumnsState
-    | StackedColumnsState
-    | LinesState
-    | ScatterplotState
-    | ComboLineSingleState;
+  const { yScale, bounds } = useChartState() as AxisHeightLinearChartState;
 
   useRenderAxisHeightLinear(ref, {
     id: "axis-height-linear",
@@ -55,27 +50,7 @@ export const AxisHeightLinear = () => {
 
   return (
     <>
-      {rest.chartType === "comboLineSingle" ? (
-        <text
-          y={axisLabelFontSize}
-          style={{ fontSize: axisLabelFontSize, fill: "black" }}
-        >
-          {yAxisLabel}
-        </text>
-      ) : (
-        <foreignObject
-          y={leftAxisLabelOffsetTop}
-          width={leftAxisLabelSize.width}
-          height={leftAxisLabelSize.height}
-          style={{ display: "flex" }}
-        >
-          <OpenMetadataPanelWrapper component={rest.yMeasure}>
-            <span style={{ fontSize: axisLabelFontSize, lineHeight: 1.5 }}>
-              {yAxisLabel}
-            </span>
-          </OpenMetadataPanelWrapper>
-        </foreignObject>
-      )}
+      <AxisHeightTitle />
       <g ref={(newRef) => setRef(newRef)} />
     </>
   );

@@ -49,6 +49,7 @@ export type PieState = CommonChartState &
     getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: PieArcDatum<Observation>) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
+    leftAxisLabelOffsetTop: number;
   };
 
 const usePieState = (
@@ -272,6 +273,7 @@ const usePieState = (
     getColorLabel: getSegmentLabel,
     getAnnotationInfo,
     leftAxisLabelSize,
+    leftAxisLabelOffsetTop: 0,
     ...showValuesVariables,
     ...variables,
   };

@@ -3,6 +3,7 @@ import { memo } from "react";
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { Pie } from "@/charts/pie/pie";
 import { PieChart } from "@/charts/pie/pie-state";
+import { AxisHeightTitle } from "@/charts/shared/axis-height-title";
 import {
   ChartContainer,
   ChartControlsContainer,
@@ -37,6 +38,7 @@ const ChartPie = memo((props: ChartProps<PieConfig>) => {
     <PieChart {...props}>
       <ChartContainer>
         <ChartSvg>
+          <AxisHeightTitle />
           <Pie />
         </ChartSvg>
         <Tooltip type="single" />
