@@ -123,7 +123,7 @@ export const getDimensionLimits = async (
         ${buildLocalizedSubQuery("value", "schema:name", "label", {
           locale,
         })}
-        ?value schema:position ?position .
+        OPTIONAL { ?value schema:position ?position . }
     }`;
 
     const allRelated = (
