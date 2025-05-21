@@ -9,6 +9,7 @@ export const useColumnValueLabelsData = () => {
   const {
     bounds: { width, height },
     showValues,
+    getValueOffset,
     renderEveryNthValue,
     chartData,
     getRenderingKey,
@@ -35,11 +36,12 @@ export const useColumnValueLabelsData = () => {
         const xScaled = xScale(getX(d)) as number;
         const value = valueRaw === null || isNaN(valueRaw) ? 0 : valueRaw;
         const yRender = yScale(Math.max(value, 0));
+        const valueOffset = getValueOffset(d);
 
         return {
           key,
           x: xScaled + bandwidth / 2,
-          y: yRender,
+          y: yRender + valueOffset,
           valueLabel: valueLabelFormatter(value),
         };
       })
@@ -57,6 +59,7 @@ export const useColumnValueLabelsData = () => {
     yScale,
     bandwidth,
     valueLabelFormatter,
+    getValueOffset,
   ]);
 
   return valueLabelsData;

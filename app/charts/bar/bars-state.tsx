@@ -267,13 +267,14 @@ const useBarsState = (
     left,
   };
 
-  const barCount = yScale.domain().length;
   const { offset: xValueLabelsOffset, ...showValuesVariables } =
     useShowBandValueLabelsVariables(x, {
       chartData,
       dimensions,
       measures,
       getValue: getX,
+      getErrorRange: getXErrorRange,
+      scale: xScale,
     });
 
   const chartWidth = getChartWidth({ width, left, right });
@@ -281,6 +282,7 @@ const useBarsState = (
   const { chartHeight } = bounds;
 
   // Here we adjust the height to make sure the bars have a minimum height and are legible
+  const barCount = yScale.domain().length;
   const adjustedChartHeight =
     barCount * MIN_BAR_HEIGHT > chartHeight
       ? barCount * MIN_BAR_HEIGHT
