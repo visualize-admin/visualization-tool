@@ -54,6 +54,7 @@ export const getDimensionLimits = async (
 
           return {
             ctx,
+            dimensionIri,
             dimensionId: stringifyComponentId({
               unversionedCubeIri,
               unversionedComponentIri: dimensionIri,
@@ -115,10 +116,10 @@ export const getDimensionLimits = async (
   if (baseRelated.length > 0) {
     const allRelatedQuery = `PREFIX schema: <http://schema.org/>
 
-    SELECT ?index ?dimensionId ?value ?label ?position WHERE {
-      VALUES (?index ?dimensionId ?value) { ${baseLimits
+    SELECT ?index ?dimensionIri ?value ?label ?position WHERE {
+      VALUES (?index ?dimensionIri ?value) { ${baseLimits
         .flatMap((l) => l.related.map((r) => ({ ...r, index: l.index })))
-        .map((r) => `(${r.index} <${r.dimensionId}> <${r.value}>)`)
+        .map((r) => `(${r.index} <${r.dimensionIri}> <${r.value}>)`)
         .join(" ")} }
         ${buildLocalizedSubQuery("value", "schema:name", "label", {
           locale,
@@ -132,14 +133,17 @@ export const getDimensionLimits = async (
       })
     ).map((d) => {
       const index = +d.index.value;
-      const dimensionId = d.dimensionId.value;
+      const dimensionIri = d.dimensionIri.value;
       const value = d.value.value;
       const label = d.label.value;
-      const position = d.position.value;
+      const position = d.position?.value;
 
       return {
         index,
-        dimensionId,
+        dimensionId: stringifyComponentId({
+          unversionedCubeIri,
+          unversionedComponentIri: dimensionIri,
+        }),
         value,
         label,
         position,
