@@ -45,27 +45,42 @@ export const getDimensionLimits = async (
         .map((ctx) => {
           const dimensionIri = ctx.out(ns.sh.path).value;
           const value = ctx.out(ns.sh.hasValue).value;
+          const minInclusive = ctx.out(ns.sh.minInclusive).value;
+          const maxInclusive = ctx.out(ns.sh.maxInclusive).value;
 
-          if (!dimensionIri || !value) {
+          if (!dimensionIri) {
             return null;
           }
 
           return {
+            ctx,
             dimensionId: stringifyComponentId({
               unversionedCubeIri,
               unversionedComponentIri: dimensionIri,
             }),
             value,
+            minInclusive,
+            maxInclusive,
           };
         })
         .filter(truthy);
 
+      // We do not support range limits yet.
+      if (related.some((r) => !!r.minInclusive || !!r.maxInclusive)) {
+        return null;
+      }
+
       const value = a.out(ns.schema.value).value;
+
+      // Temporary, until we support range limits.
+      const relatedWithoutInclusive = related.map(
+        ({ minInclusive, maxInclusive, ...r }) => r
+      );
 
       if (!!value) {
         return {
           index,
-          related,
+          related: relatedWithoutInclusive,
           limit: {
             type: "single" as const,
             name,
@@ -80,7 +95,7 @@ export const getDimensionLimits = async (
       if (!!minValue && !!maxValue) {
         return {
           index,
-          related,
+          related: relatedWithoutInclusive,
           limit: {
             type: "range" as const,
             name,
