@@ -5,6 +5,7 @@ import { BarsState } from "@/charts/bar/bars-state";
 import { ColumnsState } from "@/charts/column/columns-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
+import { Bounds } from "@/charts/shared/use-size";
 import { Limit } from "@/config-types";
 import { useLimits } from "@/config-utils";
 import { truthy } from "@/domain/types";
@@ -125,24 +126,7 @@ export const HorizontalLimits = ({
     height,
   ]);
 
-  return (
-    <g transform={`translate(${margins.left}, ${margins.top})`}>
-      <g id="horizontal-limits">
-        {renderData.map((limit) => (
-          <g key={limit.key}>
-            <MiddleLine limit={limit} />
-            {limit.symbolType ? (
-              <g className="symbol">
-                <LimitSymbol limit={limit} />
-              </g>
-            ) : (
-              <LimitLines limit={limit} isHorizontal />
-            )}
-          </g>
-        ))}
-      </g>
-    </g>
-  );
+  return <Limits renderData={renderData} margins={margins} isHorizontal />;
 };
 
 type RenderHorizontalLimitDatum = {
@@ -276,9 +260,24 @@ export const VerticalLimits = ({
     height,
   ]);
 
+  return <Limits renderData={renderData} margins={margins} />;
+};
+
+const Limits = ({
+  renderData,
+  margins,
+  isHorizontal,
+}: {
+  renderData: RenderVerticalLimitDatum[] | RenderHorizontalLimitDatum[];
+  margins: Bounds["margins"];
+  isHorizontal?: boolean;
+}) => {
   return (
-    <g transform={`translate(${margins.left}, ${margins.top})`}>
-      <g id="vertical-limits">
+    <g
+      id={isHorizontal ? "horizontal-limits" : "vertical-limits"}
+      transform={`translate(${margins.left}, ${margins.top})`}
+    >
+      <g>
         {renderData.map((limit) => (
           <g key={limit.key}>
             <MiddleLine limit={limit} />
@@ -287,7 +286,7 @@ export const VerticalLimits = ({
                 <LimitSymbol limit={limit} />
               </g>
             ) : (
-              <LimitLines limit={limit} />
+              <LimitLines limit={limit} isHorizontal={isHorizontal} />
             )}
           </g>
         ))}
