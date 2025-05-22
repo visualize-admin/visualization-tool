@@ -1,20 +1,13 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { BarsState } from "@/charts/bar/bars-state";
 import { ColumnsState } from "@/charts/column/columns-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { useChartState } from "@/charts/shared/chart-state";
-import {
-  renderContainer,
-  RenderHorizontalLimitDatum,
-  renderHorizontalLimits,
-} from "@/charts/shared/rendering-utils";
 import { Limit } from "@/config-types";
 import { useLimits } from "@/config-utils";
-import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { useTransitionStore } from "@/stores/transition";
 
 export const HorizontalLimits = ({
   axisDimension,
@@ -22,35 +15,55 @@ export const HorizontalLimits = ({
 }: ReturnType<typeof useLimits>) => {
   const { yScale, getY, xScale, bounds } = useChartState() as BarsState;
   const { width, height, chartHeight, margins } = bounds;
-  const ref = useRef<SVGGElement>(null);
-  const enableTransition = useTransitionStore((state) => state.enable);
-  const transitionDuration = useTransitionStore((state) => state.duration);
   const renderData: RenderHorizontalLimitDatum[] = useMemo(() => {
     const limitHeight = yScale.bandwidth();
+
     const preparedLimits = limits
       .map(({ configLimit, measureLimit, relatedAxisDimensionValueLabel }) => {
+        const key = axisDimension?.id ?? "";
+        const label = relatedAxisDimensionValueLabel ?? "";
+        let y1: $IntentionalAny;
+        let y2: $IntentionalAny;
         let x1: number;
         let x2: number;
 
         switch (measureLimit.type) {
-          case "single":
-            x1 = measureLimit.value;
-            x2 = measureLimit.value;
+          case "single": {
+            y1 = y2 = getY({ [key]: label });
+            x1 = x2 = measureLimit.value;
             break;
-          case "value-range":
+          }
+          case "value-range": {
+            y1 = y2 = getY({ [key]: label });
             x1 = measureLimit.min;
             x2 = measureLimit.max;
             break;
-          case "time-range":
-            x1 = measureLimit.value;
-            x2 = measureLimit.value;
+          }
+          case "time-range": {
+            const { related } = measureLimit;
+            const axisId = axisDimension?.id;
+            const timeFrom =
+              related.find(
+                (d) => d.type === "time-from" && d.dimensionId === axisId
+              )?.label ?? "";
+            const timeTo =
+              related.find(
+                (d) => d.type === "time-to" && d.dimensionId === axisId
+              )?.label ?? "";
+            y1 = getY({ [key]: timeFrom });
+            y2 = getY({ [key]: timeTo });
+            x1 = x2 = measureLimit.value;
             break;
+          }
           default:
             const _exhaustiveCheck: never = measureLimit;
             return _exhaustiveCheck;
         }
 
         return {
+          type: measureLimit.type,
+          y1: yScale(y1),
+          y2: yScale(y2),
           x1,
           x2,
           ...configLimit,
@@ -60,35 +73,43 @@ export const HorizontalLimits = ({
       .filter(truthy);
 
     return preparedLimits
-      .map((limit) => {
-        const key = limit.related.map((d) => d.dimensionId + d.value).join();
-        const x1 = xScale(limit.x1);
-        const x2 = xScale(limit.x2);
-        const fill = limit.color;
-        const lineType = limit.lineType;
+      .map(
+        ({
+          type,
+          y1,
+          y2,
+          x1,
+          x2,
+          related,
+          color,
+          lineType,
+          relatedAxisDimensionValueLabel,
+        }) => {
+          const key = related.map((d) => d.dimensionId + d.value).join();
+          const height =
+            y1 === undefined
+              ? chartHeight
+              : type === "time-range"
+                ? 0
+                : limitHeight;
 
-        const axisObservation: Observation = {
-          [axisDimension?.id ?? ""]: limit.relatedAxisDimensionValueLabel ?? "",
-        };
-        const axisY = yScale(getY(axisObservation));
-        const y = axisY ?? 0;
-        const height = axisY !== undefined ? limitHeight : chartHeight;
+          const hasValidAxis = y1 !== undefined && y2 !== undefined;
+          const hasNoAxis = relatedAxisDimensionValueLabel === undefined;
 
-        const hasValidAxis = axisY !== undefined;
-        const hasNoAxis = limit.relatedAxisDimensionValueLabel === undefined;
+          const datum: RenderHorizontalLimitDatum = {
+            key,
+            x1: xScale(x1),
+            x2: xScale(x2),
+            y1: y1 ?? 0,
+            y2: y2 ?? chartHeight,
+            height,
+            fill: color,
+            lineType,
+          };
 
-        return hasValidAxis || hasNoAxis
-          ? ({
-              key,
-              x1,
-              x2,
-              y,
-              height,
-              fill,
-              lineType,
-            } as RenderHorizontalLimitDatum)
-          : null;
-      })
+          return hasValidAxis || hasNoAxis ? datum : null;
+        }
+      )
       .filter(truthy);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -102,24 +123,55 @@ export const HorizontalLimits = ({
     height,
   ]);
 
-  useEffect(() => {
-    if (ref.current) {
-      renderContainer(ref.current, {
-        id: "horizontal-limits",
-        transform: `translate(${margins.left} ${margins.top})`,
-        transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g, opts) => renderHorizontalLimits(g, renderData, opts),
-      });
-    }
-  }, [
-    enableTransition,
-    margins.left,
-    margins.top,
-    renderData,
-    transitionDuration,
-  ]);
+  return (
+    <g transform={`translate(${margins.left}, ${margins.top})`}>
+      <g id="horizontal-limits">
+        {renderData.map((limit) => (
+          <g key={limit.key}>
+            <rect
+              className="left"
+              x={limit.x1 - LIMIT_SIZE / 2}
+              y={limit.y1}
+              width={LIMIT_SIZE}
+              height={limit.height}
+              fill={limit.fill}
+              stroke="none"
+            />
+            <line
+              className="middle"
+              x1={limit.x1 - LIMIT_SIZE / 2}
+              x2={limit.x2 - LIMIT_SIZE / 2}
+              y1={limit.y1 + limit.height / 2}
+              y2={limit.y2 + limit.height / 2}
+              stroke={limit.fill}
+              strokeWidth={LIMIT_SIZE}
+              strokeDasharray={limit.lineType === "dashed" ? "3 3" : "none"}
+            />
+            <rect
+              className="right"
+              x={limit.x2 - LIMIT_SIZE / 2}
+              y={limit.y1}
+              width={LIMIT_SIZE}
+              height={limit.height}
+              fill={limit.fill}
+              stroke="none"
+            />
+          </g>
+        ))}
+      </g>
+    </g>
+  );
+};
 
-  return <g ref={ref} />;
+type RenderHorizontalLimitDatum = {
+  key: string;
+  y1: number;
+  y2: number;
+  x1: number;
+  x2: number;
+  height: number;
+  fill: string;
+  lineType: Limit["lineType"];
 };
 
 export const VerticalLimits = ({
