@@ -184,7 +184,8 @@ export const VerticalLimits = ({
     | LinesState;
   const { margins, chartWidth, width, height } = bounds;
   const renderData: RenderVerticalLimitDatum[] = useMemo(() => {
-    const limitWidth = "bandwidth" in xScale ? xScale.bandwidth() : 15;
+    const isBandScale = "bandwidth" in xScale;
+    const limitWidth = isBandScale ? xScale.bandwidth() : 15;
 
     const preparedLimits = limits
       .map(({ configLimit, measureLimit, relatedAxisDimensionValueLabel }) => {
@@ -261,14 +262,13 @@ export const VerticalLimits = ({
               : type === "time-range"
                 ? 0
                 : limitWidth;
-
+          const xOffset = isBandScale ? width / 2 : 0;
           const hasValidAxis = x1 !== undefined && x2 !== undefined;
           const hasNoAxis = relatedAxisDimensionValueLabel === undefined;
-
           const datum: RenderVerticalLimitDatum = {
             key,
-            x1: x1 ?? 0,
-            x2: x2 ?? bounds.chartWidth,
+            x1: x1 ? x1 + xOffset : 0,
+            x2: x2 ? x2 + xOffset : bounds.chartWidth,
             y1,
             y2,
             width,
