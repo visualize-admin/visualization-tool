@@ -216,7 +216,7 @@ export const VerticalLimits = ({
           const datum: RenderVerticalLimitDatum = {
             key,
             x1: x1 ?? 0,
-            x2: x2 ?? 0,
+            x2: x2 ?? bounds.chartWidth,
             y1,
             y2,
             width,
