@@ -12,6 +12,8 @@ You can also check the
 # Unreleased
 
 - Features
+  - Added support for time range limits
+  - Symbol limits are now supported in bar charts
   - Pie charts now display the "Y" axis title
 - Fixes
   - Text of locale switcher select options is now visible on Windows machines
