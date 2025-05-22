@@ -136,43 +136,56 @@ export const VerticalLimits = ({
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const renderData: RenderVerticalLimitDatum[] = useMemo(() => {
-    const { bandwidth, limitWidth } =
-      "bandwidth" in xScale
-        ? {
-            bandwidth: xScale.bandwidth(),
-            limitWidth: xScale.bandwidth(),
-          }
-        : {
-            bandwidth: 0,
-            limitWidth: 15,
-          };
+    const limitWidth = "bandwidth" in xScale ? xScale.bandwidth() : 15;
 
     const preparedLimits = limits
       .map(({ configLimit, measureLimit, relatedAxisDimensionValueLabel }) => {
+        const key = axisDimension?.id ?? "";
+        const label = relatedAxisDimensionValueLabel ?? "";
+        let x1: $IntentionalAny;
+        let x2: $IntentionalAny;
         let y1: number;
         let y2: number;
 
         switch (measureLimit.type) {
-          case "single":
-            y1 = measureLimit.value;
-            y2 = measureLimit.value;
+          case "single": {
+            x1 = x2 = getX({ [key]: label });
+            y1 = y2 = measureLimit.value;
             break;
-          case "value-range":
+          }
+          case "value-range": {
+            x1 = x2 = getX({ [key]: label });
             y1 = measureLimit.min;
             y2 = measureLimit.max;
             break;
-          case "time-range":
-            y1 = measureLimit.value;
-            y2 = measureLimit.value;
+          }
+          case "time-range": {
+            const { related } = measureLimit;
+            const axisId = axisDimension?.id;
+            const timeFrom =
+              related.find(
+                (d) => d.type === "time-from" && d.dimensionId === axisId
+              )?.label ?? "";
+            const timeTo =
+              related.find(
+                (d) => d.type === "time-to" && d.dimensionId === axisId
+              )?.label ?? "";
+            x1 = getX({ [key]: timeFrom });
+            x2 = getX({ [key]: timeTo });
+            y1 = y2 = measureLimit.value;
             break;
+          }
           default:
             const _exhaustiveCheck: never = measureLimit;
             return _exhaustiveCheck;
         }
 
         return {
-          y1,
-          y2,
+          type: measureLimit.type,
+          x1: xScale(x1),
+          x2: xScale(x2),
+          y1: yScale(y1),
+          y2: yScale(y2),
           ...configLimit,
           relatedAxisDimensionValueLabel,
         };
@@ -180,38 +193,45 @@ export const VerticalLimits = ({
       .filter(truthy);
 
     return preparedLimits
-      .map((limit) => {
-        const key = limit.related.map((d) => d.dimensionId + d.value).join();
-        const y1 = yScale(limit.y1);
-        const y2 = yScale(limit.y2);
-        const fill = limit.color;
-        const lineType = limit.lineType;
-        const symbolType = limit.symbolType;
+      .map(
+        ({
+          type,
+          x1,
+          x2,
+          y1,
+          y2,
+          related,
+          color,
+          lineType,
+          symbolType,
+          relatedAxisDimensionValueLabel,
+        }) => {
+          const key = related.map((d) => d.dimensionId + d.value).join();
+          const width =
+            x1 === undefined
+              ? chartWidth
+              : type === "time-range"
+                ? 0
+                : limitWidth;
 
-        const axisObservation: Observation = {
-          [axisDimension?.id ?? ""]: limit.relatedAxisDimensionValueLabel ?? "",
-        };
-        const axisX = xScale(getX(axisObservation) as $IntentionalAny);
-        const x =
-          axisX !== undefined ? axisX + (bandwidth - limitWidth) * 0.5 : 0;
-        const width = axisX !== undefined ? limitWidth : chartWidth;
+          const hasValidAxis = x1 !== undefined && x2 !== undefined;
+          const hasNoAxis = relatedAxisDimensionValueLabel === undefined;
 
-        const hasValidAxis = axisX !== undefined;
-        const hasNoAxis = limit.relatedAxisDimensionValueLabel === undefined;
+          const datum: RenderVerticalLimitDatum = {
+            key,
+            x1: x1 ?? 0,
+            x2: x2 ?? 0,
+            y1,
+            y2,
+            width,
+            fill: color,
+            lineType,
+            symbolType,
+          };
 
-        return hasValidAxis || hasNoAxis
-          ? ({
-              key,
-              x,
-              y1,
-              y2,
-              width,
-              fill,
-              lineType,
-              symbolType,
-            } as RenderVerticalLimitDatum)
-          : null;
-      })
+          return hasValidAxis || hasNoAxis ? datum : null;
+        }
+      )
       .filter(truthy);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [

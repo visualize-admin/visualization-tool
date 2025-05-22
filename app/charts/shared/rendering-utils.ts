@@ -155,7 +155,8 @@ const LIMIT_SIZE = 3;
 
 export type RenderVerticalLimitDatum = {
   key: string;
-  x: number;
+  x1: number;
+  x2: number;
   y1: number;
   y2: number;
   width: number;
@@ -165,7 +166,7 @@ export type RenderVerticalLimitDatum = {
 };
 
 const getMiddle = (d: RenderVerticalLimitDatum) => ({
-  cx: d.x + d.width / 2,
+  cx: (d.x1 + d.x2) / 2,
   cy: (d.y1 + d.y2) / 2,
 });
 
@@ -206,10 +207,10 @@ export const renderVerticalLimits = (
     group
       .append("line")
       .attr("class", "middle-line")
-      .attr("x1", d.x + d.width / 2)
-      .attr("x2", d.x + d.width / 2)
-      .attr("y1", d.y1 - LIMIT_SIZE / 2)
-      .attr("y2", d.y2 - LIMIT_SIZE / 2)
+      .attr("x1", d.x1)
+      .attr("x2", d.x2)
+      .attr("y1", d.y1)
+      .attr("y2", d.y2)
       .attr("stroke", d.fill)
       .attr("stroke-width", LIMIT_SIZE)
       .attr("stroke-dasharray", d.lineType === "dashed" ? "3 3" : "none");
@@ -220,9 +221,9 @@ export const renderVerticalLimits = (
       group
         .append("line")
         .attr("class", "top-line")
-        .attr("x1", d.x)
+        .attr("x1", d.x1 + d.width / 2)
+        .attr("x2", d.x2 - d.width / 2)
         .attr("y1", d.y2)
-        .attr("x2", d.x + d.width)
         .attr("y2", d.y2)
         .attr("stroke", d.fill)
         .attr("stroke-width", LIMIT_SIZE)
@@ -233,9 +234,9 @@ export const renderVerticalLimits = (
       group
         .append("line")
         .attr("class", "bottom-line")
-        .attr("x1", d.x)
+        .attr("x1", d.x1 + d.width / 2)
+        .attr("x2", d.x2 - d.width / 2)
         .attr("y1", d.y1)
-        .attr("x2", d.x + d.width)
         .attr("y2", d.y1)
         .attr("stroke", d.fill)
         .attr("stroke-width", LIMIT_SIZE)
@@ -260,7 +261,7 @@ export const renderVerticalLimits = (
         case "cross":
           symbolGroup
             .append("rect")
-            .attr("x", d.x)
+            .attr("x", (d.x1 + d.x2) / 2 - d.width / 2)
             .attr("y", d.y2 - LIMIT_SIZE / 2)
             .attr("width", d.width)
             .attr("height", LIMIT_SIZE)
@@ -270,7 +271,7 @@ export const renderVerticalLimits = (
             .style("transform-origin", "center");
           symbolGroup
             .append("rect")
-            .attr("x", d.x)
+            .attr("x", (d.x1 + d.x2) / 2 - d.width / 2)
             .attr("y", d.y1 - LIMIT_SIZE / 2)
             .attr("width", d.width)
             .attr("height", LIMIT_SIZE)
