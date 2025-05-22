@@ -16,7 +16,8 @@ export const HorizontalLimits = ({
   const { yScale, getY, xScale, bounds } = useChartState() as BarsState;
   const { width, height, chartHeight, margins } = bounds;
   const renderData: RenderHorizontalLimitDatum[] = useMemo(() => {
-    const limitHeight = yScale.bandwidth();
+    const isBandScale = "bandwidth" in yScale;
+    const limitHeight = isBandScale ? yScale.bandwidth() : 15;
 
     const preparedLimits = limits
       .map(({ configLimit, measureLimit, relatedAxisDimensionValueLabel }) => {
@@ -83,28 +84,29 @@ export const HorizontalLimits = ({
           related,
           color,
           lineType,
+          symbolType,
           relatedAxisDimensionValueLabel,
         }) => {
           const key = related.map((d) => d.dimensionId + d.value).join();
-          const height =
+          const size =
             y1 === undefined
               ? chartHeight
               : type === "time-range"
                 ? 0
                 : limitHeight;
-
+          const yOffset = isBandScale ? size / 2 : 0;
           const hasValidAxis = y1 !== undefined && y2 !== undefined;
           const hasNoAxis = relatedAxisDimensionValueLabel === undefined;
-
           const datum: RenderHorizontalLimitDatum = {
             key,
             x1: xScale(x1),
             x2: xScale(x2),
-            y1: y1 ?? 0,
-            y2: y2 ?? chartHeight,
-            height,
+            y1: y1 ? y1 + yOffset : 0,
+            y2: y2 ? y2 + yOffset : chartHeight,
+            size,
             fill: color,
             lineType,
+            symbolType,
           };
 
           return hasValidAxis || hasNoAxis ? datum : null;
@@ -128,34 +130,14 @@ export const HorizontalLimits = ({
       <g id="horizontal-limits">
         {renderData.map((limit) => (
           <g key={limit.key}>
-            <rect
-              className="left"
-              x={limit.x1 - LIMIT_SIZE / 2}
-              y={limit.y1}
-              width={LIMIT_SIZE}
-              height={limit.height}
-              fill={limit.fill}
-              stroke="none"
-            />
-            <line
-              className="middle"
-              x1={limit.x1 - LIMIT_SIZE / 2}
-              x2={limit.x2 - LIMIT_SIZE / 2}
-              y1={limit.y1 + limit.height / 2}
-              y2={limit.y2 + limit.height / 2}
-              stroke={limit.fill}
-              strokeWidth={LIMIT_SIZE}
-              strokeDasharray={limit.lineType === "dashed" ? "3 3" : "none"}
-            />
-            <rect
-              className="right"
-              x={limit.x2 - LIMIT_SIZE / 2}
-              y={limit.y1}
-              width={LIMIT_SIZE}
-              height={limit.height}
-              fill={limit.fill}
-              stroke="none"
-            />
+            <MiddleLine limit={limit} />
+            {limit.symbolType ? (
+              <g className="symbol">
+                <LimitSymbol limit={limit} />
+              </g>
+            ) : (
+              <LimitLines limit={limit} isHorizontal />
+            )}
           </g>
         ))}
       </g>
@@ -169,9 +151,10 @@ type RenderHorizontalLimitDatum = {
   y2: number;
   x1: number;
   x2: number;
-  height: number;
+  size: number;
   fill: string;
   lineType: Limit["lineType"];
+  symbolType?: Limit["symbolType"];
 };
 
 export const VerticalLimits = ({
@@ -256,13 +239,13 @@ export const VerticalLimits = ({
           relatedAxisDimensionValueLabel,
         }) => {
           const key = related.map((d) => d.dimensionId + d.value).join();
-          const width =
+          const size =
             x1 === undefined
               ? chartWidth
               : type === "time-range"
                 ? 0
                 : limitWidth;
-          const xOffset = isBandScale ? width / 2 : 0;
+          const xOffset = isBandScale ? size / 2 : 0;
           const hasValidAxis = x1 !== undefined && x2 !== undefined;
           const hasNoAxis = relatedAxisDimensionValueLabel === undefined;
           const datum: RenderVerticalLimitDatum = {
@@ -271,7 +254,7 @@ export const VerticalLimits = ({
             x2: x2 ? x2 + xOffset : bounds.chartWidth,
             y1,
             y2,
-            width,
+            size,
             fill: color,
             lineType,
             symbolType,
@@ -298,16 +281,7 @@ export const VerticalLimits = ({
       <g id="vertical-limits">
         {renderData.map((limit) => (
           <g key={limit.key}>
-            <line
-              className="middle-line"
-              x1={limit.x1}
-              x2={limit.x2}
-              y1={limit.y1}
-              y2={limit.y2}
-              stroke={limit.fill}
-              strokeWidth={LIMIT_SIZE}
-              strokeDasharray={limit.lineType === "dashed" ? "3 3" : "none"}
-            />
+            <MiddleLine limit={limit} />
             {limit.symbolType ? (
               <g className="symbol">
                 <LimitSymbol limit={limit} />
@@ -328,7 +302,7 @@ type RenderVerticalLimitDatum = {
   x2: number;
   y1: number;
   y2: number;
-  width: number;
+  size: number;
   fill: string;
   lineType: Limit["lineType"];
   symbolType?: Limit["symbolType"];
@@ -336,58 +310,90 @@ type RenderVerticalLimitDatum = {
 
 const LIMIT_SIZE = 3;
 
-type SymbolProps = {
-  limit: RenderVerticalLimitDatum;
+type MiddleLineProps = {
+  limit: RenderVerticalLimitDatum | RenderHorizontalLimitDatum;
 };
 
-const LimitSymbol = ({ limit }: SymbolProps) => {
+const MiddleLine = ({ limit }: MiddleLineProps) => {
+  return (
+    <line
+      className="middle-line"
+      x1={limit.x1}
+      x2={limit.x2}
+      y1={limit.y1}
+      y2={limit.y2}
+      stroke={limit.fill}
+      strokeWidth={LIMIT_SIZE}
+      strokeDasharray={limit.lineType === "dashed" ? "3 3" : "none"}
+    />
+  );
+};
+
+type SymbolProps = {
+  cx: number;
+  cy: number;
+  fill: string;
+};
+
+const LimitSymbol = ({
+  limit,
+}: {
+  limit: RenderVerticalLimitDatum | RenderHorizontalLimitDatum;
+}) => {
   if (!limit.symbolType) {
     return null;
   }
 
+  const cx = (limit.x1 + limit.x2) / 2;
+  const cy = (limit.y1 + limit.y2) / 2;
+
+  const props: SymbolProps = {
+    cx,
+    cy,
+    fill: limit.fill,
+  };
+
   switch (limit.symbolType) {
     case "circle":
-      return <CircleSymbol limit={limit} />;
+      return <CircleSymbol {...props} />;
     case "cross":
-      return <CrossSymbol limit={limit} />;
+      return <CrossSymbol {...props} />;
     case "triangle":
-      return <TriangleSymbol limit={limit} />;
+      return <TriangleSymbol {...props} />;
     default:
       const _exhaustiveCheck: never = limit.symbolType;
       return _exhaustiveCheck;
   }
 };
 
-const CircleSymbol = ({ limit }: SymbolProps) => {
-  const cx = (limit.x1 + limit.x2) / 2;
-  const cy = (limit.y1 + limit.y2) / 2;
-
-  return <circle cx={cx} cy={cy} r={LIMIT_SIZE * 1.5} fill={limit.fill} />;
+const CircleSymbol = ({ cx, cy, fill }: SymbolProps) => {
+  return <circle cx={cx} cy={cy} r={LIMIT_SIZE * 1.5} fill={fill} />;
 };
 
-const CrossSymbol = ({ limit }: SymbolProps) => {
+const CrossSymbol = ({ cx, cy, fill }: SymbolProps) => {
   return (
     <>
-      <CrossSymbolArm limit={limit} rotation={45} />
-      <CrossSymbolArm limit={limit} rotation={-45} />
+      <CrossSymbolArm cx={cx} cy={cy} fill={fill} rotation={45} />
+      <CrossSymbolArm cx={cx} cy={cy} fill={fill} rotation={-45} />
     </>
   );
 };
 
 const CrossSymbolArm = ({
-  limit,
+  cx,
+  cy,
+  fill,
   rotation,
-}: {
-  limit: RenderVerticalLimitDatum;
-  rotation: number;
-}) => {
+}: SymbolProps & { rotation: number }) => {
+  const armWidth = LIMIT_SIZE * 4;
+
   return (
     <rect
-      x={(limit.x1 + limit.x2) / 2 - limit.width / 2}
-      y={limit.y2 - LIMIT_SIZE / 2}
-      width={limit.width}
+      x={cx - armWidth / 2}
+      y={cy - LIMIT_SIZE / 2}
+      width={armWidth}
       height={LIMIT_SIZE}
-      fill={limit.fill}
+      fill={fill}
       style={{
         transform: `rotate(${rotation}deg)`,
         transformBox: "fill-box",
@@ -397,24 +403,27 @@ const CrossSymbolArm = ({
   );
 };
 
-const TriangleSymbol = ({ limit }: SymbolProps) => {
-  const cx = (limit.x1 + limit.x2) / 2;
-  const cy = (limit.y1 + limit.y2) / 2;
-
+const TriangleSymbol = ({ cx, cy, fill }: SymbolProps) => {
   return (
     <path
       d="M0,-2.5L2.2,2.5L-2.2,2.5Z"
-      fill={limit.fill}
+      fill={fill}
       transform={`translate(${cx}, ${cy}) scale(2)`}
     />
   );
 };
 
-const LimitLines = ({ limit }: SymbolProps) => {
+const LimitLines = ({
+  limit,
+  isHorizontal,
+}: {
+  limit: RenderVerticalLimitDatum | RenderHorizontalLimitDatum;
+  isHorizontal?: boolean;
+}) => {
   return (
     <>
-      <LimitLine type="top" limit={limit} />
-      <LimitLine type="bottom" limit={limit} />
+      <LimitLine type="top" limit={limit} isHorizontal={isHorizontal} />
+      <LimitLine type="bottom" limit={limit} isHorizontal={isHorizontal} />
     </>
   );
 };
@@ -422,20 +431,31 @@ const LimitLines = ({ limit }: SymbolProps) => {
 const LimitLine = ({
   type,
   limit,
+  isHorizontal,
 }: {
   type: "top" | "bottom";
-  limit: RenderVerticalLimitDatum;
+  limit: RenderVerticalLimitDatum | RenderHorizontalLimitDatum;
+  isHorizontal?: boolean;
 }) => {
-  const isRange = limit.y1 !== limit.y2;
-  const y = type === "top" ? limit.y2 : limit.y1;
+  const isRange = isHorizontal ? limit.x1 !== limit.x2 : limit.y1 !== limit.y2;
+  const props = isHorizontal
+    ? {
+        x1: type === "top" ? limit.x2 : limit.x1,
+        x2: type === "top" ? limit.x2 : limit.x1,
+        y1: limit.y1 + limit.size / 2,
+        y2: limit.y2 - limit.size / 2,
+      }
+    : {
+        y1: type === "top" ? limit.y2 : limit.y1,
+        y2: type === "top" ? limit.y2 : limit.y1,
+        x1: limit.x1 + limit.size / 2,
+        x2: limit.x2 - limit.size / 2,
+      };
 
   return (
     <line
+      {...props}
       className={`${type}-line`}
-      x1={limit.x1 + limit.width / 2}
-      x2={limit.x2 - limit.width / 2}
-      y1={y}
-      y2={y}
       stroke={limit.fill}
       strokeWidth={LIMIT_SIZE}
       strokeDasharray={isRange || limit.lineType === "solid" ? "none" : "3 3"}
