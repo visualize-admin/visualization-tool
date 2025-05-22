@@ -372,7 +372,8 @@ describe("useDataCubesComponentsQuery", () => {
               values: [{ value: 100 }, { value: 200 }],
               limits: [
                 { type: "single", value: 50 },
-                { type: "range", from: 10, to: 20 },
+                { type: "value-range", min: 10, max: 20 },
+                { type: "time-range", value: 5 },
               ],
             },
             {
@@ -430,7 +431,8 @@ describe("useDataCubesComponentsQuery", () => {
         values: [{ value: 200 }, { value: 400 }],
         limits: [
           { type: "single", value: 100 },
-          { type: "range", from: 20, to: 40 },
+          { type: "value-range", min: 20, max: 40 },
+          { type: "time-range", value: 10 },
         ],
       });
 
