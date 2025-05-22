@@ -9,9 +9,8 @@ import {
   renderContainer,
   RenderHorizontalLimitDatum,
   renderHorizontalLimits,
-  RenderVerticalLimitDatum,
-  renderVerticalLimits,
 } from "@/charts/shared/rendering-utils";
+import { Limit } from "@/config-types";
 import { useLimits } from "@/config-utils";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
@@ -132,9 +131,6 @@ export const VerticalLimits = ({
     | ColumnsState
     | LinesState;
   const { margins, chartWidth, width, height } = bounds;
-  const ref = useRef<SVGGElement>(null);
-  const enableTransition = useTransitionStore((state) => state.enable);
-  const transitionDuration = useTransitionStore((state) => state.duration);
   const renderData: RenderVerticalLimitDatum[] = useMemo(() => {
     const limitWidth = "bandwidth" in xScale ? xScale.bandwidth() : 15;
 
@@ -245,22 +241,152 @@ export const VerticalLimits = ({
     height,
   ]);
 
-  useEffect(() => {
-    if (ref.current) {
-      renderContainer(ref.current, {
-        id: "vertical-limits",
-        transform: `translate(${margins.left} ${margins.top})`,
-        transition: { enable: enableTransition, duration: transitionDuration },
-        render: (g, opts) => renderVerticalLimits(g, renderData, opts),
-      });
-    }
-  }, [
-    enableTransition,
-    margins.left,
-    margins.top,
-    renderData,
-    transitionDuration,
-  ]);
+  return (
+    <g transform={`translate(${margins.left}, ${margins.top})`}>
+      <g id="vertical-limits">
+        {renderData.map((limit) => (
+          <g key={limit.key}>
+            <line
+              className="middle-line"
+              x1={limit.x1}
+              x2={limit.x2}
+              y1={limit.y1}
+              y2={limit.y2}
+              stroke={limit.fill}
+              strokeWidth={LIMIT_SIZE}
+              strokeDasharray={limit.lineType === "dashed" ? "3 3" : "none"}
+            />
+            {limit.symbolType ? (
+              <g className="symbol">
+                <LimitSymbol limit={limit} />
+              </g>
+            ) : (
+              <LimitLines limit={limit} />
+            )}
+          </g>
+        ))}
+      </g>
+    </g>
+  );
+};
 
-  return <g ref={ref} />;
+type RenderVerticalLimitDatum = {
+  key: string;
+  x1: number;
+  x2: number;
+  y1: number;
+  y2: number;
+  width: number;
+  fill: string;
+  lineType: Limit["lineType"];
+  symbolType?: Limit["symbolType"];
+};
+
+const LIMIT_SIZE = 3;
+
+type SymbolProps = {
+  limit: RenderVerticalLimitDatum;
+};
+
+const LimitSymbol = ({ limit }: SymbolProps) => {
+  if (!limit.symbolType) {
+    return null;
+  }
+
+  switch (limit.symbolType) {
+    case "circle":
+      return <CircleSymbol limit={limit} />;
+    case "cross":
+      return <CrossSymbol limit={limit} />;
+    case "triangle":
+      return <TriangleSymbol limit={limit} />;
+    default:
+      const _exhaustiveCheck: never = limit.symbolType;
+      return _exhaustiveCheck;
+  }
+};
+
+const CircleSymbol = ({ limit }: SymbolProps) => {
+  const cx = (limit.x1 + limit.x2) / 2;
+  const cy = (limit.y1 + limit.y2) / 2;
+
+  return <circle cx={cx} cy={cy} r={LIMIT_SIZE * 1.5} fill={limit.fill} />;
+};
+
+const CrossSymbol = ({ limit }: SymbolProps) => {
+  return (
+    <>
+      <CrossSymbolArm limit={limit} rotation={45} />
+      <CrossSymbolArm limit={limit} rotation={-45} />
+    </>
+  );
+};
+
+const CrossSymbolArm = ({
+  limit,
+  rotation,
+}: {
+  limit: RenderVerticalLimitDatum;
+  rotation: number;
+}) => {
+  return (
+    <rect
+      x={(limit.x1 + limit.x2) / 2 - limit.width / 2}
+      y={limit.y2 - LIMIT_SIZE / 2}
+      width={limit.width}
+      height={LIMIT_SIZE}
+      fill={limit.fill}
+      style={{
+        transform: `rotate(${rotation}deg)`,
+        transformBox: "fill-box",
+        transformOrigin: "center",
+      }}
+    />
+  );
+};
+
+const TriangleSymbol = ({ limit }: SymbolProps) => {
+  const cx = (limit.x1 + limit.x2) / 2;
+  const cy = (limit.y1 + limit.y2) / 2;
+
+  return (
+    <path
+      d="M0,-2.5L2.2,2.5L-2.2,2.5Z"
+      fill={limit.fill}
+      transform={`translate(${cx}, ${cy}) scale(2)`}
+    />
+  );
+};
+
+const LimitLines = ({ limit }: SymbolProps) => {
+  return (
+    <>
+      <LimitLine type="top" limit={limit} />
+      <LimitLine type="bottom" limit={limit} />
+    </>
+  );
+};
+
+const LimitLine = ({
+  type,
+  limit,
+}: {
+  type: "top" | "bottom";
+  limit: RenderVerticalLimitDatum;
+}) => {
+  const isRange = limit.y1 !== limit.y2;
+  const y = type === "top" ? limit.y2 : limit.y1;
+
+  return (
+    <line
+      className={`${type}-line`}
+      x1={limit.x1 + limit.width / 2}
+      x2={limit.x2 - limit.width / 2}
+      y1={y}
+      y2={y}
+      stroke={limit.fill}
+      strokeWidth={LIMIT_SIZE}
+      strokeDasharray={isRange || limit.lineType === "solid" ? "none" : "3 3"}
+    />
+  );
 };
