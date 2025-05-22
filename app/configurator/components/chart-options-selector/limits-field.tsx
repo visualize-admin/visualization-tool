@@ -147,7 +147,7 @@ export const LimitsField = ({
                   sx={{
                     gap: 4,
                     mb:
-                      limit.type === "vertical-range" || supportsLimitSymbols
+                      limit.type === "value-range" || supportsLimitSymbols
                         ? 4
                         : 0,
                   }}
@@ -268,7 +268,7 @@ export const LimitsField = ({
                     </RadioGroup>
                   </div>
                 ) : null}
-                {limit.type === "vertical-range" ||
+                {limit.type === "value-range" ||
                 !supportsLimitSymbols ||
                 hasNoAxisDimension ? (
                   <div>

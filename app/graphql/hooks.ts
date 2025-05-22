@@ -14,7 +14,7 @@ import {
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { Locale } from "@/locales/locales";
-import { LimitSingle, LimitVerticalRange } from "@/rdf/limits";
+import { LimitSingle, LimitTimeRange, LimitValueRange } from "@/rdf/limits";
 import { assert } from "@/utils/assert";
 
 import { joinDimensions, mergeObservations } from "./join";
@@ -372,14 +372,21 @@ export function transformDataCubesComponents(
                   };
 
                   return singleLimit;
-                case "vertical-range":
-                  const rangeLimit: LimitVerticalRange = {
+                case "value-range":
+                  const verticalRangeLimit: LimitValueRange = {
                     ...limit,
                     min: convertValue(limit.min, conversionUnit),
                     max: convertValue(limit.max, conversionUnit),
                   };
 
-                  return rangeLimit;
+                  return verticalRangeLimit;
+                case "time-range":
+                  const horizontalRangeLimit: LimitTimeRange = {
+                    ...limit,
+                    value: convertValue(limit.value, conversionUnit),
+                  };
+
+                  return horizontalRangeLimit;
                 default:
                   const _exhaustiveCheck: never = limit;
                   return _exhaustiveCheck;

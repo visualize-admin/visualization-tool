@@ -30,15 +30,30 @@ export const HorizontalLimits = ({
     const limitHeight = yScale.bandwidth();
     const preparedLimits = limits
       .map(({ configLimit, measureLimit, relatedAxisDimensionValueLabel }) => {
+        let x1: number;
+        let x2: number;
+
+        switch (measureLimit.type) {
+          case "single":
+            x1 = measureLimit.value;
+            x2 = measureLimit.value;
+            break;
+          case "value-range":
+            x1 = measureLimit.min;
+            x2 = measureLimit.max;
+            break;
+          case "time-range":
+            x1 = measureLimit.value;
+            x2 = measureLimit.value;
+            break;
+          default:
+            const _exhaustiveCheck: never = measureLimit;
+            return _exhaustiveCheck;
+        }
+
         return {
-          x1:
-            measureLimit.type === "single"
-              ? measureLimit.value
-              : measureLimit.min,
-          x2:
-            measureLimit.type === "single"
-              ? measureLimit.value
-              : measureLimit.max,
+          x1,
+          x2,
           ...configLimit,
           relatedAxisDimensionValueLabel,
         };
@@ -134,15 +149,30 @@ export const VerticalLimits = ({
 
     const preparedLimits = limits
       .map(({ configLimit, measureLimit, relatedAxisDimensionValueLabel }) => {
+        let y1: number;
+        let y2: number;
+
+        switch (measureLimit.type) {
+          case "single":
+            y1 = measureLimit.value;
+            y2 = measureLimit.value;
+            break;
+          case "value-range":
+            y1 = measureLimit.min;
+            y2 = measureLimit.max;
+            break;
+          case "time-range":
+            y1 = measureLimit.value;
+            y2 = measureLimit.value;
+            break;
+          default:
+            const _exhaustiveCheck: never = measureLimit;
+            return _exhaustiveCheck;
+        }
+
         return {
-          y1:
-            measureLimit.type === "single"
-              ? measureLimit.value
-              : measureLimit.min,
-          y2:
-            measureLimit.type === "single"
-              ? measureLimit.value
-              : measureLimit.max,
+          y1,
+          y2,
           ...configLimit,
           relatedAxisDimensionValueLabel,
         };

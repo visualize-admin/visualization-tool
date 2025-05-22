@@ -497,7 +497,7 @@ export const MapComponent = ({
                 ...baseLayerProps,
               }),
             ];
-          case "vertical-range":
+          case "value-range":
             return [
               new DashedScatterplotLayer({
                 id: `symbolLayerLimit-${i}-from`,
@@ -507,6 +507,14 @@ export const MapComponent = ({
               new DashedScatterplotLayer({
                 id: `symbolLayerLimit-${i}-to`,
                 getRadius: mkGetLimitRadius(measureLimit.max),
+                ...baseLayerProps,
+              }),
+            ];
+          case "time-range":
+            return [
+              new DashedScatterplotLayer({
+                id: `symbolLayerLimit-${i}`,
+                getRadius: mkGetLimitRadius(measureLimit.value),
                 ...baseLayerProps,
               }),
             ];

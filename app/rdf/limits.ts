@@ -9,24 +9,32 @@ import { buildLocalizedSubQuery } from "@/rdf/query-utils";
 
 type BaseLimit = {
   name: string;
-  related: ({
-    dimensionId: string;
-    value: string;
-  } & Pick<DimensionValue, "label" | "position">)[];
+  related: Related[];
 };
+
+type Related = {
+  type: "single" | "time-from" | "time-to";
+  dimensionId: string;
+  value: string;
+} & Pick<DimensionValue, "label" | "position">;
 
 export type LimitSingle = BaseLimit & {
   type: "single";
   value: number;
 };
 
-export type LimitVerticalRange = BaseLimit & {
-  type: "vertical-range";
+export type LimitValueRange = BaseLimit & {
+  type: "value-range";
   min: number;
   max: number;
 };
 
-export type Limit = LimitSingle | LimitVerticalRange;
+export type LimitTimeRange = BaseLimit & {
+  type: "time-range";
+  value: number;
+};
+
+export type Limit = LimitSingle | LimitValueRange | LimitTimeRange;
 
 export const getDimensionLimits = async (
   dim: CubeDimension,
@@ -41,6 +49,8 @@ export const getDimensionLimits = async (
     .map((a, index) => {
       const name = a.out(ns.schema.name, { language: locale }).value ?? "";
       const ctxs = a.out(ns.cubeMeta.annotationContext);
+      let isTimeRange = false;
+
       const related = ctxs
         .map((ctx) => {
           const dimensionIri = ctx.out(ns.sh.path).value;
@@ -52,38 +62,49 @@ export const getDimensionLimits = async (
             return null;
           }
 
-          return {
-            ctx,
-            dimensionIri,
-            dimensionId: stringifyComponentId({
-              unversionedCubeIri,
-              unversionedComponentIri: dimensionIri,
-            }),
-            value,
-            minInclusive,
-            maxInclusive,
-          };
-        })
-        .filter(truthy);
+          const dimensionId = stringifyComponentId({
+            unversionedCubeIri,
+            unversionedComponentIri: dimensionIri,
+          });
 
-      // We do not support range limits yet.
-      if (related.some((r) => !!r.minInclusive || !!r.maxInclusive)) {
-        return null;
-      }
+          if (value) {
+            return [{ type: "single", dimensionIri, dimensionId, value }];
+          }
+
+          if (minInclusive && maxInclusive) {
+            isTimeRange = true;
+
+            return [
+              {
+                type: "time-from",
+                dimensionIri,
+                dimensionId,
+                value: minInclusive,
+              },
+              {
+                type: "time-to",
+                dimensionIri,
+                dimensionId,
+                value: maxInclusive,
+              },
+            ];
+          }
+        })
+        .filter(truthy)
+        .flat();
 
       const value = a.out(ns.schema.value).value;
 
-      // Temporary, until we support range limits.
-      const relatedWithoutInclusive = related.map(
-        ({ minInclusive, maxInclusive, ...r }) => r
-      );
+      if (value) {
+        const type = isTimeRange
+          ? ("time-range" as const)
+          : ("single" as const);
 
-      if (!!value) {
         return {
           index,
-          related: relatedWithoutInclusive,
+          related,
           limit: {
-            type: "single" as const,
+            type,
             name,
             value: +value,
           },
@@ -93,12 +114,12 @@ export const getDimensionLimits = async (
       const minValue = a.out(ns.schema.minValue).value;
       const maxValue = a.out(ns.schema.maxValue).value;
 
-      if (!!minValue && !!maxValue) {
+      if (minValue && maxValue) {
         return {
           index,
-          related: relatedWithoutInclusive,
+          related,
           limit: {
-            type: "vertical-range" as const,
+            type: "value-range" as const,
             name,
             min: +minValue,
             max: +maxValue,
@@ -116,10 +137,10 @@ export const getDimensionLimits = async (
   if (baseRelated.length > 0) {
     const allRelatedQuery = `PREFIX schema: <http://schema.org/>
 
-    SELECT ?index ?dimensionIri ?value ?label ?position WHERE {
-      VALUES (?index ?dimensionIri ?value) { ${baseLimits
+    SELECT ?index ?type ?dimensionIri ?value ?label ?position WHERE {
+      VALUES (?index ?type ?dimensionIri ?value) { ${baseLimits
         .flatMap((l) => l.related.map((r) => ({ ...r, index: l.index })))
-        .map((r) => `(${r.index} <${r.dimensionIri}> <${r.value}>)`)
+        .map((r) => `(${r.index} "${r.type}" <${r.dimensionIri}> <${r.value}>)`)
         .join(" ")} }
         ${buildLocalizedSubQuery("value", "schema:name", "label", {
           locale,
@@ -133,13 +154,15 @@ export const getDimensionLimits = async (
       })
     ).map((d) => {
       const index = +d.index.value;
+      const type = d.type.value as Related["type"];
       const dimensionIri = d.dimensionIri.value;
       const value = d.value.value;
-      const label = d.label.value;
+      const label = d.label?.value;
       const position = d.position?.value;
 
       return {
         index,
+        type,
         dimensionId: stringifyComponentId({
           unversionedCubeIri,
           unversionedComponentIri: dimensionIri,
