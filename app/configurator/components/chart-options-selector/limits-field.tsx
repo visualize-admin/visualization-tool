@@ -268,7 +268,7 @@ export const LimitsField = ({
                     </RadioGroup>
                   </div>
                 ) : null}
-                {limit.type === "value-range" ||
+                {limit.type !== "single" ||
                 !supportsLimitSymbols ||
                 hasNoAxisDimension ? (
                   <div>
