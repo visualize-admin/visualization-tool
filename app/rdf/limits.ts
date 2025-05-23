@@ -54,9 +54,6 @@ export const getDimensionLimits = async (
       const related = ctxs
         .map((ctx) => {
           const dimensionIri = ctx.out(ns.sh.path).value;
-          const value = ctx.out(ns.sh.hasValue).value;
-          const minInclusive = ctx.out(ns.sh.minInclusive).value;
-          const maxInclusive = ctx.out(ns.sh.maxInclusive).value;
 
           if (!dimensionIri) {
             return null;
@@ -67,25 +64,42 @@ export const getDimensionLimits = async (
             unversionedComponentIri: dimensionIri,
           });
 
-          if (value) {
-            return [{ type: "single", dimensionIri, dimensionId, value }];
+          const valuePtr = ctx.out(ns.sh.hasValue);
+          const value = valuePtr.value;
+
+          if (!!value) {
+            return [
+              {
+                type: "single",
+                dimensionIri,
+                dimensionId,
+                value,
+                isNamedNode: valuePtr.term?.termType === "NamedNode",
+              },
+            ];
           }
 
-          if (minInclusive && maxInclusive) {
-            isTimeRange = true;
+          const minInclusivePtr = ctx.out(ns.sh.minInclusive);
+          const maxInclusivePtr = ctx.out(ns.sh.maxInclusive);
+          const minInclusive = minInclusivePtr.value;
+          const maxInclusive = maxInclusivePtr.value;
+          isTimeRange = !!minInclusive && !!maxInclusive;
 
+          if (isTimeRange) {
             return [
               {
                 type: "time-from",
                 dimensionIri,
                 dimensionId,
                 value: minInclusive,
+                isNamedNode: minInclusivePtr.term?.termType === "NamedNode",
               },
               {
                 type: "time-to",
                 dimensionIri,
                 dimensionId,
                 value: maxInclusive,
+                isNamedNode: maxInclusivePtr.term?.termType === "NamedNode",
               },
             ];
           }
@@ -130,11 +144,14 @@ export const getDimensionLimits = async (
     .filter(truthy)
     .sort((a, b) => a.limit.name.localeCompare(b.limit.name));
 
-  const baseRelated = baseLimits.flatMap((l) =>
+  const allBaseRelated = baseLimits.flatMap((l) =>
     l.related.map((r) => ({ ...r, index: l.index }))
   );
+  const baseRelatedNamedNodes = allBaseRelated.filter((r) => r.isNamedNode);
+  const baseRelatedLiterals = allBaseRelated.filter((r) => !r.isNamedNode);
+  let allRelated: (Related & { index: number })[] = [];
 
-  if (baseRelated.length > 0) {
+  if (baseRelatedNamedNodes.length > 0) {
     const allRelatedQuery = `PREFIX schema: <http://schema.org/>
 
     SELECT ?index ?type ?dimensionIri ?value ?label ?position WHERE {
@@ -148,7 +165,7 @@ export const getDimensionLimits = async (
         OPTIONAL { ?value schema:position ?position . }
     }`;
 
-    const allRelated = (
+    const relatedNamedNodes = (
       await sparqlClient.query.select(allRelatedQuery, {
         operation: "postUrlencoded",
       })
@@ -173,18 +190,28 @@ export const getDimensionLimits = async (
       };
     });
 
-    return baseLimits.map(({ index, limit }) => {
-      return {
-        ...limit,
-        related: allRelated.filter((r) => r.index === index),
-      };
-    });
-  } else {
-    return baseLimits.map(({ limit }) => {
-      return {
-        ...limit,
-        related: [],
-      };
-    });
+    allRelated = allRelated.concat(relatedNamedNodes);
   }
+
+  if (baseRelatedLiterals.length > 0) {
+    const relatedLiterals = baseRelatedLiterals.map(
+      ({ type, value = "", dimensionIri, isNamedNode, ...rest }) => {
+        return {
+          ...rest,
+          type: type as Related["type"],
+          value: value,
+          label: value,
+        };
+      }
+    );
+
+    allRelated = allRelated.concat(relatedLiterals);
+  }
+
+  return baseLimits.map(({ index, limit }) => {
+    return {
+      ...limit,
+      related: allRelated.filter((r) => r.index === index),
+    };
+  });
 };
