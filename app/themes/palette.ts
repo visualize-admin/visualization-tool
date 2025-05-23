@@ -16,6 +16,20 @@ const blue: PaletteOptions["blue"] = {
   900: "#1E3A8A",
 };
 
+const orange: PaletteOptions["orange"] = {
+  main: "#9A3412",
+  50: "#FFF7ED",
+  100: "#FFEDD5",
+  200: "#FED7AA",
+  300: "#FDBA74",
+  400: "#FB923C",
+  500: "#F97316",
+  600: "#EA580C",
+  700: "#C2410C",
+  800: "#9A3412",
+  900: "#7C2D12",
+};
+
 export const palette = {
   primary: {
     main: blue[700],
@@ -34,11 +48,10 @@ export const palette = {
   success: colors.success,
   error: colors.error,
   warning: {
-    // BLW colors
-    main: "#EDD15A",
-    light: "#F7EBB6",
+    main: orange[800],
+    // contrastText in Bund Library
+    light: orange[50],
   },
-
   cobalt: {
     main: colors.cobalt[700],
     ...colors.cobalt,
@@ -51,19 +64,7 @@ export const palette = {
     main: colors.red[700],
     ...colors.red,
   },
-  orange: {
-    main: "#9A3412",
-    50: "#FFF7ED",
-    100: "#FFEDD5",
-    200: "#FED7AA",
-    300: "#FDBA74",
-    400: "#FB923C",
-    500: "#F97316",
-    600: "#EA580C",
-    700: "#C2410C",
-    800: "#9A3412",
-    900: "#7C2D12",
-  },
+  orange,
   yellow: {
     main: "#92400E",
     50: "#FFFBEB",
