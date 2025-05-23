@@ -17,6 +17,12 @@ export const flag = function flag(...args: [FlagName] | [FlagName, FlagValue]) {
     return store.get(args[0]);
   } else {
     const [name, value] = args;
+
+    if (value === false) {
+      store.remove(name);
+      return false;
+    }
+
     store.set(name, value);
 
     return value;
