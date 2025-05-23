@@ -37,7 +37,8 @@ export const palette = {
     contrastText: "#fff",
   },
   secondary: {
-    main: colors.cobalt[700],
+    main: colors.cobalt[400],
+    dark: colors.cobalt[600],
     contrastText: "#fff",
   },
   text: {
