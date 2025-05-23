@@ -31,7 +31,7 @@ declare module "@mui/material/Alert" {
 
 declare module "@mui/material/Button" {
   interface ButtonPropsColorOverrides {
-    primary: false;
+    primary: true;
     secondary: true;
     success: false;
     error: false;
@@ -39,7 +39,6 @@ declare module "@mui/material/Button" {
     warning: false;
 
     monochrome: true;
-    blue: true;
     red: true;
     inherit: true;
   }

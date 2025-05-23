@@ -147,7 +147,7 @@ export const ProfileVisualizationsTable = (
           {preview && (
             <Button
               variant="text"
-              color="blue"
+              color="primary"
               size="sm"
               endIcon={<Icon name="arrowDown" size={20} />}
               onClick={onShowAll}

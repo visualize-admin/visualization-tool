@@ -448,7 +448,7 @@ const MultiFilterContent = ({
         <Flex gap={2} alignItems="center" sx={{ color: "primary.main" }}>
           <Button
             variant="text"
-            color="blue"
+            color="primary"
             size="xs"
             disabled={
               sum(showValuesMappingBooleans, (d) => +d) === values.length
@@ -470,7 +470,7 @@ const MultiFilterContent = ({
           •
           <Button
             variant="text"
-            color="blue"
+            color="primary"
             size="xs"
             disabled={showValuesMappingBooleans.every((d) => !d)}
             onClick={() => {

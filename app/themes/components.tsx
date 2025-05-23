@@ -146,14 +146,24 @@ export const components: Components = {
         })();
 
         const variant = ownerState.variant ?? "contained";
-        const color =
-          ownerState.color === "inherit"
-            ? "inherit"
-            : palette[
-                ownerState.color === "secondary"
-                  ? "cobalt"
-                  : (ownerState.color ?? "cobalt")
-              ];
+        const getPaletteColor = (
+          color: "primary" | "secondary" | "monochrome" | "red" | "inherit"
+        ) => {
+          if (color === "primary") {
+            return palette.blue;
+          }
+
+          if (color === "secondary") {
+            return palette.cobalt;
+          }
+
+          if (color === "inherit") {
+            return "inherit";
+          }
+
+          return palette[color];
+        };
+        const color = getPaletteColor(ownerState.color ?? "secondary");
 
         const variantColorStyles = (() => {
           if (!color) {
