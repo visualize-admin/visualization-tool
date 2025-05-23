@@ -103,6 +103,7 @@ const initFromHost = (host: string) => {
   const shouldSetDefaultFlags =
     host.includes("localhost") ||
     host.includes("test.visualize.admin.ch") ||
+    host.includes("int.visualize.admin.ch") ||
     isVercelPreviewHost(host);
 
   if (shouldSetDefaultFlags) {
