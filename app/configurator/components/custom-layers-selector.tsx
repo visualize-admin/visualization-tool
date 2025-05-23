@@ -247,11 +247,7 @@ export const CustomLayersSelector = () => {
         ) : null}
 
         <div>
-          <Button
-            variant="contained"
-            color="cobalt"
-            onClick={() => setAddingLayer(true)}
-          >
+          <Button variant="contained" onClick={() => setAddingLayer(true)}>
             Add layer
           </Button>
         </div>

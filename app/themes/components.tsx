@@ -121,7 +121,7 @@ export const components: Components = {
   MuiButton: {
     defaultProps: {
       variant: "contained",
-      color: "cobalt",
+      color: "secondary",
       size: "md",
     },
     styleOverrides: {
@@ -149,7 +149,11 @@ export const components: Components = {
         const color =
           ownerState.color === "inherit"
             ? "inherit"
-            : palette[ownerState.color ?? "cobalt"];
+            : palette[
+                ownerState.color === "secondary"
+                  ? "cobalt"
+                  : (ownerState.color ?? "cobalt")
+              ];
 
         const variantColorStyles = (() => {
           if (!color) {
