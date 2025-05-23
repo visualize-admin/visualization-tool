@@ -13,8 +13,6 @@ import {
   IconButtonProps,
   Link,
   LinkProps,
-  Switch,
-  SwitchProps,
   Tab,
   Typography,
 } from "@mui/material";
@@ -29,6 +27,7 @@ import uniqBy from "lodash/uniqBy";
 import mitt from "mitt";
 import React, {
   ChangeEvent,
+  Fragment,
   MouseEvent,
   ReactNode,
   useEffect,
@@ -44,6 +43,8 @@ import { flag, useFlag, useFlags } from "@/flags";
 import { FlagName } from "@/flags/types";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import useEvent from "@/utils/use-event";
+import { Switch } from "@/components/form";
+import { Icon } from "@/icons";
 
 type Timings = Record<
   string,
@@ -363,13 +364,13 @@ const EmojiIconButton = ({
 }: { children: ReactNode } & IconButtonProps) => {
   return (
     <IconButton
-      size="small"
       sx={{
-        display: "inline-flex",
+        display: "flex",
         justifyContent: "center",
         alignItems: "center",
         width: 32,
         height: 32,
+        mr: 2,
       }}
       {...props}
     >
@@ -496,25 +497,29 @@ const DebugPanel = () => {
 
   return (
     <>
-      <Box sx={{ position: "fixed", bottom: 0, right: 0, zIndex: 10 }}>
+      <Box sx={{ position: "fixed", bottom: 8, right: 8, zIndex: 10 }}>
         <Grow in>
-          <IconButton
-            data-testid="debug-panel-toggle"
-            size="small"
-            onClick={open}
-          >
+          <IconButton data-testid="debug-panel-toggle" onClick={open}>
             🛠
           </IconButton>
         </Grow>
       </Box>
       <Drawer open={isOpen} anchor="bottom" elevation={2} onClose={close}>
         <TabContext value={tab}>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <TabList onChange={(_, tab) => setTab(tab)}>
               <Tab value="graphql" label="GraphQL" />
               <Tab value="flags" label="🚩 Flags" />
             </TabList>
-            <EmojiIconButton onClick={close}>⨯</EmojiIconButton>
+            <EmojiIconButton onClick={close}>
+              <Icon name="close" />
+            </EmojiIconButton>
           </Box>
           <Divider />
           <TabPanel value="graphql">
@@ -533,38 +538,43 @@ const FlagList = () => {
   const flags = useFlags();
 
   return (
-    <>
-      {flags.map((flag) => {
-        return (
-          <Box
-            key={flag.name}
-            sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-          >
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "auto 1fr",
+        columnGap: "1rem",
+        rowGap: "0.5rem",
+        alignItems: "center",
+      }}
+    >
+      {flags.map((flag) => (
+        <Fragment key={flag.name}>
+          <Box sx={{ display: "flex" }}>
             <FlagSwitch flagName={flag.name as FlagName} />
-            <Typography variant="body2">{flag.name}</Typography>
-            <Typography variant="caption">{flag.description}</Typography>
           </Box>
-        );
-      })}
-    </>
+          <Typography variant="caption" style={{ paddingLeft: "0.5rem" }}>
+            {flag.description}
+          </Typography>
+        </Fragment>
+      ))}
+    </div>
   );
 };
 
-const FlagSwitch = ({
-  flagName,
-  onChange,
-  ...props
-}: {
-  flagName: FlagName;
-  onChange?: (value: boolean) => void;
-} & Omit<SwitchProps, "onChange">) => {
+const FlagSwitch = ({ flagName }: { flagName: FlagName }) => {
   const flagValue = useFlag(flagName);
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
     flag(flagName, e.target.checked);
-    onChange?.(e.target.checked);
-  };
+  });
 
-  return <Switch checked={!!flagValue} onChange={handleChange} {...props} />;
+  return (
+    <Switch
+      size="sm"
+      checked={!!flagValue}
+      onChange={handleChange}
+      label={flagName.toUpperCase()}
+    />
+  );
 };
 
 export default DebugPanel;

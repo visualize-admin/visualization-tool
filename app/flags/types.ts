@@ -3,7 +3,7 @@ export const FLAGS = [
   {
     name: "debug" as const,
     description:
-      "Controls whether debug elements are shown, e.g. ConfiguratorState viewer or GraphQL debug panel.",
+      "Controls whether debug elements are shown, e.g. ConfiguratorState viewer or this debug panel.",
   },
   {
     name: "server-side-cache.disable" as const,
@@ -11,7 +11,7 @@ export const FLAGS = [
   },
   {
     name: "graphql.endpoint" as const,
-    description: "The GraphQL endpoint, can be used for testing purposes.",
+    description: "GraphQL endpoint, can be used for testing.",
   },
   {
     name: "easter-eggs" as const,
