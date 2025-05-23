@@ -24,7 +24,6 @@ declare module "@mui/material/Button" {
     info: false;
     warning: false;
 
-    monochrome: true;
     red: true;
     inherit: true;
   }

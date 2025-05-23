@@ -162,7 +162,7 @@ export const components: Components = {
 
         const variant = ownerState.variant ?? "contained";
         const getPaletteColor = (
-          color: "primary" | "secondary" | "monochrome" | "red" | "inherit"
+          color: "primary" | "secondary" | "red" | "inherit"
         ) => {
           if (color === "primary") {
             return palette.blue;
