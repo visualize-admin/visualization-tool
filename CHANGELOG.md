@@ -24,6 +24,8 @@ You can also check the
   - Data preview table should now be aligned with the design
 - Maintenance
   - Split the chart options selector into multiple files
+  - Improved the CI / CD implementation by aligning the names better with the
+    design file
 - Documentation
   - Aligned and updated for new Parametrized URLs functionality
 

@@ -248,7 +248,7 @@ export const OpenMetadataPanelWrapper = ({
       className={classes.openComponentInteractive}
       variant="text"
       size="sm"
-      color="blue"
+      color="primary"
       onClick={handleClick}
     >
       {children}
@@ -394,7 +394,7 @@ const ToggleButton = ({
       data-testid="panel-metadata-toggle"
       className={classes.toggleButton}
       variant="text"
-      color="blue"
+      color="primary"
       size={smaller ? "xs" : "sm"}
       onClick={onClick}
     >
@@ -868,7 +868,7 @@ const ComponentTabPanel = ({
           component="a"
           variant="text"
           size="sm"
-          color="blue"
+          color="primary"
           onClick={handleClick}
           endIcon={<SvgIcArrowRight />}
           sx={{ p: 0 }}

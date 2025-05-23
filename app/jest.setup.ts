@@ -161,10 +161,19 @@ jest.mock("@zazuko/cube-hierarchy-query/index", () => ({}));
 jest.mock("@interactivethings/swiss-federal-ci", () => ({
   c: {
     cobalt: {
-      700: "#fff",
+      400: "#fff",
+      600: "#fff",
     },
     monochrome: {},
-    red: {},
+    red: {
+      50: "#fff",
+      800: "#fff",
+    },
+    green: {
+      50: "#fff",
+      500: "#fff",
+      700: "#fff",
+    },
   },
   e: {},
   t: {},

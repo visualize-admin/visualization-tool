@@ -12,7 +12,7 @@ import { CubeDataTablePreview } from "@/browse/cube-data-table-preview";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import { DataDownloadMenu } from "@/components/data-download";
 import Flex from "@/components/flex";
-import { HintRed, Loading, LoadingDataError } from "@/components/hint";
+import { HintError, Loading, LoadingDataError } from "@/components/hint";
 import { DataSource } from "@/config-types";
 import {
   DataCubeMetadataQuery,
@@ -116,13 +116,13 @@ export const DataSetPreview = ({
         {dataCubeMetadata.publicationStatus ===
           DataCubePublicationStatus.Draft && (
           <Box sx={{ mb: 4 }}>
-            <HintRed>
+            <HintError>
               <Trans id="dataset.publicationStatus.draft.warning">
                 Careful, this dataset is only a draft.
                 <br />
                 <strong>Don&apos;t use for reporting!</strong>
               </Trans>
-            </HintRed>
+            </HintError>
           </Box>
         )}
         <Flex

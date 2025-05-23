@@ -288,7 +288,7 @@ const TabsEditable = (props: TabsEditableProps) => {
               type="button"
               leadingIconName="trash"
               label={<Trans id="chart-controls.delete">Delete</Trans>}
-              color="red.main"
+              color="red"
               requireConfirmation
               confirmationTitle={t({
                 id: "chat-preview.delete.title",

@@ -186,7 +186,7 @@ export const LoadingOverlay = () => {
 
 export const NoDataHint = () => {
   return (
-    <HintBlue>
+    <HintInfo>
       <AlertTitle>
         <Trans id="hint.nodata.title">
           No data available for current filter selection
@@ -195,26 +195,26 @@ export const NoDataHint = () => {
       <Trans id="hint.nodata.message">
         Please try with another geographical dimension.
       </Trans>
-    </HintBlue>
+    </HintInfo>
   );
 };
 
 export const NoGeometriesHint = () => {
   return (
-    <HintBlue>
+    <HintInfo>
       <AlertTitle>
         <Trans id="hint.nogeometries.title">No geometries available</Trans>
       </AlertTitle>
       <Trans id="hint.nogeometries.message">
         Please try with another geographical dimension.
       </Trans>
-    </HintBlue>
+    </HintInfo>
   );
 };
 
 export const LoadingDataError = ({ message }: { message?: string }) => {
   return (
-    <HintRed>
+    <HintError>
       <AlertTitle>
         <Trans id="hint.dataloadingerror.title">Data loading error</Trans>
       </AlertTitle>
@@ -243,13 +243,13 @@ export const LoadingDataError = ({ message }: { message?: string }) => {
           {message}
         </pre>
       ) : null}
-    </HintRed>
+    </HintError>
   );
 };
 
 export const LoadingGeoDimensionsError = () => {
   return (
-    <HintRed>
+    <HintError>
       <AlertTitle>
         <Trans id="hint.coordinatesloadingerror.title">
           Coordinates loading error
@@ -259,13 +259,13 @@ export const LoadingGeoDimensionsError = () => {
         There was a problem with loading the coordinates from geographical
         dimensions.
       </Trans>
-    </HintRed>
+    </HintError>
   );
 };
 
 export const ChartUnexpectedError = ({ error }: { error?: Error }) => {
   return (
-    <HintRed>
+    <HintError>
       <AlertTitle>
         <Trans id="hint.chartunexpected.title">Unexpected error</Trans>
       </AlertTitle>
@@ -277,39 +277,39 @@ export const ChartUnexpectedError = ({ error }: { error?: Error }) => {
           {error.message}
         </Typography>
       ) : null}
-    </HintRed>
+    </HintError>
   );
 };
 
 export const OnlyNegativeDataHint = () => {
   return (
-    <HintOrange>
+    <HintWarning>
       <AlertTitle>
         <Trans id="hint.only.negative.data.title">Negative Values</Trans>
       </AlertTitle>
       <Trans id="hint.only.negative.data.message">
         Negative data values cannot be displayed with this chart type.
       </Trans>
-    </HintOrange>
+    </HintWarning>
   );
 };
 
 export const PublishSuccess = () => {
   return (
-    <HintGreen>
+    <HintSuccess>
       <Trans id="hint.publication.success">
         Your visualization is now published. You can share and embed it using
         the URL or the options below.
       </Trans>
-    </HintGreen>
+    </HintSuccess>
   );
 };
 
 const colorToIcon: Record<NonNullable<AlertProps["color"]>, IconName> = {
-  red: "infoCircle",
-  green: "checkmarkCircle",
-  blue: "infoCircle",
-  orange: "infoCircle",
+  error: "infoCircle",
+  success: "checkmarkCircle",
+  info: "infoCircle",
+  warning: "infoCircle",
 };
 
 const mkHint = (
@@ -350,10 +350,10 @@ const mkHint = (
 };
 
 /** Use to highlight errors. */
-export const HintRed = mkHint("red", "HintRed");
+export const HintError = mkHint("error", "HintError");
 /** Use to highlight successes. */
-const HintGreen = mkHint("green", "HintGreen");
+const HintSuccess = mkHint("success", "HintSuccess");
 /** Use to highlight information. */
-export const HintBlue = mkHint("blue", "HintBlue");
+export const HintInfo = mkHint("info", "HintInfo");
 /** Use to highlight warnings. */
-export const HintOrange = mkHint("orange", "HintOrange");
+export const HintWarning = mkHint("warning", "HintWarning");

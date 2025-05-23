@@ -27,7 +27,7 @@ import {
 } from "@/charts/map/wms-wmts-endpoint-utils";
 import ProviderAutocomplete from "@/charts/map/wms-wmts-providers-autocomplete";
 import { RemoteWMTSLayer } from "@/charts/map/wmts-utils";
-import { HintRed, Spinner } from "@/components/hint";
+import { HintError, Spinner } from "@/components/hint";
 import { Tree, useSelectTree } from "@/components/select-tree";
 import { Icon } from "@/icons";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
@@ -375,7 +375,7 @@ const WMTSSelector = ({
       flexDirection="column"
       width="100%"
     >
-      {error ? <HintRed>{error.message}</HintRed> : null}
+      {error ? <HintError>{error.message}</HintError> : null}
       <ProviderAutocomplete
         value={provider}
         onChange={(newValue) => setProvider(newValue)}

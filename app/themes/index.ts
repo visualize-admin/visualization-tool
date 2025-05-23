@@ -15,34 +15,16 @@ declare module "@mui/material" {
     extends FederalTypographyVariantsOptions {}
 }
 
-declare module "@mui/material/Alert" {
-  interface AlertPropsColorOverrides {
-    error: false;
-    warning: false;
-    info: false;
-    success: false;
-
-    red: true;
-    orange: true;
-    blue: true;
-    green: true;
-  }
-}
-
 declare module "@mui/material/Button" {
   interface ButtonPropsColorOverrides {
-    primary: false;
-    secondary: false;
+    primary: true;
+    secondary: true;
+    inherit: true;
+
     success: false;
     error: false;
     info: false;
     warning: false;
-
-    cobalt: true;
-    monochrome: true;
-    blue: true;
-    red: true;
-    inherit: true;
   }
 
   interface ButtonPropsSizeOverrides {

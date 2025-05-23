@@ -147,7 +147,7 @@ export const ProfileVisualizationsTable = (
           {preview && (
             <Button
               variant="text"
-              color="blue"
+              color="primary"
               size="sm"
               endIcon={<Icon name="arrowDown" size={20} />}
               onClick={onShowAll}
@@ -287,7 +287,7 @@ const ProfileVisualizationsRow = (props: {
       {
         type: "button",
         label: t({ id: "login.chart.delete", message: "Delete" }),
-        color: "red.main",
+        color: "red",
         leadingIconName:
           removeConfigMut.status === "fetching" ? "refresh" : "trash",
         requireConfirmation: true,

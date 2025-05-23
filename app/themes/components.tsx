@@ -51,19 +51,34 @@ export const components: Components = {
     },
     styleOverrides: {
       root: ({ ownerState }) => {
-        const color = ownerState.color ?? "blue";
+        const color = ownerState.color ?? "info";
+        const getPalette = (
+          color: "info" | "success" | "warning" | "error"
+        ) => {
+          switch (color) {
+            case "info":
+              return palette.blue;
+            case "success":
+              return palette.green;
+            case "warning":
+              return palette.orange;
+            case "error":
+              return palette.red;
+          }
+        };
+        const basePalette = getPalette(color);
 
         return {
           display: "flex",
           alignItems: "center",
           width: "100%",
           padding: 0,
-          backgroundColor: palette[color][50],
+          backgroundColor: palette[color].light,
           color: palette[color].main,
           boxShadow: shadows[2],
 
           "& .MuiIconButton-root:hover": {
-            backgroundColor: palette[color][100],
+            backgroundColor: basePalette[100],
           },
         };
       },
@@ -121,7 +136,7 @@ export const components: Components = {
   MuiButton: {
     defaultProps: {
       variant: "contained",
-      color: "cobalt",
+      color: "secondary",
       size: "md",
     },
     styleOverrides: {
@@ -146,10 +161,24 @@ export const components: Components = {
         })();
 
         const variant = ownerState.variant ?? "contained";
-        const color =
-          ownerState.color === "inherit"
-            ? "inherit"
-            : palette[ownerState.color ?? "cobalt"];
+        const getPaletteColor = (
+          color: "primary" | "secondary" | "red" | "inherit"
+        ) => {
+          if (color === "primary") {
+            return palette.blue;
+          }
+
+          if (color === "secondary") {
+            return palette.cobalt;
+          }
+
+          if (color === "inherit") {
+            return "inherit";
+          }
+
+          return palette[color];
+        };
+        const color = getPaletteColor(ownerState.color ?? "secondary");
 
         const variantColorStyles = (() => {
           if (!color) {

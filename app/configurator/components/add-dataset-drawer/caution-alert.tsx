@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, Link } from "@mui/material";
 import { useCallback } from "react";
 
-import { HintOrange } from "@/components/hint";
+import { HintWarning } from "@/components/hint";
 import useLocalState from "@/utils/use-local-state";
 
 export const useCautionAlert = () => {
@@ -17,7 +17,7 @@ export const useCautionAlert = () => {
 
 export const CautionAlert = ({ onConfirm }: { onConfirm: () => void }) => {
   return (
-    <HintOrange>
+    <HintWarning>
       <Trans id="dataset.search.caution.body">
         The linking of different datasets carries risks such as data
         inconsistencies, scalability issues, and unexpected correlations. Be
@@ -37,6 +37,6 @@ export const CautionAlert = ({ onConfirm }: { onConfirm: () => void }) => {
           </Trans>
         </Link>
       </Box>
-    </HintOrange>
+    </HintWarning>
   );
 };

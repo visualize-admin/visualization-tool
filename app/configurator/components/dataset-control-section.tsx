@@ -119,7 +119,7 @@ const DatasetRow = ({
         >
           <Button
             variant="text"
-            color="blue"
+            color="primary"
             size="sm"
             onClick={handleDatasetClick}
           >
@@ -240,7 +240,7 @@ export const DatasetsControlSection = () => {
           <Button
             variant="text"
             size="sm"
-            color="blue"
+            color="primary"
             startIcon={<Icon name="plus" size={20} />}
             onClick={openDatasetDialog}
           >
