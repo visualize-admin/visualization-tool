@@ -30,6 +30,7 @@ import mitt from "mitt";
 import React, {
   ChangeEvent,
   MouseEvent,
+  ReactNode,
   useEffect,
   useMemo,
   useRef,
@@ -359,16 +360,16 @@ const Queries = ({ queries }: { queries: RequestQueryMeta[] }) => {
 const EmojiIconButton = ({
   children,
   ...props
-}: { children: React.ReactNode } & IconButtonProps) => {
+}: { children: ReactNode } & IconButtonProps) => {
   return (
     <IconButton
       size="small"
       sx={{
-        width: 32,
-        height: 32,
         display: "inline-flex",
         justifyContent: "center",
         alignItems: "center",
+        width: 32,
+        height: 32,
       }}
       {...props}
     >
@@ -510,8 +511,8 @@ const DebugPanel = () => {
         <TabContext value={tab}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <TabList onChange={(_, tab) => setTab(tab)}>
-              <Tab value="graphql" label="graphql" />
-              <Tab value="flags" label="flags" />
+              <Tab value="graphql" label="GraphQL" />
+              <Tab value="flags" label="🚩 Flags" />
             </TabList>
             <EmojiIconButton onClick={close}>⨯</EmojiIconButton>
           </Box>
