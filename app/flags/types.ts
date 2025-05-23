@@ -4,6 +4,7 @@ export const FLAGS = [
     name: "debug" as const,
     description:
       "Controls whether debug elements are shown, e.g. ConfiguratorState viewer or this debug panel.",
+    priority: 1,
   },
   {
     name: "server-side-cache.disable" as const,
@@ -15,7 +16,7 @@ export const FLAGS = [
   },
   {
     name: "easter-eggs" as const,
-    description: "Enables easter eggs",
+    description: "Enables easter eggs.",
   },
   {
     name: "enable-experimental-features" as const,
@@ -24,7 +25,7 @@ export const FLAGS = [
   },
   {
     name: "wmts-show-extra-info" as const,
-    description: "Show extra debug info in WMTS provider autocomplete",
+    description: "Show extra debug info in WMTS provider autocomplete.",
   },
   {
     name: "custom-scale-domain" as const,
@@ -34,7 +35,10 @@ export const FLAGS = [
     name: "convert-units" as const,
     description: "Enables unit conversion.",
   },
-];
+].sort(
+  (a, b) =>
+    (b.priority ?? 0) - (a.priority ?? 0) || a.name.localeCompare(b.name)
+);
 export const FLAG_NAMES = FLAGS.map((flag) => flag.name);
 type Flag = (typeof FLAGS)[number];
 export type FlagName = Flag["name"];
