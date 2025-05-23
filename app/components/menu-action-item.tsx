@@ -17,12 +17,10 @@ const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
   display: "flex",
   alignItems: "flex-start",
   gap: theme.spacing(2),
-  color:
-    color === "blue" || color === "red"
-      ? theme.palette[color].main
-      : theme.palette.primary.main,
+  color: color === "red" ? theme.palette.red.main : theme.palette.text.primary,
   whiteSpace: "normal",
 })) as typeof MenuItem;
+
 export type MenuActionProps = {
   disabled?: boolean;
   label: string | NonNullable<React.ReactNode>;
@@ -30,7 +28,7 @@ export type MenuActionProps = {
   leadingIconName?: IconName;
   priority?: number;
   stayOpen?: boolean;
-  color?: "text.primary" | "red.main";
+  color?: "red";
   onClick?: (e: MouseEvent<HTMLElement>) => Promise<unknown> | void;
 } & (
   | {
@@ -69,7 +67,6 @@ export const MenuActionItem = (
     leadingIcon,
     trailingIcon,
     label,
-    color = "text.primary",
     ...rest
   }: {
     leadingIcon?: IconName;
@@ -121,7 +118,7 @@ export const MenuActionItem = (
           disabled={disabled}
           component={props.type === "link" ? Link : "div"}
           {...forwardedProps}
-          sx={{ display: "flex", alignItems: "center", minHeight: 0, color }}
+          sx={{ display: "flex", alignItems: "center", minHeight: 0 }}
         >
           {leadingIcon && <Icon name={leadingIcon} />}
           <Typography variant="body3">{label}</Typography>

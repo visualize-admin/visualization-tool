@@ -271,7 +271,7 @@ export const ChartMoreButton = ({
               <MenuActionItem
                 type="button"
                 as="menuitem"
-                color="red.main"
+                color="red"
                 requireConfirmation
                 confirmationTitle={t({
                   id: "chart-controls.delete.title",

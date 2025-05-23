@@ -287,7 +287,7 @@ const ProfileVisualizationsRow = (props: {
       {
         type: "button",
         label: t({ id: "login.chart.delete", message: "Delete" }),
-        color: "red.main",
+        color: "red",
         leadingIconName:
           removeConfigMut.status === "fetching" ? "refresh" : "trash",
         requireConfirmation: true,
