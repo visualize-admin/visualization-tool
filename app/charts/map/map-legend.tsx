@@ -231,15 +231,28 @@ export const MapLegend = ({
                   />
                 </Box>
               );
-            case "range":
+            case "value-range":
               return (
                 <Box>
                   <Typography component="div" variant="caption">
                     {measureLimit.name}
                   </Typography>
                   <LimitLegend
-                    minValue={measureLimit.from}
-                    maxValue={measureLimit.to}
+                    minValue={measureLimit.min}
+                    maxValue={measureLimit.max}
+                    color={configLimit.color}
+                  />
+                </Box>
+              );
+            case "time-range":
+              return (
+                <Box>
+                  <Typography component="div" variant="caption">
+                    {measureLimit.name}
+                    {limitUnit ? ` (${limitUnit})` : ""}
+                  </Typography>
+                  <LimitLegend
+                    maxValue={measureLimit.value}
                     color={configLimit.color}
                   />
                 </Box>

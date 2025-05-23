@@ -264,6 +264,10 @@ export const getMaybeValidChartConfigLimit = ({
 
   return {
     limit: measureConfigLimits.find((configLimit) => {
+      if (configLimit.related.length !== limit.related.length) {
+        return false;
+      }
+
       return configLimit.related.every((cr) => {
         return limit.related.some((lr) => {
           return lr.dimensionId === cr.dimensionId && lr.value === cr.value;

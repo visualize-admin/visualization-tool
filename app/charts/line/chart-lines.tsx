@@ -16,7 +16,7 @@ import { HoverDotMultiple } from "@/charts/shared/interaction/hover-dots-multipl
 import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
-import { VerticalLimits } from "@/charts/shared/limits";
+import { VerticalLimits } from "@/charts/shared/limits/vertical";
 import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { LineConfig } from "@/config-types";
 import { useLimits } from "@/config-utils";

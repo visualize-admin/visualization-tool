@@ -1139,16 +1139,23 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         if (!chartConfig.limits[measureId]) {
           chartConfig.limits[measureId] = [limit];
         } else {
-          const maybeLimitIndex = chartConfig.limits[measureId].findIndex((d) =>
-            d.related.every((r) =>
-              limit.related.some(
-                (nr) => r.dimensionId === nr.dimensionId && r.value === nr.value
-              )
-            )
+          const limitToAddIndex = chartConfig.limits[measureId].findIndex(
+            (d) => {
+              if (d.related.length !== limit.related.length) {
+                return false;
+              }
+
+              return d.related.every((r) =>
+                limit.related.some(
+                  (nr) =>
+                    r.dimensionId === nr.dimensionId && r.value === nr.value
+                )
+              );
+            }
           );
 
-          if (maybeLimitIndex !== -1) {
-            chartConfig.limits[measureId][maybeLimitIndex] = limit;
+          if (limitToAddIndex !== -1) {
+            chartConfig.limits[measureId][limitToAddIndex] = limit;
           } else {
             chartConfig.limits[measureId].push(limit);
           }
@@ -1163,26 +1170,29 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         const chartConfig = getChartConfig(draft);
 
         const limits = chartConfig.limits[measureId] ?? [];
-        const limit = limits.find((l) => {
-          return l.related.every((lr) => {
+
+        const limitToRemoveIndex = limits.findIndex((d) => {
+          if (d.related.length !== related.length) {
+            return false;
+          }
+
+          return d.related.every((r) => {
             return related.some((nr) => {
-              return lr.dimensionId === nr.dimensionId && lr.value === nr.value;
+              return r.dimensionId === nr.dimensionId && r.value === nr.value;
             });
           });
         });
 
-        if (limits.length === 1 && limit) {
+        if (limitToRemoveIndex === -1) {
+          return draft;
+        }
+
+        if (limits.length === 1) {
           delete chartConfig.limits[measureId];
         } else {
-          chartConfig.limits[measureId] = limits.filter((l) => {
-            return l.related.some((lr) => {
-              return related.every((nr) => {
-                return (
-                  lr.dimensionId !== nr.dimensionId || lr.value !== nr.value
-                );
-              });
-            });
-          });
+          chartConfig.limits[measureId] = limits.filter(
+            (_, index) => index !== limitToRemoveIndex
+          );
         }
       }
 

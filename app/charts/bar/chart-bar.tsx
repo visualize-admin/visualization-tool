@@ -25,7 +25,7 @@ import {
 } from "@/charts/shared/containers";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
-import { HorizontalLimits } from "@/charts/shared/limits";
+import { HorizontalLimits } from "@/charts/shared/limits/horizontal";
 import { BarConfig } from "@/config-types";
 import { useChartConfigFilters, useLimits } from "@/config-utils";
 import { hasChartConfigs } from "@/configurator";
