@@ -40,11 +40,12 @@ import { pipe, tap } from "wonka";
 
 import useDisclosure from "@/components/use-disclosure";
 import { flag, useFlag, useFlags } from "@/flags";
-import { FlagName } from "@/flags/types";
+import { FlagName, FLAGS } from "@/flags/types";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import useEvent from "@/utils/use-event";
 import { Switch } from "@/components/form";
 import { Icon } from "@/icons";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
 
 type Timings = Record<
   string,
@@ -563,16 +564,28 @@ const FlagList = () => {
 
 const FlagSwitch = ({ flagName }: { flagName: FlagName }) => {
   const flagValue = useFlag(flagName);
+  const isTextFlag = useMemo(() => {
+    return FLAGS.find((f) => f.name === flagName)?.type === "text";
+  }, [flagName]);
   const handleChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
     flag(flagName, e.target.checked);
   });
 
   return (
-    <Switch
-      checked={!!flagValue}
-      onChange={handleChange}
-      label={flagName.toUpperCase()}
-    />
+    <MaybeTooltip
+      title={
+        isTextFlag ? "This flag can only be set through the URL" : undefined
+      }
+    >
+      <div>
+        <Switch
+          label={flagName.toUpperCase()}
+          checked={!!flagValue}
+          disabled={isTextFlag}
+          onChange={handleChange}
+        />
+      </div>
+    </MaybeTooltip>
   );
 };
 
