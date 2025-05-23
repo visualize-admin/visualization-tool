@@ -60,12 +60,25 @@ export const palette = {
     secondary: colors.monochrome[500],
   },
   divider: colors.cobalt[100],
-  success: colors.success,
-  error: colors.error,
+  error: {
+    main: colors.red[800],
+    light: colors.red[50],
+    contrastText: "#fff",
+  },
   warning: {
     main: orange[800],
-    // contrastText in Bund Library
     light: orange[50],
+    contrastText: "#fff",
+  },
+  info: {
+    main: blue[700],
+    light: blue[50],
+    contrastText: "#fff",
+  },
+  success: {
+    main: green[700],
+    light: green[50],
+    contrastText: "#fff",
   },
   cobalt: {
     main: colors.cobalt[700],

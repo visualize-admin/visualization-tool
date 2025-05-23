@@ -19,7 +19,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ChartPublished } from "@/components/chart-published";
 import { useEmbedQueryParams } from "@/components/embed-params";
-import { HintOrange, PublishSuccess } from "@/components/hint";
+import { HintWarning, PublishSuccess } from "@/components/hint";
 import { ContentLayout } from "@/components/layout";
 import { PublishActions } from "@/components/publish-actions";
 import { ConfiguratorStatePublished } from "@/config-types";
@@ -184,7 +184,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
             )}
             {config.published_state === PUBLISHED_STATE.DRAFT && (
               <Box mt={2} mb={5}>
-                <HintOrange
+                <HintWarning
                   sx={{
                     flexDirection: "row",
                     alignItems: "center",
@@ -211,7 +211,7 @@ const VisualizationPage = (props: Serialized<PageProps>) => {
                       <Trans id="login.chart.edit">Edit</Trans>
                     </Button>
                   ) : null}
-                </HintOrange>
+                </HintWarning>
               </Box>
             )}
             <Box ref={chartWrapperRef}>

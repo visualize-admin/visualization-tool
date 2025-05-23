@@ -86,7 +86,7 @@ const ProviderInfoAlert = ({ extraInfo }: { extraInfo: ProviderExtraInfo }) => {
 
   return (
     <Alert
-      severity="blue"
+      severity="info"
       className={classes.alert}
       elevation={0}
       sx={{

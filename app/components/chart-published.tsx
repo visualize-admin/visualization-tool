@@ -28,7 +28,7 @@ import { ChartWithFilters } from "@/components/chart-with-filters";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import { EmbedQueryParams } from "@/components/embed-params";
 import Flex from "@/components/flex";
-import { HintBlue, HintOrange, HintRed } from "@/components/hint";
+import { HintInfo, HintWarning, HintError } from "@/components/hint";
 import {
   createMetadataPanelStore,
   MetadataPanelStoreContext,
@@ -376,43 +376,43 @@ const ChartPublishedInnerImpl = ({
             (d) => d.publicationStatus === DataCubePublicationStatus.Draft
           ) && (
             <Box sx={{ mb: 4 }}>
-              <HintRed>
+              <HintError>
                 <Trans id="dataset.publicationStatus.draft.warning">
                   Careful, this dataset is only a draft.
                   <br />
                   <strong>Don&apos;t use for reporting!</strong>
                 </Trans>
-              </HintRed>
+              </HintError>
             </Box>
           )}
           {metadata?.some((d) => d.expires) && (
             <Box sx={{ mb: 4 }}>
-              <HintRed>
+              <HintError>
                 <Trans id="dataset.publicationStatus.expires.warning">
                   Careful, the data for this chart has expired.
                   <br />
                   <strong>Don&apos;t use for reporting!</strong>
                 </Trans>
-              </HintRed>
+              </HintError>
             </Box>
           )}
           {!isTrustedDataSource && (
             <Box sx={{ mb: 4 }}>
-              <HintOrange>
+              <HintWarning>
                 <Trans id="data.source.notTrusted">
                   This chart is not using a trusted data source.
                 </Trans>
-              </HintOrange>
+              </HintWarning>
             </Box>
           )}
           {isUsingImputation(chartConfig) && (
             <Box sx={{ mb: 4 }}>
-              <HintBlue>
+              <HintInfo>
                 <Trans id="dataset.hasImputedValues">
                   Some data in this dataset is missing and has been interpolated
                   to fill the gaps.
                 </Trans>
-              </HintBlue>
+              </HintInfo>
             </Box>
           )}
         </div>
