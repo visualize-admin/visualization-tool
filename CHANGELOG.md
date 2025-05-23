@@ -15,6 +15,7 @@ You can also check the
   - Added support for time range limits
   - Symbol limits are now supported in bar charts
   - Pie charts now display the "Y" axis title
+  - Application now supports limits based on Literal related values
 - Fixes
   - Text of locale switcher select options is now visible on Windows machines
   - Total value labels do not overlap with error bars anymore
