@@ -552,7 +552,7 @@ const FlagList = () => {
           <Box sx={{ display: "flex" }}>
             <FlagSwitch flagName={flag.name as FlagName} />
           </Box>
-          <Typography variant="caption" style={{ paddingLeft: "0.5rem" }}>
+          <Typography variant="body3" style={{ paddingLeft: "0.5rem" }}>
             {flag.description}
           </Typography>
         </Fragment>
@@ -569,7 +569,6 @@ const FlagSwitch = ({ flagName }: { flagName: FlagName }) => {
 
   return (
     <Switch
-      size="sm"
       checked={!!flagValue}
       onChange={handleChange}
       label={flagName.toUpperCase()}
