@@ -28,13 +28,29 @@ const listFlagNames = () => {
   return store.keys().sort();
 };
 
-/** List all flags from the store */
+/** List all available flags */
 const listFlags = () => {
-  return listFlagNames().map((name) => ({
-    name,
-    description: FLAGS.find((flag) => flag.name === name)?.description,
-    value: store.get(name as FlagName),
+  const allDefinedFlags = FLAGS.map((flagDef) => ({
+    name: flagDef.name,
+    description: flagDef.description,
+    value: store.get(flagDef.name),
   }));
+
+  return allDefinedFlags;
+};
+
+/** Find and remove deprecated flags (flags in store but not in FLAGS) */
+const removeDeprecatedFlags = () => {
+  const storeFlags = listFlagNames();
+  const deprecatedFlags = storeFlags.filter(
+    (name) => !FLAGS.some((flagDef) => flagDef.name === name)
+  );
+
+  deprecatedFlags.forEach((name) => {
+    store.remove(name as FlagName);
+  });
+
+  return deprecatedFlags;
 };
 
 /** Resets all the flags */
@@ -66,6 +82,7 @@ flag.listNames = listFlagNames;
 flag.list = listFlags;
 flag.reset = resetFlags;
 flag.enable = enable;
+flag.removeDeprecated = removeDeprecatedFlags;
 
 const initFromSearchParams = (locationSearch: string) => {
   locationSearch = locationSearch.startsWith("?")
