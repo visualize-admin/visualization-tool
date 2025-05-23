@@ -30,12 +30,6 @@ export const FLAGS = [
     type: "boolean" as FlagType,
   },
   {
-    name: "enable-experimental-features" as const,
-    description:
-      "Enables experimental features, including dashboard text blocks, Markdown editor and bar charts.",
-    type: "boolean" as FlagType,
-  },
-  {
     name: "wmts-show-extra-info" as const,
     description: "Show extra debug info in WMTS provider autocomplete.",
     type: "boolean" as FlagType,
