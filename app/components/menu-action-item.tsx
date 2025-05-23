@@ -67,6 +67,7 @@ export const MenuActionItem = (
     leadingIcon,
     trailingIcon,
     label,
+    color,
     ...rest
   }: {
     leadingIcon?: IconName;
@@ -118,6 +119,7 @@ export const MenuActionItem = (
           disabled={disabled}
           component={props.type === "link" ? Link : "div"}
           {...forwardedProps}
+          color={color}
           sx={{ display: "flex", alignItems: "center", minHeight: 0 }}
         >
           {leadingIcon && <Icon name={leadingIcon} />}

@@ -19,13 +19,12 @@ declare module "@mui/material/Button" {
   interface ButtonPropsColorOverrides {
     primary: true;
     secondary: true;
+    inherit: true;
+
     success: false;
     error: false;
     info: false;
     warning: false;
-
-    red: true;
-    inherit: true;
   }
 
   interface ButtonPropsSizeOverrides {
