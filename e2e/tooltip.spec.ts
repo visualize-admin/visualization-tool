@@ -59,7 +59,6 @@ test("should keep correct position after scrolling", async ({
   await actions.chart.createFrom({
     iri: "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
     dataSource: "Prod",
-    createURLParams: "flag__enable-experimental-features=true",
   });
   await actions.editor.changeRegularChartType("Bars");
   const chart = page.locator("[data-chart-loaded]");

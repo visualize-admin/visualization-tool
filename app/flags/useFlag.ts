@@ -24,7 +24,10 @@ export default function useFlagValue(name: FlagName) {
 }
 
 export function useFlags() {
-  const [flags, setFlags] = useState(flag.list());
+  const [flags, setFlags] = useState(() => {
+    flag.removeDeprecated();
+    return flag.list();
+  });
 
   useEffect(() => {
     const handleChange = () => {

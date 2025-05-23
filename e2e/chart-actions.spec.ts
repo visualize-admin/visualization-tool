@@ -41,7 +41,6 @@ test.skip("it should be possible to make a screenshot of a chart", async ({
   await actions.chart.createFrom({
     iri: "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
     dataSource: "Prod",
-    createURLParams: "flag__enable-experimental-features=true",
   });
   await selectors.chart.loaded();
   await actions.editor.changeRegularChartType("Bars");

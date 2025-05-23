@@ -6,11 +6,16 @@ import { flag } from "@/flags/flag";
 import { devtoolsExchanges } from "@/graphql/devtools";
 
 const graphqlEndpointFlag = flag("graphql.endpoint");
+
 if (graphqlEndpointFlag) {
   console.log("ℹ️ Using custom GraphQL endpoint:", graphqlEndpointFlag);
 }
+
 export const client = createClient({
-  url: graphqlEndpointFlag ?? GRAPHQL_ENDPOINT,
+  url:
+    typeof graphqlEndpointFlag === "string"
+      ? graphqlEndpointFlag
+      : GRAPHQL_ENDPOINT,
   exchanges: [...devtoolsExchanges, ...defaultExchanges],
   fetchOptions: {
     headers: getHeaders(),
