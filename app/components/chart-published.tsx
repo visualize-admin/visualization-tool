@@ -28,7 +28,7 @@ import { ChartWithFilters } from "@/components/chart-with-filters";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import { EmbedQueryParams } from "@/components/embed-params";
 import Flex from "@/components/flex";
-import { HintInfo, HintWarning, HintError } from "@/components/hint";
+import { HintError, HintInfo, HintWarning } from "@/components/hint";
 import {
   createMetadataPanelStore,
   MetadataPanelStoreContext,
