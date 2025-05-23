@@ -91,15 +91,15 @@ export const isVercelPreviewHost = (host: string) => {
   return !!/visualization\-tool.*ixt1\.vercel\.app/.exec(host);
 };
 
-const initFromHost = (host: string) => {
-  // @ts-ignore
-  const setDefaultFlag = (name: FlagName, value: FlagValue) => {
-    const flagValue = flag(name);
+const setDefaultFlag = (name: FlagName, value: FlagValue) => {
+  const flagValue = flag(name);
 
-    if (flagValue === null) {
-      flag(name, value);
-    }
-  };
+  if (flagValue === null) {
+    flag(name, value);
+  }
+};
+
+const initFromHost = (host: string) => {
   const shouldSetDefaultFlags =
     host.includes("localhost") ||
     host.includes("test.visualize.admin.ch") ||
@@ -107,7 +107,7 @@ const initFromHost = (host: string) => {
     isVercelPreviewHost(host);
 
   if (shouldSetDefaultFlags) {
-    flag("wmts-show-extra-info", true);
+    setDefaultFlag("debug", true);
   }
 };
 
