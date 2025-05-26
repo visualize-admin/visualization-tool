@@ -58,7 +58,7 @@ export const BaseLayerField = ({ chartConfig }: { chartConfig: MapConfig }) => {
   return (
     <ControlSection hideTopBorder>
       <SectionTitle closable>
-        <Trans id="chart.map.layers.base">Base Layers</Trans>
+        <Trans id="chart.map.layers.base">Base Map</Trans>
       </SectionTitle>
       <ControlSectionContent gap="large">
         <ChartOptionCheckboxField

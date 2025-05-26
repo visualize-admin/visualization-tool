@@ -182,7 +182,7 @@ export const CustomLayersSelector = () => {
   ) : (
     <ControlSection hideTopBorder>
       <SectionTitle closable>
-        <Trans id="chart.map.layers.custom-layers">Custom Layers</Trans>
+        <Trans id="chart.map.layers.custom-layers">Import Maps</Trans>
       </SectionTitle>
       <LeftDrawer open={addingLayer} onClose={() => setAddingLayer(false)}>
         <div>
@@ -214,7 +214,7 @@ export const CustomLayersSelector = () => {
       <ControlSectionContent gap="large">
         {configLayers.length === 0 && (
           <Typography variant="body3" color="text.secondary">
-            <Trans id="chart.map.layers.no-layers">No custom layers</Trans>
+            <Trans id="chart.map.layers.no-layers">No imported maps</Trans>
           </Typography>
         )}
 
@@ -248,7 +248,7 @@ export const CustomLayersSelector = () => {
 
         <div>
           <Button variant="contained" onClick={() => setAddingLayer(true)}>
-            Add layer
+            <Trans id="chart.map.layers.add-layer">Add map</Trans>
           </Button>
         </div>
       </ControlSectionContent>

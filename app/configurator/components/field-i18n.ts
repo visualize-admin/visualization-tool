@@ -50,7 +50,7 @@ const fieldLabels = {
   }),
   "chart.map.layers.base": defineMessage({
     id: "chart.map.layers.base",
-    message: "Base Layers",
+    message: "Base Map",
   }),
   "chart.map.layers.area": defineMessage({
     id: "chart.map.layers.area",

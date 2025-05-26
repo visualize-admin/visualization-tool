@@ -137,7 +137,7 @@ const ProviderAutocomplete = ({
             {...params}
             placeholder={t({
               id: "wmts-providers-autocomplete.placeholder",
-              message: "Enter a WMTS provider URL",
+              message: "WMTS WMS URL",
             })}
             variant="outlined"
             margin="normal"

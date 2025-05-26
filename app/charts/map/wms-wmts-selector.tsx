@@ -389,7 +389,7 @@ const WMTSSelector = ({
           startAdornment={<Icon name="search" size={18} />}
           placeholder={t({
             id: "wmts.search-placeholder",
-            message: "Search custom layers",
+            message: "Search in imported maps...",
           })}
           endAdornment={
             inputValue.length > 0 ? (

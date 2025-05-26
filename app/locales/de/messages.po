@@ -257,6 +257,10 @@ msgstr "Wählen Sie einen Datensatz mit gemeinsamen Dimensionen aus"
 msgid "chart.datasets.add-dataset-drawer.title"
 msgstr "Datensatz auswählen"
 
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.add-layer"
+msgstr "Karten importieren"
+
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.area"
 msgstr "Flächen"
@@ -265,7 +269,7 @@ msgstr "Flächen"
 #: app/configurator/components/chart-options-selector/base-layer-field.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.base"
-msgstr "Basisschichten"
+msgstr "Basiskarte"
 
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.base.behind-area-layer"
@@ -286,11 +290,11 @@ msgstr "Gesperrte Ansicht"
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.custom-layers"
-msgstr "Benutzerdefinierte Ebenen"
+msgstr "Karten importieren"
 
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.no-layers"
-msgstr "Keine benutzerdefinierten Ebenen"
+msgstr "Keine importierte Karten"
 
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.symbol"
@@ -425,40 +429,40 @@ msgstr "Vergleichsdiagrammtypen kombinieren mehrere Messwerte in einem Diagramm 
 msgid "controls.chart.category.regular"
 msgstr "Normal"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
 msgid "controls.chart.combo.y.column-measure"
 msgstr "Linke Achse (Säule)"
 
-#: app/configurator/components/chart-options-selector.tsx
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
 msgid "controls.chart.combo.y.combine-different-unit"
 msgstr "Beachten Sie, dass Sie nur Messungen mit unterschiedlichen Einheiten kombinieren können."
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
 msgid "controls.chart.combo.y.combine-same-unit"
 msgstr "Beachten Sie, dass Sie nur Messungen mit der gleichen Einheit kombinieren können."
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
 msgid "controls.chart.combo.y.common-unit"
 msgstr "Gemeinsame Einheit"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
 msgid "controls.chart.combo.y.left-axis-measure"
 msgstr "Messung der linken Achse"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
 msgid "controls.chart.combo.y.line-measure"
 msgstr "Rechte Achse (Linie)"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
 msgid "controls.chart.combo.y.no-compatible-measures"
 msgstr "Keine kompatiblen Messungen zu kombinieren!"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
 msgid "controls.chart.combo.y.no-unit"
 msgstr "Keine Einheit"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
 msgid "controls.chart.combo.y.right-axis-measure"
 msgstr "Messung der rechten Achse"
 
@@ -535,8 +539,8 @@ msgstr "Scatterplot"
 msgid "controls.chart.type.table"
 msgstr "Tabelle"
 
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
-#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.color"
 msgstr "Farbe"
@@ -545,7 +549,7 @@ msgstr "Farbe"
 msgid "controls.color.add"
 msgstr "Hinzufügen…"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.opacity"
 msgstr "Transparenz"
 
@@ -571,35 +575,35 @@ msgstr "Wähle eine Farbpalette"
 msgid "controls.color.palette.sequential"
 msgstr "Sequentiell"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.discretization.jenks"
 msgstr "Jenks (Natural Breaks)"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.discretization.quantiles"
 msgstr "Quantile (gleiche Anzahl Werte)"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.discretization.quantize"
 msgstr "Quantisierung (gleiche Wertebereiche)"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.interpolation"
 msgstr "Interpolation"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.number.of.classes"
 msgstr "Anzahl Klassen"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.type.continuous"
 msgstr "Kontinuierlich"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.type.discrete"
 msgstr "Diskret"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.select"
 msgstr "Farbe auswählen"
 
@@ -779,7 +783,7 @@ msgstr "Letztes Datum verwenden"
 msgid "controls.filter.use-most-recent-explanation"
 msgstr "Wenn der Herausgeber diesen Datensatz aktualisiert, wird automatisch das neueste Datum ausgewählt."
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/calculation-field.tsx
 msgid "controls.filters.interactive.calculation"
 msgstr "Benutzer können den Diagramm-Modus ändern"
 
@@ -788,7 +792,7 @@ msgid "controls.filters.interactive.color.min-1-filter"
 msgstr "Es muss mindestens ein Filter ausgewählt werden."
 
 #: app/configurator/components/chart-configurator.tsx
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/calculation-field.tsx
 #: app/configurator/components/filters.tsx
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.interactive.toggle"
@@ -834,17 +838,17 @@ msgstr "Ziehen Sie Spalten hierher, um Gruppen zu erstellen."
 msgid "controls.imputation"
 msgstr "Imputationstyp"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/imputation-field.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.imputation.type.linear"
 msgstr "Lineare Interpolation"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/imputation-field.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.imputation.type.none"
 msgstr "-"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/imputation-field.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.imputation.type.zeros"
 msgstr "Nullen"
@@ -922,11 +926,11 @@ msgstr "Hoch"
 msgid "controls.layout.vertical"
 msgstr "Vertikal"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.line.dashed"
 msgstr "Gestrichelt"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.line.solid"
 msgstr "Durchgezogen"
 
@@ -963,9 +967,9 @@ msgstr "Zurück zum Editieren"
 msgid "controls.nav.back-to-preview"
 msgstr "Zurück zur Vorschau"
 
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
-#: app/configurator/components/chart-options-selector.tsx
-#: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.none"
@@ -979,7 +983,7 @@ msgstr "Ein"
 msgid "controls.option.isNotActive"
 msgstr "Aus"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.scale.type"
 msgstr "Skalierungstyp"
 
@@ -992,15 +996,15 @@ msgstr "Suche zurücksetzen"
 msgid "controls.section.animation.disabled-by-sorting"
 msgstr "Die Animation ist bei der Sortierung nach Gesamtgrösse deaktiviert."
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.duration"
 msgstr "Animation Dauer"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.dynamic-scaling"
 msgstr "Dynamische Skalierung"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.dynamic-scaling.explanation"
 msgstr "Aktivieren Sie die dynamische Skalierung, um die Skalierung des Diagramms auf der Grundlage des Datenbereichs anzupassen und eine optimale Visualisierung zu gewährleisten."
 
@@ -1012,27 +1016,27 @@ msgstr "Es stehen keine zeitlichen Dimensionen zur Verfügung. Ändern Sie einig
 msgid "controls.section.animation.no-temporal-dimensions"
 msgstr "Es gibt keine Dimension, die animiert werden kann."
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.settings"
 msgstr "Animation Einstellungen"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.show-play-button"
 msgstr "Schaltfläche Abspielen anzeigen"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.type"
 msgstr "Animation Typ"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.type.continuous"
 msgstr "Kontinuierlich"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.type.explanation"
 msgstr "Verwenden Sie den Typ Abgestuft, um die Animation in festen Abständen zwischen Datenpunkten springen zu lassen. Dieser Modus ist nützlich, wenn Sie Daten mit einer Zeitdimension mit einer ungleichmässigen Verteilung der Daten animieren möchten."
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.type.stepped"
 msgstr "Abgestuft"
 
@@ -1064,7 +1068,7 @@ msgstr "Spalten"
 msgid "controls.section.columnstyle"
 msgstr "Spaltenstil"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/show-dots-field.tsx
 msgid "controls.section.data-points"
 msgstr "Datenpunkte"
 
@@ -1096,24 +1100,24 @@ msgstr "Datensätze"
 msgid "controls.section.description"
 msgstr "Titel & Beschreibung"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/show-dots-field.tsx
 msgid "controls.section.dots-size"
 msgstr "Wählen Sie eine Grösse"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/show-dots-field.tsx
 msgid "controls.section.dots-size.large"
 msgstr "Gross"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/show-dots-field.tsx
 msgid "controls.section.dots-size.medium"
 msgstr "Mittel"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/show-dots-field.tsx
 msgid "controls.section.dots-size.small"
 msgstr "Klein"
 
-#: app/configurator/components/chart-options-selector.tsx
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/multi-filter-field.tsx
+#: app/configurator/components/chart-options-selector/multi-filter-field.tsx
 #: app/configurator/table/table-chart-options.tsx
 #: app/configurator/table/table-chart-options.tsx
 #: app/configurator/table/table-chart-options.tsx
@@ -1125,12 +1129,12 @@ msgstr "Filter"
 msgid "controls.section.groups"
 msgstr "Gruppierungen"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/imputation-field.tsx
 msgid "controls.section.imputation"
 msgstr "Fehlende Werte"
 
 #: app/charts/chart-config-ui-options.ts
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/imputation-field.tsx
 msgid "controls.section.imputation.explanation"
 msgstr "Für diesen Diagrammtyp sollten fehlenden Werten Ersatzwerte zugewiesen werden. Entscheiden Sie sich für die Imputationslogik oder wechseln Sie zu einem anderen Diagrammtyp."
 
@@ -1139,8 +1143,8 @@ msgstr "Für diesen Diagrammtyp sollten fehlenden Werten Ersatzwerte zugewiesen 
 msgid "controls.section.interactive.filters"
 msgstr "Animation"
 
-#: app/configurator/components/chart-options-selector.tsx
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+#: app/configurator/components/chart-options-selector/layout-field.tsx
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.layout-options"
 msgstr "Layout-Optionen"
@@ -1161,7 +1165,7 @@ msgstr "Konfidenzintervall anzeigen"
 msgid "controls.section.show-confidence-interval.explanation"
 msgstr "Unsicherheiten, die sich aus Datenpunkten ergeben anzeigen, um Konfidenzintervalle darzustellen"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/show-dots-field.tsx
 msgid "controls.section.show-dots"
 msgstr "Datenpunkte anzeigen"
 
@@ -1177,7 +1181,7 @@ msgstr "Zeigen Sie Unsicherheiten, die sich von Datenpunkten ausbreiten, um Stan
 msgid "controls.section.show-total-values"
 msgstr "Immer Gesamtwerte anzeigen"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/sorting-field.tsx
 msgid "controls.section.sorting"
 msgstr "Sortieren"
 
@@ -1193,19 +1197,19 @@ msgstr "Tabellensortierung"
 msgid "controls.section.tableoptions"
 msgstr "Tabellenoptionen"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values"
 msgstr "Zielvorgaben und Grenzwerte"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values.line-type"
 msgstr "Linientyp auswählen"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values.show-target"
 msgstr "Zielvorgabe anzeigen"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values.symbol-type"
 msgstr "Symboltyp auswählen"
 
@@ -1224,7 +1228,7 @@ msgstr "Segmentierung"
 msgid "controls.segment.stacked.disabled-by-scale-type"
 msgstr "Das gestapelte Layout kann nur aktiviert werden, wenn die der vertikalen Achse zugeordnete Dimension eine Verhältnis-Skala hat."
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/calculation-field.tsx
 msgid "controls.select.calculation.mode"
 msgstr "Visualisierungsmodus"
 
@@ -1238,7 +1242,7 @@ msgstr "Diagrammtyp"
 msgid "controls.select.color"
 msgstr "Farbe auswählen"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/layout-field.tsx
 msgid "controls.select.column.layout"
 msgstr "Spaltenstil"
 
@@ -1284,13 +1288,12 @@ msgstr "Schriftstil"
 msgid "controls.select.dimension"
 msgstr "Dimension auswählen"
 
-#: app/configurator/components/chart-options-selector.tsx
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
+#: app/configurator/components/chart-options-selector/size-field.tsx
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.measure"
 msgstr "Messwert auswählen"
 
-#: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.select.optional"
@@ -1310,20 +1313,20 @@ msgid "controls.set-values-apply"
 msgstr "Filter anwenden"
 
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/size-field.tsx
 msgid "controls.size"
 msgstr "Grösse"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
 #: app/configurator/table/table-chart-sorting-options.tsx
 msgid "controls.sorting.addDimension"
 msgstr "Dimension hinzufügen"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/sorting-field.tsx
 msgid "controls.sorting.byAuto"
 msgstr "Auto"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/sorting-field.tsx
 msgid "controls.sorting.byDimensionLabel"
 msgstr "Name"
 
@@ -1337,7 +1340,7 @@ msgstr "A → Z"
 msgid "controls.sorting.byDimensionLabel.descending"
 msgstr "Z → A"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/sorting-field.tsx
 msgid "controls.sorting.byMeasure"
 msgstr "Messwert"
 
@@ -1349,7 +1352,7 @@ msgstr "1 → 9"
 msgid "controls.sorting.byMeasure.descending"
 msgstr "9 → 1"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/sorting-field.tsx
 msgid "controls.sorting.byTotalSize"
 msgstr "Gesamtgrösse"
 
@@ -1390,15 +1393,15 @@ msgstr "Sortieren nach"
 msgid "controls.switch.chart.type"
 msgstr "Wechseln Sie zu einem anderen Diagrammtyp unter Beibehaltung der meisten Filtereinstellungen"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.symbol.cross"
 msgstr "Kreuz"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.symbol.dot"
 msgstr "Punkt"
 
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.symbol.triangle"
 msgstr "Dreieck"
 
@@ -1588,7 +1591,7 @@ msgstr "Die ersten 10 Zeilen werden angezeigt"
 
 #: app/components/metadata-panel.tsx
 #: app/components/metadata-panel.tsx
-#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/utils.ts
 msgid "dimension.joined"
 msgstr "Verbunden"
 
@@ -2070,7 +2073,7 @@ msgstr "Jahr"
 
 #: app/charts/map/wms-wmts-providers-autocomplete.tsx
 msgid "wmts-providers-autocomplete.placeholder"
-msgstr "Geben Sie die URL eines WMTS-Anbieters ein"
+msgstr "WMTS WMS URL"
 
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "wmts.custom-layer.section-title"
@@ -2086,7 +2089,7 @@ msgstr "Legende"
 
 #: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.search-placeholder"
-msgstr "Suche nach WMTS-Provider"
+msgstr "Suche in importierten Karten..."
 
 #: app/components/confirmation-dialog.tsx
 msgid "yes"
