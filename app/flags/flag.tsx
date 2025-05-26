@@ -17,6 +17,12 @@ export const flag = function flag(...args: [FlagName] | [FlagName, FlagValue]) {
     return store.get(args[0]);
   } else {
     const [name, value] = args;
+
+    if (value === false) {
+      store.remove(name);
+      return false;
+    }
+
     store.set(name, value);
 
     return value;
@@ -28,13 +34,29 @@ const listFlagNames = () => {
   return store.keys().sort();
 };
 
-/** List all flags from the store */
+/** List all available flags */
 const listFlags = () => {
-  return listFlagNames().map((name) => ({
-    name,
-    description: FLAGS.find((flag) => flag.name === name)?.description,
-    value: store.get(name as FlagName),
+  const allDefinedFlags = FLAGS.map((flagDef) => ({
+    name: flagDef.name,
+    description: flagDef.description,
+    value: store.get(flagDef.name),
   }));
+
+  return allDefinedFlags;
+};
+
+/** Find and remove deprecated flags (flags in store but not in FLAGS) */
+const removeDeprecatedFlags = () => {
+  const storeFlags = listFlagNames();
+  const deprecatedFlags = storeFlags.filter(
+    (name) => !FLAGS.some((flagDef) => flagDef.name === name)
+  );
+
+  deprecatedFlags.forEach((name) => {
+    store.remove(name as FlagName);
+  });
+
+  return deprecatedFlags;
 };
 
 /** Resets all the flags */
@@ -66,6 +88,7 @@ flag.listNames = listFlagNames;
 flag.list = listFlags;
 flag.reset = resetFlags;
 flag.enable = enable;
+flag.removeDeprecated = removeDeprecatedFlags;
 
 const initFromSearchParams = (locationSearch: string) => {
   locationSearch = locationSearch.startsWith("?")
@@ -91,22 +114,23 @@ export const isVercelPreviewHost = (host: string) => {
   return !!/visualization\-tool.*ixt1\.vercel\.app/.exec(host);
 };
 
-const initFromHost = (host: string) => {
-  // @ts-ignore
-  const setDefaultFlag = (name: FlagName, value: FlagValue) => {
-    const flagValue = flag(name);
+const setDefaultFlag = (name: FlagName, value: FlagValue) => {
+  const flagValue = flag(name);
 
-    if (flagValue === null) {
-      flag(name, value);
-    }
-  };
+  if (flagValue === null) {
+    flag(name, value);
+  }
+};
+
+const initFromHost = (host: string) => {
   const shouldSetDefaultFlags =
     host.includes("localhost") ||
     host.includes("test.visualize.admin.ch") ||
+    host.includes("int.visualize.admin.ch") ||
     isVercelPreviewHost(host);
 
   if (shouldSetDefaultFlags) {
-    flag("wmts-show-extra-info", true);
+    setDefaultFlag("debug", true);
   }
 };
 

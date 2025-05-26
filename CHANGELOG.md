@@ -16,6 +16,10 @@ You can also check the
   - Symbol limits are now supported in bar charts
   - Pie charts now display the "Y" axis title
   - Application now supports limits based on Literal related values
+  - Debug panel is now open by default on non-production environments
+  - All available flags are now displayed in the debug panel
+  - All deprecated flags are now removed from localStorage
+  - Improved the debug panel UI
 - Fixes
   - Text of locale switcher select options is now visible on Windows machines
   - Total value labels do not overlap with error bars anymore
