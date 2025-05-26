@@ -14,7 +14,8 @@ import * as ns from "@/rdf/namespace";
 // way as app files so that the macro is defined inside files that are ran by vitest.
 vi.mock("@lingui/macro", () => {
   return {
-    defineMessage: (x: string) => x,
+    defineMessage: (d: string) => d,
+    t: (d: string) => d,
   };
 });
 

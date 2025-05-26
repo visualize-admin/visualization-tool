@@ -1,12 +1,8 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { defaultSegmentOnChange } from "@/charts/chart-config-ui-options";
 import { ColumnConfig, ScatterPlotConfig } from "@/configurator";
 import { stringifyComponentId } from "@/graphql/make-component-id";
-
-vi.mock("../rdf/extended-cube", () => ({
-  ExtendedCube: vi.fn(),
-}));
 
 describe("defaultSegmentOnChange", () => {
   const componentId = stringifyComponentId({

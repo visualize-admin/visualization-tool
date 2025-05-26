@@ -8,6 +8,7 @@ import {
   mergeObservations,
   mkVersionedJoinBy,
 } from "@/graphql/join";
+import { VersionedJoinBy } from "@/graphql/join";
 import { ComponentId, stringifyComponentId } from "@/graphql/make-component-id";
 import {
   DataCubeComponentsQuery,
@@ -17,8 +18,6 @@ import {
   ScaleType,
   TimeUnit,
 } from "@/graphql/query-hooks";
-
-import { VersionedJoinBy } from "./join";
 
 type ObservationsQuery = OperationResult<
   DataCubeObservationsQuery,

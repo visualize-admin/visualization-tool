@@ -20,6 +20,7 @@ vi.mock("next-auth/react", async () => {
     expires: new Date(Date.now() + 2 * 86400).toISOString(),
     user: { username: "Test" },
   };
+
   return {
     __esModule: true,
     ...originalModule,

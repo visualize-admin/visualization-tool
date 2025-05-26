@@ -6,10 +6,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ChartConfig } from "@/config-types";
 import { DataCubeComponents, DataCubesObservations } from "@/domain/data";
-import { useDataCubesComponentsQueryVariables } from "@/graphql/hooks.mock";
-import { ComponentId } from "@/graphql/make-component-id";
-import { Response } from "@/test/utils";
-
 import {
   DataCubesComponentsOptions,
   DataCubesObservationsOptions,
@@ -17,7 +13,10 @@ import {
   transformDataCubesComponents,
   transformDataCubesObservations,
   useDataCubesComponentsQuery,
-} from "./hooks";
+} from "@/graphql/hooks";
+import { useDataCubesComponentsQueryVariables } from "@/graphql/hooks.mock";
+import { ComponentId } from "@/graphql/make-component-id";
+import { Response } from "@/test/utils";
 
 afterEach(() => {
   cleanup();
@@ -41,6 +40,7 @@ describe("makeUseQuery", () => {
   const TestComponent = ({ variables }: { variables: any }) => {
     const [result] = useMockQuery({ variables });
     const client = useMemo(() => new Client({ url: "http://example.com" }), []);
+
     return (
       <Provider value={client}>
         <div data-testid="result">{result.data ?? "loading"}</div>
@@ -54,6 +54,7 @@ describe("makeUseQuery", () => {
     );
 
     expect(getByTestId("result").innerHTML).toEqual("loading");
+
     await waitFor(() =>
       expect(getByTestId("result").innerHTML).toEqual("mock data")
     );
@@ -63,7 +64,9 @@ describe("makeUseQuery", () => {
     const { getByTestId, rerender } = render(
       <TestComponent variables={{ cubeIri: "example1" }} />
     );
+
     expect(getByTestId("result").innerHTML).toContain("loading");
+
     await waitFor(() =>
       expect(getByTestId("result").innerHTML).toEqual("mock data")
     );
@@ -71,6 +74,7 @@ describe("makeUseQuery", () => {
     // Re-rendering without changing variables should not trigger the query again, and
     // the data should immediately be available
     rerender(<TestComponent variables={{ cubeIri: "example1" }} />);
+
     expect(mockQuery).toHaveBeenCalledTimes(1);
     expect(getByTestId("result").innerHTML).toContain("mock data");
   });
@@ -79,13 +83,16 @@ describe("makeUseQuery", () => {
     const { getByTestId, rerender } = render(
       <TestComponent variables={{ cubeIri: "example1" }} />
     );
+
     expect(getByTestId("result").innerHTML).toContain("loading");
+
     await waitFor(() =>
       expect(getByTestId("result").innerHTML).toEqual("mock data")
     );
 
     // content has been loaded, changing the key
     rerender(<TestComponent variables={{ cubeIri: "example2" }} />);
+
     expect(getByTestId("result").innerHTML).toContain("loading");
 
     // Wait for some time to ensure no data is loaded
@@ -97,6 +104,7 @@ describe("makeUseQuery", () => {
     // Re-rendering without changing variables should not trigger the query again, and
     // the data should immediately be available
     rerender(<TestComponent variables={{ cubeIri: "example2" }} />);
+
     expect(mockQuery).toHaveBeenCalledTimes(2);
     expect(getByTestId("result").innerHTML).toContain("mock data");
   });
@@ -122,6 +130,7 @@ describe("useComponentsQuery - keepPreviousData", () => {
         "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/6"
       );
       await sleep(1);
+
       return new Response(
         JSON.stringify({
           data: {

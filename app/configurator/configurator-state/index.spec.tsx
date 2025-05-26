@@ -31,25 +31,10 @@ import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 // @ts-ignore
 const mockedApi = api as unknown as Mock<typeof api>;
 
-vi.mock("@/rdf/extended-cube", () => ({
-  ExtendedCube: vi.fn(),
-}));
-
 vi.mock("@/utils/chart-config/api", () => ({
   createConfig: vi.fn(),
   fetchChartConfig: vi.fn(),
 }));
-
-vi.mock("@lingui/macro", () => ({
-  defineMessage: (str: string) => str,
-  t: (str: string) => str,
-}));
-
-vi.mock("@/urql-cache", () => {
-  return {
-    getCachedComponents: vi.fn(),
-  };
-});
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -71,7 +56,9 @@ describe("initChartStateFromChart", () => {
     // @ts-ignore
     const { key, activeChartKey, chartConfigs, ...rest } =
       await initChartStateFromChartCopy(mockClient, "abcde");
+
     expect(key).toBe(undefined);
+
     const { key: chartConfigKey, ...chartConfig } = chartConfigs[0];
     const {
       key: migratedKey,
@@ -100,6 +87,7 @@ describe("initChartStateFromChart", () => {
       },
     });
     const state = await initChartStateFromChartCopy(mockClient, "abcde");
+
     expect(state).toEqual(undefined);
   });
 });
@@ -124,6 +112,7 @@ describe("initChartFromLocalStorage", () => {
 
     localStorage.setItem(getLocalStorageKey("viz1234"), "abcde");
     const state = await initChartStateFromLocalStorage(mockClient, "viz1234");
+
     expect(state).toBeUndefined();
     expect(localStorage.getItem(getLocalStorageKey("viz1234"))).toBe(null);
   });
@@ -142,6 +131,7 @@ describe("initChartStateFromCube", () => {
       dataSource,
       "en"
     );
+
     expect(res).toEqual(
       expect.objectContaining({
         state: "CONFIGURING_CHART",
@@ -156,6 +146,7 @@ describe("initChartStateFromCube", () => {
       dataSource,
       "en"
     )) as ConfiguratorStateConfiguringChart;
+
     expect(res.chartConfigs[0].cubes[0].filters).toEqual({
       [stringifyComponentId({
         unversionedCubeIri: "mapDataset",
@@ -194,6 +185,7 @@ describe("moveField", () => {
       delta: -1,
       possibleValues: ["2020.11.20", "2020.11.10"],
     });
+
     expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
       "date",
       "species",
@@ -210,6 +202,7 @@ describe("moveField", () => {
       delta: 1,
       possibleValues: ["penguins", "tigers"],
     });
+
     expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
       "date",
       "species",
@@ -226,6 +219,7 @@ describe("moveField", () => {
       delta: -1,
       possibleValues: ["red", "blue"],
     });
+
     expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
       "species",
       "color",
@@ -244,6 +238,7 @@ describe("moveField", () => {
       delta: -1,
       possibleValues: ["penguins", "tigers"],
     });
+
     expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
       "species",
       "date",
@@ -260,6 +255,7 @@ describe("moveField", () => {
       delta: 1,
       possibleValues: ["penguins", "tigers"],
     });
+
     expect(Object.keys(newChartConfig.cubes[0].filters)).toEqual([
       "species",
       "date",
@@ -358,6 +354,7 @@ describe("publishing chart config", () => {
 
     const cb = vi.fn();
     await publishState({} as any, key, state, async (_, i) => cb(i));
+
     expect(cb.mock.calls.map((c) => c[0])).toEqual(
       Array.from({ length: publishableChartKeys.length }, (_, i) => i + 1)
     );

@@ -61,10 +61,6 @@ afterEach(() => {
   }
 });
 
-vi.mock("@/rdf/extended-cube", () => ({
-  ExtendedCube: vi.fn(),
-}));
-
 vi.mock("@/utils/chart-config/api", () => ({
   createConfig: vi.fn(),
   fetchChartConfig: vi.fn(),
@@ -75,11 +71,6 @@ vi.mock("@/urql-cache", () => {
     getCachedComponents: vi.fn(),
   };
 });
-
-vi.mock("@lingui/macro", () => ({
-  defineMessage: (str: string) => str,
-  t: (str: string) => str,
-}));
 
 type GetCachedComponents = typeof getCachedComponentsOriginal;
 const getCachedComponents =
@@ -149,6 +140,7 @@ describe("add dataset", () => {
       removeAction
     ) as ConfiguratorStatePublishing;
     const config = newState2.chartConfigs[0] as MapConfig;
+
     expect(config.cubes.length).toBe(1);
     expect(config.chartType).toEqual("map");
   });
@@ -200,6 +192,7 @@ describe("add chart based on the same cube", () => {
       actionSameCube
     ) as ConfiguratorStateConfiguringChart;
     const newConfigSameCube = newStateAfterSameCube.chartConfigs[1];
+
     expect(Object.keys(newConfigSameCube.cubes[0].filters)).toEqual([
       stringifyComponentId({
         unversionedCubeIri:
@@ -215,6 +208,7 @@ describe("add chart based on the same cube", () => {
       state,
       actionNewCube
     ) as ConfiguratorStateConfiguringChart;
+
     expect(newStateAfterSameCube.chartConfigs.map((c) => c.key)).toEqual(
       newStateAfterSameCube.layout.blocks.map((b) => b.key)
     );
@@ -486,10 +480,10 @@ describe("deriveFiltersFromFields", () => {
   it("should apply missing filters, even in the case of join by dimensions, in case of non table chart", () => {
     const state = configJoinedCubes.pie!;
     const dimensions = dimensionsJoinedCubes;
-
     const derived = deriveFiltersFromFields(state, {
       dimensions: dimensions as Dimension[],
     });
+
     expect(derived).toMatchInlineSnapshot(`
       {
         "activeField": undefined,
@@ -624,6 +618,7 @@ describe("deriveFiltersFromFields", () => {
     const derived = deriveFiltersFromFields(state, {
       dimensions: dimensionsJoinedCubes,
     });
+
     expect(derived.cubes.map((c) => c.filters)).toMatchInlineSnapshot(`
       [
         {},
@@ -639,7 +634,6 @@ describe("handleChartFieldChanged", () => {
       () => getCachedComponentsMock.geoAndNumerical
     );
     const state = configStateMock.map;
-
     const newState = produce(state, (state: ConfiguratorState) =>
       handleChartFieldChanged(state, {
         type: "CHART_FIELD_CHANGED",

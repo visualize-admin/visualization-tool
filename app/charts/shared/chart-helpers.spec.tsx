@@ -233,31 +233,28 @@ describe("useQueryFilters", () => {
     const { result: queryFilters } = renderHook<
       ReturnType<typeof useQueryFilters>,
       Parameters<typeof useQueryFilters>[0]
-    >(
-      (props: Parameters<typeof useQueryFilters>[0]) => useQueryFilters(props),
-      {
-        initialProps: {
-          chartConfig,
-          dashboardFilters: {
-            timeRange: {
-              active: false,
-              timeUnit: "ms",
-              presets: {
-                from: "2021-01-01",
-                to: "2021-12-31",
-              },
+    >(useQueryFilters, {
+      initialProps: {
+        chartConfig,
+        dashboardFilters: {
+          timeRange: {
+            active: false,
+            timeUnit: "ms",
+            presets: {
+              from: "2021-01-01",
+              to: "2021-12-31",
             },
-            dataFilters: {
-              componentIds: ["A_1"],
-              filters: {
-                A_1: { type: "single", value: "A_1_Data_Filter" },
-                A_2: { type: "single", value: "A_2_3" },
-              },
+          },
+          dataFilters: {
+            componentIds: ["A_1"],
+            filters: {
+              A_1: { type: "single", value: "A_1_Data_Filter" },
+              A_2: { type: "single", value: "A_2_3" },
             },
           },
         },
-      }
-    );
+      },
+    });
 
     expect(queryFilters.current).toEqual([
       {
@@ -272,7 +269,9 @@ describe("useQueryFilters", () => {
       {
         iri: "B",
         componentIds: undefined,
-        filters: { B_1: { type: "single", value: "B_1_1" } },
+        filters: {
+          B_1: { type: "single", value: "B_1_1" },
+        },
         joinBy: undefined,
       },
     ]);

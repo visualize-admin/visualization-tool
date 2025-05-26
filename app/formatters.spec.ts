@@ -4,30 +4,33 @@ import { describe, expect, it } from "vitest";
 import {
   getTimeIntervalFormattedSelectOptions,
   getTimeIntervalWithProps,
-} from "./configurator/components/ui-helpers";
-import { Component } from "./domain/data";
+} from "@/configurator/components/ui-helpers";
+import { Component } from "@/domain/data";
 import {
   useDimensionFormatters,
   useFormatFullDateAuto,
   useTimeFormatLocale,
-} from "./formatters";
-import { TimeUnit } from "./graphql/query-hooks";
+} from "@/formatters";
+import { TimeUnit } from "@/graphql/query-hooks";
 
 describe("useFormatFullDateAuto", () => {
   const setup = () => {
     const {
       result: { current: formatFullDateAuto },
     } = renderHook(() => useFormatFullDateAuto());
+
     return { formatFullDateAuto };
   };
 
   it("should work with normal dates", () => {
     const { formatFullDateAuto } = setup();
+
     expect(formatFullDateAuto("2021-05-02T19:43")).toEqual("02.05.2021 19:43");
   });
 
   it("should work with null dates", () => {
     const { formatFullDateAuto } = setup();
+
     expect(formatFullDateAuto(null)).toEqual("-");
   });
 });
@@ -100,16 +103,19 @@ describe("useDimensionFormatters", () => {
 
   it("should work with monthly dates", () => {
     const { formatters } = setup();
+
     expect(formatters["iri-monthly"]("2021-05")).toEqual("05.2021");
   });
 
   it("should work with yearly dates", () => {
     const { formatters } = setup();
+
     expect(formatters["iri-yearly"]("2021")).toEqual("2021");
   });
 
   it("should work with numbers", () => {
     const { formatters } = setup();
+
     expect(formatters["iri-number"]("2.33333")).toEqual("2,33");
   });
 
@@ -133,6 +139,7 @@ describe("useDimensionFormatters", () => {
   it("should work with decimal dimensions", () => {
     const { formatters } = setup();
     const formatter = formatters["iri-decimal"];
+
     expect(formatter("0.0001")).toEqual("0.0001");
     expect(formatter("0.00015467")).toEqual("0.00015467");
     expect(formatter("0.00001")).toEqual("1e-5");
@@ -142,6 +149,7 @@ describe("useDimensionFormatters", () => {
   it("should work with decimal dimensions with resolution", () => {
     const { formatters } = setup();
     const formatter = formatters["iri-decimal-resolution"];
+
     expect(formatter("0.0001")).toEqual("0.0001");
     expect(formatter("0.00015467")).toEqual("0.00015467");
     expect(formatter("0.00001")).toEqual("1e-5");
@@ -161,6 +169,7 @@ describe("time intervals", () => {
       "%Y-%m-%d",
       timeFormatLocale
     );
+
     return { timeIntervalWithProps };
   };
 

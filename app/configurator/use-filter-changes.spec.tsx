@@ -18,8 +18,8 @@ describe("use-filter-changes", () => {
       },
     } as Filters;
     let filters = filters1;
-
     const { result, rerender } = renderHook(() => useFilterChanges(filters));
+
     expect(result.current).toEqual([]);
 
     filters = merge({}, filters1, {

@@ -68,6 +68,7 @@ describe("DataCubeComponents", () => {
       getCubeDimensionMock("dim2", "0"),
     ],
   } as any;
+
   it("should return sorted components", async () => {
     const dimensions = await getCubeDimensions({
       cube: fakeCube,
@@ -76,6 +77,7 @@ describe("DataCubeComponents", () => {
       unversionedCubeIri: "cube",
       cache: undefined,
     });
+
     expect(dimensions.map((d) => d.data.order)).toEqual([0, 10]);
   });
 });
@@ -93,6 +95,7 @@ describe("PossibleFilters", () => {
       sparqlClient: {} as any,
     });
     const query = getQuery(cubeIri, queryFilters);
+
     expect(query).toEqual(expectedQuery);
   };
 

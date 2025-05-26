@@ -1,12 +1,8 @@
 import { fireEvent, render } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { TimeInput } from "@/configurator/components/field";
 import { getD3TimeFormatLocale } from "@/locales/locales";
-
-vi.mock("../../rdf/extended-cube", () => ({
-  ExtendedCube: vi.fn(),
-}));
 
 describe("TimeInput", () => {
   const expectedValue = "2020-05-24";

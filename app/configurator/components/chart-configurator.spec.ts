@@ -9,6 +9,7 @@ describe("getFilterReorderCubeFilters", () => {
       { cubes: [{ filters: {} }], fields: {} } as any as ChartConfig,
       { joinByIds: [] }
     );
+
     expect(cubeFilters[0].loadValues).toBe(true);
   });
 });

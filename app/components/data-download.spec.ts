@@ -11,6 +11,7 @@ describe("getFullDataDownloadFilters", () => {
       componentIds: ["DEF"],
     };
     const filters = getFullDataDownloadFilters(rawFilters);
+
     expect(get(filters, "componentIds")).toBeFalsy();
   });
 });

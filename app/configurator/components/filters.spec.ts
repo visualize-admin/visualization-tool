@@ -1,15 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { getHasColorMapping } from "@/configurator/components/filters";
 import { TemporalDimension } from "@/domain/data";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { getD3TimeFormatLocale } from "@/locales/locales";
-
-import { getTimeFilterOptions } from "../../utils/time-filter-options";
-
-vi.mock("../../rdf/extended-cube", () => ({
-  ExtendedCube: vi.fn(),
-}));
+import { getTimeFilterOptions } from "@/utils/time-filter-options";
 
 describe("TimeFilter", () => {
   const dimension = {
@@ -24,7 +19,7 @@ describe("TimeFilter", () => {
     return date.toString();
   };
 
-  it("should correctly omit non-parseable dates", () => {
+  it("should correctly omit non-parsable dates", () => {
     const { sortedOptions, sortedValues } = getTimeFilterOptions({
       dimension,
       formatLocale,

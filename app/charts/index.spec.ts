@@ -1,6 +1,11 @@
 import { schemeCategory10 } from "d3-scale-chromatic";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
+import {
+  getChartConfigAdjustedToChartType,
+  getEnabledChartTypes,
+  getInitialConfig,
+} from "@/charts";
 import {
   ColumnConfig,
   ComboLineDualConfig,
@@ -11,24 +16,8 @@ import {
 import { Dimension, Measure } from "@/domain/data";
 import { stringifyComponentId } from "@/graphql/make-component-id";
 import { TimeUnit } from "@/graphql/resolver-types";
-
-import bathingWaterData from "../test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
-import forestAreaData from "../test/__fixtures/data/forest-area-by-production-region.json";
-
-import {
-  getChartConfigAdjustedToChartType,
-  getEnabledChartTypes,
-  getInitialConfig,
-} from "./index";
-
-vi.mock("../rdf/extended-cube", () => ({
-  ExtendedCube: vi.fn(),
-}));
-
-vi.mock("@lingui/macro", () => ({
-  defineMessage: (str: string) => str,
-  t: (str: string) => str,
-}));
+import bathingWaterData from "@/test/__fixtures/data/DataCubeMetadataWithComponentValues-bathingWater.json";
+import forestAreaData from "@/test/__fixtures/data/forest-area-by-production-region.json";
 
 const mockDimensions: Record<string, Dimension> = {
   geoCoordinates: {

@@ -5,14 +5,6 @@ import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { ChartConfig } from "@/config-types";
 
-vi.mock("@mui/styles", () => ({
-  makeStyles: () => () => ({}),
-}));
-
-vi.mock("@lingui/macro", () => ({
-  defineMessage: (str: string) => str,
-}));
-
 vi.mock("@/graphql/hooks", () => ({
   useDataCubesComponentsQuery: vi.fn().mockReturnValue([
     {

@@ -85,6 +85,7 @@ describe("datasource state hook", () => {
       initialURL: "https://visualize.admin.ch/",
       localStorageValue: undefined,
     });
+
     expect(getState()).toEqual({
       type: "sparql",
       url: "https://lindas-cached.cluster.ldbar.ch/query",
@@ -109,6 +110,7 @@ describe("datasource state hook", () => {
       initialURL: "https://visualize.admin.ch/?dataSource=Test",
       localStorageValue: "Prod",
     });
+
     expect(getState()).toEqual({
       type: "sparql",
       url: "https://lindas-cached.test.cluster.ldbar.ch/query",
@@ -126,8 +128,8 @@ describe("datasource state hook", () => {
         url: "https://lindas-cached.cluster.ldbar.ch/query",
       });
     });
-    expect(setURLParam).toHaveBeenCalledWith("dataSource", "Prod");
 
+    expect(setURLParam).toHaveBeenCalledWith("dataSource", "Prod");
     expect(localStorage.getItem("dataSource")).toBe("Prod");
   });
 });

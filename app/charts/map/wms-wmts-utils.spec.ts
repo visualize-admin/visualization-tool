@@ -32,7 +32,7 @@ describe("parseWMSContent", () => {
     ).toString();
 
     const endpoint = "http://example.com/wms";
-    const parsedLayers = await parseWMSContent(xmlContent, endpoint);
+    const parsedLayers = parseWMSContent(xmlContent, endpoint);
 
     expect(parsedLayers).toHaveLength(3);
     expect(formatLayerTree(parsedLayers[0])).toMatchInlineSnapshot(`
@@ -348,7 +348,7 @@ Der Datensatz "Wasserbauprojekte_Linienobjekte" beinhaltet folgende Werksarten, 
     ).toString();
 
     const endpoint = "https://wms.geo.ag.ch";
-    const parsedLayers = await parseWMSContent(xmlContent, endpoint);
+    const parsedLayers = parseWMSContent(xmlContent, endpoint);
     expect(parsedLayers.length).toBe(2);
     expect(parsedLayers[0]).toMatchInlineSnapshot(`
 {
@@ -886,7 +886,7 @@ describe("parseWMTSContent", () => {
     ).toString();
 
     const endpoint = "http://example.com/wms";
-    const parsedLayers = await parseWMTSContent(xmlContent, endpoint);
+    const parsedLayers = parseWMTSContent(xmlContent, endpoint);
     expect(parsedLayers.length).toBe(274);
 
     expect(parsedLayers[0]).toMatchInlineSnapshot(`
@@ -1058,7 +1058,7 @@ describe("parseWMTSContent", () => {
     ).toString();
 
     const endpoint = "http://example.com/wms";
-    const parsedLayers = await parseWMTSContent(xmlContent, endpoint);
+    const parsedLayers = parseWMTSContent(xmlContent, endpoint);
     expect(parsedLayers.length).toBe(652);
     expect(parsedLayers.every((l) => l.dimensionIdentifier)).toBe(true);
     expect(parsedLayers[0]).toMatchInlineSnapshot(`
@@ -1306,7 +1306,7 @@ describe("parseWMTSContent", () => {
     ).toString();
 
     const endpoint = "http://example.com/wms";
-    const parsedLayers = await parseWMTSContent(xmlContent, endpoint);
+    const parsedLayers = parseWMTSContent(xmlContent, endpoint);
     expect(parsedLayers.length).toBe(1);
     expect(parsedLayers[0]).toMatchInlineSnapshot(`
 {
@@ -1503,7 +1503,7 @@ describe("parseWMTSContent", () => {
     ).toString();
 
     const endpoint = "https://geoserver-swissdatacube.wms.xml";
-    const parsedLayers = await parseWMTSContent(xmlContent, endpoint);
+    const parsedLayers = parseWMTSContent(xmlContent, endpoint);
     expect(parsedLayers.length).toBe(38);
     expect(parsedLayers.map((x) => omit(x, ["tileMatrixSets"])))
       .toMatchInlineSnapshot(`

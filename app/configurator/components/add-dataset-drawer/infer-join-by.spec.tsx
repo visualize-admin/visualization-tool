@@ -1,11 +1,13 @@
 import mapValues from "lodash/mapValues";
 import { describe, expect, it } from "vitest";
 
+import {
+  findDimensionForOption,
+  inferJoinBy,
+} from "@/configurator/components/add-dataset-drawer/infer-join-by";
+import { SearchOptions } from "@/configurator/components/add-dataset-drawer/types";
 import { ComponentId, stringifyComponentId } from "@/graphql/make-component-id";
 import { DataCubePublicationStatus, TimeUnit } from "@/graphql/query-hooks";
-
-import { findDimensionForOption, inferJoinBy } from "./infer-join-by";
-import { SearchOptions } from "./types";
 
 const selectedSearchDimensions: SearchOptions[] = [
   {
