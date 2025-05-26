@@ -8,7 +8,7 @@ import {
   regularChartTypes,
 } from "@/charts";
 import Flex from "@/components/flex";
-import { HintRed } from "@/components/hint";
+import { HintError } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { ChartType, ConfiguratorStatePublished } from "@/config-types";
@@ -103,11 +103,11 @@ export const ChartTypeSelector = ({
       )}
       <div>
         {enabledChartTypes.length === 0 ? (
-          <HintRed smaller>
+          <HintError smaller>
             <Trans id="hint.no.visualization.with.dataset">
               No visualization can be created with the selected dataset.
             </Trans>
-          </HintRed>
+          </HintError>
         ) : (
           <Flex sx={{ flexDirection: "column", gap: 4 }}>
             <ChartTypeSelectorMenu

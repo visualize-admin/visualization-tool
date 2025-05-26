@@ -614,7 +614,7 @@ const NavSection = ({
         {topItems.length !== items.length ? (
           <Button
             variant="text"
-            color="blue"
+            color="primary"
             size="sm"
             onClick={isOpen ? close : open}
             endIcon={<Icon name={isOpen ? "arrowUp" : "arrowDown"} size={20} />}

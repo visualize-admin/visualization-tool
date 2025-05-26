@@ -273,10 +273,10 @@ export const ColorPalette = ({
               <Button
                 variant="text"
                 size="sm"
-                color="blue"
+                color="primary"
                 sx={{
                   "&:hover": {
-                    color: "blue.main",
+                    color: "primary.main",
                   },
                 }}
               >
@@ -533,12 +533,12 @@ const ColorPaletteControls = ({
           alignItems: "center",
           columnGap: 2,
           flexWrap: "wrap",
-          color: "blue.main",
+          color: "primary.main",
         }}
       >
         <Button
           variant="text"
-          color="blue"
+          color="primary"
           size="xs"
           disabled={same}
           onClick={resetColorPalette}
@@ -546,7 +546,12 @@ const ColorPaletteControls = ({
           <Trans id="controls.color.palette.reset">Reset color palette</Trans>
         </Button>
         •
-        <Button variant="text" color="blue" size="xs" onClick={shuffleColors}>
+        <Button
+          variant="text"
+          color="primary"
+          size="xs"
+          onClick={shuffleColors}
+        >
           <Trans id="controls.filters.select.refresh-colors">
             Shuffle colors
           </Trans>

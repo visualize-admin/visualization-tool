@@ -16,6 +16,34 @@ const blue: PaletteOptions["blue"] = {
   900: "#1E3A8A",
 };
 
+const orange: PaletteOptions["orange"] = {
+  main: "#9A3412",
+  50: "#FFF7ED",
+  100: "#FFEDD5",
+  200: "#FED7AA",
+  300: "#FDBA74",
+  400: "#FB923C",
+  500: "#F97316",
+  600: "#EA580C",
+  700: "#C2410C",
+  800: "#9A3412",
+  900: "#7C2D12",
+};
+
+const green: PaletteOptions["green"] = {
+  main: "#047857",
+  50: "#ECFDF5",
+  100: "#D1FAE5",
+  200: "#A7F3D0",
+  300: "#6EE7B7",
+  400: "#34D399",
+  500: "#10B981",
+  600: "#059669",
+  700: "#047857",
+  800: "#065F46",
+  900: "#064E3B",
+};
+
 export const palette = {
   primary: {
     main: blue[700],
@@ -23,7 +51,8 @@ export const palette = {
     contrastText: "#fff",
   },
   secondary: {
-    main: colors.cobalt[700],
+    main: colors.cobalt[400],
+    dark: colors.cobalt[600],
     contrastText: "#fff",
   },
   text: {
@@ -31,14 +60,26 @@ export const palette = {
     secondary: colors.monochrome[500],
   },
   divider: colors.cobalt[100],
-  success: colors.success,
-  error: colors.error,
-  warning: {
-    // BLW colors
-    main: "#EDD15A",
-    light: "#F7EBB6",
+  error: {
+    main: colors.red[800],
+    light: colors.red[50],
+    contrastText: "#fff",
   },
-
+  warning: {
+    main: orange[800],
+    light: orange[50],
+    contrastText: "#fff",
+  },
+  info: {
+    main: blue[700],
+    light: blue[50],
+    contrastText: "#fff",
+  },
+  success: {
+    main: green[700],
+    light: green[50],
+    contrastText: "#fff",
+  },
   cobalt: {
     main: colors.cobalt[700],
     ...colors.cobalt,
@@ -51,19 +92,7 @@ export const palette = {
     main: colors.red[700],
     ...colors.red,
   },
-  orange: {
-    main: "#9A3412",
-    50: "#FFF7ED",
-    100: "#FFEDD5",
-    200: "#FED7AA",
-    300: "#FDBA74",
-    400: "#FB923C",
-    500: "#F97316",
-    600: "#EA580C",
-    700: "#C2410C",
-    800: "#9A3412",
-    900: "#7C2D12",
-  },
+  orange,
   yellow: {
     main: "#92400E",
     50: "#FFFBEB",
@@ -77,18 +106,6 @@ export const palette = {
     800: "#92400E",
     900: "#78350F",
   },
-  green: {
-    main: "#047857",
-    50: "#ECFDF5",
-    100: "#D1FAE5",
-    200: "#A7F3D0",
-    300: "#6EE7B7",
-    400: "#34D399",
-    500: "#10B981",
-    600: "#059669",
-    700: "#047857",
-    800: "#065F46",
-    900: "#064E3B",
-  },
+  green,
   blue,
 } satisfies ThemeOptions["palette"];

@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import React, { useMemo, useState } from "react";
 
-import { HintRed } from "@/components/hint";
+import { HintError } from "@/components/hint";
 import { Icon } from "@/icons";
 
 const flashes = {
@@ -69,7 +69,7 @@ const Flashes = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "1rem" }}
           >
-            <HintRed
+            <HintError
               smaller
               onClose={() =>
                 setDismissed((dismissed) => ({
@@ -84,7 +84,7 @@ const Flashes = () => {
               ) : (
                 <Trans id={`flashes.error.${errorId}`} />
               )}
-            </HintRed>
+            </HintError>
           </motion.div>
         ) : null}
       </AnimatePresence>

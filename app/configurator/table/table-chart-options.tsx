@@ -5,7 +5,7 @@ import { ChangeEvent, useCallback } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { Checkbox } from "@/components/form";
-import { HintRed } from "@/components/hint";
+import { HintError } from "@/components/hint";
 import {
   ColumnStyle,
   ConfiguratorStateConfiguringChart,
@@ -184,7 +184,7 @@ export const TableColumnOptions = ({
   const component = allComponents.find((d) => d.id === activeField);
 
   if (!component) {
-    return <HintRed smaller>No component {activeField}</HintRed>;
+    return <HintError smaller>No component {activeField}</HintError>;
   }
 
   const { isGroup, isHidden } = chartConfig.fields[activeField];
