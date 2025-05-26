@@ -1,6 +1,7 @@
-import _hierarchy from "../../test/__fixtures/data/tarrifs-hierarchy.json";
+import { describe, expect, it } from "vitest";
 
-import { groupByParents } from "./use-hierarchy-parents";
+import { groupByParents } from "@/configurator/components/use-hierarchy-parents";
+import _hierarchy from "@/test/__fixtures/data/tarrifs-hierarchy.json";
 
 describe("grouping hierarchy by parents", () => {
   it("should work", () => {
@@ -16,8 +17,10 @@ describe("grouping hierarchy by parents", () => {
     )!;
 
     expect(ztGroups.length).toBe(1);
+
     const ztGroup = ztGroups[0]!;
     const [parents, children] = ztGroup;
+
     expect(parents.length).toBe(2);
     expect(children.length).toBe(41);
   });

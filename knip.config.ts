@@ -5,10 +5,7 @@ const config: KnipConfig = {
   paths: {
     "@/*": ["./app/*"],
   },
-  entry: [
-    './app/jest.setup.ts',
-    './app/utils/colored-console.ts'
-  ],
+  entry: ["./app/utils/colored-console.ts"],
   ignore: [
     ".github/**/*",
     ".svgrrc.js",
@@ -32,7 +29,7 @@ const config: KnipConfig = {
     "./app/typings/**/*",
     "./**/*.config.*",
     "./**/*.mock.ts",
-    "./**/*.spec.ts"
+    "./**/*.spec.ts",
   ],
   ignoreDependencies: [
     // Needed by eslint.
@@ -70,8 +67,6 @@ const config: KnipConfig = {
     "@svgr/cli",
     // Used in load tests.
     "@types/k6",
-    // Used in unit tests.
-    "ts-jest",
     // Do we still need this?
     "babel-core",
     "@babel/standalone",

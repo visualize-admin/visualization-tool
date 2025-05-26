@@ -1,10 +1,13 @@
 import mapValues from "lodash/mapValues";
+import { describe, expect, it } from "vitest";
 
+import {
+  findDimensionForOption,
+  inferJoinBy,
+} from "@/configurator/components/add-dataset-drawer/infer-join-by";
+import { SearchOptions } from "@/configurator/components/add-dataset-drawer/types";
 import { ComponentId, stringifyComponentId } from "@/graphql/make-component-id";
 import { DataCubePublicationStatus, TimeUnit } from "@/graphql/query-hooks";
-
-import { findDimensionForOption, inferJoinBy } from "./infer-join-by";
-import { SearchOptions } from "./types";
 
 const selectedSearchDimensions: SearchOptions[] = [
   {
@@ -118,10 +121,10 @@ describe("find dimension for option", () => {
       cubeElectricityPriceCanton.dimensions
     );
     expect(result).toMatchInlineSnapshot(`
-Object {
+{
   "id": "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
   "label": "Period",
-  "termsets": Array [],
+  "termsets": [],
   "timeUnit": "http://www.w3.org/2006/time#unitYear",
 }
 `);
@@ -136,12 +139,12 @@ describe("inferJoinBy", () => {
     );
 
     expect(result).toMatchInlineSnapshot(`
-Object {
-  "https://energy.ld.admin.ch/elcom/electricityprice-canton": Array [
+{
+  "https://energy.ld.admin.ch/elcom/electricityprice-canton": [
     "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
     "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
   ],
-  "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10": Array [
+  "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10": [
     "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
     "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
   ],
@@ -228,12 +231,12 @@ Object {
     const result = inferJoinBy(options.options, options.newCube);
     expect(mapValues(result, (x) => x.map((x) => x.split("/").pop())))
       .toMatchInlineSnapshot(`
-Object {
-  "https://energy.ld.admin.ch/elcom/electricityprice-canton": Array [
+{
+  "https://energy.ld.admin.ch/elcom/electricityprice-canton": [
     "period",
     "canton",
   ],
-  "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10": Array [
+  "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10": [
     "Jahr",
     "Kanton",
   ],

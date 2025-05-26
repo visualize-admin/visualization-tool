@@ -32,6 +32,7 @@ You can also check the
   - Improved the CI / CD implementation by aligning the names better with the
     design file
   - Added e2e tests for limit values and targets
+  - Switched from Jest to Vitest for unit testing
 - Documentation
   - Aligned and updated for new Parametrized URLs functionality
 

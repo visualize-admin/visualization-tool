@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { highlight } from "./query-search-score-utils";
 
 describe("highlighting search words in query", () => {

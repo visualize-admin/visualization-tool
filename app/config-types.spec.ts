@@ -1,4 +1,6 @@
-import { getChartConfigFilters } from "./config-utils";
+import { describe, expect, it } from "vitest";
+
+import { getChartConfigFilters } from "@/config-utils";
 
 describe("getChartConfigFilters", () => {
   it("should return filters for a specific cube with joinBy (joined = true)", () => {

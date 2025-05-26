@@ -1,12 +1,9 @@
+import { describe, expect, it } from "vitest";
+
 import { getCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
 import { Dimension } from "@/domain/data";
 import { stringifyComponentId } from "@/graphql/make-component-id";
 import { getD3TimeFormatLocale } from "@/locales/locales";
-
-jest.mock("@lingui/macro", () => ({
-  defineMessage: (str: string) => str,
-  t: (str: string) => str,
-}));
 
 describe("useCombinedTemporalDimension", () => {
   it("should return combined temporal dimension", () => {

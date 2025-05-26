@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import {
   CustomPaletteType,
   DivergingPaletteType,
@@ -11,7 +13,7 @@ import {
   hasEnoughContrast,
 } from "./color-palette-utils";
 
-jest.mock("nanoid", () => ({
+vi.mock("nanoid", () => ({
   nanoid: (length: number) => "test".slice(0, length),
 }));
 
@@ -46,7 +48,7 @@ describe("Color Utilities", () => {
   });
 
   describe("getFittingColorInterpolator", () => {
-    const mockGetColorInterpolator = jest.fn(
+    const mockGetColorInterpolator = vi.fn(
       (paletteId) => (t: number) => `color-${paletteId}-${t}`
     );
 
@@ -84,7 +86,7 @@ describe("Color Utilities", () => {
     };
 
     beforeEach(() => {
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it("should handle sequential color config", () => {

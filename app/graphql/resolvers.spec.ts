@@ -1,4 +1,5 @@
 import { NamedNode } from "rdf-js";
+import { describe, expect, it, vi } from "vitest";
 
 import { SingleFilters } from "@/config-types";
 import { VISUALIZE_MOST_RECENT_VALUE } from "@/domain/most-recent-value";
@@ -11,8 +12,8 @@ import {
 } from "@/rdf/query-possible-filters";
 import mockChartConfig from "@/test/__fixtures/config/prod/column-traffic-pollution.json";
 
-jest.mock("@/rdf/query-dimension-values", () => ({
-  loadMaxDimensionValue: jest.fn().mockResolvedValue("123"),
+vi.mock("@/rdf/query-dimension-values", () => ({
+  loadMaxDimensionValue: vi.fn().mockResolvedValue("123"),
 }));
 
 const getCubeDimensionMock = (iri: string, order: string) => {
@@ -67,6 +68,7 @@ describe("DataCubeComponents", () => {
       getCubeDimensionMock("dim2", "0"),
     ],
   } as any;
+
   it("should return sorted components", async () => {
     const dimensions = await getCubeDimensions({
       cube: fakeCube,
@@ -75,6 +77,7 @@ describe("DataCubeComponents", () => {
       unversionedCubeIri: "cube",
       cache: undefined,
     });
+
     expect(dimensions.map((d) => d.data.order)).toEqual([0, 10]);
   });
 });
@@ -92,6 +95,7 @@ describe("PossibleFilters", () => {
       sparqlClient: {} as any,
     });
     const query = getQuery(cubeIri, queryFilters);
+
     expect(query).toEqual(expectedQuery);
   };
 

@@ -1,10 +1,11 @@
 import rdf from "rdf-ext";
 import ParsingClient from "sparql-http-client/ParsingClient";
+import { describe, expect, it, vi } from "vitest";
 
 import * as ns from "./namespace";
 import { getCubePreview } from "./query-cube-preview";
 
-jest.mock("./extended-cube", () => ({}));
+vi.mock("./extended-cube", () => ({}));
 
 describe("dataset preview", () => {
   const dim = rdf.blankNode();

@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { buildLocalizedSubQuery } from "./query-utils";
 
 describe("buildLocalizedSubQuery", () => {
@@ -8,11 +10,11 @@ describe("buildLocalizedSubQuery", () => {
 
     // it locale must be first!
     expect(subQuery).toMatchInlineSnapshot(`
-      "OPTIONAL { ?s p ?o_it . FILTER(LANG(?o_it) = \\"it\\") }
-      OPTIONAL { ?s p ?o_de . FILTER(LANG(?o_de) = \\"de\\") }
-      OPTIONAL { ?s p ?o_fr . FILTER(LANG(?o_fr) = \\"fr\\") }
-      OPTIONAL { ?s p ?o_en . FILTER(LANG(?o_en) = \\"en\\") }
-      OPTIONAL { ?s p ?o_ . FILTER(LANG(?o_) = \\"\\") }
+      "OPTIONAL { ?s p ?o_it . FILTER(LANG(?o_it) = "it") }
+      OPTIONAL { ?s p ?o_de . FILTER(LANG(?o_de) = "de") }
+      OPTIONAL { ?s p ?o_fr . FILTER(LANG(?o_fr) = "fr") }
+      OPTIONAL { ?s p ?o_en . FILTER(LANG(?o_en) = "en") }
+      OPTIONAL { ?s p ?o_ . FILTER(LANG(?o_) = "") }
       BIND(COALESCE(?o_it, ?o_de, ?o_fr, ?o_en, ?o_) AS ?o)"
     `);
   });
@@ -23,11 +25,11 @@ describe("buildLocalizedSubQuery", () => {
       fallbackToNonLocalized: true,
     });
     expect(subQuery).toMatchInlineSnapshot(`
-      "OPTIONAL { ?s p ?o_en . FILTER(LANG(?o_en) = \\"en\\") }
-      OPTIONAL { ?s p ?o_de . FILTER(LANG(?o_de) = \\"de\\") }
-      OPTIONAL { ?s p ?o_fr . FILTER(LANG(?o_fr) = \\"fr\\") }
-      OPTIONAL { ?s p ?o_it . FILTER(LANG(?o_it) = \\"it\\") }
-      OPTIONAL { ?s p ?o_ . FILTER(LANG(?o_) = \\"\\") }
+      "OPTIONAL { ?s p ?o_en . FILTER(LANG(?o_en) = "en") }
+      OPTIONAL { ?s p ?o_de . FILTER(LANG(?o_de) = "de") }
+      OPTIONAL { ?s p ?o_fr . FILTER(LANG(?o_fr) = "fr") }
+      OPTIONAL { ?s p ?o_it . FILTER(LANG(?o_it) = "it") }
+      OPTIONAL { ?s p ?o_ . FILTER(LANG(?o_) = "") }
       OPTIONAL {
         ?s p ?o_raw .
       }

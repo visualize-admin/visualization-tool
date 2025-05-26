@@ -1,48 +1,50 @@
 import { renderHook } from "@testing-library/react";
-
-import { BBox } from "@/config-types";
+import { describe, expect, it } from "vitest";
 
 import {
   BASE_VIEW_STATE,
   shouldRenderMap,
   useViewState,
-  ViewStateInitializationProps,
-} from "./helpers";
+  type ViewStateInitializationProps,
+} from "@/charts/map/helpers";
+import { type BBox } from "@/config-types";
 
-const width = 400;
-const height = 200;
-const lockedBBox = [
+const WIDTH = 400;
+const HEIGHT = 200;
+const LOCKED_BBOX: BBox = [
   [6.8965001, 46.3947983],
   [6.8965001, 46.3947983],
-] as BBox;
-const featuresBBox = [
+];
+const FEATURES_BBOX: BBox = [
   [6.4965001, 46.2947983],
   [6.9965001, 46.4947983],
-] as BBox;
+];
 
 describe("useViewState", () => {
   it("should properly set defaultViewState", () => {
     const { result, rerender } = renderHook<
       ReturnType<typeof useViewState>,
       ViewStateInitializationProps
-    >((props: ViewStateInitializationProps) => useViewState(props), {
+    >(useViewState, {
       initialProps: {
-        width,
-        height,
+        width: WIDTH,
+        height: HEIGHT,
         lockedBBox: undefined,
         featuresBBox: undefined,
       },
     });
 
-    // If featuresBBox was not provided, defaultViewState should equal BASE_VIEW_STATE.
     expect(BASE_VIEW_STATE).toEqual(
       expect.objectContaining(result.current.defaultViewState)
     );
 
-    rerender({ width, height, lockedBBox: undefined, featuresBBox });
+    rerender({
+      width: WIDTH,
+      height: HEIGHT,
+      lockedBBox: undefined,
+      featuresBBox: FEATURES_BBOX,
+    });
 
-    // If featuresBBox was provided afterwards, defaultViewState should be
-    // different than BASE_VIEW_state.
     expect(BASE_VIEW_STATE).not.toEqual(
       expect.objectContaining(result.current.defaultViewState)
     );
@@ -52,16 +54,15 @@ describe("useViewState", () => {
     const { result } = renderHook<
       ReturnType<typeof useViewState>,
       ViewStateInitializationProps
-    >((props: ViewStateInitializationProps) => useViewState(props), {
+    >(useViewState, {
       initialProps: {
-        width,
-        height,
+        width: WIDTH,
+        height: HEIGHT,
         lockedBBox: undefined,
-        featuresBBox,
+        featuresBBox: FEATURES_BBOX,
       },
     });
 
-    // If featuresBBox was provided, defaultViewState should not equal BASE_VIEW_STATE.
     expect(BASE_VIEW_STATE).not.toEqual(
       expect.objectContaining(result.current.defaultViewState)
     );
@@ -69,17 +70,15 @@ describe("useViewState", () => {
     const { result: resultLocked } = renderHook<
       ReturnType<typeof useViewState>,
       ViewStateInitializationProps
-    >((props: ViewStateInitializationProps) => useViewState(props), {
+    >(useViewState, {
       initialProps: {
-        width,
-        height,
-        lockedBBox,
-        featuresBBox,
+        width: WIDTH,
+        height: HEIGHT,
+        lockedBBox: LOCKED_BBOX,
+        featuresBBox: FEATURES_BBOX,
       },
     });
 
-    // If lockedBBox was provided, viewState should be different than the one
-    // based on featuresBBox.
     expect(resultLocked.current.viewState).not.toEqual(
       result.current.viewState
     );

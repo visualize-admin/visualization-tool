@@ -3,6 +3,7 @@ import path from "path";
 
 import { csvParse } from "d3-dsv";
 import { Quad } from "rdf-js";
+import { describe, expect, it } from "vitest";
 
 import { SearchCube } from "@/domain/data";
 import { mergeSearchCubes } from "@/rdf/query-search";
@@ -39,9 +40,9 @@ describe("parse-search-results", () => {
     const searchCubes = buildSearchCubes(data);
 
     expect(searchCubes).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "creator": Object {
+      [
+        {
+          "creator": {
             "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
             "label": "Swiss Federal Office of Energy SFOE",
           },
@@ -50,23 +51,23 @@ describe("parse-search-results", () => {
           "dimensions": undefined,
           "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
           "publicationStatus": "PUBLISHED",
-          "subthemes": Array [],
-          "termsets": Array [
-            Object {
+          "subthemes": [],
+          "termsets": [
+            {
               "iri": "https://ld.admin.ch/dimension/office",
               "label": "Federal Offices",
             },
-            Object {
+            {
               "iri": "https://ld.admin.ch/dimension/canton",
               "label": "Cantons",
             },
           ],
-          "themes": Array [
-            Object {
+          "themes": [
+            {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
               "label": "Energy",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/national-economy",
               "label": "National economy",
             },
@@ -86,20 +87,20 @@ describe("parse-search-results", () => {
     const searchCubes = buildSearchCubes(data);
 
     expect(searchCubes.slice(0, 3)).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "creator": Object {
+      [
+        {
+          "creator": {
             "iri": "https://register.ld.admin.ch/opendataswiss/org/elcom",
             "label": "Federal Electricity Commission ElCom",
           },
           "datePublished": "2021-01-01",
           "description": "Median electricity tariff per region & consumption profiles",
-          "dimensions": Array [
-            Object {
+          "dimensions": [
+            {
               "id": "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
               "label": "Canton",
-              "termsets": Array [
-                Object {
+              "termsets": [
+                {
                   "iri": "https://ld.admin.ch/dimension/canton",
                   "label": "Cantons",
                 },
@@ -109,25 +110,25 @@ describe("parse-search-results", () => {
           ],
           "iri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
           "publicationStatus": "PUBLISHED",
-          "subthemes": Array [],
-          "termsets": Array [],
-          "themes": Array [],
+          "subthemes": [],
+          "termsets": [],
+          "themes": [],
           "title": "Median electricity tariff per canton",
           "unversionedIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
         },
-        Object {
-          "creator": Object {
+        {
+          "creator": {
             "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
             "label": "Swiss Federal Office of Energy SFOE",
           },
           "datePublished": "2022-08-16",
           "description": "Seit 2014 werden Photovoltaikanlagen mit einer Einmalvergütung (EIV) gefördert. Dabei wird abhängig von der Leistung, der Anlagenkategorie und dem Inbetriebnahmedatum ein einmaliger Beitrag an die Anlagenbetreiber ausbezahlt. Hier finden Sie pro Kanton und Auszahlungsjahr einen Überblick über die Anzahl geförderter EIV-Anlagen, die installierte Leistung in Kilowatt (kW) sowie den ausbezahlten EIV-Förderbeitrag. Die dargestellten Daten entsprechen nicht vollständig der offiziellen Statistik der erneuerbaren Energien durch das BFE. Da der Abbau der Wartelisten zeitverzögert stattfindet, können Abweichungen entstehen.",
-          "dimensions": Array [
-            Object {
+          "dimensions": [
+            {
               "id": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
               "label": "Kanton",
-              "termsets": Array [
-                Object {
+              "termsets": [
+                {
                   "iri": "https://ld.admin.ch/dimension/canton",
                   "label": "Cantons",
                 },
@@ -137,14 +138,14 @@ describe("parse-search-results", () => {
           ],
           "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
           "publicationStatus": "PUBLISHED",
-          "subthemes": Array [],
-          "termsets": Array [],
-          "themes": Array [
-            Object {
+          "subthemes": [],
+          "termsets": [],
+          "themes": [
+            {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/national-economy",
               "label": "National economy",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
               "label": "Energy",
             },
@@ -152,19 +153,19 @@ describe("parse-search-results", () => {
           "title": "Einmalvergütung für Photovoltaikanlagen",
           "unversionedIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
         },
-        Object {
-          "creator": Object {
+        {
+          "creator": {
             "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
             "label": "Swiss Federal Office of Energy SFOE",
           },
           "datePublished": "2023-09-12",
           "description": "Anhaltende CO2-Wirkungen je Massnahmenbereich (Haustechnik, Wärmedämmung, Systemsanierung, Neubau, Zentrale Wärmeversorgung, Indirekte Massnahmen), seit Start des Gebäudeprogramms (berechnet auf Basis des HFM 2015)",
-          "dimensions": Array [
-            Object {
+          "dimensions": [
+            {
               "id": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/region",
               "label": "Region",
-              "termsets": Array [
-                Object {
+              "termsets": [
+                {
                   "iri": "https://ld.admin.ch/dimension/country",
                   "label": "Countries",
                 },
@@ -174,22 +175,22 @@ describe("parse-search-results", () => {
           ],
           "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/4",
           "publicationStatus": "PUBLISHED",
-          "subthemes": Array [],
-          "termsets": Array [],
-          "themes": Array [
-            Object {
+          "subthemes": [],
+          "termsets": [],
+          "themes": [
+            {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
               "label": "Energy",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/construction",
               "label": "Construction and housing",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/statistical-basis",
               "label": "Statistical basis",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/population",
               "label": "Population",
             },
@@ -208,55 +209,55 @@ describe("parse-search-results", () => {
     const searchCubes = buildSearchCubes(data);
 
     expect(searchCubes.slice(0, 3)).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "creator": Object {
+      [
+        {
+          "creator": {
             "iri": "https://register.ld.admin.ch/opendataswiss/org/elcom",
             "label": "Eidgenössische Elektrizitätskommission ElCom",
           },
           "datePublished": "2021-01-01",
           "description": "Strompreise per Stromnetzbetreiber und Gemeinde in der Schweiz",
-          "dimensions": Array [
-            Object {
+          "dimensions": [
+            {
               "id": "https://energy.ld.admin.ch/elcom/electricityprice(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
               "label": "",
-              "termsets": Array [],
+              "termsets": [],
               "timeUnit": "http://www.w3.org/2006/time#unitYear",
             },
           ],
           "iri": "https://energy.ld.admin.ch/elcom/electricityprice",
           "publicationStatus": "PUBLISHED",
-          "subthemes": Array [],
-          "termsets": Array [],
-          "themes": Array [],
+          "subthemes": [],
+          "termsets": [],
+          "themes": [],
           "title": "Strompreis per Stromnetzbetreiber",
           "unversionedIri": "https://energy.ld.admin.ch/elcom/electricityprice",
         },
-        Object {
-          "creator": Object {
+        {
+          "creator": {
             "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
             "label": "Bundesamt für Energie BFE",
           },
           "datePublished": "2022-02-28",
           "description": "Seit 2014 werden Photovoltaikanlagen mit einer Einmalvergütung (EIV) gefördert. Dabei wird abhängig von der Leistung, der Anlagenkategorie und dem Inbetriebnahmedatum ein einmaliger Beitrag an die Anlagenbetreiber ausbezahlt. Hier finden Sie pro Kanton und Auszahlungsjahr einen Überblick über die Anzahl geförderter EIV-Anlagen, die installierte Leistung in Kilowatt (kW) sowie den ausbezahlten EIV-Förderbeitrag. Die dargestellten Daten entsprechen nicht vollständig der offiziellen Statistik der erneuerbaren Energien durch das BFE. Da der Abbau der Wartelisten zeitverzögert stattfindet, können Abweichungen entstehen.",
-          "dimensions": Array [
-            Object {
+          "dimensions": [
+            {
               "id": "https://energy.ld.admin.ch/sfoe/OGD84GebTest/1(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/OGD84GebTest/Jahr",
               "label": "",
-              "termsets": Array [],
+              "termsets": [],
               "timeUnit": "http://www.w3.org/2006/time#unitYear",
             },
           ],
           "iri": "https://energy.ld.admin.ch/sfoe/OGD84GebTest/1",
           "publicationStatus": "PUBLISHED",
-          "subthemes": Array [],
-          "termsets": Array [],
-          "themes": Array [
-            Object {
+          "subthemes": [],
+          "termsets": [],
+          "themes": [
+            {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
               "label": "Energie",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/national-economy",
               "label": "Volkswirtschaft",
             },
@@ -264,72 +265,72 @@ describe("parse-search-results", () => {
           "title": "GEB - Einmalvergütung für Photovoltaikanlagen",
           "unversionedIri": "https://energy.ld.admin.ch/sfoe/OGD84GebTest/1",
         },
-        Object {
-          "creator": Object {
+        {
+          "creator": {
             "iri": "https://register.ld.admin.ch/opendataswiss/org/bundesamt-fur-energie-bfe",
             "label": "Bundesamt für Energie BFE",
           },
           "datePublished": "2022-03-24",
           "description": "Die «Statistik der Wasserkraftanlagen (WASTA)» enthält Daten zu den Zentralen der schweizerischen Wasserkraftanlagen mit einer Leistung von mindestens 300 kW. Enthalten sind unter anderem technische Daten wie Leistung und Produktionserwartung.",
-          "dimensions": Array [
-            Object {
+          "dimensions": [
+            {
               "id": "https://energy.ld.admin.ch/sfoe/bfe_ogd40_wasta/7(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd40_wasta/YearOfStatistic",
               "label": "",
-              "termsets": Array [],
+              "termsets": [],
               "timeUnit": "http://www.w3.org/2006/time#unitYear",
             },
           ],
           "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd40_wasta/7",
           "publicationStatus": "PUBLISHED",
-          "subthemes": Array [
-            Object {
+          "subthemes": [
+            {
               "iri": "https://register.ld.admin.ch/foen/theme/15",
               "label": "Wasser",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/foen/theme/16",
               "label": "Wirtschaft und Konsum",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/foen/theme/15",
               "label": "Wasser",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/foen/theme/16",
               "label": "Wirtschaft und Konsum",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/foen/theme/15",
               "label": "Wasser",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/foen/theme/16",
               "label": "Wirtschaft und Konsum",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/foen/theme/15",
               "label": "Wasser",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/foen/theme/16",
               "label": "Wirtschaft und Konsum",
             },
           ],
-          "termsets": Array [],
-          "themes": Array [
-            Object {
+          "termsets": [],
+          "themes": [
+            {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/territory",
               "label": "Raum und Umwelt",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/energy",
               "label": "Energie",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/geography",
               "label": "Geographie",
             },
-            Object {
+            {
               "iri": "https://register.ld.admin.ch/opendataswiss/category/culture",
               "label": "Kultur, Medien, Informationsgesellschaft, Sport",
             },

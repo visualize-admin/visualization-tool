@@ -1,4 +1,5 @@
 import { renderHook } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 
 import { useObservationLabels } from "@/charts/shared/observation-labels";
 import { Observation } from "@/domain/data";

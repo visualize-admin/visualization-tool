@@ -1,10 +1,8 @@
+import { describe, expect, it } from "vitest";
+
 import { defaultSegmentOnChange } from "@/charts/chart-config-ui-options";
 import { ColumnConfig, ScatterPlotConfig } from "@/configurator";
 import { stringifyComponentId } from "@/graphql/make-component-id";
-
-jest.mock("../rdf/extended-cube", () => ({
-  ExtendedCube: jest.fn(),
-}));
 
 describe("defaultSegmentOnChange", () => {
   const componentId = stringifyComponentId({

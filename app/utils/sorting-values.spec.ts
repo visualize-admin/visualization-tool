@@ -1,4 +1,5 @@
 import orderBy from "lodash/orderBy";
+import { describe, expect, it } from "vitest";
 
 import { SortingField } from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";

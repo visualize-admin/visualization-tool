@@ -1,6 +1,7 @@
-import { HierarchyValue } from "@/domain/data";
+import { describe, expect, it } from "vitest";
 
-import { getLegendGroups } from "./legend-color-helpers";
+import { getLegendGroups } from "@/charts/shared/legend-color-helpers";
+import { HierarchyValue } from "@/domain/data";
 
 describe("getLegendGroups", () => {
   const hierarchy = [

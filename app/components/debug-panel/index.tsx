@@ -4,9 +4,9 @@ import { Suspense } from "react";
 
 import { useFlag } from "@/flags";
 
-import { DebugPanelProps } from "./DebugPanel";
+import { DebugPanelProps } from "./debug-panel";
 
-const LazyDebugPanel = dynamic(() => import("./DebugPanel"), { ssr: false });
+const LazyDebugPanel = dynamic(() => import("./debug-panel"), { ssr: false });
 
 const DebugPanel = (props: DebugPanelProps) => {
   const flagActive = useFlag("debug");

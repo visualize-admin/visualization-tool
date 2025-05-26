@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { expect, it } from "vitest";
 
 import { replaceLinks } from "@/utils/ui-strings";
 
@@ -10,7 +11,7 @@ it("should work", () => {
     }
   );
   expect(root).toMatchInlineSnapshot(`
-    Array [
+    [
       "Draft saved in ",
       <ForwardRef(LinkComponent)
         href="/profile"

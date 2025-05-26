@@ -1,6 +1,7 @@
-import { BrowseParams } from "@/pages/browse";
+import { describe, expect, it } from "vitest";
 
-import { getFiltersFromParams } from "./filters";
+import { getFiltersFromParams } from "@/browser/filters";
+import { BrowseParams } from "@/pages/browse";
 
 describe("getFiltersFromParams", () => {
   it("should work only for organization", () => {
@@ -47,7 +48,10 @@ describe("getFiltersFromParams", () => {
         iri: "https://fake-iri-organization",
         __typename: "DataCubeOrganization",
       },
-      { iri: "https://fake-iri-theme", __typename: "DataCubeTheme" },
+      {
+        iri: "https://fake-iri-theme",
+        __typename: "DataCubeTheme",
+      },
     ]);
   });
 

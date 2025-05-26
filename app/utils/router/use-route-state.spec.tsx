@@ -1,14 +1,14 @@
 import { act, renderHook } from "@testing-library/react";
 import mittEmitter from "next/dist/shared/lib/mitt";
 import { useRouter } from "next/router";
+import { describe, expect, it, vi } from "vitest";
 
 import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
+import { useRouteState } from "@/utils/router/use-route-state";
 
-import { useRouteState } from "./use-route-state";
-
-jest.mock("next/router", () => {
+vi.mock("next/router", () => {
   return {
-    useRouter: jest.fn(),
+    useRouter: vi.fn(),
   };
 });
 
@@ -31,7 +31,7 @@ describe("use route state", () => {
     // @ts-ignore
     useRouter.mockImplementation(() => router);
 
-    const onValueChange = jest.fn();
+    const onValueChange = vi.fn();
 
     const hook = renderHook(() =>
       useRouteState(
@@ -53,7 +53,7 @@ describe("use route state", () => {
       hook,
       onValueChange,
       getState: () => hook.result.current[0],
-      setState: (v: Parameters<typeof hook.result.current[1]>[0]) =>
+      setState: (v: Parameters<(typeof hook.result.current)[1]>[0]) =>
         hook.result.current[1](v),
     };
   };

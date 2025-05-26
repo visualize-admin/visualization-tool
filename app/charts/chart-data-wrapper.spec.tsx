@@ -1,19 +1,12 @@
 import { render } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { ChartConfig } from "@/config-types";
 
-jest.mock("@mui/styles", () => ({
-  makeStyles: () => () => ({}),
-}));
-
-jest.mock("@lingui/macro", () => ({
-  defineMessage: (str: string) => str,
-}));
-
-jest.mock("@/graphql/hooks", () => ({
-  useDataCubesComponentsQuery: jest.fn().mockReturnValue([
+vi.mock("@/graphql/hooks", () => ({
+  useDataCubesComponentsQuery: vi.fn().mockReturnValue([
     {
       data: {
         dataCubesComponents: {
@@ -25,7 +18,7 @@ jest.mock("@/graphql/hooks", () => ({
       fetching: false,
     },
   ]),
-  useDataCubesMetadataQuery: jest.fn().mockReturnValue([
+  useDataCubesMetadataQuery: vi.fn().mockReturnValue([
     {
       data: {
         dataCubesMetadata: [
@@ -41,7 +34,7 @@ jest.mock("@/graphql/hooks", () => ({
       fetching: false,
     },
   ]),
-  useDataCubesObservationsQuery: jest.fn().mockReturnValue([
+  useDataCubesObservationsQuery: vi.fn().mockReturnValue([
     {
       data: {
         dataCubesObservations: {
@@ -54,9 +47,9 @@ jest.mock("@/graphql/hooks", () => ({
   ]),
 }));
 
-jest.mock("@/components/hint", () => ({
-  Loading: jest.fn(() => null),
-  NoDataHint: jest.fn(() => null),
+vi.mock("@/components/hint", () => ({
+  Loading: vi.fn(() => null),
+  NoDataHint: vi.fn(() => null),
 }));
 
 describe("ChartDataWrapper", () => {

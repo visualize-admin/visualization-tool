@@ -1,5 +1,6 @@
 import { BaseOf } from "ts-brand";
 import { OperationResult } from "urql";
+import { describe, expect, it } from "vitest";
 
 import { Dimension } from "@/domain/data";
 import {
@@ -7,6 +8,7 @@ import {
   mergeObservations,
   mkVersionedJoinBy,
 } from "@/graphql/join";
+import { VersionedJoinBy } from "@/graphql/join";
 import { ComponentId, stringifyComponentId } from "@/graphql/make-component-id";
 import {
   DataCubeComponentsQuery,
@@ -16,8 +18,6 @@ import {
   ScaleType,
   TimeUnit,
 } from "@/graphql/query-hooks";
-
-import { VersionedJoinBy } from "./join";
 
 type ObservationsQuery = OperationResult<
   DataCubeObservationsQuery,
@@ -164,45 +164,45 @@ describe("mergeObservations", () => {
     const result = mergeObservations(queries);
 
     expect(result).toMatchInlineSnapshot(`
-      Array [
-        Object {
+      [
+        {
           "AMOUNT": "2010_0",
           "amount": "2010_0",
           "joinBy__0": 2010,
           "joinBy__1": 0,
         },
-        Object {
+        {
           "amount": "2010_1",
           "joinBy__0": 2010,
           "joinBy__1": 1,
         },
-        Object {
+        {
           "amount": "2011_0",
           "joinBy__0": 2011,
           "joinBy__1": 0,
         },
-        Object {
+        {
           "amount": "2011_1",
           "joinBy__0": 2011,
           "joinBy__1": 1,
         },
-        Object {
+        {
           "AMOUNT": "2020_1",
           "amount": "2020_1",
           "joinBy__0": 2020,
           "joinBy__1": 1,
         },
-        Object {
+        {
           "amount": "2020_1",
           "joinBy__0": 2020,
           "joinBy__1": 0,
         },
-        Object {
+        {
           "AMOUNT": "2000_0",
           "joinBy__0": 2000,
           "joinBy__1": 0,
         },
-        Object {
+        {
           "AMOUNT": "2000_1",
           "joinBy__0": 2000,
           "joinBy__1": 1,
@@ -263,65 +263,65 @@ describe("joinDimensions", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      Array [
-        Object {
+      [
+        {
           "cubeIri": "joinBy",
           "id": "joinBy__0",
           "isJoinByDimension": true,
           "label": "Year",
-          "originalIds": Array [
-            Object {
+          "originalIds": [
+            {
               "cubeIri": "population",
               "description": "",
               "dimensionId": "year",
               "label": "Year",
             },
-            Object {
+            {
               "cubeIri": "elec",
               "description": "",
               "dimensionId": "YEAR",
               "label": "Year",
             },
           ],
-          "values": Array [],
+          "values": [],
         },
-        Object {
+        {
           "cubeIri": "joinBy",
           "id": "joinBy__1",
           "isJoinByDimension": true,
           "label": "Canton",
-          "originalIds": Array [
-            Object {
+          "originalIds": [
+            {
               "cubeIri": "population",
               "description": "",
               "dimensionId": "canton",
               "label": "Canton",
             },
-            Object {
+            {
               "cubeIri": "elec",
               "description": "",
               "dimensionId": "CANTON",
               "label": "Canton",
             },
           ],
-          "values": Array [
-            Object {
+          "values": [
+            {
               "value": "Appenzeller",
             },
-            Object {
+            {
               "value": "Bern",
             },
-            Object {
+            {
               "value": "Zürich",
             },
           ],
         },
-        Object {
+        {
           "cubeIri": "population",
           "id": "population",
           "label": "Population",
         },
-        Object {
+        {
           "cubeIri": "elec",
           "id": "electricalConsumption",
           "label": "Electrical Consumption",
@@ -707,7 +707,7 @@ describe("joinDimensions", () => {
       dimensions: fetchedDimensions,
     });
     expect(result.map((x) => x.id)).toMatchInlineSnapshot(`
-      Array [
+      [
         "joinBy__0",
         "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
         "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_co2wirkung/region",
@@ -872,8 +872,8 @@ describe("joinDimensions", () => {
       dimensions,
     });
     expect(result).toMatchInlineSnapshot(`
-Array [
-  Object {
+[
+  {
     "__typename": "TemporalDimension",
     "cubeIri": "joinBy",
     "dataType": "http://www.w3.org/2001/XMLSchema#gYear",
@@ -885,35 +885,35 @@ Array [
     "isNumerical": false,
     "label": "Jahr der Vergütung, Period, Jahr",
     "order": 1,
-    "originalIds": Array [
-      Object {
+    "originalIds": [
+      {
         "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
         "description": "Jahr, in welchem die EIV ausbezahlt wurde",
         "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
         "label": "Jahr der Vergütung",
       },
-      Object {
+      {
         "cubeIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
         "description": "Jahr, in welchem die EIV ausbezahlt wurde",
         "dimensionId": "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
         "label": "Period",
       },
-      Object {
+      {
         "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/18",
         "description": "",
         "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/Jahr",
         "label": "Jahr",
       },
     ],
-    "related": Array [],
-    "relatedLimitValues": Array [],
+    "related": [],
+    "relatedLimitValues": [],
     "scaleType": "Interval",
     "timeFormat": "%Y",
     "timeUnit": "Year",
     "unit": "a",
-    "values": Array [],
+    "values": [],
   },
-  Object {
+  {
     "__typename": "GeoShapesDimension",
     "cubeIri": "joinBy",
     "description": "Kanton, in welchem die geförderten Anlagen stehen",
@@ -924,32 +924,32 @@ Array [
     "isNumerical": false,
     "label": "Kanton, Canton",
     "order": 2,
-    "originalIds": Array [
-      Object {
+    "originalIds": [
+      {
         "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
         "description": "Kanton, in welchem die geförderten Anlagen stehen",
         "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
         "label": "Kanton",
       },
-      Object {
+      {
         "cubeIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
         "description": "Kanton, in welchem die geförderten Anlagen stehen",
         "dimensionId": "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
         "label": "Canton",
       },
-      Object {
+      {
         "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/18",
         "description": "",
         "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_anzahl_gesuche/region",
         "label": "Kanton",
       },
     ],
-    "related": Array [],
-    "relatedLimitValues": Array [],
+    "related": [],
+    "relatedLimitValues": [],
     "scaleType": "Nominal",
-    "values": Array [],
+    "values": [],
   },
-  Object {
+  {
     "__typename": "NominalDimension",
     "cubeIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
     "hierarchy": null,
@@ -957,12 +957,12 @@ Array [
     "isKeyDimension": true,
     "isNumerical": false,
     "label": "Consumption profiles of typical households",
-    "related": Array [],
-    "relatedLimitValues": Array [],
+    "related": [],
+    "relatedLimitValues": [],
     "scaleType": "Nominal",
-    "values": Array [],
+    "values": [],
   },
-  Object {
+  {
     "__typename": "NominalDimension",
     "cubeIri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
     "hierarchy": null,
@@ -970,10 +970,10 @@ Array [
     "isKeyDimension": true,
     "isNumerical": false,
     "label": "Product",
-    "related": Array [],
-    "relatedLimitValues": Array [],
+    "related": [],
+    "relatedLimitValues": [],
     "scaleType": "Nominal",
-    "values": Array [],
+    "values": [],
   },
 ]
 `);
