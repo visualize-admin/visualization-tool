@@ -1,5 +1,5 @@
 export type FlagValue = any;
-export type FlagType = "boolean" | "text";
+type FlagType = "boolean" | "text";
 
 const TYPE_PRIORITY: Record<FlagType, number> = {
   boolean: 0,

@@ -38,14 +38,14 @@ import React, {
 import { Exchange, Operation, OperationResult } from "urql";
 import { pipe, tap } from "wonka";
 
+import { Switch } from "@/components/form";
+import { MaybeTooltip } from "@/components/maybe-tooltip";
 import useDisclosure from "@/components/use-disclosure";
 import { flag, useFlag, useFlags } from "@/flags";
 import { FlagName, FLAGS } from "@/flags/types";
 import { RequestQueryMeta } from "@/graphql/query-meta";
-import useEvent from "@/utils/use-event";
-import { Switch } from "@/components/form";
 import { Icon } from "@/icons";
-import { MaybeTooltip } from "@/components/maybe-tooltip";
+import useEvent from "@/utils/use-event";
 
 type Timings = Record<
   string,
