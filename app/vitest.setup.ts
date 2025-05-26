@@ -4,73 +4,21 @@ import DatasetExt from "rdf-ext/lib/Dataset";
 import DefaultGraphExt from "rdf-ext/lib/DefaultGraph";
 import { NamedNode, Term } from "rdf-js";
 import { createClient, defaultExchanges } from "urql";
+import { vi } from "vitest";
 
 import { GRAPHQL_ENDPOINT } from "@/domain/env";
 import * as ns from "@/rdf/namespace";
 
-import { logger } from "./utils/colored-console";
-
-jest.mock("@mapbox/tiny-sdf", () => {
+// Since it's a macro, it's not defined at runtime, maybe in the future
+// we should add a transformer so that test files are transformed the same
+// way as app files so that the macro is defined inside files that are ran by vitest.
+vi.mock("@lingui/macro", () => {
   return {
-    default: () => {},
-  };
-});
-
-jest.mock("nanoid", () => {
-  return {
-    nanoid: () => "nanoid",
-  };
-});
-
-jest.mock("react-markdown", () => {
-  return {
-    ReactMarkdown: () => null,
-  };
-});
-
-jest.mock("rehype-raw", () => {
-  return {
-    rehypeRaw: () => null,
-  };
-});
-
-jest.mock("rehype-sanitize", () => {
-  return {
-    rehypeSanitize: () => null,
-  };
-});
-
-jest.mock("remark-gfm", () => {
-  return {
-    remarkGfm: () => null,
-  };
-});
-
-jest.mock("@mdxeditor/editor", () => {
-  return {
-    realmPlugin: () => {},
-  };
-});
-
-jest.mock("@mdxeditor/gurx", () => {
-  return {
-    Action: () => {},
-    Cell: () => {},
-    Signal: () => {},
-  };
-});
-
-// @ts-ignore Ignoring cannot be compiled as isolated module warning. It's working.
-jest.mock("@lingui/macro", () => {
-  return {
-    // Since it's a macro, it's not defined at runtime, maybe in the future
-    // we should add a transformer so that jest files are transformed the same
-    // way as app files so that the macro is defined inside files that are ran by Jest.
     defineMessage: (x: string) => x,
   };
 });
 
-jest.mock("@/graphql/client", () => {
+vi.mock("@/graphql/client", () => {
   return {
     client: createClient({
       url: GRAPHQL_ENDPOINT,
@@ -79,7 +27,7 @@ jest.mock("@/graphql/client", () => {
   };
 });
 
-jest.mock("rdf-cube-view-query", () => ({
+vi.mock("rdf-cube-view-query", () => ({
   Node: class {
     constructor() {}
   },
@@ -156,32 +104,32 @@ jest.mock("rdf-cube-view-query", () => ({
   },
 }));
 
-jest.mock("@zazuko/cube-hierarchy-query/index", () => ({}));
-
-jest.mock("@interactivethings/swiss-federal-ci", () => ({
-  c: {
-    cobalt: {
-      400: "#fff",
-      600: "#fff",
-    },
-    monochrome: {},
-    red: {
-      50: "#fff",
-      800: "#fff",
-    },
-    green: {
-      50: "#fff",
-      500: "#fff",
-      700: "#fff",
-    },
-  },
-  e: {},
-  t: {},
-}));
-jest.mock("@interactivethings/swiss-federal-ci/dist/components", () => {});
-jest.mock(
+vi.mock(
   "@interactivethings/swiss-federal-ci/dist/components/pages-router",
-  () => {}
+  () => ({})
 );
 
-console.log = logger;
+vi.mock("next/router", () => {
+  const router = {
+    route: "/",
+    pathname: "/",
+    query: {},
+    asPath: "/",
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    isReady: true,
+    events: {
+      on: vi.fn(),
+      off: vi.fn(),
+      emit: vi.fn(),
+    },
+    ready: (cb: () => void) => setTimeout(cb, 0),
+  };
+
+  return {
+    __esModule: true,
+    default: router,
+    useRouter: () => router,
+  };
+});
