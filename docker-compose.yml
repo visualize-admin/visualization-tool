@@ -3,7 +3,7 @@ version: "3"
 services:
   ## Running in Docker slows down development a lot, so this is only kept for reference here.
   # nextjs:
-  #   image: "node:20"
+  #   image: "node:22"
   #   ports:
   #     - "3000:3000"
   #   volumes:
