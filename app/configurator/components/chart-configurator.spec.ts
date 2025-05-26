@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { ChartConfig } from "@/config-types";
 import { getFilterReorderCubeFilters } from "@/configurator/components/chart-configurator";
 

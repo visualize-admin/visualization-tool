@@ -1,3 +1,5 @@
+import { describe, expect, it, vi } from "vitest";
+
 import { SearchCube } from "@/domain/data";
 
 import {
@@ -6,7 +8,7 @@ import {
   fields,
 } from "./query-search-score-utils";
 
-jest.mock("@tpluscode/sparql-builder", () => ({}));
+vi.mock("@tpluscode/sparql-builder", () => ({}));
 
 describe("compute scores", () => {
   const cubes = [

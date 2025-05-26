@@ -1,4 +1,4 @@
-import { Client, ClientOptions } from "urql";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   ChartConfig,
@@ -23,66 +23,36 @@ import {
 import { getLocalStorageKey } from "@/configurator/configurator-state/localstorage";
 import { Dimension } from "@/domain/data";
 import { stringifyComponentId } from "@/graphql/make-component-id";
-import { PossibleFilterValue } from "@/graphql/query-hooks";
 import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";
-import { getCachedComponentsMock } from "@/urql-cache.mock";
+import { mockClient } from "@/test/urql-client-mock";
 import * as api from "@/utils/chart-config/api";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 
-const mockedApi = api as jest.Mocked<typeof api>;
+// @ts-ignore
+const mockedApi = api as unknown as Mock<typeof api>;
 
-jest.mock("@/rdf/extended-cube", () => ({
-  ExtendedCube: jest.fn(),
+vi.mock("@/rdf/extended-cube", () => ({
+  ExtendedCube: vi.fn(),
 }));
 
-jest.mock("@/utils/chart-config/api", () => ({
-  createConfig: jest.fn(),
-  fetchChartConfig: jest.fn(),
+vi.mock("@/utils/chart-config/api", () => ({
+  createConfig: vi.fn(),
+  fetchChartConfig: vi.fn(),
 }));
 
-jest.mock("@lingui/macro", () => ({
+vi.mock("@lingui/macro", () => ({
   defineMessage: (str: string) => str,
   t: (str: string) => str,
 }));
 
-const possibleFilters: PossibleFilterValue[] = [
-  {
-    __typename: "PossibleFilterValue",
-    id: stringifyComponentId({
-      unversionedCubeIri: "mapDataset",
-      unversionedComponentIri: "symbolLayerIri",
-    }),
-    type: "single",
-    value: "xPossible",
-  },
-];
-
-const clientOptions: ClientOptions = { url: "http://example.com" };
-const mockClient = new Client(clientOptions);
-Object.assign(mockClient, {
-  query: jest.fn().mockImplementation(() => ({
-    toPromise: jest.fn().mockResolvedValue({
-      data: {
-        dataCubePreview: getCachedComponentsMock.geoAndNumerical,
-        possibleFilters,
-      },
-    }),
-  })),
-  readQuery: jest.fn().mockImplementation(() => ({
-    data: {
-      dataCubeComponents: getCachedComponentsMock.geoAndNumerical,
-    },
-  })),
-});
-
-jest.mock("@/urql-cache", () => {
+vi.mock("@/urql-cache", () => {
   return {
-    getCachedComponents: jest.fn(),
+    getCachedComponents: vi.fn(),
   };
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 describe("initChartStateFromChart", () => {
@@ -121,8 +91,8 @@ describe("initChartStateFromChart", () => {
   });
 
   it("should return undefined if chart is invalid", async () => {
-    jest.spyOn(console, "warn").mockImplementation(() => {});
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
 
     setup({
       chartConfig: {
@@ -149,8 +119,8 @@ describe("initChartFromLocalStorage", () => {
   });
 
   it("should return undefined and remove key from localStorage if invalid", async () => {
-    jest.spyOn(console, "warn").mockImplementation(() => {});
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
 
     localStorage.setItem(getLocalStorageKey("viz1234"), "abcde");
     const state = await initChartStateFromLocalStorage(mockClient, "viz1234");
@@ -386,7 +356,7 @@ describe("publishing chart config", () => {
       ],
     } as any as ConfiguratorStatePublishing;
 
-    const cb = jest.fn();
+    const cb = vi.fn();
     await publishState({} as any, key, state, async (_, i) => cb(i));
     expect(cb.mock.calls.map((c) => c[0])).toEqual(
       Array.from({ length: publishableChartKeys.length }, (_, i) => i + 1)

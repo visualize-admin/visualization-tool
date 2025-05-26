@@ -1,15 +1,16 @@
 import { act, renderHook } from "@testing-library/react";
 import mittEmitter from "next/dist/shared/lib/mitt";
 import { SingletonRouter } from "next/router";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 
 import { createUseDataSourceStore } from "@/stores/data-source";
 import { setURLParam } from "@/utils/router/helpers";
 
-jest.mock("@/utils/router/helpers", () => {
-  const original = jest.requireActual("@/utils/router/helpers");
+vi.mock("@/utils/router/helpers", async () => {
+  const original = await vi.importActual("@/utils/router/helpers");
   return {
     getURLParam: original.getURLParam,
-    setURLParam: jest.fn(),
+    setURLParam: vi.fn(),
   };
 });
 
@@ -30,7 +31,7 @@ const createRouter = ({ query }: { query: Record<string, string> }) => {
   return router;
 };
 
-jest.mock("../env", () => ({
+vi.mock("../env", () => ({
   WHITELISTED_DATA_SOURCES: ["Test", "Prod", "Int"],
   ENDPOINT: "sparql+https://lindas-cached.cluster.ldbar.ch/query", // Default is Prod in tests
 }));
@@ -76,7 +77,7 @@ describe("datasource state hook", () => {
 
   beforeEach(() => {
     localStorage.clear();
-    (setURLParam as jest.MockedFunction<typeof setURLParam>).mockClear();
+    (setURLParam as Mock).mockClear();
   });
 
   it("should have the correct default state when nothing is there", async () => {

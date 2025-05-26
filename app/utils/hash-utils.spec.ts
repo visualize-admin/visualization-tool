@@ -1,3 +1,5 @@
+import { expect, it } from "vitest";
+
 import { hashStringToObject, objectToHashString } from "@/utils/hash-utils";
 
 it("should persist chart configs as is", () => {

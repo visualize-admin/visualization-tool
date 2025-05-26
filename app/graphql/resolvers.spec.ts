@@ -1,4 +1,5 @@
 import { NamedNode } from "rdf-js";
+import { describe, expect, it, vi } from "vitest";
 
 import { SingleFilters } from "@/config-types";
 import { VISUALIZE_MOST_RECENT_VALUE } from "@/domain/most-recent-value";
@@ -11,8 +12,8 @@ import {
 } from "@/rdf/query-possible-filters";
 import mockChartConfig from "@/test/__fixtures/config/prod/column-traffic-pollution.json";
 
-jest.mock("@/rdf/query-dimension-values", () => ({
-  loadMaxDimensionValue: jest.fn().mockResolvedValue("123"),
+vi.mock("@/rdf/query-dimension-values", () => ({
+  loadMaxDimensionValue: vi.fn().mockResolvedValue("123"),
 }));
 
 const getCubeDimensionMock = (iri: string, order: string) => {

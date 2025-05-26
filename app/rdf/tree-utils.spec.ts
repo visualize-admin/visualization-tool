@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { HierarchyValue } from "@/domain/data";
 import {
   findInHierarchy,

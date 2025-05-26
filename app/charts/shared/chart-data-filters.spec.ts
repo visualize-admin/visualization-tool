@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { getInteractiveQueryFilters } from "@/charts/shared/chart-data-filters";
 import { Filters } from "@/configurator";
 

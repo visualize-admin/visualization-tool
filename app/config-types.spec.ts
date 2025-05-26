@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { getChartConfigFilters } from "./config-utils";
 
 describe("getChartConfigFilters", () => {

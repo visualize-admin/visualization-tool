@@ -1,5 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import merge from "lodash/merge";
+import { describe, expect, it, Mock, vi } from "vitest";
 
 import {
   extractChartConfigComponentIds,
@@ -23,12 +24,12 @@ import line1Fixture from "@/test/__fixtures/config/prod/line-1.json";
 import dualLine1Fixture from "@/test/__fixtures/config/test/chartConfig-photovoltaik-und-gebaudeprogramm.json";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
-jest.mock("../../rdf/extended-cube", () => ({
-  ExtendedCube: jest.fn(),
+vi.mock("../../rdf/extended-cube", () => ({
+  ExtendedCube: vi.fn(),
 }));
 
-jest.mock("@/stores/interactive-filters", () => ({
-  useChartInteractiveFilters: jest.fn(() => ({
+vi.mock("@/stores/interactive-filters", () => ({
+  useChartInteractiveFilters: vi.fn(() => ({
     A_1: { type: "single", value: "A_1_1" },
     A_2: { type: "single", value: "A_2_1" },
     B_1: { type: "single", value: "B_1_1" },
@@ -204,7 +205,7 @@ describe("useQueryFilters", () => {
   });
 
   it("should handle correctly dashboard filters", () => {
-    (useChartInteractiveFilters as jest.Mock).mockImplementation(() => ({}));
+    (useChartInteractiveFilters as Mock).mockImplementation(() => ({}));
 
     const chartConfig = {
       chartType: "line",

@@ -1,3 +1,5 @@
+import { describe, expect, it, vi } from "vitest";
+
 import { TemporalDimension } from "@/domain/data";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { getD3TimeFormatLocale } from "@/locales/locales";
@@ -25,7 +27,7 @@ describe("getTimeFilterOptions", () => {
     relatedLimitValues: [],
   } as unknown as TemporalDimension;
   const formatLocale = getD3TimeFormatLocale("de");
-  const timeFormatUnit = jest.fn();
+  const timeFormatUnit = vi.fn();
 
   it("should correctly parse dates with timezone", () => {
     const { sortedOptions } = getTimeFilterOptions({

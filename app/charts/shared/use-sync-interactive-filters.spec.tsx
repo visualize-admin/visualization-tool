@@ -1,6 +1,7 @@
 import { fireEvent, render } from "@testing-library/react";
 import { useState } from "react";
 import { Client, Provider } from "urql";
+import { describe, expect, it, vi } from "vitest";
 
 import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
 import { ChartConfig, ConfiguratorStateConfiguringChart } from "@/config-types";
@@ -13,24 +14,8 @@ import {
 import fixture from "@/test/__fixtures/config/test/4YL1p4QTFQS4.json";
 import { migrateChartConfig } from "@/utils/chart-config/versioning";
 
-jest.mock("next/router", () => {
-  const mockRouter = {
-    events: {
-      on: () => {},
-      off: () => {},
-    },
-    ready: () => Promise.resolve(),
-    query: "",
-    replace: () => undefined,
-  };
-  return Object.assign(mockRouter, {
-    default: mockRouter,
-    useRouter: jest.fn().mockImplementation(() => mockRouter),
-  });
-});
-
-jest.mock("next-auth/react", () => {
-  const originalModule = jest.requireActual("next-auth/react");
+vi.mock("next-auth/react", async () => {
+  const originalModule = await vi.importActual("next-auth/react");
   const mockSession = {
     expires: new Date(Date.now() + 2 * 86400).toISOString(),
     user: { username: "Test" },
@@ -38,7 +23,7 @@ jest.mock("next-auth/react", () => {
   return {
     __esModule: true,
     ...originalModule,
-    useSession: jest.fn(() => {
+    useSession: vi.fn(() => {
       return { data: mockSession, status: "authenticated" }; // return type is [] in v3 but changed to {} in v4
     }),
   };

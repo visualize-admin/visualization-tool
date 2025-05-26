@@ -1,9 +1,11 @@
+import { describe, expect, it, vi } from "vitest";
+
 import { getCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
 import { Dimension } from "@/domain/data";
 import { stringifyComponentId } from "@/graphql/make-component-id";
 import { getD3TimeFormatLocale } from "@/locales/locales";
 
-jest.mock("@lingui/macro", () => ({
+vi.mock("@lingui/macro", () => ({
   defineMessage: (str: string) => str,
   t: (str: string) => str,
 }));

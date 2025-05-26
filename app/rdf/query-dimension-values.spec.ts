@@ -1,6 +1,7 @@
 import { CubeDimension } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
 import ParsingClient from "sparql-http-client/ParsingClient";
+import { describe, expect, it, vi } from "vitest";
 
 import { FilterValue } from "@/config-types";
 import * as ns from "@/rdf/namespace";
@@ -9,7 +10,7 @@ import {
   loadDimensionValuesWithMetadata,
 } from "@/rdf/query-dimension-values";
 
-jest.mock("./extended-cube", () => ({}));
+vi.mock("./extended-cube", () => ({}));
 
 const cubeDimensions = [
   {

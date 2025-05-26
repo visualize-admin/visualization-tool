@@ -1,4 +1,5 @@
 import { NumberValue } from "d3-scale";
+import { describe, expect, it } from "vitest";
 
 import {
   getStackedTooltipValueFormatter,

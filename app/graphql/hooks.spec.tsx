@@ -1,7 +1,8 @@
-import { act, render, waitFor } from "@testing-library/react";
+import { act, cleanup, render, waitFor } from "@testing-library/react";
 import { renderHook } from "@testing-library/react-hooks";
 import { useMemo } from "react";
 import { Client, Provider } from "urql";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ChartConfig } from "@/config-types";
 import { DataCubeComponents, DataCubesObservations } from "@/domain/data";
@@ -18,8 +19,12 @@ import {
   useDataCubesComponentsQuery,
 } from "./hooks";
 
+afterEach(() => {
+  cleanup();
+});
+
 describe("makeUseQuery", () => {
-  const mockQuery = jest.fn().mockImplementation(() => {
+  const mockQuery = vi.fn().mockImplementation(() => {
     return new Promise((resolve) => {
       resolve({ data: "mock data", fetching: false });
     });
@@ -192,34 +197,34 @@ describe("useComponentsQuery - keepPreviousData", () => {
       expect(dimensions && dimensions.length).toBe(3);
 
       expect(dimensions).toMatchInlineSnapshot(`
-Array [
-  Object {
+[
+  {
     "cubeIri": "joinBy",
     "id": "joinBy__0",
     "isJoinByDimension": true,
     "label": "Year",
-    "originalIds": Array [
-      Object {
+    "originalIds": [
+      {
         "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/6",
         "description": "",
         "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
         "label": "Year",
       },
-      Object {
+      {
         "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
         "description": "",
         "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
         "label": "Year",
       },
     ],
-    "values": Array [],
+    "values": [],
   },
-  Object {
+  {
     "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/6",
     "id": "https://gebaude",
     "label": "Gebaude",
   },
-  Object {
+  {
     "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
     "id": "https://eletrik",
     "label": "Electrik",
@@ -283,34 +288,34 @@ Array [
       expect(dimensions && dimensions.length).toBe(3);
 
       expect(dimensions).toMatchInlineSnapshot(`
-Array [
-  Object {
+[
+  {
     "cubeIri": "joinBy",
     "id": "joinBy__0",
     "isJoinByDimension": true,
     "label": "Year",
-    "originalIds": Array [
-      Object {
+    "originalIds": [
+      {
         "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/6",
         "description": "",
         "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/Jahr",
         "label": "Year",
       },
-      Object {
+      {
         "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
         "description": "",
         "dimensionId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
         "label": "Year",
       },
     ],
-    "values": Array [],
+    "values": [],
   },
-  Object {
+  {
     "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_energiewirkung/6",
     "id": "https://gebaude",
     "label": "Gebaude",
   },
-  Object {
+  {
     "cubeIri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
     "id": "https://eletrik",
     "label": "Electrik",

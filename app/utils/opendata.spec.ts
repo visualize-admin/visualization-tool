@@ -1,3 +1,5 @@
+import { describe, expect, it } from "vitest";
+
 import { DataCubeMetadata } from "@/domain/data";
 import { makeOpenDataLink } from "@/utils/opendata";
 

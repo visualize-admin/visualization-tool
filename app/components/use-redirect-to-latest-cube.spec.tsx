@@ -1,20 +1,21 @@
 import { renderHook } from "@testing-library/react";
 import { NextRouter, useRouter } from "next/router";
+import { describe, expect, it, Mock, vi } from "vitest";
 
 import { useRedirectToLatestCube } from "@/components/use-redirect-to-latest-cube";
 import { useLocale } from "@/locales/use-locale";
 import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 
-jest.mock("@/rdf/query-latest-cube-iri", () => ({
-  queryLatestCubeIri: jest.fn(),
+vi.mock("@/rdf/query-latest-cube-iri", () => ({
+  queryLatestCubeIri: vi.fn(),
 }));
 
-jest.mock("next/router", () => ({
-  useRouter: jest.fn(),
+vi.mock("next/router", () => ({
+  useRouter: vi.fn(),
 }));
 
-jest.mock("@/locales/use-locale", () => ({
-  useLocale: jest.fn(),
+vi.mock("@/locales/use-locale", () => ({
+  useLocale: vi.fn(),
 }));
 
 const sleep = (duration: number) =>
@@ -36,17 +37,13 @@ describe("use redirect to versioned cube", () => {
       basePath: "",
       isLocaleDomain: true,
       isReady: true,
-      replace: jest.fn(async () => true),
+      replace: vi.fn(async () => true),
     } as unknown as NextRouter;
-    (useRouter as jest.MockedFunction<typeof useRouter>).mockReturnValue(
-      router
+    (useRouter as Mock<typeof useRouter>).mockReturnValue(router);
+    (useLocale as Mock<typeof useLocale>).mockReturnValue("de");
+    (queryLatestCubeIri as Mock<typeof queryLatestCubeIri>).mockImplementation(
+      async () => versionedCube
     );
-
-    (useLocale as jest.MockedFunction<typeof useLocale>).mockReturnValue("de");
-
-    (
-      queryLatestCubeIri as jest.MockedFunction<typeof queryLatestCubeIri>
-    ).mockImplementation(async () => versionedCube);
 
     renderHook(() =>
       useRedirectToLatestCube({

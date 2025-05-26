@@ -1,3 +1,5 @@
+import { expect, it } from "vitest";
+
 import { saveDataFiltersSnapshot } from "@/components/dashboard-interactive-filters";
 import { ChartConfig } from "@/configurator";
 import {
@@ -29,7 +31,8 @@ const mockDashboardInteractiveFiltersContextValue = <T extends unknown>(
     new MockState(state),
   ] as unknown as InteractiveFiltersContextValue;
 };
-test("Save snapshot, modify the store manually, then restore and check result", () => {
+
+it("Save snapshot, modify the store manually, then restore and check result", () => {
   // Mock chartConfigs
   const chartConfigs: ChartConfig[] = [
     { key: "chart1" } as ChartConfig,

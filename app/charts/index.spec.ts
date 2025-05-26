@@ -1,4 +1,5 @@
 import { schemeCategory10 } from "d3-scale-chromatic";
+import { describe, expect, it, vi } from "vitest";
 
 import {
   ColumnConfig,
@@ -20,11 +21,11 @@ import {
   getInitialConfig,
 } from "./index";
 
-jest.mock("../rdf/extended-cube", () => ({
-  ExtendedCube: jest.fn(),
+vi.mock("../rdf/extended-cube", () => ({
+  ExtendedCube: vi.fn(),
 }));
 
-jest.mock("@lingui/macro", () => ({
+vi.mock("@lingui/macro", () => ({
   defineMessage: (str: string) => str,
   t: (str: string) => str,
 }));

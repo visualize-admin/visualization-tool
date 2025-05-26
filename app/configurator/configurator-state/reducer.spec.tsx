@@ -1,5 +1,6 @@
 import produce, { createDraft, current } from "immer";
 import get from "lodash/get";
+import { afterEach, describe, expect, it, Mock, vi } from "vitest";
 
 import { getChartConfigAdjustedToChartType } from "@/charts";
 import {
@@ -60,34 +61,32 @@ afterEach(() => {
   }
 });
 
-jest.mock("@/rdf/extended-cube", () => ({
-  ExtendedCube: jest.fn(),
+vi.mock("@/rdf/extended-cube", () => ({
+  ExtendedCube: vi.fn(),
 }));
 
-jest.mock("@/utils/chart-config/api", () => ({
-  createConfig: jest.fn(),
-  fetchChartConfig: jest.fn(),
+vi.mock("@/utils/chart-config/api", () => ({
+  createConfig: vi.fn(),
+  fetchChartConfig: vi.fn(),
 }));
 
-jest.mock("@/urql-cache", () => {
+vi.mock("@/urql-cache", () => {
   return {
-    getCachedComponents: jest.fn(),
+    getCachedComponents: vi.fn(),
   };
 });
 
-jest.mock("@lingui/macro", () => ({
+vi.mock("@lingui/macro", () => ({
   defineMessage: (str: string) => str,
   t: (str: string) => str,
 }));
 
-type getCachedComponents = typeof getCachedComponentsOriginal;
-const getCachedComponents = getCachedComponentsOriginal as unknown as jest.Mock<
-  ReturnType<getCachedComponents>,
-  Parameters<getCachedComponents>
->;
+type GetCachedComponents = typeof getCachedComponentsOriginal;
+const getCachedComponents =
+  getCachedComponentsOriginal as unknown as Mock<GetCachedComponents>;
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 describe("add dataset", () => {
@@ -492,53 +491,53 @@ describe("deriveFiltersFromFields", () => {
       dimensions: dimensions as Dimension[],
     });
     expect(derived).toMatchInlineSnapshot(`
-      Object {
+      {
         "activeField": undefined,
         "chartType": "pie",
-        "conversionUnitsByComponentId": Object {},
-        "cubes": Array [
-          Object {
-            "filters": Object {
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr": Object {
+        "conversionUnitsByComponentId": {},
+        "cubes": [
+          {
+            "filters": {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr": {
                 "type": "single",
                 "value": "2011",
               },
-              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": Object {
+              "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": {
                 "type": "single",
                 "value": "https://ld.admin.ch/canton/1",
               },
             },
             "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-            "joinBy": Array [
+            "joinBy": [
               "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Jahr",
               "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton",
             ],
           },
-          Object {
-            "filters": Object {
-              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton": Object {
+          {
+            "filters": {
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton": {
                 "type": "single",
                 "value": "https://ld.admin.ch/canton/1",
               },
-              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period": Object {
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period": {
                 "type": "single",
                 "value": "2011",
               },
-              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/product": Object {
+              "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/product": {
                 "type": "single",
                 "value": "https://energy.ld.admin.ch/elcom/electricityprice/product/cheapest",
               },
             },
             "iri": "https://energy.ld.admin.ch/elcom/electricityprice-canton",
-            "joinBy": Array [
+            "joinBy": [
               "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/period",
               "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/canton",
             ],
           },
         ],
-        "fields": Object {
-          "color": Object {
-            "colorMapping": Object {
+        "fields": {
+          "color": {
+            "colorMapping": {
               "https://energy.ld.admin.ch/elcom/electricityprice/category/C1": "#1f77b4",
               "https://energy.ld.admin.ch/elcom/electricityprice/category/C2": "#ff7f0e",
               "https://energy.ld.admin.ch/elcom/electricityprice/category/C3": "#2ca02c",
@@ -558,35 +557,35 @@ describe("deriveFiltersFromFields", () => {
             "paletteId": "category10",
             "type": "segment",
           },
-          "segment": Object {
+          "segment": {
             "componentId": "https://energy.ld.admin.ch/elcom/electricityprice-canton(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/elcom/electricityprice/dimension/category",
-            "showValuesMapping": Object {},
-            "sorting": Object {
+            "showValuesMapping": {},
+            "sorting": {
               "sortingOrder": "asc",
               "sortingType": "byMeasure",
             },
           },
-          "y": Object {
+          "y": {
             "componentId": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/AnzahlAnlagen",
           },
         },
-        "interactiveFiltersConfig": Object {
-          "calculation": Object {
+        "interactiveFiltersConfig": {
+          "calculation": {
             "active": false,
             "type": "identity",
           },
-          "dataFilters": Object {
+          "dataFilters": {
             "active": false,
-            "componentIds": Array [],
+            "componentIds": [],
           },
-          "legend": Object {
+          "legend": {
             "active": false,
             "componentId": "",
           },
-          "timeRange": Object {
+          "timeRange": {
             "active": false,
             "componentId": "",
-            "presets": Object {
+            "presets": {
               "from": "",
               "to": "",
               "type": "range",
@@ -594,21 +593,21 @@ describe("deriveFiltersFromFields", () => {
           },
         },
         "key": "ydBHrv26xvUg",
-        "limits": Object {},
-        "meta": Object {
-          "description": Object {
+        "limits": {},
+        "meta": {
+          "description": {
             "de": "",
             "en": "",
             "fr": "",
             "it": "",
           },
-          "label": Object {
+          "label": {
             "de": "",
             "en": "",
             "fr": "",
             "it": "",
           },
-          "title": Object {
+          "title": {
             "de": "",
             "en": "",
             "fr": "",
@@ -626,9 +625,9 @@ describe("deriveFiltersFromFields", () => {
       dimensions: dimensionsJoinedCubes,
     });
     expect(derived.cubes.map((c) => c.filters)).toMatchInlineSnapshot(`
-      Array [
-        Object {},
-        Object {},
+      [
+        {},
+        {},
       ]
     `);
   });
@@ -1630,33 +1629,35 @@ describe("handleChartOptionChanged", () => {
 });
 
 describe("ensureDashboardLayoutIsCorrect", () => {
-  const state = configStateMock.map;
-  const newState = produce(state, (state: ConfiguratorState) => {
-    assert(
-      state.state === "CONFIGURING_CHART",
-      "State should be CONFIGURING_CHART"
-    );
-    state.layout.type = "dashboard";
-    assert(
-      state.layout.type === "dashboard",
-      "Layout type should be dashboard"
-    );
-    state.layout.layout = "canvas";
-    assert(state.layout.layout === "canvas", "Layout type should be canvas");
-    state.layout.layouts = { xl: [], lg: [], md: [], sm: [] };
-    state.chartConfigs.push({
-      ...state.chartConfigs[0],
-      key: "newKey",
-    });
-    state.layout.blocks.push({
-      type: "chart",
-      key: "newKey",
-      initialized: false,
-    });
-    ensureDashboardLayoutIsCorrect(state);
+  it("should ensure dashboard layout is correct", () => {
+    const state = configStateMock.map;
+    const newState = produce(state, (state: ConfiguratorState) => {
+      assert(
+        state.state === "CONFIGURING_CHART",
+        "State should be CONFIGURING_CHART"
+      );
+      state.layout.type = "dashboard";
+      assert(
+        state.layout.type === "dashboard",
+        "Layout type should be dashboard"
+      );
+      state.layout.layout = "canvas";
+      assert(state.layout.layout === "canvas", "Layout type should be canvas");
+      state.layout.layouts = { xl: [], lg: [], md: [], sm: [] };
+      state.chartConfigs.push({
+        ...state.chartConfigs[0],
+        key: "newKey",
+      });
+      state.layout.blocks.push({
+        type: "chart",
+        key: "newKey",
+        initialized: false,
+      });
+      ensureDashboardLayoutIsCorrect(state);
 
-    return state;
+      return state;
+    });
+
+    expect((newState as any).layout.layouts.lg.length).toBe(2);
   });
-
-  expect((newState as any).layout.layouts.lg.length).toBe(2);
 });
