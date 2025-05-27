@@ -171,6 +171,12 @@ export const isRemoteLayerCRSSupported = (
   );
 };
 
+const DEFAULT_DATA = {
+  wmts: [],
+  wms: [],
+  byKey: {},
+};
+
 export const useWMTSorWMSLayers = (
   endpoints: string[],
   { pause }: { pause?: boolean } = { pause: false }
@@ -206,11 +212,7 @@ export const useWMTSorWMSLayers = (
     },
     options: {
       pause: pause || !endpoints.length,
-      defaultData: {
-        wmts: [],
-        wms: [],
-        byKey: {},
-      },
+      defaultData: DEFAULT_DATA,
     },
   });
 };
