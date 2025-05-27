@@ -2080,6 +2080,10 @@ msgid "wmts.custom-layer.section-title"
 msgstr "Add custom layer"
 
 #: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.error-invalid-url"
+msgstr "Invalid URL"
+
+#: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.layer-not-supported-crs"
 msgstr "Layer not supported, no supported CRS"
 

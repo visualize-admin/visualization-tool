@@ -2080,6 +2080,10 @@ msgid "wmts.custom-layer.section-title"
 msgstr "Importa mappe"
 
 #: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.error-invalid-url"
+msgstr "URL non valida"
+
+#: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.layer-not-supported-crs"
 msgstr "Il livello non supporta il sistema di riferimento EPSG:3857."
 

@@ -371,12 +371,15 @@ const WMTSSelector = ({
         overflow: "hidden",
       }}
     >
-      {error ? <HintError>{error.message}</HintError> : null}
+      {error ? (
+        <HintError>
+          <Trans id="wmts.error-invalid-url">Invalid URL</Trans>
+        </HintError>
+      ) : null}
       <ProviderAutocomplete
         value={provider}
         onChange={(newValue) => setProvider(newValue)}
       />
-
       {provider && (
         <Input
           size="sm"
@@ -405,13 +408,11 @@ const WMTSSelector = ({
           }}
         />
       )}
-
       {status === "fetching" ? (
         <Box textAlign="center" p={2}>
           <Spinner size={24} />
         </Box>
       ) : null}
-
       <TreeView
         expanded={expanded}
         onNodeToggle={handleNodeToggle}

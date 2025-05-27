@@ -2080,6 +2080,10 @@ msgid "wmts.custom-layer.section-title"
 msgstr "Ajouter une couche personnalisée"
 
 #: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.error-invalid-url"
+msgstr "URL invalide"
+
+#: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.layer-not-supported-crs"
 msgstr "Cette couche n'est pas supportée, car elle n'utilise pas système de coordonnées EPSG:3857."
 

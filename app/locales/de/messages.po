@@ -2080,6 +2080,10 @@ msgid "wmts.custom-layer.section-title"
 msgstr "Benutzerdefinierte Layer"
 
 #: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.error-invalid-url"
+msgstr "Ungültige URL"
+
+#: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.layer-not-supported-crs"
 msgstr "Dieser Layer wird nicht unterstützt, da er nicht im EPSG:3857-Koordinatensystem vorliegt."
 
