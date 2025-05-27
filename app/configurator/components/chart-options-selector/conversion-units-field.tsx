@@ -1,6 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { Box, Typography } from "@mui/material";
-import { ChangeEvent, ReactNode } from "react";
+import { ChangeEvent, ReactNode, useEffect, useState } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import Flex from "@/components/flex";
@@ -448,9 +448,24 @@ const ConversionUnitContent = ({
   const [_, dispatch] = useConfiguratorState(isConfiguring);
   const definedConversionUnit =
     conversionUnit ?? getDefaultConversionUnit({ originalUnit });
+  const [inputValue, setInputValue] = useState(
+    `${definedConversionUnit.multiplier}`
+  );
+
+  useEffect(() => {
+    setInputValue(`${definedConversionUnit.multiplier}`);
+  }, [definedConversionUnit.multiplier]);
+
   const handleMultiplierChange = useEvent(
     (e: ChangeEvent<HTMLInputElement>) => {
-      const newMultiplier = +e.target.value;
+      const newInputValue = e.target.value;
+      setInputValue(newInputValue);
+
+      if (newInputValue === "") {
+        return;
+      }
+
+      const newMultiplier = +newInputValue;
 
       if (!isNaN(newMultiplier) && newMultiplier > 0) {
         dispatch({
@@ -468,6 +483,14 @@ const ConversionUnitContent = ({
       }
     }
   );
+
+  const handleMultiplierBlur = useEvent(() => {
+    const numericValue = +inputValue;
+
+    if (inputValue === "" || isNaN(numericValue) || numericValue <= 0) {
+      setInputValue(`${definedConversionUnit.multiplier}`);
+    }
+  });
 
   const handleLabelChange = useEvent((locale: Locale, value: string) => {
     dispatch({
@@ -503,8 +526,9 @@ const ConversionUnitContent = ({
             message: "Multiplier",
           })}
           name="multiplier"
-          value={definedConversionUnit.multiplier}
+          value={inputValue}
           onChange={handleMultiplierChange}
+          onBlur={handleMultiplierBlur}
         />
       </Flex>
       <Flex sx={{ flexDirection: "column", gap: 1 }}>
