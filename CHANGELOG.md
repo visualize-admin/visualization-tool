@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# 5.8.1 - 2025-05-27
+
 - Features
   - Added support for time range limits
   - Symbol limits are now supported in bar charts
