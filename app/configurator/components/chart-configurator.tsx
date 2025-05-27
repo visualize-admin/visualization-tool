@@ -929,7 +929,7 @@ const ChartFields = ({
               key={field}
               value={field}
               icon="baseLayer"
-              label={<Trans id="chart.map.layers.base">Base Map</Trans>}
+              label={<Trans id="chart.map.layers.base">Base map</Trans>}
               active={chartConfig.baseLayer.show}
             />
           ) : customLayers ? (
@@ -938,7 +938,7 @@ const ChartFields = ({
               value={field}
               icon="customLayers"
               label={
-                <Trans id="chart.map.layers.custom-layers">Import Maps</Trans>
+                <Trans id="chart.map.layers.custom-layers">Import map</Trans>
               }
               active={
                 chartConfig.baseLayer.show &&

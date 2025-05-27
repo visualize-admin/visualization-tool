@@ -1,5 +1,6 @@
 import groupBy from "lodash/groupBy";
 import sortBy from "lodash/sortBy";
+import { useCallback } from "react";
 
 import { parseWMSContent, RemoteWMSLayer } from "@/charts/map/wms-utils";
 import { parseWMTSContent, RemoteWMTSLayer } from "@/charts/map/wmts-utils";
@@ -171,46 +172,49 @@ export const isRemoteLayerCRSSupported = (
   );
 };
 
+const DEFAULT_DATA = {
+  wmts: [],
+  wms: [],
+  byKey: {},
+};
+
 export const useWMTSorWMSLayers = (
   endpoints: string[],
   { pause }: { pause?: boolean } = { pause: false }
 ) => {
   const locale = useLocale();
+  const queryFn = useCallback(async () => {
+    const allLayers = (
+      await Promise.all(
+        endpoints.map((endpoint) =>
+          fetchWMSorWMSLayersFromEndpoint(endpoint, locale)
+        )
+      )
+    ).flat();
+    const { wmts = [], wms = [] } = groupBy(allLayers, (x) => x.type);
+    const byKey = indexByKey({
+      wmsLayers: wms as RemoteWMSLayer[],
+      wmtsLayers: wmts as RemoteWMTSLayer[],
+    });
+
+    // Don't know why I need to "as" since the groupBy is correctly discriminating on type ?
+    return {
+      wmts: wmts as RemoteWMTSLayer[],
+      wms: wms as RemoteWMSLayer[],
+      byKey,
+    };
+  }, [endpoints, locale]);
 
   return useFetchData<{
     wmts: RemoteWMTSLayer[];
     wms: RemoteWMSLayer[];
     byKey: Record<string, RemoteWMSLayer | RemoteWMTSLayer>;
   }>({
-    queryKey: [`custom-layers`, ...sortBy(endpoints), locale],
-    queryFn: async () => {
-      const allLayers = (
-        await Promise.all(
-          endpoints.map((endpoint) =>
-            fetchWMSorWMSLayersFromEndpoint(endpoint, locale)
-          )
-        )
-      ).flat();
-      const { wmts = [], wms = [] } = groupBy(allLayers, (x) => x.type);
-      const byKey = indexByKey({
-        wmsLayers: wms as RemoteWMSLayer[],
-        wmtsLayers: wmts as RemoteWMTSLayer[],
-      });
-
-      // Don't know why I need to "as" since the groupBy is correctly discriminating on type ?
-      return {
-        wmts: wmts as RemoteWMTSLayer[],
-        wms: wms as RemoteWMSLayer[],
-        byKey,
-      };
-    },
+    queryKey: ["custom-layers", ...sortBy(endpoints), locale],
+    queryFn,
     options: {
       pause: pause || !endpoints.length,
-      defaultData: {
-        wmts: [],
-        wms: [],
-        byKey: {},
-      },
+      defaultData: DEFAULT_DATA,
     },
   });
 };

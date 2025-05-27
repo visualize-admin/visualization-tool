@@ -8,7 +8,7 @@ import {
   useEventCallback,
 } from "@mui/material";
 import uniq from "lodash/uniq";
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useCallback, useMemo, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -16,6 +16,7 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd";
 
+import { RemoteLayer } from "@/charts/map/types";
 import { RemoteWMSLayer } from "@/charts/map/wms-utils";
 import {
   getLayerKey,
@@ -105,62 +106,62 @@ export const CustomLayersSelector = () => {
     });
   });
 
-  const handleCheckLayer = (
-    layer: RemoteWMSLayer | RemoteWMTSLayer | null,
-    checked: boolean
-  ) => {
-    const valueType = layer?.type;
+  const handleCheckLayer = useCallback(
+    (layer: RemoteWMSLayer | RemoteWMTSLayer | null, checked: boolean) => {
+      const valueType = layer?.type;
 
-    if (!valueType) {
-      return;
-    }
-
-    if (!checked) {
-      dispatch({
-        type: "CUSTOM_LAYER_REMOVE",
-        value: {
-          type: valueType,
-          id: layer.id,
-        },
-      });
-      return;
-    } else {
-      switch (valueType) {
-        case "wms":
-          dispatch({
-            type: "CUSTOM_LAYER_ADD",
-            value: {
-              layer: {
-                type: "wms",
-                id: layer.id,
-                isBehindAreaLayer: false,
-                syncTemporalFilters: false,
-                endpoint: layer.endpoint,
-              },
-            },
-          });
-          break;
-        case "wmts":
-          dispatch({
-            type: "CUSTOM_LAYER_ADD",
-            value: {
-              layer: {
-                type: "wmts",
-                id: layer.id,
-                url: layer.url,
-                isBehindAreaLayer: false,
-                syncTemporalFilters: false,
-                endpoint: layer.endpoint,
-              },
-            },
-          });
-          break;
-        default:
-          const _exhaustiveCheck: never = valueType;
-          return _exhaustiveCheck;
+      if (!valueType) {
+        return;
       }
-    }
-  };
+
+      if (!checked) {
+        dispatch({
+          type: "CUSTOM_LAYER_REMOVE",
+          value: {
+            type: valueType,
+            id: layer.id,
+          },
+        });
+        return;
+      } else {
+        switch (valueType) {
+          case "wms":
+            dispatch({
+              type: "CUSTOM_LAYER_ADD",
+              value: {
+                layer: {
+                  type: "wms",
+                  id: layer.id,
+                  isBehindAreaLayer: false,
+                  syncTemporalFilters: false,
+                  endpoint: layer.endpoint,
+                },
+              },
+            });
+            break;
+          case "wmts":
+            dispatch({
+              type: "CUSTOM_LAYER_ADD",
+              value: {
+                layer: {
+                  type: "wmts",
+                  id: layer.id,
+                  url: layer.url,
+                  isBehindAreaLayer: false,
+                  syncTemporalFilters: false,
+                  endpoint: layer.endpoint,
+                },
+              },
+            });
+            break;
+          default:
+            const _exhaustiveCheck: never = valueType;
+            return _exhaustiveCheck;
+        }
+      }
+    },
+    [dispatch]
+  );
 
   const [addingLayer, setAddingLayer] = useState(false);
   const getParsedLayer = useMemo(() => {
@@ -173,6 +174,18 @@ export const CustomLayersSelector = () => {
     sectionOpen: true,
     interactive: true,
   });
+  const selectedLayers = useMemo(() => {
+    return configLayers.map((layer) => {
+      return makeKey(layer);
+    });
+  }, [configLayers]);
+  const handleLayerCheck = useCallback(
+    (layer: RemoteLayer, checked: boolean) => {
+      return handleCheckLayer(layer, checked);
+    },
+    [handleCheckLayer]
+  );
+
   return error ? (
     <Typography mx={2} color="error">
       {error.message}
@@ -182,7 +195,7 @@ export const CustomLayersSelector = () => {
   ) : (
     <ControlSection hideTopBorder>
       <SectionTitle closable>
-        <Trans id="chart.map.layers.custom-layers">Import Maps</Trans>
+        <Trans id="chart.map.layers.custom-layers">Import map</Trans>
       </SectionTitle>
       <LeftDrawer open={addingLayer} onClose={() => setAddingLayer(false)}>
         <div>
@@ -201,12 +214,8 @@ export const CustomLayersSelector = () => {
         <Box px={4}>
           {addingLayer ? (
             <WMTSSelector
-              onLayerCheck={(x, checked) => {
-                return handleCheckLayer(x, checked);
-              }}
-              selected={configLayers.map((layer) => {
-                return makeKey(layer);
-              })}
+              onLayerCheck={handleLayerCheck}
+              selected={selectedLayers}
             />
           ) : null}
         </Box>

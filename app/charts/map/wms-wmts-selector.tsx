@@ -15,7 +15,7 @@ import { makeStyles } from "@mui/styles";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import React from "react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import createStore from "zustand";
 
 import { RemoteLayer } from "@/charts/map/types";
@@ -27,6 +27,7 @@ import {
 } from "@/charts/map/wms-wmts-endpoint-utils";
 import ProviderAutocomplete from "@/charts/map/wms-wmts-providers-autocomplete";
 import { RemoteWMTSLayer } from "@/charts/map/wmts-utils";
+import Flex from "@/components/flex";
 import { HintError, Spinner } from "@/components/hint";
 import { Tree, useSelectTree } from "@/components/select-tree";
 import { Icon } from "@/icons";
@@ -361,26 +362,24 @@ const WMTSSelector = ({
     ]
   );
 
-  const treeRef = useRef();
-  const handleNodeSelect = () => {};
-
   return (
-    <Box
-      sx={{
+    <Flex
+      style={{
+        flexDirection: "column",
         width: "100%",
         maxWidth: "100%",
         overflow: "hidden",
       }}
-      display="flex"
-      flexDirection="column"
-      width="100%"
     >
-      {error ? <HintError>{error.message}</HintError> : null}
+      {error ? (
+        <HintError>
+          <Trans id="wmts.error-invalid-url">Invalid URL</Trans>
+        </HintError>
+      ) : null}
       <ProviderAutocomplete
         value={provider}
         onChange={(newValue) => setProvider(newValue)}
       />
-
       {provider && (
         <Input
           size="sm"
@@ -409,23 +408,19 @@ const WMTSSelector = ({
           }}
         />
       )}
-
       {status === "fetching" ? (
         <Box textAlign="center" p={2}>
           <Spinner size={24} />
         </Box>
       ) : null}
-
       <TreeView
-        sx={{ flexGrow: 1, overflow: "auto" }}
-        ref={treeRef}
         expanded={expanded}
         onNodeToggle={handleNodeToggle}
-        onNodeSelect={handleNodeSelect}
+        style={{ flexGrow: 1, overflow: "auto" }}
       >
         {renderTreeContent(filteredOptions)}
       </TreeView>
-    </Box>
+    </Flex>
   );
 };
 

@@ -11,7 +11,10 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - Invalid URL error message is now translated
+- Fixes
+  - Fixed an infinite render loop when adding a custom map layer
 
 # 5.8.1 - 2025-05-27
 

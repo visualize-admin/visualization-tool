@@ -269,7 +269,7 @@ msgstr "Areas"
 #: app/configurator/components/chart-options-selector/base-layer-field.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.base"
-msgstr "Base Map"
+msgstr "Base map"
 
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.base.behind-area-layer"
@@ -290,7 +290,7 @@ msgstr "Locked view"
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.custom-layers"
-msgstr "Import Maps"
+msgstr "Import map"
 
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.no-layers"
@@ -2078,6 +2078,10 @@ msgstr "WMTS WMS URL"
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "wmts.custom-layer.section-title"
 msgstr "Add custom layer"
+
+#: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.error-invalid-url"
+msgstr "Invalid URL"
 
 #: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.layer-not-supported-crs"
