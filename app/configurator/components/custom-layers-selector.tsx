@@ -182,7 +182,7 @@ export const CustomLayersSelector = () => {
   ) : (
     <ControlSection hideTopBorder>
       <SectionTitle closable>
-        <Trans id="chart.map.layers.custom-layers">Import Maps</Trans>
+        <Trans id="chart.map.layers.custom-layers">Import map</Trans>
       </SectionTitle>
       <LeftDrawer open={addingLayer} onClose={() => setAddingLayer(false)}>
         <div>
