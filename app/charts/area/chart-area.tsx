@@ -48,7 +48,7 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
           <AxisTimeDomain />
           <VerticalLimits {...limits} />
           <InteractionHorizontal />
-          {interactiveFiltersConfig?.timeRange.active === true && <BrushTime />}
+          {interactiveFiltersConfig.timeRange.active && <BrushTime />}
         </ChartSvg>
         <Tooltip type={fields.segment ? "multiple" : "single"} />
         <Ruler />
@@ -58,7 +58,7 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
           <LegendColor
             chartConfig={chartConfig}
             symbol="square"
-            interactive={interactiveFiltersConfig?.legend.active}
+            interactive={interactiveFiltersConfig.legend.active}
             showTitle={fields.segment?.showTitle}
             dimensionsById={dimensionsById}
             limits={limits}

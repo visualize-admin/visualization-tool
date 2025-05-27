@@ -743,7 +743,7 @@ export const ChartConfigurator = ({
                   field={null}
                   path="interactiveFiltersConfig.dataFilters.defaultOpen"
                   disabled={
-                    !chartConfig.interactiveFiltersConfig?.dataFilters.active
+                    !chartConfig.interactiveFiltersConfig.dataFilters.active
                   }
                 />
               </Box>

@@ -39,11 +39,11 @@ const useSyncInteractiveFilters = (
 
   // Time range filter
   const presetFrom =
-    interactiveFiltersConfig?.timeRange.presets.from &&
-    parseDate(interactiveFiltersConfig?.timeRange.presets.from);
+    interactiveFiltersConfig.timeRange.presets.from &&
+    parseDate(interactiveFiltersConfig.timeRange.presets.from);
   const presetTo =
-    interactiveFiltersConfig?.timeRange.presets.to &&
-    parseDate(interactiveFiltersConfig?.timeRange.presets.to);
+    interactiveFiltersConfig.timeRange.presets.to &&
+    parseDate(interactiveFiltersConfig.timeRange.presets.to);
 
   const presetFromStr = presetFrom?.toString();
   const presetToStr = presetTo?.toString();
@@ -56,7 +56,7 @@ const useSyncInteractiveFilters = (
   }, [setTimeRange, presetFromStr, presetToStr]);
 
   // Data Filters
-  const componentIds = interactiveFiltersConfig?.dataFilters.componentIds;
+  const componentIds = interactiveFiltersConfig.dataFilters.componentIds;
   const dashboardComponentIds = dashboardFilters?.dataFilters.componentIds;
   const newPotentialInteractiveDataFilters = useMemo(() => {
     if (componentIds) {
@@ -141,8 +141,9 @@ const useSyncInteractiveFilters = (
   );
 
   // Calculation
-  const calculationActive = interactiveFiltersConfig?.calculation.active;
-  const calculationType = interactiveFiltersConfig?.calculation.type;
+  const calculationActive = interactiveFiltersConfig.calculation.active;
+  const calculationType = interactiveFiltersConfig.calculation.type;
+
   useEffect(() => {
     if (calculationType) {
       setCalculationType(calculationType);

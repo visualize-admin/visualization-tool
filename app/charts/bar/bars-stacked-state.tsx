@@ -358,7 +358,7 @@ const useBarsStackedState = (
     //  When the user can toggle between absolute and relative values, we use the
     // absolute values to calculate the xScale domain, so that the xScale doesn't
     // change when the user toggles between absolute and relative values.
-    if (interactiveFiltersConfig?.calculation.active) {
+    if (interactiveFiltersConfig.calculation.active) {
       const scale = getStackedXScale(paddingData, {
         normalize: false,
         getX,
@@ -382,7 +382,7 @@ const useBarsStackedState = (
       customDomain: x.customDomain,
     });
   }, [
-    interactiveFiltersConfig?.calculation.active,
+    interactiveFiltersConfig.calculation.active,
     paddingData,
     normalize,
     getX,

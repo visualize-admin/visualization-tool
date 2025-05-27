@@ -329,12 +329,12 @@ describe("chart type switch", () => {
       measures: bathingWaterData.data.dataCubeByIri.measures as Measure[],
     });
 
-    expect(newConfig.interactiveFiltersConfig?.dataFilters.active).toEqual(
+    expect(newConfig.interactiveFiltersConfig.dataFilters.active).toEqual(
       false
     );
-    expect(
-      newConfig.interactiveFiltersConfig?.dataFilters.componentIds
-    ).toEqual([]);
+    expect(newConfig.interactiveFiltersConfig.dataFilters.componentIds).toEqual(
+      []
+    );
   });
 
   it("should not carry over not-allowed segment", () => {

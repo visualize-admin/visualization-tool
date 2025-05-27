@@ -54,7 +54,7 @@ const computeChartPadding = ({
   // with decimals have greater text length than the extremes.
   const fakeTicks = yScale.ticks(getTickNumber(height));
   const minLeftTickWidth =
-    !!interactiveFiltersConfig?.calculation.active || normalize
+    interactiveFiltersConfig.calculation.active || normalize
       ? getTextWidth("100%", { fontSize: TICK_FONT_SIZE }) + TICK_PADDING
       : 0;
   const left = Math.max(
@@ -68,7 +68,7 @@ const computeChartPadding = ({
 
   const interactiveBottomElement =
     !dashboardFilters?.timeRange.active &&
-    !!interactiveFiltersConfig?.timeRange.active;
+    interactiveFiltersConfig.timeRange.active;
 
   let bottom = isFlipped
     ? 15 // Eyeballed value
@@ -80,7 +80,7 @@ const computeChartPadding = ({
       70;
   }
 
-  const top = interactiveFiltersConfig?.calculation.active ? 24 : 0;
+  const top = interactiveFiltersConfig.calculation.active ? 24 : 0;
 
   return isFlipped
     ? {
