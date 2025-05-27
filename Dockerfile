@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:22
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
@@ -31,11 +31,11 @@ COPY package.json yarn.lock ./
 COPY app/package.json ./app/
 RUN yarn install --frozen-lockfile
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-http-header-size=65536 --max_old_space_size=2048"
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV STORYBOOK_DISABLE_TELEMETRY=1
-ENV PORT 3000
+ENV PORT=3000
 
 ENV PREVENT_SEARCH_BOTS=$PREVENT_SEARCH_BOTS
 ENV NEXT_PUBLIC_COMMIT=$COMMIT
@@ -54,6 +54,6 @@ RUN yarn build
 
 # Install only prod dependencies and start app
 RUN yarn install --frozen-lockfile --production && yarn cache clean
-CMD yarn start
+CMD ["yarn", "start"]
 
 EXPOSE 3000

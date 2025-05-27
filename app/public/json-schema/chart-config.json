@@ -17,7 +17,7 @@
               "allOf": [
                 {
                   "type": "object",
-                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) }",
+                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) }",
                   "properties": {
                     "key": {
                       "type": "string",
@@ -287,10 +287,10 @@
                     },
                     "limits": {
                       "type": "object",
-                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }",
+                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }",
                       "additionalProperties": {
                         "type": "array",
-                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)>",
+                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)>",
                         "items": {
                           "allOf": [
                             {
@@ -345,7 +345,7 @@
                             },
                             {
                               "type": "object",
-                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\") }>",
+                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>",
                               "properties": {
                                 "symbolType": {
                                   "anyOf": [
@@ -356,15 +356,65 @@
                                     {
                                       "const": "circle",
                                       "description": "\"circle\""
+                                    },
+                                    {
+                                      "const": "triangle",
+                                      "description": "\"triangle\""
                                     }
                                   ],
-                                  "description": "(\"cross\" | \"circle\")"
+                                  "description": "(\"cross\" | \"circle\" | \"triangle\")"
                                 }
                               }
                             }
                           ],
-                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)"
+                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)"
                         }
+                      }
+                    },
+                    "conversionUnitsByComponentId": {
+                      "type": "object",
+                      "description": "{ [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }",
+                      "additionalProperties": {
+                        "type": "object",
+                        "description": "{ multiplier: number, labels: { de: string, fr: string, it: string, en: string } }",
+                        "properties": {
+                          "multiplier": {
+                            "type": "number",
+                            "description": "number"
+                          },
+                          "labels": {
+                            "type": "object",
+                            "description": "{ de: string, fr: string, it: string, en: string }",
+                            "properties": {
+                              "de": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "fr": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "it": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "en": {
+                                "type": "string",
+                                "description": "string"
+                              }
+                            },
+                            "required": [
+                              "de",
+                              "fr",
+                              "it",
+                              "en"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "multiplier",
+                          "labels"
+                        ]
                       }
                     },
                     "activeField": {
@@ -384,6 +434,7 @@
                     "meta",
                     "cubes",
                     "limits",
+                    "conversionUnitsByComponentId",
                     "activeField"
                   ]
                 },
@@ -541,7 +592,7 @@
                       "allOf": [
                         {
                           "type": "object",
-                          "description": "{ x: ({ componentId: string } & Partial<{ useAbbreviations: boolean }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ imputationType: (\"none\" | \"zeros\" | \"linear\") }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) }",
+                          "description": "{ x: ({ componentId: string } & Partial<{ useAbbreviations: boolean }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ customDomain: [number, number] }> & Partial<{ imputationType: (\"none\" | \"zeros\" | \"linear\") }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) }",
                           "properties": {
                             "x": {
                               "allOf": [
@@ -613,6 +664,28 @@
                                 },
                                 {
                                   "type": "object",
+                                  "description": "Partial<{ customDomain: [number, number] }>",
+                                  "properties": {
+                                    "customDomain": {
+                                      "type": "array",
+                                      "description": "[number, number]",
+                                      "items": [
+                                        {
+                                          "type": "number",
+                                          "description": "number"
+                                        },
+                                        {
+                                          "type": "number",
+                                          "description": "number"
+                                        }
+                                      ],
+                                      "minItems": 2,
+                                      "maxItems": 2
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "object",
                                   "description": "Partial<{ imputationType: (\"none\" | \"zeros\" | \"linear\") }>",
                                   "properties": {
                                     "imputationType": {
@@ -635,7 +708,7 @@
                                   }
                                 }
                               ],
-                              "description": "(({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ imputationType: (\"none\" | \"zeros\" | \"linear\") }>)"
+                              "description": "(({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ customDomain: [number, number] }> & Partial<{ imputationType: (\"none\" | \"zeros\" | \"linear\") }>)"
                             },
                             "color": {
                               "anyOf": [
@@ -816,7 +889,7 @@
                           }
                         }
                       ],
-                      "description": "({ x: ({ componentId: string } & Partial<{ useAbbreviations: boolean }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ imputationType: (\"none\" | \"zeros\" | \"linear\") }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) } & Partial<{ segment: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }> & Partial<{ showTitle: boolean }> & { showValuesMapping: { [K in string]: boolean } }) }>)"
+                      "description": "({ x: ({ componentId: string } & Partial<{ useAbbreviations: boolean }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ customDomain: [number, number] }> & Partial<{ imputationType: (\"none\" | \"zeros\" | \"linear\") }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) } & Partial<{ segment: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }> & Partial<{ showTitle: boolean }> & { showValuesMapping: { [K in string]: boolean } }) }>)"
                     }
                   },
                   "required": [
@@ -826,13 +899,13 @@
                   ]
                 }
               ],
-              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & AreaConfig)"
+              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & AreaConfig)"
             },
             {
               "allOf": [
                 {
                   "type": "object",
-                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) }",
+                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) }",
                   "properties": {
                     "key": {
                       "type": "string",
@@ -1102,10 +1175,10 @@
                     },
                     "limits": {
                       "type": "object",
-                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }",
+                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }",
                       "additionalProperties": {
                         "type": "array",
-                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)>",
+                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)>",
                         "items": {
                           "allOf": [
                             {
@@ -1160,7 +1233,7 @@
                             },
                             {
                               "type": "object",
-                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\") }>",
+                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>",
                               "properties": {
                                 "symbolType": {
                                   "anyOf": [
@@ -1171,15 +1244,65 @@
                                     {
                                       "const": "circle",
                                       "description": "\"circle\""
+                                    },
+                                    {
+                                      "const": "triangle",
+                                      "description": "\"triangle\""
                                     }
                                   ],
-                                  "description": "(\"cross\" | \"circle\")"
+                                  "description": "(\"cross\" | \"circle\" | \"triangle\")"
                                 }
                               }
                             }
                           ],
-                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)"
+                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)"
                         }
+                      }
+                    },
+                    "conversionUnitsByComponentId": {
+                      "type": "object",
+                      "description": "{ [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }",
+                      "additionalProperties": {
+                        "type": "object",
+                        "description": "{ multiplier: number, labels: { de: string, fr: string, it: string, en: string } }",
+                        "properties": {
+                          "multiplier": {
+                            "type": "number",
+                            "description": "number"
+                          },
+                          "labels": {
+                            "type": "object",
+                            "description": "{ de: string, fr: string, it: string, en: string }",
+                            "properties": {
+                              "de": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "fr": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "it": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "en": {
+                                "type": "string",
+                                "description": "string"
+                              }
+                            },
+                            "required": [
+                              "de",
+                              "fr",
+                              "it",
+                              "en"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "multiplier",
+                          "labels"
+                        ]
                       }
                     },
                     "activeField": {
@@ -1199,6 +1322,7 @@
                     "meta",
                     "cubes",
                     "limits",
+                    "conversionUnitsByComponentId",
                     "activeField"
                   ]
                 },
@@ -1356,7 +1480,7 @@
                       "allOf": [
                         {
                           "type": "object",
-                          "description": "{ x: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ showStandardError: boolean, showConfidenceInterval: boolean }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) }",
+                          "description": "{ x: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ showStandardError: boolean, showConfidenceInterval: boolean }> & Partial<{ customDomain: [number, number] }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) }",
                           "properties": {
                             "x": {
                               "allOf": [
@@ -1494,9 +1618,31 @@
                                       "description": "boolean"
                                     }
                                   }
+                                },
+                                {
+                                  "type": "object",
+                                  "description": "Partial<{ customDomain: [number, number] }>",
+                                  "properties": {
+                                    "customDomain": {
+                                      "type": "array",
+                                      "description": "[number, number]",
+                                      "items": [
+                                        {
+                                          "type": "number",
+                                          "description": "number"
+                                        },
+                                        {
+                                          "type": "number",
+                                          "description": "number"
+                                        }
+                                      ],
+                                      "minItems": 2,
+                                      "maxItems": 2
+                                    }
+                                  }
                                 }
                               ],
-                              "description": "(({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ showStandardError: boolean, showConfidenceInterval: boolean }>)"
+                              "description": "(({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ showStandardError: boolean, showConfidenceInterval: boolean }> & Partial<{ customDomain: [number, number] }>)"
                             },
                             "color": {
                               "anyOf": [
@@ -1769,7 +1915,7 @@
                           }
                         }
                       ],
-                      "description": "({ x: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ showStandardError: boolean, showConfidenceInterval: boolean }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) } & Partial<{ segment: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }> & { type: (\"stacked\" | \"grouped\") } & Partial<{ showTitle: boolean }> & { showValuesMapping: { [K in string]: boolean } }), animation: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & { showPlayButton: boolean, type: (\"continuous\" | \"stepped\"), duration: number, dynamicScales: boolean }) }>)"
+                      "description": "({ x: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ showStandardError: boolean, showConfidenceInterval: boolean }> & Partial<{ customDomain: [number, number] }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) } & Partial<{ segment: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }> & { type: (\"stacked\" | \"grouped\") } & Partial<{ showTitle: boolean }> & { showValuesMapping: { [K in string]: boolean } }), animation: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & { showPlayButton: boolean, type: (\"continuous\" | \"stepped\"), duration: number, dynamicScales: boolean }) }>)"
                     }
                   },
                   "required": [
@@ -1779,13 +1925,13 @@
                   ]
                 }
               ],
-              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ColumnConfig)"
+              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ColumnConfig)"
             },
             {
               "allOf": [
                 {
                   "type": "object",
-                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) }",
+                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) }",
                   "properties": {
                     "key": {
                       "type": "string",
@@ -2055,10 +2201,10 @@
                     },
                     "limits": {
                       "type": "object",
-                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }",
+                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }",
                       "additionalProperties": {
                         "type": "array",
-                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)>",
+                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)>",
                         "items": {
                           "allOf": [
                             {
@@ -2113,7 +2259,7 @@
                             },
                             {
                               "type": "object",
-                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\") }>",
+                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>",
                               "properties": {
                                 "symbolType": {
                                   "anyOf": [
@@ -2124,15 +2270,65 @@
                                     {
                                       "const": "circle",
                                       "description": "\"circle\""
+                                    },
+                                    {
+                                      "const": "triangle",
+                                      "description": "\"triangle\""
                                     }
                                   ],
-                                  "description": "(\"cross\" | \"circle\")"
+                                  "description": "(\"cross\" | \"circle\" | \"triangle\")"
                                 }
                               }
                             }
                           ],
-                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)"
+                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)"
                         }
+                      }
+                    },
+                    "conversionUnitsByComponentId": {
+                      "type": "object",
+                      "description": "{ [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }",
+                      "additionalProperties": {
+                        "type": "object",
+                        "description": "{ multiplier: number, labels: { de: string, fr: string, it: string, en: string } }",
+                        "properties": {
+                          "multiplier": {
+                            "type": "number",
+                            "description": "number"
+                          },
+                          "labels": {
+                            "type": "object",
+                            "description": "{ de: string, fr: string, it: string, en: string }",
+                            "properties": {
+                              "de": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "fr": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "it": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "en": {
+                                "type": "string",
+                                "description": "string"
+                              }
+                            },
+                            "required": [
+                              "de",
+                              "fr",
+                              "it",
+                              "en"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "multiplier",
+                          "labels"
+                        ]
                       }
                     },
                     "activeField": {
@@ -2152,6 +2348,7 @@
                     "meta",
                     "cubes",
                     "limits",
+                    "conversionUnitsByComponentId",
                     "activeField"
                   ]
                 },
@@ -2309,7 +2506,7 @@
                       "allOf": [
                         {
                           "type": "object",
-                          "description": "{ x: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) }",
+                          "description": "{ x: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ customDomain: [number, number] }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) }",
                           "properties": {
                             "x": {
                               "allOf": [
@@ -2350,9 +2547,31 @@
                                       "description": "boolean"
                                     }
                                   }
+                                },
+                                {
+                                  "type": "object",
+                                  "description": "Partial<{ customDomain: [number, number] }>",
+                                  "properties": {
+                                    "customDomain": {
+                                      "type": "array",
+                                      "description": "[number, number]",
+                                      "items": [
+                                        {
+                                          "type": "number",
+                                          "description": "number"
+                                        },
+                                        {
+                                          "type": "number",
+                                          "description": "number"
+                                        }
+                                      ],
+                                      "minItems": 2,
+                                      "maxItems": 2
+                                    }
+                                  }
                                 }
                               ],
-                              "description": "(({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }>)"
+                              "description": "(({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ customDomain: [number, number] }>)"
                             },
                             "y": {
                               "allOf": [
@@ -2708,7 +2927,7 @@
                           }
                         }
                       ],
-                      "description": "({ x: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) } & Partial<{ segment: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }> & { type: (\"stacked\" | \"grouped\") } & Partial<{ showTitle: boolean }> & { showValuesMapping: { [K in string]: boolean } }), animation: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & { showPlayButton: boolean, type: (\"continuous\" | \"stepped\"), duration: number, dynamicScales: boolean }) }>)"
+                      "description": "({ x: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ customDomain: [number, number] }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) } & Partial<{ segment: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }> & { type: (\"stacked\" | \"grouped\") } & Partial<{ showTitle: boolean }> & { showValuesMapping: { [K in string]: boolean } }), animation: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & { showPlayButton: boolean, type: (\"continuous\" | \"stepped\"), duration: number, dynamicScales: boolean }) }>)"
                     }
                   },
                   "required": [
@@ -2718,13 +2937,13 @@
                   ]
                 }
               ],
-              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & BarConfig)"
+              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & BarConfig)"
             },
             {
               "allOf": [
                 {
                   "type": "object",
-                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) }",
+                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) }",
                   "properties": {
                     "key": {
                       "type": "string",
@@ -2994,10 +3213,10 @@
                     },
                     "limits": {
                       "type": "object",
-                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }",
+                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }",
                       "additionalProperties": {
                         "type": "array",
-                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)>",
+                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)>",
                         "items": {
                           "allOf": [
                             {
@@ -3052,7 +3271,7 @@
                             },
                             {
                               "type": "object",
-                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\") }>",
+                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>",
                               "properties": {
                                 "symbolType": {
                                   "anyOf": [
@@ -3063,15 +3282,65 @@
                                     {
                                       "const": "circle",
                                       "description": "\"circle\""
+                                    },
+                                    {
+                                      "const": "triangle",
+                                      "description": "\"triangle\""
                                     }
                                   ],
-                                  "description": "(\"cross\" | \"circle\")"
+                                  "description": "(\"cross\" | \"circle\" | \"triangle\")"
                                 }
                               }
                             }
                           ],
-                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)"
+                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)"
                         }
+                      }
+                    },
+                    "conversionUnitsByComponentId": {
+                      "type": "object",
+                      "description": "{ [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }",
+                      "additionalProperties": {
+                        "type": "object",
+                        "description": "{ multiplier: number, labels: { de: string, fr: string, it: string, en: string } }",
+                        "properties": {
+                          "multiplier": {
+                            "type": "number",
+                            "description": "number"
+                          },
+                          "labels": {
+                            "type": "object",
+                            "description": "{ de: string, fr: string, it: string, en: string }",
+                            "properties": {
+                              "de": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "fr": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "it": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "en": {
+                                "type": "string",
+                                "description": "string"
+                              }
+                            },
+                            "required": [
+                              "de",
+                              "fr",
+                              "it",
+                              "en"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "multiplier",
+                          "labels"
+                        ]
                       }
                     },
                     "activeField": {
@@ -3091,6 +3360,7 @@
                     "meta",
                     "cubes",
                     "limits",
+                    "conversionUnitsByComponentId",
                     "activeField"
                   ]
                 },
@@ -3248,7 +3518,7 @@
                       "allOf": [
                         {
                           "type": "object",
-                          "description": "{ x: ({ componentId: string } & Partial<{ useAbbreviations: boolean }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ showStandardError: boolean, showConfidenceInterval: boolean }> & Partial<{ showDots: boolean, showDotsSize: (\"Small\" | \"Medium\" | \"Large\") }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) }",
+                          "description": "{ x: ({ componentId: string } & Partial<{ useAbbreviations: boolean }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ showStandardError: boolean, showConfidenceInterval: boolean }> & Partial<{ customDomain: [number, number] }> & Partial<{ showDots: boolean, showDotsSize: (\"Small\" | \"Medium\" | \"Large\") }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) }",
                           "properties": {
                             "x": {
                               "allOf": [
@@ -3334,6 +3604,28 @@
                                 },
                                 {
                                   "type": "object",
+                                  "description": "Partial<{ customDomain: [number, number] }>",
+                                  "properties": {
+                                    "customDomain": {
+                                      "type": "array",
+                                      "description": "[number, number]",
+                                      "items": [
+                                        {
+                                          "type": "number",
+                                          "description": "number"
+                                        },
+                                        {
+                                          "type": "number",
+                                          "description": "number"
+                                        }
+                                      ],
+                                      "minItems": 2,
+                                      "maxItems": 2
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "object",
                                   "description": "Partial<{ showDots: boolean, showDotsSize: (\"Small\" | \"Medium\" | \"Large\") }>",
                                   "properties": {
                                     "showDots": {
@@ -3360,7 +3652,7 @@
                                   }
                                 }
                               ],
-                              "description": "(({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ showStandardError: boolean, showConfidenceInterval: boolean }> & Partial<{ showDots: boolean, showDotsSize: (\"Small\" | \"Medium\" | \"Large\") }>)"
+                              "description": "(({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ showStandardError: boolean, showConfidenceInterval: boolean }> & Partial<{ customDomain: [number, number] }> & Partial<{ showDots: boolean, showDotsSize: (\"Small\" | \"Medium\" | \"Large\") }>)"
                             },
                             "color": {
                               "anyOf": [
@@ -3541,7 +3833,7 @@
                           }
                         }
                       ],
-                      "description": "({ x: ({ componentId: string } & Partial<{ useAbbreviations: boolean }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ showStandardError: boolean, showConfidenceInterval: boolean }> & Partial<{ showDots: boolean, showDotsSize: (\"Small\" | \"Medium\" | \"Large\") }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) } & Partial<{ segment: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }> & Partial<{ showTitle: boolean }> & { showValuesMapping: { [K in string]: boolean } }) }>)"
+                      "description": "({ x: ({ componentId: string } & Partial<{ useAbbreviations: boolean }>), y: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ showValues: boolean }> & Partial<{ showStandardError: boolean, showConfidenceInterval: boolean }> & Partial<{ customDomain: [number, number] }> & Partial<{ showDots: boolean, showDotsSize: (\"Small\" | \"Medium\" | \"Large\") }>), color: ({ type: \"segment\", paletteId: string, colorMapping: { [K in string]: string } } | { type: \"single\", paletteId: string, color: string }) } & Partial<{ segment: (({ componentId: string } & Partial<{ useAbbreviations: boolean }>) & Partial<{ sorting: { sortingType: (\"byDimensionLabel\" | \"byMeasure\" | \"byTotalSize\" | \"byAuto\"), sortingOrder: (\"asc\" | \"desc\") } }> & Partial<{ showTitle: boolean }> & { showValuesMapping: { [K in string]: boolean } }) }>)"
                     }
                   },
                   "required": [
@@ -3551,13 +3843,13 @@
                   ]
                 }
               ],
-              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & LineConfig)"
+              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & LineConfig)"
             },
             {
               "allOf": [
                 {
                   "type": "object",
-                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) }",
+                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) }",
                   "properties": {
                     "key": {
                       "type": "string",
@@ -3827,10 +4119,10 @@
                     },
                     "limits": {
                       "type": "object",
-                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }",
+                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }",
                       "additionalProperties": {
                         "type": "array",
-                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)>",
+                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)>",
                         "items": {
                           "allOf": [
                             {
@@ -3885,7 +4177,7 @@
                             },
                             {
                               "type": "object",
-                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\") }>",
+                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>",
                               "properties": {
                                 "symbolType": {
                                   "anyOf": [
@@ -3896,15 +4188,65 @@
                                     {
                                       "const": "circle",
                                       "description": "\"circle\""
+                                    },
+                                    {
+                                      "const": "triangle",
+                                      "description": "\"triangle\""
                                     }
                                   ],
-                                  "description": "(\"cross\" | \"circle\")"
+                                  "description": "(\"cross\" | \"circle\" | \"triangle\")"
                                 }
                               }
                             }
                           ],
-                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)"
+                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)"
                         }
+                      }
+                    },
+                    "conversionUnitsByComponentId": {
+                      "type": "object",
+                      "description": "{ [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }",
+                      "additionalProperties": {
+                        "type": "object",
+                        "description": "{ multiplier: number, labels: { de: string, fr: string, it: string, en: string } }",
+                        "properties": {
+                          "multiplier": {
+                            "type": "number",
+                            "description": "number"
+                          },
+                          "labels": {
+                            "type": "object",
+                            "description": "{ de: string, fr: string, it: string, en: string }",
+                            "properties": {
+                              "de": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "fr": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "it": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "en": {
+                                "type": "string",
+                                "description": "string"
+                              }
+                            },
+                            "required": [
+                              "de",
+                              "fr",
+                              "it",
+                              "en"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "multiplier",
+                          "labels"
+                        ]
                       }
                     },
                     "activeField": {
@@ -3924,6 +4266,7 @@
                     "meta",
                     "cubes",
                     "limits",
+                    "conversionUnitsByComponentId",
                     "activeField"
                   ]
                 },
@@ -4608,7 +4951,7 @@
                     },
                     "baseLayer": {
                       "type": "object",
-                      "description": "{ show: boolean, locked: boolean, bbox: ([[number, number], [number, number]] | undefined), customLayers: Array<(({ type: \"wms\" } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean }) | ({ type: \"wmts\", url: string } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean }))> }",
+                      "description": "{ show: boolean, locked: boolean, bbox: ([[number, number], [number, number]] | undefined), customLayers: Array<(({ type: \"wms\", endpoint: string } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean, endpoint: (string | undefined) }) | ({ type: \"wmts\", url: string } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean, endpoint: (string | undefined) }))> }",
                       "properties": {
                         "show": {
                           "type": "boolean",
@@ -4666,27 +5009,32 @@
                         },
                         "customLayers": {
                           "type": "array",
-                          "description": "Array<(({ type: \"wms\" } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean }) | ({ type: \"wmts\", url: string } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean }))>",
+                          "description": "Array<(({ type: \"wms\", endpoint: string } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean, endpoint: (string | undefined) }) | ({ type: \"wmts\", url: string } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean, endpoint: (string | undefined) }))>",
                           "items": {
                             "anyOf": [
                               {
                                 "allOf": [
                                   {
                                     "type": "object",
-                                    "description": "{ type: \"wms\" }",
+                                    "description": "{ type: \"wms\", endpoint: string }",
                                     "properties": {
                                       "type": {
                                         "const": "wms",
                                         "description": "\"wms\""
+                                      },
+                                      "endpoint": {
+                                        "type": "string",
+                                        "description": "string"
                                       }
                                     },
                                     "required": [
-                                      "type"
+                                      "type",
+                                      "endpoint"
                                     ]
                                   },
                                   {
                                     "type": "object",
-                                    "description": "{ id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean }",
+                                    "description": "{ id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean, endpoint: (string | undefined) }",
                                     "properties": {
                                       "id": {
                                         "type": "string",
@@ -4699,16 +5047,27 @@
                                       "syncTemporalFilters": {
                                         "type": "boolean",
                                         "description": "boolean"
+                                      },
+                                      "endpoint": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string",
+                                            "description": "string"
+                                          },
+                                          {}
+                                        ],
+                                        "description": "(string | undefined)"
                                       }
                                     },
                                     "required": [
                                       "id",
                                       "isBehindAreaLayer",
-                                      "syncTemporalFilters"
+                                      "syncTemporalFilters",
+                                      "endpoint"
                                     ]
                                   }
                                 ],
-                                "description": "({ type: \"wms\" } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean })"
+                                "description": "({ type: \"wms\", endpoint: string } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean, endpoint: (string | undefined) })"
                               },
                               {
                                 "allOf": [
@@ -4732,7 +5091,7 @@
                                   },
                                   {
                                     "type": "object",
-                                    "description": "{ id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean }",
+                                    "description": "{ id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean, endpoint: (string | undefined) }",
                                     "properties": {
                                       "id": {
                                         "type": "string",
@@ -4745,19 +5104,30 @@
                                       "syncTemporalFilters": {
                                         "type": "boolean",
                                         "description": "boolean"
+                                      },
+                                      "endpoint": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string",
+                                            "description": "string"
+                                          },
+                                          {}
+                                        ],
+                                        "description": "(string | undefined)"
                                       }
                                     },
                                     "required": [
                                       "id",
                                       "isBehindAreaLayer",
-                                      "syncTemporalFilters"
+                                      "syncTemporalFilters",
+                                      "endpoint"
                                     ]
                                   }
                                 ],
-                                "description": "({ type: \"wmts\", url: string } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean })"
+                                "description": "({ type: \"wmts\", url: string } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean, endpoint: (string | undefined) })"
                               }
                             ],
-                            "description": "(({ type: \"wms\" } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean }) | ({ type: \"wmts\", url: string } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean }))"
+                            "description": "(({ type: \"wms\", endpoint: string } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean, endpoint: (string | undefined) }) | ({ type: \"wmts\", url: string } & { id: string, isBehindAreaLayer: boolean, syncTemporalFilters: boolean, endpoint: (string | undefined) }))"
                           }
                         }
                       },
@@ -4777,13 +5147,13 @@
                   ]
                 }
               ],
-              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & MapConfig)"
+              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & MapConfig)"
             },
             {
               "allOf": [
                 {
                   "type": "object",
-                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) }",
+                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) }",
                   "properties": {
                     "key": {
                       "type": "string",
@@ -5053,10 +5423,10 @@
                     },
                     "limits": {
                       "type": "object",
-                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }",
+                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }",
                       "additionalProperties": {
                         "type": "array",
-                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)>",
+                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)>",
                         "items": {
                           "allOf": [
                             {
@@ -5111,7 +5481,7 @@
                             },
                             {
                               "type": "object",
-                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\") }>",
+                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>",
                               "properties": {
                                 "symbolType": {
                                   "anyOf": [
@@ -5122,15 +5492,65 @@
                                     {
                                       "const": "circle",
                                       "description": "\"circle\""
+                                    },
+                                    {
+                                      "const": "triangle",
+                                      "description": "\"triangle\""
                                     }
                                   ],
-                                  "description": "(\"cross\" | \"circle\")"
+                                  "description": "(\"cross\" | \"circle\" | \"triangle\")"
                                 }
                               }
                             }
                           ],
-                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)"
+                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)"
                         }
+                      }
+                    },
+                    "conversionUnitsByComponentId": {
+                      "type": "object",
+                      "description": "{ [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }",
+                      "additionalProperties": {
+                        "type": "object",
+                        "description": "{ multiplier: number, labels: { de: string, fr: string, it: string, en: string } }",
+                        "properties": {
+                          "multiplier": {
+                            "type": "number",
+                            "description": "number"
+                          },
+                          "labels": {
+                            "type": "object",
+                            "description": "{ de: string, fr: string, it: string, en: string }",
+                            "properties": {
+                              "de": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "fr": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "it": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "en": {
+                                "type": "string",
+                                "description": "string"
+                              }
+                            },
+                            "required": [
+                              "de",
+                              "fr",
+                              "it",
+                              "en"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "multiplier",
+                          "labels"
+                        ]
                       }
                     },
                     "activeField": {
@@ -5150,6 +5570,7 @@
                     "meta",
                     "cubes",
                     "limits",
+                    "conversionUnitsByComponentId",
                     "activeField"
                   ]
                 },
@@ -5583,13 +6004,13 @@
                   ]
                 }
               ],
-              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & PieConfig)"
+              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & PieConfig)"
             },
             {
               "allOf": [
                 {
                   "type": "object",
-                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) }",
+                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) }",
                   "properties": {
                     "key": {
                       "type": "string",
@@ -5859,10 +6280,10 @@
                     },
                     "limits": {
                       "type": "object",
-                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }",
+                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }",
                       "additionalProperties": {
                         "type": "array",
-                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)>",
+                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)>",
                         "items": {
                           "allOf": [
                             {
@@ -5917,7 +6338,7 @@
                             },
                             {
                               "type": "object",
-                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\") }>",
+                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>",
                               "properties": {
                                 "symbolType": {
                                   "anyOf": [
@@ -5928,15 +6349,65 @@
                                     {
                                       "const": "circle",
                                       "description": "\"circle\""
+                                    },
+                                    {
+                                      "const": "triangle",
+                                      "description": "\"triangle\""
                                     }
                                   ],
-                                  "description": "(\"cross\" | \"circle\")"
+                                  "description": "(\"cross\" | \"circle\" | \"triangle\")"
                                 }
                               }
                             }
                           ],
-                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)"
+                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)"
                         }
+                      }
+                    },
+                    "conversionUnitsByComponentId": {
+                      "type": "object",
+                      "description": "{ [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }",
+                      "additionalProperties": {
+                        "type": "object",
+                        "description": "{ multiplier: number, labels: { de: string, fr: string, it: string, en: string } }",
+                        "properties": {
+                          "multiplier": {
+                            "type": "number",
+                            "description": "number"
+                          },
+                          "labels": {
+                            "type": "object",
+                            "description": "{ de: string, fr: string, it: string, en: string }",
+                            "properties": {
+                              "de": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "fr": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "it": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "en": {
+                                "type": "string",
+                                "description": "string"
+                              }
+                            },
+                            "required": [
+                              "de",
+                              "fr",
+                              "it",
+                              "en"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "multiplier",
+                          "labels"
+                        ]
                       }
                     },
                     "activeField": {
@@ -5956,6 +6427,7 @@
                     "meta",
                     "cubes",
                     "limits",
+                    "conversionUnitsByComponentId",
                     "activeField"
                   ]
                 },
@@ -6380,13 +6852,13 @@
                   ]
                 }
               ],
-              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ScatterPlotConfig)"
+              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ScatterPlotConfig)"
             },
             {
               "allOf": [
                 {
                   "type": "object",
-                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) }",
+                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) }",
                   "properties": {
                     "key": {
                       "type": "string",
@@ -6656,10 +7128,10 @@
                     },
                     "limits": {
                       "type": "object",
-                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }",
+                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }",
                       "additionalProperties": {
                         "type": "array",
-                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)>",
+                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)>",
                         "items": {
                           "allOf": [
                             {
@@ -6714,7 +7186,7 @@
                             },
                             {
                               "type": "object",
-                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\") }>",
+                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>",
                               "properties": {
                                 "symbolType": {
                                   "anyOf": [
@@ -6725,15 +7197,65 @@
                                     {
                                       "const": "circle",
                                       "description": "\"circle\""
+                                    },
+                                    {
+                                      "const": "triangle",
+                                      "description": "\"triangle\""
                                     }
                                   ],
-                                  "description": "(\"cross\" | \"circle\")"
+                                  "description": "(\"cross\" | \"circle\" | \"triangle\")"
                                 }
                               }
                             }
                           ],
-                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)"
+                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)"
                         }
+                      }
+                    },
+                    "conversionUnitsByComponentId": {
+                      "type": "object",
+                      "description": "{ [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }",
+                      "additionalProperties": {
+                        "type": "object",
+                        "description": "{ multiplier: number, labels: { de: string, fr: string, it: string, en: string } }",
+                        "properties": {
+                          "multiplier": {
+                            "type": "number",
+                            "description": "number"
+                          },
+                          "labels": {
+                            "type": "object",
+                            "description": "{ de: string, fr: string, it: string, en: string }",
+                            "properties": {
+                              "de": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "fr": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "it": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "en": {
+                                "type": "string",
+                                "description": "string"
+                              }
+                            },
+                            "required": [
+                              "de",
+                              "fr",
+                              "it",
+                              "en"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "multiplier",
+                          "labels"
+                        ]
                       }
                     },
                     "activeField": {
@@ -6753,6 +7275,7 @@
                     "meta",
                     "cubes",
                     "limits",
+                    "conversionUnitsByComponentId",
                     "activeField"
                   ]
                 },
@@ -7176,10 +7699,10 @@
                   ]
                 }
               ],
-              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & TableConfig)"
+              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & TableConfig)"
             }
           ],
-          "description": "(({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & AreaConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ColumnConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & BarConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & LineConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & MapConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & PieConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ScatterPlotConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & TableConfig))"
+          "description": "(({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & AreaConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ColumnConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & BarConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & LineConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & MapConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & PieConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ScatterPlotConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & TableConfig))"
         },
         {
           "anyOf": [
@@ -7187,7 +7710,7 @@
               "allOf": [
                 {
                   "type": "object",
-                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) }",
+                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) }",
                   "properties": {
                     "key": {
                       "type": "string",
@@ -7457,10 +7980,10 @@
                     },
                     "limits": {
                       "type": "object",
-                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }",
+                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }",
                       "additionalProperties": {
                         "type": "array",
-                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)>",
+                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)>",
                         "items": {
                           "allOf": [
                             {
@@ -7515,7 +8038,7 @@
                             },
                             {
                               "type": "object",
-                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\") }>",
+                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>",
                               "properties": {
                                 "symbolType": {
                                   "anyOf": [
@@ -7526,15 +8049,65 @@
                                     {
                                       "const": "circle",
                                       "description": "\"circle\""
+                                    },
+                                    {
+                                      "const": "triangle",
+                                      "description": "\"triangle\""
                                     }
                                   ],
-                                  "description": "(\"cross\" | \"circle\")"
+                                  "description": "(\"cross\" | \"circle\" | \"triangle\")"
                                 }
                               }
                             }
                           ],
-                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)"
+                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)"
                         }
+                      }
+                    },
+                    "conversionUnitsByComponentId": {
+                      "type": "object",
+                      "description": "{ [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }",
+                      "additionalProperties": {
+                        "type": "object",
+                        "description": "{ multiplier: number, labels: { de: string, fr: string, it: string, en: string } }",
+                        "properties": {
+                          "multiplier": {
+                            "type": "number",
+                            "description": "number"
+                          },
+                          "labels": {
+                            "type": "object",
+                            "description": "{ de: string, fr: string, it: string, en: string }",
+                            "properties": {
+                              "de": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "fr": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "it": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "en": {
+                                "type": "string",
+                                "description": "string"
+                              }
+                            },
+                            "required": [
+                              "de",
+                              "fr",
+                              "it",
+                              "en"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "multiplier",
+                          "labels"
+                        ]
                       }
                     },
                     "activeField": {
@@ -7554,6 +8127,7 @@
                     "meta",
                     "cubes",
                     "limits",
+                    "conversionUnitsByComponentId",
                     "activeField"
                   ]
                 },
@@ -7798,13 +8372,13 @@
                   ]
                 }
               ],
-              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ComboLineSingleConfig)"
+              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ComboLineSingleConfig)"
             },
             {
               "allOf": [
                 {
                   "type": "object",
-                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) }",
+                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) }",
                   "properties": {
                     "key": {
                       "type": "string",
@@ -8074,10 +8648,10 @@
                     },
                     "limits": {
                       "type": "object",
-                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }",
+                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }",
                       "additionalProperties": {
                         "type": "array",
-                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)>",
+                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)>",
                         "items": {
                           "allOf": [
                             {
@@ -8132,7 +8706,7 @@
                             },
                             {
                               "type": "object",
-                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\") }>",
+                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>",
                               "properties": {
                                 "symbolType": {
                                   "anyOf": [
@@ -8143,15 +8717,65 @@
                                     {
                                       "const": "circle",
                                       "description": "\"circle\""
+                                    },
+                                    {
+                                      "const": "triangle",
+                                      "description": "\"triangle\""
                                     }
                                   ],
-                                  "description": "(\"cross\" | \"circle\")"
+                                  "description": "(\"cross\" | \"circle\" | \"triangle\")"
                                 }
                               }
                             }
                           ],
-                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)"
+                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)"
                         }
+                      }
+                    },
+                    "conversionUnitsByComponentId": {
+                      "type": "object",
+                      "description": "{ [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }",
+                      "additionalProperties": {
+                        "type": "object",
+                        "description": "{ multiplier: number, labels: { de: string, fr: string, it: string, en: string } }",
+                        "properties": {
+                          "multiplier": {
+                            "type": "number",
+                            "description": "number"
+                          },
+                          "labels": {
+                            "type": "object",
+                            "description": "{ de: string, fr: string, it: string, en: string }",
+                            "properties": {
+                              "de": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "fr": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "it": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "en": {
+                                "type": "string",
+                                "description": "string"
+                              }
+                            },
+                            "required": [
+                              "de",
+                              "fr",
+                              "it",
+                              "en"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "multiplier",
+                          "labels"
+                        ]
                       }
                     },
                     "activeField": {
@@ -8171,6 +8795,7 @@
                     "meta",
                     "cubes",
                     "limits",
+                    "conversionUnitsByComponentId",
                     "activeField"
                   ]
                 },
@@ -8416,13 +9041,13 @@
                   ]
                 }
               ],
-              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ComboLineDualConfig)"
+              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ComboLineDualConfig)"
             },
             {
               "allOf": [
                 {
                   "type": "object",
-                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) }",
+                  "description": "{ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) }",
                   "properties": {
                     "key": {
                       "type": "string",
@@ -8692,10 +9317,10 @@
                     },
                     "limits": {
                       "type": "object",
-                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }",
+                      "description": "{ [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }",
                       "additionalProperties": {
                         "type": "array",
-                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)>",
+                        "description": "Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)>",
                         "items": {
                           "allOf": [
                             {
@@ -8750,7 +9375,7 @@
                             },
                             {
                               "type": "object",
-                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\") }>",
+                              "description": "Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>",
                               "properties": {
                                 "symbolType": {
                                   "anyOf": [
@@ -8761,15 +9386,65 @@
                                     {
                                       "const": "circle",
                                       "description": "\"circle\""
+                                    },
+                                    {
+                                      "const": "triangle",
+                                      "description": "\"triangle\""
                                     }
                                   ],
-                                  "description": "(\"cross\" | \"circle\")"
+                                  "description": "(\"cross\" | \"circle\" | \"triangle\")"
                                 }
                               }
                             }
                           ],
-                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)"
+                          "description": "({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)"
                         }
+                      }
+                    },
+                    "conversionUnitsByComponentId": {
+                      "type": "object",
+                      "description": "{ [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }",
+                      "additionalProperties": {
+                        "type": "object",
+                        "description": "{ multiplier: number, labels: { de: string, fr: string, it: string, en: string } }",
+                        "properties": {
+                          "multiplier": {
+                            "type": "number",
+                            "description": "number"
+                          },
+                          "labels": {
+                            "type": "object",
+                            "description": "{ de: string, fr: string, it: string, en: string }",
+                            "properties": {
+                              "de": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "fr": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "it": {
+                                "type": "string",
+                                "description": "string"
+                              },
+                              "en": {
+                                "type": "string",
+                                "description": "string"
+                              }
+                            },
+                            "required": [
+                              "de",
+                              "fr",
+                              "it",
+                              "en"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "multiplier",
+                          "labels"
+                        ]
                       }
                     },
                     "activeField": {
@@ -8789,6 +9464,7 @@
                     "meta",
                     "cubes",
                     "limits",
+                    "conversionUnitsByComponentId",
                     "activeField"
                   ]
                 },
@@ -9048,13 +9724,13 @@
                   ]
                 }
               ],
-              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ComboLineColumnConfig)"
+              "description": "({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ComboLineColumnConfig)"
             }
           ],
-          "description": "(({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ComboLineSingleConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ComboLineDualConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ComboLineColumnConfig))"
+          "description": "(({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ComboLineSingleConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ComboLineDualConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ComboLineColumnConfig))"
         }
       ],
-      "description": "((({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & AreaConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ColumnConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & BarConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & LineConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & MapConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & PieConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ScatterPlotConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & TableConfig)) | (({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ComboLineSingleConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ComboLineDualConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\") }>)> }, activeField: (string | undefined) } & ComboLineColumnConfig)))"
+      "description": "((({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & AreaConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ColumnConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & BarConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & LineConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & MapConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & PieConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ScatterPlotConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & TableConfig)) | (({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ComboLineSingleConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ComboLineDualConfig) | ({ key: string, version: string, meta: { title: { de: string, fr: string, it: string, en: string }, description: { de: string, fr: string, it: string, en: string }, label: { de: string, fr: string, it: string, en: string } }, cubes: Array<({ iri: string, filters: Filters } & Partial<{ joinBy: Array<string> }>)>, limits: { [K in string]: Array<({ related: Array<{ dimensionId: string, value: string }>, color: string, lineType: (\"dashed\" | \"solid\") } & Partial<{ symbolType: (\"cross\" | \"circle\" | \"triangle\") }>)> }, conversionUnitsByComponentId: { [K in string]: { multiplier: number, labels: { de: string, fr: string, it: string, en: string } } }, activeField: (string | undefined) } & ComboLineColumnConfig)))"
     }
   }
 }

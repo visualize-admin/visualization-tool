@@ -28,6 +28,7 @@ You can also check the
   - Header of data preview table is now sticky
   - Data preview table should now be aligned with the design
 - Maintenance
+  - Updated Node.js to 22
   - Split the chart options selector into multiple files
   - Improved the CI / CD implementation by aligning the names better with the
     design file
