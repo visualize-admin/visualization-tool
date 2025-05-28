@@ -260,6 +260,7 @@ const AddTableSortingOption = ({
   return (
     <Select
       id="add-tablesorting"
+      size="sm"
       value="-"
       options={options}
       sortOptions={false}
@@ -328,6 +329,7 @@ const ChangeTableSortingOption = ({
   return (
     <Select
       id={`change-sorting-option-${index}`}
+      size="sm"
       value={componentId}
       options={options}
       label={t({ id: "controls.sorting.sortBy", message: `Sort by` })}
