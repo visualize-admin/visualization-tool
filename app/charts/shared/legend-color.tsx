@@ -461,7 +461,12 @@ const LegendIcon = ({
   }
 
   return (
-    <svg width={size} height={size} viewBox="0 0 1 1">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 1 1"
+      style={{ minWidth: size, minHeight: size }}
+    >
       {node}
     </svg>
   );
@@ -488,10 +493,13 @@ export const LegendItem = ({
   disabled?: boolean;
   smaller?: boolean;
 }) => {
-  const labelNode = smaller ? (
-    <Typography variant="caption">{label}</Typography>
-  ) : (
-    <Typography variant="body3">{label}</Typography>
+  const labelNode = (
+    <Typography
+      variant={smaller ? "caption" : "body3"}
+      style={{ wordBreak: "break-word" }}
+    >
+      {label}
+    </Typography>
   );
 
   return interactive && onToggle ? (
