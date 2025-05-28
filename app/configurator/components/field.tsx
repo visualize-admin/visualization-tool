@@ -852,10 +852,11 @@ export const ColorPickerField = ({
 
   return (
     <Flex
-      style={{
+      sx={{
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
+        gap: 2,
       }}
     >
       <LegendItem label={label} color={color} symbol={symbol} />

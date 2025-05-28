@@ -17,15 +17,14 @@ import {
   useState,
 } from "react";
 
-import { SearchCubeResultOrder } from "@/graphql/query-hooks";
-import { BrowseParams } from "@/pages/browse";
-import { useEvent } from "@/utils/use-event";
-
 import {
   BrowseFilter,
   getFiltersFromParams,
   getParamsFromFilters,
-} from "./filters";
+} from "@/browser/filters";
+import { SearchCubeResultOrder } from "@/graphql/query-hooks";
+import { BrowseParams } from "@/pages/browse";
+import { useEvent } from "@/utils/use-event";
 
 export const getBrowseParamsFromQuery = (
   query: Router["query"]
