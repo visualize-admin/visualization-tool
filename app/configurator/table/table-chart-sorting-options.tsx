@@ -232,7 +232,7 @@ const AddTableSortingOption = ({
       value: "-",
       label: t({
         id: "controls.sorting.selectDimension",
-        message: `Select a dimension …`,
+        message: "Select a dimension...",
       }),
       disabled: true,
     },

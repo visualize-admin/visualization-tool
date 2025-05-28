@@ -1382,7 +1382,7 @@ msgstr "Supprimer la dimension de tri"
 
 #: app/configurator/table/table-chart-sorting-options.tsx
 msgid "controls.sorting.selectDimension"
-msgstr "Sélectionner une dimension…"
+msgstr "Sélectionner une dimension..."
 
 #: app/configurator/components/field-i18n.ts
 #: app/configurator/table/table-chart-sorting-options.tsx

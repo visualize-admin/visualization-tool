@@ -1382,7 +1382,7 @@ msgstr "Rimuovi l'ordinamento"
 
 #: app/configurator/table/table-chart-sorting-options.tsx
 msgid "controls.sorting.selectDimension"
-msgstr "Seleziona una dimensione ..."
+msgstr "Seleziona una dimensione..."
 
 #: app/configurator/components/field-i18n.ts
 #: app/configurator/table/table-chart-sorting-options.tsx
