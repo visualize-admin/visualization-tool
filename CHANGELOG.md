@@ -16,6 +16,11 @@ You can also check the
   - Improved UX of interacting with conversion units multiplier input
 - Fixes
   - Fixed an infinite render loop when adding a custom map layer
+- Styles
+  - Fixed some smaller UI inconsistencies, mostly in table charts
+- Maintenance
+  - Consolidated file names, to use kebab-case everywhere
+  - Simplified exports and imports, to prefer named exports over default exports
 
 # 5.8.1 - 2025-05-27
 
