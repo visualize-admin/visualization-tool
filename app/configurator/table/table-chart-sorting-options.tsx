@@ -44,7 +44,6 @@ import useEvent from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   sortingItemContainer: {
-    backgroundColor: theme.palette.grey[100],
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
     paddingLeft: theme.spacing(4),
@@ -60,7 +59,6 @@ const useStyles = makeStyles<Theme>((theme) => ({
     },
   },
   selectWrapper: {
-    color: theme.palette.grey[800],
     lineHeight: "1rem",
     textAlign: "left",
     marginBottom: theme.spacing(4),
