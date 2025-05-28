@@ -10,7 +10,7 @@ import {
 } from "@/utils/chart-config/api";
 
 export const createPaletteForUser = async (
-  data: CreateCustomColorPalette & { user_id?: number }
+  data: CreateCustomColorPalette & { user_id: number }
 ): Promise<CustomPaletteType> => {
   const palette = await prisma.palette.create({
     data: {
@@ -28,9 +28,11 @@ export const createPaletteForUser = async (
   };
 };
 
-export const getPalettesForUser = async (
-  user_id?: number
-): Promise<CustomPaletteType[]> => {
+export const getPalettesForUser = async ({
+  user_id,
+}: {
+  user_id: number;
+}): Promise<CustomPaletteType[]> => {
   const palettes = await prisma.palette.findMany({
     where: {
       user_id,

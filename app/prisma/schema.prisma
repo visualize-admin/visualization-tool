@@ -75,8 +75,8 @@ model Palette {
   created_at DateTime     @default(now()) @db.Timestamp(6)
   updated_at DateTime     @default(now()) @db.Timestamp(6)
   
-  user       User?        @relation(fields: [user_id], references: [id])
-  user_id    Int?
+  user       User         @relation(fields: [user_id], references: [id])
+  user_id    Int
 
   @@map("palettes")
   @@unique([name, user_id])
