@@ -13,6 +13,7 @@ import { createId } from "../create-id";
 import type apiConfig from "../../pages/api/config/[key]";
 import type apiConfigCreate from "../../pages/api/config-create";
 import type apiConfigUpdate from "../../pages/api/config-update";
+import type apiUserColorPalette from "../../pages/api/user/color-palette";
 
 export type CreateCustomColorPalette = Omit<CustomPaletteType, "paletteId">;
 export type UpdateCustomColorPalette = Partial<
@@ -112,7 +113,7 @@ export const fetchChartConfigs = async () => {
 export const createCustomColorPalette = async (
   options: CreateCustomColorPalette
 ) => {
-  return (await apiFetch<InferAPIResponse<typeof apiConfigCreate, "POST">>(
+  return (await apiFetch<InferAPIResponse<typeof apiUserColorPalette, "POST">>(
     "/api/user/color-palette",
     {
       method: "POST",
@@ -124,7 +125,7 @@ export const createCustomColorPalette = async (
 export const getCustomColorPalettes = async (): Promise<
   CustomPaletteType[]
 > => {
-  return (await apiFetch<InferAPIResponse<typeof apiConfigCreate, "GET">>(
+  return (await apiFetch<InferAPIResponse<typeof apiUserColorPalette, "GET">>(
     "/api/user/color-palette",
     {
       method: "GET",
@@ -135,7 +136,7 @@ export const getCustomColorPalettes = async (): Promise<
 export const deleteCustomColorPalette = async (
   options: DeleteCustomColorPalette
 ) => {
-  await apiFetch<InferAPIResponse<typeof apiConfigCreate, "DELETE">>(
+  await apiFetch<InferAPIResponse<typeof apiUserColorPalette, "DELETE">>(
     "/api/user/color-palette",
     {
       method: "DELETE",
@@ -147,7 +148,7 @@ export const deleteCustomColorPalette = async (
 export const updateCustomColorPalette = async (
   options: UpdateCustomColorPalette
 ) => {
-  await apiFetch<InferAPIResponse<typeof apiConfigCreate, "PUT">>(
+  await apiFetch<InferAPIResponse<typeof apiUserColorPalette, "PUT">>(
     "/api/user/color-palette",
     {
       method: "PUT",
