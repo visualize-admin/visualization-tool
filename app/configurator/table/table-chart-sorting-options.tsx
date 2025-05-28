@@ -17,7 +17,7 @@ import {
 } from "react-beautiful-dnd";
 
 import { Radio, RadioGroup, Select } from "@/components/form";
-import VisuallyHidden from "@/components/visually-hidden";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import {
   ConfiguratorStateConfiguringChart,
   TableConfig,
@@ -40,7 +40,7 @@ import {
 } from "@/configurator/table/table-config-state";
 import { Dimension, isNumericalMeasure, Measure } from "@/domain/data";
 import { Icon } from "@/icons";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   sortingItemContainer: {

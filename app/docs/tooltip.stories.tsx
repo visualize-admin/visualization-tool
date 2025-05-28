@@ -11,8 +11,9 @@ import {
   TooltipMultiple,
   TooltipSingle,
 } from "@/charts/shared/interaction/tooltip-content";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { InfoIconTooltip as InfoIconTooltipComponent } from "@/components/info-icon-tooltip";
+import { ReactSpecimen } from "@/docs/catalog";
 import {
   dimensions,
   fields,
@@ -22,8 +23,6 @@ import {
 } from "@/docs/fixtures";
 import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
 import { CHART_CONFIG_VERSION } from "@/utils/chart-config/constants";
-
-import { ReactSpecimen } from "./catalog";
 
 const meta: Meta = {
   title: "components / Tooltip",

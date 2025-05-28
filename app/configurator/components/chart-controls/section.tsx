@@ -22,7 +22,7 @@ import {
 } from "react";
 
 import { MaybeTooltip } from "@/components/maybe-tooltip";
-import useDisclosure from "@/components/use-disclosure";
+import { useDisclosure } from "@/components/use-disclosure";
 import { isConfiguring, isLayouting } from "@/configurator/configurator-state";
 import { Icon, IconName } from "@/icons";
 import { useConfiguratorState } from "@/src";

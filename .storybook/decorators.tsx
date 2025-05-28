@@ -8,7 +8,7 @@ import { Client, Provider } from "urql";
 
 import { i18n } from "../app/locales/locales";
 import { theme } from "../app/themes/theme";
-import AsyncLocalizationProvider from "../app/utils/l10n-provider";
+import { AsyncLocalizationProvider } from "../app/utils/async-localization-provider";
 import { SnackbarProvider } from "../app/components/snackbar";
 import { useEffect, useState } from "react";
 

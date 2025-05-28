@@ -7,7 +7,7 @@ import { ComponentProps, ReactNode, useMemo } from "react";
 import { extractChartConfigUsedComponents } from "@/charts/shared/chart-helpers";
 import { LegendItem } from "@/charts/shared/legend-color";
 import { ChartFiltersList } from "@/components/chart-filters-list";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import {
   MetadataPanel,
   OpenMetadataPanelWrapper,

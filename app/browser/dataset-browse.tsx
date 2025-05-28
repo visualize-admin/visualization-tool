@@ -31,7 +31,7 @@ import {
   useState,
 } from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import {
   Checkbox,
   SearchField,
@@ -40,7 +40,7 @@ import {
 } from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
-import MaybeLink from "@/components/maybe-link";
+import { MaybeLink } from "@/components/maybe-link";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import {
   accordionPresenceProps,
@@ -48,8 +48,8 @@ import {
   MotionCard,
   smoothPresenceProps,
 } from "@/components/presence";
-import Tag from "@/components/tag";
-import useDisclosure from "@/components/use-disclosure";
+import { Tag } from "@/components/tag";
+import { useDisclosure } from "@/components/use-disclosure";
 import { PartialSearchCube, SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useFormatDate } from "@/formatters";
@@ -65,7 +65,7 @@ import {
 } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 import SvgIcClose from "@/icons/components/IcClose";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 import {
   BrowseState,

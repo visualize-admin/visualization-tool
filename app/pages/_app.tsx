@@ -17,18 +17,19 @@ import { GraphqlProvider } from "@/graphql/graphql-provider";
 import { i18n, parseLocaleString } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
 import * as federalTheme from "@/themes/theme";
-import AsyncLocalizationProvider from "@/utils/async-localization-provider";
+import { AsyncLocalizationProvider } from "@/utils/async-localization-provider";
 import { EventEmitterProvider } from "@/utils/event-emitter";
-import Flashes from "@/utils/flashes";
+import { Flashes } from "@/utils/flashes";
 import { analyticsPageView } from "@/utils/google-analytics";
 import "@/utils/nprogress.css";
 import { useNProgress } from "@/utils/use-nprogress";
 
 import "@/configurator/components/color-picker.css";
 
-const GQLDebugPanel = dynamic(() => import("@/gql-flamegraph/devtool"), {
-  ssr: false,
-});
+const GQLDebugPanel = dynamic(
+  () => import("@/gql-flamegraph/devtool").then((mod) => mod.DebugPanel),
+  { ssr: false }
+);
 
 export default function App({
   Component,

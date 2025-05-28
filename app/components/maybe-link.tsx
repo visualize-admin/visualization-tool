@@ -2,7 +2,7 @@ import NextLink, { LinkProps } from "next/link";
 import { ReactNode } from "react";
 
 /** A link where the default link behavior can be disabled */
-const MaybeLink = ({
+export const MaybeLink = ({
   disabled,
   children,
   ...props
@@ -13,5 +13,3 @@ const MaybeLink = ({
 
   return <NextLink {...props}>{children}</NextLink>;
 };
-
-export default MaybeLink;

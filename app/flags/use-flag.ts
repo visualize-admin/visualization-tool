@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { flag } from "./flag";
-import { FlagName } from "./types";
+import { flag } from "@/flags/flag";
+import { FlagName } from "@/flags/types";
 
-export default function useFlagValue(name: FlagName) {
+export const useFlag = (name: FlagName) => {
   const [flagValue, setFlag] = useState(() => flag(name));
 
   useEffect(() => {
@@ -21,9 +21,9 @@ export default function useFlagValue(name: FlagName) {
   }, [setFlag, name]);
 
   return flagValue;
-}
+};
 
-export function useFlags() {
+export const useFlags = () => {
   const [flags, setFlags] = useState(() => {
     flag.removeDeprecated();
     return flag.list();
@@ -42,4 +42,4 @@ export function useFlags() {
   }, [setFlags]);
 
   return flags;
-}
+};

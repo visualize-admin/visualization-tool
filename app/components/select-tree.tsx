@@ -41,7 +41,7 @@ import { HierarchyValue } from "@/domain/data";
 import { Icon } from "@/icons";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { flattenTree, pruneTree } from "@/rdf/tree-utils";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 const useTreeItemStyles = makeStyles({
   // Necessary to use $content below
@@ -371,7 +371,7 @@ export const useSelectTree = ({
   };
 };
 
-const SelectTree = ({
+export const SelectTree = ({
   size = "sm",
   label,
   options,
@@ -624,5 +624,3 @@ const SelectTree = ({
     </div>
   );
 };
-
-export default SelectTree;

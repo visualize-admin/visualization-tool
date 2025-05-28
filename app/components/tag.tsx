@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const Tag = forwardRef<
+export const Tag = forwardRef<
   HTMLParagraphElement,
   {
     children: ReactNode;
@@ -73,5 +73,3 @@ const Tag = forwardRef<
     </TagTypography>
   );
 });
-
-export default Tag;

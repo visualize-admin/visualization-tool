@@ -19,7 +19,7 @@ import {
 
 import { SearchCubeResultOrder } from "@/graphql/query-hooks";
 import { BrowseParams } from "@/pages/browse";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 import {
   BrowseFilter,

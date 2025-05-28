@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { ChangeEvent, ReactNode, useEffect, useState } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Checkbox, Input } from "@/components/form";
 import { ChartConfig, ConversionUnit } from "@/config-types";
 import {
@@ -21,7 +21,7 @@ import { Component } from "@/domain/data";
 import { ComponentId } from "@/graphql/make-component-id";
 import { Locale } from "@/locales/locales";
 import { useLocale, useOrderedLocales } from "@/locales/use-locale";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 export const ConversionUnitsField = ({
   chartConfig,

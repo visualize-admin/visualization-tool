@@ -26,7 +26,7 @@ import { AddButton } from "@/components/add-button";
 import { ArrowMenuTopCenter } from "@/components/arrow-menu";
 import { DuplicateChartMenuActionItem } from "@/components/chart-shared";
 import { DragHandle } from "@/components/drag-handle";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { MenuActionItem } from "@/components/menu-action-item";
 import { VisualizeTab, VisualizeTabList } from "@/components/tabs";
 import { getChartConfig } from "@/config-utils";
@@ -47,7 +47,7 @@ import { ChartTypeSelector } from "@/configurator/components/chart-type-selector
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/locales";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 type TabsState = {
   popoverOpen: boolean;

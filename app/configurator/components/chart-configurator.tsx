@@ -38,7 +38,7 @@ import {
   getPossibleFiltersQueryVariables,
   skipPossibleFiltersQuery,
 } from "@/charts/shared/possible-filters";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Switch } from "@/components/form";
 import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import {
@@ -46,7 +46,7 @@ import {
   OpenMetadataPanelWrapper,
 } from "@/components/metadata-panel";
 import { MoveDragButton } from "@/components/move-drag-button";
-import useDisclosure from "@/components/use-disclosure";
+import { useDisclosure } from "@/components/use-disclosure";
 import {
   ChartConfig,
   ConfiguratorStateConfiguringChart,
@@ -58,6 +58,7 @@ import {
 } from "@/config-types";
 import { getChartConfig, getChartConfigFilters } from "@/config-utils";
 import { ChartAnnotator } from "@/configurator/components/annotators";
+import { FiltersBadge } from "@/configurator/components/badges";
 import {
   ControlSection,
   ControlSectionContent,
@@ -65,6 +66,7 @@ import {
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
+import { DatasetsControlSection } from "@/configurator/components/dataset-control-section";
 import {
   ChartOptionCheckboxField,
   ControlTabField,
@@ -104,10 +106,7 @@ import {
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
-import useEvent from "@/utils/use-event";
-
-import { FiltersBadge } from "./badges";
-import { DatasetsControlSection } from "./dataset-control-section";
+import { useEvent } from "@/utils/use-event";
 
 export const DataFilterSelectGeneric = ({
   rawDimension,

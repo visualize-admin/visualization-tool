@@ -14,7 +14,7 @@ import { ReactElement, ReactNode } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { DataDownloadMenu } from "@/components/data-download";
-import Tag from "@/components/tag";
+import { Tag } from "@/components/tag";
 import { DataSource } from "@/configurator";
 import { DataCubeMetadata } from "@/domain/data";
 import { useFormatDate } from "@/formatters";

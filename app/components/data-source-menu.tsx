@@ -3,7 +3,7 @@ import { Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Select } from "@/components/form";
 import {
   isDataSourceChangeable,

@@ -1,12 +1,12 @@
+import { Page, PlaywrightTestOptions, test as base } from "@playwright/test";
 import {
   locatorFixtures as fixtures,
   LocatorFixtures as TestingLibraryFixtures,
 } from "@playwright-testing-library/test/fixture";
-import { Page, PlaywrightTestOptions, test as base } from "@playwright/test";
 
 import { Actions, createActions } from "./actions";
 import { createSelectors, Selectors } from "./selectors";
-import slugify from "./slugify";
+import { slugify } from "./slugify";
 
 type RouteFromHAROptions = Parameters<Page["routeFromHAR"]>[1];
 

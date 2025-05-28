@@ -21,9 +21,9 @@ import { dataSourceToSparqlEditorUrl } from "@/domain/data-source";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
-import { useLocale } from "@/src";
+import { useLocale } from "@/locales/use-locale";
 import { useInteractiveFiltersGetState } from "@/stores/interactive-filters";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 const DebugInteractiveFilters = () => {
@@ -197,7 +197,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const DebugPanel = (props: DebugPanelProps) => {
+export const DebugPanel = (props: DebugPanelProps) => {
   const { configurator = false, interactiveFilters = false } = props;
   const classes = useStyles();
 
@@ -226,5 +226,3 @@ const DebugPanel = (props: DebugPanelProps) => {
     </Accordion>
   );
 };
-
-export default DebugPanel;

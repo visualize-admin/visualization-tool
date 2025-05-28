@@ -4,7 +4,7 @@ import { Box, TextField } from "@mui/material";
 import { timeFormat } from "d3-time-format";
 import { ChangeEvent, ReactNode, useCallback } from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Label } from "@/components/form";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";

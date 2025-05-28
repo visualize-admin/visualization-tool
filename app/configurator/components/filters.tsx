@@ -39,7 +39,7 @@ import {
 import { getChartSymbol } from "@/charts";
 import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Select, Switch } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
@@ -103,7 +103,7 @@ import {
 import { interlace } from "@/utils/interlace";
 import { valueComparator } from "@/utils/sorting-values";
 import { getTimeFilterOptions } from "@/utils/time-filter-options";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {

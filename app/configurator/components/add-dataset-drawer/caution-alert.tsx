@@ -3,7 +3,7 @@ import { Box, Link } from "@mui/material";
 import { useCallback } from "react";
 
 import { HintWarning } from "@/components/hint";
-import useLocalState from "@/utils/use-local-state";
+import { useLocalState } from "@/utils/use-local-state";
 
 export const useCautionAlert = () => {
   const [isOpen, setIsOpen] = useLocalState("add-dataset-caution-alert", true);

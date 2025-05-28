@@ -13,10 +13,10 @@ import uniqBy from "lodash/uniqBy";
 import { useMemo, useState } from "react";
 import { useClient } from "urql";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { useMetadataPanelStoreActions } from "@/components/metadata-panel-store";
-import useDisclosure from "@/components/use-disclosure";
+import { useDisclosure } from "@/components/use-disclosure";
 import { getChartConfig } from "@/config-utils";
 import { AddDatasetDrawer } from "@/configurator/components/add-dataset-drawer/add-dataset-drawer";
 import { DatasetsBadge } from "@/configurator/components/badges";

@@ -40,7 +40,7 @@ import {
   ShowBandValueLabelsVariables,
   useShowBandValueLabelsVariables,
 } from "@/charts/shared/show-values-utils";
-import useChartFormatters from "@/charts/shared/use-chart-formatters";
+import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { useLimits } from "@/config-utils";

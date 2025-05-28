@@ -38,10 +38,19 @@ import {
   SearchDatasetResultsCount,
   SearchDatasetSortControl,
 } from "@/browser/dataset-browse";
-import Flex from "@/components/flex";
-import Tag from "@/components/tag";
-import VisuallyHidden from "@/components/visually-hidden";
+import { Flex } from "@/components/flex";
+import { Tag } from "@/components/tag";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import { ConfiguratorStateConfiguringChart } from "@/config-types";
+import {
+  CautionAlert,
+  useCautionAlert,
+} from "@/configurator/components/add-dataset-drawer/caution-alert";
+import { inferJoinBy } from "@/configurator/components/add-dataset-drawer/infer-join-by";
+import { PreviewDataTable } from "@/configurator/components/add-dataset-drawer/preview-table";
+import { SearchOptions } from "@/configurator/components/add-dataset-drawer/types";
+import { useAddDataset } from "@/configurator/components/add-dataset-drawer/use-add-dataset";
+import { useStyles } from "@/configurator/components/add-dataset-drawer/use-styles";
 import { RightDrawer } from "@/configurator/components/drawers";
 import {
   ComponentTermsets,
@@ -66,13 +75,6 @@ import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { useEventEmitter } from "@/utils/event-emitter";
-
-import { CautionAlert, useCautionAlert } from "./caution-alert";
-import { inferJoinBy } from "./infer-join-by";
-import PreviewDataTable from "./preview-table";
-import { SearchOptions } from "./types";
-import useAddDataset from "./use-add-dataset";
-import useStyles from "./use-styles";
 
 const DialogCloseButton = (props: IconButtonProps) => {
   return (

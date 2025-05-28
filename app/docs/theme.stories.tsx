@@ -32,11 +32,10 @@ import { Meta } from "@storybook/react";
 import { useSnackbar } from "notistack";
 import { ComponentProps, FC, ReactNode, useState } from "react";
 
+import { DialogCloseButton } from "@/components/dialog-close-button";
+import { useDisclosure } from "@/components/use-disclosure";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
-
-import { DialogCloseButton } from "../components/dialog-close-button";
-import useDisclosure from "../components/use-disclosure";
 
 const meta: Meta = {
   title: "Design system / Theme",

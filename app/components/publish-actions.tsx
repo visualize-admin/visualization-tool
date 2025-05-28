@@ -23,10 +23,10 @@ import {
   isEmbedQueryParam,
   useEmbedQueryParams,
 } from "@/components/embed-params";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Radio } from "@/components/form";
 import { Icon } from "@/icons";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 import { useI18n } from "@/utils/use-i18n";
 import { useResizeObserver } from "@/utils/use-resize-observer";
 

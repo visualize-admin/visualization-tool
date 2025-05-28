@@ -4,9 +4,9 @@ import { Term } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
-import batchLoad from "./batch-load";
-import { pragmas } from "./create-source";
-import * as ns from "./namespace";
+import { batchLoad } from "@/rdf/batch-load";
+import { pragmas } from "@/rdf/create-source";
+import * as ns from "@/rdf/namespace";
 
 type ResourceLabel = {
   iri: Term;

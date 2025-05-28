@@ -42,7 +42,7 @@ import {
 } from "@/charts/shared/chart-helpers";
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import { useEmbedQueryParams } from "@/components/embed-params";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Error, Loading } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { JoinByChip } from "@/components/join-by-chip";
@@ -87,7 +87,7 @@ import { useTransitionStore } from "@/stores/transition";
 import { assert } from "@/utils/assert";
 import { useEventEmitter } from "@/utils/event-emitter";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 const useDrawerStyles = makeStyles<Theme, { top: number | string }>((theme) => {
   return {

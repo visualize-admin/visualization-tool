@@ -7,7 +7,7 @@ import {
   EncodingSpec,
 } from "@/charts/chart-config-ui-options";
 import { LegendSymbol } from "@/charts/shared/legend-color";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { RadioGroup } from "@/components/form";
 import {
   ChartConfig,

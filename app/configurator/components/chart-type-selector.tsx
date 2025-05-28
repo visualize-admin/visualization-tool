@@ -7,7 +7,7 @@ import {
   getEnabledChartTypes,
   regularChartTypes,
 } from "@/charts";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { HintError } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { MaybeTooltip } from "@/components/maybe-tooltip";

@@ -7,7 +7,7 @@ import { Cell } from "react-table";
 import { BAR_CELL_PADDING } from "@/charts/table/constants";
 import { ColumnMeta } from "@/charts/table/table-state";
 import { Tag } from "@/charts/table/tag";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Observation } from "@/domain/data";
 
 const useStyles = makeStyles((theme: Theme) => ({

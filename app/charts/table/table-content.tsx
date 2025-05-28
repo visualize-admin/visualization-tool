@@ -6,7 +6,7 @@ import { HeaderGroup } from "react-table";
 
 import { SORTING_ARROW_WIDTH } from "@/charts/table/constants";
 import { ColumnMeta } from "@/charts/table/table-state";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { Observation } from "@/domain/data";
 

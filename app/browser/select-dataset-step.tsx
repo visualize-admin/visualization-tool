@@ -31,7 +31,7 @@ import {
 import { BrowseFilter, DataCubeAbout } from "@/browser/filters";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { DatasetMetadata } from "@/components/dataset-metadata";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
   __BANNER_MARGIN_CSS_VAR,

@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 
-import Tag from "@/components/tag";
+import { Tag } from "@/components/tag";
 
 const meta = {
   title: "components / Tag",

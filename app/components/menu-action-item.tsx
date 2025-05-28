@@ -9,8 +9,8 @@ import {
 import NextLink from "next/link";
 import { MouseEvent, ReactNode } from "react";
 
-import ConfirmationDialog from "@/components/confirmation-dialog";
-import useDisclosure from "@/components/use-disclosure";
+import { ConfirmationDialog } from "@/components/confirmation-dialog";
+import { useDisclosure } from "@/components/use-disclosure";
 import { Icon, IconName } from "@/icons";
 
 const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({

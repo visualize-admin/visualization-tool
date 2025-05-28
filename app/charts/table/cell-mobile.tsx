@@ -6,7 +6,7 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { getBarLeftOffset, getBarWidth } from "@/charts/table/cell-desktop";
 import { ColumnMeta } from "@/charts/table/table-state";
 import { Tag } from "@/charts/table/tag";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Observation } from "@/domain/data";
 import { useFormatNumber } from "@/formatters";
 

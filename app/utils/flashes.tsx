@@ -53,7 +53,7 @@ const renderErrorContent: Record<
   CANNOT_FIND_CUBE: CannotFindCubeContent,
 };
 
-const Flashes = () => {
+export const Flashes = () => {
   const router = useRouter();
   const query = router.query;
   const [dismissed, setDismissed] = useState<Record<string, boolean>>({});
@@ -91,5 +91,3 @@ const Flashes = () => {
     </Box>
   );
 };
-
-export default Flashes;

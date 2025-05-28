@@ -4,7 +4,7 @@ import { Box, Button, IconButton, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { forwardRef, useState } from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Input } from "@/components/form";
 import { CustomPaletteType } from "@/config-types";
 import SvgIcClose from "@/icons/components/IcClose";

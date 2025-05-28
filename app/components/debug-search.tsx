@@ -187,7 +187,7 @@ const Search = ({
   );
 };
 
-const DebugSearch = () => {
+export const DebugSearch = () => {
   const [includeDrafts, setIncludeDrafts] = useState(false);
   const [sourceUrl, setSourceUrl] = useState(
     "https://int.lindas.admin.ch/query"
@@ -347,5 +347,3 @@ const DebugSearch = () => {
     </Box>
   );
 };
-
-export default DebugSearch;

@@ -8,7 +8,7 @@ import {
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 export const useInteractiveFiltersToggle = (target: "legend") => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);

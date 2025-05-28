@@ -13,18 +13,18 @@ import maplibreglRaw from "maplibre-gl";
 import { useMemo } from "react";
 import Map from "react-map-gl";
 
-import CustomAttribution from "@/charts/map/custom-attribution";
+import { CustomAttribution } from "@/charts/map/custom-attribution";
 import { useMapStyle } from "@/charts/map/get-base-layer-style";
 import { DeckGLOverlay } from "@/charts/map/helpers";
 import { RemoteLayer } from "@/charts/map/types";
 import { getWMSTile } from "@/charts/map/wms-utils";
-import WMTSSelector from "@/charts/map/wms-wmts-selector";
+import { WMTSSelector } from "@/charts/map/wms-wmts-selector";
 import { getWMTSTile } from "@/charts/map/wmts-utils";
 import { Icon } from "@/icons";
 import { LocaleProvider } from "@/locales";
 import "maplibre-gl/dist/maplibre-gl.css";
-import useEvent from "@/utils/use-event";
-import useLocalState from "@/utils/use-local-state";
+import { useEvent } from "@/utils/use-event";
+import { useLocalState } from "@/utils/use-local-state";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 

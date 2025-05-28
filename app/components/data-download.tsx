@@ -45,7 +45,7 @@ import {
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { Locale } from "@/locales/locales";
-import { useLocale } from "@/src";
+import { useLocale } from "@/locales/use-locale";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import { useI18n } from "@/utils/use-i18n";
 

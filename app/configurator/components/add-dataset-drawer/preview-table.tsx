@@ -22,9 +22,10 @@ import { useEffect, useMemo, useState } from "react";
 
 import { FirstTenRowsCaption } from "@/browser/dataset-preview";
 import { Error as ErrorHint, Loading } from "@/components/hint";
-import Tag from "@/components/tag";
+import { Tag } from "@/components/tag";
 import { ChartConfig, DataSource } from "@/config-types";
 import { SearchOptions } from "@/configurator/components/add-dataset-drawer/types";
+import { useStyles } from "@/configurator/components/add-dataset-drawer/use-styles";
 import {
   Dimension,
   isJoinByComponent,
@@ -47,10 +48,9 @@ import {
 } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
-import useStyles from "./use-styles";
-
 const NewAnnotation = (props: TypographyProps) => {
   const classes = useStyles();
+
   return (
     <Typography
       className={clsx(classes.newAnnotation, props.className)}
@@ -63,7 +63,7 @@ const NewAnnotation = (props: TypographyProps) => {
   );
 };
 
-const PreviewDataTable = ({
+export const PreviewDataTable = ({
   chartConfig,
   dataSource,
   existingCubes,
@@ -375,5 +375,3 @@ const PreviewDataTable = ({
     </>
   );
 };
-
-export default PreviewDataTable;

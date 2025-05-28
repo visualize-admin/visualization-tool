@@ -1,4 +1,4 @@
-import prisma from "./client";
+import { prisma } from "@/db/client";
 
 export const findBySub = async (sub: string) => {
   return prisma.user.findFirstOrThrow({

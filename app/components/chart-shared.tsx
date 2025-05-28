@@ -54,7 +54,7 @@ import { Component } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { getChartIcon, Icon } from "@/icons";
-import { useLocale } from "@/src";
+import { useLocale } from "@/locales/use-locale";
 import { animationFrame } from "@/utils/animation-frame";
 import { createId } from "@/utils/create-id";
 import {

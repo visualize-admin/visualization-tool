@@ -54,14 +54,14 @@ import {
 } from "react";
 
 import { useBrowseContext } from "@/browser/context";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BlockTypeMenu } from "@/components/mdx-editor/block-type-menu";
 import { BoldItalicUnderlineToggles } from "@/components/mdx-editor/bold-italic-underline-toggles";
 import { linkDialogPlugin } from "@/components/mdx-editor/link-dialog";
 import { LinkDialogToggle } from "@/components/mdx-editor/link-dialog-toggle";
 import { ListToggles } from "@/components/mdx-editor/list-toggles";
-import VisuallyHidden from "@/components/visually-hidden";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import {
   FieldProps,
   Option,
@@ -71,7 +71,8 @@ import {
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
+
 import "@mdxeditor/editor/style.css";
 
 type FormControlLabelSize = "sm" | "md" | "lg";

@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef } from "react";
 
 import { LegendItem } from "@/charts/shared/legend-color";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { DisabledMessageIcon, Label } from "@/components/form";
 import { CustomPaletteType } from "@/config-types";
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";

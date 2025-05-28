@@ -19,7 +19,7 @@ import { ObjectInspector } from "react-inspector";
 
 import { DatasetResult } from "@/browser/dataset-browse";
 import { Error } from "@/components/hint";
-import Tag from "@/components/tag";
+import { Tag } from "@/components/tag";
 import { ComponentTermsets } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import {

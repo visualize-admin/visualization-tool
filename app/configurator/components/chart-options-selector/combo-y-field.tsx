@@ -4,7 +4,7 @@ import { groups } from "d3-array";
 import { useCallback, useMemo } from "react";
 
 import { LegendSymbol } from "@/charts/shared/legend-color";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Select, SelectOptionGroup } from "@/components/form";
 import {
   ComboChartConfig,

@@ -8,7 +8,7 @@ type AsyncLocalizationProviderProps = {
   locale: Locale;
 };
 
-const AsyncLocalizationProvider = (
+export const AsyncLocalizationProvider = (
   props: PropsWithChildren<AsyncLocalizationProviderProps>
 ) => {
   const { locale, children } = props;
@@ -50,5 +50,3 @@ const AsyncLocalizationProvider = (
     </LocalizationProvider>
   );
 };
-
-export default AsyncLocalizationProvider;

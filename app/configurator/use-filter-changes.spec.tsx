@@ -3,7 +3,7 @@ import merge from "lodash/merge";
 import { describe, expect, it } from "vitest";
 
 import { Filters } from "@/config-types";
-import useFilterChanges from "@/configurator/use-filter-changes";
+import { useFilterChanges } from "@/configurator/use-filter-changes";
 
 describe("use-filter-changes", () => {
   it("should work", () => {

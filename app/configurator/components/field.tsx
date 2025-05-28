@@ -17,7 +17,7 @@ import {
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { LegendItem, LegendSymbol } from "@/charts/shared/legend-color";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import {
   Checkbox,
   CheckboxProps,
@@ -31,8 +31,8 @@ import {
   Slider,
   Switch,
 } from "@/components/form";
-import SelectTree from "@/components/select-tree";
-import useDisclosure from "@/components/use-disclosure";
+import { SelectTree } from "@/components/select-tree";
+import { useDisclosure } from "@/components/use-disclosure";
 import {
   ChartConfig,
   CustomPaletteType,
@@ -95,7 +95,7 @@ import { getPalette } from "@/palettes";
 import { assert } from "@/utils/assert";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 import { useUserPalettes } from "@/utils/use-user-palettes";
 
 const ColorPickerMenu = dynamic(

@@ -8,7 +8,7 @@ import {
 import { Meta } from "@storybook/react";
 import { useState } from "react";
 
-import Tag from "@/components/tag";
+import { Tag } from "@/components/tag";
 import { useDataCubeComponentTermsetsQuery } from "@/graphql/query-hooks";
 
 export const Termsets = () => {

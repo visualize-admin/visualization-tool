@@ -5,7 +5,7 @@ import { pointer, select, Selection } from "d3-selection";
 import { CountableTimeInterval } from "d3-time";
 import { useCallback, useEffect, useRef } from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { useTimeFormatUnit } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useTheme } from "@/themes";

@@ -4,7 +4,7 @@ import { useDimensionFormatters } from "@/formatters";
 
 import { BaseChartProps } from "./chart-props";
 
-const useChartFormatters = (
+export const useChartFormatters = (
   chartProps: Pick<BaseChartProps, "dimensions" | "measures">
 ) => {
   const { dimensions, measures } = chartProps;
@@ -15,5 +15,3 @@ const useChartFormatters = (
 
   return useDimensionFormatters(components);
 };
-
-export default useChartFormatters;

@@ -13,7 +13,7 @@ import { MouseEventHandler, useMemo, useState } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { hasDimensionColors } from "@/charts/shared/colors";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { selectMenuProps } from "@/components/form";
 import { Label } from "@/components/form";
 import { getChartConfig } from "@/config-utils";
@@ -24,6 +24,8 @@ import {
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
+import { ColorPaletteDrawerContent } from "@/configurator/components/chart-controls/drawer-color-palette-content";
+import { ConfiguratorDrawer } from "@/configurator/components/drawers";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { Component, isNumericalMeasure } from "@/domain/data";
 import { Icon } from "@/icons";
@@ -35,12 +37,8 @@ import {
   getDefaultCategoricalPalette,
   getPalette,
 } from "@/palettes";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 import { useUserPalettes } from "@/utils/use-user-palettes";
-
-import { ConfiguratorDrawer } from "../drawers";
-
-import { ColorPaletteDrawerContent } from "./drawer-color-palette-content";
 
 type Props = {
   field: EncodingFieldType;

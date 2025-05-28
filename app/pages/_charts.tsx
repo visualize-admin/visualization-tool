@@ -6,7 +6,7 @@ import SuperJSON from "superjson";
 import { SuperJSONResult } from "superjson/dist/types";
 
 import { ChartPublished } from "@/components/chart-published";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { ContentLayout } from "@/components/layout";
 import {
   Config,

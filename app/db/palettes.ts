@@ -3,12 +3,11 @@ import {
   convertPaletteTypeToDBType,
   CustomPaletteType,
 } from "@/config-types";
+import { prisma } from "@/db/client";
 import {
   CreateCustomColorPalette,
   UpdateCustomColorPalette,
 } from "@/utils/chart-config/api";
-
-import { default as prisma } from "./client";
 
 export const createPaletteForUser = async (
   data: CreateCustomColorPalette & { user_id?: number }

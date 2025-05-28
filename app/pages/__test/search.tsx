@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import DebugSearch from "@/components/debug-search";
+import { DebugSearch } from "@/components/debug-search";
 
 const SearchPage = () => {
   return (

@@ -3,7 +3,12 @@ import { useMemo, useRef } from "react";
 type Changes<K, U> = (readonly [K, U, U])[];
 
 const empty = [] as any[];
-const useChanges = <T extends unknown, K extends unknown, U extends unknown>(
+
+export const useChanges = <
+  T extends unknown,
+  K extends unknown,
+  U extends unknown,
+>(
   currentValue: T,
   computeChanges: (prev: T, cur: T) => Changes<K, U>
 ) => {
@@ -24,5 +29,3 @@ const useChanges = <T extends unknown, K extends unknown, U extends unknown>(
   prevRef.current = currentValue;
   return changes;
 };
-
-export default useChanges;

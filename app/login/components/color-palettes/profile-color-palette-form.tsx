@@ -4,7 +4,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ChangeEvent, useCallback, useRef, useState } from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { RadioGroup } from "@/components/form";
 import { Input, Radio } from "@/components/form";
 import { BackButton, CustomPaletteType } from "@/configurator";

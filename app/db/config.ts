@@ -15,7 +15,7 @@ import {
   ConfiguratorState,
   ConfiguratorStatePublished,
 } from "@/config-types";
-import prisma from "@/db/client";
+import { prisma } from "@/db/client";
 import { upgradeConfiguratorStateServerSide } from "@/utils/chart-config/upgrade-cube";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 

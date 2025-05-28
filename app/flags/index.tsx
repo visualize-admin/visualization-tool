@@ -1,2 +1,2 @@
-export { flag } from "./flag";
-export { default as useFlag, useFlags } from "./use-flag";
+export { flag } from "@/flags/flag";
+export { useFlag, useFlags } from "@/flags/use-flag";

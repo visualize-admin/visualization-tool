@@ -1,8 +1,7 @@
 import isEqual from "lodash/isEqual";
 
-import useChanges from "../utils/use-changes";
-
-import { Filters, FilterValue } from ".";
+import { Filters, FilterValue } from "@/config-types";
+import { useChanges } from "@/utils/use-changes";
 
 const isEqualFilter = (fa?: FilterValue, fb?: FilterValue) => {
   if (fa?.type === "single" && fb?.type === "single") {
@@ -32,8 +31,6 @@ const computeFilterChanges = (prev: Filters, cur: Filters) => {
   return res;
 };
 
-const useFilterChanges = (cur: Filters) => {
+export const useFilterChanges = (cur: Filters) => {
   return useChanges(cur, computeFilterChanges);
 };
-
-export default useFilterChanges;

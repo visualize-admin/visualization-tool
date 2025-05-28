@@ -28,6 +28,8 @@ import {
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator";
+import { ColorPaletteDrawerContent } from "@/configurator/components/chart-controls/drawer-color-palette-content";
+import { ConfiguratorDrawer } from "@/configurator/components/drawers";
 import { useLocale } from "@/locales/use-locale";
 import { useUser } from "@/login/utils";
 import {
@@ -38,12 +40,8 @@ import {
   sequentialPalettes,
 } from "@/palettes";
 import { getFittingColorInterpolator } from "@/utils/color-palette-utils";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 import { useUserPalettes } from "@/utils/use-user-palettes";
-
-import { ConfiguratorDrawer } from "../drawers";
-
-import { ColorPaletteDrawerContent } from "./drawer-color-palette-content";
 
 // Adapted from https://observablehq.com/@mbostock/color-ramp
 

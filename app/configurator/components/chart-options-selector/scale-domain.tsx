@@ -7,7 +7,7 @@ import {
   EncodingFieldType,
   EncodingOption,
 } from "@/charts/chart-config-ui-options";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Checkbox, Input } from "@/components/form";
 import { ChartConfig } from "@/config-types";
 import {
@@ -17,7 +17,7 @@ import {
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { Observation } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 export const ScaleDomain = ({
   chartConfig,

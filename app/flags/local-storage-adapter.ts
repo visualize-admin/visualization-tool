@@ -1,6 +1,5 @@
 import { FLAG_PREFIX } from "@/flags/flag";
-
-import { FlagName, FlagValue } from "./types";
+import { FlagName, FlagValue } from "@/flags/types";
 
 type FlagNameOrString = FlagName | (string & {});
 
@@ -63,12 +62,10 @@ const clearAll = () => {
   });
 };
 
-const api = {
+export const localStorageAdapter = {
   getAll,
   getItem,
   setItem,
   clearAll,
   removeItem,
 };
-
-export default api;

@@ -13,11 +13,11 @@ import {
   getPossibleFiltersQueryVariables,
   skipPossibleFiltersQuery,
 } from "@/charts/shared/possible-filters";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
-import SelectTree, { Tree } from "@/components/select-tree";
+import { SelectTree, Tree } from "@/components/select-tree";
 import { useChartConfigFilters } from "@/config-utils";
 import {
   areDataFiltersActive,
@@ -58,7 +58,7 @@ import {
 } from "@/stores/interactive-filters";
 import { assert } from "@/utils/assert";
 import { hierarchyToOptions } from "@/utils/hierarchy";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 type PreparedFilter = {
   cubeIri: string;
