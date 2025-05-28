@@ -18,9 +18,9 @@ import {
   ReactGridLayoutType,
   useConfiguratorState,
 } from "@/configurator";
-import { useTimeout } from "@/utils/use-timeout";
 import { theme } from "@/themes/theme";
 import { assert } from "@/utils/assert";
+import { useTimeout } from "@/utils/use-timeout";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 

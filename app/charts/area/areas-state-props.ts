@@ -19,9 +19,10 @@ import {
   useSegmentVariables,
   useTemporalXVariables,
 } from "@/charts/shared/chart-state";
-import { ChartProps } from "@/charts/shared/chart-props";
 import { AreaConfig } from "@/config-types";
 import { useLimits } from "@/config-utils";
+
+import { ChartProps } from "../shared/chart-props";
 
 export type AreasStateVariables = BaseVariables &
   SortingVariables &
