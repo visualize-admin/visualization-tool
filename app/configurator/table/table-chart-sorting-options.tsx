@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ascending } from "d3-array";
-import { ChangeEvent, useCallback } from "react";
+import { ChangeEvent, ReactNode, useCallback } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -44,14 +44,10 @@ import useEvent from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme>((theme) => ({
   sortingItemContainer: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-    paddingLeft: theme.spacing(4),
-    paddingRight: `calc(${theme.spacing(6)} + ${theme.spacing(2)})`,
+    padding: theme.spacing(4),
+    paddingRight: theme.spacing(0),
 
-    borderTopColor: theme.palette.divider,
-    borderTopStyle: "solid",
-    borderTopWidth: 1,
+    borderTop: `1px solid ${theme.palette.divider}`,
   },
   sortingItemBox: {
     "&:first-of-type $sortingItemContainer": {
@@ -65,6 +61,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
   },
   removeButton: {
     padding: 0,
+    paddingRight: theme.spacing(6),
     cursor: "pointer",
     marginLeft: "auto",
     minWidth: 0,
@@ -73,17 +70,10 @@ const useStyles = makeStyles<Theme>((theme) => ({
   iconWrapper: {
     // @ts-ignore
     color: theme.palette.secondary.disabled,
+
     "&:hover": {
       color: theme.palette.secondary.main,
     },
-  },
-  icon: {
-    width: 24,
-    height: 24,
-    position: "absolute",
-    top: "50%",
-    right: 2,
-    marginTop: -12,
   },
 }));
 
@@ -94,11 +84,13 @@ const TableSortingOptionItem = ({
   index,
   chartConfig,
   sortingOrder,
+  sideControls,
 }: {
   dimensions: Dimension[];
   measures: Measure[];
   index: number;
   chartConfig: TableConfig;
+  sideControls?: ReactNode;
 } & TableSortingOption) => {
   const [, dispatch] = useConfiguratorState();
   const classes = useStyles();
@@ -149,6 +141,7 @@ const TableSortingOptionItem = ({
           dimensions={dimensions}
           measures={measures}
           chartConfig={chartConfig}
+          sideControls={sideControls}
         />
       </Typography>
       <RadioGroup>
@@ -264,7 +257,7 @@ const AddTableSortingOption = ({
       sortOptions={false}
       label={t({
         id: "controls.sorting.addDimension",
-        message: `Add dimension`,
+        message: "Add dimension",
       })}
       onChange={onChange}
     />
@@ -276,11 +269,13 @@ const ChangeTableSortingOption = ({
   measures,
   chartConfig,
   index,
+  sideControls,
 }: {
   dimensions: Dimension[];
   measures: Measure[];
   chartConfig: TableConfig;
   index: number;
+  sideControls?: ReactNode;
 }) => {
   const [, dispatch] = useConfiguratorState();
 
@@ -330,8 +325,9 @@ const ChangeTableSortingOption = ({
       size="sm"
       value={componentId}
       options={options}
-      label={t({ id: "controls.sorting.sortBy", message: `Sort by` })}
+      label={t({ id: "controls.sorting.sortBy", message: "Sort by" })}
       onChange={onChange}
+      sideControls={sideControls}
     />
   );
 };
@@ -388,7 +384,7 @@ export const TableSortingOptions = ({
         <Droppable droppableId="table-sorting" type="table-sorting">
           {({ innerRef, placeholder }) => {
             return (
-              <Box>
+              <div>
                 <Box ref={innerRef}>
                   {sorting.map((option, i) => {
                     return (
@@ -405,11 +401,11 @@ export const TableSortingOptions = ({
                             <Box
                               ref={innerRef}
                               {...draggableProps}
+                              className={classes.sortingItemBox}
                               sx={{
                                 position: "relative",
                                 boxShadow: isDragging ? "tooltip" : undefined,
                               }}
-                              className={classes.sortingItemBox}
                               style={{
                                 ...draggableProps.style,
                               }}
@@ -420,21 +416,23 @@ export const TableSortingOptions = ({
                                 dimensions={dimensions}
                                 measures={measures}
                                 chartConfig={chartConfig}
+                                sideControls={
+                                  <Box
+                                    sx={{
+                                      color: isDragging
+                                        ? "secondary.main"
+                                        : "secondary.light",
+
+                                      "&:hover": {
+                                        color: "secondary.main",
+                                      },
+                                    }}
+                                    {...dragHandleProps}
+                                  >
+                                    <Icon name="dragndrop" />
+                                  </Box>
+                                }
                               />
-                              <Box
-                                className={classes.icon}
-                                sx={{
-                                  color: isDragging
-                                    ? "secondary.active"
-                                    : "secondary.disabled",
-                                  ":hover": {
-                                    color: "secondary.hover",
-                                  },
-                                }}
-                                {...dragHandleProps}
-                              >
-                                <Icon name="dragndrop" />
-                              </Box>
                             </Box>
                           );
                         }}
@@ -458,7 +456,7 @@ export const TableSortingOptions = ({
                     chartConfig={chartConfig}
                   />
                 </Box>
-              </Box>
+              </div>
             );
           }}
         </Droppable>
