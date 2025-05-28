@@ -1172,13 +1172,13 @@ export const TimeFilter = (props: TimeFilterProps) => {
     });
 
     return (
-      <Box>
+      <div>
         {!disableInteractiveFilters && (
           <Flex sx={{ justifyContent: "flex-end", mb: 3 }}>
             <InteractiveTimeRangeToggle />
           </Flex>
         )}
-        <Box sx={{ display: "flex", gap: 1 }}>
+        <Flex sx={{ gap: 1 }}>
           {rangeActiveFilter ? (
             canRenderDatePickerField(timeUnit) ? (
               <LeftRightFormContainer
@@ -1227,6 +1227,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
                 left={
                   <Select
                     id="time-range-start"
+                    size="sm"
                     label={fromLabel}
                     options={fromOptions}
                     sortOptions={false}
@@ -1237,6 +1238,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
                 right={
                   <Select
                     id="time-range-end"
+                    size="sm"
                     label={toLabel}
                     options={toOptions}
                     sortOptions={false}
@@ -1247,7 +1249,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
               />
             )
           ) : null}
-        </Box>
+        </Flex>
         <EditorBrush
           timeExtent={[from, to]}
           timeRange={timeRange}
@@ -1268,7 +1270,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
           }}
         />
         {rangeActiveFilter && (
-          <Flex sx={{ display: "flex", alignItems: "center", gap: 1, mt: 3 }}>
+          <Flex sx={{ alignItems: "center", gap: 1, mt: 3 }}>
             <Switch
               label={t({
                 id: "controls.filter.use-most-recent",
@@ -1301,7 +1303,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
             </Tooltip>
           </Flex>
         )}
-      </Box>
+      </div>
     );
   } else {
     return <Loading />;
@@ -1320,20 +1322,18 @@ const LeftRightFormContainer = ({
   const sideElementSize = DRAWER_WIDTH / 2 - columnGap * 2 - middleElementSize;
 
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         display: "grid",
-        columnGap: `${columnGap}px`,
         gridTemplateColumns: `${sideElementSize}px ${middleElementSize}px ${sideElementSize}px`,
+        columnGap,
         alignItems: "center",
       }}
     >
       {left}
-      <Typography mt="1em" color="grey.700">
-        –
-      </Typography>
+      <Typography mt="1em">–</Typography>
       {right}
-    </Box>
+    </div>
   );
 };
 
@@ -1353,7 +1353,6 @@ const InteractiveTimeRangeToggle = () => {
   );
 };
 
-// This component is now only used in the Table Chart options.
 export const DimensionValuesSingleFilter = ({
   dimension,
 }: {
@@ -1367,13 +1366,13 @@ export const DimensionValuesSingleFilter = ({
 
   return dimension ? (
     <>
-      {sortedDimensionValues.map((dv) => {
+      {sortedDimensionValues.map((d) => {
         return (
           <SingleFilterField
-            key={dv.value}
+            key={d.value}
             filters={dimensionToFieldProps(dimension)}
-            label={dv.label}
-            value={`${dv.value}`}
+            label={d.label}
+            value={`${d.value}`}
           />
         );
       })}

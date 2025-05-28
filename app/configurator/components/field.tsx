@@ -6,7 +6,7 @@ import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import pick from "lodash/pick";
 import dynamic from "next/dynamic";
-import React, {
+import {
   ChangeEvent,
   ComponentProps,
   ReactNode,
@@ -423,35 +423,18 @@ export const DataFilterSelectTime = ({
   timeFormat,
   id,
   disabled,
-  isOptional,
 }: {
   dimension: Dimension;
-  label: React.ReactNode;
+  label: ReactNode;
   from: string;
   to: string;
   timeUnit: TimeUnit;
   timeFormat: string;
   id: string;
   disabled?: boolean;
-  isOptional?: boolean;
 }) => {
   const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
   const formatLocale = useTimeFormatLocale();
-  const noneLabel = t({
-    id: "controls.dimensionvalue.none",
-    message: `No Filter`,
-  });
-  const optionalLabel = t({
-    id: "controls.select.optional",
-    message: `optional`,
-  });
-  const fullLabel = isOptional ? (
-    <span>
-      {label} ({optionalLabel})
-    </span>
-  ) : (
-    label
-  );
 
   const timeIntervalWithProps = useMemo(() => {
     return getTimeIntervalWithProps(
@@ -469,26 +452,14 @@ export const DataFilterSelectTime = ({
       : getTimeIntervalFormattedSelectOptions(timeIntervalWithProps);
   }, [timeIntervalWithProps]);
 
-  const allOptions = useMemo(() => {
-    return isOptional
-      ? [
-          {
-            value: FIELD_VALUE_NONE,
-            label: noneLabel,
-            isNoneValue: true,
-          },
-          ...options,
-        ]
-      : options;
-  }, [isOptional, options, noneLabel]);
-
   if (options.length) {
     return (
       <Select
         id={id}
-        label={fullLabel}
+        size="sm"
+        label={label}
         disabled={disabled}
-        options={allOptions}
+        options={options}
         sortOptions={false}
         {...fieldProps}
       />
@@ -498,11 +469,11 @@ export const DataFilterSelectTime = ({
   return (
     <TimeInput
       id={id}
-      label={fullLabel}
+      label={label}
       value={fieldProps.value}
       timeFormat={timeFormat}
       formatLocale={formatLocale}
-      isOptional={isOptional}
+      isOptional={false}
       onChange={fieldProps.onChange}
     />
   );
@@ -518,7 +489,7 @@ export const TimeInput = ({
   onChange,
 }: {
   id: string;
-  label: React.ReactNode;
+  label: ReactNode;
   value: string | undefined;
   timeFormat: string;
   formatLocale: TimeLocaleObject;
@@ -569,7 +540,7 @@ export const TimeInput = ({
 
 type AnnotatorTabFieldProps<T extends string = string> = {
   value: T;
-  emptyValueWarning?: React.ReactNode;
+  emptyValueWarning?: ReactNode;
 } & Omit<ControlTabProps, "onClick" | "value">;
 
 export const ChartAnnotatorTabField = (props: AnnotatorTabFieldProps) => {
@@ -833,6 +804,7 @@ export const SingleFilterField = ({
   disabled?: boolean;
 }) => {
   const field = useSingleFilterField({ filters, value });
+
   return <Radio label={label} disabled={disabled} {...field} />;
 };
 
@@ -880,7 +852,7 @@ export const ColorPickerField = ({
 
   return (
     <Flex
-      sx={{
+      style={{
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
