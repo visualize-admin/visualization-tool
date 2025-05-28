@@ -43,18 +43,16 @@ const BRUSH_HEIGHT = 4;
 const HEIGHT = HANDLE_HEIGHT + BRUSH_HEIGHT;
 
 export const shouldShowBrush = (
-  interactiveFiltersConfig:
-    | (
-        | LineConfig
-        | ComboLineSingleConfig
-        | ComboLineDualConfig
-        | ComboLineColumnConfig
-        | ColumnConfig
-      )["interactiveFiltersConfig"]
-    | undefined,
+  interactiveFiltersConfig: (
+    | LineConfig
+    | ComboLineSingleConfig
+    | ComboLineDualConfig
+    | ComboLineColumnConfig
+    | ColumnConfig
+  )["interactiveFiltersConfig"],
   dashboardTimeRange: DashboardTimeRangeFilter | undefined
 ) => {
-  const chartTimeRange = interactiveFiltersConfig?.timeRange;
+  const chartTimeRange = interactiveFiltersConfig.timeRange;
   return !dashboardTimeRange?.active && chartTimeRange?.active;
 };
 

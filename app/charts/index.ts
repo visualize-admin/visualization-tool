@@ -386,6 +386,7 @@ export const getInitialConfig = (
           };
         }
       }),
+      interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
       limits: {},
       conversionUnitsByComponentId: {},
       activeField: undefined,
@@ -507,7 +508,6 @@ export const getInitialConfig = (
       return {
         ...getGenericConfig(makeInitialFiltersForArea(areaDimension)),
         chartType,
-        interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         baseLayer: {
           show: true,
           locked: false,
@@ -542,7 +542,6 @@ export const getInitialConfig = (
       return {
         ...getGenericConfig(),
         chartType,
-        interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         fields: {
           y: { componentId: numericalMeasures[0].id },
           segment: {
@@ -571,7 +570,6 @@ export const getInitialConfig = (
       return {
         ...getGenericConfig(),
         chartType: "scatterplot",
-        interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         fields: {
           x: { componentId: numericalMeasures[0].id },
           y: {
@@ -612,7 +610,6 @@ export const getInitialConfig = (
       return {
         ...getGenericConfig(),
         chartType,
-        interactiveFiltersConfig: undefined,
         settings: {
           showSearch: true,
           showAllRows: false,
