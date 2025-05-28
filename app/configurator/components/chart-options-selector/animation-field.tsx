@@ -1,7 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import { Box, Tooltip, Typography } from "@mui/material";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { RadioGroup } from "@/components/form";
 import { type AnimationField as AnimationFieldType } from "@/config-types";
 import {

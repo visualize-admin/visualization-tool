@@ -1,6 +1,6 @@
 import { SetStateAction, useCallback, useEffect, useState } from "react";
 
-const useLocalState = <T>(
+export const useLocalState = <T>(
   key: string,
   initialValue: T
 ): [T, (value: SetStateAction<T>) => void] => {
@@ -19,5 +19,3 @@ const useLocalState = <T>(
 
   return [state, updateState];
 };
-
-export default useLocalState;

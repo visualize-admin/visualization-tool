@@ -8,7 +8,7 @@ import { memo, useCallback, useMemo } from "react";
 import { ColorsChartState, useChartState } from "@/charts/shared/chart-state";
 import { rgbArrayToHex } from "@/charts/shared/colors";
 import { getLegendGroups } from "@/charts/shared/legend-color-helpers";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Checkbox, CheckboxProps } from "@/components/form";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
@@ -38,9 +38,9 @@ import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 import { interlace } from "@/utils/interlace";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
-import { DimensionsById } from "./ChartProps";
+import { DimensionsById } from "./chart-props";
 
 export type LegendSymbol =
   | "square"
@@ -461,7 +461,12 @@ const LegendIcon = ({
   }
 
   return (
-    <svg width={size} height={size} viewBox="0 0 1 1">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 1 1"
+      style={{ minWidth: size, minHeight: size }}
+    >
       {node}
     </svg>
   );
@@ -488,10 +493,13 @@ export const LegendItem = ({
   disabled?: boolean;
   smaller?: boolean;
 }) => {
-  const labelNode = smaller ? (
-    <Typography variant="caption">{label}</Typography>
-  ) : (
-    <Typography variant="body3">{label}</Typography>
+  const labelNode = (
+    <Typography
+      variant={smaller ? "caption" : "body3"}
+      style={{ wordBreak: "break-word" }}
+    >
+      {label}
+    </Typography>
   );
 
   return interactive && onToggle ? (

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 

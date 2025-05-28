@@ -18,7 +18,7 @@ import { useLocale } from "@/locales/use-locale";
  * Adds a dataset to the current chart configuration.
  * Is currently responsible for finding the correct joinBy dimension.
  */
-const useAddDataset = () => {
+export const useAddDataset = () => {
   const [hookState, setHookState] = useState({
     fetching: false,
     otherIri: null as null | string,
@@ -89,5 +89,3 @@ const useAddDataset = () => {
 
   return [hookState, { addDataset }] as const;
 };
-
-export default useAddDataset;

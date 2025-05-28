@@ -9,7 +9,7 @@ import {
   decodeConfiguratorState,
 } from "@/configurator";
 import { increaseConfigViewCount } from "@/db/config";
-import { GraphqlProvider } from "@/graphql/GraphqlProvider";
+import { GraphqlProvider } from "@/graphql/graphql-provider";
 import { defaultLocale, i18n, Locale } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
 import { ConfiguratorStateProvider } from "@/src";

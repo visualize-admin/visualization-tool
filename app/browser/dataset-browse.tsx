@@ -22,9 +22,16 @@ import uniqBy from "lodash/uniqBy";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { stringify } from "qs";
-import React, { ComponentProps, ReactNode, useMemo, useState } from "react";
+import {
+  ComponentProps,
+  type KeyboardEvent,
+  type MouseEvent,
+  ReactNode,
+  useMemo,
+  useState,
+} from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import {
   Checkbox,
   SearchField,
@@ -33,7 +40,7 @@ import {
 } from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
-import MaybeLink from "@/components/maybe-link";
+import { MaybeLink } from "@/components/maybe-link";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import {
   accordionPresenceProps,
@@ -41,8 +48,8 @@ import {
   MotionCard,
   smoothPresenceProps,
 } from "@/components/presence";
-import Tag from "@/components/tag";
-import useDisclosure from "@/components/use-disclosure";
+import { Tag } from "@/components/tag";
+import { useDisclosure } from "@/components/use-disclosure";
 import { PartialSearchCube, SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useFormatDate } from "@/formatters";
@@ -58,7 +65,7 @@ import {
 } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 import SvgIcClose from "@/icons/components/IcClose";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 import {
   BrowseState,
@@ -135,7 +142,7 @@ export const SearchDatasetInput = ({
     message: "Name, description, organization, theme, keyword",
   });
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputRef.current) {
       onSubmitSearch(inputRef.current.value);
     }
@@ -912,7 +919,7 @@ export const DatasetResults = ({
   );
 };
 
-export type DatasetResultsProps = React.ComponentProps<typeof DatasetResults>;
+export type DatasetResultsProps = ComponentProps<typeof DatasetResults>;
 
 const useResultStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -951,7 +958,7 @@ type ResultProps = {
   showTags?: boolean;
   disableTitleLink?: boolean;
   showDimensions?: boolean;
-  onClickTitle?: (ev: React.MouseEvent<HTMLDivElement>, iri: string) => void;
+  onClickTitle?: (e: MouseEvent<HTMLDivElement>, iri: string) => void;
 };
 
 export const DatasetResult = ({
@@ -977,9 +984,10 @@ export const DatasetResult = ({
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
   const router = useRouter();
 
-  const handleTitleClick = useEvent((ev: React.MouseEvent<HTMLDivElement>) => {
-    onClickTitle?.(ev, iri);
-    if (ev.defaultPrevented) {
+  const handleTitleClick = useEvent((e: MouseEvent<HTMLDivElement>) => {
+    onClickTitle?.(e, iri);
+
+    if (e.defaultPrevented) {
       return;
     }
 

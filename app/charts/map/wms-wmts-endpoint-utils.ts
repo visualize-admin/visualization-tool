@@ -6,8 +6,8 @@ import { parseWMSContent, RemoteWMSLayer } from "@/charts/map/wms-utils";
 import { parseWMTSContent, RemoteWMTSLayer } from "@/charts/map/wmts-utils";
 import { WMSCustomLayer, WMTSCustomLayer } from "@/config-types";
 import { Locale } from "@/locales/locales";
+import { useLocale } from "@/locales/use-locale";
 import { visitHierarchy } from "@/rdf/tree-utils";
-import { useLocale } from "@/src";
 import { useFetchData } from "@/utils/use-fetch-data";
 
 /** Logic taken from GeoAdmin

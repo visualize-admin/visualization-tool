@@ -9,7 +9,7 @@ import {
 import { nextAuthOptions } from "@/pages/api/auth/[...nextauth]";
 import { controller } from "@/server/nextkit";
 
-const ConfigController = controller({
+export const ConfigController = controller({
   create: async ({ req, res }) => {
     const session = await getServerSession(req, res, nextAuthOptions);
     const userId = session?.user?.id;
@@ -65,5 +65,3 @@ const ConfigController = controller({
     });
   },
 });
-
-export default ConfigController;

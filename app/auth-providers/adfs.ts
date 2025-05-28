@@ -1,6 +1,6 @@
 import { OAuthConfig, OAuthUserConfig } from "next-auth/providers";
 
-interface ADFSProfile extends Record<string, any> {
+type ADFSProfile = Record<string, any> & {
   /**
    * The subject of the JWT (user)
    */
@@ -20,19 +20,19 @@ interface ADFSProfile extends Record<string, any> {
    * The assigned role(s) of the user.
    */
   role: string | string[];
-}
+};
 
 /**
  * Configures Active Directory Federation Services as a NextAuth provider.
  */
-export default function ADFS<P extends ADFSProfile>(
+export const ADFS = <P extends ADFSProfile>(
   options: OAuthUserConfig<P> & {
     /**
      * The OAuth Authorize URL
      */
     authorizeUrl: string;
   }
-): OAuthConfig<P> {
+): OAuthConfig<P> => {
   return {
     id: "adfs",
     name: "eIAM (ADFS)",
@@ -43,9 +43,7 @@ export default function ADFS<P extends ADFSProfile>(
         scope: "openid",
       },
     },
-
     idToken: true,
-
     async profile(profile: P, tokens) {
       // Usually the user only has one role, which is a string.
       let role = profile.role;
@@ -72,7 +70,6 @@ export default function ADFS<P extends ADFSProfile>(
         idToken: tokens.id_token,
       };
     },
-
     options,
   };
-}
+};

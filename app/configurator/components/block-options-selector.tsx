@@ -12,7 +12,7 @@ import { isLayouting } from "@/configurator/configurator-state";
 import { useOrderedLocales } from "@/locales/use-locale";
 import { useConfiguratorState } from "@/src";
 import { assert } from "@/utils/assert";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 export const LayoutBlocksSelector = () => {
   const orderedLocales = useOrderedLocales();

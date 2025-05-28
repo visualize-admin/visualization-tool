@@ -14,7 +14,7 @@ import {
   Observation,
   SymbolLayer,
 } from "@/domain/data";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 type MinMaxZoomViewState = Pick<
   ViewState,

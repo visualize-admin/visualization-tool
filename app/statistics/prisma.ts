@@ -1,5 +1,5 @@
 import { ChartType, LayoutDashboard, LayoutType } from "@/config-types";
-import prisma from "@/db/client";
+import { prisma } from "@/db/client";
 
 export const fetchMostPopularAllTimeCharts = async () => {
   return await prisma.config

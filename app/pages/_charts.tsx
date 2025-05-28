@@ -1,12 +1,12 @@
 import { Box, Link } from "@mui/material";
 import { NextPage } from "next";
 import NextLink from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import SuperJSON from "superjson";
 import { SuperJSONResult } from "superjson/dist/types";
 
 import { ChartPublished } from "@/components/chart-published";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { ContentLayout } from "@/components/layout";
 import {
   Config,
@@ -65,9 +65,9 @@ export const HiddenUntilScrolledTo = ({
   initialVisible = false,
   fallback,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   initialVisible?: boolean;
-  fallback: React.ReactNode;
+  fallback: ReactNode;
 }) => {
   const [ref, hasBeenVisible] = useHasBeenVisible(initialVisible);
   return <div ref={ref}>{hasBeenVisible ? children : fallback}</div>;

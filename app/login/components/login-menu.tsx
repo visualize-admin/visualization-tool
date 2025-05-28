@@ -7,8 +7,8 @@ import { MenuActionItem } from "@/components/menu-action-item";
 import { ADFS_PROFILE_URL } from "@/domain/env";
 import { isVercelPreviewHost } from "@/flags/flag";
 import { Icon } from "@/icons";
+import { useLocale } from "@/locales/use-locale";
 import { useUser } from "@/login/utils";
-import { useLocale } from "@/src";
 import { createMailtoLink } from "@/templates/email";
 import { bugReportTemplates } from "@/templates/email/bug-report";
 import {

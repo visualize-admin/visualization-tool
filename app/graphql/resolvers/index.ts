@@ -2,7 +2,7 @@ import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
 import { MeasureType } from "@/configurator";
 import { DimensionType } from "@/domain/data";
-import { isDataSourceUrlAllowed } from "@/domain/datasource";
+import { isDataSourceUrlAllowed } from "@/domain/data-source";
 import { setupFlamegraph } from "@/gql-flamegraph/resolvers";
 import {
   QueryResolvers,

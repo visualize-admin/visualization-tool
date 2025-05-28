@@ -10,7 +10,7 @@ import sortBy from "lodash/sortBy";
 import { useMemo } from "react";
 
 import { guessUrlType } from "@/charts/map/wms-wmts-endpoint-utils";
-import ProviderInfoAlert from "@/charts/map/wms-wmts-provider-info";
+import { ProviderInfoAlert } from "@/charts/map/wms-wmts-provider-info";
 import wmsWmtsProvidersExtra_ from "@/charts/map/wms-wmts-providers-extra.json";
 import wmsWmtsProviders from "@/charts/map/wms-wmts-providers.json";
 import { useFlag } from "@/flags";
@@ -63,7 +63,7 @@ const inferUrlGroup = (host: string) => {
   return host.split(".").slice(-2).join(".");
 };
 
-const ProviderAutocomplete = ({
+export const ProviderAutocomplete = ({
   value,
   onChange,
 }: {
@@ -160,5 +160,3 @@ const ProviderAutocomplete = ({
     </>
   );
 };
-
-export default ProviderAutocomplete;

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Client, Provider } from "urql";
 import { describe, expect, it, vi } from "vitest";
 
-import useSyncInteractiveFilters from "@/charts/shared/use-sync-interactive-filters";
+import { useSyncInteractiveFilters } from "@/charts/shared/use-sync-interactive-filters";
 import { ChartConfig, ConfiguratorStateConfiguringChart } from "@/config-types";
 import { ConfiguratorStateProvider } from "@/src";
 import {

@@ -5,7 +5,7 @@ import {
   ConfiguratorStateSelectingDataSet,
   DataSource,
 } from "@/config-types";
-import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
+import { DEFAULT_DATA_SOURCE } from "@/domain/data-source";
 import { CONFIGURATOR_STATE_VERSION } from "@/utils/chart-config/constants";
 
 export const getInitialConfiguringConfigBasedOnCube = (props: {

@@ -1382,7 +1382,7 @@ msgstr "Sortierung entfernen"
 
 #: app/configurator/table/table-chart-sorting-options.tsx
 msgid "controls.sorting.selectDimension"
-msgstr "Wählen Sie eine Dimension aus …"
+msgstr "Wählen Sie eine Dimension aus..."
 
 #: app/configurator/components/field-i18n.ts
 #: app/configurator/table/table-chart-sorting-options.tsx

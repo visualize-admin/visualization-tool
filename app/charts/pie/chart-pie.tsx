@@ -16,7 +16,7 @@ import { PieConfig } from "@/config-types";
 import { useChartConfigFilters } from "@/config-utils";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 
-import { ChartProps, VisualizationProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/chart-props";
 
 export const ChartPieVisualization = (props: VisualizationProps<PieConfig>) => {
   return <ChartDataWrapper {...props} Component={ChartPie} />;

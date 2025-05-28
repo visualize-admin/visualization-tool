@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { FormEvent } from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Input } from "@/components/form";
 import { ParsedConfig } from "@/db/config";
 import { useUserConfigs } from "@/domain/user-configs";

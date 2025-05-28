@@ -6,7 +6,7 @@ import { Table } from "@/charts/table/table";
 import { TableChart } from "@/charts/table/table-state";
 import { TableConfig } from "@/configurator";
 
-import { ChartProps, VisualizationProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/chart-props";
 
 export const ChartTableVisualization = (
   props: Omit<VisualizationProps<TableConfig>, "observationQueryFilters">

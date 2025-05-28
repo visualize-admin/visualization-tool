@@ -22,7 +22,7 @@ import { LineConfig } from "@/config-types";
 import { useLimits } from "@/config-utils";
 import { hasChartConfigs, useConfiguratorState } from "@/configurator";
 
-import { ChartProps, VisualizationProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/chart-props";
 
 export const ChartLinesVisualization = (
   props: VisualizationProps<LineConfig>

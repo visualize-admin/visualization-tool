@@ -1,6 +1,6 @@
 // @ts-ignore We use StrictEventEmitter to type EventEmitter
 import EventEmitter from "microee";
-import { createContext, useContext, useEffect } from "react";
+import { createContext, PropsWithChildren, useContext, useEffect } from "react";
 import StrictEventEmitter from "strict-event-emitter-types";
 
 /**
@@ -22,9 +22,7 @@ const globalEventEmitter: GlobalEventEmitter = new EventEmitter();
 const EventEmitterContext =
   createContext<GlobalEventEmitter>(globalEventEmitter);
 
-export const EventEmitterProvider = ({
-  children,
-}: React.PropsWithChildren<{}>) => {
+export const EventEmitterProvider = ({ children }: PropsWithChildren<{}>) => {
   return (
     <EventEmitterContext.Provider value={globalEventEmitter}>
       {children}

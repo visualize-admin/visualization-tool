@@ -1,9 +1,9 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import {
   ChartConfig,
@@ -20,7 +20,7 @@ import { Component } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
 import SvgIcPen from "@/icons/components/IcPen";
 import SvgIcWarningCircle from "@/icons/components/IcWarningCircle";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 export const ControlTabFieldInner = ({
   chartConfig,
@@ -120,7 +120,7 @@ const useIconStyles = makeStyles<Theme, { isActive: boolean }>((theme) => ({
 }));
 
 type WarnIconTooltipProps = {
-  title: NonNullable<React.ReactNode>;
+  title: NonNullable<ReactNode>;
 };
 
 const WarnIconTooltip = (props: WarnIconTooltipProps) => {

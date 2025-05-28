@@ -10,11 +10,10 @@ import {
 import dynamic from "next/dynamic";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
+import { Swatch } from "@/configurator/components/chart-controls/color-picker";
 import { ColorItem } from "@/palettes";
 import { createColorId } from "@/utils/color-palette-utils";
-
-import { Swatch } from "./chart-controls/color-picker";
 
 const ChromePicker = dynamic(
   () => import("@uiw/react-color").then((mod) => ({ default: mod.Chrome })),
@@ -36,7 +35,7 @@ type CustomColorPickerProps = {
   defaultSelection?: HsvaColor & Pick<ColorItem, "id">;
 };
 
-const CustomColorPicker = ({
+export const CustomColorPicker = ({
   onChange,
   colorSwatches,
   defaultSelection = { h: 0, s: 0, v: 68, a: 1, id: createColorId() },
@@ -158,5 +157,3 @@ const CustomColorPicker = ({
     </Flex>
   );
 };
-
-export default CustomColorPicker;

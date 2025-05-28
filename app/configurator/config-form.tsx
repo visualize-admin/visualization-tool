@@ -1,9 +1,10 @@
 import { SelectChangeEvent, SelectProps } from "@mui/material";
 import get from "lodash/get";
-import React, {
+import {
   ChangeEvent,
   createContext,
   InputHTMLAttributes,
+  ReactNode,
   useCallback,
   useContext,
   useMemo,
@@ -21,6 +22,7 @@ import {
   isTableConfig,
 } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
+import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import {
   getChartOptionField,
   GetConfiguratorStateAction,
@@ -42,9 +44,7 @@ import { useLocale } from "@/locales/use-locale";
 import { categoricalPalettes } from "@/palettes";
 import { bfs } from "@/utils/bfs";
 import { isMultiHierarchyNode } from "@/utils/hierarchy";
-import useEvent from "@/utils/use-event";
-
-import { mapValueIrisToColor } from "./components/ui-helpers";
+import { useEvent } from "@/utils/use-event";
 
 export type Option = {
   value: string | $FixMe;
@@ -631,7 +631,7 @@ export const MultiFilterContextProvider = ({
   getValueColor,
 }: {
   dimension: Dimension;
-  children: React.ReactNode;
+  children: ReactNode;
   colorConfigPath?: string;
   getValueColor: (value: string) => string;
 }) => {

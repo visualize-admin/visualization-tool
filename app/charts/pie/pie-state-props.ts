@@ -14,7 +14,7 @@ import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { useChartConfigFilters } from "@/config-utils";
 import { PieConfig } from "@/configurator";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type PieStateVariables = BaseVariables &
   NumericalYVariables &

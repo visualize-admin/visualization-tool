@@ -42,9 +42,9 @@ import {
 } from "@/components/chart-table-preview";
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
-import DebugPanel from "@/components/debug-panel";
+import { DebugPanel } from "@/components/debug-panel";
 import { DragHandle, useDragOverClasses } from "@/components/drag-handle";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Checkbox } from "@/components/form";
 import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import { HintWarning } from "@/components/hint";

@@ -29,7 +29,7 @@ generates:
         Termset: "../domain/data#Termset"
         ComponentTermsets: "../domain/data#ComponentTermsets"
         GeoShapes: "../domain/data#GeoShapes"
-        DataSourceUrl: "../domain/datasource#DataSourceUrl"
+        DataSourceUrl: "../domain/data-source#DataSourceUrl"
   app/graphql/resolver-types.ts:
     plugins:
       - "typescript"
@@ -54,4 +54,4 @@ generates:
         Termset: "../domain/data#Termset"
         ComponentTermsets: "../domain/data#ComponentTermsets"
         GeoShapes: "../domain/data#GeoShapes"
-        DataSourceUrl: "../domain/datasource#DataSourceUrl"
+        DataSourceUrl: "../domain/data-source#DataSourceUrl"

@@ -52,7 +52,7 @@ import { getTimeInterval } from "@/intervals";
 import { getTextWidth } from "@/utils/get-text-width";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type ComboLineColumnState = CommonChartState &
   ComboLineColumnStateVariables &

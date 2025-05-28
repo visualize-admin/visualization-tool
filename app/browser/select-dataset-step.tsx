@@ -8,12 +8,7 @@ import uniqBy from "lodash/uniqBy";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
-import React, {
-  ComponentProps,
-  type MouseEvent,
-  useCallback,
-  useMemo,
-} from "react";
+import { ComponentProps, type MouseEvent, useCallback, useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
 import {
@@ -36,7 +31,7 @@ import {
 import { BrowseFilter, DataCubeAbout } from "@/browser/filters";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { DatasetMetadata } from "@/components/dataset-metadata";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
   __BANNER_MARGIN_CSS_VAR,
@@ -52,7 +47,7 @@ import {
   PanelBodyWrapper,
   PanelLayout,
 } from "@/configurator/components/layout";
-import { sourceToLabel } from "@/domain/datasource";
+import { sourceToLabel } from "@/domain/data-source";
 import { truthy } from "@/domain/types";
 import {
   DataCubeOrganization,
@@ -665,9 +660,7 @@ const SelectDatasetStepContent = ({
   );
 };
 
-type SelectDatasetStepProps = React.ComponentProps<
-  typeof SelectDatasetStepContent
->;
+type SelectDatasetStepProps = ComponentProps<typeof SelectDatasetStepContent>;
 
 const DatasetMetadataSingleCubeAdapter = ({
   dataSource,

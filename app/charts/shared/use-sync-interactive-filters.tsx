@@ -9,7 +9,7 @@ import {
 import { useChartConfigFilters } from "@/config-utils";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import useFilterChanges from "@/configurator/use-filter-changes";
+import { useFilterChanges } from "@/configurator/use-filter-changes";
 import { truthy } from "@/domain/types";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
@@ -20,7 +20,7 @@ import { useChartInteractiveFilters } from "@/stores/interactive-filters";
  *   inside the interactive filters
  *
  */
-const useSyncInteractiveFilters = (
+export const useSyncInteractiveFilters = (
   chartConfig: ChartConfig,
   dashboardFilters: DashboardFiltersConfig | undefined
 ) => {
@@ -149,5 +149,3 @@ const useSyncInteractiveFilters = (
     }
   }, [calculationActive, calculationType, setCalculationType]);
 };
-
-export default useSyncInteractiveFilters;

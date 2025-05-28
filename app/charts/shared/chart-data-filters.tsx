@@ -4,7 +4,7 @@ import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import mapValues from "lodash/mapValues";
 import pickBy from "lodash/pickBy";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
@@ -13,11 +13,11 @@ import {
   getPossibleFiltersQueryVariables,
   skipPossibleFiltersQuery,
 } from "@/charts/shared/possible-filters";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
-import SelectTree, { Tree } from "@/components/select-tree";
+import { SelectTree, Tree } from "@/components/select-tree";
 import { useChartConfigFilters } from "@/config-utils";
 import {
   areDataFiltersActive,
@@ -58,7 +58,7 @@ import {
 } from "@/stores/interactive-filters";
 import { assert } from "@/utils/assert";
 import { hierarchyToOptions } from "@/utils/hierarchy";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 type PreparedFilter = {
   cubeIri: string;
@@ -532,7 +532,7 @@ export const DataFilterTemporalDimension = ({
   dimension: TemporalDimension;
   value: string;
   onChange: (
-    e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>
+    e: SelectChangeEvent<unknown> | ChangeEvent<HTMLSelectElement>
   ) => void;
   disabled: boolean;
 }) => {

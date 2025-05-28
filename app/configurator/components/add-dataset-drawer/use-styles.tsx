@@ -8,7 +8,7 @@ import {
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 
-const useStyles = makeStyles((theme: Theme) => ({
+export const useStyles = makeStyles((theme: Theme) => ({
   addButton: {
     transition: "opacity 0.25s ease",
   },
@@ -60,5 +60,3 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
 }));
-
-export default useStyles;

@@ -18,7 +18,7 @@ import {
   stackOrderReverse,
 } from "d3-shape";
 import orderBy from "lodash/orderBy";
-import React, { useCallback, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   BarsStackedStateData,
@@ -62,7 +62,7 @@ import {
   getStackedTooltipValueFormatter,
   getStackedXScale,
 } from "@/charts/shared/stacked-helpers";
-import useChartFormatters from "@/charts/shared/use-chart-formatters";
+import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { BarConfig } from "@/configurator";
@@ -77,7 +77,7 @@ import {
 } from "@/utils/sorting-values";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type StackedBarsState = CommonChartState &
   BarsStackedStateVariables &
@@ -585,7 +585,7 @@ const useBarsStackedState = (
 };
 
 const StackedBarsChartProvider = (
-  props: React.PropsWithChildren<ChartProps<BarConfig>>
+  props: PropsWithChildren<ChartProps<BarConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useBarsStackedStateVariables(chartProps);
@@ -598,7 +598,7 @@ const StackedBarsChartProvider = (
 };
 
 export const StackedBarsChart = (
-  props: React.PropsWithChildren<ChartProps<BarConfig>>
+  props: PropsWithChildren<ChartProps<BarConfig>>
 ) => {
   return (
     <InteractionProvider>

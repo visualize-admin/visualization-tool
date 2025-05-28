@@ -44,7 +44,7 @@ import {
   ShowBandValueLabelsVariables,
   useShowBandValueLabelsVariables,
 } from "@/charts/shared/show-values-utils";
-import useChartFormatters from "@/charts/shared/use-chart-formatters";
+import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { useLimits } from "@/config-utils";
@@ -58,7 +58,7 @@ import {
 } from "@/utils/sorting-values";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type BarsState = CommonChartState &
   BarsStateVariables &

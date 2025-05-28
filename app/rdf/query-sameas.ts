@@ -4,8 +4,8 @@ import { NamedNode } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
-import batchLoad from "./batch-load";
-import { pragmas } from "./create-source";
+import { batchLoad } from "@/rdf/batch-load";
+import { pragmas } from "@/rdf/create-source";
 
 interface UnversionedResource {
   iri: NamedNode;

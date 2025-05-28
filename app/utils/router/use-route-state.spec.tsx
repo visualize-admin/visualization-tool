@@ -3,7 +3,7 @@ import mittEmitter from "next/dist/shared/lib/mitt";
 import { useRouter } from "next/router";
 import { describe, expect, it, vi } from "vitest";
 
-import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
+import { DEFAULT_DATA_SOURCE } from "@/domain/data-source";
 import { useRouteState } from "@/utils/router/use-route-state";
 
 vi.mock("next/router", () => {

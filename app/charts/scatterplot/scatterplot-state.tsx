@@ -2,7 +2,7 @@ import { max } from "d3-array";
 import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
-import { useMemo } from "react";
+import { PropsWithChildren, useMemo } from "react";
 
 import {
   ScatterplotStateVariables,
@@ -36,7 +36,7 @@ import {
 } from "@/utils/sorting-values";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 import { TooltipPlacement } from "../shared/interaction/tooltip-box";
 
 export type ScatterplotState = CommonChartState &
@@ -258,7 +258,7 @@ const useScatterplotState = (
 };
 
 const ScatterplotChartProvider = (
-  props: React.PropsWithChildren<ChartProps<ScatterPlotConfig>>
+  props: PropsWithChildren<ChartProps<ScatterPlotConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useScatterplotStateVariables(chartProps);
@@ -271,7 +271,7 @@ const ScatterplotChartProvider = (
 };
 
 export const ScatterplotChart = (
-  props: React.PropsWithChildren<ChartProps<ScatterPlotConfig>>
+  props: PropsWithChildren<ChartProps<ScatterPlotConfig>>
 ) => {
   return (
     <InteractionProvider>

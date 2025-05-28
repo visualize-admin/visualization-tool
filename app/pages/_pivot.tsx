@@ -25,7 +25,7 @@ import {
 } from "@/graphql/hooks";
 import { ComponentId } from "@/graphql/make-component-id";
 import { visitHierarchy } from "@/rdf/tree-utils";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 const Card = styled(MUICard)({
   border: "1px solid #ccc",

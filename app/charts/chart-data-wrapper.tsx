@@ -1,18 +1,19 @@
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
 import keyBy from "lodash/keyBy";
-import React, {
+import {
   ComponentProps,
   createElement,
+  ElementType,
   useEffect,
   useMemo,
 } from "react";
 
 import { A11yTable } from "@/charts/shared/a11y-table";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
-import { ChartProps } from "@/charts/shared/ChartProps";
+import { ChartProps } from "@/charts/shared/chart-props";
 import { EmbedQueryParams } from "@/components/embed-params";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import {
   Loading,
   LoadingDataError,
@@ -26,9 +27,9 @@ import {
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
-import { useLocale } from "@/src";
+import { useLocale } from "@/locales/use-locale";
 
-type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
+type ElementProps<RE> = RE extends ElementType<infer P> ? P : never;
 
 const useStyles = makeStyles(() => ({
   dataWrapper: {
@@ -48,7 +49,7 @@ const useStyles = makeStyles(() => ({
 const ChartDataWrapperInner = <
   TChartConfig extends ChartConfig,
   TOtherProps,
-  TChartComponent extends React.ElementType,
+  TChartComponent extends ElementType,
 >({
   chartConfig,
   LoadingOverlayComponent = LoadingOverlay,
@@ -62,7 +63,7 @@ const ChartDataWrapperInner = <
   error: propError,
 }: {
   chartConfig: TChartConfig;
-  LoadingOverlayComponent?: React.ElementType;
+  LoadingOverlayComponent?: ElementType;
   Component: TChartComponent;
   ComponentProps?: Omit<
     ElementProps<TChartComponent>,

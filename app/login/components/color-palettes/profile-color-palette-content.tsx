@@ -3,8 +3,8 @@ import { Trans } from "@lingui/macro";
 import { Box, Button, Grid, styled, Typography } from "@mui/material";
 import { useState } from "react";
 
-import Flex from "@/components/flex";
-import VisuallyHidden from "@/components/visually-hidden";
+import { Flex } from "@/components/flex";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import { CustomPaletteType } from "@/config-types";
 import { ColorSquare } from "@/configurator/components/chart-controls/color-palette";
 import { ColorRamp } from "@/configurator/components/chart-controls/color-ramp";

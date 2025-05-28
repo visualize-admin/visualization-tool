@@ -22,7 +22,7 @@ import {
   TableContentProvider,
 } from "@/charts/table/table-content";
 import { TableChartState } from "@/charts/table/table-state";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Input, Switch } from "@/components/form";
 import { Observation } from "@/domain/data";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";

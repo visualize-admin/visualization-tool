@@ -2,7 +2,7 @@ import { BoxProps, styled, Typography, TypographyProps } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { forwardRef, ReactNode } from "react";
+import { forwardRef, ReactNode } from "react";
 
 type TagType =
   | "draft"
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.cobalt[50],
   },
   dimensionType: {
-    backgroundColor: theme.palette.warning.light,
+    backgroundColor: theme.palette.yellow[100],
   },
   draftType: {},
   clickable: {
@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const Tag = forwardRef<
+export const Tag = forwardRef<
   HTMLParagraphElement,
   {
     children: ReactNode;
@@ -73,5 +73,3 @@ const Tag = forwardRef<
     </TagTypography>
   );
 });
-
-export default Tag;

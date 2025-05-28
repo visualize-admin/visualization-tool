@@ -5,7 +5,7 @@ import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 export const InteractionColumns = ({ temporal }: { temporal?: boolean }) => {
   const [, dispatch] = useInteraction();

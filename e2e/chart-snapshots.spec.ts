@@ -1,6 +1,6 @@
 import { argosScreenshot } from "@argos-ci/playwright";
 
-import intConfigs from "../app/test/__fixtures/config/int/configs";
+import { configs as intConfigs } from "../app/test/__fixtures/config/int/configs";
 
 import { setup, sleep } from "./common";
 import { harReplayGraphqlEndpointQueryParam } from "./har-utils";

@@ -22,11 +22,12 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, {
+import {
   ForwardedRef,
   forwardRef,
   HTMLAttributes,
   type MouseEvent,
+  MouseEventHandler,
   ReactNode,
   useCallback,
   useEffect,
@@ -40,7 +41,7 @@ import { HierarchyValue } from "@/domain/data";
 import { Icon } from "@/icons";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
 import { flattenTree, pruneTree } from "@/rdf/tree-utils";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 const useTreeItemStyles = makeStyles({
   // Necessary to use $content below
@@ -110,14 +111,14 @@ const TreeItemContent = forwardRef<
   {
     classes: Record<TreeItemContentClassKey, string>;
     className?: string;
-    displayIcon?: React.ReactNode;
-    expansionIcon?: React.ReactNode;
+    displayIcon?: ReactNode;
+    expansionIcon?: ReactNode;
     size?: SelectProps["size"];
-    icon?: React.ReactNode;
-    label?: React.ReactNode;
-    onClick?: React.MouseEventHandler;
+    icon?: ReactNode;
+    label?: ReactNode;
+    onClick?: MouseEventHandler;
     nodeId: string;
-    onMouseDown?: React.MouseEventHandler;
+    onMouseDown?: MouseEventHandler;
     "data-selectable"?: boolean;
     "data-children"?: boolean;
   }
@@ -152,11 +153,11 @@ const TreeItemContent = forwardRef<
 
   const icon = iconProp || expansionIcon || displayIcon;
 
-  const handleMouseDown = useEvent((event: React.MouseEvent) => {
-    preventSelection(event);
+  const handleMouseDown = useEvent((e: MouseEvent) => {
+    preventSelection(e);
 
     if (onMouseDown) {
-      onMouseDown(event);
+      onMouseDown(e);
     }
   });
 
@@ -370,7 +371,7 @@ export const useSelectTree = ({
   };
 };
 
-const SelectTree = ({
+export const SelectTree = ({
   size = "sm",
   label,
   options,
@@ -623,5 +624,3 @@ const SelectTree = ({
     </div>
   );
 };
-
-export default SelectTree;

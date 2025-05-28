@@ -6,7 +6,7 @@ import {
   DEFAULT_DATA_SOURCE,
   parseSourceByLabel,
   sourceToLabel,
-} from "@/domain/datasource";
+} from "@/domain/data-source";
 import { isRunningInBrowser } from "@/utils/is-running-in-browser";
 import { getURLParam, setURLParam } from "@/utils/router/helpers";
 

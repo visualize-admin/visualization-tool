@@ -1,8 +1,8 @@
 import NextAuth, { NextAuthOptions, User } from "next-auth";
 import CredentialsProviders from "next-auth/providers/credentials";
 
-import ADFS from "@/auth-providers/adfs";
-import prisma from "@/db/client";
+import { ADFS } from "@/auth-providers/adfs";
+import { prisma } from "@/db/client";
 import { ensureUserFromSub } from "@/db/user";
 import { ADFS_ID, ADFS_ISSUER } from "@/domain/env";
 import { truthy } from "@/domain/types";

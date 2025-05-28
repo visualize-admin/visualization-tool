@@ -20,7 +20,7 @@ import {
   initChartStateFromCube,
   initChartStateFromLocalStorage,
 } from "@/configurator/configurator-state/init";
-import { getLocalStorageKey } from "@/configurator/configurator-state/localstorage";
+import { getLocalStorageKey } from "@/configurator/configurator-state/local-storage";
 import { Dimension } from "@/domain/data";
 import { stringifyComponentId } from "@/graphql/make-component-id";
 import { data as fakeVizFixture } from "@/test/__fixtures/config/prod/line-1.json";

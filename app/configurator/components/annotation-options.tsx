@@ -17,7 +17,7 @@ import {
 import { MetaInputField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { useOrderedLocales } from "@/locales/use-locale";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 export const ChartAnnotationsSelector = () => {
   const [state] = useConfiguratorState(isConfiguring);

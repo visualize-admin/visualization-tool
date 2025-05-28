@@ -7,7 +7,7 @@ import { getMaybeCachedSparqlUrl } from "@/graphql/caching-utils";
 import { useLocale } from "@/locales/use-locale";
 import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 import { getErrorQueryParams } from "@/utils/flashes";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 export const useRedirectToLatestCube = ({
   datasetIri,

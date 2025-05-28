@@ -9,8 +9,8 @@ import {
 import NextLink from "next/link";
 import { MouseEvent, ReactNode } from "react";
 
-import ConfirmationDialog from "@/components/confirmation-dialog";
-import useDisclosure from "@/components/use-disclosure";
+import { ConfirmationDialog } from "@/components/confirmation-dialog";
+import { useDisclosure } from "@/components/use-disclosure";
 import { Icon, IconName } from "@/icons";
 
 const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
@@ -23,7 +23,7 @@ const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
 
 export type MenuActionProps = {
   disabled?: boolean;
-  label: string | NonNullable<React.ReactNode>;
+  label: string | NonNullable<ReactNode>;
   trailingIconName?: IconName;
   leadingIconName?: IconName;
   priority?: number;

@@ -11,7 +11,7 @@ import { executeWithCache } from "./query-cache";
 
 const BATCH_SIZE = 500;
 
-export default async function batchLoad<
+export const batchLoad = async <
   TReturn extends unknown,
   TId extends Term | NamedNode = Term,
 >({
@@ -29,7 +29,7 @@ export default async function batchLoad<
     key: number
   ) => SparqlQueryExecutable & SparqlQuery;
   batchSize?: number;
-}): Promise<TReturn[]> {
+}): Promise<TReturn[]> => {
   const batched = groups(ids, (_, i) => Math.floor(i / batchSize));
 
   const results = await Promise.all(
@@ -56,4 +56,4 @@ export default async function batchLoad<
   );
 
   return results.flat();
-}
+};

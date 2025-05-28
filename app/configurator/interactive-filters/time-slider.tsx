@@ -33,7 +33,7 @@ import {
   getSortingOrders,
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 const TimelineContext = createContext<Timeline | undefined>(undefined);

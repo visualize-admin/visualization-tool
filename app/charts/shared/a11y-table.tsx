@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { memo, useMemo } from "react";
 
-import VisuallyHidden from "@/components/visually-hidden";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import { Dimension, Measure, Observation } from "@/domain/data";
 
 export const A11yTable = memo(

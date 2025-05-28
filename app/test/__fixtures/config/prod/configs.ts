@@ -1,6 +1,6 @@
 import { TestConfig } from "@/test/__fixtures/config/types";
 
-const configs: TestConfig[] = [
+export const configs: TestConfig[] = [
   { chartId: "column-1", slug: "column-1", name: "Column 1" },
   { chartId: "column-2", slug: "column-2", name: "Column 2" },
   { chartId: "column-3", slug: "column-3", name: "Column 3" },
@@ -22,5 +22,3 @@ const configs: TestConfig[] = [
   },
   { chartId: "pie-1", slug: "pie-1", name: "Pie 1" },
 ];
-
-export default configs;

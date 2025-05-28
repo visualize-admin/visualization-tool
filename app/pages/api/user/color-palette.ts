@@ -1,5 +1,5 @@
 import { api } from "@/server/nextkit";
-import UserController from "@/server/user-controller";
+import { UserController } from "@/server/user-controller";
 
 const route = api({
   POST: UserController.createPalette,

@@ -1,5 +1,11 @@
 import uniq from "lodash/uniq";
-import React, { createContext, useContext, useMemo, useRef } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useContext,
+  useMemo,
+  useRef,
+} from "react";
 import create, { StateCreator, StoreApi, UseBoundStore } from "zustand";
 
 import { getChartSpec } from "@/charts/chart-config-ui-options";
@@ -203,7 +209,7 @@ const getPotentialDataFilterIds = (chartConfigs: ChartConfig[]) => {
 export const InteractiveFiltersProvider = ({
   children,
   chartConfigs,
-}: React.PropsWithChildren<{
+}: PropsWithChildren<{
   chartConfigs: ChartConfig[];
 }>) => {
   const storeRefs = useRef<Record<ChartConfig["key"], StoreApi<State>>>({});
@@ -253,14 +259,14 @@ export const InteractiveFiltersProvider = ({
  * Provides the chartConfig key to children, so that they know which interactive filters
  * store they should use.
  */
-const InteractiveFiltersChartContext = React.createContext<
-  ChartConfig["key"] | null
->(null);
+const InteractiveFiltersChartContext = createContext<ChartConfig["key"] | null>(
+  null
+);
 
 export const InteractiveFiltersChartProvider = ({
   chartConfigKey,
   children,
-}: React.PropsWithChildren<{ chartConfigKey: ChartConfig["key"] }>) => {
+}: PropsWithChildren<{ chartConfigKey: ChartConfig["key"] }>) => {
   return (
     <InteractiveFiltersChartContext.Provider value={chartConfigKey}>
       {children}

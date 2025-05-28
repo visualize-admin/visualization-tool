@@ -3,14 +3,14 @@ import { Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Select } from "@/components/form";
 import {
   isDataSourceChangeable,
   parseDataSource,
   stringifyDataSource,
-} from "@/domain/datasource";
-import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
+} from "@/domain/data-source";
+import { SOURCE_OPTIONS } from "@/domain/data-source/constants";
 import { useDataSourceStore } from "@/stores/data-source";
 
 export const DataSourceMenu = () => {

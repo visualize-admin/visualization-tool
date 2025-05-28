@@ -20,8 +20,8 @@ import {
   FLY_TO_DURATION,
   RESET_DURATION,
 } from "@/charts/map/constants";
-import CustomAttribution from "@/charts/map/custom-attribution";
-import DashedScatterplotLayer from "@/charts/map/dashed-scatterplot-layer";
+import { CustomAttribution } from "@/charts/map/custom-attribution";
+import { DashedScatterplotLayer } from "@/charts/map/dashed-scatterplot-layer";
 import { useMapStyle } from "@/charts/map/get-base-layer-style";
 import {
   BASE_VIEW_STATE,
@@ -58,8 +58,8 @@ import {
 } from "@/configurator";
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
-import { useLocale } from "@/src";
-import useEvent from "@/utils/use-event";
+import { useLocale } from "@/locales/use-locale";
+import { useEvent } from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 import "maplibre-gl/dist/maplibre-gl.css";

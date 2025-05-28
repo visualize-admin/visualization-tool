@@ -6,7 +6,7 @@ import { timeFormat, TimeLocaleObject, timeParse } from "d3-time-format";
 import { useMemo } from "react";
 import { match } from "ts-pattern";
 
-import type { BaseChartProps } from "@/charts/shared/ChartProps";
+import type { BaseChartProps } from "@/charts/shared/chart-props";
 import {
   ColorMapping,
   CustomPaletteType,

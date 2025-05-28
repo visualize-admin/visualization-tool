@@ -14,9 +14,12 @@ import { createColorId } from "@/utils/color-palette-utils";
 
 import type { Meta, StoryObj } from "@storybook/react";
 
-//have to import dynamically to avoid @uiw/react-color dependency issues with the server
+// Have to import dynamically to avoid @uiw/react-color dependency issues with the server
 const CustomColorPicker = dynamic(
-  () => import("../configurator/components/color-picker"),
+  () =>
+    import("../configurator/components/color-picker").then(
+      (mod) => mod.CustomColorPicker
+    ),
   {
     ssr: false,
   }

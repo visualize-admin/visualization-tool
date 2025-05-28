@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useMemo } from "react";
 
 import { LegendItem } from "@/charts/shared/legend-color";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Radio, RadioGroup, Switch } from "@/components/form";
 import { ChartConfig } from "@/config-types";
 import {
@@ -27,7 +27,7 @@ import { Dimension, Measure } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { getPalette } from "@/palettes";
 import { Limit } from "@/rdf/limits";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 import { useUserPalettes } from "@/utils/use-user-palettes";
 
 const ColorPickerMenu = dynamic(

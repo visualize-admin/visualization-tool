@@ -1,7 +1,7 @@
 import mitt, { Emitter } from "mitt";
 
-import localStorageAdapter from "./local-storage-adapter";
-import { FLAG_NAMES, FlagName, FlagValue } from "./types";
+import { localStorageAdapter } from "@/flags/local-storage-adapter";
+import { FLAG_NAMES, FlagName, FlagValue } from "@/flags/types";
 
 type Events = {
   change: string;
@@ -14,7 +14,7 @@ type Events = {
 
  * Emits `change` when a key is set (eventEmitter).
  */
-class FlagStore {
+export class FlagStore {
   longTermStore: typeof localStorageAdapter | null;
   store: Record<string, any>;
   ee: Emitter<Events>;
@@ -83,5 +83,3 @@ class FlagStore {
 
   removeListener(_event: string, _fn: (changed: string) => void) {}
 }
-
-export default FlagStore;

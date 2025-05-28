@@ -23,7 +23,7 @@ import { ScatterPlotConfig } from "@/config-types";
 import { useChartConfigFilters } from "@/config-utils";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 
-import { ChartProps, VisualizationProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/chart-props";
 import { Ruler } from "../shared/interaction/ruler";
 
 export const ChartScatterplotVisualization = (

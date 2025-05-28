@@ -7,7 +7,7 @@ import {
 } from "@/charts/shared/chart-state";
 import { TableConfig } from "@/configurator";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type TableStateVariables = BaseVariables;
 
