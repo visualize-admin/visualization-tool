@@ -80,4 +80,5 @@ model Palette {
 
   @@map("palettes")
   @@unique([name, user_id])
+  @@unique([paletteId, user_id])
 }
