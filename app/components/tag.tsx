@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.cobalt[50],
   },
   dimensionType: {
-    backgroundColor: theme.palette.warning.light,
+    backgroundColor: theme.palette.yellow[100],
   },
   draftType: {},
   clickable: {
