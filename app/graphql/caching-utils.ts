@@ -1,4 +1,4 @@
-import { SOURCES_BY_URL } from "@/domain/datasource/constants";
+import { SOURCES_BY_URL } from "@/domain/data-source/constants";
 
 /** As Lindas supports caching requests per given id, we can utilize this function
  * to query endpoint that will cache the results per given cube iri.

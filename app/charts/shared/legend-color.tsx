@@ -40,7 +40,7 @@ import { interlace } from "@/utils/interlace";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 
-import { DimensionsById } from "./ChartProps";
+import { DimensionsById } from "./chart-props";
 
 export type LegendSymbol =
   | "square"

@@ -26,7 +26,7 @@ import {
 import { getInitialConfiguringConfigBasedOnCube } from "@/configurator/configurator-state/initial";
 import { deriveFiltersFromFields } from "@/configurator/configurator-state/reducer";
 import { Dimension, isJoinByComponent, ObservationValue } from "@/domain/data";
-import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
+import { DEFAULT_DATA_SOURCE } from "@/domain/data-source";
 import { mkJoinById, VersionedJoinBy } from "@/graphql/join";
 import { Locale } from "@/locales/locales";
 import { getDataSourceFromLocalStorage } from "@/stores/data-source";
@@ -40,7 +40,7 @@ export {
   useReadOnlyConfiguratorState,
 } from "./context";
 export { initChartStateFromChartEdit, initChartStateFromCube } from "./init";
-export { saveChartLocally } from "./localstorage";
+export { saveChartLocally } from "./local-storage";
 
 export type GetConfiguratorStateAction<
   T extends ConfiguratorStateAction["type"],

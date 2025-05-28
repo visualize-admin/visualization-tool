@@ -18,7 +18,7 @@ import {
   ReactGridLayoutType,
   useConfiguratorState,
 } from "@/configurator";
-import { useTimeout } from "@/hooks/use-timeout";
+import { useTimeout } from "@/utils/use-timeout";
 import { theme } from "@/themes/theme";
 import { assert } from "@/utils/assert";
 

@@ -20,7 +20,7 @@ import {
 } from "@/charts/shared/chart-state";
 import { ComboLineDualConfig } from "@/configurator";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 type NumericalYComboLineDualVariables = {
   y: {

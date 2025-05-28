@@ -47,7 +47,7 @@ import {
   PanelBodyWrapper,
   PanelLayout,
 } from "@/configurator/components/layout";
-import { sourceToLabel } from "@/domain/datasource";
+import { sourceToLabel } from "@/domain/data-source";
 import { truthy } from "@/domain/types";
 import {
   DataCubeOrganization,

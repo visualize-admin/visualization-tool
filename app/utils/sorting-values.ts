@@ -7,7 +7,7 @@ import {
   isTemporalDimension,
 } from "@/domain/data";
 import { bfs } from "@/utils/bfs";
-import { uniqueMapBy } from "@/utils/uniqueMapBy";
+import { uniqueMapBy } from "@/utils/unique-map-by";
 
 export const maybeInt = (value?: string | number): number | string => {
   if (value === undefined) {
@@ -108,12 +108,12 @@ export const makeDimensionValueSorters = (
   };
   const getIdentifier = (valueOrLabel?: string) => {
     return valueOrLabel
-      ? maybeInt(getByValueOrLabel(valueOrLabel)?.identifier) ?? Infinity
+      ? (maybeInt(getByValueOrLabel(valueOrLabel)?.identifier) ?? Infinity)
       : Infinity;
   };
   const getPosition = (valueOrLabel?: string) => {
     return valueOrLabel
-      ? getByValueOrLabel(valueOrLabel)?.position ?? Infinity
+      ? (getByValueOrLabel(valueOrLabel)?.position ?? Infinity)
       : Infinity;
   };
   const getHierarchy = (value?: string) => {
@@ -131,10 +131,10 @@ export const makeDimensionValueSorters = (
   };
 
   const getSum = (valueOrLabel?: string) =>
-    valueOrLabel ? sumsBySegment?.[valueOrLabel] ?? Infinity : Infinity;
+    valueOrLabel ? (sumsBySegment?.[valueOrLabel] ?? Infinity) : Infinity;
 
   const getMeasure = (valueOrLabel?: string) =>
-    valueOrLabel ? measureBySegment?.[valueOrLabel] ?? Infinity : Infinity;
+    valueOrLabel ? (measureBySegment?.[valueOrLabel] ?? Infinity) : Infinity;
 
   let sorters: ((dv: string) => string | undefined | number)[] = [];
 

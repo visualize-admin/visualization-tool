@@ -17,7 +17,7 @@ import { Inspector } from "react-inspector";
 
 import { getChartConfig } from "@/config-utils";
 import { ChartConfig, DataSource, useConfiguratorState } from "@/configurator";
-import { dataSourceToSparqlEditorUrl } from "@/domain/datasource";
+import { dataSourceToSparqlEditorUrl } from "@/domain/data-source";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";

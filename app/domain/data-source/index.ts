@@ -4,7 +4,7 @@ import { DataSource } from "@/config-types";
 import {
   SOURCES_BY_LABEL,
   SOURCES_BY_VALUE,
-} from "@/domain/datasource/constants";
+} from "@/domain/data-source/constants";
 import { ENDPOINT } from "@/domain/env";
 
 export { type DataSourceUrl, isDataSourceUrlAllowed } from "./urls";

@@ -26,7 +26,7 @@ import {
   isGeoShapesDimension,
 } from "@/domain/data";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type MapStateVariables = BaseVariables &
   AreaLayerVariables &

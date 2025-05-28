@@ -13,7 +13,7 @@ import { ComponentLabel } from "@/browse/component-label";
 import { Component, isNumericalMeasure, Observation } from "@/domain/data";
 import { useDimensionFormatters } from "@/formatters";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
-import { uniqueMapBy } from "@/utils/uniqueMapBy";
+import { uniqueMapBy } from "@/utils/unique-map-by";
 
 export const DataTablePreview = ({
   title,

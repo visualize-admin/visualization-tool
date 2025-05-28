@@ -11,7 +11,7 @@ import {
 
 import { A11yTable } from "@/charts/shared/a11y-table";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
-import { ChartProps } from "@/charts/shared/ChartProps";
+import { ChartProps } from "@/charts/shared/chart-props";
 import { EmbedQueryParams } from "@/components/embed-params";
 import Flex from "@/components/flex";
 import {

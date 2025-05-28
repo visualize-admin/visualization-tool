@@ -38,7 +38,7 @@ import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type ComboLineSingleState = CommonChartState &
   ComboLineSingleStateVariables &

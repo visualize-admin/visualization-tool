@@ -38,7 +38,7 @@ import {
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type PieState = CommonChartState &
   PieStateVariables &

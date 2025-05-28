@@ -42,7 +42,7 @@ import { truthy } from "@/domain/types";
 import { getTextWidth } from "@/utils/get-text-width";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type ComboLineDualState = CommonChartState &
   ComboLineDualStateVariables &

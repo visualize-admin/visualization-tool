@@ -33,7 +33,7 @@ import { RowActions } from "@/components/row-actions";
 import useDisclosure from "@/components/use-disclosure";
 import { CONFIGURATOR_STATE_LAYOUTING } from "@/config-types";
 import { ParsedConfig } from "@/db/config";
-import { sourceToLabel } from "@/domain/datasource";
+import { sourceToLabel } from "@/domain/data-source";
 import { truthy } from "@/domain/types";
 import { useUserConfigs } from "@/domain/user-configs";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";

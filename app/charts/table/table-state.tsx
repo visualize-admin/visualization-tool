@@ -47,7 +47,7 @@ import { getColorInterpolator } from "@/palettes";
 import { getTextWidth } from "@/utils/get-text-width";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 type MKColumnMeta<T> = {
   dim: Component;

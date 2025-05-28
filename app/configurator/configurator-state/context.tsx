@@ -26,7 +26,7 @@ import {
   initChartStateFromLocalStorage,
 } from "@/configurator/configurator-state/init";
 import { INITIAL_STATE } from "@/configurator/configurator-state/initial";
-import { saveChartLocally } from "@/configurator/configurator-state/localstorage";
+import { saveChartLocally } from "@/configurator/configurator-state/local-storage";
 import { reducer } from "@/configurator/configurator-state/reducer";
 import { ParsedConfig } from "@/db/config";
 import { useLocale } from "@/locales/use-locale";

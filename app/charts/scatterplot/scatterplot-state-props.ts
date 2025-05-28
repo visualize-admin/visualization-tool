@@ -16,7 +16,7 @@ import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { useChartConfigFilters } from "@/config-utils";
 import { ScatterPlotConfig } from "@/configurator";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type ScatterplotStateVariables = BaseVariables &
   NumericalXVariables &

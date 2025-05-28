@@ -26,7 +26,6 @@ const AsyncLocalizationProvider = (
         case "fr":
         case "it": {
           const importedLocale = await import(
-            /* webpackMode: "lazy", webpackChunkName: "date-fns-[index]", webpackExclude: /_lib/ */
             `date-fns/locale/${locale}/index.js`
           );
           setDateFnsLocale(importedLocale.default);

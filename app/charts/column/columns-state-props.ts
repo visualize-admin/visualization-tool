@@ -27,7 +27,7 @@ import { useChartConfigFilters, useLimits } from "@/config-utils";
 import { ColumnConfig } from "@/configurator";
 import { isTemporalEntityDimension } from "@/domain/data";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type ColumnsStateVariables = BaseVariables &
   SortingVariables &

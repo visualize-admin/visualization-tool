@@ -17,7 +17,7 @@ import {
 import { ComboLineSingleConfig } from "@/configurator";
 
 import { usePlottableData } from "../shared/chart-helpers";
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 type NumericalYComboLineSingleVariables = {
   y: {

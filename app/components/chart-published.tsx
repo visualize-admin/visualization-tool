@@ -55,7 +55,7 @@ import { DRAWER_WIDTH } from "@/configurator/components/drawers";
 import {
   DEFAULT_DATA_SOURCE,
   useIsTrustedDataSource,
-} from "@/domain/datasource";
+} from "@/domain/data-source";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,

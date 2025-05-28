@@ -45,7 +45,7 @@ import { useEmbedQueryParams } from "@/components/embed-params";
 import Flex from "@/components/flex";
 import { Error, Loading } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
-import { JoinByChip } from "@/components/JoinByChip";
+import { JoinByChip } from "@/components/join-by-chip";
 import {
   useMetadataPanelStore,
   useMetadataPanelStoreActions,
@@ -85,7 +85,7 @@ import SvgIcClose from "@/icons/components/IcClose";
 import { useLocale } from "@/locales/use-locale";
 import { useTransitionStore } from "@/stores/transition";
 import { assert } from "@/utils/assert";
-import { useEventEmitter } from "@/utils/eventEmitter";
+import { useEventEmitter } from "@/utils/event-emitter";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import useEvent from "@/utils/use-event";
 

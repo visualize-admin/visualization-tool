@@ -36,7 +36,7 @@ import {
 } from "@/utils/sorting-values";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 import { TooltipPlacement } from "../shared/interaction/tooltip-box";
 
 export type ScatterplotState = CommonChartState &

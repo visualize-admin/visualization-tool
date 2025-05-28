@@ -65,7 +65,7 @@ import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
-import { useEventEmitter } from "@/utils/eventEmitter";
+import { useEventEmitter } from "@/utils/event-emitter";
 
 import { CautionAlert, useCautionAlert } from "./caution-alert";
 import { inferJoinBy } from "./infer-join-by";

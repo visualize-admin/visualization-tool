@@ -37,7 +37,7 @@ import {
 import { Icon } from "@/icons";
 import SvgIcTrash from "@/icons/components/IcTrash";
 import { useLocale } from "@/locales/use-locale";
-import { useEventEmitter } from "@/utils/eventEmitter";
+import { useEventEmitter } from "@/utils/event-emitter";
 
 const useStyles = makeStyles((theme: Theme) => ({
   row: {

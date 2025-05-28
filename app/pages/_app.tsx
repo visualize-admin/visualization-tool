@@ -13,14 +13,14 @@ import { useEffect } from "react";
 import { SnackbarProvider } from "@/components/snackbar";
 import { PUBLIC_URL } from "@/domain/env";
 import { flag } from "@/flags/flag";
-import { GraphqlProvider } from "@/graphql/GraphqlProvider";
+import { GraphqlProvider } from "@/graphql/graphql-provider";
 import { i18n, parseLocaleString } from "@/locales/locales";
 import { LocaleProvider } from "@/locales/use-locale";
 import * as federalTheme from "@/themes/theme";
-import { EventEmitterProvider } from "@/utils/eventEmitter";
+import AsyncLocalizationProvider from "@/utils/async-localization-provider";
+import { EventEmitterProvider } from "@/utils/event-emitter";
 import Flashes from "@/utils/flashes";
-import { analyticsPageView } from "@/utils/googleAnalytics";
-import AsyncLocalizationProvider from "@/utils/l10n-provider";
+import { analyticsPageView } from "@/utils/google-analytics";
 import "@/utils/nprogress.css";
 import { useNProgress } from "@/utils/use-nprogress";
 

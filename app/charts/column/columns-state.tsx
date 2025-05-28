@@ -54,7 +54,7 @@ import {
 } from "@/utils/sorting-values";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type ColumnsState = CommonChartState &
   ColumnsStateVariables &
