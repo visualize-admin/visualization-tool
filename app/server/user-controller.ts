@@ -56,7 +56,7 @@ export const UserController = controller({
 
     const data: DeleteCustomColorPalette = req.body;
 
-    await deletePaletteForUser(paletteId);
+    await deletePaletteForUser({ ...data, user_id: userId });
   },
 
   updatePalette: async ({ req, res }) => {
@@ -71,6 +71,6 @@ export const UserController = controller({
 
     const data: UpdateCustomColorPalette = req.body;
 
-    await updatePaletteForUser(data);
+    await updatePaletteForUser({ ...data, user_id: userId });
   },
 });
