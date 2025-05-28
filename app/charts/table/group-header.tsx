@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import { hcl } from "d3-color";
 import * as React from "react";
+import { Fragment } from "react";
 import { Row } from "react-table";
 
 import { useChartState } from "@/charts/shared/chart-state";
@@ -27,8 +28,9 @@ export const GroupHeader = ({
         const colMeta = tableColumnsMeta[cell.column.id];
         const { formatter } = colMeta;
         const bg = getGroupLevelBackgroundColor(groupingLevels - depth);
+
         return (
-          <React.Fragment key={i}>
+          <Fragment key={i}>
             {cell.isGrouped && (
               <Flex
                 {...row.getToggleRowExpandedProps()}
@@ -65,7 +67,7 @@ export const GroupHeader = ({
                 )}
               </Flex>
             )}
-          </React.Fragment>
+          </Fragment>
         );
       })}
     </>

@@ -16,7 +16,7 @@ import isEqual from "lodash/isEqual";
 import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
 import uniq from "lodash/uniq";
-import React, {
+import {
   Fragment,
   ReactNode,
   useEffect,

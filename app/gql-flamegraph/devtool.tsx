@@ -25,7 +25,7 @@ import minBy from "lodash/minBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import mitt from "mitt";
-import React, {
+import {
   ChangeEvent,
   Fragment,
   MouseEvent,

@@ -49,7 +49,7 @@ type TriggeredPopoverProps = {
   children: ReactNode;
   renderTrigger?: (
     setAnchorEl: (el: HTMLElement | undefined) => void
-  ) => React.ReactNode;
+  ) => ReactNode;
   popoverProps: Omit<PopoverProps, "open" | "anchorEl" | "onClose">;
   trigger?: HTMLElement;
 };

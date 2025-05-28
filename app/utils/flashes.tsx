@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { Box, Link } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
-import React, { useMemo, useState } from "react";
+import { ReactElement, useMemo, useState } from "react";
 
 import { HintError } from "@/components/hint";
 import { Icon } from "@/icons";
@@ -48,7 +48,7 @@ const CannotFindCubeContent = () => {
 
 const renderErrorContent: Record<
   keyof typeof flashes,
-  (props: any) => React.ReactElement
+  (props: any) => ReactElement
 > = {
   CANNOT_FIND_CUBE: CannotFindCubeContent,
 };

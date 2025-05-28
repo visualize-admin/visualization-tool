@@ -10,7 +10,16 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  type MouseEvent,
+  PropsWithChildren,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 import { AddButton } from "@/components/add-button";
@@ -53,7 +62,7 @@ const TABS_STATE: TabsState = {
 };
 
 const TabsStateContext = createContext<
-  [TabsState, React.Dispatch<TabsState>] | undefined
+  [TabsState, Dispatch<TabsState>] | undefined
 >(undefined);
 
 const useTabsState = () => {
@@ -68,7 +77,7 @@ const useTabsState = () => {
   return ctx;
 };
 
-const TabsStateProvider = (props: React.PropsWithChildren<{}>) => {
+const TabsStateProvider = (props: PropsWithChildren<{}>) => {
   const { children } = props;
   const [state, dispatch] = useState<TabsState>(TABS_STATE);
 
@@ -350,7 +359,7 @@ const PassthroughTab = ({
   children,
   value: _value,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   value?: string;
 }) => {
   return <>{children}</>;
@@ -410,8 +419,8 @@ const TabsInner = ({
   addable: boolean;
   editable: boolean;
   draggable: boolean;
-  onChartAdd?: (e: React.MouseEvent<HTMLElement>) => void;
-  onChartEdit?: (e: React.MouseEvent<HTMLElement>, key: string) => void;
+  onChartAdd?: (e: MouseEvent<HTMLElement>) => void;
+  onChartEdit?: (e: MouseEvent<HTMLElement>, key: string) => void;
   onChartSwitch?: (key: string) => void;
 }) => {
   const classes = useTabsInnerStyles();
@@ -604,7 +613,7 @@ const TabContent = (props: {
   dragging?: boolean;
   label?: string;
   onChevronDownClick?: (
-    e: React.MouseEvent<HTMLElement>,
+    e: MouseEvent<HTMLElement>,
     activeChartKey: string
   ) => void;
   onSwitchClick?: () => void;

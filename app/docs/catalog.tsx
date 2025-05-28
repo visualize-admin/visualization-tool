@@ -1,3 +1,5 @@
-export const ReactSpecimen = (props: React.PropsWithChildren<{}>) => {
-    return <div {...props} />
-}
+import { PropsWithChildren } from "react";
+
+export const ReactSpecimen = (props: PropsWithChildren<{}>) => {
+  return <div {...props} />;
+};

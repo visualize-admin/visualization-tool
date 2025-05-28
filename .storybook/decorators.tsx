@@ -3,7 +3,6 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { NextPage } from "next";
 import { SessionProvider } from "next-auth/react";
 import Router from "next/router";
-import * as React from "react";
 import { Decorator } from "@storybook/react";
 import { Client, Provider } from "urql";
 
@@ -11,6 +10,7 @@ import { i18n } from "../app/locales/locales";
 import { theme } from "../app/themes/theme";
 import AsyncLocalizationProvider from "../app/utils/l10n-provider";
 import { SnackbarProvider } from "../app/components/snackbar";
+import { useEffect, useState } from "react";
 
 export const AppContextDecorator = (Story: NextPage) => (
   <SessionProvider refetchOnWindowFocus={false} refetchWhenOffline={false}>
@@ -28,8 +28,8 @@ export const AppContextDecorator = (Story: NextPage) => (
 );
 
 export const RouterDecorator = (Story: NextPage) => {
-  const [_, setIsRouterReady] = React.useState(false);
-  React.useEffect(() => {
+  const [_, setIsRouterReady] = useState(false);
+  useEffect(() => {
     Router.ready(() => {
       setIsRouterReady(true);
     });

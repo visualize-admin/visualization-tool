@@ -20,7 +20,7 @@ import {
 } from "geojson";
 import keyBy from "lodash/keyBy";
 import mapValues from "lodash/mapValues";
-import { useCallback, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 import { ckmeans } from "simple-statistics";
 
 import { ChartMapProps } from "@/charts/map/chart-map";
@@ -617,7 +617,7 @@ const filterFeatureCollection = <TFeatureCollection extends FeatureCollection>(
   };
 };
 
-const MapChartProvider = (props: React.PropsWithChildren<ChartMapProps>) => {
+const MapChartProvider = (props: PropsWithChildren<ChartMapProps>) => {
   const { children, ...chartProps } = props;
   const variables = useMapStateVariables(chartProps);
   const data = useMapStateData(chartProps, variables);
@@ -628,7 +628,7 @@ const MapChartProvider = (props: React.PropsWithChildren<ChartMapProps>) => {
   );
 };
 
-export const MapChart = (props: React.PropsWithChildren<ChartMapProps>) => {
+export const MapChart = (props: PropsWithChildren<ChartMapProps>) => {
   const { children, ...rest } = props;
 
   return (

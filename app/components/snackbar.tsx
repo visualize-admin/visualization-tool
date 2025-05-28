@@ -3,6 +3,7 @@ import {
   MaterialDesignContent,
   SnackbarProvider as NotistackSnackbarProvider,
 } from "notistack";
+import { PropsWithChildren } from "react";
 
 import SvgIcCheckmarkCircle from "@/icons/components/IcCheckmarkCircle";
 import SvgIcClear from "@/icons/components/IcClear";
@@ -44,7 +45,7 @@ const iconVariants = {
   error: <SvgIcClear width={24} height={24} className="icon" />,
 };
 
-export const SnackbarProvider = (props: React.PropsWithChildren<{}>) => {
+export const SnackbarProvider = (props: PropsWithChildren<{}>) => {
   return (
     <NotistackSnackbarProvider
       anchorOrigin={{ horizontal: "right", vertical: "bottom" }}

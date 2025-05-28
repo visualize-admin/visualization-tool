@@ -10,7 +10,8 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, {
+import {
+  ComponentProps,
   createContext,
   ElementType,
   forwardRef,
@@ -295,7 +296,7 @@ export const ControlSectionSkeleton = ({
   sx,
   showTitle = true,
 }: {
-  sx?: React.ComponentProps<typeof ControlSection>["sx"];
+  sx?: ComponentProps<typeof ControlSection>["sx"];
   showTitle?: boolean;
 }) => (
   <ControlSection sx={{ mt: 2, ...sx }}>

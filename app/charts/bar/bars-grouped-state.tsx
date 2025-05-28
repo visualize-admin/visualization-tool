@@ -10,7 +10,7 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
-import { useCallback, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   BarsGroupedStateVariables,
@@ -481,7 +481,7 @@ const useBarsGroupedState = (
 };
 
 const GroupedBarChartProvider = (
-  props: React.PropsWithChildren<ChartProps<BarConfig>>
+  props: PropsWithChildren<ChartProps<BarConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useBarsGroupedStateVariables(chartProps);
@@ -494,7 +494,7 @@ const GroupedBarChartProvider = (
 };
 
 export const GroupedBarChart = (
-  props: React.PropsWithChildren<ChartProps<BarConfig>>
+  props: PropsWithChildren<ChartProps<BarConfig>>
 ) => {
   return (
     <InteractionProvider>

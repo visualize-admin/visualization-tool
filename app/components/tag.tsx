@@ -2,7 +2,7 @@ import { BoxProps, styled, Typography, TypographyProps } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { forwardRef, ReactNode } from "react";
+import { forwardRef, ReactNode } from "react";
 
 type TagType =
   | "draft"

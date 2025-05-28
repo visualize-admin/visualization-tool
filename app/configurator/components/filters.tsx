@@ -23,7 +23,8 @@ import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
-import React, {
+import {
+  ChangeEvent,
   forwardRef,
   MouseEventHandler,
   MutableRefObject,
@@ -1097,7 +1098,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
     : false;
 
   const onChangeFrom = useEvent(
-    (e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>) => {
+    (e: SelectChangeEvent<unknown> | ChangeEvent<HTMLSelectElement>) => {
       if (rangeActiveFilter) {
         const from = e.target.value as string;
         setFilterRange([from, rangeActiveFilter.to]);
@@ -1106,7 +1107,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
   );
 
   const onChangeTo = useEvent(
-    (e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>) => {
+    (e: SelectChangeEvent<unknown> | ChangeEvent<HTMLSelectElement>) => {
       if (rangeActiveFilter) {
         const to = e.target.value as string;
         setFilterRange([rangeActiveFilter.from, to]);

@@ -1,5 +1,5 @@
 import { schemeCategory10 } from "d3-scale-chromatic";
-import React, { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import {
   renderCircles,

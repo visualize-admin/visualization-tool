@@ -40,11 +40,12 @@ import {
 import { makeStyles } from "@mui/styles";
 import { useId } from "@reach/auto-id";
 import flatten from "lodash/flatten";
-import React, {
+import {
   ComponentProps,
   FocusEventHandler,
   KeyboardEventHandler,
   ReactNode,
+  RefObject,
   SyntheticEvent,
   useCallback,
   useMemo,
@@ -685,7 +686,7 @@ export const SearchField = ({
   defaultValue?: string;
   placeholder?: string;
   InputProps?: InputProps;
-  inputRef?: React.RefObject<HTMLInputElement>;
+  inputRef?: RefObject<HTMLInputElement>;
   className?: BoxProps["className"];
   sx?: BoxProps["sx"];
 } & FieldProps) => {

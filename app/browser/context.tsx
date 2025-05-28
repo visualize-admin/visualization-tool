@@ -6,8 +6,10 @@ import pickBy from "lodash/pickBy";
 import { Url } from "next/dist/shared/lib/router/router";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
-import React, {
+import {
+  ComponentProps,
   createContext,
+  ReactNode,
   useContext,
   useEffect,
   useMemo,
@@ -98,7 +100,7 @@ export const buildURLFromBrowseState = (browseState: BrowseParams) => {
   return {
     pathname,
     query: queryParams,
-  } as React.ComponentProps<typeof Link>["href"];
+  } as ComponentProps<typeof Link>["href"];
 };
 const extractParamFromPath = (path: string, param: string) =>
   path.match(new RegExp(`[&?]${param}=(.*?)(&|$)`));
@@ -283,7 +285,7 @@ export const BrowseStateProvider = ({
   children,
   syncWithUrl,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   syncWithUrl: boolean;
 }) => {
   const browseState = useBrowseState({ syncWithUrl });

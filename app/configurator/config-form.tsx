@@ -1,9 +1,10 @@
 import { SelectChangeEvent, SelectProps } from "@mui/material";
 import get from "lodash/get";
-import React, {
+import {
   ChangeEvent,
   createContext,
   InputHTMLAttributes,
+  ReactNode,
   useCallback,
   useContext,
   useMemo,
@@ -631,7 +632,7 @@ export const MultiFilterContextProvider = ({
   getValueColor,
 }: {
   dimension: Dimension;
-  children: React.ReactNode;
+  children: ReactNode;
   colorConfigPath?: string;
   getValueColor: (value: string) => string;
 }) => {

@@ -10,7 +10,7 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
-import { useCallback, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   ColumnsGroupedStateVariables,
@@ -482,7 +482,7 @@ const useColumnsGroupedState = (
 };
 
 const GroupedColumnChartProvider = (
-  props: React.PropsWithChildren<ChartProps<ColumnConfig>>
+  props: PropsWithChildren<ChartProps<ColumnConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useColumnsGroupedStateVariables(chartProps);
@@ -495,7 +495,7 @@ const GroupedColumnChartProvider = (
 };
 
 export const GroupedColumnChart = (
-  props: React.PropsWithChildren<ChartProps<ColumnConfig>>
+  props: PropsWithChildren<ChartProps<ColumnConfig>>
 ) => {
   return (
     <InteractionProvider>

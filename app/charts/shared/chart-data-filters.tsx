@@ -4,7 +4,7 @@ import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import mapValues from "lodash/mapValues";
 import pickBy from "lodash/pickBy";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
@@ -532,7 +532,7 @@ export const DataFilterTemporalDimension = ({
   dimension: TemporalDimension;
   value: string;
   onChange: (
-    e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>
+    e: SelectChangeEvent<unknown> | ChangeEvent<HTMLSelectElement>
   ) => void;
   disabled: boolean;
 }) => {

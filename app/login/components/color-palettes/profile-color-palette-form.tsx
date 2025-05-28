@@ -2,7 +2,7 @@ import { useEvent } from "@dnd-kit/utilities";
 import { t, Trans } from "@lingui/macro";
 import { Box, Button, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { useCallback, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useRef, useState } from "react";
 
 import Flex from "@/components/flex";
 import { RadioGroup } from "@/components/form";
@@ -276,7 +276,7 @@ const ColorPaletteTypeSelector = ({
     }),
   };
 
-  const handleChange = useEvent((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value as CustomPaletteType["type"]);
   });
 

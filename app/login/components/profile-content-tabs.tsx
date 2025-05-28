@@ -4,7 +4,7 @@ import { Box, Tab, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import groupBy from "lodash/groupBy";
-import React, { useMemo, useState } from "react";
+import { SyntheticEvent, useMemo, useState } from "react";
 
 import { useUserConfigs } from "@/domain/user-configs";
 import { ProfileVisualizationsTable } from "@/login/components/profile-tables";
@@ -50,7 +50,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
 
   const { data: userConfigs } = useUserConfigs();
   const [value, setValue] = useState("home");
-  const handleChange = useEvent((_: React.SyntheticEvent, v: string) => {
+  const handleChange = useEvent((_: SyntheticEvent, v: string) => {
     setValue(v);
   });
   const rootClasses = useRootStyles();

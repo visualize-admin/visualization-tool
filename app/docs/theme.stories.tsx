@@ -30,7 +30,7 @@ import {
 } from "@mui/material";
 import { Meta } from "@storybook/react";
 import { useSnackbar } from "notistack";
-import { ComponentProps, ReactNode, useState } from "react";
+import { ComponentProps, FC, ReactNode, useState } from "react";
 
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
@@ -244,7 +244,7 @@ export const PaletteStory = () => {
 
 PaletteStory.storyName = "Palette";
 
-const ButtonsExample: React.FC = () => {
+const ButtonsExample: FC = () => {
   return (
     <Stack
       spacing={2}
@@ -312,7 +312,7 @@ const ButtonsExample: React.FC = () => {
   );
 };
 
-export const Components: React.FC = () => {
+export const Components: FC = () => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement>();
   const [inverted, setInverted] = useState(true);
 

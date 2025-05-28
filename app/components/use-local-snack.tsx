@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * Holds a temporary snack state
  */
 export const useLocalSnack = () => {
   type Snack = {
-    message: string | React.ReactNode;
+    message: string | ReactNode;
     variant: "success" | "error";
     duration?: number;
   };

@@ -1,16 +1,14 @@
 import { Box, TableSortLabel, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { createContext, useContext, useMemo } from "react";
+import { createContext, ReactNode, useContext, useMemo } from "react";
 import { HeaderGroup } from "react-table";
 
+import { SORTING_ARROW_WIDTH } from "@/charts/table/constants";
+import { ColumnMeta } from "@/charts/table/table-state";
+import Flex from "@/components/flex";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
-
-import Flex from "../../components/flex";
-import { Observation } from "../../domain/data";
-
-import { SORTING_ARROW_WIDTH } from "./constants";
-import { ColumnMeta } from "./table-state";
+import { Observation } from "@/domain/data";
 
 /** Workaround because react-window can't pass props to inner element */
 type TableContentProps = {
@@ -19,6 +17,7 @@ type TableContentProps = {
   customSortCount: number;
   totalColumnsWidth: number;
 };
+
 const TableContentContext = createContext<TableContentProps | undefined>(
   undefined
 );
@@ -29,7 +28,7 @@ export const TableContentProvider = ({
   customSortCount,
   totalColumnsWidth,
   children,
-}: TableContentProps & { children: React.ReactNode }) => {
+}: TableContentProps & { children: ReactNode }) => {
   const value = useMemo(() => {
     return {
       headerGroups,
@@ -68,7 +67,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const TableContent = ({ children }: { children: React.ReactNode }) => {
+export const TableContent = ({ children }: { children: ReactNode }) => {
   const ctx = useContext(TableContentContext);
   const classes = useStyles();
 

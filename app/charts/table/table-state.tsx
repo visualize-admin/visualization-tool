@@ -11,7 +11,7 @@ import {
 import { schemeCategory10 } from "d3-scale-chromatic";
 import mapKeys from "lodash/mapKeys";
 import mapValues from "lodash/mapValues";
-import { useMemo } from "react";
+import { PropsWithChildren, useMemo } from "react";
 import { Cell, Column, Row } from "react-table";
 
 import {
@@ -406,7 +406,7 @@ const useTableState = (
 };
 
 const TableChartProvider = (
-  props: React.PropsWithChildren<ChartProps<TableConfig>>
+  props: PropsWithChildren<ChartProps<TableConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useTableStateVariables(chartProps);
@@ -419,7 +419,7 @@ const TableChartProvider = (
 };
 
 export const TableChart = (
-  props: React.PropsWithChildren<ChartProps<TableConfig>>
+  props: PropsWithChildren<ChartProps<TableConfig>>
 ) => {
   return <TableChartProvider {...props} />;
 };

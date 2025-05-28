@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import maplibreglRaw from "maplibre-gl";
-import React from "react";
 import { useMemo } from "react";
 import Map from "react-map-gl";
 

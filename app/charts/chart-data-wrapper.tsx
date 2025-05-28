@@ -1,9 +1,10 @@
 import { makeStyles } from "@mui/styles";
 import { AnimatePresence } from "framer-motion";
 import keyBy from "lodash/keyBy";
-import React, {
+import {
   ComponentProps,
   createElement,
+  ElementType,
   useEffect,
   useMemo,
 } from "react";
@@ -26,9 +27,9 @@ import {
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
 import { DataCubeObservationFilter } from "@/graphql/query-hooks";
-import { useLocale } from "@/src";
+import { useLocale } from "@/locales/use-locale";
 
-type ElementProps<RE> = RE extends React.ElementType<infer P> ? P : never;
+type ElementProps<RE> = RE extends ElementType<infer P> ? P : never;
 
 const useStyles = makeStyles(() => ({
   dataWrapper: {
@@ -48,7 +49,7 @@ const useStyles = makeStyles(() => ({
 const ChartDataWrapperInner = <
   TChartConfig extends ChartConfig,
   TOtherProps,
-  TChartComponent extends React.ElementType,
+  TChartComponent extends ElementType,
 >({
   chartConfig,
   LoadingOverlayComponent = LoadingOverlay,
@@ -62,7 +63,7 @@ const ChartDataWrapperInner = <
   error: propError,
 }: {
   chartConfig: TChartConfig;
-  LoadingOverlayComponent?: React.ElementType;
+  LoadingOverlayComponent?: ElementType;
   Component: TChartComponent;
   ComponentProps?: Omit<
     ElementProps<TChartComponent>,

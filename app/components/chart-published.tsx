@@ -2,7 +2,14 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import { forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  forwardRef,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { useStore } from "zustand";
 
 import { ChartDataTablePreview } from "@/browse/chart-data-table-preview";
@@ -274,7 +281,7 @@ type ChartPublishInnerProps = {
   chartConfig: ChartConfig;
   configKey: string | undefined;
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
   metadataPanelStore: ReturnType<typeof createMetadataPanelStore>;
   embedParams?: EmbedQueryParams;
   shouldShrink?: boolean;

@@ -26,8 +26,9 @@ import omit from "lodash/omit";
 import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 import { useRouter } from "next/router";
-import React, {
+import {
   Fragment,
+  type MouseEvent,
   ReactNode,
   useCallback,
   useEffect,
@@ -231,7 +232,7 @@ export const OpenMetadataPanelWrapper = ({
   const classes = useOtherStyles();
   const { openComponent, setOpen, setActiveSection } =
     useMetadataPanelStoreActions();
-  const handleClick = useEvent((e: React.MouseEvent) => {
+  const handleClick = useEvent((e: MouseEvent) => {
     e.stopPropagation();
     if (component) {
       openComponent(component);

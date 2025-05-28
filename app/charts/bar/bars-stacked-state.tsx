@@ -18,7 +18,7 @@ import {
   stackOrderReverse,
 } from "d3-shape";
 import orderBy from "lodash/orderBy";
-import React, { useCallback, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   BarsStackedStateData,
@@ -585,7 +585,7 @@ const useBarsStackedState = (
 };
 
 const StackedBarsChartProvider = (
-  props: React.PropsWithChildren<ChartProps<BarConfig>>
+  props: PropsWithChildren<ChartProps<BarConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useBarsStackedStateVariables(chartProps);
@@ -598,7 +598,7 @@ const StackedBarsChartProvider = (
 };
 
 export const StackedBarsChart = (
-  props: React.PropsWithChildren<ChartProps<BarConfig>>
+  props: PropsWithChildren<ChartProps<BarConfig>>
 ) => {
   return (
     <InteractionProvider>

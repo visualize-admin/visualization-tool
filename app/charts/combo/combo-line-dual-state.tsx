@@ -1,6 +1,7 @@
 import { max, mean, min } from "d3-array";
 import { ScaleLinear, scaleLinear, ScaleOrdinal, ScaleTime } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
+import { PropsWithChildren } from "react";
 
 import {
   ComboLineDualStateVariables,
@@ -247,7 +248,7 @@ const useComboLineDualState = (
 };
 
 const ComboLineDualChartProvider = (
-  props: React.PropsWithChildren<ChartProps<ComboLineDualConfig>>
+  props: PropsWithChildren<ChartProps<ComboLineDualConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useComboLineDualStateVariables(chartProps);
@@ -260,7 +261,7 @@ const ComboLineDualChartProvider = (
 };
 
 export const ComboLineDualChart = (
-  props: React.PropsWithChildren<ChartProps<ComboLineDualConfig>>
+  props: PropsWithChildren<ChartProps<ComboLineDualConfig>>
 ) => {
   return (
     <InteractionProvider>

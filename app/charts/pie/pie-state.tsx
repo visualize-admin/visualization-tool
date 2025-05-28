@@ -3,7 +3,7 @@ import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import { Pie, pie, PieArcDatum } from "d3-shape";
 import orderBy from "lodash/orderBy";
-import { useMemo } from "react";
+import { PropsWithChildren, useMemo } from "react";
 
 import {
   PieStateVariables,
@@ -279,9 +279,7 @@ const usePieState = (
   };
 };
 
-const PieChartProvider = (
-  props: React.PropsWithChildren<ChartProps<PieConfig>>
-) => {
+const PieChartProvider = (props: PropsWithChildren<ChartProps<PieConfig>>) => {
   const { children, ...chartProps } = props;
   const variables = usePieStateVariables(chartProps);
   const data = usePieStateData(chartProps, variables);
@@ -292,9 +290,7 @@ const PieChartProvider = (
   );
 };
 
-export const PieChart = (
-  props: React.PropsWithChildren<ChartProps<PieConfig>>
-) => {
+export const PieChart = (props: PropsWithChildren<ChartProps<PieConfig>>) => {
   return (
     <InteractionProvider>
       <PieChartProvider {...props} />

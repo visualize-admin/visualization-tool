@@ -24,7 +24,13 @@ import {
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import uniq from "lodash/uniq";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  type KeyboardEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import {
   DatasetResults,
@@ -407,7 +413,7 @@ export const AddDatasetDrawer = ({
   const inputRef = useRef<HTMLInputElement>();
 
   const handleKeyDown = useEventCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
+    (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         setQuery(e.currentTarget.value);
       }

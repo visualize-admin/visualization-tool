@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
-import React, { ReactNode } from "react";
+import { ReactElement, ReactNode } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { DataDownloadMenu } from "@/components/data-download";
@@ -176,7 +176,7 @@ const DatasetMetadataLink = ({
   ...props
 }: {
   href: string;
-  label: string | React.ReactElement;
+  label: string | ReactElement;
   external?: boolean;
 } & LinkProps) => (
   <Link

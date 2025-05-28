@@ -8,12 +8,7 @@ import uniqBy from "lodash/uniqBy";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
-import React, {
-  ComponentProps,
-  type MouseEvent,
-  useCallback,
-  useMemo,
-} from "react";
+import { ComponentProps, type MouseEvent, useCallback, useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
 import {
@@ -665,9 +660,7 @@ const SelectDatasetStepContent = ({
   );
 };
 
-type SelectDatasetStepProps = React.ComponentProps<
-  typeof SelectDatasetStepContent
->;
+type SelectDatasetStepProps = ComponentProps<typeof SelectDatasetStepContent>;
 
 const DatasetMetadataSingleCubeAdapter = ({
   dataSource,

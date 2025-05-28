@@ -5,7 +5,7 @@ import { Box, Paper, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React, { ComponentProps, useEffect } from "react";
+import { ComponentProps, useEffect } from "react";
 import { UseQueryResponse } from "urql";
 
 import { CubeDataTablePreview } from "@/browse/cube-data-table-preview";

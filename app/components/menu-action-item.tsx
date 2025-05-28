@@ -23,7 +23,7 @@ const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
 
 export type MenuActionProps = {
   disabled?: boolean;
-  label: string | NonNullable<React.ReactNode>;
+  label: string | NonNullable<ReactNode>;
   trailingIconName?: IconName;
   leadingIconName?: IconName;
   priority?: number;
