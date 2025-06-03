@@ -11,10 +11,14 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# 5.8.2 - 2025-06-03
+
 - Features
   - Invalid URL error message is now translated
   - Improved UX of interacting with conversion units multiplier input
-  - Additional WMS & WMTS providers
+  - Added additional WMS & WMTS providers
 - Fixes
   - Fixed an infinite render loop when adding a custom map layer
 - Styles
