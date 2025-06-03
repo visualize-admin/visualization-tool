@@ -1,4 +1,5 @@
 [
+  "https://bio.discomap.eea.europa.eu/arcgis/services/Ecosystem/Ecosystems/MapServer/WMSServer",
   "https://copernicus.discomap.eea.europa.eu/arcgis/services/Corine/CLC2012_WM/MapServer/WMSServer",
   "https://geo.so.ch/api/wms",
   "https://geodienste.ch/db/av_situationsplan/deu",
@@ -220,7 +221,6 @@
   "https://vogis.cnv.at/mapserver/mapserv?map=i_flaechenwidmung_v_wms.map",
   "https://vogis.cnv.at/mapserver/mapserv?map=i_historischekarten_r_wms.map",
   "https://vogis.cnv.at/mapserver/mapserv?map=i_luftbilder_r_wms.map",
-  "https://vogis.cnv.at/mapserver/mapserv?map=i_naturschutz_v_wms.map",
   "https://vogis.cnv.at/mapserver/mapserv?map=i_relief_r_wms.map",
   "https://vogis.cnv.at/mapserver/mapserv?map=i_topographie_r_wms.map",
   "https://wms.geo.admin.ch/",
@@ -305,7 +305,6 @@
   "https://www.geoservice.apps.be.ch/geoservice3/services/a42geo/of_planningcadastre06_de_ms_wms/MapServer/WMSServer",
   "https://www.geoservice.apps.be.ch/geoservice3/services/a42geo/of_planningcadastre07_de_ms_wms/MapServer/WMSServer",
   "https://www.geoservice.apps.be.ch/geoservice3/services/a42geo/of_transportation01_de_ms_wms/MapServer/WMSServer",
-  "https://www.geoservice.apps.be.ch/geoservice3/services/a42geo/of_transportation02_de_ms_wms/MapServer/WMSServer",
   "https://www.geoservice.apps.be.ch/geoservice3/services/a42geo/of_transportation02_de_ms_wms/MapServer/WMSServer",
   "https://www.opensnowmap.org/OSnM_GetCapabilities.xml"
 ]
