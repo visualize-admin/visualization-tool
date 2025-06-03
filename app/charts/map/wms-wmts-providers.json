@@ -304,5 +304,8 @@
   "https://geodienste.ch/db/grundwasservorkommen/ita",
   "https://geodienste.ch/db/rodungen_und_rodungsersatz/deu",
   "https://geodienste.ch/db/rodungen_und_rodungsersatz/ita",
-  "https://geodienste.ch/db/rodungen_und_rodungsersatz/fra"
+  "https://geodienste.ch/db/rodungen_und_rodungsersatz/fra",
+  "https://www.opensnowmap.org/OSnM_GetCapabilities.xml",
+  "https://wms.geo.sh.ch/wms?SERVICE=WMS",
+  "https://www.geoservice.apps.be.ch/geoservice3/services/a42geo/of_transportation02_de_ms_wms/MapServer/WMSServer"
 ]

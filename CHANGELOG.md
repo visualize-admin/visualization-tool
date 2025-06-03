@@ -14,6 +14,7 @@ You can also check the
 - Features
   - Invalid URL error message is now translated
   - Improved UX of interacting with conversion units multiplier input
+  - Additional WMS & WMTS providers
 - Fixes
   - Fixed an infinite render loop when adding a custom map layer
 - Styles
