@@ -11,7 +11,9 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Segmented bar and column charts now correctly display value labels when
+    downloading an image
 
 # 5.8.2 - 2025-06-03
 
