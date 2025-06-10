@@ -453,11 +453,13 @@ const useColumnsStackedState = (
 
   const isMobile = useIsMobile();
 
-  const maybeFormatDate = useCallback(
+  const formatXAxisTick = useCallback(
     (tick: string) => {
-      return isTemporalDimension(xDimension) ? formatXDate(tick) : tick;
+      return isTemporalDimension(xDimension)
+        ? formatXDate(tick)
+        : getXLabel(tick);
     },
-    [xDimension, formatXDate]
+    [xDimension, formatXDate, getXLabel]
   );
 
   // Tooltips
@@ -499,7 +501,7 @@ const useColumnsStackedState = (
         xAnchor: xAnchorRaw + (placement.x === "right" ? 0.5 : -0.5) * bw,
         yAnchor,
         placement,
-        value: maybeFormatDate(xLabel),
+        value: formatXAxisTick(xLabel),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
           value: yValueFormatter(getY(datum), getIdentityY(datum)),
@@ -533,7 +535,7 @@ const useColumnsStackedState = (
       isMobile,
       normalize,
       yScale,
-      maybeFormatDate,
+      formatXAxisTick,
     ]
   );
 
@@ -563,7 +565,7 @@ const useColumnsStackedState = (
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     valueLabelFormatter,
-    formatXAxisTick: maybeFormatDate,
+    formatXAxisTick: formatXAxisTick,
     ...variables,
   };
 };
