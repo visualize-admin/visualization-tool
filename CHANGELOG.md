@@ -14,6 +14,7 @@ You can also check the
 - Fixes
   - Segmented bar and column charts now correctly display value labels when
     downloading an image
+  - Ticks of X and Y axes in bar and column charts are now correctly formatted
 
 # 5.8.2 - 2025-06-03
 

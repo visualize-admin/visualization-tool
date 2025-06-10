@@ -395,11 +395,13 @@ const useColumnsGroupedState = (
 
   const isMobile = useIsMobile();
 
-  const maybeFormatDate = useCallback(
+  const formatXAxisTick = useCallback(
     (tick: string) => {
-      return isTemporalDimension(xDimension) ? formatXDate(tick) : tick;
+      return isTemporalDimension(xDimension)
+        ? formatXDate(tick)
+        : getXLabel(tick);
     },
-    [xDimension, formatXDate]
+    [xDimension, formatXDate, getXLabel]
   );
 
   // Tooltip
@@ -440,7 +442,7 @@ const useColumnsGroupedState = (
       xAnchor: xAnchorRaw + (placement.x === "right" ? 0.5 : -0.5) * bw,
       yAnchor,
       placement,
-      value: maybeFormatDate(xLabel),
+      value: formatXAxisTick(xLabel),
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
@@ -476,7 +478,7 @@ const useColumnsGroupedState = (
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
-    formatXAxisTick: maybeFormatDate,
+    formatXAxisTick,
     ...variables,
   };
 };

@@ -294,11 +294,13 @@ const useColumnsState = (
   yScale.range([chartHeight, 0]);
   const isMobile = useIsMobile();
 
-  const maybeFormatDate = useCallback(
+  const formatXAxisTick = useCallback(
     (tick: string) => {
-      return isTemporalDimension(xDimension) ? formatXDate(tick) : tick;
+      return isTemporalDimension(xDimension)
+        ? formatXDate(tick)
+        : getXLabel(tick);
     },
-    [xDimension, formatXDate]
+    [xDimension, formatXDate, getXLabel]
   );
 
   // Tooltip
@@ -327,7 +329,7 @@ const useColumnsState = (
       xAnchor,
       yAnchor,
       placement,
-      value: maybeFormatDate(xLabel),
+      value: formatXAxisTick(xLabel),
       datum: {
         label: undefined,
         value: y !== null && isNaN(y) ? "-" : `${yValueUnitFormatter(getY(d))}`,
@@ -353,7 +355,7 @@ const useColumnsState = (
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
-    formatXAxisTick: maybeFormatDate,
+    formatXAxisTick,
     ...showValuesVariables,
     ...variables,
   };

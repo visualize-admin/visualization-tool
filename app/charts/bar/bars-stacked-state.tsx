@@ -465,11 +465,13 @@ const useBarsStackedState = (
 
   const isMobile = useIsMobile();
 
-  const maybeFormatDate = useCallback(
+  const formatYAxisTick = useCallback(
     (tick: string) => {
-      return isTemporalDimension(yDimension) ? formatYDate(tick) : tick;
+      return isTemporalDimension(yDimension)
+        ? formatYDate(tick)
+        : getYLabel(tick);
     },
-    [yDimension, formatYDate]
+    [yDimension, formatYDate, getYLabel]
   );
 
   // Tooltips
@@ -512,7 +514,7 @@ const useBarsStackedState = (
         yAnchor: yAnchorRaw + (placement.y === "top" ? 0.5 : -0.5) * bw,
         xAnchor,
         placement,
-        value: maybeFormatDate(yLabel),
+        value: formatYAxisTick(yLabel),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
           value: xValueFormatter(getX(datum), getIdentityX(datum)),
@@ -546,7 +548,7 @@ const useBarsStackedState = (
       isMobile,
       normalize,
       yScale,
-      maybeFormatDate,
+      formatYAxisTick,
     ]
   );
 
@@ -579,7 +581,7 @@ const useBarsStackedState = (
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     valueLabelFormatter,
-    formatYAxisTick: maybeFormatDate,
+    formatYAxisTick,
     ...variables,
   };
 };
