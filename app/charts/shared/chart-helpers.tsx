@@ -87,7 +87,7 @@ export const prepareCubeQueryFilters = ({
 
     for (const [k, v] of Object.entries(interactiveDataFilters)) {
       if (
-        (interactiveFiltersConfig?.dataFilters.active ||
+        (interactiveFiltersConfig.dataFilters.active ||
           dashboardFilters?.dataFilters.componentIds?.includes(k)) &&
         animationField?.componentId !== k
       ) {

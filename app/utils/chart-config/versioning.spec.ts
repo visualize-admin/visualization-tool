@@ -303,7 +303,7 @@ describe("config migrations", () => {
 
     expect(decodedConfig).toBeDefined();
     expect(
-      (decodedConfig as LineConfig).interactiveFiltersConfig?.timeRange
+      (decodedConfig as LineConfig).interactiveFiltersConfig.timeRange
         .componentId === lineConfigV1_0_0.fields.x.componentIri
     ).toBeDefined();
 
@@ -312,7 +312,7 @@ describe("config migrations", () => {
     })) as any;
 
     expect(
-      migratedOldConfig.interactiveFiltersConfig?.timeRange.componentIri
+      migratedOldConfig.interactiveFiltersConfig.timeRange.componentIri
     ).toEqual("");
   });
 

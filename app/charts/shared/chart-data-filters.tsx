@@ -76,10 +76,10 @@ export const useChartDataFiltersState = ({
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
 }) => {
-  const dataFiltersConfig = chartConfig.interactiveFiltersConfig?.dataFilters;
-  const active = dataFiltersConfig?.active;
-  const defaultOpen = dataFiltersConfig?.defaultOpen;
-  const componentIds = dataFiltersConfig?.componentIds;
+  const dataFiltersConfig = chartConfig.interactiveFiltersConfig.dataFilters;
+  const active = dataFiltersConfig.active;
+  const defaultOpen = dataFiltersConfig.defaultOpen;
+  const componentIds = dataFiltersConfig.componentIds;
   const [open, setOpen] = useState<boolean>(!!defaultOpen);
 
   useEffect(() => {

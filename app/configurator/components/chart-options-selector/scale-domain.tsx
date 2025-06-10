@@ -40,7 +40,7 @@ export const ScaleDomain = ({
     | undefined;
   const checked = !!domain;
   const disabled =
-    chartConfig.interactiveFiltersConfig?.calculation.type === "percent";
+    chartConfig.interactiveFiltersConfig.calculation.type === "percent";
 
   const defaultDomain = useMemo(() => {
     return getDefaultDomain({ chartConfig, observations });

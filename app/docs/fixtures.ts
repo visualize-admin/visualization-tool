@@ -1112,7 +1112,30 @@ export const tableConfig: TableConfig = {
   limits: {},
   conversionUnitsByComponentId: {},
   chartType: "table",
-  interactiveFiltersConfig: undefined,
+  interactiveFiltersConfig: {
+    legend: {
+      active: false,
+      componentId: "",
+    },
+    timeRange: {
+      active: false,
+      componentId: "",
+      presets: {
+        type: "range",
+        from: "",
+        to: "",
+      },
+    },
+    dataFilters: {
+      active: false,
+      componentIds: [],
+      defaultOpen: true,
+    },
+    calculation: {
+      active: false,
+      type: "identity",
+    },
+  },
   settings: { showSearch: true, showAllRows: true },
   sorting: [
     {
