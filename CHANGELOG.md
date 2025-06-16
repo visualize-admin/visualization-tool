@@ -11,7 +11,8 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Security
+  - Added additional protection against data source URL injection
 
 # 5.8.3 - 2025-06-10
 

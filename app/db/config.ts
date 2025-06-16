@@ -16,6 +16,7 @@ import {
   ConfiguratorStatePublished,
 } from "@/config-types";
 import { prisma } from "@/db/client";
+import { isDataSourceUrlAllowed } from "@/domain/data-source";
 import { upgradeConfiguratorStateServerSide } from "@/utils/chart-config/upgrade-cube";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 
@@ -145,6 +146,10 @@ const parseDbConfig = async (d: PrismaConfig) => {
     data
   )) as ConfiguratorStatePublished;
 
+  if (!isDataSourceUrlAllowed(state.dataSource.url)) {
+    throw new Error("Invalid data source!");
+  }
+
   return {
     ...d,
     data: {
@@ -159,6 +164,7 @@ const parseDbConfig = async (d: PrismaConfig) => {
 const upgradeDbConfig = async (config: PrismaConfig) => {
   const state = config.data as Config;
   const dataSource = state.dataSource;
+
   return {
     ...config,
     data: await upgradeConfiguratorStateServerSide(state as ConfiguratorState, {
@@ -184,6 +190,7 @@ export const getConfig = async (key: string) => {
   }
 
   const dbConfig = await parseDbConfig(config);
+
   return await upgradeDbConfig(dbConfig);
 };
 
@@ -274,6 +281,7 @@ export const getUserConfigs = async (userId: number) => {
     },
   });
   const parsedConfigs = await Promise.all(configs.map(parseDbConfig));
+
   return await Promise.all(parsedConfigs.map(upgradeDbConfig));
 };
 
