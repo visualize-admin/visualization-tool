@@ -1,11 +1,13 @@
 import { getServerSession } from "next-auth";
 
+import { ConfiguratorState } from "@/config-types";
 import {
   createConfig,
   getConfig,
   removeConfig,
   updateConfig,
 } from "@/db/config";
+import { isDataSourceUrlAllowed } from "@/domain/data-source";
 import { nextAuthOptions } from "@/pages/api/auth/[...nextauth]";
 import { controller } from "@/server/nextkit";
 
@@ -15,6 +17,10 @@ export const ConfigController = controller({
     const userId = session?.user?.id;
     const { data, published_state } = req.body;
 
+    if (!isDataSourceUrlAllowed((data as ConfiguratorState).dataSource.url)) {
+      throw Error("Invalid data source!");
+    }
+
     return await createConfig({
       key: data.key,
       data,
@@ -22,25 +28,23 @@ export const ConfigController = controller({
       published_state: published_state,
     });
   },
-
   remove: async ({ req, res }) => {
+    const { key } = req.body;
     const session = await getServerSession(req, res, nextAuthOptions);
     const sessionUserId = session?.user?.id;
-    const { key } = req.body;
-
     const config = await getConfig(key);
+
     if (sessionUserId !== config?.user_id) {
       throw Error("Unauthorized!");
     }
 
     return await removeConfig({ key });
   },
-
   update: async ({ req, res }) => {
+    const { key, data, published_state } = req.body;
     const session = await getServerSession(req, res, nextAuthOptions);
     const sessionUserId = session?.user?.id;
 
-    const { key, data, published_state } = req.body;
     if (!sessionUserId) {
       throw Error(
         "Could not update config: Not logged in users cannot update a chart"
@@ -48,6 +52,7 @@ export const ConfigController = controller({
     }
 
     const config = await getConfig(key);
+
     if (!config) {
       throw Error("Could not update config: config not found");
     }
@@ -56,6 +61,10 @@ export const ConfigController = controller({
       throw Error(
         `Could not update config: config must be edited by its author (config user id: ${config?.user_id}, server user id: ${sessionUserId})`
       );
+    }
+
+    if (!isDataSourceUrlAllowed((data as ConfiguratorState).dataSource.url)) {
+      throw Error("Invalid data source!");
     }
 
     return await updateConfig({
