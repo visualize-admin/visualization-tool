@@ -1,4 +1,6 @@
+import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
+import { NextkitHandler } from "nextkit";
 
 import { ConfiguratorState } from "@/config-types";
 import {
@@ -12,9 +14,7 @@ import { nextAuthOptions } from "@/pages/api/auth/[...nextauth]";
 import { controller } from "@/server/nextkit";
 
 export const ConfigController = controller({
-  create: async ({ req, res }) => {
-    const session = await getServerSession(req, res, nextAuthOptions);
-    const userId = session?.user?.id;
+  create: withAuth(async ({ userId }, req) => {
     const { data, published_state } = req.body;
 
     if (!isDataSourceUrlAllowed((data as ConfiguratorState).dataSource.url)) {
@@ -27,25 +27,21 @@ export const ConfigController = controller({
       userId,
       published_state: published_state,
     });
-  },
-  remove: async ({ req, res }) => {
+  }),
+  remove: withAuth(async ({ userId }, req) => {
     const { key } = req.body;
-    const session = await getServerSession(req, res, nextAuthOptions);
-    const sessionUserId = session?.user?.id;
     const config = await getConfig(key);
 
-    if (sessionUserId !== config?.user_id) {
+    if (userId !== config?.user_id) {
       throw Error("Unauthorized!");
     }
 
     return await removeConfig({ key });
-  },
-  update: async ({ req, res }) => {
+  }),
+  update: withAuth(async ({ userId }, req) => {
     const { key, data, published_state } = req.body;
-    const session = await getServerSession(req, res, nextAuthOptions);
-    const sessionUserId = session?.user?.id;
 
-    if (!sessionUserId) {
+    if (!userId) {
       throw Error(
         "Could not update config: Not logged in users cannot update a chart"
       );
@@ -57,9 +53,9 @@ export const ConfigController = controller({
       throw Error("Could not update config: config not found");
     }
 
-    if (config.user_id !== sessionUserId) {
+    if (userId !== config.user_id) {
       throw Error(
-        `Could not update config: config must be edited by its author (config user id: ${config?.user_id}, server user id: ${sessionUserId})`
+        `Could not update config: config must be edited by its author (config user id: ${config?.user_id}, server user id: ${userId})`
       );
     }
 
@@ -72,5 +68,21 @@ export const ConfigController = controller({
       data,
       published_state,
     });
-  },
+  }),
 });
+
+function withAuth<T>(
+  handler: (
+    ctx: {
+      userId: number | undefined;
+    },
+    req: NextApiRequest,
+    res: NextApiResponse
+  ) => Promise<T>
+): NextkitHandler<null, T> {
+  return async ({ req, res }) => {
+    const session = await getServerSession(req, res, nextAuthOptions);
+    const userId = session?.user?.id;
+    return handler({ userId }, req, res);
+  };
+}
