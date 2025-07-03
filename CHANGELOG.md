@@ -28,6 +28,8 @@ You can also check the
   - Improved UX of interacting with conversion units multiplier input
   - Added additional WMS & WMTS providers
 - Fixes
+  - Custom color palette names are not required to be globally unique anymore,
+    but unique per user
   - Fixed an infinite render loop when adding a custom map layer
 - Styles
   - Fixed some smaller UI inconsistencies, mostly in table charts
