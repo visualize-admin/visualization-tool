@@ -126,9 +126,11 @@ const formatBackLink = (
   query: Router["query"]
 ): ComponentProps<typeof NextLink>["href"] => {
   const backParameters = softJSONParse(query.previous as string);
+
   if (!backParameters) {
     return "/browse";
   }
+
   return buildURLFromBrowseState(backParameters);
 };
 
@@ -294,10 +296,9 @@ const SelectDatasetStepContent = ({
 
   const pageTitle = useMemo(() => {
     return queryFilters
-      .map((d) => {
+      .map((queryFilter) => {
         const searchList = (() => {
-          const type = d.type;
-          switch (type) {
+          switch (queryFilter.type) {
             case SearchCubeFilterType.DataCubeTheme:
               return themes;
             case SearchCubeFilterType.DataCubeOrganization:
@@ -305,18 +306,18 @@ const SelectDatasetStepContent = ({
             case SearchCubeFilterType.DataCubeTermset:
               return termsets;
             case SearchCubeFilterType.DataCubeAbout:
-              return [];
             case SearchCubeFilterType.TemporalDimension:
               return [];
             default:
-              const check: never = type;
-              throw Error(`Invalid search cube filter type ${check}`);
+              const _exhaustiveCheck: never = queryFilter.type;
+              return _exhaustiveCheck;
           }
         })();
-        const item = (searchList as { iri: string; label?: string }[]).find(
-          ({ iri }) => iri === d.value
-        );
-        return (item ?? d).label;
+        const foundQueryFilter = (
+          searchList as { iri: string; label?: string }[]
+        ).find(({ iri }) => iri === queryFilter.value);
+
+        return (foundQueryFilter ?? queryFilter).label;
       })
       .join(", ");
   }, [orgs, queryFilters, termsets, themes]);
@@ -336,7 +337,7 @@ const SelectDatasetStepContent = ({
       sourceUrl: configState.dataSource.url,
       locale,
       cubeFilter: {
-        iri: dataset!,
+        iri: dataset ?? "",
       },
     },
     pause: !dataset,

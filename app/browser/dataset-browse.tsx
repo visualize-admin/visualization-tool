@@ -688,9 +688,8 @@ export const SearchFilters = ({
     DataCubeOrganization: orgFilter,
     DataCubeTermset: termsetFilter,
   } = useMemo(() => {
-    const result = keyBy(filters, (f) => f.__typename) as {
-      [K in BrowseFilter["__typename"]]?: BrowseFilter;
-    };
+    const result = keyBy(filters, (f) => f.__typename);
+
     return {
       DataCubeTheme: result.DataCubeTheme as DataCubeTheme | undefined,
       DataCubeOrganization: result.DataCubeOrganization as
@@ -841,10 +840,10 @@ export const SearchFilters = ({
   ];
   const navs = sortBy(baseNavs, (x) => {
     const i = filters.findIndex((f) => f.__typename === x.__typename);
+
     return i === -1
       ? // If the filter is not in the list, we want to put it at the end
-        navOrder[x.__typename as BrowseFilter["__typename"]] +
-          Object.keys(navOrder).length
+        navOrder[x.__typename] + Object.keys(navOrder).length
       : i;
   });
 
