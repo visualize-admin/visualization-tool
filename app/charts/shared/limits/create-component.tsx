@@ -40,7 +40,7 @@ export const createLimitsComponent = <
     const measureScale = isHorizontal ? xScale : yScale;
     const chartSize = isHorizontal ? chartHeight : chartWidth;
 
-    const renderData: RenderLimitDatum[] = useMemo(() => {
+    const renderData = useMemo(() => {
       if (!limits.length) {
         return [];
       }
@@ -76,18 +76,21 @@ export const createLimitsComponent = <
           const axisOffset = isBandScale ? size / 2 : 0;
           const hasValidAxis = axis1 !== undefined && axis2 !== undefined;
           const hasNoAxis = relatedAxisDimensionValueLabel === undefined;
-          let x1, x2, y1, y2;
+          let x1: number;
+          let x2: number;
+          let y1: number;
+          let y2: number;
 
           if (isHorizontal) {
             y1 = axis1 ? axis1 + axisOffset : 0;
             y2 = axis2 ? axis2 + axisOffset : chartSize;
-            x1 = measure1;
-            x2 = measure2;
+            x1 = measure1 ?? 0;
+            x2 = measure2 ?? 0;
           } else {
             x1 = axis1 ? axis1 + axisOffset : 0;
             x2 = axis2 ? axis2 + axisOffset : chartSize;
-            y1 = measure1;
-            y2 = measure2;
+            y1 = measure1 ?? 0;
+            y2 = measure2 ?? 0;
           }
 
           const datum = {
@@ -100,7 +103,7 @@ export const createLimitsComponent = <
             fill: configLimit.color,
             lineType: configLimit.lineType,
             symbolType: configLimit.symbolType,
-          } as RenderLimitDatum;
+          } satisfies RenderLimitDatum;
 
           return hasValidAxis || hasNoAxis ? [datum] : [];
         }

@@ -20,7 +20,7 @@ export const useBarValueLabelsData = () => {
     getValueOffset,
   } = useChartState() as BarsState;
   const bandwidth = yScale.bandwidth();
-  const valueLabelsData: RenderTotalValueLabelDatum[] = useMemo(() => {
+  const valueLabelsData = useMemo(() => {
     if (!showValues || !width || !height) {
       return [];
     }
@@ -43,7 +43,7 @@ export const useBarValueLabelsData = () => {
           x: xScaled + valueOffset,
           y: yRender + bandwidth / 2,
           valueLabel: valueLabelFormatter(value),
-        };
+        } satisfies RenderTotalValueLabelDatum;
       })
       .filter(truthy);
   }, [

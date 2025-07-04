@@ -447,15 +447,15 @@ const useColumnsGroupedState = (
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
         error: getFormattedYUncertainty(datum),
-        color: colors(getSegment(datum)) as string,
+        color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map((td) => ({
-        label: getSegmentAbbreviationOrLabel(td),
+      values: sortedTooltipValues.map((d) => ({
+        label: getSegmentAbbreviationOrLabel(d),
         value: yMeasure.unit
-          ? `${formatNumber(getY(td))} ${yMeasure.unit}`
-          : formatNumber(getY(td)),
-        error: getFormattedYUncertainty(td),
-        color: colors(getSegment(td)) as string,
+          ? `${formatNumber(getY(d))} ${yMeasure.unit}`
+          : formatNumber(getY(d)),
+        error: getFormattedYUncertainty(d),
+        color: colors(getSegment(d)),
       })),
     };
   };

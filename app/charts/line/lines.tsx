@@ -34,7 +34,7 @@ export const ErrorWhiskers = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderVerticalWhiskerDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     if (!getYErrorRange || !showYUncertainty) {
       return [];
     }
@@ -45,6 +45,7 @@ export const ErrorWhiskers = () => {
       const barWidth = 15;
       const y = getY(d) as number;
       const [y1, y2] = getYErrorRange(d);
+
       return {
         key: `${i}`,
         x: x0 - barWidth / 2,
@@ -54,7 +55,7 @@ export const ErrorWhiskers = () => {
         width: barWidth,
         fill: colors(segment),
         renderMiddleCircle: true,
-      } as RenderVerticalWhiskerDatum;
+      } satisfies RenderVerticalWhiskerDatum;
     });
   }, [
     chartData,

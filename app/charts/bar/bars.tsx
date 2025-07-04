@@ -31,7 +31,7 @@ export const ErrorWhiskers = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderHorizontalWhiskerDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     if (!getXErrorRange || !showXUncertainty) {
       return [];
     }
@@ -49,7 +49,7 @@ export const ErrorWhiskers = () => {
         x1: xScale(x1),
         x2: xScale(x2),
         height: barHeight,
-      } as RenderHorizontalWhiskerDatum;
+      } satisfies RenderHorizontalWhiskerDatum;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -104,7 +104,7 @@ export const Bars = () => {
   const transitionDuration = useTransitionStore((state) => state.duration);
   const bandwidth = yScale.bandwidth();
   const x0 = xScale(0);
-  const renderData: RenderBarDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     return chartData.map((d) => {
       const key = getRenderingKey(d);
       const yScaled = yScale(getY(d)) as number;
@@ -121,7 +121,7 @@ export const Bars = () => {
         width,
         height: bandwidth,
         color: colors(d.key as string) ?? schemeCategory10[0],
-      };
+      } satisfies RenderBarDatum;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [

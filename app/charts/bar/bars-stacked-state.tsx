@@ -403,17 +403,12 @@ const useBarsStackedState = (
           : stackOrderDescending
         : // Reverse segments here, so they're sorted from top to bottom
           stackOrderReverse;
-
     const stacked = stack()
       .order(stackOrder)
       .offset(stackOffsetDiverging)
       .keys(segments);
 
-    return stacked(
-      chartWideData as {
-        [key: string]: number;
-      }[]
-    );
+    return stacked(chartWideData as { [key: string]: number }[]);
   }, [chartWideData, fields.segment?.sorting, segments]);
 
   /** Chart dimensions */
@@ -480,7 +475,7 @@ const useBarsStackedState = (
       const bw = yScale.bandwidth();
       const y = getY(datum);
 
-      const tooltipValues = chartDataGroupedByY.get(y) as Observation[];
+      const tooltipValues = chartDataGroupedByY.get(y) ?? [];
       const xValues = tooltipValues.map(getX);
       const sortedTooltipValues = sortByIndex({
         data: tooltipValues,
@@ -504,7 +499,6 @@ const useBarsStackedState = (
         ? MOBILE_TOOLTIP_PLACEMENT
         : getCenteredTooltipPlacement({
             chartWidth,
-            //NOTE: this might be wrong
             xAnchor,
             topAnchor: !fields.segment,
           });
@@ -518,12 +512,12 @@ const useBarsStackedState = (
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
           value: xValueFormatter(getX(datum), getIdentityX(datum)),
-          color: colors(getSegment(datum)) as string,
+          color: colors(getSegment(datum)),
         },
-        values: sortedTooltipValues.map((td) => ({
-          label: getSegmentAbbreviationOrLabel(td),
-          value: xValueFormatter(getX(td), getIdentityX(td)),
-          color: colors(getSegment(td)) as string,
+        values: sortedTooltipValues.map((d) => ({
+          label: getSegmentAbbreviationOrLabel(d),
+          value: xValueFormatter(getX(d), getIdentityX(d)),
+          color: colors(getSegment(d)),
         })),
       };
     },

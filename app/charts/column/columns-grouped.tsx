@@ -18,6 +18,7 @@ export const ErrorWhiskers = () => {
     bounds,
     xScale,
     xScaleIn,
+    getY,
     getYErrorRange,
     getYErrorPresent,
     yScale,
@@ -29,31 +30,36 @@ export const ErrorWhiskers = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderVerticalWhiskerDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     if (!getYErrorRange || !showYUncertainty) {
       return [];
     }
 
     const bandwidth = xScaleIn.bandwidth();
+
     return grouped
       .filter((d) => d[1].some(getYErrorPresent))
       .flatMap(([segment, observations]) =>
         observations.map((d) => {
           const x0 = xScaleIn(getSegment(d)) as number;
           const barWidth = Math.min(bandwidth, 15);
+          const y = getY(d) as number;
           const [y1, y2] = getYErrorRange(d);
+
           return {
             key: `${segment}-${getSegment(d)}`,
             x: (xScale(segment) as number) + x0 + bandwidth / 2 - barWidth / 2,
+            y: yScale(y),
             y1: yScale(y1),
             y2: yScale(y2),
             width: barWidth,
-          } as RenderVerticalWhiskerDatum;
+          } satisfies RenderVerticalWhiskerDatum;
         })
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     getSegment,
+    getY,
     getYErrorRange,
     getYErrorPresent,
     grouped,
@@ -103,22 +109,21 @@ export const ColumnsGrouped = () => {
   const { margins, height } = bounds;
   const bandwidth = xScaleIn.bandwidth();
   const y0 = yScale(0);
-  const renderData: RenderColumnDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     return grouped.flatMap(([segment, observations]) => {
       return observations.map((d) => {
         const key = getRenderingKey(d, getSegment(d));
         const x = getSegment(d);
-        const y = getY(d) ?? NaN;
+        const y = getY(d) as number;
 
         return {
           key,
-          value: y,
           x: (xScale(segment) as number) + (xScaleIn(x) as number),
           y: yScale(Math.max(y, 0)),
           width: bandwidth,
           height: Math.max(0, Math.abs(yScale(y) - y0)),
           color: colors(x),
-        };
+        } satisfies RenderColumnDatum;
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

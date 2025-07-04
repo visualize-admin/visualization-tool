@@ -417,7 +417,7 @@ const useAreasState = (
   const getAnnotationInfo = useCallback(
     (datum: Observation): TooltipInfo => {
       const x = getXAsString(datum);
-      const tooltipValues = chartDataGroupedByX.get(x) as Observation[];
+      const tooltipValues = chartDataGroupedByX.get(x) ?? [];
       const yValues = tooltipValues.map(getY);
       const sortedTooltipValues = sortByIndex({
         data: tooltipValues,
@@ -456,13 +456,13 @@ const useAreasState = (
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
           value: yValueFormatter(getY(datum), getIdentityY(datum)),
-          color: colors(getSegment(datum)) as string,
+          color: colors(getSegment(datum)),
         },
         values: fields.segment
-          ? sortedTooltipValues.map((td) => ({
-              label: getSegmentAbbreviationOrLabel(td),
-              value: yValueFormatter(getY(td), getIdentityY(td)),
-              color: colors(getSegment(td)) as string,
+          ? sortedTooltipValues.map((d) => ({
+              label: getSegmentAbbreviationOrLabel(d),
+              value: yValueFormatter(getY(d), getIdentityY(d)),
+              color: colors(getSegment(d)),
             }))
           : undefined,
       };

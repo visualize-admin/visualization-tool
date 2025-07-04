@@ -32,7 +32,7 @@ export const Areas = () => {
     .x((d) => xScale(getX(d.data)))
     .y0((d) => yScale(d[0]))
     .y1((d) => yScale(d[1]));
-  const renderData: RenderAreaDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     return series.map((d) => {
       return {
         key: d.key,
@@ -46,7 +46,7 @@ export const Areas = () => {
           })
         ) as string,
         color: colors(d.key),
-      };
+      } satisfies RenderAreaDatum;
     });
   }, [series, areaGenerator, colors]);
 

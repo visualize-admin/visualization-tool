@@ -28,7 +28,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -179,7 +179,7 @@ const useComboLineDualState = (
   const isMobile = useIsMobile();
 
   // Tooltip
-  const getAnnotationInfo = (d: Observation): TooltipInfo => {
+  const getAnnotationInfo = (d: Observation) => {
     const x = getX(d);
     const xScaled = xScale(x);
 
@@ -198,7 +198,7 @@ const useComboLineDualState = (
           hide: y === null,
           yPos: yPos,
           symbol: "line",
-        };
+        } satisfies TooltipValue;
       })
       .filter(truthy);
     const yAnchor = isMobile
@@ -219,7 +219,7 @@ const useComboLineDualState = (
       value: timeFormatUnit(x, xDimension.timeUnit),
       placement,
       values,
-    } as TooltipInfo;
+    } satisfies TooltipInfo;
   };
 
   return {

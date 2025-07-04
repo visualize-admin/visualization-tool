@@ -22,6 +22,7 @@ import {
   getFiltersFromParams,
   getParamsFromFilters,
 } from "@/browser/filters";
+import { truthy } from "@/domain/types";
 import { SearchCubeResultOrder } from "@/graphql/query-hooks";
 import { BrowseParams } from "@/pages/browse";
 import { useEvent } from "@/utils/use-event";
@@ -76,10 +77,15 @@ export const getBrowseParamsFromQuery = (
   );
 };
 
-export const buildURLFromBrowseState = (browseState: BrowseParams) => {
-  const { type, iri, subtype, subiri, subsubtype, subsubiri, ...queryParams } =
-    browseState;
-
+export const buildURLFromBrowseState = ({
+  type,
+  iri,
+  subtype,
+  subiri,
+  subsubtype,
+  subsubiri,
+  ...queryParams
+}: BrowseParams) => {
   const typePart =
     type && iri
       ? `${encodeURIComponent(type)}/${encodeURIComponent(iri)}`
@@ -92,15 +98,16 @@ export const buildURLFromBrowseState = (browseState: BrowseParams) => {
     subsubtype && subsubiri
       ? `${encodeURIComponent(subsubtype)}/${encodeURIComponent(subsubiri)}`
       : undefined;
-
   const pathname = ["/browse", typePart, subtypePart, subsubtypePart]
-    .filter(Boolean)
+    .filter(truthy)
     .join("/");
+
   return {
     pathname,
     query: queryParams,
-  } as ComponentProps<typeof Link>["href"];
+  } satisfies ComponentProps<typeof Link>["href"];
 };
+
 const extractParamFromPath = (path: string, param: string) =>
   path.match(new RegExp(`[&?]${param}=(.*?)(&|$)`));
 
@@ -141,22 +148,22 @@ const useBrowseParamsStateWithUrlSync = (initialState: BrowseParams) => {
   }, [router.isReady, router.query]);
 
   const setState = useEvent(
-    (
-      stateUpdate: BrowseParams | ((prevState: BrowseParams) => BrowseParams)
-    ) => {
-      rawSetState((curState) => {
+    (stateUpdate: BrowseParams | ((prev: BrowseParams) => BrowseParams)) => {
+      rawSetState((prev) => {
         const newState = {
           ...(stateUpdate instanceof Function
-            ? stateUpdate(curState)
+            ? stateUpdate(prev)
             : stateUpdate),
-        } as BrowseParams;
+        } satisfies BrowseParams;
         router.replace(urlCodec.serialize(newState), undefined, {
           shallow: true,
         });
+
         return newState;
       });
     }
   );
+
   return [state, setState] as const;
 };
 

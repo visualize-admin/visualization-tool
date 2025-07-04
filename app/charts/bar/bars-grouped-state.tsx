@@ -446,15 +446,15 @@ const useBarsGroupedState = (
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: xValueFormatter(getX(datum)),
         error: getFormattedXUncertainty(datum),
-        color: colors(getSegment(datum)) as string,
+        color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map((td) => ({
-        label: getSegmentAbbreviationOrLabel(td),
+      values: sortedTooltipValues.map((d) => ({
+        label: getSegmentAbbreviationOrLabel(d),
         value: xMeasure.unit
-          ? `${formatNumber(getX(td))} ${xMeasure.unit}`
-          : formatNumber(getX(td)),
-        error: getFormattedXUncertainty(td),
-        color: colors(getSegment(td)) as string,
+          ? `${formatNumber(getX(d))} ${xMeasure.unit}`
+          : formatNumber(getX(d)),
+        error: getFormattedXUncertainty(d),
+        color: colors(getSegment(d)),
       })),
     };
   };

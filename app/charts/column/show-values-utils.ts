@@ -20,7 +20,7 @@ export const useColumnValueLabelsData = () => {
     valueLabelFormatter,
   } = useChartState() as ColumnsState;
   const bandwidth = xScale.bandwidth();
-  const valueLabelsData: RenderTotalValueLabelDatum[] = useMemo(() => {
+  const valueLabelsData = useMemo(() => {
     if (!showValues || !width || !height) {
       return [];
     }
@@ -43,7 +43,7 @@ export const useColumnValueLabelsData = () => {
           x: xScaled + bandwidth / 2,
           y: yRender + valueOffset,
           valueLabel: valueLabelFormatter(value),
-        };
+        } satisfies RenderTotalValueLabelDatum;
       })
       .filter(truthy);
   }, [

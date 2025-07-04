@@ -33,7 +33,7 @@ const emptyStyle = {
       },
     },
   ],
-} as MapboxStyle;
+} satisfies MapboxStyle;
 
 type AnyLayer = MapboxStyle["layers"][number];
 
@@ -63,9 +63,9 @@ const getBaseLayerStyle = ({
           "text-field": `{${languageTag}}`,
           visibility: textLayersVisibility,
         },
-      }) as AnyLayer;
+      }) satisfies AnyLayer;
     } else {
-      return layer as AnyLayer;
+      return layer satisfies AnyLayer;
     }
   });
 
