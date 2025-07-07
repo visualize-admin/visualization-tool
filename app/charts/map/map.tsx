@@ -301,7 +301,7 @@ export const MapComponent = ({
       features.areaLayer?.shapes?.features,
       geoArea,
       "desc"
-    ) as GeoFeature[];
+    ) satisfies GeoFeature[];
 
     return {
       ...features.areaLayer?.shapes,

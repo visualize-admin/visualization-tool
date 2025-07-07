@@ -26,7 +26,7 @@ export const BarsStacked = () => {
   const { margins, height } = bounds;
   const bandwidth = yScale.bandwidth();
   const x0 = xScale(0);
-  const renderData: RenderBarDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     return series.flatMap((s) => {
       const segmentLabel = s.key;
       const segment =
@@ -35,6 +35,7 @@ export const BarsStacked = () => {
 
       return s.map((d) => {
         const observation = d.data;
+        const x = xScale(d[0]);
         const value = observation[segmentLabel];
         const valueLabel =
           segment && showValuesBySegmentMapping[segment]
@@ -47,13 +48,13 @@ export const BarsStacked = () => {
         return {
           key: getRenderingKey(observation, segmentLabel),
           y: yScale(getY(observation)) as number,
-          x: xScale(d[0]),
+          x,
           height: bandwidth,
-          width: Math.min(0, xScale(d[0]) - xScale(d[1])) * -1,
+          width: Math.min(0, x - xScale(d[1])) * -1,
           color,
           valueLabel,
           valueLabelColor,
-        };
+        } satisfies RenderBarDatum;
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -20,6 +20,7 @@ import { useTransitionStore } from "@/stores/transition";
 export const ErrorWhiskers = () => {
   const {
     getX,
+    getY,
     getYErrorPresent,
     getYErrorRange,
     chartData,
@@ -33,7 +34,7 @@ export const ErrorWhiskers = () => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const bandwidth = xScale.bandwidth();
-  const renderData: RenderVerticalWhiskerDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     if (!getYErrorRange || !showYUncertainty) {
       return [];
     }
@@ -41,15 +42,17 @@ export const ErrorWhiskers = () => {
     return chartData.filter(getYErrorPresent).map((d, i) => {
       const x0 = xScale(getX(d)) as number;
       const barWidth = Math.min(bandwidth, 15);
+      const y = getY(d) as number;
       const [y1, y2] = getYErrorRange(d);
 
       return {
         key: `${i}`,
         x: x0 + bandwidth / 2 - barWidth / 2,
+        y: yScale(y),
         y1: yScale(y1),
         y2: yScale(y2),
         width: barWidth,
-      } as RenderVerticalWhiskerDatum;
+      } satisfies RenderVerticalWhiskerDatum;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -104,7 +107,7 @@ export const Columns = () => {
   const transitionDuration = useTransitionStore((state) => state.duration);
   const bandwidth = xScale.bandwidth();
   const y0 = yScale(0);
-  const columnsData: RenderColumnDatum[] = useMemo(() => {
+  const columnsData = useMemo(() => {
     return chartData.map((d) => {
       const key = getRenderingKey(d);
       const valueRaw = getY(d);
@@ -119,13 +122,12 @@ export const Columns = () => {
 
       return {
         key,
-        value,
         x: xScaled,
         y: yRender,
         width: bandwidth,
         height,
         color,
-      };
+      } satisfies RenderColumnDatum;
     });
   }, [
     chartData,

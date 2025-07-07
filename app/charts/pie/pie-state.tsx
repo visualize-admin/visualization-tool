@@ -30,7 +30,7 @@ import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { PieConfig } from "@/configurator";
-import { Dimension, Observation } from "@/domain/data";
+import { Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import {
@@ -69,7 +69,7 @@ const usePieState = (
     yAxisLabel,
   } = variables;
   // Segment dimension is guaranteed to be present, because it is required.
-  const segmentDimension = _segmentDimension as Dimension;
+  const segmentDimension = _segmentDimension!;
   const { chartData, segmentData, allData } = data;
   const { fields } = chartConfig;
   const { y } = fields;
