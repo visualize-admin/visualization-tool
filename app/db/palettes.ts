@@ -10,7 +10,7 @@ import {
 } from "@/utils/chart-config/api";
 
 export const createPaletteForUser = async (
-  data: CreateCustomColorPalette & { user_id?: number }
+  data: CreateCustomColorPalette & { user_id: number }
 ): Promise<CustomPaletteType> => {
   const palette = await prisma.palette.create({
     data: {
@@ -28,9 +28,11 @@ export const createPaletteForUser = async (
   };
 };
 
-export const getPalettesForUser = async (
-  user_id?: number
-): Promise<CustomPaletteType[]> => {
+export const getPalettesForUser = async ({
+  user_id,
+}: {
+  user_id: number;
+}): Promise<CustomPaletteType[]> => {
   const palettes = await prisma.palette.findMany({
     where: {
       user_id,
@@ -47,25 +49,43 @@ export const getPalettesForUser = async (
   });
 };
 
-export const deletePaletteForUser = async (paletteId: string) => {
+export const deletePaletteForUser = async ({
+  paletteId,
+  user_id,
+}: {
+  paletteId: string;
+  user_id: number;
+}) => {
   await prisma.palette.delete({
     where: {
-      paletteId,
+      paletteId_user_id: {
+        paletteId,
+        user_id,
+      },
     },
   });
 };
 
-export const updatePaletteForUser = async (data: UpdateCustomColorPalette) => {
-  const type = data.type && convertPaletteTypeToDBType(data.type);
+export const updatePaletteForUser = async ({
+  type,
+  paletteId,
+  name,
+  colors,
+  user_id,
+}: UpdateCustomColorPalette & { user_id: number }) => {
+  const dbType = type && convertPaletteTypeToDBType(type);
 
   await prisma.palette.update({
     where: {
-      paletteId: data.paletteId,
+      paletteId_user_id: {
+        paletteId,
+        user_id,
+      },
     },
     data: {
-      name: data.name,
-      colors: data.colors,
-      type,
+      name,
+      colors,
+      type: dbType,
       updated_at: new Date(),
     },
   });
