@@ -159,11 +159,8 @@ export const ControlSection = forwardRef<
 
 type ControlSectionContentProps = {
   children: ReactNode;
-  px?: "default" | "none";
-  // large for specific purposes, e.g. base layer map options
-  // default for right panel options
-  // none for left panel options
-  gap?: "large" | "default" | "none";
+  px?: "md" | "none";
+  gap?: "lg" | "md" | "none";
 } & Omit<BoxProps, "children">;
 
 const useControlSectionContentStyles = makeStyles<
@@ -173,8 +170,7 @@ const useControlSectionContentStyles = makeStyles<
   controlSectionContent: {
     display: "flex",
     flexDirection: "column",
-    gap: ({ gap }) =>
-      theme.spacing(gap === "large" ? 3 : gap === "default" ? 2 : 0),
+    gap: ({ gap }) => theme.spacing(gap === "lg" ? 3 : gap === "md" ? 2 : 0),
     minWidth: 0,
     paddingLeft: ({ px }) => (px === "none" ? 0 : theme.spacing(4)),
     paddingTop: theme.spacing(2),
@@ -187,8 +183,8 @@ export const ControlSectionContent = ({
   component = "div",
   role,
   children,
-  px = "default",
-  gap = "default",
+  px = "md",
+  gap = "md",
   sx,
   ...props
 }: ControlSectionContentProps) => {

@@ -391,7 +391,7 @@ const EncodingOptionsPanel = ({
           <SectionTitle closable>
             {getFieldLabel(`${chartConfig.chartType}.${encoding.field}`)}
           </SectionTitle>
-          <ControlSectionContent gap="large">
+          <ControlSectionContent gap="lg">
             {!encoding.customComponent && (
               <ChartFieldField
                 field={encoding.field}
