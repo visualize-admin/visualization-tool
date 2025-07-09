@@ -160,7 +160,7 @@ export const ControlSection = forwardRef<
 type ControlSectionContentProps = {
   children: ReactNode;
   px?: "md" | "none";
-  gap?: "lg" | "md" | "none";
+  gap?: "xl" | "lg" | "md" | "none";
 } & Omit<BoxProps, "children">;
 
 const useControlSectionContentStyles = makeStyles<
@@ -170,12 +170,40 @@ const useControlSectionContentStyles = makeStyles<
   controlSectionContent: {
     display: "flex",
     flexDirection: "column",
-    gap: ({ gap }) => theme.spacing(gap === "lg" ? 3 : gap === "md" ? 2 : 0),
+    gap: ({ gap }) => {
+      switch (gap) {
+        case "xl":
+          return theme.spacing(4);
+        case "lg":
+          return theme.spacing(3);
+        case "md":
+          return theme.spacing(2);
+        case "none":
+        case undefined:
+          return 0;
+        default:
+          const _exhaustiveCheck: never = gap;
+          return _exhaustiveCheck;
+      }
+    },
     minWidth: 0,
-    paddingLeft: ({ px }) => (px === "none" ? 0 : theme.spacing(4)),
-    paddingTop: theme.spacing(2),
-    paddingRight: ({ px }) => (px === "none" ? 0 : theme.spacing(4)),
-    paddingBottom: theme.spacing(4),
+    padding: ({ px: _px }) => {
+      const px: string = (() => {
+        switch (_px) {
+          case "none":
+            return "0px";
+          case "md":
+            return theme.spacing(4);
+          case undefined:
+            return "0px";
+          default:
+            const _exhaustiveCheck: never = _px;
+            return _exhaustiveCheck;
+        }
+      })();
+
+      return `${theme.spacing(2)} ${px} ${theme.spacing(4)}`;
+    },
   },
 }));
 
