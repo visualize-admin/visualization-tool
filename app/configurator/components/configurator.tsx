@@ -398,7 +398,10 @@ const ConfigureChartStep = () => {
   const chartConfig = getChartConfig(state);
   const router = useRouter();
   const handleClosePanel = useEvent(() => {
-    dispatch({ type: "CHART_ACTIVE_FIELD_CHANGED", value: undefined });
+    dispatch({
+      type: "CHART_ACTIVE_FIELD_CHANGE",
+      value: undefined,
+    });
   });
   const handlePrevious = useEvent(() => {
     if (!configuring) {
@@ -502,12 +505,16 @@ const LayoutingStep = () => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const handleClosePanel = useEvent(() => {
-    dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value: undefined });
+    dispatch({
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE",
+      value: undefined,
+    });
   });
   const handlePrevious = useEvent(() => {
     if (state.state !== "LAYOUTING") {
       return;
     }
+
     dispatch({ type: "STEP_PREVIOUS" });
   });
 
@@ -710,7 +717,7 @@ const LayoutingStep = () => {
                   onClick={() => {
                     if (state.layout.activeField !== "title") {
                       dispatch({
-                        type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+                        type: "LAYOUT_ACTIVE_FIELD_CHANGE",
                         value: "title",
                       });
                     }
@@ -721,7 +728,7 @@ const LayoutingStep = () => {
                   onClick={() => {
                     if (state.layout.activeField !== "description") {
                       dispatch({
-                        type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+                        type: "LAYOUT_ACTIVE_FIELD_CHANGE",
                         value: "description",
                       });
                     }

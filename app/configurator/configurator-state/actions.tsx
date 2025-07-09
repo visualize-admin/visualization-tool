@@ -64,7 +64,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_ACTIVE_FIELD_CHANGED";
+      type: "CHART_ACTIVE_FIELD_CHANGE";
       value: string | undefined;
     }
   | {
@@ -316,7 +316,7 @@ export type ConfiguratorStateAction =
       value: Layout;
     }
   | {
-      type: "LAYOUT_ACTIVE_FIELD_CHANGED";
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE";
       value: string | undefined;
     }
   | {

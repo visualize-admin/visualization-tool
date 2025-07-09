@@ -396,7 +396,10 @@ export const useActiveChartField = (
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const onClick = useCallback(() => {
-    dispatch({ type: "CHART_ACTIVE_FIELD_CHANGED", value });
+    dispatch({
+      type: "CHART_ACTIVE_FIELD_CHANGE",
+      value,
+    });
   }, [dispatch, value]);
   const checked = chartConfig.activeField === value;
 
@@ -415,7 +418,10 @@ export const useActiveLayoutField = (
   const { value } = props;
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const onClick = useCallback(() => {
-    dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value });
+    dispatch({
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE",
+      value,
+    });
   }, [dispatch, value]);
   const checked = state.layout.activeField === value;
 

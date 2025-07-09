@@ -61,8 +61,8 @@ const AnnotatorOptions = ({
     dispatch({
       type:
         type === "chart"
-          ? "CHART_ACTIVE_FIELD_CHANGED"
-          : "LAYOUT_ACTIVE_FIELD_CHANGED",
+          ? "CHART_ACTIVE_FIELD_CHANGE"
+          : "LAYOUT_ACTIVE_FIELD_CHANGE",
       value: undefined,
     });
   });

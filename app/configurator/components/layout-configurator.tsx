@@ -564,7 +564,10 @@ const LayoutBlocksConfigurator = () => {
   const { blocks } = layout;
   const classes = useLayoutBlocksStyles();
   const onClick = useEvent((blockKey: string) => {
-    dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value: blockKey });
+    dispatch({
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE",
+      value: blockKey,
+    });
   });
 
   return layout.type === "dashboard" ? (
@@ -641,7 +644,7 @@ const AddLayoutBlocks = () => {
       },
     });
     dispatch({
-      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE",
       value: key,
     });
     handleClose();

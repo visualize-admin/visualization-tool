@@ -241,14 +241,14 @@ export const SectionTitle = ({
 
     if (isConfiguring(state)) {
       return dispatch({
-        type: "CHART_ACTIVE_FIELD_CHANGED",
+        type: "CHART_ACTIVE_FIELD_CHANGE",
         value: undefined,
       });
     }
 
     if (isLayouting(state)) {
       return dispatch({
-        type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+        type: "LAYOUT_ACTIVE_FIELD_CHANGE",
         value: undefined,
       });
     }

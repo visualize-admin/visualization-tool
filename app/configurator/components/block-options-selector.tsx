@@ -34,7 +34,7 @@ export const LayoutBlocksSelector = () => {
 
   const handleClosePanel = useEvent(() => {
     dispatch({
-      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE",
       value: undefined,
     });
   });

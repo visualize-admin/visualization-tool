@@ -40,7 +40,7 @@ export const AddAnnotationButton = () => {
       value: annotation,
     });
     dispatch({
-      type: "CHART_ACTIVE_FIELD_CHANGED",
+      type: "CHART_ACTIVE_FIELD_CHANGE",
       value: annotation.key,
     });
   });

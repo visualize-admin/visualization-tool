@@ -57,7 +57,7 @@ const ChartAnnotationTab = ({ annotation }: { annotation: Annotation }) => {
 
   const handleClick = useEvent(() => {
     dispatch({
-      type: "CHART_ACTIVE_FIELD_CHANGED",
+      type: "CHART_ACTIVE_FIELD_CHANGE",
       value: annotation.key,
     });
   });

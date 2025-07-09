@@ -705,7 +705,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "CHART_ACTIVE_FIELD_CHANGED":
+    case "CHART_ACTIVE_FIELD_CHANGE":
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         chartConfig.activeField = action.value;
@@ -1248,7 +1248,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "LAYOUT_ACTIVE_FIELD_CHANGED":
+    case "LAYOUT_ACTIVE_FIELD_CHANGE":
       if (draft.state === "LAYOUTING") {
         draft.layout.activeField = action.value;
       }
