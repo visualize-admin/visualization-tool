@@ -26,18 +26,18 @@ msgstr "Trascina i filtri per riorganizzarli"
 msgid "No results"
 msgstr "Nessun risultato"
 
-#: app/configurator/components/annotators.tsx
-msgid "annotation.add.description"
-msgstr "[ Nessuna descrizione ]"
-
 #: app/components/text-block.tsx
 msgid "annotation.add.text"
 msgstr "[ Aggiungi testo ]"
 
 #: app/configurator/components/annotators.tsx
+msgid "annotator.add.description"
+msgstr " [ Aggiungi descrizione ]"
+
+#: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
-msgid "annotation.add.title"
-msgstr "[ Nessun titolo ]"
+msgid "annotator.add.title"
+msgstr "[ Aggiungi titolo ]"
 
 #: app/components/dashboard-shared.tsx
 msgid "block-controls.delete"
@@ -746,7 +746,6 @@ msgstr "Descrizione"
 #: app/charts/shared/chart-data-filters.tsx
 #: app/charts/shared/chart-data-filters.tsx
 #: app/configurator/components/field.tsx
-#: app/configurator/components/field.tsx
 msgid "controls.dimensionvalue.none"
 msgstr "Nessun filtro"
 
@@ -1294,7 +1293,6 @@ msgstr "Seleziona una dimensione"
 msgid "controls.select.measure"
 msgstr "Seleziona una misura"
 
-#: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.select.optional"
 msgstr "opzionale"

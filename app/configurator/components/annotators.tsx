@@ -72,7 +72,7 @@ export const Title = ({
       {text ? (
         <MarkdownInheritFonts>{text}</MarkdownInheritFonts>
       ) : (
-        <Trans id="annotation.add.title">[ Title ]</Trans>
+        <Trans id="annotator.add.title">[ Add Title ]</Trans>
       )}
     </Typography>
   );
@@ -102,7 +102,7 @@ export const Description = ({
       {text ? (
         <MarkdownInheritFonts>{text}</MarkdownInheritFonts>
       ) : (
-        <Trans id="annotation.add.description">[ Description ]</Trans>
+        <Trans id="annotator.add.description">[ Add Description ]</Trans>
       )}
     </Typography>
   );
