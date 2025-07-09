@@ -278,6 +278,24 @@ const Cube = t.intersection([
 ]);
 export type Cube = t.TypeOf<typeof Cube>;
 
+const HighlightAnnotation = t.type({
+  key: t.string,
+  type: t.literal("highlight"),
+  text: t.type({
+    de: t.string,
+    fr: t.string,
+    it: t.string,
+    en: t.string,
+  }),
+  target: t.type({
+    axisValue: t.union([t.string, t.undefined]),
+    segmentValue: t.union([t.string, t.undefined]),
+  }),
+});
+
+const Annotation = HighlightAnnotation;
+export type Annotation = t.TypeOf<typeof Annotation>;
+
 const Limit = t.intersection([
   t.type({
     related: t.array(
@@ -315,6 +333,7 @@ const GenericChartConfig = t.type({
   version: t.string,
   meta: Meta,
   cubes: t.array(Cube),
+  annotations: t.array(Annotation),
   limits: t.record(t.string, t.array(Limit)),
   conversionUnitsByComponentId: t.record(t.string, ConversionUnit),
   activeField: t.union([t.string, t.undefined]),

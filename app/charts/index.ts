@@ -386,6 +386,7 @@ export const getInitialConfig = (
           };
         }
       }),
+      annotations: [],
       limits: {},
       conversionUnitsByComponentId: {},
       activeField: undefined,
