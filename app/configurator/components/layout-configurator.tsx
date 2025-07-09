@@ -23,7 +23,7 @@ import {
 
 import { DataFilterGenericDimensionProps } from "@/charts/shared/chart-data-filters";
 import { useCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
-import { AddButton } from "@/components/add-button";
+import { ConfiguratorAddButton } from "@/components/add-button";
 import { Select } from "@/components/form";
 import { Markdown } from "@/components/markdown";
 import {
@@ -573,7 +573,7 @@ const LayoutBlocksConfigurator = () => {
         <Trans id="controls.section.block-options">Objects</Trans>
       </SectionTitle>
       <ControlSectionContent gap="none">
-        <div className={classes.root}>
+        <div>
           {blocks
             .filter(
               (block): block is LayoutTextBlock & { initialized: boolean } =>
@@ -603,9 +603,6 @@ const LayoutBlocksConfigurator = () => {
 };
 
 const useLayoutBlocksStyles = makeStyles<Theme>((theme) => ({
-  root: {
-    marginBottom: theme.spacing(5),
-  },
   tabRightIcon: {
     color: theme.palette.primary.main,
   },
@@ -653,13 +650,9 @@ const AddLayoutBlocks = () => {
 
   return (
     <>
-      <AddButton
-        variant="outlined"
-        onClick={handleOpen}
-        sx={{ width: "fit-content" }}
-      >
+      <ConfiguratorAddButton onClick={handleOpen}>
         <Trans id="controls.section.block-options.block-add">Add object</Trans>
-      </AddButton>
+      </ConfiguratorAddButton>
       <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={handleClose}>
         <MenuItem className={classes.menuItem} onClick={handleAddTextBlock}>
           <Icon name="text" className={classes.menuItemIcon} />
