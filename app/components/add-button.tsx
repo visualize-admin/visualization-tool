@@ -12,12 +12,14 @@ export const AddButton = (props: Omit<ButtonProps, "startIcon">) => {
 export const ConfiguratorAddButton = (
   props: ComponentProps<typeof AddButton>
 ) => {
+  const { sx, ...rest } = props;
+
   return (
     <AddButton
       size="sm"
       variant="outlined"
-      sx={{ width: "fit-content", mt: 4 }}
-      {...props}
+      sx={{ width: "fit-content", mt: 4, ...sx }}
+      {...rest}
     />
   );
 };

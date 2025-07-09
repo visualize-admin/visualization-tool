@@ -47,7 +47,7 @@ export const AddAnnotationButton = () => {
 
   return (
     <>
-      <ConfiguratorAddButton onClick={handleOpen}>
+      <ConfiguratorAddButton onClick={handleOpen} sx={{ mx: 4 }}>
         <Trans id="controls.annotations.add">Add</Trans>
       </ConfiguratorAddButton>
       <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={handleClose}>
