@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { useEffect, useRef } from "react";
 
 import { Meta } from "@/config-types";
@@ -14,6 +14,7 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { ConfirmButton } from "@/configurator/components/confirm-button";
 import { MetaInputField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { useOrderedLocales } from "@/locales/use-locale";
@@ -105,13 +106,7 @@ const AnnotatorOptions = ({
               />
             </div>
           ))}
-          <Button
-            size="sm"
-            onClick={handleClosePanel}
-            sx={{ alignSelf: "flex-end", mt: 2, px: 5 }}
-          >
-            <Typography component="span">Ok</Typography>
-          </Button>
+          <ConfirmButton onClick={handleClosePanel} />
         </ControlSectionContent>
       </ControlSection>
     </Box>

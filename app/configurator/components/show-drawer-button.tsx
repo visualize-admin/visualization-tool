@@ -22,6 +22,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
 export const ShowDrawerButton = (props: ButtonProps) => {
   const { className, variant = "text", ...rest } = props;
   const classes = useStyles();
+
   return (
     <Button className={clsx(classes.root, className)} {...rest}>
       <Icon name="doublearrow" />
