@@ -59,6 +59,7 @@ import {
 import { getChartConfig, getChartConfigFilters } from "@/config-utils";
 import { ChartAnnotator } from "@/configurator/components/annotators";
 import { FiltersBadge } from "@/configurator/components/badges";
+import { ChartAnnotations } from "@/configurator/components/chart-annotations/chart-annotations";
 import {
   ControlSection,
   ControlSectionContent,
@@ -831,6 +832,7 @@ export const ChartConfigurator = ({
         </ControlSection>
       )}
       <ChartAnnotator />
+      <ChartAnnotations />
       {chartConfig.chartType !== "table" && (
         <InteractiveFiltersConfigurator state={state} />
       )}
