@@ -653,7 +653,11 @@ const AddLayoutBlocks = () => {
 
   return (
     <>
-      <AddButton onClick={handleOpen}>
+      <AddButton
+        variant="outlined"
+        onClick={handleOpen}
+        sx={{ width: "fit-content" }}
+      >
         <Trans id="controls.section.block-options.block-add">Add object</Trans>
       </AddButton>
       <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={handleClose}>
