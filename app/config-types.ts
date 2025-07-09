@@ -281,17 +281,20 @@ export type Cube = t.TypeOf<typeof Cube>;
 const HighlightAnnotation = t.type({
   key: t.string,
   type: t.literal("highlight"),
+  target: t.type({
+    axisValue: t.union([t.string, t.undefined]),
+    segmentValue: t.union([t.string, t.undefined]),
+  }),
   text: t.type({
     de: t.string,
     fr: t.string,
     it: t.string,
     en: t.string,
   }),
-  target: t.type({
-    axisValue: t.union([t.string, t.undefined]),
-    segmentValue: t.union([t.string, t.undefined]),
-  }),
+  styleType: t.union([t.literal("none"), t.literal("filled")]),
+  color: t.union([t.string, t.undefined]),
 });
+export type HighlightAnnotation = t.TypeOf<typeof HighlightAnnotation>;
 
 const Annotation = HighlightAnnotation;
 export type Annotation = t.TypeOf<typeof Annotation>;
