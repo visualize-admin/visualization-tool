@@ -43,9 +43,9 @@ import {
 } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import {
-  ChartAnnotationsSelector,
-  LayoutAnnotationsSelector,
-} from "@/configurator/components/annotation-options";
+  ChartAnnotatorSelector,
+  LayoutAnnotatorSelector,
+} from "@/configurator/components/annotator-options";
 import { Description, Title } from "@/configurator/components/annotators";
 import { LayoutBlocksSelector } from "@/configurator/components/block-options-selector";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
@@ -113,7 +113,7 @@ export const BackButton = ({
   );
 };
 
-export const isAnnotationField = (
+export const isAnnotatorField = (
   field: string | undefined
 ): field is MetaKey => {
   return field === "title" || field === "description" || field === "label";
@@ -486,8 +486,8 @@ const ConfigureChartStep = () => {
           onClose={handleClosePanel}
         >
           <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
-            {isAnnotationField(chartConfig.activeField) ? (
-              <ChartAnnotationsSelector />
+            {isAnnotatorField(chartConfig.activeField) ? (
+              <ChartAnnotatorSelector />
             ) : (
               <ChartOptionsSelector state={state} />
             )}
@@ -741,8 +741,8 @@ const LayoutingStep = () => {
         onClose={handleClosePanel}
       >
         <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
-          {isAnnotationField(state.layout.activeField) ? (
-            <LayoutAnnotationsSelector />
+          {isAnnotatorField(state.layout.activeField) ? (
+            <LayoutAnnotatorSelector />
           ) : (
             <LayoutBlocksSelector />
           )}
