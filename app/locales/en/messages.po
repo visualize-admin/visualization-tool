@@ -571,7 +571,7 @@ msgstr "Color"
 
 #: app/configurator/components/chart-controls/control-tab.tsx
 msgid "controls.color.add"
-msgstr "Add…"
+msgstr "Add..."
 
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.opacity"
