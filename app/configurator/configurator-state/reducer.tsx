@@ -1131,6 +1131,24 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
+    case "CHART_ANNOTATION_ADD":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+        chartConfig.annotations.push(action.value);
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_REMOVE":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+        chartConfig.annotations = chartConfig.annotations.filter(
+          (a) => a.key !== action.value.key
+        );
+      }
+
+      return draft;
+
     case "LIMIT_SET":
       if (isConfiguring(draft)) {
         const { measureId, ...limit } = action.value;

@@ -1,5 +1,6 @@
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import {
+  Annotation,
   BaseLayer,
   ChartConfig,
   ChartType,
@@ -275,6 +276,16 @@ export type ConfiguratorStateAction =
       value: {
         oldIndex: number;
         newIndex: number;
+      };
+    }
+  | {
+      type: "CHART_ANNOTATION_ADD";
+      value: Annotation;
+    }
+  | {
+      type: "CHART_ANNOTATION_REMOVE";
+      value: {
+        key: string;
       };
     }
   | {
