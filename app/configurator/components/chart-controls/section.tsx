@@ -13,7 +13,6 @@ import clsx from "clsx";
 import {
   ComponentProps,
   createContext,
-  ElementType,
   forwardRef,
   HTMLProps,
   ReactNode,
@@ -159,17 +158,13 @@ export const ControlSection = forwardRef<
 });
 
 type ControlSectionContentProps = {
-  component?: ElementType;
-  role?: string;
-  ariaLabelledBy?: string;
   children: ReactNode;
   px?: "default" | "none";
   // large for specific purposes, e.g. base layer map options
   // default for right panel options
   // none for left panel options
   gap?: "large" | "default" | "none";
-  sx?: BoxProps["sx"];
-} & BoxProps;
+} & Omit<BoxProps, "children">;
 
 const useControlSectionContentStyles = makeStyles<
   Theme,
@@ -191,7 +186,6 @@ const useControlSectionContentStyles = makeStyles<
 export const ControlSectionContent = ({
   component = "div",
   role,
-  ariaLabelledBy,
   children,
   px = "default",
   gap = "default",
@@ -206,7 +200,6 @@ export const ControlSectionContent = ({
       <Box
         component={component}
         role={role}
-        aria-labelledby={ariaLabelledBy}
         {...props}
         className={classes.controlSectionContent}
         sx={sx}

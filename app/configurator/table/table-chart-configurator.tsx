@@ -72,8 +72,12 @@ export const ChartConfiguratorTable = ({
   return (
     <>
       <DatasetsControlSection />
-      <ControlSection collapse>
-        <SectionTitle id="controls-design">
+      <ControlSection
+        role="tablist"
+        aria-labelledby="controls-chart-type"
+        collapse
+      >
+        <SectionTitle id="controls-chart-type">
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </SectionTitle>
         <ControlSectionContent gap="none">
