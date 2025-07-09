@@ -370,6 +370,30 @@ msgstr "Le minimum doit être inférieur au maximum"
 msgid "controls.animation"
 msgstr "Animation"
 
+#: app/configurator/components/annotations.tsx
+msgid "controls.annotations.add"
+msgstr "Ajouter"
+
+#: app/configurator/components/annotations.tsx
+msgid "controls.annotations.add.highlight"
+msgstr "Souligner"
+
+#: app/configurator/components/annotations.tsx
+msgid "controls.annotations.highlight.section.annotation.title"
+msgstr "Annotation"
+
+#: app/configurator/components/annotations.tsx
+msgid "controls.annotations.highlight.section.element.cta"
+msgstr "Sélectionnez un élément dans le graphique..."
+
+#: app/configurator/components/annotations.tsx
+msgid "controls.annotations.highlight.section.element.title"
+msgstr "Mettre en évidence l'élément"
+
+#: app/configurator/components/annotations.tsx
+msgid "controls.annotations.highlight.section.style.title"
+msgstr "Style"
+
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
 msgid "controls.annotator.add-description-warning"
@@ -749,6 +773,10 @@ msgstr "Description"
 msgid "controls.dimensionvalue.none"
 msgstr "Aucune filtre"
 
+#: app/configurator/components/annotations.tsx
+msgid "controls.filled"
+msgstr "Rempli"
+
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.nb-elements"
 msgstr "{0} sur {1}"
@@ -966,6 +994,7 @@ msgstr "Retour à l'édition"
 msgid "controls.nav.back-to-preview"
 msgstr "Retour à l'aperçu"
 
+#: app/configurator/components/annotations.tsx
 #: app/configurator/components/chart-options-selector/combo-y-field.tsx
 #: app/configurator/components/chart-options-selector/combo-y-field.tsx
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
@@ -1038,6 +1067,10 @@ msgstr "Utilisez le type en escalier pour que l'animation passe d'un point de do
 #: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.type.stepped"
 msgstr "En escalier"
+
+#: app/configurator/components/annotations.tsx
+msgid "controls.section.annotations"
+msgstr "Annotations"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.block-options"
