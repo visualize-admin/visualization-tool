@@ -1,9 +1,12 @@
 import { Annotation, HighlightAnnotation } from "@/config-types";
+import { createId } from "@/utils/create-id";
 
-const ANNOTATION_FIELD_PREFIX = "annotation:";
+const ANNOTATION_FIELD_PREFIX = "annotation";
 
 const getAnnotationKey = (type: Annotation["type"]) => {
-  return `${ANNOTATION_FIELD_PREFIX}${type}`;
+  const key = createId();
+
+  return `${ANNOTATION_FIELD_PREFIX}:${type}:${key}`;
 };
 
 export const isAnnotationField = (field: string | undefined) => {
