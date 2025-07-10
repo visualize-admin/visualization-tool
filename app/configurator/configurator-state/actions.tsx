@@ -290,6 +290,13 @@ export type ConfiguratorStateAction =
       };
     }
   | {
+      type: "CHART_ANNOTATION_COLOR_CHANGE";
+      value: {
+        key: string;
+        color: string;
+      };
+    }
+  | {
       type: "CHART_ANNOTATION_TEXT_CHANGE";
       value: {
         key: string;

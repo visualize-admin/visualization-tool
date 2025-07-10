@@ -1141,13 +1141,25 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
     case "CHART_ANNOTATION_HIGHLIGHT_TYPE_CHANGE":
       if (isConfiguring(draft)) {
+        const { key, highlightType } = action.value;
         const chartConfig = getChartConfig(draft);
-        const annotation = chartConfig.annotations.find(
-          (a) => a.key === action.value.key
-        );
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
 
         if (annotation) {
-          annotation.highlightType = action.value.highlightType;
+          annotation.highlightType = highlightType;
+        }
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_COLOR_CHANGE":
+      if (isConfiguring(draft)) {
+        const { key, color } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.color = color;
         }
       }
 
