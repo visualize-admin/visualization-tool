@@ -13,7 +13,10 @@ export const InteractionBars = () => {
   const showTooltip = (d: Observation) => {
     dispatch({
       type: "INTERACTION_UPDATE",
-      value: { interaction: { visible: true, d } },
+      value: {
+        observation: d,
+        visible: true,
+      },
     });
   };
   const hideTooltip = () => {

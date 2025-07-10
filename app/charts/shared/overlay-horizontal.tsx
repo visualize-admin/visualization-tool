@@ -29,7 +29,7 @@ export const InteractionHorizontal = memo(function InteractionHorizontal() {
         }
       : chartState;
   const { chartWidth, chartHeight, margins } = chartState.bounds;
-  const [state, dispatch] = useInteraction();
+  const [interaction, dispatch] = useInteraction();
   const ref = useRef<SVGGElement>(null);
 
   const hideTooltip = () => {
@@ -57,7 +57,7 @@ export const InteractionHorizontal = memo(function InteractionHorizontal() {
       : undefined;
 
     if (!closestDatum || Number.isNaN(yAnchor) || yAnchor === undefined) {
-      if (state.interaction.visible) {
+      if (interaction.visible) {
         hideTooltip();
       }
 
@@ -65,23 +65,21 @@ export const InteractionHorizontal = memo(function InteractionHorizontal() {
     }
 
     const closestDatumTime = getX(closestDatum).getTime();
-    const datumToUpdate = chartData.find(
+    const newObservation = chartData.find(
       (d) => closestDatumTime === getX(d).getTime()
     ) as Observation;
 
     if (
-      !state.interaction.d ||
-      closestDatumTime !== getX(state.interaction.d).getTime() ||
-      !state.interaction.visible
+      !interaction.observation ||
+      closestDatumTime !== getX(interaction.observation).getTime() ||
+      !interaction.visible
     ) {
       dispatch({
         type: "INTERACTION_UPDATE",
         value: {
-          interaction: {
-            visible: true,
-            mouse: { x, y },
-            d: datumToUpdate,
-          },
+          observation: newObservation,
+          visible: true,
+          mouse: { x, y },
         },
       });
     }

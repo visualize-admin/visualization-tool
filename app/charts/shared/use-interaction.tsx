@@ -9,14 +9,13 @@ import {
 
 import { Observation } from "@/domain/data";
 
-type InteractionElement = {
-  visible: boolean;
-  mouse?: { x: number; y: number } | undefined;
-  d: Observation | undefined;
-};
-
 type InteractionState = {
-  interaction: InteractionElement;
+  observation: Observation | undefined;
+  visible: boolean;
+  mouse?: {
+    x: number;
+    y: number;
+  };
 };
 
 type InteractionStateAction =
@@ -29,34 +28,24 @@ type InteractionStateAction =
     };
 
 const INTERACTION_INITIAL_STATE: InteractionState = {
-  interaction: {
-    visible: false,
-    mouse: undefined,
-    d: undefined,
-  },
+  observation: undefined,
+  visible: false,
+  mouse: undefined,
 };
 
 const InteractionStateReducer = (
-  state: InteractionState,
+  _: InteractionState,
   action: InteractionStateAction
 ) => {
   switch (action.type) {
     case "INTERACTION_UPDATE":
-      const { visible, mouse, d } = action.value.interaction;
-
-      return {
-        ...state,
-        interaction: { visible, mouse, d },
-      };
+      return action.value satisfies InteractionState;
     case "INTERACTION_HIDE":
       return {
-        ...state,
-        interaction: {
-          ...state.interaction,
-          visible: false,
-          mouse: undefined,
-        },
-      };
+        observation: undefined,
+        visible: false,
+        mouse: undefined,
+      } satisfies InteractionState;
     default:
       const _exhaustiveCheck: never = action;
       return _exhaustiveCheck;

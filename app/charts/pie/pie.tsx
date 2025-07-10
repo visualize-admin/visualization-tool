@@ -68,10 +68,8 @@ export const Pie = () => {
     dispatch({
       type: "INTERACTION_UPDATE",
       value: {
-        interaction: {
-          visible: true,
-          d: d as unknown as Observation,
-        },
+        observation: d as unknown as Observation,
+        visible: true,
       },
     });
   });

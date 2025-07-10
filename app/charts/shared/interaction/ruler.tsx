@@ -21,10 +21,13 @@ type RulerProps = {
 
 export const Ruler = (props: RulerProps) => {
   const { rotate = false } = props;
-  const [state] = useInteraction();
-  const { visible, d } = state.interaction;
+  const [{ observation, visible }] = useInteraction();
 
-  return <>{visible && d && <RulerInner d={d} rotate={rotate} />}</>;
+  return (
+    <>
+      {observation && visible && <RulerInner d={observation} rotate={rotate} />}
+    </>
+  );
 };
 
 type RulerInnerProps = {

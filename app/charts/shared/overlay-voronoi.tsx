@@ -46,10 +46,8 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
       dispatch({
         type: "INTERACTION_UPDATE",
         value: {
-          interaction: {
-            visible: true,
-            d,
-          },
+          observation: d,
+          visible: true,
         },
       });
     }

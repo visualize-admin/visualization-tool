@@ -9,11 +9,9 @@ import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
 export const HoverDotMultiple = () => {
-  const [state] = useInteraction();
+  const [{ observation, visible }] = useInteraction();
 
-  const { visible, d } = state.interaction;
-
-  return <>{visible && d && <HoverDots d={d} />}</>;
+  return <>{observation && visible && <HoverDots d={observation} />}</>;
 };
 
 const useStyles = makeStyles((theme: Theme) => ({

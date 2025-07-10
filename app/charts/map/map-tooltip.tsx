@@ -54,7 +54,7 @@ const isTooltipValueValid = (
 
 export const MapTooltip = () => {
   const [hoverObjectType] = useMapTooltip();
-  const [{ interaction }] = useInteraction();
+  const [interaction] = useInteraction();
   const { identicalLayerComponentIds, areaLayer, symbolLayer } =
     useChartState() as MapState;
   const formatNumber = useFormatNumber();
@@ -75,15 +75,15 @@ export const MapTooltip = () => {
   });
 
   const areaTooltipState = useMemo(() => {
-    const obs = interaction.d;
+    const { observation } = interaction;
 
-    if (areaLayer && obs) {
+    if (areaLayer && observation) {
       const { colors } = areaLayer;
-      const value = colors.getValue(obs);
+      const value = colors.getValue(observation);
 
       if (isTooltipValueValid(value)) {
         const show = identicalLayerComponentIds || hoverObjectType === "area";
-        const color = rgbArrayToHex(colors.getColor(obs));
+        const color = rgbArrayToHex(colors.getColor(observation));
         const textColor = getTooltipTextColor(color);
         const valueFormatter = (d: number | null) => {
           return formatNumberWithUnit(
@@ -98,7 +98,7 @@ export const MapTooltip = () => {
           value: typeof value === "number" ? valueFormatter(value) : value,
           error:
             colors.type === "continuous"
-              ? colors.getFormattedError?.(obs)
+              ? colors.getFormattedError?.(observation)
               : null,
           componentId: colors.component.id,
           label: colors.component.label,
@@ -109,7 +109,7 @@ export const MapTooltip = () => {
     }
   }, [
     areaLayer,
-    interaction.d,
+    interaction.observation,
     identicalLayerComponentIds,
     hoverObjectType,
     formatNumber,
@@ -117,15 +117,15 @@ export const MapTooltip = () => {
   ]);
 
   const symbolTooltipState = useMemo(() => {
-    const obs = interaction.d;
+    const { observation } = interaction;
 
-    if (symbolLayer && obs) {
+    if (symbolLayer && observation) {
       const { colors } = symbolLayer;
-      const value = symbolLayer.getValue(obs);
+      const value = symbolLayer.getValue(observation);
 
       if (isTooltipValueValid(value)) {
         const show = identicalLayerComponentIds || hoverObjectType === "symbol";
-        const color = rgbArrayToHex(colors.getColor(obs));
+        const color = rgbArrayToHex(colors.getColor(observation));
         const textColor = getTooltipTextColor(color);
         const valueFormatter = (d: number | null) => {
           return formatNumberWithUnit(
@@ -151,15 +151,15 @@ export const MapTooltip = () => {
           preparedColors = {
             type: "categorical" as const,
             component: colors.component,
-            value: colors.getValue(obs),
+            value: colors.getValue(observation),
             error: null,
             color,
             textColor,
             sameAsValue: false,
           };
         } else {
-          const rawValue = obs[colors.component.id] as number;
-          const formattedError = colors.getFormattedError?.(obs);
+          const rawValue = observation[colors.component.id] as number;
+          const formattedError = colors.getFormattedError?.(observation);
           preparedColors = {
             type: "continuous",
             component: colors.component,
@@ -178,7 +178,7 @@ export const MapTooltip = () => {
 
         return {
           value: valueFormatter(value),
-          error: formatSymbolError?.(obs),
+          error: formatSymbolError?.(observation),
           measureDimension: symbolLayer.measureDimension,
           show,
           color,
@@ -189,7 +189,7 @@ export const MapTooltip = () => {
     }
   }, [
     symbolLayer,
-    interaction.d,
+    interaction.observation,
     formatSymbolError,
     identicalLayerComponentIds,
     hoverObjectType,
@@ -216,7 +216,7 @@ export const MapTooltip = () => {
 
   return (
     <>
-      {interaction.mouse && interaction.d && (
+      {interaction.mouse && interaction.observation && (
         <TooltipBox
           x={interaction.mouse.x}
           y={interaction.mouse.y - 20}
@@ -230,8 +230,8 @@ export const MapTooltip = () => {
               sx={{ fontWeight: "bold" }}
             >
               {hoverObjectType === "area"
-                ? areaLayer?.getLabel(interaction.d)
-                : symbolLayer?.getLabel(interaction.d)}
+                ? areaLayer?.getLabel(interaction.observation)
+                : symbolLayer?.getLabel(interaction.observation)}
             </Typography>
             <Box
               display="grid"

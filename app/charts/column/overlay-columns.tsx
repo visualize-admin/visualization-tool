@@ -20,7 +20,10 @@ export const InteractionColumns = ({ temporal }: { temporal?: boolean }) => {
   const showTooltip = useEvent((d: Observation) => {
     dispatch({
       type: "INTERACTION_UPDATE",
-      value: { interaction: { visible: true, d } },
+      value: {
+        observation: d,
+        visible: true,
+      },
     });
   });
   const hideTooltip = useEvent(() => {

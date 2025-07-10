@@ -25,10 +25,11 @@ import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
 export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
-  const [state] = useInteraction();
-  const { visible, d } = state.interaction;
+  const [{ observation, visible }] = useInteraction();
 
-  return visible && d ? <TooltipInner d={d} type={type} /> : null;
+  return observation && visible ? (
+    <TooltipInner d={observation} type={type} />
+  ) : null;
 };
 export type { TooltipPlacement };
 
