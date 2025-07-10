@@ -283,6 +283,13 @@ export type ConfiguratorStateAction =
       value: Annotation;
     }
   | {
+      type: "CHART_ANNOTATION_TARGET_CHANGE";
+      value: {
+        key: string;
+        target: Annotation["target"];
+      };
+    }
+  | {
       type: "CHART_ANNOTATION_HIGHLIGHT_TYPE_CHANGE";
       value: {
         key: string;
