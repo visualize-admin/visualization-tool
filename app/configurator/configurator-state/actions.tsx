@@ -283,6 +283,13 @@ export type ConfiguratorStateAction =
       value: Annotation;
     }
   | {
+      type: "CHART_ANNOTATION_HIGHLIGHT_TYPE_CHANGE";
+      value: {
+        key: string;
+        highlightType: Annotation["highlightType"];
+      };
+    }
+  | {
       type: "CHART_ANNOTATION_REMOVE";
       value: {
         key: string;
