@@ -1,0 +1,245 @@
+import { t, Trans } from "@lingui/macro";
+import { Typography } from "@mui/material";
+
+import { MarkdownInput, Radio, RadioGroup } from "@/components/form";
+import { Markdown } from "@/components/markdown";
+import { useDisclosure } from "@/components/use-disclosure";
+import { Annotation } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
+import { ControlTab } from "@/configurator/components/chart-controls/control-tab";
+import {
+  ControlSection,
+  ControlSectionContent,
+  SectionTitle,
+} from "@/configurator/components/chart-controls/section";
+import { ConfirmButton } from "@/configurator/components/confirm-button";
+import { ConfiguratorDrawer } from "@/configurator/components/drawers";
+import { ColorPicker } from "@/configurator/components/field";
+import { getFieldLabel } from "@/configurator/components/field-i18n";
+import { useConfiguratorState } from "@/configurator/configurator-state";
+import { isConfiguring } from "@/configurator/configurator-state";
+import { Locale } from "@/locales/locales";
+import { useLocale, useOrderedLocales } from "@/locales/use-locale";
+import { PRIMARY_COLOR } from "@/themes/palette";
+import { useEvent } from "@/utils/use-event";
+
+export const ChartAnnotationsSelector = () => {
+  const locale = useLocale();
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
+  const activeField = chartConfig.activeField;
+  const annotation = chartConfig.annotations.find(
+    (annotation) => annotation.key === activeField
+  );
+
+  const handleClose = useEvent(() => {
+    dispatch({
+      type: "CHART_ACTIVE_FIELD_CHANGE",
+      value: undefined,
+    });
+  });
+
+  const handleStyleTypeChange = useEvent(
+    (highlightType: Annotation["highlightType"]) => {
+      if (!annotation || annotation.highlightType === highlightType) {
+        return;
+      }
+
+      dispatch({
+        type: "CHART_ANNOTATION_HIGHLIGHT_TYPE_CHANGE",
+        value: {
+          key: annotation.key,
+          highlightType,
+        },
+      });
+
+      if (highlightType === "filled" && !annotation.color) {
+        dispatch({
+          type: "CHART_ANNOTATION_COLOR_CHANGE",
+          value: {
+            key: annotation.key,
+            color: PRIMARY_COLOR,
+          },
+        });
+      }
+    }
+  );
+
+  const handleColorChange = useEvent((color: string) => {
+    if (!annotation || annotation.color === color) {
+      return;
+    }
+
+    dispatch({
+      type: "CHART_ANNOTATION_COLOR_CHANGE",
+      value: {
+        key: annotation.key,
+        color,
+      },
+    });
+  });
+
+  const drawerState = useDisclosure();
+
+  if (!annotation) {
+    return null;
+  }
+
+  return (
+    <>
+      <ControlSection hideTopBorder>
+        <SectionTitle closable>
+          <Trans id="controls.annotations.highlight.section.element.title">
+            Highlight element
+          </Trans>
+        </SectionTitle>
+        <ControlSectionContent>
+          <Typography variant="h6" component="p">
+            <Trans id="controls.annotations.highlight.section.element.cta">
+              Select an element in the chart...
+            </Trans>
+          </Typography>
+        </ControlSectionContent>
+      </ControlSection>
+      <ControlSection collapse>
+        <SectionTitle>
+          <Trans id="controls.annotations.highlight.section.style.title">
+            Style
+          </Trans>
+        </SectionTitle>
+        <ControlSectionContent gap="xl">
+          <RadioGroup>
+            <Radio
+              label={t({ id: "controls.none", message: "None" })}
+              value="none"
+              checked={annotation.highlightType === "none"}
+              onChange={() => handleStyleTypeChange("none")}
+            />
+            <Radio
+              label={t({ id: "controls.filled", message: "Filled" })}
+              value="filled"
+              checked={annotation.highlightType === "filled"}
+              onChange={() => handleStyleTypeChange("filled")}
+            />
+          </RadioGroup>
+          {annotation.highlightType === "filled" && annotation.color && (
+            <ColorPicker
+              label={annotation.color}
+              color={annotation.color}
+              symbol="square"
+              onChange={handleColorChange}
+            />
+          )}
+        </ControlSectionContent>
+      </ControlSection>
+      <ControlSection collapse>
+        <SectionTitle>
+          <Trans id="controls.annotations.highlight.section.annotation.title">
+            Annotation
+          </Trans>
+        </SectionTitle>
+        <ControlSectionContent px="none">
+          <ControlTab
+            upperLabel={t({
+              id: "controls.annotations.annotation",
+              message: "Annotation",
+            })}
+            mainLabel={
+              <Markdown>
+                {annotation.text[locale] ||
+                  t({
+                    id: "controls.annotations.annotation.add.text",
+                    message: "Add text...",
+                  })}
+              </Markdown>
+            }
+            icon="text"
+            onClick={drawerState.open}
+            value="text"
+          />
+        </ControlSectionContent>
+      </ControlSection>
+      <ControlSection hideTopBorder>
+        <ControlSectionContent>
+          <ConfirmButton onClick={handleClose} />
+        </ControlSectionContent>
+      </ControlSection>
+      <AnnotationDrawer opened={drawerState.isOpen} close={drawerState.close} />
+    </>
+  );
+};
+
+const AnnotationDrawer = ({
+  opened,
+  close,
+}: {
+  opened: boolean;
+  close: () => void;
+}) => {
+  const orderedLocales = useOrderedLocales();
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
+  const activeField = chartConfig.activeField;
+  const annotation = chartConfig.annotations.find(
+    (annotation) => annotation.key === activeField
+  );
+
+  const handleTextChange = useEvent((locale: Locale, value: string) => {
+    if (!annotation) {
+      return;
+    }
+
+    dispatch({
+      type: "CHART_ANNOTATION_TEXT_CHANGE",
+      value: {
+        key: annotation.key,
+        locale,
+        value,
+      },
+    });
+  });
+
+  if (!annotation) {
+    return null;
+  }
+
+  return (
+    <ConfiguratorDrawer open={opened} hideBackdrop>
+      <div
+        role="tabpanel"
+        id={`annotations-panel-${activeField}`}
+        aria-labelledby={`annotations-tab-${activeField}`}
+        tabIndex={-1}
+        style={{ overflowX: "hidden", overflowY: "auto" }}
+      >
+        <ControlSection hideTopBorder>
+          <SectionTitle onClose={close}>
+            <Trans id="controls.annotations.highlight.section.annotation.title">
+              Annotation
+            </Trans>
+          </SectionTitle>
+          <ControlSectionContent>
+            {orderedLocales.map((locale) => (
+              <div key={`${locale}-${activeField}`}>
+                <MarkdownInput
+                  name={`annotation-${locale}`}
+                  label={getFieldLabel(locale)}
+                  value={annotation.text[locale]}
+                  disableToolbar={{
+                    blockType: true,
+                    listToggles: true,
+                    link: true,
+                  }}
+                  onChange={(e) => {
+                    handleTextChange(locale, e.currentTarget.value);
+                  }}
+                />
+              </div>
+            ))}
+            <ConfirmButton onClick={close} />
+          </ControlSectionContent>
+        </ControlSection>
+      </div>
+    </ConfiguratorDrawer>
+  );
+};

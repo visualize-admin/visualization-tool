@@ -48,6 +48,8 @@ import {
 } from "@/configurator/components/annotator-options";
 import { Description, Title } from "@/configurator/components/annotators";
 import { LayoutBlocksSelector } from "@/configurator/components/block-options-selector";
+import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations/chart-annotations-selector";
+import { isAnnotationField } from "@/configurator/components/chart-annotations/utils";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
 import {
@@ -488,9 +490,11 @@ const ConfigureChartStep = () => {
           hideBackdrop
           onClose={handleClosePanel}
         >
-          <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
+          <div data-testid="panel-drawer" style={{ width: DRAWER_WIDTH }}>
             {isAnnotatorField(chartConfig.activeField) ? (
               <ChartAnnotatorSelector />
+            ) : isAnnotationField(chartConfig.activeField) ? (
+              <ChartAnnotationsSelector />
             ) : (
               <ChartOptionsSelector state={state} />
             )}
