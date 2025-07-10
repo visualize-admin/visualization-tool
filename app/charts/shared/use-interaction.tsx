@@ -22,7 +22,7 @@ type InteractionState = {
 type InteractionStateAction =
   | {
       type: "INTERACTION_UPDATE";
-      value: Pick<InteractionState, "interaction">;
+      value: InteractionState;
     }
   | {
       type: "INTERACTION_HIDE";
@@ -42,18 +42,11 @@ const InteractionStateReducer = (
 ) => {
   switch (action.type) {
     case "INTERACTION_UPDATE":
+      const { visible, mouse, d } = action.value.interaction;
+
       return {
         ...state,
-        interaction: {
-          visible: action.value.interaction.visible,
-          mouse: action.value.interaction.mouse
-            ? {
-                x: action.value.interaction.mouse.x,
-                y: action.value.interaction.mouse.y,
-              }
-            : undefined,
-          d: action.value.interaction.d,
-        },
+        interaction: { visible, mouse, d },
       };
     case "INTERACTION_HIDE":
       return {
@@ -65,7 +58,8 @@ const InteractionStateReducer = (
         },
       };
     default:
-      throw Error();
+      const _exhaustiveCheck: never = action;
+      return _exhaustiveCheck;
   }
 };
 
