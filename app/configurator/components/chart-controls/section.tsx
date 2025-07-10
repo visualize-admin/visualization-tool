@@ -238,7 +238,8 @@ export const useControlSectionContext = () => useContext(ControlSectionContext);
 
 export const SectionTitle = ({
   children,
-  closable,
+  closable: _closable,
+  onClose,
   id,
   disabled,
   iconName,
@@ -247,12 +248,14 @@ export const SectionTitle = ({
 }: {
   children: ReactNode;
   closable?: boolean;
+  onClose?: () => void;
   id?: string;
   disabled?: boolean;
   iconName?: IconName;
   warnMessage?: string | ReactNode;
   sx?: TypographyProps["sx"];
 }) => {
+  const closable = !!(_closable || onClose);
   const [state, dispatch] = useConfiguratorState();
   const handleClick = useEventCallback(() => {
     if (collapse) {
@@ -260,6 +263,11 @@ export const SectionTitle = ({
     }
 
     if (!closable) {
+      return;
+    }
+
+    if (onClose) {
+      onClose();
       return;
     }
 
