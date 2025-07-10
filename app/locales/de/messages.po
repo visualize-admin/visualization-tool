@@ -370,27 +370,36 @@ msgstr "Min muss kleiner als Max sein"
 msgid "controls.animation"
 msgstr "Animation"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/add-annotation-button.tsx
 msgid "controls.annotations.add"
 msgstr "Hinzufügen"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/add-annotation-button.tsx
 msgid "controls.annotations.add.highlight"
 msgstr "Hervorheben"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.annotation"
+msgstr "Anmerkung"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.annotation.add.text"
+msgstr "Text hinzufügen..."
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.highlight.section.annotation.title"
 msgstr "Anmerkung"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.highlight.section.element.cta"
 msgstr "Wählen Sie ein Element im Diagramm aus..."
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.highlight.section.element.title"
 msgstr "Element hervorheben"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.highlight.section.style.title"
 msgstr "Stil"
 
@@ -773,7 +782,7 @@ msgstr "Beschreibung hinzufügen"
 msgid "controls.dimensionvalue.none"
 msgstr "Kein Filter"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.filled"
 msgstr "Gefüllt"
 
@@ -994,7 +1003,7 @@ msgstr "Zurück zum Editieren"
 msgid "controls.nav.back-to-preview"
 msgstr "Zurück zur Vorschau"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 #: app/configurator/components/chart-options-selector/combo-y-field.tsx
 #: app/configurator/components/chart-options-selector/combo-y-field.tsx
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
@@ -1068,7 +1077,7 @@ msgstr "Verwenden Sie den Typ Abgestuft, um die Animation in festen Abständen z
 msgid "controls.section.animation.type.stepped"
 msgstr "Abgestuft"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/chart-annotations.tsx
 msgid "controls.section.annotations"
 msgstr "Anmerkungen"
 

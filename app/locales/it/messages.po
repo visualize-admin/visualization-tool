@@ -370,27 +370,36 @@ msgstr "Il minimo deve essere inferiore al massimo"
 msgid "controls.animation"
 msgstr "Animazione"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/add-annotation-button.tsx
 msgid "controls.annotations.add"
 msgstr "Aggiungere"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/add-annotation-button.tsx
 msgid "controls.annotations.add.highlight"
 msgstr "Evidenziare"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.annotation"
+msgstr "Annotazione"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.annotation.add.text"
+msgstr "Aggiungi testo..."
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.highlight.section.annotation.title"
 msgstr "Annotazione"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.highlight.section.element.cta"
 msgstr "Seleziona un elemento nel grafico..."
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.highlight.section.element.title"
 msgstr "Elemento di evidenziazione"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.highlight.section.style.title"
 msgstr "Stile"
 
@@ -773,7 +782,7 @@ msgstr "Descrizione"
 msgid "controls.dimensionvalue.none"
 msgstr "Nessun filtro"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.filled"
 msgstr "Riempito"
 
@@ -994,7 +1003,7 @@ msgstr "Torniamo alla modifica"
 msgid "controls.nav.back-to-preview"
 msgstr "Torna all'anteprima"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 #: app/configurator/components/chart-options-selector/combo-y-field.tsx
 #: app/configurator/components/chart-options-selector/combo-y-field.tsx
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
@@ -1068,7 +1077,7 @@ msgstr "Usare il tipo a gradini per far saltare l'animazione tra i punti di dati
 msgid "controls.section.animation.type.stepped"
 msgstr "A gradini"
 
-#: app/configurator/components/annotations.tsx
+#: app/configurator/components/chart-annotations/chart-annotations.tsx
 msgid "controls.section.annotations"
 msgstr "Annotazioni"
 
