@@ -290,6 +290,14 @@ export type ConfiguratorStateAction =
       };
     }
   | {
+      type: "CHART_ANNOTATION_TEXT_CHANGE";
+      value: {
+        key: string;
+        locale: Locale;
+        value: string;
+      };
+    }
+  | {
       type: "CHART_ANNOTATION_REMOVE";
       value: {
         key: string;

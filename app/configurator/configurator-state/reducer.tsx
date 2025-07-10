@@ -1153,6 +1153,19 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
+    case "CHART_ANNOTATION_TEXT_CHANGE":
+      if (isConfiguring(draft)) {
+        const { key, locale, value } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.text[locale] = value;
+        }
+      }
+
+      return draft;
+
     case "CHART_ANNOTATION_REMOVE":
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
