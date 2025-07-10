@@ -91,7 +91,7 @@ import { useTimeFormatLocale } from "@/formatters";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
-import { getPalette } from "@/palettes";
+import { ColorItem, getPalette } from "@/palettes";
 import { assert } from "@/utils/assert";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
@@ -808,6 +808,39 @@ export const SingleFilterField = ({
   return <Radio label={label} disabled={disabled} {...field} />;
 };
 
+export const ColorPicker = ({
+  label,
+  color,
+  symbol,
+  colors,
+  onChange,
+  disabled,
+}: {
+  label: string;
+  color: string;
+  symbol: LegendSymbol;
+  colors: ColorItem[] | readonly string[];
+  onChange: (color: string) => void;
+  disabled?: boolean;
+}) => {
+  return (
+    <Flex
+      justifyContent="space-between"
+      alignItems="center"
+      gap={2}
+      width="100%"
+    >
+      <LegendItem label={label} color={color} symbol={symbol} />
+      <ColorPickerMenu
+        colors={colors}
+        selectedHexColor={color}
+        onChange={onChange}
+        disabled={disabled}
+      />
+    </Flex>
+  );
+};
+
 export const ColorPickerField = ({
   symbol = "square",
   field,
@@ -851,22 +884,14 @@ export const ColorPickerField = ({
   });
 
   return (
-    <Flex
-      sx={{
-        justifyContent: "space-between",
-        alignItems: "center",
-        width: "100%",
-        gap: 2,
-      }}
-    >
-      <LegendItem label={label} color={color} symbol={symbol} />
-      <ColorPickerMenu
-        colors={palette}
-        selectedHexColor={color}
-        onChange={updateColor}
-        disabled={disabled}
-      />
-    </Flex>
+    <ColorPicker
+      label={label}
+      color={color}
+      symbol={symbol}
+      colors={palette}
+      onChange={updateColor}
+      disabled={disabled}
+    />
   );
 };
 
