@@ -812,7 +812,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_ANNOTATION_CHANGED":
+    case "CHART_META_CHANGE":
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         setWith(
@@ -1282,7 +1282,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "LAYOUT_ANNOTATION_CHANGED":
+    case "LAYOUT_META_CHANGE":
       if (draft.state === "LAYOUTING") {
         setWith(
           draft,

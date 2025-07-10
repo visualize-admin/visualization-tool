@@ -130,7 +130,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_ANNOTATION_CHANGED";
+      type: "CHART_META_CHANGE";
       value: {
         path: string | string[];
         value: string;
@@ -335,7 +335,7 @@ export type ConfiguratorStateAction =
       value: string | undefined;
     }
   | {
-      type: "LAYOUT_ANNOTATION_CHANGED";
+      type: "LAYOUT_META_CHANGE";
       value: {
         path: string | string[];
         value: string;
