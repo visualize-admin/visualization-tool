@@ -819,7 +819,7 @@ export const ColorPicker = ({
   label: string;
   color: string;
   symbol: LegendSymbol;
-  colors: ColorItem[] | readonly string[];
+  colors?: ColorItem[] | readonly string[];
   onChange: (color: string) => void;
   disabled?: boolean;
 }) => {
