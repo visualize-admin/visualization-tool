@@ -15,8 +15,8 @@ export const getDefaultHighlightAnnotation = (): HighlightAnnotation => {
     key: getAnnotationKey("highlight"),
     type: "highlight",
     target: {
-      axisValue: undefined,
-      segmentValue: undefined,
+      axis: undefined,
+      segment: undefined,
     },
     text: {
       de: "",
@@ -24,7 +24,7 @@ export const getDefaultHighlightAnnotation = (): HighlightAnnotation => {
       it: "",
       en: "",
     },
-    styleType: "none",
+    highlightType: "none",
     color: undefined,
   };
 };

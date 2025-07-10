@@ -278,12 +278,21 @@ const Cube = t.intersection([
 ]);
 export type Cube = t.TypeOf<typeof Cube>;
 
+const AnnotationTarget = t.union([
+  t.type({
+    componentId: t.string,
+    value: t.string,
+  }),
+  t.undefined,
+]);
+export type AnnotationTarget = t.TypeOf<typeof AnnotationTarget>;
+
 const HighlightAnnotation = t.type({
   key: t.string,
   type: t.literal("highlight"),
   target: t.type({
-    axisValue: t.union([t.string, t.undefined]),
-    segmentValue: t.union([t.string, t.undefined]),
+    axis: AnnotationTarget,
+    segment: AnnotationTarget,
   }),
   text: t.type({
     de: t.string,
@@ -291,7 +300,7 @@ const HighlightAnnotation = t.type({
     it: t.string,
     en: t.string,
   }),
-  styleType: t.union([t.literal("none"), t.literal("filled")]),
+  highlightType: t.union([t.literal("none"), t.literal("filled")]),
   color: t.union([t.string, t.undefined]),
 });
 export type HighlightAnnotation = t.TypeOf<typeof HighlightAnnotation>;
