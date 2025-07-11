@@ -1,5 +1,5 @@
-import { arc, PieArcDatum } from "d3-shape";
-import { useEffect, useMemo, useRef } from "react";
+import { arc } from "d3-shape";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { PieState } from "@/charts/pie/pie-state";
 import { RenderDatum, renderPies } from "@/charts/pie/rendering-utils";
@@ -7,6 +7,10 @@ import {
   renderPieValueLabelConnectors,
   useRenderPieValueLabelsData,
 } from "@/charts/pie/show-values-utils";
+import {
+  useGetAnnotationRenderState,
+  useIsEditingAnnotation,
+} from "@/charts/shared/annotation-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { renderTotalValueLabels } from "@/charts/shared/render-value-labels";
 import {
@@ -24,6 +28,7 @@ export const Pie = () => {
     bounds: { width, height, chartWidth, chartHeight },
     chartData,
     getPieData,
+    segmentDimension,
     getSegment,
     colors,
     getRenderingKey,
@@ -37,6 +42,9 @@ export const Pie = () => {
   const labelsRef = useRef<SVGGElement>(null);
   const connectorsRef = useRef<SVGGElement>(null);
 
+  const [hoveredObservation, setHoveredObservation] =
+    useState<Observation | null>(null);
+
   const maxSide = Math.min(chartWidth, chartHeight) / 2;
 
   const innerRadius = 0;
@@ -45,30 +53,51 @@ export const Pie = () => {
   const xTranslate = width / 2;
   const yTranslate = height / 2;
 
+  const isEditingAnnotation = useIsEditingAnnotation();
+  const getAnnotationRenderState = useGetAnnotationRenderState();
+
   const renderData = useMemo(() => {
     const arcs = getPieData(chartData);
 
     return arcs.map((arcDatum) => {
       const y = getY(arcDatum.data);
+      const segment = getSegment(arcDatum.data);
+      const { focused } = getAnnotationRenderState(arcDatum.data, {
+        axisComponentId: segmentDimension?.id ?? "",
+        axisValue: segment,
+      });
 
       return {
         key: getRenderingKey(arcDatum.data),
         value: y === null || isNaN(y) ? 0 : y,
         arcDatum,
-        color: colors(getSegment(arcDatum.data)),
+        color: colors(segment),
+        focused,
+        hovered: hoveredObservation === arcDatum.data,
       } satisfies RenderDatum;
     });
-  }, [getPieData, chartData, getY, getRenderingKey, colors, getSegment]);
+  }, [
+    getPieData,
+    chartData,
+    getY,
+    getSegment,
+    getAnnotationRenderState,
+    segmentDimension?.id,
+    getRenderingKey,
+    colors,
+    hoveredObservation,
+  ]);
 
   const arcGenerator = arc<$FixMe>()
     .innerRadius(innerRadius)
     .outerRadius(outerRadius);
 
   const handleMouseEnter = useEvent((observation: Observation) => {
+    setHoveredObservation(observation);
     dispatch({
       type: "INTERACTION_UPDATE",
       value: {
-        type: "tooltip",
+        type: isEditingAnnotation ? "focus" : "tooltip",
         visible: true,
         observation,
       },
@@ -76,6 +105,7 @@ export const Pie = () => {
   });
 
   const handleMouseLeave = useEvent(() => {
+    setHoveredObservation(null);
     dispatch({
       type: "INTERACTION_HIDE",
     });
@@ -108,6 +138,7 @@ export const Pie = () => {
             arcGenerator,
             handleMouseEnter,
             handleMouseLeave,
+            isEditingAnnotation,
           }),
       });
       renderContainer(connectorsContainer, {
@@ -139,6 +170,7 @@ export const Pie = () => {
     fontFamily,
     handleMouseEnter,
     handleMouseLeave,
+    isEditingAnnotation,
     labelFontSize,
     renderData,
     transitionDuration,
