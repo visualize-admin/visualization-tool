@@ -6,8 +6,7 @@ import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
-import { useInteraction } from "@/charts/shared/use-interaction";
-import { useEvent } from "@/utils/use-event";
+import { useOverlayInteractions } from "@/charts/shared/overlay-utils";
 
 const atLeastZero = (n: number) => (n < 0 ? 0 : n);
 
@@ -16,8 +15,6 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
 }: {
   debug?: boolean;
 }) {
-  const [, dispatch] = useInteraction();
-  const ref = useRef<SVGGElement>(null);
   const {
     chartData,
     getX,
@@ -28,6 +25,8 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
     colors,
     bounds: { chartWidth, chartHeight, margins },
   } = useChartState() as LinesState | AreasState | ScatterplotState;
+  const { onClick, onHover, onHoverOut } = useOverlayInteractions();
+  const ref = useRef<SVGGElement>(null);
 
   const delaunay = useMemo(() => {
     return Delaunay.from(
@@ -46,33 +45,41 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
     ]);
   }, [chartWidth, chartHeight, delaunay]);
 
-  const showTooltip = useCallback(
+  const findObservation = useCallback(
     (e: MouseEvent) => {
       if (!ref.current) {
         return;
       }
 
       const [x, y] = pointer(e, ref.current);
-      const location = delaunay.find(x, y);
-      const observation = chartData[location];
+      const i = delaunay.find(x, y);
 
-      dispatch({
-        type: "INTERACTION_UPDATE",
-        value: {
-          type: "tooltip",
-          visible: true,
-          observation,
-        },
-      });
+      return chartData[i];
     },
-    [chartData, delaunay, dispatch]
+    [chartData, delaunay]
   );
 
-  const hideTooltip = useEvent(() => {
-    dispatch({
-      type: "INTERACTION_HIDE",
-    });
-  });
+  const handleHover = useCallback(
+    (e: MouseEvent) => {
+      const observation = findObservation(e);
+
+      if (observation) {
+        onHover(observation);
+      }
+    },
+    [findObservation, onHover]
+  );
+
+  const handleClick = useCallback(
+    (e: MouseEvent) => {
+      const observation = findObservation(e);
+
+      if (observation) {
+        onClick(observation);
+      }
+    },
+    [findObservation, onClick]
+  );
 
   return (
     <g ref={ref} transform={`translate(${margins.left} ${margins.top})`}>
@@ -91,9 +98,10 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
         width={chartWidth}
         height={chartHeight}
         fillOpacity={0}
-        onMouseOver={showTooltip}
-        onMouseMove={showTooltip}
-        onMouseOut={hideTooltip}
+        onMouseOver={handleHover}
+        onMouseMove={handleHover}
+        onMouseOut={onHoverOut}
+        onClick={handleClick}
       />
     </g>
   );
