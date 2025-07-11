@@ -166,10 +166,6 @@ const useComboLineDualState = (
     chartWidth,
     height,
     margins,
-    yAxisLabels: {
-      leftLabel: variables.y.left.label,
-      rightLabel: variables.y.right.label,
-    },
   });
   const { chartHeight } = bounds;
   const xScales = [xScale, xScaleTimeRange];

@@ -1,4 +1,4 @@
-import { Box, Theme } from "@mui/material";
+import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 
 import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
@@ -56,7 +56,6 @@ const RulerInner = (props: RulerInnerProps) => {
       xAnchor={xAnchor}
       datum={datum}
       placement={placement}
-      yAxisTitleHeight={bounds.yAxisTitleHeight}
     />
   );
 };
@@ -71,7 +70,6 @@ type RulerContentProps = {
   datum: TooltipValue;
   placement: TooltipPlacement;
   showXValue?: boolean;
-  yAxisTitleHeight?: number;
 };
 
 const useStyles = makeStyles<Theme, { rotate: boolean }>((theme: Theme) => ({
@@ -99,30 +97,22 @@ const useStyles = makeStyles<Theme, { rotate: boolean }>((theme: Theme) => ({
 }));
 
 export const RulerContent = (props: RulerContentProps) => {
-  const {
-    rotate,
-    xValue,
-    chartHeight,
-    margins,
-    xAnchor,
-    yAxisTitleHeight = 0,
-  } = props;
+  const { rotate, xValue, chartHeight, margins, xAnchor } = props;
   const classes = useStyles({ rotate });
-
   const isMobile = useIsMobile();
 
   return (
     <>
-      <Box
+      <div
         className={classes.left}
         style={{
           height: chartHeight,
           left: xAnchor + margins.left,
-          top: margins.top + yAxisTitleHeight,
+          top: margins.top,
         }}
       />
       {!isMobile && (
-        <Box
+        <div
           className={classes.right}
           style={{
             left: xAnchor + margins.left,
@@ -130,7 +120,7 @@ export const RulerContent = (props: RulerContentProps) => {
           }}
         >
           {xValue}
-        </Box>
+        </div>
       )}
     </>
   );
