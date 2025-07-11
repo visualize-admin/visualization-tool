@@ -1,10 +1,11 @@
 import { t, Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
+import { useMemo } from "react";
 
 import { MarkdownInput, Radio, RadioGroup } from "@/components/form";
 import { Markdown } from "@/components/markdown";
 import { useDisclosure } from "@/components/use-disclosure";
-import { Annotation } from "@/config-types";
+import { Annotation, AnnotationTarget } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import { ControlTab } from "@/configurator/components/chart-controls/control-tab";
 import {
@@ -18,6 +19,8 @@ import { ColorPicker } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { isConfiguring } from "@/configurator/configurator-state";
+import { Dimension } from "@/domain/data";
+import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { Locale } from "@/locales/locales";
 import { useLocale, useOrderedLocales } from "@/locales/use-locale";
 import { PRIMARY_COLOR } from "@/themes/palette";
@@ -31,6 +34,28 @@ export const ChartAnnotationsSelector = () => {
   const annotation = chartConfig.annotations.find(
     (annotation) => annotation.key === activeField
   );
+
+  const [{ data: componentsData }] = useDataCubesComponentsQuery({
+    chartConfig,
+    variables: {
+      locale,
+      sourceType: state.dataSource.type,
+      sourceUrl: state.dataSource.url,
+      cubeFilters: chartConfig.cubes.map((cube) => ({
+        iri: cube.iri,
+        joinBy: cube.joinBy,
+        loadValues: true,
+      })),
+    },
+  });
+
+  const dimensions = useMemo(() => {
+    return componentsData?.dataCubesComponents.dimensions ?? [];
+  }, [componentsData]);
+
+  const annotationLabel = useMemo(() => {
+    return getAnnotationLabel({ annotation, dimensions });
+  }, [annotation, dimensions]);
 
   const handleClose = useEvent(() => {
     dispatch({
@@ -95,9 +120,11 @@ export const ChartAnnotationsSelector = () => {
         </SectionTitle>
         <ControlSectionContent>
           <Typography variant="h6" component="p">
-            <Trans id="controls.annotations.highlight.section.element.cta">
-              Select an element in the chart...
-            </Trans>
+            {annotationLabel ??
+              t({
+                id: "controls.annotations.highlight.section.element.cta",
+                message: "Select an element in the chart...",
+              })}
           </Typography>
         </ControlSectionContent>
       </ControlSection>
@@ -242,4 +269,53 @@ const AnnotationDrawer = ({
       </div>
     </ConfiguratorDrawer>
   );
+};
+
+const getAnnotationLabel = ({
+  annotation,
+  dimensions,
+}: {
+  annotation?: Annotation;
+  dimensions: Dimension[];
+}) => {
+  if (!annotation) {
+    return;
+  }
+
+  let label: string | undefined;
+
+  for (const target of Object.values(annotation.target)) {
+    if (target) {
+      const targetLabel = getTargetLabel(target, { dimensions });
+
+      if (targetLabel) {
+        label = label ? `${label}, ${targetLabel}` : targetLabel;
+      }
+    }
+  }
+
+  return label;
+};
+
+const getTargetLabel = (
+  target: AnnotationTarget,
+  { dimensions }: { dimensions: Dimension[] }
+) => {
+  if (!target) {
+    return;
+  }
+
+  const component = dimensions.find((d) => d.id === target.componentId);
+
+  if (!component) {
+    return;
+  }
+
+  const value = component.values.find((v) => v.value === target.value);
+
+  if (!value) {
+    return;
+  }
+
+  return `${component.label}: ${value.label}`;
 };
