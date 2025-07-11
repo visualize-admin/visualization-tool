@@ -1,30 +1,16 @@
 import { BarsState } from "@/charts/bar/bars-state";
+import { useOverlayRectInteractions } from "@/charts/shared/annotation-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { useInteraction } from "@/charts/shared/use-interaction";
-import { Observation } from "@/domain/data";
 
 export const InteractionBars = () => {
-  const [, dispatch] = useInteraction();
+  const {
+    chartData,
+    bounds: { chartWidth, margins },
+    getY,
+    yScaleInteraction,
+  } = useChartState() as BarsState;
+  const { onClick, onHover, onHoverOut } = useOverlayRectInteractions();
 
-  const { chartData, bounds, getY, yScaleInteraction } =
-    useChartState() as BarsState;
-  const { margins, chartWidth } = bounds;
-
-  const showTooltip = (d: Observation) => {
-    dispatch({
-      type: "INTERACTION_UPDATE",
-      value: {
-        type: "tooltip",
-        visible: true,
-        observation: d,
-      },
-    });
-  };
-  const hideTooltip = () => {
-    dispatch({
-      type: "INTERACTION_HIDE",
-    });
-  };
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
       {chartData.map((d, i) => (
@@ -34,11 +20,12 @@ export const InteractionBars = () => {
           y={yScaleInteraction(getY(d)) as number}
           height={yScaleInteraction.bandwidth()}
           width={Math.max(0, chartWidth)}
+          stroke="none"
           fill="hotpink"
           fillOpacity={0}
-          stroke="none"
-          onMouseOut={hideTooltip}
-          onMouseOver={() => showTooltip(d)}
+          onMouseOver={() => onHover(d)}
+          onMouseOut={onHoverOut}
+          onClick={() => onClick(d)}
         />
       ))}
     </g>
