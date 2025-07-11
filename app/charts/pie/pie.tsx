@@ -64,13 +64,13 @@ export const Pie = () => {
     .innerRadius(innerRadius)
     .outerRadius(outerRadius);
 
-  const handleMouseEnter = useEvent((d: PieArcDatum<Observation>) => {
+  const handleMouseEnter = useEvent((observation: Observation) => {
     dispatch({
       type: "INTERACTION_UPDATE",
       value: {
         type: "tooltip",
         visible: true,
-        observation: d as unknown as Observation,
+        observation,
       },
     });
   });

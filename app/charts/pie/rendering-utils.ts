@@ -22,7 +22,7 @@ export type RenderDatum = {
 
 type RenderPieOptions = RenderOptions & {
   arcGenerator: Arc<any, any>;
-  handleMouseEnter: (d: PieArcDatum<Observation>) => void;
+  handleMouseEnter: (d: Observation) => void;
   handleMouseLeave: () => void;
 };
 
@@ -45,7 +45,7 @@ export const renderPies = (
           .attr("stroke", "black")
           .attr("stroke-width", 0)
           .on("mouseenter", function (_, d) {
-            handleMouseEnter(d.arcDatum);
+            handleMouseEnter(d.arcDatum.data);
             select<SVGPathElement, RenderDatum>(this).attr("stroke-width", 1);
           })
           .on("mouseleave", function () {
