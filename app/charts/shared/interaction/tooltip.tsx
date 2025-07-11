@@ -78,7 +78,7 @@ const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
     datum,
     values,
     withTriangle,
-  } = getAnnotationInfo(d as Observation & PieArcDatum<Observation>, []);
+  } = getAnnotationInfo(d as Observation & PieArcDatum<Observation>);
 
   if (Number.isNaN(yAnchor) || yAnchor === undefined) {
     return null;

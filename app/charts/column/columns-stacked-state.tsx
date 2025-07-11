@@ -87,10 +87,7 @@ export type StackedColumnsState = CommonChartState &
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
     series: Series<{ [key: string]: number }, string>[];
-    getAnnotationInfo: (
-      d: Observation,
-      orderedSegments: string[]
-    ) => TooltipInfo;
+    getAnnotationInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;

@@ -46,7 +46,7 @@ export type ScatterplotState = CommonChartState &
     yScale: ScaleLinear<number, number>;
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
-    getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
+    getAnnotationInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
