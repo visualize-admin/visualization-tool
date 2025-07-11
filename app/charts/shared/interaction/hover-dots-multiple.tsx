@@ -1,6 +1,5 @@
-import { Box, Theme } from "@mui/material";
+import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { Fragment } from "react";
 
 import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import { LinesState } from "@/charts/line/lines-state";
@@ -35,32 +34,31 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const HoverDots = ({ d }: { d: Observation }) => {
-  const { getAnnotationInfo, bounds } = useChartState() as
-    | LinesState
-    | ComboLineSingleState;
-  const { xAnchor, values } = getAnnotationInfo(d);
+  const {
+    getAnnotationInfo,
+    bounds: { margins },
+  } = useChartState() as LinesState | ComboLineSingleState;
   const classes = useStyles();
+  const { xAnchor, values } = getAnnotationInfo(d);
 
   return (
     <>
       {values &&
-        values.map((value, i) => (
-          <Fragment key={i}>
-            {!value.hide && (
-              <Box
+        values.map(
+          (value, i) =>
+            !value.hide &&
+            value.yPos !== undefined && (
+              <div
+                key={i}
+                className={classes.dot}
                 style={{
                   backgroundColor: value.color,
-                  left: xAnchor + bounds.margins.left,
-                  top:
-                    value.yPos! +
-                    bounds.margins.top +
-                    (bounds.yAxisTitleHeight || 0),
+                  left: xAnchor + margins.left,
+                  top: value.yPos + margins.top,
                 }}
-                className={classes.dot}
               />
-            )}
-          </Fragment>
-        ))}
+            )
+        )}
     </>
   );
 };
