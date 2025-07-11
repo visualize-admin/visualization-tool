@@ -7,6 +7,7 @@ import {
 import {
   maybeTransition,
   RenderOptions,
+  toggleFocusBorder,
 } from "@/charts/shared/rendering-utils";
 
 export type RenderBarDatum = {
@@ -16,6 +17,7 @@ export type RenderBarDatum = {
   width: number;
   height: number;
   color: string;
+  focused?: boolean;
   valueLabel?: string;
   valueLabelColor?: string;
 };
@@ -77,8 +79,10 @@ export const renderBars = (
               })
               .text((d) => d.valueLabel ?? "")
           ),
-      (update) =>
-        maybeTransition(update, {
+      (update) => {
+        toggleFocusBorder(update.select("rect"));
+
+        return maybeTransition(update, {
           s: (g) =>
             g
               .call((g) =>
@@ -104,7 +108,8 @@ export const renderBars = (
                   .text((d) => d.valueLabel ?? "")
               ),
           transition,
-        }),
+        });
+      },
       (exit) =>
         maybeTransition(exit, {
           transition,

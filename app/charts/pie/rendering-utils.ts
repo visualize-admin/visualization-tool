@@ -6,6 +6,7 @@ import { Transition } from "d3-transition";
 import {
   maybeTransition,
   RenderOptions,
+  toggleFocusBorder,
 } from "@/charts/shared/rendering-utils";
 import { Observation } from "@/domain/data";
 
@@ -16,6 +17,7 @@ export type RenderDatum = {
   value: number;
   arcDatum: PieArcDatum<Observation>;
   color: string;
+  focused?: boolean;
 };
 
 type RenderPieOptions = RenderOptions & {
@@ -57,8 +59,10 @@ export const renderPies = (
               t: (g) => g.call(animatePath, arcGenerator),
             })
           ),
-      (update) =>
-        update.call((update) =>
+      (update) => {
+        toggleFocusBorder(update);
+
+        return update.call((update) =>
           maybeTransition(update, {
             transition,
             s: (g) =>
@@ -68,7 +72,8 @@ export const renderPies = (
             t: (g) =>
               g.call(animatePath, arcGenerator).attr("fill", (d) => d.color),
           })
-        ),
+        );
+      },
       (exit) =>
         maybeTransition(exit, {
           transition,

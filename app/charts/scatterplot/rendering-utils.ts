@@ -3,6 +3,7 @@ import { Selection } from "d3-selection";
 import {
   maybeTransition,
   RenderOptions,
+  toggleFocusBorder,
 } from "@/charts/shared/rendering-utils";
 
 export type RenderDatum = {
@@ -10,6 +11,7 @@ export type RenderDatum = {
   cx: number;
   cy: number;
   color: string;
+  focused?: boolean;
 };
 
 export const renderCircles = (
@@ -29,7 +31,6 @@ export const renderCircles = (
           .attr("cx", (d) => d.cx)
           .attr("cy", (d) => d.cy)
           .attr("r", 4)
-          .attr("stroke", "none")
           .attr("fill", (d) => d.color)
           .attr("opacity", 0)
           .call((enter) =>
@@ -38,8 +39,10 @@ export const renderCircles = (
               s: (g) => g.attr("opacity", 1),
             })
           ),
-      (update) =>
-        maybeTransition(update, {
+      (update) => {
+        toggleFocusBorder(update);
+
+        return maybeTransition(update, {
           transition,
           s: (g) =>
             g
@@ -47,7 +50,8 @@ export const renderCircles = (
               .attr("cy", (d) => d.cy)
               .attr("fill", (d) => d.color)
               .attr("opacity", 1),
-        }),
+        });
+      },
       (exit) =>
         maybeTransition(exit, {
           transition,
