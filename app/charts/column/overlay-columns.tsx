@@ -9,6 +9,11 @@ import { useOverlayInteractions } from "@/charts/shared/overlay-utils";
 import { Observation } from "@/domain/data";
 
 export const InteractionColumns = ({ temporal }: { temporal?: boolean }) => {
+  const chartState = useChartState() as
+    | ColumnsState
+    | StackedColumnsState
+    | GroupedColumnsState
+    | ComboLineColumnState;
   const {
     chartData,
     bounds: { chartHeight, margins },
@@ -16,12 +21,10 @@ export const InteractionColumns = ({ temporal }: { temporal?: boolean }) => {
     getXAsDate,
     formatXDate,
     xScaleInteraction,
-  } = useChartState() as
-    | ColumnsState
-    | StackedColumnsState
-    | GroupedColumnsState
-    | ComboLineColumnState;
-  const { onClick, onHover, onHoverOut } = useOverlayInteractions();
+  } = chartState;
+  const { onClick, onHover, onHoverOut } = useOverlayInteractions({
+    getSegment: "getSegment" in chartState ? chartState.getSegment : undefined,
+  });
   const getXValue = useCallback(
     (d: Observation) => {
       return temporal ? formatXDate(getXAsDate(d)) : getX(d);

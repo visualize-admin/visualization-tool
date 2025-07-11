@@ -25,7 +25,9 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
     colors,
     bounds: { chartWidth, chartHeight, margins },
   } = useChartState() as LinesState | AreasState | ScatterplotState;
-  const { onClick, onHover, onHoverOut } = useOverlayInteractions();
+  const { onClick, onHover, onHoverOut } = useOverlayInteractions({
+    getSegment,
+  });
   const ref = useRef<SVGGElement>(null);
 
   const delaunay = useMemo(() => {

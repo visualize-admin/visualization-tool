@@ -11,7 +11,11 @@ import { useConfiguratorState } from "@/configurator/configurator-state";
 import { Observation } from "@/domain/data";
 import { useEvent } from "@/utils/use-event";
 
-export const useOverlayInteractions = () => {
+export const useOverlayInteractions = ({
+  getSegment,
+}: {
+  getSegment?: (d: Observation) => string;
+}) => {
   const [, dispatchInteraction] = useInteraction();
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
@@ -28,6 +32,7 @@ export const useOverlayInteractions = () => {
     const currentTarget = activeAnnotation.target;
     const newTarget = getAnnotationTargetFromObservation(observation, {
       chartConfig,
+      getSegment,
     });
 
     if (isEqual(currentTarget, newTarget)) {

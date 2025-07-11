@@ -90,15 +90,15 @@ export const useGetAnnotationRenderState = () => {
 
 export const getAnnotationTargetFromObservation = (
   observation: Observation,
-  { chartConfig }: { chartConfig: ChartConfig }
+  {
+    chartConfig,
+    getSegment,
+  }: {
+    chartConfig: ChartConfig;
+    getSegment?: (d: Observation) => string;
+  }
 ): Annotation["target"] => {
   const target: Annotation["target"] = { axis: undefined, segment: undefined };
-  const mkTarget = (componentId: string) => {
-    return {
-      componentId,
-      value: `${observation[componentId]}`,
-    };
-  };
 
   switch (chartConfig.chartType) {
     case "column":
@@ -106,12 +106,19 @@ export const getAnnotationTargetFromObservation = (
     case "area": {
       const xComponentId = chartConfig.fields.x.componentId;
       if (xComponentId) {
-        target.axis = mkTarget(xComponentId);
+        target.axis = {
+          componentId: xComponentId,
+          value: `${observation[xComponentId]}`,
+        };
       }
 
       const segmentComponentId = chartConfig.fields.segment?.componentId;
-      if (segmentComponentId) {
-        target.segment = mkTarget(segmentComponentId);
+      if (segmentComponentId && getSegment) {
+        const segment = getSegment(observation);
+        target.segment = {
+          componentId: segmentComponentId,
+          value: segment,
+        };
       }
 
       break;
@@ -119,12 +126,19 @@ export const getAnnotationTargetFromObservation = (
     case "bar": {
       const yComponentId = chartConfig.fields.y.componentId;
       if (yComponentId) {
-        target.axis = mkTarget(yComponentId);
+        target.axis = {
+          componentId: yComponentId,
+          value: `${observation[yComponentId]}`,
+        };
       }
 
       const segmentComponentId = chartConfig.fields.segment?.componentId;
-      if (segmentComponentId) {
-        target.segment = mkTarget(segmentComponentId);
+      if (segmentComponentId && getSegment) {
+        const segment = getSegment(observation);
+        target.segment = {
+          componentId: segmentComponentId,
+          value: segment,
+        };
       }
 
       break;
@@ -132,20 +146,31 @@ export const getAnnotationTargetFromObservation = (
     case "scatterplot": {
       const xComponentId = chartConfig.fields.x?.componentId;
       if (xComponentId) {
-        target.axis = mkTarget(xComponentId);
+        target.axis = {
+          componentId: xComponentId,
+          value: `${observation[xComponentId]}`,
+        };
       }
 
       const segmentComponentId = chartConfig.fields.segment?.componentId;
-      if (segmentComponentId) {
-        target.segment = mkTarget(segmentComponentId);
+      if (segmentComponentId && getSegment) {
+        const segment = getSegment(observation);
+        target.segment = {
+          componentId: segmentComponentId,
+          value: segment,
+        };
       }
 
       break;
     }
     case "pie": {
       const segmentComponentId = chartConfig.fields.segment?.componentId;
-      if (segmentComponentId) {
-        target.segment = mkTarget(segmentComponentId);
+      if (segmentComponentId && getSegment) {
+        const segment = getSegment(observation);
+        target.segment = {
+          componentId: segmentComponentId,
+          value: segment,
+        };
       }
 
       break;

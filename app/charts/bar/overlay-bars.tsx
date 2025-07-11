@@ -10,8 +10,11 @@ export const InteractionBars = () => {
     bounds: { chartWidth, margins },
     getY,
     yScaleInteraction,
+    getSegment,
   } = useChartState() as BarsState | StackedBarsState | GroupedBarsState;
-  const { onClick, onHover, onHoverOut } = useOverlayInteractions();
+  const { onClick, onHover, onHoverOut } = useOverlayInteractions({
+    getSegment,
+  });
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
