@@ -1,5 +1,7 @@
 import { useCallback } from "react";
 
+import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
+import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import { ColumnsState } from "@/charts/column/columns-state";
 import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { useChartState } from "@/charts/shared/chart-state";
@@ -14,7 +16,11 @@ export const InteractionColumns = ({ temporal }: { temporal?: boolean }) => {
     getXAsDate,
     formatXDate,
     xScaleInteraction,
-  } = useChartState() as ColumnsState | ComboLineColumnState;
+  } = useChartState() as
+    | ColumnsState
+    | StackedColumnsState
+    | GroupedColumnsState
+    | ComboLineColumnState;
   const { onClick, onHover, onHoverOut } = useOverlayInteractions();
   const getXValue = useCallback(
     (d: Observation) => {
