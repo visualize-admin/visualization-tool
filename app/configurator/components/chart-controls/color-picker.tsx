@@ -99,7 +99,7 @@ export const ColorPickerMenu = ({
   onRemove,
 }: {
   selectedHexColor: string;
-  colors: ColorItem[] | readonly string[];
+  colors?: ColorItem[] | readonly string[];
   onChange?: (color: string) => void;
   disabled?: boolean;
   colorId?: string;
@@ -124,8 +124,8 @@ export const ColorPickerMenu = ({
   );
 
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         opacity: disabled ? 0.5 : 1,
         pointerEvents: disabled ? "none" : "auto",
       }}
@@ -172,13 +172,13 @@ export const ColorPickerMenu = ({
             defaultSelection={initialSelected}
             onChange={handleColorChange}
             colorSwatches={
-              (typeof colors[0] === "string"
+              (colors && typeof colors[0] === "string"
                 ? colors.map((color) => ({ color: color, id: createColorId() }))
                 : colors) as ColorItem[]
             }
           />
         </Box>
       </Popover>
-    </Box>
+    </div>
   );
 };

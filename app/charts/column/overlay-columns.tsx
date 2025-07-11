@@ -1,32 +1,29 @@
 import { useCallback } from "react";
 
+import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
+import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import { ColumnsState } from "@/charts/column/columns-state";
 import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { useChartState } from "@/charts/shared/chart-state";
-import { useInteraction } from "@/charts/shared/use-interaction";
+import { useOverlayInteractions } from "@/charts/shared/overlay-utils";
 import { Observation } from "@/domain/data";
-import { useEvent } from "@/utils/use-event";
 
 export const InteractionColumns = ({ temporal }: { temporal?: boolean }) => {
-  const [, dispatch] = useInteraction();
+  const chartState = useChartState() as
+    | ColumnsState
+    | StackedColumnsState
+    | GroupedColumnsState
+    | ComboLineColumnState;
   const {
     chartData,
-    bounds: { margins, chartHeight },
+    bounds: { chartHeight, margins },
     getX,
     getXAsDate,
     formatXDate,
     xScaleInteraction,
-  } = useChartState() as ColumnsState | ComboLineColumnState;
-  const showTooltip = useEvent((d: Observation) => {
-    dispatch({
-      type: "INTERACTION_UPDATE",
-      value: { interaction: { visible: true, d } },
-    });
-  });
-  const hideTooltip = useEvent(() => {
-    dispatch({
-      type: "INTERACTION_HIDE",
-    });
+  } = chartState;
+  const { onClick, onHover, onHoverOut } = useOverlayInteractions({
+    getSegment: "getSegment" in chartState ? chartState.getSegment : undefined,
   });
   const getXValue = useCallback(
     (d: Observation) => {
@@ -52,8 +49,9 @@ export const InteractionColumns = ({ temporal }: { temporal?: boolean }) => {
             fill="hotpink"
             fillOpacity={0}
             stroke="none"
-            onMouseOut={hideTooltip}
-            onMouseOver={() => showTooltip(d)}
+            onMouseOver={() => onHover(d)}
+            onMouseOut={onHoverOut}
+            onClick={() => onClick(d)}
           />
         );
       })}

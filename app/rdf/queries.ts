@@ -852,11 +852,10 @@ function parseObservation(
             : obs[d.data.iri]?.value;
 
       const rawValue = parseObservationValue({ value: obs[d.data.iri] });
-      if (d.data.hasHierarchy) {
-        res[iriDimensionIri(d.data.iri)] = obs[d.data.iri]?.value;
-      }
+      res[iriDimensionIri(d.data.iri)] = obs[d.data.iri]?.value ?? null;
       res[d.data.iri] = raw ? rawValue : (label ?? value ?? null);
     }
+
     return res;
   };
 }

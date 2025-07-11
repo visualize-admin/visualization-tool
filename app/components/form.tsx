@@ -593,7 +593,7 @@ export const MarkdownInput = ({
           toolbarClassName: classes.toolbar,
           toolbarContents: () => (
             <div>
-              <Box sx={{ display: "flex", gap: 2 }}>
+              <Flex gap={2}>
                 {disableToolbar?.textStyles ? null : (
                   <BoldItalicUnderlineToggles />
                 )}
@@ -610,7 +610,7 @@ export const MarkdownInput = ({
                     <LinkDialogToggle />
                   </>
                 )}
-              </Box>
+              </Flex>
               {label && name ? <Label htmlFor={name}>{label}</Label> : null}
             </div>
           ),

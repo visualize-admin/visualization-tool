@@ -26,18 +26,18 @@ msgstr "Ziehen Sie die Filter per Drag & Drop, um sie neu zu organisieren"
 msgid "No results"
 msgstr "Kein Ergebnis"
 
-#: app/configurator/components/annotators.tsx
-msgid "annotation.add.description"
-msgstr "[ Ohne Beschreibung ]"
-
 #: app/components/text-block.tsx
 msgid "annotation.add.text"
 msgstr "[ Text hinzufügen ]"
 
 #: app/configurator/components/annotators.tsx
+msgid "annotator.add.description"
+msgstr "[ Beschreibung hinzufügen ]"
+
+#: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
-msgid "annotation.add.title"
-msgstr "[ Ohne Titel ]"
+msgid "annotator.add.title"
+msgstr "[ Titel hinzufügen ]"
 
 #: app/components/dashboard-shared.tsx
 msgid "block-controls.delete"
@@ -369,6 +369,39 @@ msgstr "Min muss kleiner als Max sein"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.animation"
 msgstr "Animation"
+
+#: app/configurator/components/chart-annotations/add-annotation-button.tsx
+msgid "controls.annotations.add"
+msgstr "Hinzufügen"
+
+#: app/configurator/components/chart-annotations/add-annotation-button.tsx
+msgid "controls.annotations.add.highlight"
+msgstr "Hervorheben"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.annotation"
+msgstr "Anmerkung"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.annotation.add.text"
+msgstr "Text hinzufügen..."
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.annotation.title"
+msgstr "Anmerkung"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.element.cta"
+msgstr "Wählen Sie ein Element im Diagramm aus..."
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.element.title"
+msgstr "Element hervorheben"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.style.title"
+msgstr "Stil"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -746,9 +779,12 @@ msgstr "Beschreibung hinzufügen"
 #: app/charts/shared/chart-data-filters.tsx
 #: app/charts/shared/chart-data-filters.tsx
 #: app/configurator/components/field.tsx
-#: app/configurator/components/field.tsx
 msgid "controls.dimensionvalue.none"
 msgstr "Kein Filter"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.filled"
+msgstr "Gefüllt"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.nb-elements"
@@ -967,6 +1003,7 @@ msgstr "Zurück zum Editieren"
 msgid "controls.nav.back-to-preview"
 msgstr "Zurück zur Vorschau"
 
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 #: app/configurator/components/chart-options-selector/combo-y-field.tsx
 #: app/configurator/components/chart-options-selector/combo-y-field.tsx
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
@@ -1039,6 +1076,10 @@ msgstr "Verwenden Sie den Typ Abgestuft, um die Animation in festen Abständen z
 #: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.type.stepped"
 msgstr "Abgestuft"
+
+#: app/configurator/components/chart-annotations/chart-annotations.tsx
+msgid "controls.section.annotations"
+msgstr "Anmerkungen"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.block-options"
@@ -1294,7 +1335,6 @@ msgstr "Dimension auswählen"
 msgid "controls.select.measure"
 msgstr "Messwert auswählen"
 
-#: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.select.optional"
 msgstr "optional"

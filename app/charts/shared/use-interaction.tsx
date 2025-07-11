@@ -9,31 +9,30 @@ import {
 
 import { Observation } from "@/domain/data";
 
-type InteractionElement = {
-  visible: boolean;
-  mouse?: { x: number; y: number } | undefined;
-  d: Observation | undefined;
-};
-
 type InteractionState = {
-  interaction: InteractionElement;
+  type: "tooltip" | "focus";
+  visible: boolean;
+  observation: Observation | undefined;
+  mouse?: {
+    x: number;
+    y: number;
+  };
 };
 
 type InteractionStateAction =
   | {
       type: "INTERACTION_UPDATE";
-      value: Pick<InteractionState, "interaction">;
+      value: InteractionState;
     }
   | {
       type: "INTERACTION_HIDE";
     };
 
 const INTERACTION_INITIAL_STATE: InteractionState = {
-  interaction: {
-    visible: false,
-    mouse: undefined,
-    d: undefined,
-  },
+  type: "tooltip",
+  observation: undefined,
+  visible: false,
+  mouse: undefined,
 };
 
 const InteractionStateReducer = (
@@ -42,30 +41,17 @@ const InteractionStateReducer = (
 ) => {
   switch (action.type) {
     case "INTERACTION_UPDATE":
-      return {
-        ...state,
-        interaction: {
-          visible: action.value.interaction.visible,
-          mouse: action.value.interaction.mouse
-            ? {
-                x: action.value.interaction.mouse.x,
-                y: action.value.interaction.mouse.y,
-              }
-            : undefined,
-          d: action.value.interaction.d,
-        },
-      };
+      return action.value satisfies InteractionState;
     case "INTERACTION_HIDE":
       return {
-        ...state,
-        interaction: {
-          ...state.interaction,
-          visible: false,
-          mouse: undefined,
-        },
-      };
+        type: state.type,
+        observation: undefined,
+        visible: false,
+        mouse: undefined,
+      } satisfies InteractionState;
     default:
-      throw Error();
+      const _exhaustiveCheck: never = action;
+      return _exhaustiveCheck;
   }
 };
 

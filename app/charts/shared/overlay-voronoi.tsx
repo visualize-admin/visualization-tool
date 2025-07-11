@@ -1,12 +1,12 @@
 import { Delaunay } from "d3-delaunay";
 import { pointer } from "d3-selection";
-import { memo, MouseEvent as ReactMouseEvent, useRef } from "react";
+import { memo, MouseEvent, useCallback, useMemo, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
-import { useInteraction } from "@/charts/shared/use-interaction";
+import { useOverlayInteractions } from "@/charts/shared/overlay-utils";
 
 const atLeastZero = (n: number) => (n < 0 ? 0 : n);
 
@@ -15,50 +15,73 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
 }: {
   debug?: boolean;
 }) {
-  const [, dispatch] = useInteraction();
-  const ref = useRef<SVGGElement>(null);
-  const { chartData, getX, xScale, getY, yScale, getSegment, colors, bounds } =
-    useChartState() as LinesState | AreasState | ScatterplotState;
-
-  const { chartWidth, chartHeight, margins } = bounds;
-
-  // FIXME: delaunay / voronoi calculation could be memoized
-  const delaunay = Delaunay.from(
+  const {
     chartData,
-    (d) => xScale(getX(d) ?? NaN),
-    (d) => yScale(getY(d) ?? NaN)
+    getX,
+    xScale,
+    getY,
+    yScale,
+    getSegment,
+    colors,
+    bounds: { chartWidth, chartHeight, margins },
+  } = useChartState() as LinesState | AreasState | ScatterplotState;
+  const { onClick, onHover, onHoverOut } = useOverlayInteractions({
+    getSegment,
+  });
+  const ref = useRef<SVGGElement>(null);
+
+  const delaunay = useMemo(() => {
+    return Delaunay.from(
+      chartData,
+      (d) => xScale(getX(d) ?? NaN),
+      (d) => yScale(getY(d) ?? NaN)
+    );
+  }, [chartData, xScale, yScale, getX, getY]);
+
+  const voronoi = useMemo(() => {
+    return delaunay.voronoi([
+      0,
+      0,
+      atLeastZero(chartWidth),
+      atLeastZero(chartHeight),
+    ]);
+  }, [chartWidth, chartHeight, delaunay]);
+
+  const findObservation = useCallback(
+    (e: MouseEvent) => {
+      if (!ref.current) {
+        return;
+      }
+
+      const [x, y] = pointer(e, ref.current);
+      const i = delaunay.find(x, y);
+
+      return chartData[i];
+    },
+    [chartData, delaunay]
   );
 
-  const voronoi = delaunay.voronoi([
-    0,
-    0,
-    atLeastZero(chartWidth),
-    atLeastZero(chartHeight),
-  ]);
+  const handleHover = useCallback(
+    (e: MouseEvent) => {
+      const observation = findObservation(e);
 
-  const findLocation = (e: ReactMouseEvent) => {
-    const [x, y] = pointer(e, ref.current!);
+      if (observation) {
+        onHover(observation);
+      }
+    },
+    [findObservation, onHover]
+  );
 
-    const location = delaunay.find(x, y);
-    const d = chartData[location];
+  const handleClick = useCallback(
+    (e: MouseEvent) => {
+      const observation = findObservation(e);
 
-    if (typeof location !== "undefined") {
-      dispatch({
-        type: "INTERACTION_UPDATE",
-        value: {
-          interaction: {
-            visible: true,
-            d,
-          },
-        },
-      });
-    }
-  };
-  const hideTooltip = () => {
-    dispatch({
-      type: "INTERACTION_HIDE",
-    });
-  };
+      if (observation) {
+        onClick(observation);
+      }
+    },
+    [findObservation, onClick]
+  );
 
   return (
     <g ref={ref} transform={`translate(${margins.left} ${margins.top})`}>
@@ -67,19 +90,20 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
           <path
             key={i}
             d={voronoi.renderCell(i)}
-            fill={colors(getSegment(d))}
-            fillOpacity={0.2}
             stroke="white"
             strokeOpacity={1}
+            fill={colors(getSegment(d))}
+            fillOpacity={0.2}
           />
         ))}
       <rect
-        fillOpacity={0}
         width={chartWidth}
-        height={Math.max(0, chartHeight)}
-        onMouseOut={hideTooltip}
-        onMouseOver={findLocation}
-        onMouseMove={findLocation}
+        height={chartHeight}
+        fillOpacity={0}
+        onMouseOver={handleHover}
+        onMouseMove={handleHover}
+        onMouseOut={onHoverOut}
+        onClick={handleClick}
       />
     </g>
   );

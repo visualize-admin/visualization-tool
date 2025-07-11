@@ -1,6 +1,10 @@
 .common {
   margin-top: 0;
   line-height: 1.2;
+
+  &:only-child {
+    margin-block: 0;
+  }
 }
 
 .inheritFonts {

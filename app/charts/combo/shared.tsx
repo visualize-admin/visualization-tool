@@ -6,7 +6,7 @@ import { getTextSize, GetTextSizeOptions } from "@/utils/get-text-size";
 export const TITLE_V_PADDING = 4;
 export const TITLE_H_PADDING = 8;
 
-export const getAxisTitleSize = (
+const getAxisTitleSize = (
   text: string,
   options: Pick<GetTextSizeOptions, "width" | "fontSize">
 ) => {

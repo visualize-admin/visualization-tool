@@ -376,3 +376,12 @@ export const renderHorizontalWhisker = (
         })
     );
 };
+
+export const toggleFocusBorder = (s: AnySelection) => {
+  const focusBorderWidth = 4;
+  const focusBorderColor = "#A332DE";
+  s.attr("stroke", (d) => (d.focused ? focusBorderColor : "none")).attr(
+    "stroke-width",
+    (d) => (d.focused ? focusBorderWidth : 0)
+  );
+};

@@ -25,10 +25,11 @@ import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
 export const Tooltip = ({ type = "single" }: { type: TooltipType }) => {
-  const [state] = useInteraction();
-  const { visible, d } = state.interaction;
+  const [{ type: interactionType, visible, observation }] = useInteraction();
 
-  return visible && d ? <TooltipInner d={d} type={type} /> : null;
+  return interactionType === "tooltip" && visible && observation ? (
+    <TooltipInner d={observation} type={type} />
+  ) : null;
 };
 export type { TooltipPlacement };
 
@@ -77,7 +78,7 @@ const TooltipInner = ({ d, type }: { d: Observation; type: TooltipType }) => {
     datum,
     values,
     withTriangle,
-  } = getAnnotationInfo(d as Observation & PieArcDatum<Observation>, []);
+  } = getAnnotationInfo(d as Observation & PieArcDatum<Observation>);
 
   if (Number.isNaN(yAnchor) || yAnchor === undefined) {
     return null;

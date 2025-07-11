@@ -1,27 +1,29 @@
 import { interpolate } from "d3-interpolate";
-import { select } from "d3-selection";
+import { Selection } from "d3-selection";
 import { Arc, PieArcDatum } from "d3-shape";
 import { Transition } from "d3-transition";
 
 import {
   maybeTransition,
   RenderOptions,
+  toggleFocusBorder,
 } from "@/charts/shared/rendering-utils";
 import { Observation } from "@/domain/data";
-
-import type { Selection } from "d3-selection";
 
 export type RenderDatum = {
   key: string;
   value: number;
   arcDatum: PieArcDatum<Observation>;
   color: string;
+  focused?: boolean;
+  hovered?: boolean;
 };
 
 type RenderPieOptions = RenderOptions & {
   arcGenerator: Arc<any, any>;
-  handleMouseEnter: (d: PieArcDatum<Observation>) => void;
+  handleMouseEnter: (d: Observation) => void;
   handleMouseLeave: () => void;
+  isEditingAnnotation?: boolean;
 };
 
 export const renderPies = (
@@ -29,8 +31,13 @@ export const renderPies = (
   renderData: RenderDatum[],
   options: RenderPieOptions
 ) => {
-  const { arcGenerator, transition, handleMouseEnter, handleMouseLeave } =
-    options;
+  const {
+    arcGenerator,
+    transition,
+    handleMouseEnter,
+    handleMouseLeave,
+    isEditingAnnotation,
+  } = options;
 
   g.selectAll<SVGPathElement, RenderDatum>("path")
     .data(renderData, (d) => d.key)
@@ -43,12 +50,10 @@ export const renderPies = (
           .attr("stroke", "black")
           .attr("stroke-width", 0)
           .on("mouseenter", function (_, d) {
-            handleMouseEnter(d.arcDatum);
-            select<SVGPathElement, RenderDatum>(this).attr("stroke-width", 1);
+            handleMouseEnter(d.arcDatum.data);
           })
           .on("mouseleave", function () {
             handleMouseLeave();
-            select<SVGPathElement, RenderDatum>(this).attr("stroke-width", 0);
           })
           .call((enter) =>
             maybeTransition(enter, {
@@ -57,8 +62,16 @@ export const renderPies = (
               t: (g) => g.call(animatePath, arcGenerator),
             })
           ),
-      (update) =>
-        update.call((update) =>
+      (update) => {
+        if (isEditingAnnotation) {
+          toggleFocusBorder(update);
+        } else {
+          update
+            .attr("stroke", "black")
+            .attr("stroke-width", (d) => (d.hovered ? 1 : 0));
+        }
+
+        return update.call((update) =>
           maybeTransition(update, {
             transition,
             s: (g) =>
@@ -68,7 +81,8 @@ export const renderPies = (
             t: (g) =>
               g.call(animatePath, arcGenerator).attr("fill", (d) => d.color),
           })
-        ),
+        );
+      },
       (exit) =>
         maybeTransition(exit, {
           transition,

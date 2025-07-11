@@ -1,7 +1,7 @@
 import { ascending, sum } from "d3-array";
 import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
-import { Pie, pie, PieArcDatum } from "d3-shape";
+import { Pie, pie } from "d3-shape";
 import orderBy from "lodash/orderBy";
 import { PropsWithChildren, useMemo } from "react";
 
@@ -47,7 +47,7 @@ export type PieState = CommonChartState &
     getPieData: Pie<$IntentionalAny, Observation>;
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
-    getAnnotationInfo: (d: PieArcDatum<Observation>) => TooltipInfo;
+    getAnnotationInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
   };
@@ -220,11 +220,7 @@ const usePieState = (
   };
 
   // Tooltip
-  const getAnnotationInfo = (
-    arcDatum: PieArcDatum<Observation>
-  ): TooltipInfo => {
-    const datum = arcDatum.data;
-
+  const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const xAnchor = chartWidth / 2;
     const yAnchor = -4;
 
@@ -235,10 +231,10 @@ const usePieState = (
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      value: getSegmentAbbreviationOrLabel(datum),
+      value: getSegmentAbbreviationOrLabel(d),
       datum: {
-        value: valueFormatter(getY(datum)),
-        color: colors(getSegment(datum)) as string,
+        value: valueFormatter(getY(d)),
+        color: colors(getSegment(d)) as string,
       },
       values: undefined,
       withTriangle: false,
