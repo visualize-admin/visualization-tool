@@ -1,4 +1,3 @@
-import { schemeCategory10 } from "d3-scale-chromatic";
 import { useEffect, useMemo, useRef } from "react";
 
 import {
@@ -6,6 +5,7 @@ import {
   RenderDatum,
 } from "@/charts/scatterplot/rendering-utils";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
+import { useGetAnnotationRenderState } from "@/charts/shared/annotation-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { renderContainer } from "@/charts/shared/rendering-utils";
 import { useTransitionStore } from "@/stores/transition";
@@ -18,7 +18,7 @@ export const Scatterplot = () => {
     xScale,
     getY,
     yScale,
-    hasSegment,
+    segmentDimension,
     getSegment,
     colors,
     getRenderingKey,
@@ -27,25 +27,34 @@ export const Scatterplot = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
+  const getAnnotationRenderState = useGetAnnotationRenderState();
   const renderData = useMemo(() => {
     return chartData.map((d) => {
+      const segment = getSegment(d);
+      const { focused } = getAnnotationRenderState(d, {
+        axisComponentId: segmentDimension?.id ?? "",
+        axisValue: segment,
+      });
+
       return {
         key: getRenderingKey(d),
         cx: xScale(getX(d) ?? NaN),
         cy: yScale(getY(d) ?? NaN),
-        color: hasSegment ? colors(getSegment(d)) : schemeCategory10[0],
+        color: colors(segment),
+        focused,
       } satisfies RenderDatum;
     });
   }, [
     chartData,
-    colors,
     getSegment,
-    getX,
-    getY,
-    hasSegment,
-    xScale,
-    yScale,
+    getAnnotationRenderState,
+    segmentDimension?.id,
     getRenderingKey,
+    xScale,
+    getX,
+    yScale,
+    getY,
+    colors,
   ]);
 
   useEffect(() => {

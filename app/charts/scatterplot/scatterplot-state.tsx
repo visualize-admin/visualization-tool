@@ -44,7 +44,6 @@ export type ScatterplotState = CommonChartState &
     chartType: "scatterplot";
     xScale: ScaleLinear<number, number>;
     yScale: ScaleLinear<number, number>;
-    hasSegment: boolean;
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
@@ -100,7 +99,6 @@ const useScatterplotState = (
     .domain([paddingYMinValue, paddingYMaxValue])
     .nice();
 
-  const hasSegment = fields.segment ? true : false;
   const segmentFilter = segmentDimension?.id
     ? chartConfig.cubes.find((d) => d.iri === segmentDimension.cubeIri)
         ?.filters[segmentDimension.id]
@@ -246,7 +244,6 @@ const useScatterplotState = (
     allData,
     xScale,
     yScale,
-    hasSegment,
     colors,
     getColorLabel: getSegmentLabel,
     getAnnotationInfo,
