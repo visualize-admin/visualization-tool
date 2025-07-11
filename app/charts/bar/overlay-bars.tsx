@@ -1,6 +1,6 @@
 import { BarsState } from "@/charts/bar/bars-state";
-import { useOverlayRectInteractions } from "@/charts/shared/annotation-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import { useOverlayInteractions } from "@/charts/shared/overlay-utils";
 
 export const InteractionBars = () => {
   const {
@@ -9,7 +9,7 @@ export const InteractionBars = () => {
     getY,
     yScaleInteraction,
   } = useChartState() as BarsState;
-  const { onClick, onHover, onHoverOut } = useOverlayRectInteractions();
+  const { onClick, onHover, onHoverOut } = useOverlayInteractions();
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>

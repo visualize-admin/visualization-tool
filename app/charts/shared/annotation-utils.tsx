@@ -1,4 +1,3 @@
-import isEqual from "lodash/isEqual";
 import { useCallback } from "react";
 
 import { useInteraction } from "@/charts/shared/use-interaction";
@@ -10,7 +9,6 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { Observation } from "@/domain/data";
-import { useEvent } from "@/utils/use-event";
 
 export const useGetAnnotationRenderState = () => {
   const [interaction] = useInteraction();
@@ -33,7 +31,7 @@ export const useGetAnnotationRenderState = () => {
       let annotation: Annotation | undefined;
 
       for (const a of chartConfig.annotations) {
-        const matches = matchesTarget(observation, a.target);
+        const matches = matchesAnnotationTarget(observation, a.target);
 
         if (matches) {
           annotation = a;
@@ -52,7 +50,9 @@ export const useGetAnnotationRenderState = () => {
         interaction.visible &&
         interaction.observation?.[axisComponentId] === axisValue;
       const targetsOtherAnnotations = chartConfig.annotations.some(
-        (a) => a.key !== activeField && matchesTarget(observation, a.target)
+        (a) =>
+          a.key !== activeField &&
+          matchesAnnotationTarget(observation, a.target)
       );
 
       const annotationMatches = annotation?.target.axis?.value === axisValue;
@@ -81,81 +81,7 @@ export const useGetAnnotationRenderState = () => {
   return getAnnotationRenderState;
 };
 
-export const useOverlayRectInteractions = () => {
-  const [, dispatchInteraction] = useInteraction();
-  const [state, dispatch] = useConfiguratorState();
-  const chartConfig = getChartConfig(state);
-  const { activeField, annotations } = chartConfig;
-  const isEditingAnnotation =
-    isAnnotationField(activeField) && isConfiguring(state);
-  const activeAnnotation = annotations.find((a) => a.key === activeField);
-
-  // TODO: Differentiate between edit and view modes (to open annotation).
-  const onClick = useEvent((observation: Observation) => {
-    if (!isEditingAnnotation || !activeAnnotation || !activeField) {
-      return;
-    }
-
-    const currentTarget = activeAnnotation.target;
-    const newTarget = getTargetFromObservation(observation, { chartConfig });
-
-    if (isEqual(currentTarget, newTarget)) {
-      return;
-    }
-
-    const otherAnnotationWithSameTarget = annotations.find(
-      (a) => a.key !== activeField && matchesTarget(observation, a.target)
-    );
-
-    if (otherAnnotationWithSameTarget) {
-      return;
-    }
-
-    dispatch({
-      type: "CHART_ANNOTATION_TARGET_CHANGE",
-      value: {
-        key: activeField,
-        target: newTarget,
-      },
-    });
-  });
-
-  const onHover = useEvent((observation: Observation) => {
-    if (isEditingAnnotation) {
-      dispatchInteraction({
-        type: "INTERACTION_UPDATE",
-        value: {
-          type: "focus",
-          visible: true,
-          observation,
-        },
-      });
-    } else {
-      dispatchInteraction({
-        type: "INTERACTION_UPDATE",
-        value: {
-          type: "tooltip",
-          visible: true,
-          observation,
-        },
-      });
-    }
-  });
-
-  const onHoverOut = useEvent(() => {
-    dispatchInteraction({
-      type: "INTERACTION_HIDE",
-    });
-  });
-
-  return {
-    onClick,
-    onHover,
-    onHoverOut,
-  };
-};
-
-const getTargetFromObservation = (
+export const getAnnotationTargetFromObservation = (
   observation: Observation,
   { chartConfig }: { chartConfig: ChartConfig }
 ): Annotation["target"] => {
@@ -231,7 +157,7 @@ const getTargetFromObservation = (
   return target;
 };
 
-const matchesTarget = (
+export const matchesAnnotationTarget = (
   observation: Observation,
   target: Annotation["target"] | undefined
 ): boolean => {

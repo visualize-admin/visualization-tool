@@ -2,8 +2,8 @@ import { useCallback } from "react";
 
 import { ColumnsState } from "@/charts/column/columns-state";
 import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
-import { useOverlayRectInteractions } from "@/charts/shared/annotation-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import { useOverlayInteractions } from "@/charts/shared/overlay-utils";
 import { Observation } from "@/domain/data";
 
 export const InteractionColumns = ({ temporal }: { temporal?: boolean }) => {
@@ -15,7 +15,7 @@ export const InteractionColumns = ({ temporal }: { temporal?: boolean }) => {
     formatXDate,
     xScaleInteraction,
   } = useChartState() as ColumnsState | ComboLineColumnState;
-  const { onClick, onHover, onHoverOut } = useOverlayRectInteractions();
+  const { onClick, onHover, onHoverOut } = useOverlayInteractions();
   const getXValue = useCallback(
     (d: Observation) => {
       return temporal ? formatXDate(getXAsDate(d)) : getX(d);
