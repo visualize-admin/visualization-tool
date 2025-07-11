@@ -10,12 +10,19 @@ import {
 } from "@/configurator/configurator-state";
 import { Observation } from "@/domain/data";
 
+export const useIsEditingAnnotation = () => {
+  const [state] = useConfiguratorState();
+  const { activeField } = getChartConfig(state);
+
+  return isAnnotationField(activeField) && isConfiguring(state);
+};
+
 export const useGetAnnotationRenderState = () => {
   const [interaction] = useInteraction();
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const { activeField } = chartConfig;
-  const isEditing = isAnnotationField(activeField) && isConfiguring(state);
+  const isEditing = useIsEditingAnnotation();
 
   const getAnnotationRenderState = useCallback(
     (

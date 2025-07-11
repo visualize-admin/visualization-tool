@@ -3,14 +3,11 @@ import isEqual from "lodash/isEqual";
 import {
   getAnnotationTargetFromObservation,
   matchesAnnotationTarget,
+  useIsEditingAnnotation,
 } from "@/charts/shared/annotation-utils";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { getChartConfig } from "@/config-utils";
-import { isAnnotationField } from "@/configurator/components/chart-annotations/utils";
-import {
-  isConfiguring,
-  useConfiguratorState,
-} from "@/configurator/configurator-state";
+import { useConfiguratorState } from "@/configurator/configurator-state";
 import { Observation } from "@/domain/data";
 import { useEvent } from "@/utils/use-event";
 
@@ -19,8 +16,7 @@ export const useOverlayInteractions = () => {
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const { activeField, annotations } = chartConfig;
-  const isEditingAnnotation =
-    isAnnotationField(activeField) && isConfiguring(state);
+  const isEditingAnnotation = useIsEditingAnnotation();
   const activeAnnotation = annotations.find((a) => a.key === activeField);
 
   // TODO: Differentiate between edit and view modes (to open annotation).
