@@ -496,7 +496,7 @@ const ConfigureChartStep = () => {
             ) : isAnnotationField(chartConfig.activeField) ? (
               <ChartAnnotationsSelector />
             ) : (
-              <ChartOptionsSelector state={state} />
+              <ChartOptionsSelector />
             )}
           </div>
         </ConfiguratorDrawer>
