@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { BarsState } from "@/charts/bar/bars-state";
 import { RenderBarDatum, renderBars } from "@/charts/bar/rendering-utils";
 import { useBarValueLabelsData } from "@/charts/bar/show-values-utils";
+import { useGetAnnotationRenderState } from "@/charts/shared/annotation-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { renderTotalValueLabels } from "@/charts/shared/render-value-labels";
 import {
@@ -88,6 +89,7 @@ export const Bars = () => {
     bounds,
     getX,
     xScale,
+    yDimension,
     getY,
     yScale,
     getRenderingKey,
@@ -101,15 +103,21 @@ export const Bars = () => {
   const transitionDuration = useTransitionStore((state) => state.duration);
   const bandwidth = yScale.bandwidth();
   const x0 = xScale(0);
+  const getAnnotationRenderState = useGetAnnotationRenderState();
   const renderData = useMemo(() => {
     return chartData.map((d) => {
       const key = getRenderingKey(d);
-      const yScaled = yScale(getY(d)) as number;
+      const y = getY(d);
+      const yScaled = yScale(y) as number;
       const xRaw = getX(d);
       const x = xRaw === null || isNaN(xRaw) ? 0 : xRaw;
       const xScaled = xScale(x);
       const xRender = xScale(Math.min(x, 0));
       const width = Math.max(0, Math.abs(xScaled - x0));
+      const { color, focused } = getAnnotationRenderState(d, {
+        axisComponentId: yDimension.id,
+        axisValue: y,
+      });
 
       return {
         key,
@@ -119,7 +127,8 @@ export const Bars = () => {
         height: bandwidth,
         // Calling colors(key) directly results in every key being added to the domain,
         // which is not what we want.
-        color: colors.copy()(key),
+        color: color ?? colors.copy()(key),
+        focused,
       } satisfies RenderBarDatum;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -133,6 +142,9 @@ export const Bars = () => {
     yScale,
     x0,
     getRenderingKey,
+    getAnnotationRenderState,
+    yDimension.id,
+    colors,
   ]);
 
   const valueLabelsData = useBarValueLabelsData();
