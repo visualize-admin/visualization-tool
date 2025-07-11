@@ -75,15 +75,13 @@ export const MapTooltip = () => {
   });
 
   const areaTooltipState = useMemo(() => {
-    const { observation } = interaction;
-
-    if (areaLayer && observation) {
+    if (areaLayer && interaction.observation) {
       const { colors } = areaLayer;
-      const value = colors.getValue(observation);
+      const value = colors.getValue(interaction.observation);
 
       if (isTooltipValueValid(value)) {
         const show = identicalLayerComponentIds || hoverObjectType === "area";
-        const color = rgbArrayToHex(colors.getColor(observation));
+        const color = rgbArrayToHex(colors.getColor(interaction.observation));
         const textColor = getTooltipTextColor(color);
         const valueFormatter = (d: number | null) => {
           return formatNumberWithUnit(
@@ -98,7 +96,7 @@ export const MapTooltip = () => {
           value: typeof value === "number" ? valueFormatter(value) : value,
           error:
             colors.type === "continuous"
-              ? colors.getFormattedError?.(observation)
+              ? colors.getFormattedError?.(interaction.observation)
               : null,
           componentId: colors.component.id,
           label: colors.component.label,
@@ -108,12 +106,12 @@ export const MapTooltip = () => {
       }
     }
   }, [
-    areaLayer,
     interaction.observation,
+    areaLayer,
     identicalLayerComponentIds,
     hoverObjectType,
-    formatNumber,
     formatters,
+    formatNumber,
   ]);
 
   const symbolTooltipState = useMemo(() => {
@@ -188,13 +186,13 @@ export const MapTooltip = () => {
       }
     }
   }, [
+    interaction,
     symbolLayer,
-    interaction.observation,
-    formatSymbolError,
     identicalLayerComponentIds,
     hoverObjectType,
-    formatNumber,
+    formatSymbolError,
     formatters,
+    formatNumber,
   ]);
 
   const showAreaColorTooltip = areaTooltipState?.show;

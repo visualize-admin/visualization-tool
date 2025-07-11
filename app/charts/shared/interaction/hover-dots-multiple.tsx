@@ -9,9 +9,15 @@ import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
 export const HoverDotMultiple = () => {
-  const [{ observation, visible }] = useInteraction();
+  const [{ type, visible, observation }] = useInteraction();
 
-  return <>{observation && visible && <HoverDots d={observation} />}</>;
+  return (
+    <>
+      {type === "tooltip" && visible && observation && (
+        <HoverDots d={observation} />
+      )}
+    </>
+  );
 };
 
 const useStyles = makeStyles((theme: Theme) => ({

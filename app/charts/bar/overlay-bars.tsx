@@ -14,8 +14,9 @@ export const InteractionBars = () => {
     dispatch({
       type: "INTERACTION_UPDATE",
       value: {
-        observation: d,
+        type: "tooltip",
         visible: true,
+        observation: d,
       },
     });
   };

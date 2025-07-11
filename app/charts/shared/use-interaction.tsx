@@ -10,8 +10,9 @@ import {
 import { Observation } from "@/domain/data";
 
 type InteractionState = {
-  observation: Observation | undefined;
+  type: "tooltip" | "focus";
   visible: boolean;
+  observation: Observation | undefined;
   mouse?: {
     x: number;
     y: number;
@@ -28,13 +29,14 @@ type InteractionStateAction =
     };
 
 const INTERACTION_INITIAL_STATE: InteractionState = {
+  type: "tooltip",
   observation: undefined,
   visible: false,
   mouse: undefined,
 };
 
 const InteractionStateReducer = (
-  _: InteractionState,
+  state: InteractionState,
   action: InteractionStateAction
 ) => {
   switch (action.type) {
@@ -42,6 +44,7 @@ const InteractionStateReducer = (
       return action.value satisfies InteractionState;
     case "INTERACTION_HIDE":
       return {
+        type: state.type,
         observation: undefined,
         visible: false,
         mouse: undefined,

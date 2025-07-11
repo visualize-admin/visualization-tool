@@ -77,8 +77,9 @@ export const InteractionHorizontal = memo(function InteractionHorizontal() {
       dispatch({
         type: "INTERACTION_UPDATE",
         value: {
-          observation: newObservation,
+          type: "tooltip",
           visible: true,
+          observation: newObservation,
           mouse: { x, y },
         },
       });

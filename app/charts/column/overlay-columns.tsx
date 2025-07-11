@@ -21,8 +21,9 @@ export const InteractionColumns = ({ temporal }: { temporal?: boolean }) => {
     dispatch({
       type: "INTERACTION_UPDATE",
       value: {
-        observation: d,
+        type: "tooltip",
         visible: true,
+        observation: d,
       },
     });
   });

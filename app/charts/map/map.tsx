@@ -284,8 +284,9 @@ export const MapComponent = ({
         dispatchInteraction({
           type: "INTERACTION_UPDATE",
           value: {
-            observation,
+            type: "tooltip",
             visible: true,
+            observation,
             mouse: { x, y },
           },
         });

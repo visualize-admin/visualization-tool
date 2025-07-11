@@ -21,11 +21,13 @@ type RulerProps = {
 
 export const Ruler = (props: RulerProps) => {
   const { rotate = false } = props;
-  const [{ observation, visible }] = useInteraction();
+  const [{ type, visible, observation }] = useInteraction();
 
   return (
     <>
-      {observation && visible && <RulerInner d={observation} rotate={rotate} />}
+      {type === "tooltip" && visible && observation && (
+        <RulerInner d={observation} rotate={rotate} />
+      )}
     </>
   );
 };
