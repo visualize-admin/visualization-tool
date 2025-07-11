@@ -1,6 +1,6 @@
 import { Delaunay } from "d3-delaunay";
 import { pointer } from "d3-selection";
-import { memo, MouseEvent as ReactMouseEvent, useRef } from "react";
+import { memo, MouseEvent as ReactMouseEvent, useMemo, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
@@ -17,30 +17,38 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
 }) {
   const [, dispatch] = useInteraction();
   const ref = useRef<SVGGElement>(null);
-  const { chartData, getX, xScale, getY, yScale, getSegment, colors, bounds } =
-    useChartState() as LinesState | AreasState | ScatterplotState;
-
-  const { chartWidth, chartHeight, margins } = bounds;
-
-  // FIXME: delaunay / voronoi calculation could be memoized
-  const delaunay = Delaunay.from(
+  const {
     chartData,
-    (d) => xScale(getX(d) ?? NaN),
-    (d) => yScale(getY(d) ?? NaN)
-  );
+    getX,
+    xScale,
+    getY,
+    yScale,
+    getSegment,
+    colors,
+    bounds: { chartWidth, chartHeight, margins },
+  } = useChartState() as LinesState | AreasState | ScatterplotState;
 
-  const voronoi = delaunay.voronoi([
-    0,
-    0,
-    atLeastZero(chartWidth),
-    atLeastZero(chartHeight),
-  ]);
+  const delaunay = useMemo(() => {
+    return Delaunay.from(
+      chartData,
+      (d) => xScale(getX(d) ?? NaN),
+      (d) => yScale(getY(d) ?? NaN)
+    );
+  }, [chartData, xScale, yScale, getX, getY]);
+
+  const voronoi = useMemo(() => {
+    return delaunay.voronoi([
+      0,
+      0,
+      atLeastZero(chartWidth),
+      atLeastZero(chartHeight),
+    ]);
+  }, [chartWidth, chartHeight, delaunay]);
 
   const findLocation = (e: ReactMouseEvent) => {
     const [x, y] = pointer(e, ref.current!);
-
     const location = delaunay.find(x, y);
-    const d = chartData[location];
+    const observation = chartData[location];
 
     if (typeof location !== "undefined") {
       dispatch({
@@ -48,11 +56,12 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
         value: {
           type: "tooltip",
           visible: true,
-          observation: d,
+          observation,
         },
       });
     }
   };
+
   const hideTooltip = () => {
     dispatch({
       type: "INTERACTION_HIDE",
