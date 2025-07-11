@@ -1,4 +1,3 @@
-import { schemeCategory10 } from "d3-scale-chromatic";
 import { useEffect, useMemo, useRef } from "react";
 
 import { BarsState } from "@/charts/bar/bars-state";
@@ -14,7 +13,6 @@ import {
 } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useTransitionStore } from "@/stores/transition";
-import { useTheme } from "@/themes";
 
 export const ErrorWhiskers = () => {
   const {
@@ -96,7 +94,6 @@ export const Bars = () => {
     colors,
     rotateValues,
   } = useChartState() as BarsState;
-  const theme = useTheme();
   const { margins } = bounds;
   const { labelFontSize, fontFamily } = useChartTheme();
   const ref = useRef<SVGGElement>(null);
@@ -120,7 +117,9 @@ export const Bars = () => {
         y: yScaled,
         width,
         height: bandwidth,
-        color: colors(d.key as string) ?? schemeCategory10[0],
+        // Calling colors(key) directly results in every key being added to the domain,
+        // which is not what we want.
+        color: colors.copy()(key),
       } satisfies RenderBarDatum;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -133,7 +132,6 @@ export const Bars = () => {
     xScale,
     yScale,
     x0,
-    theme.palette.secondary.main,
     getRenderingKey,
   ]);
 
