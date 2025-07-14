@@ -151,33 +151,33 @@ export const getStackedTooltipValueFormatter = ({
   };
 };
 
-export const getStackedY = <T extends { [key: string]: any }>({
+export const getStackedPosition = <T extends { [key: string]: any }>({
   observation,
   series,
-  xKey,
-  getX,
-  yScale,
-  fallbackY,
+  key,
+  getAxisValue,
+  measureScale,
+  fallbackMeasureValue,
   getSegment,
 }: {
   observation: Observation;
   series: Series<T, string>[];
-  xKey: string;
-  getX: (d: Observation) => string;
-  yScale: ScaleLinear<number, number>;
-  fallbackY: number;
+  key: string;
+  getAxisValue: (d: Observation) => string;
+  measureScale: ScaleLinear<number, number>;
+  fallbackMeasureValue: number;
   getSegment: (d: Observation) => string;
 }) => {
-  const x = getX(observation);
+  const axisValue = getAxisValue(observation);
   const segment = getSegment(observation);
   const segmentSeries = series.find((s) => s.key === segment);
-  const seriesPoint = segmentSeries?.find((s) => s.data[xKey] === x);
+  const seriesPoint = segmentSeries?.find((s) => s.data[key] === axisValue);
 
   if (!seriesPoint) {
-    return fallbackY;
+    return fallbackMeasureValue;
   }
 
   const [y0, y1] = seriesPoint;
 
-  return yScale((y0 + y1) * 0.5);
+  return measureScale((y0 + y1) * 0.5);
 };

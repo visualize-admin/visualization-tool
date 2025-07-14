@@ -502,13 +502,13 @@ const useColumnsStackedState = (
           color: colors(getSegment(datum)),
         },
         values: sortedTooltipValues.map((d) => {
-          const yPos = getStackedY({
+          const yPos = getStackedPosition({
             observation: d,
             series,
-            xKey,
-            getX,
-            yScale,
-            fallbackY: yScale(getY(d) ?? 0),
+            key: xKey,
+            getAxisValue: getX,
+            measureScale: yScale,
+            fallbackMeasureValue: yScale(getY(d) ?? 0),
             getSegment,
           });
 

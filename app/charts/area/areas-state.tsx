@@ -53,8 +53,8 @@ import {
   useShowTemporalValueLabelsVariables,
 } from "@/charts/shared/show-values-utils";
 import {
+  getStackedPosition,
   getStackedTooltipValueFormatter,
-  getStackedY,
   getStackedYScale,
 } from "@/charts/shared/stacked-helpers";
 import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
@@ -460,13 +460,13 @@ const useAreasState = (
           color: colors(getSegment(datum)),
         },
         values: sortedTooltipValues.map((d) => {
-          const yPos = getStackedY({
+          const yPos = getStackedPosition({
             observation: d,
             series,
-            xKey,
-            getX: getXAsString,
-            yScale,
-            fallbackY: yScale(getY(d) ?? 0),
+            key: xKey,
+            getAxisValue: getXAsString,
+            measureScale: yScale,
+            fallbackMeasureValue: yScale(getY(d) ?? 0),
             getSegment,
           });
 
