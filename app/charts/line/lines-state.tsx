@@ -30,7 +30,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -350,14 +350,18 @@ const useLinesState = (
         error: getFormattedYUncertainty(datum),
         color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map((d) => ({
-        hide: getY(d) === null,
-        label: getSegmentAbbreviationOrLabel(d),
-        value: yValueFormatter(getY(d)),
-        color: colors(getSegment(d)),
-        yPos: yScale(getY(d) ?? 0),
-        symbol: "line",
-      })),
+      values: sortedTooltipValues.map(
+        (d) =>
+          ({
+            hide: getY(d) === null,
+            label: getSegmentAbbreviationOrLabel(d),
+            value: yValueFormatter(getY(d)),
+            color: colors(getSegment(d)),
+            axis: "y",
+            axisOffset: yScale(getY(d) ?? 0),
+            symbol: "line",
+          }) satisfies TooltipValue
+      ),
     } satisfies TooltipInfo;
   };
 

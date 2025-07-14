@@ -47,14 +47,15 @@ const HoverDots = ({ d }: { d: Observation }) => {
         values.map(
           (value, i) =>
             !value.hide &&
-            value.yPos !== undefined && (
+            value.axis === "y" &&
+            value.axisOffset !== undefined && (
               <div
                 key={i}
                 className={classes.dot}
                 style={{
                   backgroundColor: value.color,
                   left: xAnchor + margins.left,
-                  top: value.yPos + margins.top,
+                  top: value.axisOffset + margins.top,
                 }}
               />
             )

@@ -199,24 +199,27 @@ const useComboLineColumnState = (
       (xScale(formatXDate(x)) as number) + xScale.bandwidth() * 0.5;
     const values = [variables.y.left, variables.y.right]
       .map(({ orientation, getY, id, label, chartType }) => {
-        const y = getY(d);
-        const yPos = yOrientationScales[orientation](y ?? 0);
+        const yRaw = getY(d);
 
-        if (!Number.isFinite(y) || y === null) {
+        if (!Number.isFinite(yRaw) || yRaw === null) {
           return null;
         }
 
+        const axisOffset = yOrientationScales[orientation](yRaw ?? 0);
+
         return {
           label,
-          value: `${y}`,
+          value: `${yRaw}`,
           color: colors(id),
-          hide: y === null,
-          yPos,
+          axis: "y",
+          axisOffset,
           symbol: chartType === "line" ? "line" : "square",
         } satisfies TooltipValue;
       })
       .filter(truthy);
-    const yAnchor = isMobile ? chartHeight : mean(values.map((d) => d.yPos));
+    const yAnchor = isMobile
+      ? chartHeight
+      : mean(values.map((d) => d.axisOffset));
     const placement = isMobile
       ? MOBILE_TOOLTIP_PLACEMENT
       : getCenteredTooltipPlacement({

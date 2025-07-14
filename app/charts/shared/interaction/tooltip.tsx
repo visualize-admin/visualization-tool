@@ -41,9 +41,17 @@ export type TooltipValue = {
   value: string;
   error?: string;
   color: string;
-  yPos?: number;
   symbol?: LegendSymbol;
-};
+} & (
+  | {
+      axis: "x" | "y";
+      axisOffset: number;
+    }
+  | {
+      axis?: undefined;
+      axisOffset?: undefined;
+    }
+);
 
 export type TooltipInfo = {
   xAnchor: number;

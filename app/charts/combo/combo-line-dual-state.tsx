@@ -181,25 +181,27 @@ const useComboLineDualState = (
 
     const values = [variables.y.left, variables.y.right]
       .map(({ orientation, getY, id, label }) => {
-        const y = getY(d);
-        const yPos = yOrientationScales[orientation](y ?? 0);
-        if (!Number.isFinite(y) || y === null) {
+        const yRaw = getY(d);
+
+        if (!Number.isFinite(yRaw) || yRaw === null) {
           return null;
         }
 
+        const axisOffset = yOrientationScales[orientation](yRaw ?? 0);
+
         return {
           label,
-          value: `${y}`,
+          value: `${yRaw}`,
           color: colors(id),
-          hide: y === null,
-          yPos: yPos,
+          axis: "y",
+          axisOffset,
           symbol: "line",
         } satisfies TooltipValue;
       })
       .filter(truthy);
     const yAnchor = isMobile
       ? chartHeight + margins.bottom
-      : (mean(values.map((d) => d.yPos)) ?? chartHeight);
+      : (mean(values.map((d) => d.axisOffset)) ?? chartHeight);
     const placement = isMobile
       ? MOBILE_TOOLTIP_PLACEMENT
       : getCenteredTooltipPlacement({

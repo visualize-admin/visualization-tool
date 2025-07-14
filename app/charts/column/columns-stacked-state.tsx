@@ -55,8 +55,8 @@ import {
   ValueLabelFormatter,
 } from "@/charts/shared/show-values-utils";
 import {
+  getStackedPosition,
   getStackedTooltipValueFormatter,
-  getStackedY,
   getStackedYScale,
 } from "@/charts/shared/stacked-helpers";
 import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
@@ -502,7 +502,7 @@ const useColumnsStackedState = (
           color: colors(getSegment(datum)),
         },
         values: sortedTooltipValues.map((d) => {
-          const yPos = getStackedPosition({
+          const y = getStackedPosition({
             observation: d,
             series,
             key: xKey,
@@ -515,7 +515,8 @@ const useColumnsStackedState = (
           return {
             label: getSegmentAbbreviationOrLabel(d),
             value: yValueFormatter(getY(d), getIdentityY(d)),
-            yPos,
+            axis: "y",
+            axisOffset: y,
             color: colors(getSegment(d)),
           } satisfies TooltipValue;
         }),

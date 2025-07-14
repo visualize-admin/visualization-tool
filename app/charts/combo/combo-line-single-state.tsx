@@ -146,24 +146,25 @@ const useComboLineSingleState = (
     const xScaled = xScale(x);
     const values = variables.y.lines
       .map(({ getY, id, label }) => {
-        const y = getY(d);
-        if (!Number.isFinite(y) || y === null) {
+        const yRaw = getY(d);
+
+        if (!Number.isFinite(yRaw) || yRaw === null) {
           return null;
         }
 
         return {
           label,
-          value: `${y}`,
+          value: `${yRaw}`,
           color: colors(id),
-          hide: y === null,
-          yPos: yScale(y ?? 0),
+          axis: "y",
+          axisOffset: yScale(yRaw ?? 0),
           symbol: "line",
         } satisfies TooltipValue;
       })
       .filter(truthy);
     const yAnchor = isMobile
       ? chartHeight
-      : (mean(values.map((d) => d.yPos)) ?? chartHeight);
+      : (mean(values.map((d) => d.axisOffset)) ?? chartHeight);
     const placement = isMobile
       ? MOBILE_TOOLTIP_PLACEMENT
       : getCenteredTooltipPlacement({
