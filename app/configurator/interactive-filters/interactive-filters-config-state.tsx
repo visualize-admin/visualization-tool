@@ -14,7 +14,7 @@ export const useInteractiveFiltersToggle = (target: "legend") => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
-    if (chartConfig.interactiveFiltersConfig?.[target]) {
+    if (chartConfig.interactiveFiltersConfig[target]) {
       const newConfig = produce(
         chartConfig.interactiveFiltersConfig,
         (draft) => {
@@ -61,7 +61,7 @@ export const useInteractiveDataFilterToggle = (dimensionId: string) => {
     });
   });
   const checked =
-    chartConfig.interactiveFiltersConfig?.dataFilters.componentIds?.includes(
+    chartConfig.interactiveFiltersConfig.dataFilters.componentIds.includes(
       dimensionId
     );
 
@@ -116,7 +116,7 @@ export const useInteractiveTimeRangeToggle = () => {
       value: newIFConfig,
     });
   });
-  const checked = chartConfig.interactiveFiltersConfig?.timeRange.active;
+  const checked = chartConfig.interactiveFiltersConfig.timeRange.active;
 
   return { checked, toggle };
 };

@@ -608,7 +608,7 @@ describe("deriveFiltersFromFields", () => {
             "it": "",
           },
         },
-        "version": "4.5.0",
+        "version": "4.6.0",
       }
     `);
   });
@@ -1110,10 +1110,34 @@ describe("colorMapping", () => {
               filters: {},
             },
           ],
+          interactiveFiltersConfig: {
+            legend: {
+              active: false,
+              componentId: "",
+            },
+            timeRange: {
+              active: false,
+              componentId: "",
+              presets: {
+                type: "range",
+                from: "",
+                to: "",
+              },
+            },
+            dataFilters: {
+              active: false,
+              componentIds: [],
+              defaultOpen: true,
+            },
+            calculation: {
+              active: false,
+              type: "identity",
+            },
+          },
         },
       ],
       activeChartKey: "abc",
-    } as ConfiguratorStateConfiguringChart;
+    } as unknown as ConfiguratorStateConfiguringChart;
 
     handleChartFieldChanged(state, {
       type: "CHART_FIELD_CHANGED",

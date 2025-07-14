@@ -763,7 +763,7 @@ export const useInteractiveFiltersVariables = (
   interactiveFiltersConfig: ChartConfig["interactiveFiltersConfig"],
   { dimensionsById }: { dimensionsById: DimensionsById }
 ): InteractiveFiltersVariables => {
-  const id = interactiveFiltersConfig?.timeRange.componentId ?? "";
+  const id = interactiveFiltersConfig.timeRange.componentId;
   const dimension = dimensionsById[id];
   const getTimeRangeDate = useTemporalVariable(id);
   const dimensionValues = dimension?.values ?? [];
@@ -897,12 +897,12 @@ export const useChartData = (
   const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
 
   // time range
-  const interactiveTimeRange = interactiveFiltersConfig?.timeRange;
-  const timeRangeFromTime = interactiveTimeRange?.presets.from
-    ? parseDate(interactiveTimeRange?.presets.from).getTime()
+  const interactiveTimeRange = interactiveFiltersConfig.timeRange;
+  const timeRangeFromTime = interactiveTimeRange.presets.from
+    ? parseDate(interactiveTimeRange.presets.from).getTime()
     : undefined;
-  const timeRangeToTime = interactiveTimeRange?.presets.to
-    ? parseDate(interactiveTimeRange?.presets.to).getTime()
+  const timeRangeToTime = interactiveTimeRange.presets.to
+    ? parseDate(interactiveTimeRange.presets.to).getTime()
     : undefined;
   const timeRangeFilters = useMemo(() => {
     const timeRangeFilter: ValuePredicate | null =
@@ -981,7 +981,7 @@ export const useChartData = (
   const interactiveLegendFilters = useMemo(() => {
     const legendItems = Object.keys(categories);
     const interactiveLegendFilter: ValuePredicate | null =
-      interactiveFiltersConfig?.legend?.active && getSegmentAbbreviationOrLabel
+      interactiveFiltersConfig.legend.active && getSegmentAbbreviationOrLabel
         ? (d: Observation) => {
             return !legendItems.includes(getSegmentAbbreviationOrLabel(d));
           }
@@ -991,7 +991,7 @@ export const useChartData = (
   }, [
     categories,
     getSegmentAbbreviationOrLabel,
-    interactiveFiltersConfig?.legend?.active,
+    interactiveFiltersConfig.legend.active,
   ]);
 
   const chartData = useMemo(() => {

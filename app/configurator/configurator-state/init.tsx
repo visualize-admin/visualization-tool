@@ -151,6 +151,7 @@ export const initChartStateFromLocalStorage = async (
   try {
     const rawState = JSON.parse(storedState);
     const migratedState = await migrateConfiguratorState(rawState);
+    console.log("migratedState", migratedState);
     state = decodeConfiguratorState(migratedState);
   } catch (e) {
     console.error("Error while parsing stored state", e);

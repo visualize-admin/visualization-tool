@@ -107,11 +107,11 @@ export const ChartControls = ({
     "dataSource" | "chartConfig" | "dashboardFilters"
   >;
 }) => {
-  const chartDataFilters = chartConfig.interactiveFiltersConfig?.dataFilters;
+  const chartDataFilters = chartConfig.interactiveFiltersConfig.dataFilters;
   const dashboardDataFilters = dashboardFilters?.dataFilters;
   const showFilters =
-    chartDataFilters?.active &&
-    chartDataFilters?.componentIds.some(
+    chartDataFilters.active &&
+    chartDataFilters.componentIds.some(
       (id) => !dashboardDataFilters?.componentIds.includes(id)
     );
   const chartFiltersState = useChartDataFiltersState({

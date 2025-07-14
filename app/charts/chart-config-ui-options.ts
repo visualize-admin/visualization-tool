@@ -655,7 +655,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               if (segment) {
                 const yScale = getStackedYScale(observations, {
                   normalize:
-                    chartConfig.interactiveFiltersConfig?.calculation.type ===
+                    chartConfig.interactiveFiltersConfig.calculation.type ===
                     "percent",
                   getX,
                   getY,
@@ -758,7 +758,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             if (disableStacked(yMeasure)) {
               setWith(chartConfig, "fields.segment.type", "grouped", Object);
 
-              if (chartConfig.interactiveFiltersConfig?.calculation) {
+              if (chartConfig.interactiveFiltersConfig.calculation) {
                 setWith(
                   chartConfig,
                   "interactiveFiltersConfig.calculation",
@@ -799,7 +799,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               if (segment && segment.type === "stacked") {
                 const yScale = getStackedYScale(observations, {
                   normalize:
-                    chartConfig.interactiveFiltersConfig?.calculation.type ===
+                    chartConfig.interactiveFiltersConfig.calculation.type ===
                     "percent",
                   getX,
                   getY,
@@ -959,7 +959,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
             if (disableStacked(xMeasure)) {
               setWith(chartConfig, "fields.segment.type", "grouped", Object);
 
-              if (chartConfig.interactiveFiltersConfig?.calculation) {
+              if (chartConfig.interactiveFiltersConfig.calculation) {
                 setWith(
                   chartConfig,
                   "interactiveFiltersConfig.calculation",
@@ -1000,7 +1000,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
               if (segment && segment.type === "stacked") {
                 const xScale = getStackedXScale(observations, {
                   normalize:
-                    chartConfig.interactiveFiltersConfig?.calculation.type ===
+                    chartConfig.interactiveFiltersConfig.calculation.type ===
                     "percent",
                   getX,
                   getY,

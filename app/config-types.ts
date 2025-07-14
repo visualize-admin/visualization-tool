@@ -164,15 +164,13 @@ export type InteractiveFiltersCalculation = t.TypeOf<
   typeof InteractiveFiltersCalculation
 >;
 
-const InteractiveFiltersConfig = t.union([
-  t.type({
-    legend: InteractiveFiltersLegend,
-    timeRange: InteractiveFiltersTimeRange,
-    dataFilters: InteractiveFiltersDataConfig,
-    calculation: InteractiveFiltersCalculation,
-  }),
-  t.undefined,
-]);
+const InteractiveFiltersConfig = t.type({
+  legend: InteractiveFiltersLegend,
+  timeRange: InteractiveFiltersTimeRange,
+  dataFilters: InteractiveFiltersDataConfig,
+  calculation: InteractiveFiltersCalculation,
+});
+
 export type InteractiveFiltersConfig = t.TypeOf<
   typeof InteractiveFiltersConfig
 >;
@@ -315,6 +313,7 @@ const GenericChartConfig = t.type({
   version: t.string,
   meta: Meta,
   cubes: t.array(Cube),
+  interactiveFiltersConfig: InteractiveFiltersConfig,
   limits: t.record(t.string, t.array(Limit)),
   conversionUnitsByComponentId: t.record(t.string, ConversionUnit),
   activeField: t.union([t.string, t.undefined]),
@@ -384,7 +383,6 @@ const ColumnConfig = t.intersection([
   t.type(
     {
       chartType: t.literal("column"),
-      interactiveFiltersConfig: InteractiveFiltersConfig,
       fields: ColumnFields,
     },
     "ColumnConfig"
@@ -423,7 +421,6 @@ const BarConfig = t.intersection([
   t.type(
     {
       chartType: t.literal("bar"),
-      interactiveFiltersConfig: InteractiveFiltersConfig,
       fields: BarFields,
     },
     "BarConfig"
@@ -472,7 +469,6 @@ const LineConfig = t.intersection([
   t.type(
     {
       chartType: t.literal("line"),
-      interactiveFiltersConfig: InteractiveFiltersConfig,
       fields: LineFields,
     },
     "LineConfig"
@@ -518,7 +514,6 @@ const AreaConfig = t.intersection([
   t.type(
     {
       chartType: t.literal("area"),
-      interactiveFiltersConfig: InteractiveFiltersConfig,
       fields: AreaFields,
     },
     "AreaConfig"
@@ -551,7 +546,6 @@ const ScatterPlotConfig = t.intersection([
   t.type(
     {
       chartType: t.literal("scatterplot"),
-      interactiveFiltersConfig: InteractiveFiltersConfig,
       fields: ScatterPlotFields,
     },
     "ScatterPlotConfig"
@@ -582,7 +576,6 @@ const PieConfig = t.intersection([
   t.type(
     {
       chartType: t.literal("pie"),
-      interactiveFiltersConfig: InteractiveFiltersConfig,
       fields: PieFields,
     },
     "PieConfig"
@@ -788,7 +781,6 @@ const TableConfig = t.intersection([
       fields: TableFields,
       settings: TableSettings,
       sorting: t.array(TableSortingOption),
-      interactiveFiltersConfig: t.undefined,
     },
     "TableConfig"
   ),
@@ -942,7 +934,6 @@ const MapConfig = t.intersection([
   t.type(
     {
       chartType: t.literal("map"),
-      interactiveFiltersConfig: InteractiveFiltersConfig,
       fields: MapFields,
       baseLayer: BaseLayer,
     },
@@ -966,7 +957,6 @@ const ComboLineSingleConfig = t.intersection([
     {
       chartType: t.literal("comboLineSingle"),
       fields: ComboLineSingleFields,
-      interactiveFiltersConfig: InteractiveFiltersConfig,
     },
     "ComboLineSingleConfig"
   ),
@@ -989,7 +979,6 @@ const ComboLineDualConfig = t.intersection([
     {
       chartType: t.literal("comboLineDual"),
       fields: ComboLineDualFields,
-      interactiveFiltersConfig: InteractiveFiltersConfig,
     },
     "ComboLineDualConfig"
   ),
@@ -1014,7 +1003,6 @@ const ComboLineColumnConfig = t.intersection([
     {
       chartType: t.literal("comboLineColumn"),
       fields: ComboLineColumnFields,
-      interactiveFiltersConfig: InteractiveFiltersConfig,
     },
     "ComboLineColumnConfig"
   ),

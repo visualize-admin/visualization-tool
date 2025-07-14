@@ -1557,6 +1557,54 @@ export const chartConfigMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    from: "4.5.0",
+    to: "4.6.0",
+    description: `ALL {
+      interactiveFiltersConfig can't be undefined anymore
+    }`,
+    up: (config) => {
+      const newConfig = { ...config, version: "4.6.0" };
+
+      if (!newConfig.interactiveFiltersConfig) {
+        newConfig.interactiveFiltersConfig = {
+          legend: {
+            active: false,
+            componentId: "",
+          },
+          timeRange: {
+            active: false,
+            componentId: "",
+            presets: {
+              type: "range",
+              from: "",
+              to: "",
+            },
+          },
+          dataFilters: {
+            active: false,
+            componentIds: [],
+            defaultOpen: true,
+          },
+          calculation: {
+            active: false,
+            type: "identity",
+          },
+        };
+      }
+
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "4.5.0" };
+
+      if (newConfig.chartType === "table") {
+        newConfig.interactiveFiltersConfig = undefined;
+      }
+
+      return newConfig;
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -2175,6 +2223,12 @@ export const configuratorStateMigrations: Migration[] = [
     toVersion: "4.6.0",
     fromChartConfigVersion: "4.4.0",
     toChartConfigVersion: "4.5.0",
+  }),
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "4.6.0",
+    toVersion: "4.7.0",
+    fromChartConfigVersion: "4.5.0",
+    toChartConfigVersion: "4.6.0",
   }),
 ];
 
