@@ -48,7 +48,7 @@ import {
   CommonChartState,
   InteractiveYTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -59,6 +59,7 @@ import {
   ValueLabelFormatter,
 } from "@/charts/shared/show-values-utils";
 import {
+  getStackedPosition,
   getStackedTooltipValueFormatter,
   getStackedXScale,
 } from "@/charts/shared/stacked-helpers";
@@ -488,7 +489,7 @@ const useBarsStackedState = (
         formatNumber,
       });
 
-      const yAnchorRaw = (yScale(y) as number) + bw;
+      const yAnchorRaw = (yScale(y) as number) + bw * 0.5;
       const xAnchor = isMobile
         ? chartHeight
         : xScale(sum(xValues.map((d) => d ?? 0)));
@@ -502,7 +503,7 @@ const useBarsStackedState = (
       const yLabel = getYAbbreviationOrLabel(datum);
 
       return {
-        yAnchor: yAnchorRaw + (placement.y === "top" ? 0.5 : -0.5) * bw,
+        yAnchor: yAnchorRaw + (placement.y === "top" ? bw : 0),
         xAnchor,
         placement,
         value: formatYAxisTick(yLabel),
@@ -511,35 +512,51 @@ const useBarsStackedState = (
           value: xValueFormatter(getX(datum), getIdentityX(datum)),
           color: colors(getSegment(datum)),
         },
-        values: sortedTooltipValues.map((d) => ({
-          label: getSegmentAbbreviationOrLabel(d),
-          value: xValueFormatter(getX(d), getIdentityX(d)),
-          color: colors(getSegment(d)),
-        })),
-      };
+        values: sortedTooltipValues.map((d) => {
+          const x = getStackedPosition({
+            observation: d,
+            series,
+            key: yKey,
+            getAxisValue: getY,
+            measureScale: xScale,
+            fallbackMeasureValue: xScale(getX(d) ?? 0),
+            getSegment,
+          });
+
+          return {
+            label: getSegmentAbbreviationOrLabel(d),
+            value: xValueFormatter(getX(d), getIdentityX(d)),
+            axis: "x",
+            axisOffset: x,
+            color: colors(getSegment(d)),
+          } satisfies TooltipValue;
+        }),
+      } satisfies TooltipInfo;
     },
     [
-      getX,
-      xScale,
+      yScale,
+      getY,
       chartDataGroupedByY,
+      getX,
       segments,
       getSegment,
+      normalize,
       xMeasure.id,
       xMeasure.unit,
       formatters,
       formatNumber,
-      getYAbbreviationOrLabel,
+      isMobile,
+      chartHeight,
+      xScale,
+      chartWidth,
       fields.segment,
+      getYAbbreviationOrLabel,
+      formatYAxisTick,
       getSegmentAbbreviationOrLabel,
-      getY,
       getIdentityX,
       colors,
-      chartWidth,
-      chartHeight,
-      isMobile,
-      normalize,
-      yScale,
-      formatYAxisTick,
+      series,
+      yKey,
     ]
   );
 
