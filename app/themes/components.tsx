@@ -463,6 +463,11 @@ export const components: Components = {
       elevation: 0,
     },
   },
+  MuiPopover: {
+    defaultProps: {
+      elevation: 0,
+    },
+  },
   MuiRadio: {
     defaultProps: {
       icon: <RadioIcon />,
