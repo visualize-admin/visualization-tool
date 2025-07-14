@@ -193,6 +193,10 @@ export const matchesAnnotationTarget = (
   observation: Observation,
   target: Annotation["target"] | undefined
 ): boolean => {
+  if (!target || (!target.axis && !target.segment)) {
+    return false;
+  }
+
   if (
     target?.axis &&
     observation[target.axis.componentId] !== target.axis.value
