@@ -44,7 +44,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -56,6 +56,7 @@ import {
 } from "@/charts/shared/show-values-utils";
 import {
   getStackedTooltipValueFormatter,
+  getStackedY,
   getStackedYScale,
 } from "@/charts/shared/stacked-helpers";
 import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
@@ -223,7 +224,7 @@ const useColumnsStackedState = (
       allSegments: segments,
       imputationType: "zeros",
     });
-  }, [getSegment, getY, chartDataGroupedByX, segments, xKey]);
+  }, [chartDataGroupedByX, xKey, getY, getSegment, segments]);
 
   const xFilter = chartConfig.cubes.find((d) => d.iri === xDimension.cubeIri)
     ?.filters[xDimension.id];
@@ -500,35 +501,51 @@ const useColumnsStackedState = (
           value: yValueFormatter(getY(datum), getIdentityY(datum)),
           color: colors(getSegment(datum)),
         },
-        values: sortedTooltipValues.map((d) => ({
-          label: getSegmentAbbreviationOrLabel(d),
-          value: yValueFormatter(getY(d), getIdentityY(d)),
-          color: colors(getSegment(d)),
-        })),
+        values: sortedTooltipValues.map((d) => {
+          const yPos = getStackedY({
+            observation: d,
+            series,
+            xKey,
+            getX,
+            yScale,
+            fallbackY: yScale(getY(d) ?? 0),
+            getSegment,
+          });
+
+          return {
+            label: getSegmentAbbreviationOrLabel(d),
+            value: yValueFormatter(getY(d), getIdentityY(d)),
+            yPos,
+            color: colors(getSegment(d)),
+          } satisfies TooltipValue;
+        }),
       };
     },
     [
-      getX,
       xScale,
+      getX,
       chartDataGroupedByX,
+      getY,
       segments,
       getSegment,
+      normalize,
       yMeasure.id,
       yMeasure.unit,
       formatters,
       formatNumber,
-      getXAbbreviationOrLabel,
+      isMobile,
+      chartHeight,
+      yScale,
+      chartWidth,
       fields.segment,
+      getXAbbreviationOrLabel,
+      isEditingAnnotation,
+      formatXAxisTick,
       getSegmentAbbreviationOrLabel,
-      getY,
       getIdentityY,
       colors,
-      chartWidth,
-      chartHeight,
-      isMobile,
-      normalize,
-      yScale,
-      formatXAxisTick,
+      series,
+      xKey,
     ]
   );
 

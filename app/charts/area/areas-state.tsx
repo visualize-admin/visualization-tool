@@ -42,7 +42,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -54,6 +54,7 @@ import {
 } from "@/charts/shared/show-values-utils";
 import {
   getStackedTooltipValueFormatter,
+  getStackedY,
   getStackedYScale,
 } from "@/charts/shared/stacked-helpers";
 import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
@@ -458,38 +459,51 @@ const useAreasState = (
           value: yValueFormatter(getY(datum), getIdentityY(datum)),
           color: colors(getSegment(datum)),
         },
-        values: fields.segment
-          ? sortedTooltipValues.map((d) => ({
-              label: getSegmentAbbreviationOrLabel(d),
-              value: yValueFormatter(getY(d), getIdentityY(d)),
-              color: colors(getSegment(d)),
-            }))
-          : undefined,
-      };
+        values: sortedTooltipValues.map((d) => {
+          const yPos = getStackedY({
+            observation: d,
+            series,
+            xKey,
+            getX: getXAsString,
+            yScale,
+            fallbackY: yScale(getY(d) ?? 0),
+            getSegment,
+          });
+
+          return {
+            label: getSegmentAbbreviationOrLabel(d),
+            value: yValueFormatter(getY(d), getIdentityY(d)),
+            yPos,
+            color: colors(getSegment(d)),
+          } satisfies TooltipValue;
+        }),
+      } satisfies TooltipInfo;
     },
     [
-      yScale,
-      colors,
-      fields.segment,
-      formatNumber,
-      formatters,
-      getSegment,
-      getSegmentAbbreviationOrLabel,
-      getX,
       getXAsString,
-      getY,
       chartDataGroupedByX,
+      getY,
       segments,
-      timeFormatUnit,
-      xDimension.timeUnit,
-      xScale,
+      getSegment,
+      normalize,
       yMeasure.id,
       yMeasure.unit,
-      normalize,
-      getIdentityY,
-      chartWidth,
-      chartHeight,
+      formatters,
+      formatNumber,
+      xScale,
+      getX,
+      yScale,
+      fields.segment,
       isMobile,
+      chartHeight,
+      chartWidth,
+      timeFormatUnit,
+      xDimension.timeUnit,
+      getSegmentAbbreviationOrLabel,
+      getIdentityY,
+      colors,
+      series,
+      xKey,
     ]
   );
 
