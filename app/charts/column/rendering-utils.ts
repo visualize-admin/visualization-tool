@@ -1,5 +1,10 @@
+import { getContrastingColor } from "@uiw/react-color";
 import { select, Selection } from "d3-selection";
+import { Series } from "d3-shape";
+import { useCallback } from "react";
 
+import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import {
   setSegmentValueLabelProps,
   setSegmentWrapperValueLabelProps,
@@ -20,6 +25,64 @@ export type RenderColumnDatum = {
   focused?: boolean;
   valueLabel?: string;
   valueLabelColor?: string;
+};
+
+export const useGetRenderColumnDatum = () => {
+  const {
+    segmentsByAbbreviationOrLabel,
+    colors,
+    showValuesBySegmentMapping,
+    valueLabelFormatter,
+    xScale,
+    yScale,
+    getX,
+    getRenderingKey,
+  } = useChartState() as StackedColumnsState;
+  const bandwidth = xScale.bandwidth();
+
+  return useCallback(
+    (s: Series<{ [key: string]: number }, string>) => {
+      const segmentLabel = s.key;
+      const segment =
+        segmentsByAbbreviationOrLabel.get(segmentLabel)?.value ?? segmentLabel;
+      const color = colors(segmentLabel);
+
+      return s.map((d) => {
+        const observation = d.data;
+        const value = observation[segmentLabel];
+        const valueLabel =
+          segment && showValuesBySegmentMapping[segment]
+            ? valueLabelFormatter(value)
+            : undefined;
+        const valueLabelColor = valueLabel
+          ? getContrastingColor(color)
+          : undefined;
+        const y = yScale(d[1]) as number;
+
+        return {
+          key: getRenderingKey(observation, segmentLabel),
+          x: xScale(getX(observation)) as number,
+          y,
+          width: bandwidth,
+          height: Math.max(0, yScale(d[0]) - y),
+          color,
+          valueLabel,
+          valueLabelColor,
+        } satisfies RenderColumnDatum;
+      });
+    },
+    [
+      bandwidth,
+      colors,
+      getRenderingKey,
+      getX,
+      segmentsByAbbreviationOrLabel,
+      showValuesBySegmentMapping,
+      valueLabelFormatter,
+      xScale,
+      yScale,
+    ]
+  );
 };
 
 export const renderColumns = (
