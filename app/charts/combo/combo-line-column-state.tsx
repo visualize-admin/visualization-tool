@@ -193,7 +193,7 @@ const useComboLineColumnState = (
   const isMobile = useIsMobile();
 
   // Tooltip
-  const getAnnotationInfo = (d: Observation) => {
+  const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const x = getXAsDate(d);
     const xScaled =
       (xScale(formatXDate(x)) as number) + xScale.bandwidth() * 0.5;
@@ -235,7 +235,7 @@ const useComboLineColumnState = (
       value: timeFormatUnit(x, xTimeUnit),
       placement,
       values,
-    } satisfies TooltipInfo;
+    };
   };
 
   return {

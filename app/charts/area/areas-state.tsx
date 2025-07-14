@@ -478,7 +478,7 @@ const useAreasState = (
             color: colors(getSegment(d)),
           } satisfies TooltipValue;
         }),
-      } satisfies TooltipInfo;
+      };
     },
     [
       getXAsString,

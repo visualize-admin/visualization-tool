@@ -35,7 +35,7 @@ import {
   CommonChartState,
   InteractiveYTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -448,14 +448,17 @@ const useBarsGroupedState = (
         error: getFormattedXUncertainty(datum),
         color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map((d) => ({
-        label: getSegmentAbbreviationOrLabel(d),
-        value: xMeasure.unit
-          ? `${formatNumber(getX(d))} ${xMeasure.unit}`
-          : formatNumber(getX(d)),
-        error: getFormattedXUncertainty(d),
-        color: colors(getSegment(d)),
-      })),
+      values: sortedTooltipValues.map(
+        (d) =>
+          ({
+            label: getSegmentAbbreviationOrLabel(d),
+            value: xMeasure.unit
+              ? `${formatNumber(getX(d))} ${xMeasure.unit}`
+              : formatNumber(getX(d)),
+            error: getFormattedXUncertainty(d),
+            color: colors(getSegment(d)),
+          }) satisfies TooltipValue
+      ),
     };
   };
 

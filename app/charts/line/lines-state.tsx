@@ -308,7 +308,7 @@ const useLinesState = (
   const isMobile = useIsMobile();
 
   // Tooltip
-  const getAnnotationInfo = (datum: Observation) => {
+  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
     const x = getX(datum);
     const tooltipValues = chartData.filter(
       (d) => getX(d).getTime() === x.getTime()
@@ -362,7 +362,7 @@ const useLinesState = (
             symbol: "line",
           }) satisfies TooltipValue
       ),
-    } satisfies TooltipInfo;
+    };
   };
 
   return {

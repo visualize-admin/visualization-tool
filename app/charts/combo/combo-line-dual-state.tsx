@@ -175,7 +175,7 @@ const useComboLineDualState = (
   const isMobile = useIsMobile();
 
   // Tooltip
-  const getAnnotationInfo = (d: Observation) => {
+  const getAnnotationInfo = (d: Observation): TooltipInfo => {
     const x = getX(d);
     const xScaled = xScale(x);
 
@@ -217,7 +217,7 @@ const useComboLineDualState = (
       value: timeFormatUnit(x, xDimension.timeUnit),
       placement,
       values,
-    } satisfies TooltipInfo;
+    };
   };
 
   return {

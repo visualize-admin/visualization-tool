@@ -531,7 +531,7 @@ const useBarsStackedState = (
             color: colors(getSegment(d)),
           } satisfies TooltipValue;
         }),
-      } satisfies TooltipInfo;
+      };
     },
     [
       yScale,

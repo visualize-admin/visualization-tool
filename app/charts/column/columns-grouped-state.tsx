@@ -462,7 +462,7 @@ const useColumnsGroupedState = (
             color: colors(getSegment(d)),
           }) satisfies TooltipValue
       ),
-    } satisfies TooltipInfo;
+    };
   };
 
   return {
