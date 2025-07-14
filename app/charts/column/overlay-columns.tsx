@@ -1,42 +1,30 @@
-import { useCallback } from "react";
-
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import { ColumnsState } from "@/charts/column/columns-state";
-import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useOverlayInteractions } from "@/charts/shared/overlay-utils";
-import { Observation } from "@/domain/data";
 
-export const InteractionColumns = ({ temporal }: { temporal?: boolean }) => {
+export const InteractionColumns = () => {
   const chartState = useChartState() as
     | ColumnsState
     | StackedColumnsState
-    | GroupedColumnsState
-    | ComboLineColumnState;
+    | GroupedColumnsState;
   const {
     chartData,
     bounds: { chartHeight, margins },
     getX,
-    getXAsDate,
-    formatXDate,
     xScaleInteraction,
+    getSegment,
   } = chartState;
   const { onClick, onHover, onHoverOut } = useOverlayInteractions({
-    getSegment: "getSegment" in chartState ? chartState.getSegment : undefined,
+    getSegment,
   });
-  const getXValue = useCallback(
-    (d: Observation) => {
-      return temporal ? formatXDate(getXAsDate(d)) : getX(d);
-    },
-    [formatXDate, getX, getXAsDate, temporal]
-  );
   const bandwidth = xScaleInteraction.bandwidth();
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
       {chartData.map((d, i) => {
-        const x = getXValue(d);
+        const x = getX(d);
         const xScaled = xScaleInteraction(x) as number;
 
         return (
