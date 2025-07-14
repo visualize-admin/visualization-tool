@@ -14,6 +14,7 @@ import {
   RenderOptions,
   toggleFocusBorder,
 } from "@/charts/shared/rendering-utils";
+import { Observation } from "@/domain/data";
 
 export type RenderColumnDatum = {
   key: string;
@@ -25,17 +26,20 @@ export type RenderColumnDatum = {
   focused?: boolean;
   valueLabel?: string;
   valueLabelColor?: string;
+  observation: Observation;
 };
 
-export const useGetRenderColumnDatum = () => {
+export const useGetRenderStackedColumnDatum = () => {
   const {
     segmentsByAbbreviationOrLabel,
     colors,
     showValuesBySegmentMapping,
     valueLabelFormatter,
+    xDimension,
     xScale,
     yScale,
     getX,
+    segmentDimension,
     getRenderingKey,
   } = useChartState() as StackedColumnsState;
   const bandwidth = xScale.bandwidth();
@@ -57,17 +61,24 @@ export const useGetRenderColumnDatum = () => {
         const valueLabelColor = valueLabel
           ? getContrastingColor(color)
           : undefined;
+        const xRaw = getX(observation);
         const y = yScale(d[1]) as number;
 
         return {
           key: getRenderingKey(observation, segmentLabel),
-          x: xScale(getX(observation)) as number,
+          x: xScale(xRaw) as number,
           y,
           width: bandwidth,
           height: Math.max(0, yScale(d[0]) - y),
           color,
           valueLabel,
           valueLabelColor,
+          // We need to include the axis value and segment in the observation
+          // so that we can use it in the overlay interactions.
+          observation: {
+            [xDimension.id]: xRaw,
+            [`${segmentDimension?.id ?? ""}/__iri__`]: segment,
+          },
         } satisfies RenderColumnDatum;
       });
     },
@@ -76,9 +87,11 @@ export const useGetRenderColumnDatum = () => {
       colors,
       getRenderingKey,
       getX,
+      segmentDimension?.id,
       segmentsByAbbreviationOrLabel,
       showValuesBySegmentMapping,
       valueLabelFormatter,
+      xDimension.id,
       xScale,
       yScale,
     ]

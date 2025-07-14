@@ -123,6 +123,7 @@ export const ColumnsGrouped = () => {
           width: bandwidth,
           height: Math.max(0, Math.abs(yScale(y) - y0)),
           color: colors(x),
+          observation: d,
         } satisfies RenderColumnDatum;
       });
     });

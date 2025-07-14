@@ -134,6 +134,7 @@ export const Columns = () => {
         // which is not what we want.
         color: color ?? colors.copy()(key),
         focused,
+        observation: d,
       } satisfies RenderColumnDatum;
     });
   }, [
