@@ -116,6 +116,7 @@ export const BarsGrouped = () => {
           width: Math.max(0, Math.abs(xScale(x) - x0)),
           height: bandwidth,
           color: colors(y),
+          observation: d,
         };
       });
     });

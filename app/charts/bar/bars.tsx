@@ -129,6 +129,7 @@ export const Bars = () => {
         // which is not what we want.
         color: color ?? colors.copy()(key),
         focused,
+        observation: d,
       } satisfies RenderBarDatum;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

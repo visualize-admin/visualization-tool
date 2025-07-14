@@ -1,5 +1,10 @@
+import { getContrastingColor } from "@uiw/react-color";
 import { select, Selection } from "d3-selection";
+import { Series } from "d3-shape";
+import { useCallback } from "react";
 
+import { StackedBarsState } from "@/charts/bar/bars-stacked-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import {
   setSegmentValueLabelProps,
   setSegmentWrapperValueLabelProps,
@@ -9,6 +14,7 @@ import {
   RenderOptions,
   toggleFocusBorder,
 } from "@/charts/shared/rendering-utils";
+import { Observation } from "@/domain/data";
 
 export type RenderBarDatum = {
   key: string;
@@ -20,6 +26,77 @@ export type RenderBarDatum = {
   focused?: boolean;
   valueLabel?: string;
   valueLabelColor?: string;
+  observation: Observation;
+};
+
+export const useGetRenderStackedBarDatum = () => {
+  const {
+    segmentsByAbbreviationOrLabel,
+    colors,
+    showValuesBySegmentMapping,
+    valueLabelFormatter,
+    xScale,
+    yDimension,
+    yScale,
+    getY,
+    segmentDimension,
+    getRenderingKey,
+  } = useChartState() as StackedBarsState;
+  const bandwidth = yScale.bandwidth();
+
+  return useCallback(
+    (s: Series<{ [key: string]: number }, string>) => {
+      const segmentLabel = s.key;
+      const segment =
+        segmentsByAbbreviationOrLabel.get(segmentLabel)?.value ?? segmentLabel;
+      const color = colors(segmentLabel);
+
+      return s.map((d) => {
+        const observation = d.data;
+        const value = observation[segmentLabel];
+        const valueLabel =
+          segment && showValuesBySegmentMapping[segment]
+            ? valueLabelFormatter(value)
+            : undefined;
+        const valueLabelColor = valueLabel
+          ? getContrastingColor(color)
+          : undefined;
+        const x = xScale(d[0]);
+        const yRaw = getY(observation);
+        const y = yScale(yRaw) as number;
+
+        return {
+          key: getRenderingKey(observation, segmentLabel),
+          y,
+          x,
+          height: bandwidth,
+          width: Math.min(0, x - xScale(d[1])) * -1,
+          color,
+          valueLabel,
+          valueLabelColor,
+          // We need to include the axis value and segment in the observation
+          // so that we can use it in the overlay interactions.
+          observation: {
+            [yDimension.id]: yRaw,
+            [`${segmentDimension?.id ?? ""}/__iri__`]: segment,
+          },
+        } satisfies RenderBarDatum;
+      });
+    },
+    [
+      bandwidth,
+      colors,
+      getRenderingKey,
+      getY,
+      segmentDimension?.id,
+      segmentsByAbbreviationOrLabel,
+      showValuesBySegmentMapping,
+      valueLabelFormatter,
+      xScale,
+      yDimension.id,
+      yScale,
+    ]
+  );
 };
 
 type RenderBarOptions = RenderOptions & {
