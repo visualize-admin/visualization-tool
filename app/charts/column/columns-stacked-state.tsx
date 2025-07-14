@@ -539,7 +539,6 @@ const useColumnsStackedState = (
       chartWidth,
       fields.segment,
       getXAbbreviationOrLabel,
-      isEditingAnnotation,
       formatXAxisTick,
       getSegmentAbbreviationOrLabel,
       getIdentityY,
