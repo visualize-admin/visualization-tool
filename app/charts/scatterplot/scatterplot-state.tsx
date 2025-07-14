@@ -46,7 +46,7 @@ export type ScatterplotState = CommonChartState &
     yScale: ScaleLinear<number, number>;
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -191,8 +191,7 @@ const useScatterplotState = (
 
   const isMobile = useIsMobile();
 
-  // Tooltip
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum) ?? NaN);
     const yRef = yScale(getY(datum) ?? NaN);
     const xAnchor = xRef;
@@ -246,7 +245,7 @@ const useScatterplotState = (
     yScale,
     colors,
     getColorLabel: getSegmentLabel,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,

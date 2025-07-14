@@ -74,7 +74,7 @@ export type LinesState = CommonChartState &
     grouped: Map<string, Observation[]>;
     chartWideData: ArrayLike<Observation>;
     xKey: string;
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -307,8 +307,7 @@ const useLinesState = (
 
   const isMobile = useIsMobile();
 
-  // Tooltip
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const x = getX(datum);
     const tooltipValues = chartData.filter(
       (d) => getX(d).getTime() === x.getTime()
@@ -379,7 +378,7 @@ const useLinesState = (
     grouped: preparedDataGroupedBySegment,
     chartWideData,
     xKey,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,

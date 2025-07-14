@@ -69,7 +69,7 @@ export type BarsState = CommonChartState &
     yScaleInteraction: ScaleBand<string>;
     yScale: ScaleBand<string>;
     minY: string;
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     leftAxisLabelSize: AxisLabelSizeVariables;
@@ -304,12 +304,11 @@ const useBarsState = (
     [yDimension, formatYDate, getYLabel]
   );
 
-  // Tooltip
-  const getAnnotationInfo = (d: Observation): TooltipInfo => {
-    const yAnchor = (yScale(getY(d)) as number) + yScale.bandwidth() * 0.5;
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
+    const yAnchor = (yScale(getY(datum)) as number) + yScale.bandwidth() * 0.5;
     const xAnchor = isMobile
       ? chartHeight
-      : xScale(Math.max(getX(d) ?? NaN, 0));
+      : xScale(Math.max(getX(datum) ?? NaN, 0));
     const placement = isMobile
       ? MOBILE_TOOLTIP_PLACEMENT
       : getCenteredTooltipPlacement({
@@ -318,7 +317,7 @@ const useBarsState = (
           topAnchor: !fields.segment,
         });
 
-    const yLabel = getYAbbreviationOrLabel(d);
+    const yLabel = getYAbbreviationOrLabel(datum);
 
     const xValueFormatter = (value: number | null) =>
       formatNumberWithUnit(
@@ -327,7 +326,7 @@ const useBarsState = (
         xMeasure.unit
       );
 
-    const x = getX(d);
+    const x = getX(datum);
 
     return {
       xAnchor,
@@ -336,8 +335,8 @@ const useBarsState = (
       value: formatYAxisTick(yLabel),
       datum: {
         label: undefined,
-        value: x !== null && isNaN(x) ? "-" : `${xValueFormatter(getX(d))}`,
-        error: getFormattedXUncertainty(d),
+        value: x !== null && isNaN(x) ? "-" : `${xValueFormatter(getX(datum))}`,
+        error: getFormattedXUncertainty(datum),
         color: "",
       },
       values: undefined,
@@ -370,7 +369,7 @@ const useBarsState = (
     yScaleTimeRange,
     yScaleInteraction,
     yScale,
-    getAnnotationInfo,
+    getTooltipInfo,
     getColorLabel: getSegmentLabel,
     colors,
     leftAxisLabelSize,

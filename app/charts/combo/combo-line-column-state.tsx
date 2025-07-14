@@ -70,7 +70,7 @@ export type ComboLineColumnState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (label: string) => string;
     chartWideData: ArrayLike<Observation>;
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     maxRightTickWidth: number;
     leftAxisLabelSize: AxisLabelSizeVariables;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -192,14 +192,13 @@ const useComboLineColumnState = (
 
   const isMobile = useIsMobile();
 
-  // Tooltip
-  const getAnnotationInfo = (d: Observation): TooltipInfo => {
-    const x = getXAsDate(d);
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
+    const x = getXAsDate(datum);
     const xScaled =
       (xScale(formatXDate(x)) as number) + xScale.bandwidth() * 0.5;
     const values = [variables.y.left, variables.y.right]
       .map(({ orientation, getY, id, label, chartType }) => {
-        const yRaw = getY(d);
+        const yRaw = getY(datum);
 
         if (!Number.isFinite(yRaw) || yRaw === null) {
           return null;
@@ -229,7 +228,11 @@ const useComboLineColumnState = (
         });
 
     return {
-      datum: { label: "", value: "0", color: schemeCategory10[0] },
+      datum: {
+        label: "",
+        value: "0",
+        color: schemeCategory10[0],
+      },
       xAnchor: xScaled,
       yAnchor,
       value: timeFormatUnit(x, xTimeUnit),
@@ -254,7 +257,7 @@ const useComboLineColumnState = (
     colors,
     getColorLabel: (label) => label,
     chartWideData,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize: {
       width: Math.max(leftAxisLabelSize.width, rightAxisLabelSize.width),
       height: Math.max(leftAxisLabelSize.height, rightAxisLabelSize.height),

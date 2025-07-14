@@ -17,7 +17,7 @@ export const InteractionHorizontal = memo(function InteractionHorizontal() {
     chartWideData,
     xScale,
     getX,
-    getAnnotationInfo,
+    getTooltipInfo,
     bounds: { chartWidth, chartHeight, margins },
   } = useChartState() as
     | AreasState
@@ -53,7 +53,7 @@ export const InteractionHorizontal = memo(function InteractionHorizontal() {
           ? dRight
           : dLeft;
       const yAnchor = closestDatum
-        ? getAnnotationInfo(closestDatum).yAnchor
+        ? getTooltipInfo(closestDatum).yAnchor
         : undefined;
 
       if (!closestDatum || Number.isNaN(yAnchor) || yAnchor === undefined) {
@@ -89,7 +89,7 @@ export const InteractionHorizontal = memo(function InteractionHorizontal() {
       chartData,
       chartWideData,
       dispatch,
-      getAnnotationInfo,
+      getTooltipInfo,
       getX,
       hideTooltip,
       interaction.observation,

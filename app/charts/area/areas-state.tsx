@@ -87,7 +87,7 @@ export type AreasState = CommonChartState &
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
     series: Series<{ [key: string]: number }, string>[];
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -414,8 +414,7 @@ const useAreasState = (
 
   const isMobile = useIsMobile();
 
-  /** Tooltip */
-  const getAnnotationInfo = useCallback(
+  const getTooltipInfo = useCallback(
     (datum: Observation): TooltipInfo => {
       const x = getXAsString(datum);
       const tooltipValues = chartDataGroupedByX.get(x) ?? [];
@@ -521,7 +520,7 @@ const useAreasState = (
     getColorLabel: getSegmentLabel,
     chartWideData,
     series,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,

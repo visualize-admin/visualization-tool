@@ -39,12 +39,12 @@ type RulerInnerProps = {
 
 const RulerInner = (props: RulerInnerProps) => {
   const { d, rotate } = props;
-  const { getAnnotationInfo, bounds } = useChartState() as
+  const { getTooltipInfo, bounds } = useChartState() as
     | LinesState
     | ComboLineSingleState
     | ComboLineDualState
     | ComboLineColumnState;
-  const { xAnchor, value, datum, placement, values } = getAnnotationInfo(d);
+  const { xAnchor, value, datum, placement, values } = getTooltipInfo(d);
 
   return (
     <RulerContent

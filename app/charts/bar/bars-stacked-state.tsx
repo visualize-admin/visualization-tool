@@ -92,7 +92,7 @@ export type StackedBarsState = CommonChartState &
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
     series: Series<{ [key: string]: number }, string>[];
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -467,8 +467,7 @@ const useBarsStackedState = (
     [yDimension, formatYDate, getYLabel]
   );
 
-  // Tooltips
-  const getAnnotationInfo = useCallback(
+  const getTooltipInfo = useCallback(
     (datum: Observation): TooltipInfo => {
       const bw = yScale.bandwidth();
       const y = getY(datum);
@@ -584,7 +583,7 @@ const useBarsStackedState = (
     getColorLabel: getSegmentLabel,
     chartWideData,
     series,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,

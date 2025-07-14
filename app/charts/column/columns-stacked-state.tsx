@@ -88,7 +88,7 @@ export type StackedColumnsState = CommonChartState &
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
     series: Series<{ [key: string]: number }, string>[];
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -456,8 +456,7 @@ const useColumnsStackedState = (
     [xDimension, formatXDate, getXLabel]
   );
 
-  // Tooltips
-  const getAnnotationInfo = useCallback(
+  const getTooltipInfo = useCallback(
     (datum: Observation): TooltipInfo => {
       const bw = xScale.bandwidth();
       const x = getX(datum);
@@ -571,7 +570,7 @@ const useColumnsStackedState = (
     getColorLabel: getSegmentLabel,
     chartWideData,
     series,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,

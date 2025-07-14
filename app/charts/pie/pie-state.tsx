@@ -47,7 +47,7 @@ export type PieState = CommonChartState &
     getPieData: Pie<$IntentionalAny, Observation>;
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
   };
@@ -219,8 +219,7 @@ const usePieState = (
     return `${rounded}% (${formattedValue})`;
   };
 
-  // Tooltip
-  const getAnnotationInfo = (d: Observation): TooltipInfo => {
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = chartWidth / 2;
     const yAnchor = -4;
 
@@ -231,10 +230,10 @@ const usePieState = (
       xAnchor,
       yAnchor,
       placement: { x: xPlacement, y: yPlacement },
-      value: getSegmentAbbreviationOrLabel(d),
+      value: getSegmentAbbreviationOrLabel(datum),
       datum: {
-        value: valueFormatter(getY(d)),
-        color: colors(getSegment(d)) as string,
+        value: valueFormatter(getY(datum)),
+        color: colors(getSegment(datum)) as string,
       },
       values: undefined,
       withTriangle: false,
@@ -267,7 +266,7 @@ const usePieState = (
     getPieData,
     colors,
     getColorLabel: getSegmentLabel,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: 0,
     ...showValuesVariables,

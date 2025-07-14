@@ -69,7 +69,7 @@ export type GroupedBarsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     grouped: [string, Observation[]][];
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -403,8 +403,7 @@ const useBarsGroupedState = (
     [yDimension, formatYDate, getYLabel]
   );
 
-  // Tooltip
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const bw = yScale.bandwidth();
     const y = getY(datum);
 
@@ -476,7 +475,7 @@ const useBarsGroupedState = (
     colors,
     getColorLabel: getSegmentLabel,
     grouped,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,

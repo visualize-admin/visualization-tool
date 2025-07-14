@@ -35,11 +35,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const HoverDots = ({ d }: { d: Observation }) => {
   const {
-    getAnnotationInfo,
+    getTooltipInfo,
     bounds: { margins },
   } = useChartState() as LinesState | ComboLineSingleState;
   const classes = useStyles();
-  const { xAnchor, values } = getAnnotationInfo(d);
+  const { xAnchor, values } = getTooltipInfo(d);
 
   return (
     <>

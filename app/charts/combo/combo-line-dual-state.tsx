@@ -58,7 +58,7 @@ export type ComboLineDualState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (label: string) => string;
     chartWideData: ArrayLike<Observation>;
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     maxRightTickWidth: number;
     leftAxisLabelSize: AxisLabelSizeVariables;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -174,14 +174,13 @@ const useComboLineDualState = (
 
   const isMobile = useIsMobile();
 
-  // Tooltip
-  const getAnnotationInfo = (d: Observation): TooltipInfo => {
-    const x = getX(d);
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
+    const x = getX(datum);
     const xScaled = xScale(x);
 
     const values = [variables.y.left, variables.y.right]
       .map(({ orientation, getY, id, label }) => {
-        const yRaw = getY(d);
+        const yRaw = getY(datum);
 
         if (!Number.isFinite(yRaw) || yRaw === null) {
           return null;
@@ -234,7 +233,7 @@ const useComboLineDualState = (
     colors,
     getColorLabel: (label) => label,
     chartWideData,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize: {
       width: Math.max(leftAxisLabelSize.width, rightAxisLabelSize.width),
       height: Math.max(leftAxisLabelSize.height, rightAxisLabelSize.height),
