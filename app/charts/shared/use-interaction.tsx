@@ -13,6 +13,7 @@ type InteractionState = {
   type: "tooltip" | "focus";
   visible: boolean;
   observation: Observation | undefined;
+  segment?: string;
   mouse?: {
     x: number;
     y: number;
