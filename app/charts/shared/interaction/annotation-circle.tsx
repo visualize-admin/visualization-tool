@@ -10,7 +10,7 @@ import {
 export const AnnotationCircle = ({
   x,
   y,
-  color = "#6B7280",
+  color = DEFAULT_ANNOTATION_CIRCLE_COLOR,
   focused = false,
 }: {
   x: number;
@@ -30,6 +30,7 @@ export const AnnotationCircle = ({
   );
 };
 
+export const DEFAULT_ANNOTATION_CIRCLE_COLOR = "#6B7280";
 const SIZE = 16;
 
 const useStyles = makeStyles((theme: Theme) => ({

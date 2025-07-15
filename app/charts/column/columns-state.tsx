@@ -34,6 +34,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
+import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/interaction/annotation-circle";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
@@ -322,6 +323,7 @@ const useColumnsState = (
       return {
         x,
         y,
+        color: DEFAULT_ANNOTATION_CIRCLE_COLOR,
       };
     },
     [xScale, yScale, getY, getX]

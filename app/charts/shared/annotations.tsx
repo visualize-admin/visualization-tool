@@ -93,4 +93,4 @@ type AnnotationPosition = {
   focused: boolean;
 };
 
-export const ANNOTATION_SINGLE_SEGMENT_OFFSET = 16;
+export const ANNOTATION_SINGLE_SEGMENT_OFFSET = 12;

@@ -31,6 +31,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
+import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/interaction/annotation-circle";
 import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
@@ -310,17 +311,17 @@ const useLinesState = (
   const isMobile = useIsMobile();
 
   const getAnnotationInfo = useCallback(
-    (datum: Observation, segment: string) => {
+    (datum: Observation) => {
       const x = xScale(getX(datum));
       const y = yScale(getY(datum) ?? 0);
 
       return {
         x,
         y,
-        color: colors(segment),
+        color: DEFAULT_ANNOTATION_CIRCLE_COLOR,
       };
     },
-    [colors, getX, getY, xScale, yScale]
+    [getX, getY, xScale, yScale]
   );
 
   const getTooltipInfo = (datum: Observation): TooltipInfo => {
