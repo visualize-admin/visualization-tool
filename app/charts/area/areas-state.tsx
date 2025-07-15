@@ -459,6 +459,7 @@ const useAreasState = (
           color: colors(getSegment(datum)),
         },
         values: sortedTooltipValues.map((d) => {
+          const segment = getSegment(d);
           const y = getStackedPosition({
             observation: d,
             series,
@@ -466,7 +467,7 @@ const useAreasState = (
             getAxisValue: getXAsString,
             measureScale: yScale,
             fallbackMeasureValue: yScale(getY(d) ?? 0),
-            getSegment,
+            segment,
           });
 
           return {
@@ -474,7 +475,8 @@ const useAreasState = (
             value: yValueFormatter(getY(d), getIdentityY(d)),
             axis: "y",
             axisOffset: y,
-            color: colors(getSegment(d)),
+            segment,
+            color: colors(segment),
           } satisfies TooltipValue;
         }),
       };

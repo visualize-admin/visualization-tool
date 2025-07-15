@@ -448,19 +448,21 @@ const useColumnsGroupedState = (
         error: getFormattedYUncertainty(datum),
         color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map(
-        (d) =>
-          ({
-            label: getSegmentAbbreviationOrLabel(d),
-            value: yMeasure.unit
-              ? `${formatNumber(getY(d))} ${yMeasure.unit}`
-              : formatNumber(getY(d)),
-            axis: "y",
-            axisOffset: yScale(getY(d) ?? 0),
-            error: getFormattedYUncertainty(d),
-            color: colors(getSegment(d)),
-          }) satisfies TooltipValue
-      ),
+      values: sortedTooltipValues.map((d) => {
+        const segment = getSegment(d);
+
+        return {
+          label: getSegmentAbbreviationOrLabel(d),
+          value: yMeasure.unit
+            ? `${formatNumber(getY(d))} ${yMeasure.unit}`
+            : formatNumber(getY(d)),
+          axis: "y",
+          axisOffset: yScale(getY(d) ?? 0),
+          error: getFormattedYUncertainty(d),
+          segment,
+          color: colors(segment),
+        } satisfies TooltipValue;
+      }),
     };
   };
 

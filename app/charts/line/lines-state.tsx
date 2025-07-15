@@ -349,18 +349,20 @@ const useLinesState = (
         error: getFormattedYUncertainty(datum),
         color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map(
-        (d) =>
-          ({
-            hide: getY(d) === null,
-            label: getSegmentAbbreviationOrLabel(d),
-            value: yValueFormatter(getY(d)),
-            color: colors(getSegment(d)),
-            axis: "y",
-            axisOffset: yScale(getY(d) ?? 0),
-            symbol: "line",
-          }) satisfies TooltipValue
-      ),
+      values: sortedTooltipValues.map((d) => {
+        const segment = getSegment(d);
+
+        return {
+          hide: getY(d) === null,
+          label: getSegmentAbbreviationOrLabel(d),
+          value: yValueFormatter(getY(d)),
+          axis: "y",
+          axisOffset: yScale(getY(d) ?? 0),
+          symbol: "line",
+          color: colors(segment),
+          segment,
+        } satisfies TooltipValue;
+      }),
     };
   };
 

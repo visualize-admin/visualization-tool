@@ -158,7 +158,7 @@ export const getStackedPosition = <T extends { [key: string]: any }>({
   getAxisValue,
   measureScale,
   fallbackMeasureValue,
-  getSegment,
+  segment,
 }: {
   observation: Observation;
   series: Series<T, string>[];
@@ -166,10 +166,9 @@ export const getStackedPosition = <T extends { [key: string]: any }>({
   getAxisValue: (d: Observation) => string;
   measureScale: ScaleLinear<number, number>;
   fallbackMeasureValue: number;
-  getSegment: (d: Observation) => string;
+  segment: string;
 }) => {
   const axisValue = getAxisValue(observation);
-  const segment = getSegment(observation);
   const segmentSeries = series.find((s) => s.key === segment);
   const seriesPoint = segmentSeries?.find((s) => s.data[key] === axisValue);
 

@@ -517,6 +517,7 @@ const useBarsStackedState = (
           color: colors(getSegment(datum)),
         },
         values: sortedTooltipValues.map((d) => {
+          const segment = getSegment(d);
           const x = getStackedPosition({
             observation: d,
             series,
@@ -524,7 +525,7 @@ const useBarsStackedState = (
             getAxisValue: getY,
             measureScale: xScale,
             fallbackMeasureValue: xScale(getX(d) ?? 0),
-            getSegment,
+            segment,
           });
 
           return {
@@ -532,7 +533,8 @@ const useBarsStackedState = (
             value: xValueFormatter(getX(d), getIdentityX(d)),
             axis: "x",
             axisOffset: x,
-            color: colors(getSegment(d)),
+            segment,
+            color: colors(segment),
           } satisfies TooltipValue;
         }),
       };

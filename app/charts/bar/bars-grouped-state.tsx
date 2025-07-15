@@ -447,17 +447,19 @@ const useBarsGroupedState = (
         error: getFormattedXUncertainty(datum),
         color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map(
-        (d) =>
-          ({
-            label: getSegmentAbbreviationOrLabel(d),
-            value: xMeasure.unit
-              ? `${formatNumber(getX(d))} ${xMeasure.unit}`
-              : formatNumber(getX(d)),
-            error: getFormattedXUncertainty(d),
-            color: colors(getSegment(d)),
-          }) satisfies TooltipValue
-      ),
+      values: sortedTooltipValues.map((d) => {
+        const segment = getSegment(d);
+
+        return {
+          label: getSegmentAbbreviationOrLabel(d),
+          value: xMeasure.unit
+            ? `${formatNumber(getX(d))} ${xMeasure.unit}`
+            : formatNumber(getX(d)),
+          error: getFormattedXUncertainty(d),
+          segment,
+          color: colors(segment),
+        } satisfies TooltipValue;
+      }),
     };
   };
 
