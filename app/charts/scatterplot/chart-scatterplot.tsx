@@ -3,6 +3,7 @@ import { memo } from "react";
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { Scatterplot } from "@/charts/scatterplot/scatterplot";
 import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
+import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
 import {
   AxisHeightLinear,
   AxisHeightLinearDomain,
@@ -16,6 +17,7 @@ import {
   ChartControlsContainer,
   ChartSvg,
 } from "@/charts/shared/containers";
+import { HoverAnnotationDot } from "@/charts/shared/interaction/hover-annotation-dot";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
@@ -36,6 +38,7 @@ const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
   const { chartConfig, dimensions, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
+  const isEditingAnnotation = useIsEditingAnnotation();
 
   return (
     <ScatterplotChart {...props}>
@@ -49,7 +52,11 @@ const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
           <InteractionVoronoi />
         </ChartSvg>
         <Ruler />
-        <Tooltip type="single" />
+        {isEditingAnnotation ? (
+          <HoverAnnotationDot />
+        ) : (
+          <Tooltip type="single" />
+        )}
       </ChartContainer>
       {(fields.animation || fields.segment) && (
         <ChartControlsContainer>
