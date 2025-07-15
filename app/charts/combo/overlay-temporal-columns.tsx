@@ -2,21 +2,18 @@ import { useCallback } from "react";
 
 import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { useChartState } from "@/charts/shared/chart-state";
-import { useOverlayInteractions } from "@/charts/shared/overlay-utils";
+import { useAnnotationInteractions } from "@/charts/shared/use-annotation-interactions";
 import { Observation } from "@/domain/data";
 
 export const InteractionTemporalColumns = () => {
-  const chartState = useChartState() as ComboLineColumnState;
   const {
     chartData,
     bounds: { chartHeight, margins },
     getXAsDate,
     formatXDate,
     xScaleInteraction,
-  } = chartState;
-  const { onClick, onHover, onHoverOut } = useOverlayInteractions({
-    getSegment: undefined,
-  });
+  } = useChartState() as ComboLineColumnState;
+  const { onClick, onHover, onHoverOut } = useAnnotationInteractions();
   const getXValue = useCallback(
     (d: Observation) => {
       return formatXDate(getXAsDate(d));
@@ -41,9 +38,9 @@ export const InteractionTemporalColumns = () => {
             fill="hotpink"
             fillOpacity={0}
             stroke="none"
-            onMouseOver={() => onHover(d)}
+            onMouseOver={() => onHover(d, { segment: undefined })}
             onMouseOut={onHoverOut}
-            onClick={() => onClick(d)}
+            onClick={() => onClick(d, { segment: undefined })}
           />
         );
       })}
