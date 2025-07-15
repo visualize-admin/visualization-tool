@@ -179,5 +179,5 @@ export const getStackedPosition = <T extends { [key: string]: any }>({
 
   const [y0, y1] = seriesPoint;
 
-  return measureScale((y0 + y1) * 0.5);
+  return measureScale(series.length === 1 ? y1 : (y0 + y1) * 0.5);
 };
