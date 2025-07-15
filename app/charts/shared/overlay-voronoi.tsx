@@ -6,37 +6,36 @@ import { AreasState } from "@/charts/area/areas-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { useChartState } from "@/charts/shared/chart-state";
-import { useOverlayInteractions } from "@/charts/shared/overlay-utils";
+import { useAnnotationInteractions } from "@/charts/shared/use-annotation-interactions";
+import { Observation } from "@/domain/data";
 
-const atLeastZero = (n: number) => (n < 0 ? 0 : n);
+type InteractionVoronoiChartState = AreasState | LinesState | ScatterplotState;
 
 export const InteractionVoronoi = memo(function InteractionVoronoi({
   debug,
 }: {
   debug?: boolean;
 }) {
+  const ref = useRef<SVGGElement>(null);
+  const chartState = useChartState() as InteractionVoronoiChartState;
   const {
-    chartData,
-    getX,
-    xScale,
-    getY,
-    yScale,
+    bounds: { chartWidth, chartHeight, margins },
     getSegment,
     colors,
-    bounds: { chartWidth, chartHeight, margins },
-  } = useChartState() as LinesState | AreasState | ScatterplotState;
-  const { onClick, onHover, onHoverOut } = useOverlayInteractions({
-    getSegment,
-  });
-  const ref = useRef<SVGGElement>(null);
+  } = chartState;
+  const { onClick, onHover, onHoverOut } = useAnnotationInteractions();
+
+  const voronoiPoints = useMemo(() => {
+    return getVoronoiPoints(chartState);
+  }, [chartState]);
 
   const delaunay = useMemo(() => {
     return Delaunay.from(
-      chartData,
-      (d) => xScale(getX(d) ?? NaN),
-      (d) => yScale(getY(d) ?? NaN)
+      voronoiPoints,
+      (d) => d.x,
+      (d) => d.y
     );
-  }, [chartData, xScale, yScale, getX, getY]);
+  }, [voronoiPoints]);
 
   const voronoi = useMemo(() => {
     return delaunay.voronoi([
@@ -47,7 +46,7 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
     ]);
   }, [chartWidth, chartHeight, delaunay]);
 
-  const findObservation = useCallback(
+  const findVoronoiPoint = useCallback(
     (e: MouseEvent) => {
       if (!ref.current) {
         return;
@@ -56,43 +55,43 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
       const [x, y] = pointer(e, ref.current);
       const i = delaunay.find(x, y);
 
-      return chartData[i];
+      return voronoiPoints[i];
     },
-    [chartData, delaunay]
+    [voronoiPoints, delaunay]
   );
 
   const handleHover = useCallback(
     (e: MouseEvent) => {
-      const observation = findObservation(e);
+      const point = findVoronoiPoint(e);
 
-      if (observation) {
-        onHover(observation);
+      if (point) {
+        onHover(point.observation, { segment: point.segment });
       }
     },
-    [findObservation, onHover]
+    [findVoronoiPoint, onHover]
   );
 
   const handleClick = useCallback(
     (e: MouseEvent) => {
-      const observation = findObservation(e);
+      const point = findVoronoiPoint(e);
 
-      if (observation) {
-        onClick(observation);
+      if (point) {
+        onClick(point.observation, { segment: point.segment });
       }
     },
-    [findObservation, onClick]
+    [findVoronoiPoint, onClick]
   );
 
   return (
     <g ref={ref} transform={`translate(${margins.left} ${margins.top})`}>
       {debug &&
-        chartData.map((d, i) => (
+        voronoiPoints.map(({ observation }, i) => (
           <path
             key={i}
             d={voronoi.renderCell(i)}
             stroke="white"
             strokeOpacity={1}
-            fill={colors(getSegment(d))}
+            fill={colors(getSegment(observation))}
             fillOpacity={0.2}
           />
         ))}
@@ -108,3 +107,63 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
     </g>
   );
 });
+
+type VoronoiDataPoint = {
+  x: number;
+  y: number;
+  observation: Observation;
+  segment?: string;
+};
+
+const getVoronoiPoints = (chartState: InteractionVoronoiChartState) => {
+  const { chartData, xScale, getX, yScale, getY, getSegment } = chartState;
+
+  switch (chartState.chartType) {
+    case "area": {
+      const { series } = chartState;
+
+      return series.flatMap((s) => {
+        const segment = s.key;
+
+        return s
+          .map((d) => {
+            const observation = d.data;
+            const x = xScale(getX(observation) ?? NaN);
+            const y = yScale(series.length === 1 ? d[0] : (d[0] + d[1]) * 0.5);
+
+            return {
+              x,
+              y,
+              observation,
+              segment,
+            };
+          })
+          .filter(
+            (point) => !Number.isNaN(point.x) && !Number.isNaN(point.y)
+          ) satisfies VoronoiDataPoint[];
+      });
+    }
+    case "line":
+    case "scatterplot": {
+      return chartData
+        .map((d) => {
+          const segment = getSegment(d);
+
+          return {
+            observation: d,
+            x: xScale(getX(d) ?? NaN),
+            y: yScale(getY(d) ?? NaN),
+            segment,
+          };
+        })
+        .filter(
+          (point) => !Number.isNaN(point.x) && !Number.isNaN(point.y)
+        ) satisfies VoronoiDataPoint[];
+    }
+    default:
+      const _exhaustiveCheck: never = chartState;
+      return _exhaustiveCheck;
+  }
+};
+
+const atLeastZero = (n: number) => (n < 0 ? 0 : n);
