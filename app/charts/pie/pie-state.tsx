@@ -48,6 +48,7 @@ export type PieState = CommonChartState &
     arcs: PieArcDatum<Observation>[];
     arcGenerator: Arc<any, any>;
     outerRadius: number;
+    segments: string[];
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     getTooltipInfo: (d: Observation) => TooltipInfo;
@@ -287,6 +288,7 @@ const usePieState = (
     arcs,
     arcGenerator,
     outerRadius,
+    segments,
     colors,
     getColorLabel: getSegmentLabel,
     getTooltipInfo,

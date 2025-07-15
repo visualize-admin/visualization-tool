@@ -44,6 +44,7 @@ export type ScatterplotState = CommonChartState &
     chartType: "scatterplot";
     xScale: ScaleLinear<number, number>;
     yScale: ScaleLinear<number, number>;
+    segments: string[];
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     getTooltipInfo: (d: Observation) => TooltipInfo;
@@ -103,6 +104,9 @@ const useScatterplotState = (
     ? chartConfig.cubes.find((d) => d.iri === segmentDimension.cubeIri)
         ?.filters[segmentDimension.id]
     : undefined;
+
+  // TODO: Verify is segments creation logic is correct
+  // (it's not consistent with other charts).
   const allSegments = useMemo(() => {
     const allUniqueSegments = Array.from(new Set(segmentData.map(getSegment)));
     const sorting = {
@@ -243,6 +247,7 @@ const useScatterplotState = (
     allData,
     xScale,
     yScale,
+    segments: allSegments,
     colors,
     getColorLabel: getSegmentLabel,
     getTooltipInfo,

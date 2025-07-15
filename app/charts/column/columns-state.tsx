@@ -64,6 +64,7 @@ export type ColumnsState = CommonChartState &
     xScale: ScaleBand<string>;
     xScaleInteraction: ScaleBand<string>;
     yScale: ScaleLinear<number, number>;
+    segments: string[];
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     getTooltipInfo: (d: Observation) => TooltipInfo;
@@ -116,6 +117,7 @@ const useColumnsState = (
   }, [chartData, getX, getY]);
 
   const {
+    segments,
     xScale,
     colors,
     yScale,
@@ -124,6 +126,7 @@ const useColumnsState = (
     xScaleInteraction,
     xTimeRangeDomainLabels,
   } = useMemo(() => {
+    const segments: string[] = [];
     const colors = scaleOrdinal<string, string>();
 
     if (fields.color.type === "single") {
@@ -217,6 +220,7 @@ const useColumnsState = (
     }
 
     return {
+      segments,
       colors,
       xScale,
       yScale,
@@ -351,6 +355,7 @@ const useColumnsState = (
     xScaleTimeRange,
     xScaleInteraction,
     yScale,
+    segments,
     getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
