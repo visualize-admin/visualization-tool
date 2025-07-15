@@ -47,7 +47,7 @@ export const HoverAnnotationDot = () => {
   const value = values?.find((v) => v.label === segmentLabel) ?? datum;
   const { x, y } = getPosition({
     chartType,
-    shiftToTop: segments.length <= 1,
+    multipleSegments: segments.length > 1,
     xAnchor,
     yAnchor,
     value,
@@ -69,28 +69,27 @@ export const HoverAnnotationDot = () => {
 
 const getPosition = ({
   chartType,
-  shiftToTop,
+  multipleSegments,
   xAnchor,
   yAnchor,
   value,
 }: {
   chartType: "area" | "bar" | "column" | "line" | "pie" | "scatterplot";
-  shiftToTop?: boolean;
+  multipleSegments: boolean;
   xAnchor: number;
   yAnchor: number | undefined;
   value: TooltipValue | undefined;
 }) => {
-  const axisOffset = shiftToTop ? -16 : 0;
+  const axisOffset = multipleSegments ? 0 : -16;
 
   switch (chartType) {
     case "area":
-    case "column":
     case "line": {
       const y = value?.axisOffset ?? yAnchor;
 
       return {
         x: xAnchor,
-        y: y !== undefined ? y + axisOffset : y,
+        y,
       };
     }
     case "bar":
@@ -98,6 +97,14 @@ const getPosition = ({
         x: (value?.axisOffset ?? xAnchor) + axisOffset,
         y: yAnchor,
       };
+    case "column": {
+      const y = value?.axisOffset ?? yAnchor;
+
+      return {
+        x: xAnchor,
+        y: y !== undefined ? y + axisOffset : y,
+      };
+    }
     case "pie":
     case "scatterplot":
       return {
