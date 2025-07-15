@@ -278,22 +278,16 @@ const Cube = t.intersection([
 ]);
 export type Cube = t.TypeOf<typeof Cube>;
 
-const AnnotationTarget = t.union([
-  t.type({
-    componentId: t.string,
-    value: t.string,
-  }),
-  t.undefined,
-]);
+const AnnotationTarget = t.type({
+  componentId: t.string,
+  value: t.string,
+});
 export type AnnotationTarget = t.TypeOf<typeof AnnotationTarget>;
 
 const HighlightAnnotation = t.type({
   key: t.string,
   type: t.literal("highlight"),
-  target: t.type({
-    axis: AnnotationTarget,
-    segment: AnnotationTarget,
-  }),
+  targets: t.array(AnnotationTarget),
   text: t.type({
     de: t.string,
     fr: t.string,

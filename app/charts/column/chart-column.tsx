@@ -34,8 +34,8 @@ import { VerticalLimits } from "@/charts/shared/limits/vertical";
 import { ColumnConfig } from "@/config-types";
 import { useChartConfigFilters, useLimits } from "@/config-utils";
 import { hasChartConfigs } from "@/configurator";
+import { useConfiguratorState } from "@/configurator/configurator-state";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
-import { useConfiguratorState } from "@/src";
 
 import { ChartProps, VisualizationProps } from "../shared/chart-props";
 

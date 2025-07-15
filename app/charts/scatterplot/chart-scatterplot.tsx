@@ -18,6 +18,7 @@ import {
   ChartSvg,
 } from "@/charts/shared/containers";
 import { HoverAnnotationDot } from "@/charts/shared/interaction/hover-annotation-dot";
+import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
@@ -26,7 +27,6 @@ import { useChartConfigFilters } from "@/config-utils";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 
 import { ChartProps, VisualizationProps } from "../shared/chart-props";
-import { Ruler } from "../shared/interaction/ruler";
 
 export const ChartScatterplotVisualization = (
   props: VisualizationProps<ScatterPlotConfig>

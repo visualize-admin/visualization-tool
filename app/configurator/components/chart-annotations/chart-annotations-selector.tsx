@@ -284,7 +284,7 @@ const getAnnotationLabel = ({
 
   let label: string | undefined;
 
-  for (const target of Object.values(annotation.target)) {
+  for (const target of annotation.targets) {
     if (target) {
       const targetLabel = getTargetLabel(target, { dimensions });
 

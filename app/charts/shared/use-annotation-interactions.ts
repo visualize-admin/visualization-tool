@@ -1,7 +1,7 @@
 import isEqual from "lodash/isEqual";
 
 import {
-  getAnnotationTargetFromObservation,
+  getAnnotationTargetsFromObservation,
   matchesAnnotationTarget,
   useIsEditingAnnotation,
 } from "@/charts/shared/annotation-utils";
@@ -26,20 +26,20 @@ export const useAnnotationInteractions = () => {
         return;
       }
 
-      const currentTarget = activeAnnotation.target;
-      const newTarget = getAnnotationTargetFromObservation(observation, {
+      const currentTargets = activeAnnotation.targets;
+      const newTargets = getAnnotationTargetsFromObservation(observation, {
         chartConfig,
         segment,
       });
 
-      if (isEqual(currentTarget, newTarget)) {
+      if (isEqual(currentTargets, newTargets)) {
         return;
       }
 
       const otherAnnotationWithSameTarget = annotations.find(
         (a) =>
           a.key !== activeField &&
-          matchesAnnotationTarget(observation, a.target)
+          matchesAnnotationTarget(observation, a.targets)
       );
 
       if (otherAnnotationWithSameTarget) {
@@ -47,10 +47,10 @@ export const useAnnotationInteractions = () => {
       }
 
       dispatch({
-        type: "CHART_ANNOTATION_TARGET_CHANGE",
+        type: "CHART_ANNOTATION_TARGETS_CHANGE",
         value: {
           key: activeField,
-          target: newTarget,
+          targets: newTargets,
         },
       });
     }

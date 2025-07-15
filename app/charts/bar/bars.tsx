@@ -86,7 +86,7 @@ export const ErrorWhiskers = () => {
 export const Bars = () => {
   const {
     chartData,
-    bounds,
+    bounds: { width, margins },
     getX,
     xScale,
     yDimension,
@@ -96,7 +96,6 @@ export const Bars = () => {
     colors,
     rotateValues,
   } = useChartState() as BarsState;
-  const { margins } = bounds;
   const { labelFontSize, fontFamily } = useChartTheme();
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
@@ -134,7 +133,7 @@ export const Bars = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    bounds.width,
+    width,
     chartData,
     bandwidth,
     getX,

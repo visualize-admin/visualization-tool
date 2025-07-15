@@ -23,7 +23,10 @@ import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
 import { LineConfig } from "@/config-types";
 import { useLimits } from "@/config-utils";
-import { hasChartConfigs, useConfiguratorState } from "@/configurator";
+import {
+  hasChartConfigs,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
 
 import { ChartProps, VisualizationProps } from "../shared/chart-props";
 

@@ -1,8 +1,12 @@
 import { useCallback } from "react";
 
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { Annotation, ChartConfig } from "@/config-types";
-import { getChartConfig } from "@/config-utils";
+import { Annotation, AnnotationTarget, ChartConfig } from "@/config-types";
+import {
+  extractSingleFilters,
+  getChartConfig,
+  getChartConfigFilters,
+} from "@/config-utils";
 import { isAnnotationField } from "@/configurator/components/chart-annotations/utils";
 import {
   isConfiguring,
@@ -38,7 +42,7 @@ export const useGetAnnotationRenderState = () => {
       let annotation: Annotation | undefined;
 
       for (const a of chartConfig.annotations) {
-        const matches = matchesAnnotationTarget(observation, a.target);
+        const matches = matchesAnnotationTarget(observation, a.targets);
 
         if (matches) {
           annotation = a;
@@ -60,16 +64,13 @@ export const useGetAnnotationRenderState = () => {
       const targetsOtherAnnotations = chartConfig.annotations.some(
         (a) =>
           a.key !== activeField &&
-          matchesAnnotationTarget(observation, a.target)
+          matchesAnnotationTarget(observation, a.targets)
       );
-
-      const annotationMatches = annotation?.target.axis?.value === axisValue;
       const isActive = annotation?.key === activeField;
 
       let focused =
         isEditing &&
-        ((interactionMatches && !targetsOtherAnnotations) ||
-          (annotationMatches && isActive));
+        ((interactionMatches && !targetsOtherAnnotations) || isActive);
 
       return {
         color,
@@ -89,7 +90,7 @@ export const useGetAnnotationRenderState = () => {
   return getAnnotationRenderState;
 };
 
-export const getAnnotationTargetFromObservation = (
+export const getAnnotationTargetsFromObservation = (
   observation: Observation,
   {
     chartConfig,
@@ -106,8 +107,15 @@ export const getAnnotationTargetFromObservation = (
     segment?: string;
     getSegment?: (d: Observation) => string;
   }
-): Annotation["target"] => {
-  const target: Annotation["target"] = { axis: undefined, segment: undefined };
+): Annotation["targets"] => {
+  const filters = getChartConfigFilters(chartConfig.cubes, { joined: true });
+  const singleFilters = extractSingleFilters(filters);
+  const targets: Annotation["targets"] = Object.entries(singleFilters).map(
+    ([componentId, value]) => ({
+      componentId,
+      value: `${value.value}`,
+    })
+  );
 
   switch (chartConfig.chartType) {
     case "column":
@@ -115,19 +123,19 @@ export const getAnnotationTargetFromObservation = (
     case "area": {
       const xComponentId = chartConfig.fields.x.componentId;
       if (xComponentId) {
-        target.axis = {
+        targets.push({
           componentId: xComponentId,
           value: `${observation[xComponentId]}`,
-        };
+        });
       }
 
       const segmentComponentId = chartConfig.fields.segment?.componentId;
       if (segmentComponentId && (segment || getSegment)) {
         const value = segment ?? getSegment?.(observation) ?? "";
-        target.segment = {
+        targets.push({
           componentId: segmentComponentId,
           value,
-        };
+        });
       }
 
       break;
@@ -135,19 +143,19 @@ export const getAnnotationTargetFromObservation = (
     case "bar": {
       const yComponentId = chartConfig.fields.y.componentId;
       if (yComponentId) {
-        target.axis = {
+        targets.push({
           componentId: yComponentId,
           value: `${observation[yComponentId]}`,
-        };
+        });
       }
 
       const segmentComponentId = chartConfig.fields.segment?.componentId;
       if (segmentComponentId && (segment || getSegment)) {
         const value = segment ?? getSegment?.(observation) ?? "";
-        target.segment = {
+        targets.push({
           componentId: segmentComponentId,
           value,
-        };
+        });
       }
 
       break;
@@ -156,10 +164,10 @@ export const getAnnotationTargetFromObservation = (
       const segmentComponentId = chartConfig.fields.segment?.componentId;
       if (segmentComponentId && (segment || getSegment)) {
         const value = segment ?? getSegment?.(observation) ?? "";
-        target.segment = {
+        targets.push({
           componentId: segmentComponentId,
           value,
-        };
+        });
       }
 
       break;
@@ -168,10 +176,10 @@ export const getAnnotationTargetFromObservation = (
       const segmentComponentId = chartConfig.fields.segment?.componentId;
       if (segmentComponentId && (segment || getSegment)) {
         const value = segment ?? getSegment?.(observation) ?? "";
-        target.segment = {
+        targets.push({
           componentId: segmentComponentId,
           value,
-        };
+        });
       }
 
       break;
@@ -187,29 +195,23 @@ export const getAnnotationTargetFromObservation = (
       return _exhaustiveCheck;
   }
 
-  return target;
+  return targets;
 };
 
 export const matchesAnnotationTarget = (
   observation: Observation,
-  target: Annotation["target"] | undefined
+  targets: AnnotationTarget[]
 ) => {
-  if (!target || (!target.axis && !target.segment)) {
+  if (targets.length === 0) {
     return false;
   }
 
-  if (
-    target?.axis &&
-    observation[target.axis.componentId] !== target.axis.value
-  ) {
-    return false;
-  }
+  for (const target of targets) {
+    const observationValue = observation[`${target.componentId}/__iri__`];
 
-  if (
-    target?.segment &&
-    observation[target.segment.componentId] !== target.segment.value
-  ) {
-    return false;
+    if (observationValue !== target.value) {
+      return false;
+    }
   }
 
   return true;
