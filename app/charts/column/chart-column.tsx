@@ -10,7 +10,11 @@ import { GroupedColumnChart } from "@/charts/column/columns-grouped-state";
 import { ColumnsStacked } from "@/charts/column/columns-stacked";
 import { StackedColumnsChart } from "@/charts/column/columns-stacked-state";
 import { ColumnChart } from "@/charts/column/columns-state";
-import { InteractionColumns } from "@/charts/column/overlay-columns";
+import {
+  InteractionColumns,
+  InteractionColumnsStacked,
+} from "@/charts/column/overlay-columns";
+import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisHideXOverflowRect } from "@/charts/shared/axis-hide-overflow-rect";
 import {
@@ -23,6 +27,7 @@ import {
   ChartControlsContainer,
   ChartSvg,
 } from "@/charts/shared/containers";
+import { HoverAnnotationDot } from "@/charts/shared/interaction/hover-annotation-dot";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { VerticalLimits } from "@/charts/shared/limits/vertical";
@@ -54,6 +59,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
     dimensions,
     measures,
   });
+  const isEditingAnnotation = useIsEditingAnnotation();
 
   return (
     <>
@@ -66,10 +72,18 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               <AxisHideXOverflowRect />
               <AxisWidthBand />
               <AxisWidthBandDomain />
-              <InteractionColumns />
+              {isEditingAnnotation ? (
+                <InteractionColumnsStacked />
+              ) : (
+                <InteractionColumns />
+              )}
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
-            <Tooltip type="multiple" />
+            {isEditingAnnotation ? (
+              <HoverAnnotationDot />
+            ) : (
+              <Tooltip type="multiple" />
+            )}
           </ChartContainer>
           <ChartControlsContainer>
             {fields.animation && (

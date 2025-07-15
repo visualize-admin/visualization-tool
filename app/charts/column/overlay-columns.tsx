@@ -1,8 +1,11 @@
+import { useMemo } from "react";
+
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import { ColumnsState } from "@/charts/column/columns-state";
+import { useGetRenderStackedColumnDatum } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { useOverlayInteractions } from "@/charts/shared/overlay-utils";
+import { useAnnotationInteractions } from "@/charts/shared/use-annotation-interactions";
 
 export const InteractionColumns = () => {
   const chartState = useChartState() as
@@ -16,9 +19,7 @@ export const InteractionColumns = () => {
     xScaleInteraction,
     getSegment,
   } = chartState;
-  const { onClick, onHover, onHoverOut } = useOverlayInteractions({
-    getSegment,
-  });
+  const { onClick, onHover, onHoverOut } = useAnnotationInteractions();
   const bandwidth = xScaleInteraction.bandwidth();
 
   return (
@@ -26,6 +27,7 @@ export const InteractionColumns = () => {
       {chartData.map((d, i) => {
         const x = getX(d);
         const xScaled = xScaleInteraction(x) as number;
+        const segment = getSegment(d);
 
         return (
           <rect
@@ -37,9 +39,49 @@ export const InteractionColumns = () => {
             fill="hotpink"
             fillOpacity={0}
             stroke="none"
-            onMouseOver={() => onHover(d)}
+            onMouseOver={() => onHover(d, { segment })}
             onMouseOut={onHoverOut}
-            onClick={() => onClick(d)}
+            onClick={() => onClick(d, { segment })}
+          />
+        );
+      })}
+    </g>
+  );
+};
+
+export const InteractionColumnsStacked = () => {
+  const {
+    bounds: { height, margins },
+    series,
+  } = useChartState() as StackedColumnsState;
+  const { onClick, onHover, onHoverOut } = useAnnotationInteractions();
+  const getRenderDatum = useGetRenderStackedColumnDatum();
+  const renderData = useMemo(() => {
+    return series.flatMap(getRenderDatum);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    getRenderDatum,
+    series,
+    // We need to reset the yRange on height change.
+    height,
+  ]);
+
+  return (
+    <g transform={`translate(${margins.left} ${margins.top})`}>
+      {renderData.map((d) => {
+        return (
+          <rect
+            key={d.key}
+            x={d.x}
+            y={d.y}
+            width={d.width}
+            height={d.height}
+            fill="hotpink"
+            fillOpacity={0}
+            stroke="none"
+            onMouseOver={() => onHover(d.observation, { segment: d.segment })}
+            onMouseOut={onHoverOut}
+            onClick={() => onClick(d.observation, { segment: d.segment })}
           />
         );
       })}

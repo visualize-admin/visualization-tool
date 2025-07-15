@@ -27,6 +27,7 @@ import {
   useColumnsStackedStateVariables,
 } from "@/charts/column/columns-stacked-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
+import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -135,6 +136,8 @@ const useColumnsStackedState = (
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
   const calculationType = useChartInteractiveFilters((d) => d.calculation.type);
+
+  const isEditingAnnotation = useIsEditingAnnotation();
 
   const xKey = fields.x.componentId;
 
@@ -491,7 +494,9 @@ const useColumnsStackedState = (
       const xLabel = getXAbbreviationOrLabel(datum);
 
       return {
-        xAnchor: xAnchorRaw + (placement.x === "right" ? 0.5 : -0.5) * bw,
+        xAnchor:
+          xAnchorRaw +
+          (isEditingAnnotation ? 0 : placement.x === "right" ? 0.5 : -0.5) * bw,
         yAnchor,
         placement,
         value: formatXAxisTick(xLabel),
@@ -539,6 +544,7 @@ const useColumnsStackedState = (
       chartWidth,
       fields.segment,
       getXAbbreviationOrLabel,
+      isEditingAnnotation,
       formatXAxisTick,
       getSegmentAbbreviationOrLabel,
       getIdentityY,

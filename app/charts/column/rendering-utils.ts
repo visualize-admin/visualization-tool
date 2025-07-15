@@ -26,30 +26,28 @@ export type RenderColumnDatum = {
   focused?: boolean;
   valueLabel?: string;
   valueLabelColor?: string;
+  segment?: string;
   observation: Observation;
 };
 
 export const useGetRenderStackedColumnDatum = () => {
   const {
-    segmentsByAbbreviationOrLabel,
     colors,
     showValuesBySegmentMapping,
     valueLabelFormatter,
-    xDimension,
     xScale,
     yScale,
     getX,
-    segmentDimension,
+    getSegmentLabel,
     getRenderingKey,
   } = useChartState() as StackedColumnsState;
   const bandwidth = xScale.bandwidth();
 
   return useCallback(
     (s: Series<{ [key: string]: number }, string>) => {
-      const segmentLabel = s.key;
-      const segment =
-        segmentsByAbbreviationOrLabel.get(segmentLabel)?.value ?? segmentLabel;
-      const color = colors(segmentLabel);
+      const segment = s.key;
+      const segmentLabel = getSegmentLabel(segment);
+      const color = colors(segment);
 
       return s.map((d) => {
         const observation = d.data;
@@ -73,12 +71,8 @@ export const useGetRenderStackedColumnDatum = () => {
           color,
           valueLabel,
           valueLabelColor,
-          // We need to include the axis value and segment in the observation
-          // so that we can use it in the overlay interactions.
-          observation: {
-            [xDimension.id]: xRaw,
-            [`${segmentDimension?.id ?? ""}/__iri__`]: segment,
-          },
+          observation,
+          segment,
         } satisfies RenderColumnDatum;
       });
     },
@@ -86,12 +80,10 @@ export const useGetRenderStackedColumnDatum = () => {
       bandwidth,
       colors,
       getRenderingKey,
+      getSegmentLabel,
       getX,
-      segmentDimension?.id,
-      segmentsByAbbreviationOrLabel,
       showValuesBySegmentMapping,
       valueLabelFormatter,
-      xDimension.id,
       xScale,
       yScale,
     ]
