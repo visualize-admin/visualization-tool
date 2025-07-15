@@ -1,3 +1,7 @@
+import {
+  ANNOTATION_FOCUS_COLOR,
+  ANNOTATION_FOCUS_WIDTH,
+} from "@/charts/shared/rendering-utils";
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
@@ -48,6 +52,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderRadius: "50%",
   },
   focused: {
-    outline: "4px solid #A332DE",
+    outline: `${ANNOTATION_FOCUS_WIDTH}px solid ${ANNOTATION_FOCUS_COLOR}`,
   },
 }));
