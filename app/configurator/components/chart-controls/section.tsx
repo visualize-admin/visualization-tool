@@ -52,11 +52,15 @@ export const useSectionTitleStyles = makeStyles<
     flexGrow: 1,
     display: "flex",
     alignItems: "center",
+    color: theme.palette.text.primary,
     fontWeight: 700,
 
     "& > svg:first-of-type": {
       marginRight: theme.spacing(1),
     },
+  },
+  textDisabled: {
+    color: theme.palette.monochrome[300],
   },
   root: {
     display: "flex",
@@ -89,13 +93,6 @@ export const useSectionTitleStyles = makeStyles<
         }
 
         return "transparent";
-      },
-
-      "& $text": {
-        color: ({ disabled }) =>
-          disabled
-            ? theme.palette.monochrome[300]
-            : theme.palette.monochrome[800],
       },
     },
   },
@@ -301,7 +298,12 @@ export const SectionTitle = ({
       className={classes.root}
       onClick={handleClick}
     >
-      <Typography variant="h6" id={id} className={classes.text} sx={sx}>
+      <Typography
+        variant="h6"
+        id={id}
+        className={clsx(classes.text, disabled && classes.textDisabled)}
+        sx={sx}
+      >
         {closable ? (
           <Icon name="chevronLeft" />
         ) : iconName ? (
