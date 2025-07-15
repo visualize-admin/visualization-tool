@@ -15,6 +15,7 @@ import {
   InteractionColumnsStacked,
 } from "@/charts/column/overlay-columns";
 import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
+import { Annotations } from "@/charts/shared/annotations";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisHideXOverflowRect } from "@/charts/shared/axis-hide-overflow-rect";
 import {
@@ -84,6 +85,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
             ) : (
               <Tooltip type="multiple" />
             )}
+            <Annotations />
           </ChartContainer>
           <ChartControlsContainer>
             {fields.animation && (
@@ -153,6 +155,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
             ) : (
               <Tooltip type="single" />
             )}
+            <Annotations />
           </ChartContainer>
           {fields.animation || limits.limits.length > 0 ? (
             <ChartControlsContainer>

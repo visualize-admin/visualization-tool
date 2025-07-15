@@ -4,6 +4,7 @@ import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { ErrorWhiskers, Lines } from "@/charts/line/lines";
 import { LineChart } from "@/charts/line/lines-state";
 import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
+import { Annotations } from "@/charts/shared/annotations";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisHideXOverflowRect } from "@/charts/shared/axis-hide-overflow-rect";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
@@ -79,6 +80,7 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
         <Ruler />
         {isEditingAnnotation ? <HoverAnnotationDot /> : <HoverDotMultiple />}
         <Tooltip type={fields.segment ? "multiple" : "single"} />
+        <Annotations />
       </ChartContainer>
       {(fields.segment || limits.limits.length > 0) && (
         <ChartControlsContainer>

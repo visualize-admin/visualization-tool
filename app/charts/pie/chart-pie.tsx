@@ -4,6 +4,7 @@ import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { Pie } from "@/charts/pie/pie";
 import { PieChart } from "@/charts/pie/pie-state";
 import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
+import { Annotations } from "@/charts/shared/annotations";
 import { AxisHeightTitle } from "@/charts/shared/axis-height-title";
 import {
   ChartContainer,
@@ -49,6 +50,7 @@ const ChartPie = memo((props: ChartProps<PieConfig>) => {
         ) : (
           <Tooltip type="single" />
         )}
+        <Annotations />
       </ChartContainer>
       <ChartControlsContainer>
         {fields.animation && (

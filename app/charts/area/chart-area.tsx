@@ -4,6 +4,7 @@ import { Areas } from "@/charts/area/areas";
 import { AreaChart } from "@/charts/area/areas-state";
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
+import { Annotations } from "@/charts/shared/annotations";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisHideXOverflowRect } from "@/charts/shared/axis-hide-overflow-rect";
 import { AxisTime, AxisTimeDomain } from "@/charts/shared/axis-width-time";
@@ -64,6 +65,7 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
           <Tooltip type={fields.segment ? "multiple" : "single"} />
         )}
         <Ruler />
+        <Annotations />
       </ChartContainer>
       {(fields.segment || limits.limits.length > 0) && (
         <ChartControlsContainer>

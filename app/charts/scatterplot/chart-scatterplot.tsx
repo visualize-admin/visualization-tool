@@ -4,6 +4,7 @@ import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { Scatterplot } from "@/charts/scatterplot/scatterplot";
 import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
 import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
+import { Annotations } from "@/charts/shared/annotations";
 import {
   AxisHeightLinear,
   AxisHeightLinearDomain,
@@ -57,6 +58,7 @@ const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
         ) : (
           <Tooltip type="single" />
         )}
+        <Annotations />
       </ChartContainer>
       {(fields.animation || fields.segment) && (
         <ChartControlsContainer>

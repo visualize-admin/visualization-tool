@@ -15,6 +15,7 @@ import {
 } from "@/charts/bar/overlay-bars";
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
+import { Annotations } from "@/charts/shared/annotations";
 import {
   AxisHeightBand,
   AxisHeightBandDomain,
@@ -84,6 +85,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
             ) : (
               <Tooltip type="multiple" />
             )}
+            <Annotations />
           </ChartContainer>
           <ChartControlsContainer>
             {fields.animation && (
@@ -153,6 +155,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
             ) : (
               <Tooltip type="single" />
             )}
+            <Annotations />
           </ChartContainer>
           {fields.animation || limits.limits.length > 0 ? (
             <ChartControlsContainer>
