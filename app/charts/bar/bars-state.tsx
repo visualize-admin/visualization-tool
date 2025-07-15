@@ -70,6 +70,7 @@ export type BarsState = CommonChartState &
     yScale: ScaleBand<string>;
     minY: string;
     getTooltipInfo: (d: Observation) => TooltipInfo;
+    segments: string[];
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     leftAxisLabelSize: AxisLabelSizeVariables;
@@ -343,7 +344,8 @@ const useBarsState = (
     };
   };
 
-  const { colors } = useMemo(() => {
+  const { segments, colors } = useMemo(() => {
+    const segments: string[] = [];
     const colors = scaleOrdinal<string, string>();
 
     colors.range(
@@ -353,7 +355,10 @@ const useBarsState = (
       })
     );
 
-    return { colors };
+    return {
+      segments,
+      colors,
+    };
   }, [fields.color]);
 
   return {
@@ -371,6 +376,7 @@ const useBarsState = (
     yScale,
     getTooltipInfo,
     getColorLabel: getSegmentLabel,
+    segments,
     colors,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
