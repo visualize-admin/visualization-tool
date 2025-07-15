@@ -52,7 +52,7 @@ export const HoverAnnotationDot = () => {
     <AnnotationCircle
       x={x + margins.left}
       y={y + margins.top}
-      color={value.color}
+      color={value.color || "#6B7280"}
       focused
     />
   );
