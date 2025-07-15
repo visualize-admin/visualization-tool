@@ -56,6 +56,7 @@ export const useGetAnnotationRenderState = () => {
         interaction.type === "focus" &&
         interaction.visible &&
         interaction.observation?.[axisComponentId] === axisValue;
+
       const targetsOtherAnnotations = chartConfig.annotations.some(
         (a) =>
           a.key !== activeField &&
@@ -92,9 +93,17 @@ export const getAnnotationTargetFromObservation = (
   observation: Observation,
   {
     chartConfig,
+    segment,
     getSegment,
   }: {
     chartConfig: ChartConfig;
+    /** We need to be able to conditionally pass a segment value,
+     *  but also use the getSegment function to get the segment value from the observation.
+     *
+     *  This is useful for stacked charts, where the segment value is not in the observation,
+     *  but in the getSegment function.
+     */
+    segment?: string;
     getSegment?: (d: Observation) => string;
   }
 ): Annotation["target"] => {
@@ -113,11 +122,11 @@ export const getAnnotationTargetFromObservation = (
       }
 
       const segmentComponentId = chartConfig.fields.segment?.componentId;
-      if (segmentComponentId && getSegment) {
-        const segment = getSegment(observation);
+      if (segmentComponentId && (segment || getSegment)) {
+        const value = segment ?? getSegment?.(observation) ?? "";
         target.segment = {
           componentId: segmentComponentId,
-          value: segment,
+          value,
         };
       }
 
@@ -133,31 +142,23 @@ export const getAnnotationTargetFromObservation = (
       }
 
       const segmentComponentId = chartConfig.fields.segment?.componentId;
-      if (segmentComponentId && getSegment) {
-        const segment = getSegment(observation);
+      if (segmentComponentId && (segment || getSegment)) {
+        const value = segment ?? getSegment?.(observation) ?? "";
         target.segment = {
           componentId: segmentComponentId,
-          value: segment,
+          value,
         };
       }
 
       break;
     }
     case "scatterplot": {
-      const xComponentId = chartConfig.fields.x?.componentId;
-      if (xComponentId) {
-        target.axis = {
-          componentId: xComponentId,
-          value: `${observation[xComponentId]}`,
-        };
-      }
-
       const segmentComponentId = chartConfig.fields.segment?.componentId;
-      if (segmentComponentId && getSegment) {
-        const segment = getSegment(observation);
+      if (segmentComponentId && (segment || getSegment)) {
+        const value = segment ?? getSegment?.(observation) ?? "";
         target.segment = {
           componentId: segmentComponentId,
-          value: segment,
+          value,
         };
       }
 
@@ -165,11 +166,11 @@ export const getAnnotationTargetFromObservation = (
     }
     case "pie": {
       const segmentComponentId = chartConfig.fields.segment?.componentId;
-      if (segmentComponentId && getSegment) {
-        const segment = getSegment(observation);
+      if (segmentComponentId && (segment || getSegment)) {
+        const value = segment ?? getSegment?.(observation) ?? "";
         target.segment = {
           componentId: segmentComponentId,
-          value: segment,
+          value,
         };
       }
 
@@ -192,7 +193,7 @@ export const getAnnotationTargetFromObservation = (
 export const matchesAnnotationTarget = (
   observation: Observation,
   target: Annotation["target"] | undefined
-): boolean => {
+) => {
   if (!target || (!target.axis && !target.segment)) {
     return false;
   }
