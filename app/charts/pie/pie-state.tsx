@@ -1,7 +1,7 @@
 import { ascending, sum } from "d3-array";
 import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
-import { Pie, pie } from "d3-shape";
+import { Arc, arc, pie, PieArcDatum } from "d3-shape";
 import orderBy from "lodash/orderBy";
 import { PropsWithChildren, useMemo } from "react";
 
@@ -14,6 +14,7 @@ import {
   ShowPieValueLabelsVariables,
   useShowPieValueLabelsVariables,
 } from "@/charts/pie/show-values-utils";
+import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -44,7 +45,9 @@ export type PieState = CommonChartState &
   PieStateVariables &
   ShowPieValueLabelsVariables & {
     chartType: "pie";
-    getPieData: Pie<$IntentionalAny, Observation>;
+    arcs: PieArcDatum<Observation>[];
+    arcGenerator: Arc<any, any>;
+    outerRadius: number;
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     getTooltipInfo: (d: Observation) => TooltipInfo;
@@ -77,6 +80,8 @@ const usePieState = (
   const { width, height } = useSize();
   const formatNumber = useFormatNumber();
   const formatters = useChartFormatters(chartProps);
+
+  const isEditingAnnotation = useIsEditingAnnotation();
 
   const segmentsByValue = useMemo(() => {
     return new Map(segmentDimension.values.map((d) => [d.value, d]));
@@ -219,9 +224,25 @@ const usePieState = (
     return `${rounded}% (${formattedValue})`;
   };
 
+  const maxSide = Math.min(chartWidth, bounds.chartHeight) / 2;
+  const innerRadius = 0;
+  const outerRadius = maxSide;
+
+  const arcs = getPieData(chartData);
+  const arcGenerator = arc<$FixMe>()
+    .innerRadius(innerRadius)
+    .outerRadius(outerRadius);
+
   const getTooltipInfo = (datum: Observation): TooltipInfo => {
-    const xAnchor = chartWidth / 2;
-    const yAnchor = -4;
+    let xAnchor = chartWidth / 2;
+    let yAnchor = -4;
+
+    if (isEditingAnnotation) {
+      const arc = arcs.find((d) => d.data === datum);
+      const centroid = arcGenerator.centroid(arc);
+      xAnchor = centroid[0] + chartWidth / 2;
+      yAnchor = centroid[1] + bounds.chartHeight / 2 - 4;
+    }
 
     const xPlacement = "center";
     const yPlacement = "top";
@@ -263,7 +284,9 @@ const usePieState = (
     bounds,
     chartData: chartDataWithMissingSegments,
     allData,
-    getPieData,
+    arcs,
+    arcGenerator,
+    outerRadius,
     colors,
     getColorLabel: getSegmentLabel,
     getTooltipInfo,
