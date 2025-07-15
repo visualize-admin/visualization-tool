@@ -496,7 +496,9 @@ export const components: Components = {
   MuiSelect: {
     defaultProps: {
       size: "md",
-      notched: false,
+      // MUI types are not correct here - browser is not happy with
+      // a boolean passed to DOM.
+      notched: "false" as any,
       MenuProps: {
         slotProps: {
           paper: {

@@ -8,7 +8,7 @@ export const Step3 = () => (
     xmlns="http://www.w3.org/2000/svg"
     style={{ aspectRatio: "416 / 266" }}
   >
-    <g clip-path="url(#clip0_6751_165882)" filter="url(#filter0_i_6751_165882)">
+    <g clipPath="url(#clip0_6751_165882)" filter="url(#filter0_i_6751_165882)">
       <rect width="416" height="265.778" fill="#F3F4F6" />
       <g filter="url(#filter1_dd_6751_165882)">
         <rect
@@ -209,7 +209,7 @@ export const Step3 = () => (
         rx="0.577778"
         fill="#DFE4E9"
       />
-      <g clip-path="url(#clip1_6751_165882)">
+      <g clipPath="url(#clip1_6751_165882)">
         <rect
           x="99.377"
           y="44.2031"
@@ -234,18 +234,18 @@ export const Step3 = () => (
           rx="0.577778"
           fill="#047857"
         />
-        <g clip-path="url(#clip2_6751_165882)">
+        <g clipPath="url(#clip2_6751_165882)">
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M112.786 48.541L115.556 51.3102V58.9554C116.855 59.0994 117.866 60.2014 117.866 61.5395C117.864 62.9747 116.701 64.1379 115.266 64.1395C114.365 64.1395 113.571 63.6814 113.105 62.9855H104V48.541H112.786ZM114.978 58.9552C113.678 59.0985 112.666 60.2008 112.666 61.5395C112.666 61.8441 112.718 62.1364 112.815 62.408H104.578V49.1191H112.377V51.717H114.978V58.9552ZM112.955 51.1392V49.5265L114.567 51.1392H112.955ZM113.727 61.7588L113.994 61.4629L114.84 62.2221L116.505 60.2871L116.808 60.5462L114.877 62.7908L113.727 61.7588ZM107.179 58.6474V56.9141H105.445V58.6474H107.179ZM106.023 57.4922H106.601V58.07H106.023V57.4922ZM114.112 58.6467V55.7578H112.379V58.6467H114.112ZM112.957 56.3359H113.535V58.0693H112.957V56.3359ZM111.802 58.645V52.8672H110.068V58.645H111.802ZM110.646 53.4453H111.224V58.0675H110.646V53.4453ZM109.489 58.648V54.6035H107.756V58.648H109.489ZM108.334 55.1816H108.912V58.0705H108.334V55.1816Z"
             fill="#047857"
           />
         </g>
       </g>
-      <g clip-path="url(#clip3_6751_165882)">
+      <g clipPath="url(#clip3_6751_165882)">
         <rect y="11.5586" width="416" height="27.7333" fill="white" />
-        <g clip-path="url(#clip4_6751_165882)">
+        <g clipPath="url(#clip4_6751_165882)">
           <rect y="11.5586" width="416" height="27.7333" fill="white" />
         </g>
         <path
@@ -258,11 +258,11 @@ export const Step3 = () => (
         />
       </g>
       <g
-        clip-path="url(#clip5_6751_165882)"
+        clipPath="url(#clip5_6751_165882)"
         filter="url(#filter2_i_6751_165882)"
       >
         <rect y="11.5586" width="416" height="27.7333" fill="white" />
-        <g clip-path="url(#clip6_6751_165882)">
+        <g clipPath="url(#clip6_6751_165882)">
           <rect y="11.5586" width="416" height="27.7333" fill="white" />
         </g>
         <path
@@ -287,9 +287,9 @@ export const Step3 = () => (
         width="416"
         height="266.777"
         filterUnits="userSpaceOnUse"
-        color-interpolation-filters="sRGB"
+        colorInterpolationFilters="sRGB"
       >
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend
           mode="normal"
           in="SourceGraphic"
@@ -322,9 +322,9 @@ export const Step3 = () => (
         width="234.577"
         height="223.888"
         filterUnits="userSpaceOnUse"
-        color-interpolation-filters="sRGB"
+        colorInterpolationFilters="sRGB"
       >
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feColorMatrix
           in="SourceAlpha"
           type="matrix"
@@ -373,9 +373,9 @@ export const Step3 = () => (
         width="416"
         height="27.7324"
         filterUnits="userSpaceOnUse"
-        color-interpolation-filters="sRGB"
+        colorInterpolationFilters="sRGB"
       >
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend
           mode="normal"
           in="SourceGraphic"
