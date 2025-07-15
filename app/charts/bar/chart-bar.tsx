@@ -148,7 +148,11 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
               <InteractionBars />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
-            <Tooltip type="single" />
+            {isEditingAnnotation ? (
+              <HoverAnnotationDot />
+            ) : (
+              <Tooltip type="single" />
+            )}
           </ChartContainer>
           {fields.animation || limits.limits.length > 0 ? (
             <ChartControlsContainer>
