@@ -9,8 +9,12 @@ import { GroupedBarChart } from "@/charts/bar/bars-grouped-state";
 import { BarsStacked } from "@/charts/bar/bars-stacked";
 import { StackedBarsChart } from "@/charts/bar/bars-stacked-state";
 import { BarChart } from "@/charts/bar/bars-state";
-import { InteractionBars } from "@/charts/bar/overlay-bars";
+import {
+  InteractionBars,
+  InteractionBarsStacked,
+} from "@/charts/bar/overlay-bars";
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
+import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
 import {
   AxisHeightBand,
   AxisHeightBandDomain,
@@ -23,6 +27,7 @@ import {
   ChartControlsContainer,
   ChartSvg,
 } from "@/charts/shared/containers";
+import { HoverAnnotationDot } from "@/charts/shared/interaction/hover-annotation-dot";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { HorizontalLimits } from "@/charts/shared/limits/horizontal";
@@ -54,6 +59,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
     dimensions,
     measures,
   });
+  const isEditingAnnotation = useIsEditingAnnotation();
 
   return (
     <>
@@ -66,10 +72,18 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
               <AxisHideYOverflowRect />
               <AxisHeightBand />
               <AxisHeightBandDomain />
-              <InteractionBars />
+              {isEditingAnnotation ? (
+                <InteractionBarsStacked />
+              ) : (
+                <InteractionBars />
+              )}
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
-            <Tooltip type="multiple" />
+            {isEditingAnnotation ? (
+              <HoverAnnotationDot />
+            ) : (
+              <Tooltip type="multiple" />
+            )}
           </ChartContainer>
           <ChartControlsContainer>
             {fields.animation && (

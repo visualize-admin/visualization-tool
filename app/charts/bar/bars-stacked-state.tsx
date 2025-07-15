@@ -31,6 +31,7 @@ import {
   PADDING_INNER,
   PADDING_OUTER,
 } from "@/charts/bar/constants";
+import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -139,6 +140,8 @@ const useBarsStackedState = (
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
   const calculationType = useChartInteractiveFilters((d) => d.calculation.type);
+
+  const isEditingAnnotation = useIsEditingAnnotation();
 
   const yKey = fields.y.componentId;
 
@@ -502,7 +505,9 @@ const useBarsStackedState = (
       const yLabel = getYAbbreviationOrLabel(datum);
 
       return {
-        yAnchor: yAnchorRaw + (placement.y === "top" ? bw : 0),
+        yAnchor:
+          yAnchorRaw +
+          (isEditingAnnotation ? 0 : placement.y === "top" ? bw : 0),
         xAnchor,
         placement,
         value: formatYAxisTick(yLabel),
@@ -550,6 +555,7 @@ const useBarsStackedState = (
       chartWidth,
       fields.segment,
       getYAbbreviationOrLabel,
+      isEditingAnnotation,
       formatYAxisTick,
       getSegmentAbbreviationOrLabel,
       getIdentityX,

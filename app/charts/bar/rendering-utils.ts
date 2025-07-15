@@ -27,29 +27,27 @@ export type RenderBarDatum = {
   valueLabel?: string;
   valueLabelColor?: string;
   observation: Observation;
+  segment?: string;
 };
 
 export const useGetRenderStackedBarDatum = () => {
   const {
-    segmentsByAbbreviationOrLabel,
     colors,
     showValuesBySegmentMapping,
     valueLabelFormatter,
     xScale,
-    yDimension,
     yScale,
     getY,
-    segmentDimension,
+    getSegmentLabel,
     getRenderingKey,
   } = useChartState() as StackedBarsState;
   const bandwidth = yScale.bandwidth();
 
   return useCallback(
     (s: Series<{ [key: string]: number }, string>) => {
-      const segmentLabel = s.key;
-      const segment =
-        segmentsByAbbreviationOrLabel.get(segmentLabel)?.value ?? segmentLabel;
-      const color = colors(segmentLabel);
+      const segment = s.key;
+      const segmentLabel = getSegmentLabel(segment);
+      const color = colors(segment);
 
       return s.map((d) => {
         const observation = d.data;
@@ -74,12 +72,8 @@ export const useGetRenderStackedBarDatum = () => {
           color,
           valueLabel,
           valueLabelColor,
-          // We need to include the axis value and segment in the observation
-          // so that we can use it in the overlay interactions.
-          observation: {
-            [yDimension.id]: yRaw,
-            [`${segmentDimension?.id ?? ""}/__iri__`]: segment,
-          },
+          observation,
+          segment,
         } satisfies RenderBarDatum;
       });
     },
@@ -87,13 +81,11 @@ export const useGetRenderStackedBarDatum = () => {
       bandwidth,
       colors,
       getRenderingKey,
+      getSegmentLabel,
       getY,
-      segmentDimension?.id,
-      segmentsByAbbreviationOrLabel,
       showValuesBySegmentMapping,
       valueLabelFormatter,
       xScale,
-      yDimension.id,
       yScale,
     ]
   );
