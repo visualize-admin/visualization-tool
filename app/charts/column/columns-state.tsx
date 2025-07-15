@@ -18,6 +18,10 @@ import {
 } from "@/charts/column/columns-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
+  ANNOTATION_SINGLE_SEGMENT_OFFSET,
+  AnnotationInfo,
+} from "@/charts/shared/annotations";
+import {
   AxisLabelSizeVariables,
   getChartWidth,
   useAxisLabelSizeVariables,
@@ -67,6 +71,7 @@ export type ColumnsState = CommonChartState &
     segments: string[];
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
+    getAnnotationInfo: (d: Observation, segment: string) => AnnotationInfo;
     getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
@@ -307,6 +312,21 @@ const useColumnsState = (
     [xDimension, formatXDate, getXLabel]
   );
 
+  const getAnnotationInfo = useCallback(
+    (datum: Observation) => {
+      const x = (xScale(getX(datum)) as number) + xScale.bandwidth() * 0.5;
+      const y =
+        yScale(Math.max(getY(datum) ?? NaN, 0)) -
+        ANNOTATION_SINGLE_SEGMENT_OFFSET;
+
+      return {
+        x,
+        y,
+      };
+    },
+    [xScale, yScale, getY, getX]
+  );
+
   const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = (xScale(getX(datum)) as number) + xScale.bandwidth() * 0.5;
     const yAnchor = isMobile
@@ -356,6 +376,7 @@ const useColumnsState = (
     xScaleInteraction,
     yScale,
     segments,
+    getAnnotationInfo,
     getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,

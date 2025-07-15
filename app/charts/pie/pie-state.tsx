@@ -3,7 +3,7 @@ import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import { Arc, arc, pie, PieArcDatum } from "d3-shape";
 import orderBy from "lodash/orderBy";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   PieStateVariables,
@@ -14,7 +14,7 @@ import {
   ShowPieValueLabelsVariables,
   useShowPieValueLabelsVariables,
 } from "@/charts/pie/show-values-utils";
-import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
+import { AnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -51,6 +51,7 @@ export type PieState = CommonChartState &
     segments: string[];
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
+    getAnnotationInfo: (d: Observation, segment: string) => AnnotationInfo;
     getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
@@ -81,8 +82,6 @@ const usePieState = (
   const { width, height } = useSize();
   const formatNumber = useFormatNumber();
   const formatters = useChartFormatters(chartProps);
-
-  const isEditingAnnotation = useIsEditingAnnotation();
 
   const segmentsByValue = useMemo(() => {
     return new Map(segmentDimension.values.map((d) => [d.value, d]));
@@ -234,16 +233,25 @@ const usePieState = (
     .innerRadius(innerRadius)
     .outerRadius(outerRadius);
 
-  const getTooltipInfo = (datum: Observation): TooltipInfo => {
-    let xAnchor = chartWidth / 2;
-    let yAnchor = -4;
-
-    if (isEditingAnnotation) {
+  const getAnnotationInfo = useCallback(
+    (datum: Observation, segment: string): AnnotationInfo => {
       const arc = arcs.find((d) => d.data === datum);
       const centroid = arcGenerator.centroid(arc);
-      xAnchor = centroid[0] + chartWidth / 2;
-      yAnchor = centroid[1] + bounds.chartHeight / 2 - 4;
-    }
+      const x = centroid[0] + chartWidth / 2;
+      const y = centroid[1] + bounds.chartHeight / 2 - 4;
+
+      return {
+        x,
+        y,
+        color: colors(segment),
+      };
+    },
+    [arcGenerator, arcs, bounds.chartHeight, chartWidth, colors]
+  );
+
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
+    const xAnchor = chartWidth / 2;
+    const yAnchor = -4;
 
     const xPlacement = "center";
     const yPlacement = "top";
@@ -291,6 +299,7 @@ const usePieState = (
     segments,
     colors,
     getColorLabel: getSegmentLabel,
+    getAnnotationInfo,
     getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: 0,

@@ -456,7 +456,6 @@ const useBarsGroupedState = (
             ? `${formatNumber(getX(d))} ${xMeasure.unit}`
             : formatNumber(getX(d)),
           error: getFormattedXUncertainty(d),
-          segment,
           color: colors(segment),
         } satisfies TooltipValue;
       }),

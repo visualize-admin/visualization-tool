@@ -19,7 +19,6 @@ export const useAnnotationInteractions = () => {
   const isEditingAnnotation = useIsEditingAnnotation();
   const activeAnnotation = annotations.find((a) => a.key === activeField);
 
-  // TODO: Differentiate between edit and view modes (to open annotation).
   const onClick = useEvent(
     (observation: Observation, { segment }: { segment?: string }) => {
       if (!isEditingAnnotation || !activeAnnotation || !activeField) {

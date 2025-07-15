@@ -9,13 +9,14 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   LinesStateVariables,
   useLinesStateData,
   useLinesStateVariables,
 } from "@/charts/line/lines-state-props";
+import { AnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -74,6 +75,7 @@ export type LinesState = CommonChartState &
     grouped: Map<string, Observation[]>;
     chartWideData: ArrayLike<Observation>;
     xKey: string;
+    getAnnotationInfo: (d: Observation, segment: string) => AnnotationInfo;
     getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
@@ -307,6 +309,20 @@ const useLinesState = (
 
   const isMobile = useIsMobile();
 
+  const getAnnotationInfo = useCallback(
+    (datum: Observation, segment: string) => {
+      const x = xScale(getX(datum));
+      const y = yScale(getY(datum) ?? 0);
+
+      return {
+        x,
+        y,
+        color: colors(segment),
+      };
+    },
+    [colors, getX, getY, xScale, yScale]
+  );
+
   const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const x = getX(datum);
     const tooltipValues = chartData.filter(
@@ -360,7 +376,6 @@ const useLinesState = (
           axisOffset: yScale(getY(d) ?? 0),
           symbol: "line",
           color: colors(segment),
-          segment,
         } satisfies TooltipValue;
       }),
     };
@@ -380,6 +395,7 @@ const useLinesState = (
     grouped: preparedDataGroupedBySegment,
     chartWideData,
     xKey,
+    getAnnotationInfo,
     getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,

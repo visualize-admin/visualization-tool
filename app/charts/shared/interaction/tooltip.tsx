@@ -42,7 +42,6 @@ export type TooltipValue = {
   error?: string;
   color: string;
   symbol?: LegendSymbol;
-  segment?: string;
 } & (
   | {
       axis: "x" | "y";

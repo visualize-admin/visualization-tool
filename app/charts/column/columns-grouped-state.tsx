@@ -459,7 +459,6 @@ const useColumnsGroupedState = (
           axis: "y",
           axisOffset: yScale(getY(d) ?? 0),
           error: getFormattedYUncertainty(d),
-          segment,
           color: colors(segment),
         } satisfies TooltipValue;
       }),

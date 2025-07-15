@@ -23,6 +23,7 @@ import {
   useAreasStateData,
   useAreasStateVariables,
 } from "@/charts/area/areas-state-props";
+import { AnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -87,6 +88,7 @@ export type AreasState = CommonChartState &
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
     series: Series<{ [key: string]: number }, string>[];
+    getAnnotationInfo: (d: Observation, segment: string) => AnnotationInfo;
     getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
@@ -414,6 +416,28 @@ const useAreasState = (
 
   const isMobile = useIsMobile();
 
+  const getAnnotationInfo = useCallback(
+    (datum: Observation, segment: string): AnnotationInfo => {
+      const x = xScale(getX(datum));
+      const y = getStackedPosition({
+        observation: datum,
+        series,
+        key: xKey,
+        getAxisValue: getXAsString,
+        measureScale: yScale,
+        fallbackMeasureValue: yScale(getY(datum) ?? 0),
+        segment,
+      });
+
+      return {
+        x,
+        y,
+        color: segment ? colors(segment) : undefined,
+      };
+    },
+    [xScale, getX, series, xKey, getXAsString, yScale, getY, colors]
+  );
+
   const getTooltipInfo = useCallback(
     (datum: Observation): TooltipInfo => {
       const x = getXAsString(datum);
@@ -475,7 +499,6 @@ const useAreasState = (
             value: yValueFormatter(getY(d), getIdentityY(d)),
             axis: "y",
             axisOffset: y,
-            segment,
             color: colors(segment),
           } satisfies TooltipValue;
         }),
@@ -522,6 +545,7 @@ const useAreasState = (
     getColorLabel: getSegmentLabel,
     chartWideData,
     series,
+    getAnnotationInfo,
     getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,

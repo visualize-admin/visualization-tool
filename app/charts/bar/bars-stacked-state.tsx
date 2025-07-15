@@ -31,7 +31,7 @@ import {
   PADDING_INNER,
   PADDING_OUTER,
 } from "@/charts/bar/constants";
-import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
+import { AnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -93,6 +93,7 @@ export type StackedBarsState = CommonChartState &
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
     series: Series<{ [key: string]: number }, string>[];
+    getAnnotationInfo: (d: Observation, segment: string) => AnnotationInfo;
     getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
@@ -140,8 +141,6 @@ const useBarsStackedState = (
   const formatNumber = useFormatNumber({ decimals: "auto" });
   const formatters = useChartFormatters(chartProps);
   const calculationType = useChartInteractiveFilters((d) => d.calculation.type);
-
-  const isEditingAnnotation = useIsEditingAnnotation();
 
   const yKey = fields.y.componentId;
 
@@ -470,6 +469,28 @@ const useBarsStackedState = (
     [yDimension, formatYDate, getYLabel]
   );
 
+  const getAnnotationInfo = useCallback(
+    (datum: Observation, segment: string): AnnotationInfo => {
+      const x = getStackedPosition({
+        observation: datum,
+        series,
+        key: yKey,
+        getAxisValue: getY,
+        measureScale: xScale,
+        fallbackMeasureValue: xScale(getX(datum) ?? 0),
+        segment,
+      });
+      const y = (yScale(getY(datum)) as number) + yScale.bandwidth() * 0.5;
+
+      return {
+        x,
+        y,
+        color: colors(segment),
+      };
+    },
+    [colors, getX, getY, series, xScale, yKey, yScale]
+  );
+
   const getTooltipInfo = useCallback(
     (datum: Observation): TooltipInfo => {
       const bw = yScale.bandwidth();
@@ -505,9 +526,7 @@ const useBarsStackedState = (
       const yLabel = getYAbbreviationOrLabel(datum);
 
       return {
-        yAnchor:
-          yAnchorRaw +
-          (isEditingAnnotation ? 0 : placement.y === "top" ? bw : 0),
+        yAnchor: yAnchorRaw + (placement.y === "top" ? bw : 0),
         xAnchor,
         placement,
         value: formatYAxisTick(yLabel),
@@ -533,7 +552,6 @@ const useBarsStackedState = (
             value: xValueFormatter(getX(d), getIdentityX(d)),
             axis: "x",
             axisOffset: x,
-            segment,
             color: colors(segment),
           } satisfies TooltipValue;
         }),
@@ -557,7 +575,6 @@ const useBarsStackedState = (
       chartWidth,
       fields.segment,
       getYAbbreviationOrLabel,
-      isEditingAnnotation,
       formatYAxisTick,
       getSegmentAbbreviationOrLabel,
       getIdentityX,
@@ -591,6 +608,7 @@ const useBarsStackedState = (
     getColorLabel: getSegmentLabel,
     chartWideData,
     series,
+    getAnnotationInfo,
     getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,

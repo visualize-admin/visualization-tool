@@ -22,6 +22,10 @@ import {
   PADDING_OUTER,
 } from "@/charts/bar/constants";
 import {
+  ANNOTATION_SINGLE_SEGMENT_OFFSET,
+  AnnotationInfo,
+} from "@/charts/shared/annotations";
+import {
   AxisLabelSizeVariables,
   getChartWidth,
   useAxisLabelSizeVariables,
@@ -69,6 +73,7 @@ export type BarsState = CommonChartState &
     yScaleInteraction: ScaleBand<string>;
     yScale: ScaleBand<string>;
     minY: string;
+    getAnnotationInfo: (d: Observation, segment: string) => AnnotationInfo;
     getTooltipInfo: (d: Observation) => TooltipInfo;
     segments: string[];
     colors: ScaleOrdinal<string, string>;
@@ -305,6 +310,18 @@ const useBarsState = (
     [yDimension, formatYDate, getYLabel]
   );
 
+  const getAnnotationInfo = (datum: Observation): AnnotationInfo => {
+    const x =
+      xScale(Math.max(getX(datum) ?? NaN, 0)) +
+      ANNOTATION_SINGLE_SEGMENT_OFFSET;
+    const y = (yScale(getY(datum)) as number) + yScale.bandwidth() * 0.5;
+
+    return {
+      x,
+      y,
+    };
+  };
+
   const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const yAnchor = (yScale(getY(datum)) as number) + yScale.bandwidth() * 0.5;
     const xAnchor = isMobile
@@ -374,6 +391,7 @@ const useBarsState = (
     yScaleTimeRange,
     yScaleInteraction,
     yScale,
+    getAnnotationInfo,
     getTooltipInfo,
     getColorLabel: getSegmentLabel,
     segments,

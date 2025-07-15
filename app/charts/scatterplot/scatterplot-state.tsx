@@ -2,13 +2,14 @@ import { max } from "d3-array";
 import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   ScatterplotStateVariables,
   useScatterplotStateData,
   useScatterplotStateVariables,
 } from "@/charts/scatterplot//scatterplot-state-props";
+import { AnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -47,6 +48,7 @@ export type ScatterplotState = CommonChartState &
     segments: string[];
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
+    getAnnotationInfo: (d: Observation, segment: string) => AnnotationInfo;
     getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
@@ -195,6 +197,20 @@ const useScatterplotState = (
 
   const isMobile = useIsMobile();
 
+  const getAnnotationInfo = useCallback(
+    (datum: Observation, segment: string) => {
+      const x = xScale(getX(datum) ?? 0);
+      const y = yScale(getY(datum) ?? 0);
+
+      return {
+        x,
+        y,
+        color: colors(segment),
+      };
+    },
+    [xScale, getX, yScale, getY, colors]
+  );
+
   const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum) ?? NaN);
     const yRef = yScale(getY(datum) ?? NaN);
@@ -250,6 +266,7 @@ const useScatterplotState = (
     segments: allSegments,
     colors,
     getColorLabel: getSegmentLabel,
+    getAnnotationInfo,
     getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,

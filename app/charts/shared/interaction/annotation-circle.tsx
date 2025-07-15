@@ -1,20 +1,21 @@
-import {
-  ANNOTATION_FOCUS_COLOR,
-  ANNOTATION_FOCUS_WIDTH,
-} from "@/charts/shared/rendering-utils";
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 
+import {
+  ANNOTATION_FOCUS_COLOR,
+  ANNOTATION_FOCUS_WIDTH,
+} from "@/charts/shared/rendering-utils";
+
 export const AnnotationCircle = ({
   x,
   y,
-  color,
+  color = "#6B7280",
   focused = false,
 }: {
   x: number;
   y: number;
-  color: string;
+  color?: string;
   focused?: boolean;
 }) => {
   const classes = useStyles();
