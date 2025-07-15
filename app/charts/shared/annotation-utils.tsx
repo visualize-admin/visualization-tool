@@ -95,17 +95,12 @@ export const getAnnotationTargetsFromObservation = (
   {
     chartConfig,
     segment,
-    getSegment,
   }: {
     chartConfig: ChartConfig;
-    /** We need to be able to conditionally pass a segment value,
-     *  but also use the getSegment function to get the segment value from the observation.
-     *
-     *  This is useful for stacked charts, where the segment value is not in the observation,
+    /** This is needed for stacked charts, where the segment value is not in the observation,
      *  but in the getSegment function.
      */
     segment?: string;
-    getSegment?: (d: Observation) => string;
   }
 ): Annotation["targets"] => {
   const filters = getChartConfigFilters(chartConfig.cubes, { joined: true });
@@ -130,8 +125,9 @@ export const getAnnotationTargetsFromObservation = (
       }
 
       const segmentComponentId = chartConfig.fields.segment?.componentId;
-      if (segmentComponentId && (segment || getSegment)) {
-        const value = segment ?? getSegment?.(observation) ?? "";
+      if (segmentComponentId && segment) {
+        const value =
+          segment ?? observation[`${segmentComponentId}/__iri__`] ?? "";
         targets.push({
           componentId: segmentComponentId,
           value,
@@ -150,8 +146,9 @@ export const getAnnotationTargetsFromObservation = (
       }
 
       const segmentComponentId = chartConfig.fields.segment?.componentId;
-      if (segmentComponentId && (segment || getSegment)) {
-        const value = segment ?? getSegment?.(observation) ?? "";
+      if (segmentComponentId && segment) {
+        const value =
+          segment ?? observation[`${segmentComponentId}/__iri__`] ?? "";
         targets.push({
           componentId: segmentComponentId,
           value,
@@ -162,8 +159,9 @@ export const getAnnotationTargetsFromObservation = (
     }
     case "scatterplot": {
       const segmentComponentId = chartConfig.fields.segment?.componentId;
-      if (segmentComponentId && (segment || getSegment)) {
-        const value = segment ?? getSegment?.(observation) ?? "";
+      if (segmentComponentId && segment) {
+        const value =
+          segment ?? observation[`${segmentComponentId}/__iri__`] ?? "";
         targets.push({
           componentId: segmentComponentId,
           value,
@@ -174,8 +172,9 @@ export const getAnnotationTargetsFromObservation = (
     }
     case "pie": {
       const segmentComponentId = chartConfig.fields.segment?.componentId;
-      if (segmentComponentId && (segment || getSegment)) {
-        const value = segment ?? getSegment?.(observation) ?? "";
+      if (segmentComponentId && segment) {
+        const value =
+          segment ?? observation[`${segmentComponentId}/__iri__`] ?? "";
         targets.push({
           componentId: segmentComponentId,
           value,
