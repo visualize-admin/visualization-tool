@@ -88,8 +88,6 @@ export const makeDimensionValueSorters = (
   const allHierarchyValues = isMeasure(component)
     ? []
     : bfs(component.hierarchy ?? [], (node) => node);
-
-  // For hierarchies, we always fetch /__iri__.
   const hierarchyValuesByValue = uniqueMapBy(
     allHierarchyValues,
     (dv) => dv.value
