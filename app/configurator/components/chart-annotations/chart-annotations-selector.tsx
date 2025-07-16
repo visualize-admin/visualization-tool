@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useMemo } from "react";
 
 import { Checkbox, MarkdownInput, Radio, RadioGroup } from "@/components/form";
@@ -92,6 +92,15 @@ export const ChartAnnotationsSelector = () => {
       value: {
         key: annotation.key,
         color,
+      },
+    });
+  });
+
+  const handleDelete = useEvent((key: string) => {
+    dispatch({
+      type: "CHART_ANNOTATION_REMOVE",
+      value: {
+        key,
       },
     });
   });
@@ -190,6 +199,17 @@ export const ChartAnnotationsSelector = () => {
             onClick={drawerState.open}
             value="text"
           />
+          <Button
+            variant="text"
+            color="primary"
+            size="xs"
+            sx={{ width: "fit-content", ml: 4 }}
+            onClick={() => handleDelete(annotation.key)}
+          >
+            <Trans id="controls.annotations.annotation.delete">
+              Delete annotation
+            </Trans>
+          </Button>
         </ControlSectionContent>
       </ControlSection>
       <ControlSection collapse>
