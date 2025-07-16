@@ -5,6 +5,10 @@
   &:only-child {
     margin-block: 0;
   }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .inheritFonts {
