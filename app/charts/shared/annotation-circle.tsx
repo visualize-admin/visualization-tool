@@ -12,25 +12,19 @@ export const AnnotationCircle = ({
   y,
   color = DEFAULT_ANNOTATION_CIRCLE_COLOR,
   focused = false,
-  outerCircle = true,
   onClick,
 }: {
   x: number;
   y: number;
   color?: string;
   focused?: boolean;
-  outerCircle?: boolean;
   onClick?: () => void;
 }) => {
   const classes = useStyles();
 
   return (
     <ButtonBase
-      className={clsx(
-        classes.outerCircle,
-        outerCircle && classes.outerCircleVisible,
-        focused && classes.focused
-      )}
+      className={clsx(classes.outerCircle, focused && classes.focused)}
       onClick={onClick}
       style={{ left: x, top: y, pointerEvents: onClick ? "auto" : "none" }}
     >
@@ -49,11 +43,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: SIZE,
     height: SIZE,
     borderRadius: "50%",
-    cursor: "pointer",
-  },
-  outerCircleVisible: {
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[2],
+    cursor: "pointer",
   },
   innerCircle: {
     transform: "translate3d(-50%, -50%, 0)",

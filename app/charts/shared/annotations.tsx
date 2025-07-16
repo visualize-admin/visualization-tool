@@ -121,7 +121,6 @@ export const Annotations = () => {
                 y={y}
                 color={color}
                 focused={focused}
-                outerCircle={!interactiveAnnotations[annotation.key]}
                 onClick={() => handleAnnotationClick(annotation)}
               />
             ) : null}
