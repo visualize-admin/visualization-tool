@@ -387,6 +387,10 @@ msgid "controls.annotations.annotation.clear-text"
 msgstr "Clear text"
 
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.delete"
+msgstr "Delete"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.highlight.section.annotation.title"
 msgstr "Annotation"

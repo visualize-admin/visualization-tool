@@ -99,6 +99,19 @@ export const ChartAnnotationsSelector = () => {
     });
   });
 
+  const handleDelete = useEvent(() => {
+    if (!annotation) {
+      return;
+    }
+
+    dispatch({
+      type: "CHART_ANNOTATION_REMOVE",
+      value: {
+        key: annotation.key,
+      },
+    });
+  });
+
   const handleClearText = useEvent((key: string) => {
     dispatch({
       type: "CHART_ANNOTATION_TEXT_CLEAR",
@@ -253,6 +266,13 @@ export const ChartAnnotationsSelector = () => {
         </ControlSectionContent>
       </ControlSection>
       <AnnotationDrawer opened={drawerState.isOpen} close={drawerState.close} />
+      <ControlSection hideTopBorder style={{ marginTop: "auto" }}>
+        <ControlSectionContent>
+          <Button size="sm" onClick={handleDelete}>
+            <Trans id="controls.annotations.delete">Delete</Trans>
+          </Button>
+        </ControlSectionContent>
+      </ControlSection>
     </>
   );
 };
