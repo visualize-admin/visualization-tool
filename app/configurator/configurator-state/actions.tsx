@@ -304,6 +304,13 @@ export type ConfiguratorStateAction =
       };
     }
   | {
+      type: "CHART_ANNOTATION_DEFAULT_OPEN_CHANGE";
+      value: {
+        key: string;
+        defaultOpen: boolean;
+      };
+    }
+  | {
       type: "CHART_ANNOTATION_TEXT_CHANGE";
       value: {
         key: string;

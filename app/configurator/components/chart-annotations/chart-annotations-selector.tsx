@@ -2,7 +2,7 @@ import { t, Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
 import { useMemo } from "react";
 
-import { MarkdownInput, Radio, RadioGroup } from "@/components/form";
+import { Checkbox, MarkdownInput, Radio, RadioGroup } from "@/components/form";
 import { Markdown } from "@/components/markdown";
 import { useDisclosure } from "@/components/use-disclosure";
 import { Annotation, AnnotationTarget } from "@/config-types";
@@ -96,6 +96,20 @@ export const ChartAnnotationsSelector = () => {
     });
   });
 
+  const handleDefaultOpenChange = useEvent((defaultOpen: boolean) => {
+    if (!annotation || annotation.defaultOpen === defaultOpen) {
+      return;
+    }
+
+    dispatch({
+      type: "CHART_ANNOTATION_DEFAULT_OPEN_CHANGE",
+      value: {
+        key: annotation.key,
+        defaultOpen,
+      },
+    });
+  });
+
   const drawerState = useDisclosure();
 
   if (!annotation) {
@@ -175,6 +189,23 @@ export const ChartAnnotationsSelector = () => {
             icon="text"
             onClick={drawerState.open}
             value="text"
+          />
+        </ControlSectionContent>
+      </ControlSection>
+      <ControlSection collapse>
+        <SectionTitle>
+          <Trans id="controls.annotations.highlight.section.display.title">
+            Display
+          </Trans>
+        </SectionTitle>
+        <ControlSectionContent>
+          <Checkbox
+            label={t({
+              id: "controls.annotations.highlight.section.display.default-open",
+              message: "Show open by default",
+            })}
+            checked={annotation.defaultOpen}
+            onChange={() => handleDefaultOpenChange(!annotation.defaultOpen)}
           />
         </ControlSectionContent>
       </ControlSection>

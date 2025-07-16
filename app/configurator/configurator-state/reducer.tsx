@@ -1165,6 +1165,19 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
+    case "CHART_ANNOTATION_DEFAULT_OPEN_CHANGE":
+      if (isConfiguring(draft)) {
+        const { key, defaultOpen } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.defaultOpen = defaultOpen;
+        }
+      }
+
+      return draft;
+
     case "CHART_ANNOTATION_TEXT_CHANGE":
       if (isConfiguring(draft)) {
         const { key, locale, value } = action.value;

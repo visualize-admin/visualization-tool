@@ -296,6 +296,7 @@ const HighlightAnnotation = t.type({
   }),
   highlightType: t.union([t.literal("none"), t.literal("filled")]),
   color: t.union([t.string, t.undefined]),
+  defaultOpen: t.boolean,
 });
 export type HighlightAnnotation = t.TypeOf<typeof HighlightAnnotation>;
 
