@@ -4,6 +4,7 @@ import {
   linkPlugin,
   listsPlugin,
   markdownShortcutPlugin,
+  maxLengthPlugin,
   MDXEditor,
   quotePlugin,
   thematicBreakPlugin,
@@ -573,8 +574,10 @@ export const MarkdownInput = ({
   value,
   onChange,
   disableToolbar,
+  characterLimit,
 }: {
   label?: string | ReactNode;
+  characterLimit?: number;
   disableToolbar?: {
     textStyles?: boolean;
     blockType?: boolean;
@@ -622,6 +625,7 @@ export const MarkdownInput = ({
         quotePlugin(),
         markdownShortcutPlugin(),
         thematicBreakPlugin(),
+        maxLengthPlugin(characterLimit),
       ]}
       onChange={(newValue) => {
         onChange?.({
