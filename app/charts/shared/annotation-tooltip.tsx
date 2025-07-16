@@ -84,6 +84,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(3),
     borderRadius: theme.shape.borderRadius,
     backgroundColor: theme.palette.background.paper,
+    wordBreak: "break-word",
     boxShadow: theme.shadows[4],
   },
   text: {
