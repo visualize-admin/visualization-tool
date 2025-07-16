@@ -26,12 +26,11 @@ export const AnnotationTooltip = ({
 
   return open && text ? (
     <div className={classes.root} style={{ left: x, top: y + 28 }}>
-      {/* TODO: There should be a distinction between the title and the text */}
-      <Typography variant="caption">
+      <Typography className={classes.text} variant="caption">
         <MarkdownInheritFonts>{annotation.text[locale]}</MarkdownInheritFonts>
       </Typography>
       <IconButton className={classes.closeButton} onClick={handleClose}>
-        <Icon name="close" />
+        <Icon name="close" size={14} />
       </IconButton>
     </div>
   ) : null;
@@ -45,14 +44,18 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: "flex-start",
     justifyContent: "space-between",
     gap: theme.spacing(2),
-    width: "100%",
+    width: "fit-content",
     maxWidth: 240,
     padding: theme.spacing(3),
     borderRadius: theme.shape.borderRadius,
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[4],
   },
+  text: {
+    margin: "auto 0",
+  },
   closeButton: {
-    padding: 0,
+    padding: theme.spacing(1),
+    color: theme.palette.text.primary,
   },
 }));
