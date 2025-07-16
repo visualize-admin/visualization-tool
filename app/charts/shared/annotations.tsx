@@ -87,8 +87,8 @@ export const Annotations = () => {
 
           return {
             annotation: a,
-            x,
-            y,
+            x: x + margins.left,
+            y: y + margins.top,
             color: finalColor,
             focused,
           };
@@ -103,6 +103,8 @@ export const Annotations = () => {
     getSegment,
     getAnnotationInfo,
     activeField,
+    margins.left,
+    margins.top,
   ]);
 
   return (
@@ -115,8 +117,8 @@ export const Annotations = () => {
             {annotation.text[locale] || focused ? (
               <AnnotationCircle
                 key={annotation.key}
-                x={x + margins.left}
-                y={y + margins.top}
+                x={x}
+                y={y}
                 color={color}
                 focused={focused}
                 onClick={() => handleAnnotationClick(annotation)}

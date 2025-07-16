@@ -110,9 +110,10 @@ const getAdjustedPosition = ({
   chartHeight: number;
 }) => {
   const { width: tooltipWidth, height: tooltipHeight } = dimensions;
-  const yOffset = 28;
+  const xOffset = -24;
+  const yOffset = -12;
 
-  let adjustedX = x;
+  let adjustedX = x + xOffset;
   let adjustedY = y + yOffset;
 
   if (adjustedX + tooltipWidth > chartWidth) {
