@@ -160,6 +160,8 @@ export const ChartAnnotationsSelector = () => {
     return null;
   }
 
+  const label = annotation.text[locale];
+
   return (
     <>
       <ControlSection hideTopBorder>
@@ -217,13 +219,17 @@ export const ChartAnnotationsSelector = () => {
         </SectionTitle>
         <ControlSectionContent px="none">
           <ControlTab
-            upperLabel={t({
-              id: "controls.annotations.annotation",
-              message: "Annotation",
-            })}
+            upperLabel={
+              label
+                ? undefined
+                : t({
+                    id: "controls.annotations.annotation",
+                    message: "Annotation",
+                  })
+            }
             mainLabel={
               <Markdown>
-                {annotation.text[locale] ||
+                {label ||
                   t({
                     id: "controls.annotations.annotation.add.text",
                     message: "Add text...",

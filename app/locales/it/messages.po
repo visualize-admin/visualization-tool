@@ -379,6 +379,7 @@ msgid "controls.annotations.annotation"
 msgstr "Annotazione"
 
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+#: app/configurator/components/chart-annotations/chart-annotations.tsx
 msgid "controls.annotations.annotation.add.text"
 msgstr "Aggiungi testo..."
 
@@ -414,6 +415,10 @@ msgstr "Annotare l'elemento"
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.highlight.section.style.title"
 msgstr "Stile"
+
+#: app/configurator/components/chart-annotations/chart-annotations.tsx
+msgid "controls.annotations.label"
+msgstr "Etichetta"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx

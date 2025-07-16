@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
 
 import { Markdown } from "@/components/markdown";
@@ -64,7 +64,23 @@ const ChartAnnotationTab = ({ annotation }: { annotation: Annotation }) => {
 
   return (
     <ControlTab
-      mainLabel={<Markdown>{label}</Markdown>}
+      upperLabel={
+        label
+          ? undefined
+          : t({
+              id: "controls.annotations.label",
+              message: "Label",
+            })
+      }
+      mainLabel={
+        <Markdown>
+          {label ||
+            t({
+              id: "controls.annotations.annotation.add.text",
+              message: "Add text...",
+            })}
+        </Markdown>
+      }
       icon="text"
       rightIcon={
         <Typography component="span" color="text.primary">
