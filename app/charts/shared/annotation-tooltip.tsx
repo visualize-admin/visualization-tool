@@ -60,15 +60,84 @@ export const AnnotationTooltip = ({
   }, [annotation.key, annotations, setAnnotations]);
 
   return open && text ? (
-    <div ref={ref} className={classes.root} style={{ left, top }}>
-      <Typography className={classes.text} variant="caption">
-        <MarkdownInheritFonts>{annotation.text[locale]}</MarkdownInheritFonts>
-      </Typography>
-      <IconButton className={classes.closeButton} onClick={handleClose}>
-        <Icon name="close" size={14} />
-      </IconButton>
-    </div>
+    <>
+      <Connector annotationX={x} annotationY={y} />
+      <div ref={ref} className={classes.root} style={{ left, top }}>
+        <Typography className={classes.text} variant="caption">
+          <MarkdownInheritFonts>{annotation.text[locale]}</MarkdownInheritFonts>
+        </Typography>
+        <IconButton className={classes.closeButton} onClick={handleClose}>
+          <Icon name="close" size={14} />
+        </IconButton>
+      </div>
+    </>
   ) : null;
+};
+
+const Y_OFFSET = 12;
+
+const getAdjustedPosition = ({
+  x,
+  y,
+  dimensions,
+  chartWidth,
+  chartHeight,
+}: {
+  x: number;
+  y: number;
+  dimensions: { width: number; height: number };
+  chartWidth: number;
+  chartHeight: number;
+}) => {
+  const { width: tooltipWidth, height: tooltipHeight } = dimensions;
+  const xOffset = -24;
+
+  let adjustedX = x + xOffset;
+  let adjustedY = y - Y_OFFSET;
+
+  if (adjustedX + tooltipWidth > chartWidth) {
+    adjustedX = chartWidth - tooltipWidth;
+  }
+
+  if (adjustedX < 0) {
+    adjustedX = 0;
+  }
+
+  if (adjustedY - tooltipHeight < 0) {
+    adjustedY = tooltipHeight;
+  }
+
+  if (adjustedY > chartHeight) {
+    adjustedY = chartHeight;
+  }
+
+  return {
+    left: adjustedX,
+    top: adjustedY,
+  };
+};
+
+const Connector = ({
+  annotationX,
+  annotationY,
+}: {
+  annotationX: number;
+  annotationY: number;
+}) => {
+  const classes = useStyles();
+  const connectorHeight = Y_OFFSET;
+  const connectorTop = annotationY - Y_OFFSET;
+
+  return (
+    <div
+      className={classes.connector}
+      style={{
+        left: annotationX,
+        top: connectorTop,
+        height: connectorHeight,
+      }}
+    />
+  );
 };
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -94,46 +163,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(1),
     color: theme.palette.text.primary,
   },
+  connector: {
+    transform: "translateX(-50%)",
+    position: "absolute",
+    width: 1,
+    backgroundColor: theme.palette.text.secondary,
+  },
 }));
-
-const getAdjustedPosition = ({
-  x,
-  y,
-  dimensions,
-  chartWidth,
-  chartHeight,
-}: {
-  x: number;
-  y: number;
-  dimensions: { width: number; height: number };
-  chartWidth: number;
-  chartHeight: number;
-}) => {
-  const { width: tooltipWidth, height: tooltipHeight } = dimensions;
-  const xOffset = -24;
-  const yOffset = -12;
-
-  let adjustedX = x + xOffset;
-  let adjustedY = y + yOffset;
-
-  if (adjustedX + tooltipWidth > chartWidth) {
-    adjustedX = chartWidth - tooltipWidth;
-  }
-
-  if (adjustedX < 0) {
-    adjustedX = 0;
-  }
-
-  if (adjustedY - tooltipHeight < 0) {
-    adjustedY = tooltipHeight;
-  }
-
-  if (adjustedY > chartHeight) {
-    adjustedY = chartHeight;
-  }
-
-  return {
-    left: adjustedX,
-    top: adjustedY,
-  };
-};
