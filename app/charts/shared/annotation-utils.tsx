@@ -57,7 +57,7 @@ export const useGetAnnotationRenderState = () => {
       }
 
       const interactionMatches =
-        interaction.type === "focus" &&
+        interaction.type === "annotation" &&
         interaction.visible &&
         interaction.observation?.[axisComponentId] === axisValue;
 

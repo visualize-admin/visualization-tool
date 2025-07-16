@@ -214,79 +214,81 @@ export const MapTooltip = () => {
 
   return (
     <>
-      {interaction.mouse && interaction.observation && (
-        <TooltipBox
-          x={interaction.mouse.x}
-          y={interaction.mouse.y - 20}
-          placement={{ x: "center", y: "top" }}
-          margins={{ bottom: 0, left: 0, right: 0, top: 0 }}
-        >
-          <Box sx={{ minWidth: 200 }}>
-            <Typography
-              component="div"
-              variant="caption"
-              sx={{ fontWeight: "bold" }}
-            >
-              {hoverObjectType === "area"
-                ? areaLayer?.getLabel(interaction.observation)
-                : symbolLayer?.getLabel(interaction.observation)}
-            </Typography>
-            <Box
-              display="grid"
-              sx={{
-                mt: 1,
-                width: "100%",
-                gridTemplateColumns: "1fr auto",
-                gap: 1,
-                alignItems: "center",
-              }}
-            >
-              {
-                <>
-                  {areaTooltipState && showAreaColorTooltip && (
-                    <TooltipRow
-                      title={areaTooltipState.label}
-                      background={areaTooltipState.color}
-                      color={areaTooltipState.textColor}
-                      value={areaTooltipState.value}
-                      error={areaTooltipState.error}
-                    />
-                  )}
+      {interaction.type === "tooltip" &&
+        interaction.mouse &&
+        interaction.observation && (
+          <TooltipBox
+            x={interaction.mouse.x}
+            y={interaction.mouse.y - 20}
+            placement={{ x: "center", y: "top" }}
+            margins={{ bottom: 0, left: 0, right: 0, top: 0 }}
+          >
+            <Box sx={{ minWidth: 200 }}>
+              <Typography
+                component="div"
+                variant="caption"
+                sx={{ fontWeight: "bold" }}
+              >
+                {hoverObjectType === "area"
+                  ? areaLayer?.getLabel(interaction.observation)
+                  : symbolLayer?.getLabel(interaction.observation)}
+              </Typography>
+              <Box
+                display="grid"
+                sx={{
+                  mt: 1,
+                  width: "100%",
+                  gridTemplateColumns: "1fr auto",
+                  gap: 1,
+                  alignItems: "center",
+                }}
+              >
+                {
+                  <>
+                    {areaTooltipState && showAreaColorTooltip && (
+                      <TooltipRow
+                        title={areaTooltipState.label}
+                        background={areaTooltipState.color}
+                        color={areaTooltipState.textColor}
+                        value={areaTooltipState.value}
+                        error={areaTooltipState.error}
+                      />
+                    )}
 
-                  {symbolTooltipState && showSymbolMeasureTooltip && (
-                    <TooltipRow
-                      title={symbolTooltipState.measureDimension?.label || ""}
-                      {...(symbolTooltipState.colors.type === "fixed"
-                        ? {
-                            background: symbolTooltipState.color,
-                            border: undefined,
-                            color: symbolTooltipState.textColor,
-                          }
-                        : {
-                            background: "#fff",
-                            border: "1px solid #ccc",
-                            color: "#000",
-                          })}
-                      value={symbolTooltipState.value}
-                      error={symbolTooltipState.error}
-                    />
-                  )}
+                    {symbolTooltipState && showSymbolMeasureTooltip && (
+                      <TooltipRow
+                        title={symbolTooltipState.measureDimension?.label || ""}
+                        {...(symbolTooltipState.colors.type === "fixed"
+                          ? {
+                              background: symbolTooltipState.color,
+                              border: undefined,
+                              color: symbolTooltipState.textColor,
+                            }
+                          : {
+                              background: "#fff",
+                              border: "1px solid #ccc",
+                              color: "#000",
+                            })}
+                        value={symbolTooltipState.value}
+                        error={symbolTooltipState.error}
+                      />
+                    )}
 
-                  {symbolTooltipState && showSymbolColorTooltip && (
-                    <TooltipRow
-                      title={symbolTooltipState.colors.component?.label || ""}
-                      background={symbolTooltipState.color}
-                      color={symbolTooltipState.textColor}
-                      value={symbolTooltipState.colors.value ?? ""}
-                      error={symbolTooltipState.colors.error}
-                    />
-                  )}
-                </>
-              }
+                    {symbolTooltipState && showSymbolColorTooltip && (
+                      <TooltipRow
+                        title={symbolTooltipState.colors.component?.label || ""}
+                        background={symbolTooltipState.color}
+                        color={symbolTooltipState.textColor}
+                        value={symbolTooltipState.colors.value ?? ""}
+                        error={symbolTooltipState.colors.error}
+                      />
+                    )}
+                  </>
+                }
+              </Box>
             </Box>
-          </Box>
-        </TooltipBox>
-      )}
+          </TooltipBox>
+        )}
     </>
   );
 };

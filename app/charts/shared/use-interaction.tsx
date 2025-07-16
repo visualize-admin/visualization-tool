@@ -9,16 +9,25 @@ import {
 
 import { Observation } from "@/domain/data";
 
-type InteractionState = {
-  type: "tooltip" | "focus";
+type BaseInteraction = {
   visible: boolean;
   observation: Observation | undefined;
-  segment?: string;
+};
+
+type TooltipInteraction = BaseInteraction & {
+  type: "tooltip";
   mouse?: {
     x: number;
     y: number;
   };
 };
+
+type AnnotationInteraction = BaseInteraction & {
+  type: "annotation";
+  segment?: string;
+};
+
+type InteractionState = TooltipInteraction | AnnotationInteraction;
 
 type InteractionStateAction =
   | {

@@ -11,7 +11,7 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 
 export const HoverAnnotationDot = () => {
-  const [{ type, visible, observation, segment }] = useInteraction();
+  const [interaction] = useInteraction();
   const {
     getAnnotationInfo,
     bounds: { margins },
@@ -25,11 +25,18 @@ export const HoverAnnotationDot = () => {
     | ColumnsState
     | StackedColumnsState;
 
-  if (type !== "focus" || !visible || !observation) {
+  if (
+    interaction.type !== "annotation" ||
+    !interaction.visible ||
+    !interaction.observation
+  ) {
     return null;
   }
 
-  const { x, y, color } = getAnnotationInfo(observation, segment ?? "");
+  const { x, y, color } = getAnnotationInfo(
+    interaction.observation,
+    interaction.segment ?? ""
+  );
 
   return (
     <AnnotationCircle

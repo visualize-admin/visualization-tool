@@ -60,7 +60,7 @@ export const useAnnotationInteractions = () => {
       dispatchInteraction({
         type: "INTERACTION_UPDATE",
         value: {
-          type: isEditingAnnotation ? "focus" : "tooltip",
+          type: isEditingAnnotation ? "annotation" : "tooltip",
           visible: true,
           observation,
           segment,
