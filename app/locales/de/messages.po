@@ -374,10 +374,6 @@ msgstr "Animation"
 msgid "controls.annotations.add"
 msgstr "Hinzufügen"
 
-#: app/configurator/components/chart-annotations/add-annotation-button.tsx
-msgid "controls.annotations.add.highlight"
-msgstr "Hervorheben"
-
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.annotation"
 msgstr "Anmerkung"

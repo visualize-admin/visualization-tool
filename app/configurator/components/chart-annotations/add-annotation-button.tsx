@@ -1,6 +1,4 @@
 import { Trans } from "@lingui/macro";
-import { Menu, MenuItem } from "@mui/material";
-import { MouseEvent, useState } from "react";
 
 import { ConfiguratorAddButton } from "@/components/add-button";
 import { Annotation } from "@/config-types";
@@ -18,17 +16,7 @@ export const AddAnnotationButton = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const { annotations } = chartConfig;
-
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const handleOpen = useEvent((e: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(e.currentTarget);
-  });
-  const handleClose = useEvent(() => {
-    setAnchorEl(null);
-  });
   const handleAddAnnotation = useEvent((type: Annotation["type"]) => {
-    setAnchorEl(null);
-
     let annotation: Annotation;
 
     switch (type) {
@@ -52,14 +40,12 @@ export const AddAnnotationButton = () => {
 
   return annotations.length < MAX_ANNOTATIONS ? (
     <>
-      <ConfiguratorAddButton onClick={handleOpen} sx={{ mx: 4 }}>
+      <ConfiguratorAddButton
+        onClick={() => handleAddAnnotation("highlight")}
+        sx={{ mx: 4 }}
+      >
         <Trans id="controls.annotations.add">Add</Trans>
       </ConfiguratorAddButton>
-      <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={handleClose}>
-        <MenuItem onClick={() => handleAddAnnotation("highlight")}>
-          <Trans id="controls.annotations.add.highlight">Highlight</Trans>
-        </MenuItem>
-      </Menu>
     </>
   ) : null;
 };
