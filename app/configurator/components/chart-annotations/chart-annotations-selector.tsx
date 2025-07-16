@@ -282,19 +282,16 @@ const getAnnotationLabel = ({
     return;
   }
 
-  let label: string | undefined;
-
-  for (const target of annotation.targets) {
-    if (target) {
-      const targetLabel = getTargetLabel(target, { dimensions });
-
-      if (targetLabel) {
-        label = label ? `${label}, ${targetLabel}` : targetLabel;
+  return annotation.targets
+    .map((target) => {
+      if (target) {
+        return getTargetLabel(target, { dimensions });
       }
-    }
-  }
 
-  return label;
+      return "";
+    })
+    .sort()
+    .join(", ");
 };
 
 const getTargetLabel = (
