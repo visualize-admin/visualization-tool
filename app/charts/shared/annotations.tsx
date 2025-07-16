@@ -15,6 +15,7 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { Annotation } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import { useConfiguratorState } from "@/configurator/configurator-state";
+import { useLocale } from "@/locales/use-locale";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
 export type AnnotationInfo = {
@@ -24,6 +25,7 @@ export type AnnotationInfo = {
 };
 
 export const Annotations = () => {
+  const locale = useLocale();
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const { activeField, annotations } = chartConfig;
@@ -108,14 +110,16 @@ export const Annotations = () => {
 
         return (
           <>
-            <AnnotationCircle
-              key={annotation.key}
-              x={x + margins.left}
-              y={y + margins.top}
-              color={color}
-              focused={focused}
-              onClick={() => handleAnnotationClick(annotation)}
-            />
+            {annotation.text[locale] || focused ? (
+              <AnnotationCircle
+                key={annotation.key}
+                x={x + margins.left}
+                y={y + margins.top}
+                color={color}
+                focused={focused}
+                onClick={() => handleAnnotationClick(annotation)}
+              />
+            ) : null}
             <AnnotationTooltip renderAnnotation={renderAnnotation} />
           </>
         );
