@@ -1,8 +1,12 @@
 import { IconButton, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { useCallback } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
-import { RenderAnnotation } from "@/charts/shared/annotations";
+import {
+  AnnotationEnabledChartState,
+  RenderAnnotation,
+} from "@/charts/shared/annotations";
+import { useChartState } from "@/charts/shared/chart-state";
 import { MarkdownInheritFonts } from "@/components/markdown";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
@@ -13,19 +17,50 @@ export const AnnotationTooltip = ({
 }: {
   renderAnnotation: RenderAnnotation;
 }) => {
+  const locale = useLocale();
   const classes = useStyles();
   const annotations = useChartInteractiveFilters((d) => d.annotations);
   const setAnnotations = useChartInteractiveFilters((d) => d.setAnnotations);
+
   const open = annotations[annotation.key];
-  const locale = useLocale();
   const text = annotation.text[locale];
+
+  const ref = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({
+    width: 0,
+    height: 0,
+  });
+
+  useLayoutEffect(() => {
+    if (ref.current && open) {
+      const rect = ref.current.getBoundingClientRect();
+      setDimensions({
+        width: rect.width,
+        height: rect.height,
+      });
+    }
+  }, [open, text]);
+
+  const {
+    bounds: { width, height },
+  } = useChartState() as AnnotationEnabledChartState;
+
+  const { left, top } = useMemo(() => {
+    return getAdjustedPosition({
+      x,
+      y,
+      dimensions,
+      chartWidth: width,
+      chartHeight: height,
+    });
+  }, [x, y, dimensions, width, height]);
 
   const handleClose = useCallback(() => {
     setAnnotations({ ...annotations, [annotation.key]: false });
   }, [annotation.key, annotations, setAnnotations]);
 
   return open && text ? (
-    <div className={classes.root} style={{ left: x, top: y + 28 }}>
+    <div ref={ref} className={classes.root} style={{ left, top }}>
       <Typography className={classes.text} variant="caption">
         <MarkdownInheritFonts>{annotation.text[locale]}</MarkdownInheritFonts>
       </Typography>
@@ -59,3 +94,44 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.text.primary,
   },
 }));
+
+const getAdjustedPosition = ({
+  x,
+  y,
+  dimensions,
+  chartWidth,
+  chartHeight,
+}: {
+  x: number;
+  y: number;
+  dimensions: { width: number; height: number };
+  chartWidth: number;
+  chartHeight: number;
+}) => {
+  const { width: tooltipWidth, height: tooltipHeight } = dimensions;
+  const yOffset = 28;
+
+  let adjustedX = x;
+  let adjustedY = y + yOffset;
+
+  if (adjustedX + tooltipWidth > chartWidth) {
+    adjustedX = chartWidth - tooltipWidth;
+  }
+
+  if (adjustedX < 0) {
+    adjustedX = 0;
+  }
+
+  if (adjustedY - tooltipHeight < 0) {
+    adjustedY = tooltipHeight;
+  }
+
+  if (adjustedY > chartHeight) {
+    adjustedY = chartHeight;
+  }
+
+  return {
+    left: adjustedX,
+    top: adjustedY,
+  };
+};

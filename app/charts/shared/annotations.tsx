@@ -18,6 +18,16 @@ import { useConfiguratorState } from "@/configurator/configurator-state";
 import { useLocale } from "@/locales/use-locale";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
+export type AnnotationEnabledChartState =
+  | AreasState
+  | BarsState
+  | StackedBarsState
+  | ColumnsState
+  | StackedColumnsState
+  | LinesState
+  | PieState
+  | ScatterplotState;
+
 export type AnnotationInfo = {
   x: number;
   y: number;
@@ -34,15 +44,7 @@ export const Annotations = () => {
     bounds: { width, height, margins },
     getSegment,
     getAnnotationInfo,
-  } = useChartState() as
-    | AreasState
-    | BarsState
-    | StackedBarsState
-    | ColumnsState
-    | StackedColumnsState
-    | LinesState
-    | PieState
-    | ScatterplotState;
+  } = useChartState() as AnnotationEnabledChartState;
   const interactiveAnnotations = useChartInteractiveFilters(
     (d) => d.annotations
   );
