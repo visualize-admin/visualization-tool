@@ -290,6 +290,7 @@ const AnnotationDrawer = ({
                   name={`annotation-${locale}`}
                   label={getFieldLabel(locale)}
                   value={annotation.text[locale]}
+                  characterLimit={500}
                   disableToolbar={{
                     blockType: true,
                     listToggles: true,
