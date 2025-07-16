@@ -36,6 +36,9 @@ export type InteractiveFiltersState = {
   calculation: {
     type: CalculationType | undefined;
   };
+  annotations: {
+    [x: string]: boolean;
+  };
 };
 
 export type DataFilters = Record<string, FilterValueSingle>;
@@ -64,6 +67,7 @@ type InteractiveFiltersStateActions = {
   ) => void;
   resetDataFilters: () => void;
   setCalculationType: (calculationType: CalculationType) => void;
+  setAnnotations: (annotations: InteractiveFiltersState["annotations"]) => void;
 };
 
 type State = InteractiveFiltersState & InteractiveFiltersStateActions;
@@ -136,6 +140,10 @@ const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
     },
     setCalculationType: (calculationType: CalculationType) => {
       set({ calculation: { type: calculationType } });
+    },
+    annotations: {},
+    setAnnotations: (annotations: InteractiveFiltersState["annotations"]) => {
+      set({ annotations });
     },
   };
 };

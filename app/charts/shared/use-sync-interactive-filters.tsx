@@ -24,7 +24,7 @@ export const useSyncInteractiveFilters = (
   chartConfig: ChartConfig,
   dashboardFilters: DashboardFiltersConfig | undefined
 ) => {
-  const { interactiveFiltersConfig } = chartConfig;
+  const { interactiveFiltersConfig, annotations } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
   const resetCategories = useChartInteractiveFilters((d) => d.resetCategories);
   const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
@@ -148,4 +148,12 @@ export const useSyncInteractiveFilters = (
       setCalculationType(calculationType);
     }
   }, [calculationActive, calculationType, setCalculationType]);
+
+  const setAnnotations = useChartInteractiveFilters((d) => d.setAnnotations);
+
+  useEffect(() => {
+    setAnnotations(
+      Object.fromEntries(annotations.map((a) => [a.key, a.defaultOpen]))
+    );
+  }, [annotations, setAnnotations]);
 };
