@@ -4,6 +4,7 @@ import { MouseEvent, useState } from "react";
 
 import { ConfiguratorAddButton } from "@/components/add-button";
 import { Annotation } from "@/config-types";
+import { getChartConfig } from "@/config-utils";
 import { getDefaultHighlightAnnotation } from "@/configurator/components/chart-annotations/utils";
 import {
   isConfiguring,
@@ -11,8 +12,12 @@ import {
 } from "@/configurator/configurator-state";
 import { useEvent } from "@/utils/use-event";
 
+const MAX_ANNOTATIONS = 3;
+
 export const AddAnnotationButton = () => {
-  const [_, dispatch] = useConfiguratorState(isConfiguring);
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
+  const { annotations } = chartConfig;
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const handleOpen = useEvent((e: MouseEvent<HTMLButtonElement>) => {
@@ -45,7 +50,7 @@ export const AddAnnotationButton = () => {
     });
   });
 
-  return (
+  return annotations.length < MAX_ANNOTATIONS ? (
     <>
       <ConfiguratorAddButton onClick={handleOpen} sx={{ mx: 4 }}>
         <Trans id="controls.annotations.add">Add</Trans>
@@ -56,5 +61,5 @@ export const AddAnnotationButton = () => {
         </MenuItem>
       </Menu>
     </>
-  );
+  ) : null;
 };
