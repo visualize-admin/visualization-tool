@@ -1,5 +1,7 @@
 import { t, Trans } from "@lingui/macro";
 import { Button, Typography } from "@mui/material";
+import isEqual from "lodash/isEqual";
+import omit from "lodash/omit";
 import { useMemo } from "react";
 
 import { Checkbox, MarkdownInput, Radio, RadioGroup } from "@/components/form";
@@ -7,6 +9,7 @@ import { Markdown } from "@/components/markdown";
 import { useDisclosure } from "@/components/use-disclosure";
 import { Annotation, AnnotationTarget } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
+import { getDefaultHighlightAnnotation } from "@/configurator/components/chart-annotations/utils";
 import { ControlTab } from "@/configurator/components/chart-controls/control-tab";
 import {
   ControlSection,
@@ -105,6 +108,25 @@ export const ChartAnnotationsSelector = () => {
     });
   });
 
+  const handleClose = useEvent(() => {
+    if (!annotation) {
+      return;
+    }
+
+    const defaultHighlightAnnotation = getDefaultHighlightAnnotation();
+
+    if (
+      isEqual(omit(annotation, "key"), omit(defaultHighlightAnnotation, "key"))
+    ) {
+      handleDelete(annotation.key);
+    }
+
+    dispatch({
+      type: "CHART_ACTIVE_FIELD_CHANGE",
+      value: undefined,
+    });
+  });
+
   const handleDefaultOpenChange = useEvent((defaultOpen: boolean) => {
     if (!annotation || annotation.defaultOpen === defaultOpen) {
       return;
@@ -128,7 +150,7 @@ export const ChartAnnotationsSelector = () => {
   return (
     <>
       <ControlSection hideTopBorder>
-        <SectionTitle closable>
+        <SectionTitle closable onClose={handleClose}>
           <Trans id="controls.annotations.highlight.section.element.title">
             Highlight element
           </Trans>
