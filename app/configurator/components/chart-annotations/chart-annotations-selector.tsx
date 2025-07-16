@@ -13,7 +13,6 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
-import { ConfirmButton } from "@/configurator/components/confirm-button";
 import { ConfiguratorDrawer } from "@/configurator/components/drawers";
 import { ColorPicker } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
@@ -56,13 +55,6 @@ export const ChartAnnotationsSelector = () => {
   const annotationLabel = useMemo(() => {
     return getAnnotationLabel({ annotation, dimensions });
   }, [annotation, dimensions]);
-
-  const handleClose = useEvent(() => {
-    dispatch({
-      type: "CHART_ACTIVE_FIELD_CHANGE",
-      value: undefined,
-    });
-  });
 
   const handleStyleTypeChange = useEvent(
     (highlightType: Annotation["highlightType"]) => {
@@ -186,11 +178,6 @@ export const ChartAnnotationsSelector = () => {
           />
         </ControlSectionContent>
       </ControlSection>
-      <ControlSection hideTopBorder>
-        <ControlSectionContent>
-          <ConfirmButton onClick={handleClose} />
-        </ControlSectionContent>
-      </ControlSection>
       <AnnotationDrawer opened={drawerState.isOpen} close={drawerState.close} />
     </>
   );
@@ -263,7 +250,6 @@ const AnnotationDrawer = ({
                 />
               </div>
             ))}
-            <ConfirmButton onClick={close} />
           </ControlSectionContent>
         </ControlSection>
       </div>
