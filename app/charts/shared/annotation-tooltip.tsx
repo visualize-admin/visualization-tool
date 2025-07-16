@@ -2,16 +2,16 @@ import { IconButton, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useCallback } from "react";
 
-import { AnnotationPosition } from "@/charts/shared/annotations";
+import { RenderAnnotation } from "@/charts/shared/annotations";
 import { MarkdownInheritFonts } from "@/components/markdown";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
 export const AnnotationTooltip = ({
-  annotationPosition: { annotation, x, y },
+  renderAnnotation: { annotation, x, y },
 }: {
-  annotationPosition: AnnotationPosition;
+  renderAnnotation: RenderAnnotation;
 }) => {
   const classes = useStyles();
   const annotations = useChartInteractiveFilters((d) => d.annotations);

@@ -58,7 +58,7 @@ export const Annotations = () => {
     [interactiveAnnotations, setInteractiveAnnotations]
   );
 
-  const annotationPositions = useMemo(() => {
+  const renderAnnotations = useMemo(() => {
     // A "hack" to prevent using // eslint-disable-next-line @typescript-eslint/no-unused-vars
     // We need to re-compute the annotation positions when the chart width or height changes.
     width;
@@ -90,7 +90,7 @@ export const Annotations = () => {
           };
         });
       })
-      .filter((d): d is AnnotationPosition => d !== null);
+      .filter((d): d is RenderAnnotation => d !== null);
   }, [
     width,
     height,
@@ -103,8 +103,8 @@ export const Annotations = () => {
 
   return (
     <>
-      {annotationPositions.map((annotationPosition) => {
-        const { annotation, x, y, color, focused } = annotationPosition;
+      {renderAnnotations.map((renderAnnotation) => {
+        const { annotation, x, y, color, focused } = renderAnnotation;
 
         return (
           <>
@@ -116,7 +116,7 @@ export const Annotations = () => {
               focused={focused}
               onClick={() => handleAnnotationClick(annotation)}
             />
-            <AnnotationTooltip annotationPosition={annotationPosition} />
+            <AnnotationTooltip renderAnnotation={renderAnnotation} />
           </>
         );
       })}
@@ -124,7 +124,7 @@ export const Annotations = () => {
   );
 };
 
-export type AnnotationPosition = {
+export type RenderAnnotation = {
   annotation: Annotation;
   x: number;
   y: number;
