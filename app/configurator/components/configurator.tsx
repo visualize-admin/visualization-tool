@@ -490,7 +490,15 @@ const ConfigureChartStep = () => {
           hideBackdrop
           onClose={handleClosePanel}
         >
-          <div data-testid="panel-drawer" style={{ width: DRAWER_WIDTH }}>
+          <div
+            data-testid="panel-drawer"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              width: DRAWER_WIDTH,
+            }}
+          >
             {isAnnotatorField(chartConfig.activeField) ? (
               <ChartAnnotatorSelector />
             ) : isAnnotationField(chartConfig.activeField) ? (
