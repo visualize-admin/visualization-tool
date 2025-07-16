@@ -874,6 +874,10 @@ msgstr "To"
 msgid "controls.filters.show-legend.toggle"
 msgstr "Show legend titles"
 
+#: app/components/form.tsx
+msgid "controls.form.max-length-reached"
+msgstr "Character limit reached"
+
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
 msgstr "Drag and drop columns here to make groups."

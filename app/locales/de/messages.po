@@ -874,6 +874,10 @@ msgstr "Zu"
 msgid "controls.filters.show-legend.toggle"
 msgstr "Legendentitel anzeigen"
 
+#: app/components/form.tsx
+msgid "controls.form.max-length-reached"
+msgstr "Zeichenlimit erreicht"
+
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
 msgstr "Ziehen Sie Spalten hierher, um Gruppen zu erstellen."

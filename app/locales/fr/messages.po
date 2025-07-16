@@ -874,6 +874,10 @@ msgstr "Au"
 msgid "controls.filters.show-legend.toggle"
 msgstr "Afficher les titres des légendes"
 
+#: app/components/form.tsx
+msgid "controls.form.max-length-reached"
+msgstr "Limite de caractères atteinte"
+
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
 msgstr "Glisser-déposer des colonnes ici pour créer des groupes."

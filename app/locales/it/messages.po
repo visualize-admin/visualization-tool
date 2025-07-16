@@ -874,6 +874,10 @@ msgstr "Alla"
 msgid "controls.filters.show-legend.toggle"
 msgstr "Mostra i titoli delle leggende"
 
+#: app/components/form.tsx
+msgid "controls.form.max-length-reached"
+msgstr "Limite di caratteri raggiunto"
+
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
 msgstr "Trascina qui le colonne per creare gruppi."
