@@ -27,7 +27,7 @@ export const Annotations = () => {
   const { activeField, annotations } = chartConfig;
   const {
     chartData,
-    bounds: { margins },
+    bounds: { width, height, margins },
     getSegment,
     getAnnotationInfo,
   } = useChartState() as
@@ -41,6 +41,11 @@ export const Annotations = () => {
     | ScatterplotState;
 
   const annotationPositions = useMemo(() => {
+    // A "hack" to prevent using // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // We need to re-compute the annotation positions when the chart width or height changes.
+    width;
+    height;
+
     if (annotations.length === 0) {
       return [];
     }
@@ -68,7 +73,15 @@ export const Annotations = () => {
         });
       })
       .filter((d): d is AnnotationPosition => d !== null);
-  }, [annotations, chartData, getSegment, getAnnotationInfo, activeField]);
+  }, [
+    width,
+    height,
+    annotations,
+    chartData,
+    getSegment,
+    getAnnotationInfo,
+    activeField,
+  ]);
 
   return (
     <>
