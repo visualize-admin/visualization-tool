@@ -110,19 +110,19 @@ export const ColumnsGrouped = () => {
   const bandwidth = xScaleIn.bandwidth();
   const y0 = yScale(0);
   const renderData = useMemo(() => {
-    return grouped.flatMap(([segment, observations]) => {
+    return grouped.flatMap(([x, observations]) => {
       return observations.map((d) => {
-        const key = getRenderingKey(d, getSegment(d));
-        const x = getSegment(d);
+        const segment = getSegment(d);
         const y = getY(d) as number;
+        const key = getRenderingKey(d, segment);
 
         return {
           key,
-          x: (xScale(segment) as number) + (xScaleIn(x) as number),
+          x: (xScale(x) as number) + (xScaleIn(segment) as number),
           y: yScale(Math.max(y, 0)),
           width: bandwidth,
           height: Math.max(0, Math.abs(yScale(y) - y0)),
-          color: colors(x),
+          color: colors(segment),
           observation: d,
         } satisfies RenderColumnDatum;
       });
