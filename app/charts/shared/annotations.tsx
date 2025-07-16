@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { StackedBarsState } from "@/charts/bar/bars-stacked-state";
@@ -9,11 +9,13 @@ import { LinesState } from "@/charts/line/lines-state";
 import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { AnnotationCircle } from "@/charts/shared/annotation-circle";
+import { AnnotationTooltip } from "@/charts/shared/annotation-tooltip";
 import { matchesAnnotationTarget } from "@/charts/shared/annotation-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { Annotation } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import { useConfiguratorState } from "@/configurator/configurator-state";
+import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
 export type AnnotationInfo = {
   x: number;
@@ -39,6 +41,22 @@ export const Annotations = () => {
     | LinesState
     | PieState
     | ScatterplotState;
+  const interactiveAnnotations = useChartInteractiveFilters(
+    (d) => d.annotations
+  );
+  const setInteractiveAnnotations = useChartInteractiveFilters(
+    (d) => d.setAnnotations
+  );
+
+  const handleAnnotationClick = useCallback(
+    (annotation: Annotation) => {
+      setInteractiveAnnotations({
+        ...interactiveAnnotations,
+        [annotation.key]: !interactiveAnnotations[annotation.key],
+      });
+    },
+    [interactiveAnnotations, setInteractiveAnnotations]
+  );
 
   const annotationPositions = useMemo(() => {
     // A "hack" to prevent using // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -85,20 +103,28 @@ export const Annotations = () => {
 
   return (
     <>
-      {annotationPositions.map(({ annotation, x, y, color, focused }) => (
-        <AnnotationCircle
-          key={annotation.key}
-          x={x + margins.left}
-          y={y + margins.top}
-          color={color}
-          focused={focused}
-        />
-      ))}
+      {annotationPositions.map((annotationPosition) => {
+        const { annotation, x, y, color, focused } = annotationPosition;
+
+        return (
+          <>
+            <AnnotationCircle
+              key={annotation.key}
+              x={x + margins.left}
+              y={y + margins.top}
+              color={color}
+              focused={focused}
+              onClick={() => handleAnnotationClick(annotation)}
+            />
+            <AnnotationTooltip annotationPosition={annotationPosition} />
+          </>
+        );
+      })}
     </>
   );
 };
 
-type AnnotationPosition = {
+export type AnnotationPosition = {
   annotation: Annotation;
   x: number;
   y: number;
