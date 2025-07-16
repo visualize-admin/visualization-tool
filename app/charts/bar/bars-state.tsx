@@ -21,6 +21,7 @@ import {
   PADDING_INNER,
   PADDING_OUTER,
 } from "@/charts/bar/constants";
+import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/annotation-circle";
 import {
   ANNOTATION_SINGLE_SEGMENT_OFFSET,
   AnnotationInfo,
@@ -38,7 +39,6 @@ import {
   CommonChartState,
   InteractiveYTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/interaction/annotation-circle";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,

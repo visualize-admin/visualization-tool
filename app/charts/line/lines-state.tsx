@@ -16,6 +16,7 @@ import {
   useLinesStateData,
   useLinesStateVariables,
 } from "@/charts/line/lines-state-props";
+import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/annotation-circle";
 import { AnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
@@ -31,7 +32,6 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/interaction/annotation-circle";
 import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,

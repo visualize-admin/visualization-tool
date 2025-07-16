@@ -6,8 +6,8 @@ import { ColumnsState } from "@/charts/column/columns-state";
 import { LinesState } from "@/charts/line/lines-state";
 import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
+import { AnnotationCircle } from "@/charts/shared/annotation-circle";
 import { useChartState } from "@/charts/shared/chart-state";
-import { AnnotationCircle } from "@/charts/shared/interaction/annotation-circle";
 import { useInteraction } from "@/charts/shared/use-interaction";
 
 export const HoverAnnotationDot = () => {
