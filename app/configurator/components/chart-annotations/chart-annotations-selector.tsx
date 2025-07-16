@@ -165,7 +165,7 @@ export const ChartAnnotationsSelector = () => {
       <ControlSection hideTopBorder>
         <SectionTitle closable onClose={handleClose}>
           <Trans id="controls.annotations.highlight.section.element.title">
-            Highlight element
+            Annotate element
           </Trans>
         </SectionTitle>
         <ControlSectionContent>

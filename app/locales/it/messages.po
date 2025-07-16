@@ -409,7 +409,7 @@ msgstr "Seleziona un elemento nel grafico..."
 
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.highlight.section.element.title"
-msgstr "Elemento di evidenziazione"
+msgstr "Annotare l'elemento"
 
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.highlight.section.style.title"
