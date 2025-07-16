@@ -319,6 +319,12 @@ export type ConfiguratorStateAction =
       };
     }
   | {
+      type: "CHART_ANNOTATION_TEXT_CLEAR";
+      value: {
+        key: string;
+      };
+    }
+  | {
       type: "CHART_ANNOTATION_REMOVE";
       value: {
         key: string;

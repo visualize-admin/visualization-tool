@@ -383,8 +383,8 @@ msgid "controls.annotations.annotation.add.text"
 msgstr "Ajouter du texte..."
 
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
-msgid "controls.annotations.annotation.delete"
-msgstr "Supprimer l'annotation"
+msgid "controls.annotations.annotation.clear-text"
+msgstr "Effacer le texte"
 
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx

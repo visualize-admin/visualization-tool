@@ -99,9 +99,9 @@ export const ChartAnnotationsSelector = () => {
     });
   });
 
-  const handleDelete = useEvent((key: string) => {
+  const handleClearText = useEvent((key: string) => {
     dispatch({
-      type: "CHART_ANNOTATION_REMOVE",
+      type: "CHART_ANNOTATION_TEXT_CLEAR",
       value: {
         key,
       },
@@ -118,7 +118,7 @@ export const ChartAnnotationsSelector = () => {
     if (
       isEqual(omit(annotation, "key"), omit(defaultHighlightAnnotation, "key"))
     ) {
-      handleDelete(annotation.key);
+      handleClearText(annotation.key);
     }
 
     dispatch({
@@ -225,11 +225,12 @@ export const ChartAnnotationsSelector = () => {
             variant="text"
             color="primary"
             size="xs"
+            disabled={Object.values(annotation.text).every((t) => !t)}
+            onClick={() => handleClearText(annotation.key)}
             sx={{ width: "fit-content", ml: 4 }}
-            onClick={() => handleDelete(annotation.key)}
           >
-            <Trans id="controls.annotations.annotation.delete">
-              Delete annotation
+            <Trans id="controls.annotations.annotation.clear-text">
+              Clear text
             </Trans>
           </Button>
         </ControlSectionContent>
