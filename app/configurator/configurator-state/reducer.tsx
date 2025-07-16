@@ -1197,6 +1197,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
         chartConfig.annotations = chartConfig.annotations.filter(
           (a) => a.key !== action.value.key
         );
+        chartConfig.activeField = undefined;
       }
 
       return draft;
