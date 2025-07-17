@@ -74,7 +74,10 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               <AxisWidthBand />
               <AxisWidthBandDomain />
               {isEditingAnnotation ? (
-                <InteractionColumnsStacked />
+                <>
+                  <InteractionColumns disableGaps={false} />
+                  <InteractionColumnsStacked />
+                </>
               ) : (
                 <InteractionColumns />
               )}

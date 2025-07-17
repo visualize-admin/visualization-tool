@@ -74,7 +74,10 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
               <AxisHeightBand />
               <AxisHeightBandDomain />
               {isEditingAnnotation ? (
-                <InteractionBarsStacked />
+                <>
+                  <InteractionBars disableGaps={false} />
+                  <InteractionBarsStacked />
+                </>
               ) : (
                 <InteractionBars />
               )}
