@@ -13,7 +13,7 @@ import {
   CalculationType,
   ChartConfig,
   FilterValueSingle,
-} from "@/configurator";
+} from "@/config-types";
 import { truthy } from "@/domain/types";
 import { getOriginalIds, isJoinById } from "@/graphql/join";
 import {
@@ -68,6 +68,7 @@ type InteractiveFiltersStateActions = {
   resetDataFilters: () => void;
   setCalculationType: (calculationType: CalculationType) => void;
   setAnnotations: (annotations: InteractiveFiltersState["annotations"]) => void;
+  updateAnnotation: (key: string, show: boolean) => void;
 };
 
 type State = InteractiveFiltersState & InteractiveFiltersStateActions;
@@ -144,6 +145,14 @@ const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
     annotations: {},
     setAnnotations: (annotations: InteractiveFiltersState["annotations"]) => {
       set({ annotations });
+    },
+    updateAnnotation: (key: string, show: boolean) => {
+      set((state) => ({
+        annotations: {
+          ...state.annotations,
+          [key]: show,
+        },
+      }));
     },
   };
 };
