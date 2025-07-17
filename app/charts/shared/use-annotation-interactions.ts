@@ -2,7 +2,6 @@ import isEqual from "lodash/isEqual";
 
 import {
   getAnnotationTargetsFromObservation,
-  matchesAnnotationTarget,
   useIsEditingAnnotation,
 } from "@/charts/shared/annotation-utils";
 import { useInteraction } from "@/charts/shared/use-interaction";
@@ -29,29 +28,34 @@ export const useAnnotationInteractions = ({
         return;
       }
 
-      const currentTargets = activeAnnotation.targets;
-      const newTargets = getAnnotationTargetsFromObservation(observation, {
-        chartConfig,
-        segment,
-      });
+      const activeNewTargets = getAnnotationTargetsFromObservation(
+        observation,
+        {
+          chartConfig,
+          segment,
+        }
+      );
 
-      if (isEqual(currentTargets, newTargets)) {
-        return;
-      }
+      for (const annotation of annotations) {
+        const currentTargets = annotation.targets;
+        const newTargets =
+          annotation.key !== activeField
+            ? getAnnotationTargetsFromObservation(observation, {
+                chartConfig,
+                segment,
+              })
+            : activeNewTargets;
 
-      const otherAnnotationWithSameTarget = annotations
-        .filter((d) => d.targets.length === newTargets.length)
-        .find((a) => matchesAnnotationTarget(observation, a.targets));
-
-      if (otherAnnotationWithSameTarget) {
-        return;
+        if (isEqual(currentTargets, newTargets)) {
+          return;
+        }
       }
 
       dispatch({
         type: "CHART_ANNOTATION_TARGETS_CHANGE",
         value: {
           key: activeField,
-          targets: newTargets,
+          targets: activeNewTargets,
         },
       });
     }
