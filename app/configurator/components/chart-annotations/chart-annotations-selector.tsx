@@ -161,6 +161,7 @@ export const ChartAnnotationsSelector = () => {
   }
 
   const hasTargets = annotation.targets.length > 0;
+  const hasText = Object.values(annotation.text).some((t) => t);
   const label = annotation.text[locale];
 
   return (
@@ -248,9 +249,7 @@ export const ChartAnnotationsSelector = () => {
             variant="text"
             color="primary"
             size="xs"
-            disabled={
-              !hasTargets || Object.values(annotation.text).every((t) => !t)
-            }
+            disabled={!hasTargets || !hasText}
             onClick={() => handleClearText(annotation.key)}
             sx={{ width: "fit-content", ml: 4 }}
           >
@@ -273,7 +272,7 @@ export const ChartAnnotationsSelector = () => {
               message: "Show open by default",
             })}
             checked={annotation.defaultOpen}
-            disabled={!hasTargets}
+            disabled={!hasTargets || !hasText}
             onChange={() => handleDefaultOpenChange(!annotation.defaultOpen)}
           />
         </ControlSectionContent>
