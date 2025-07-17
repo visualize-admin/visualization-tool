@@ -24,7 +24,7 @@ import {
 import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/annotation-circle";
 import {
   ANNOTATION_SINGLE_SEGMENT_OFFSET,
-  AnnotationInfo,
+  GetAnnotationInfo,
 } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
@@ -74,7 +74,7 @@ export type BarsState = CommonChartState &
     yScaleInteraction: ScaleBand<string>;
     yScale: ScaleBand<string>;
     minY: string;
-    getAnnotationInfo: (d: Observation, segment: string) => AnnotationInfo;
+    getAnnotationInfo: GetAnnotationInfo;
     getTooltipInfo: (d: Observation) => TooltipInfo;
     segments: string[];
     colors: ScaleOrdinal<string, string>;
@@ -311,11 +311,11 @@ const useBarsState = (
     [yDimension, formatYDate, getYLabel]
   );
 
-  const getAnnotationInfo = (datum: Observation): AnnotationInfo => {
+  const getAnnotationInfo: GetAnnotationInfo = (observation) => {
     const x =
-      xScale(Math.max(getX(datum) ?? NaN, 0)) +
+      xScale(Math.max(getX(observation) ?? NaN, 0)) +
       ANNOTATION_SINGLE_SEGMENT_OFFSET;
-    const y = (yScale(getY(datum)) as number) + yScale.bandwidth() * 0.5;
+    const y = (yScale(getY(observation)) as number) + yScale.bandwidth() * 0.5;
 
     return {
       x,

@@ -18,6 +18,7 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { Annotation } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import { useConfiguratorState } from "@/configurator/configurator-state";
+import { Observation } from "@/domain/data";
 import { useLocale } from "@/locales/use-locale";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
@@ -30,6 +31,14 @@ export type AnnotationEnabledChartState =
   | LinesState
   | PieState
   | ScatterplotState;
+
+export type GetAnnotationInfo = (
+  observation: Observation,
+  props: {
+    segment: string;
+    focusingSegment: boolean;
+  }
+) => AnnotationInfo;
 
 export type AnnotationInfo = {
   x: number;
@@ -81,7 +90,10 @@ export const Annotations = () => {
           }
 
           const segment = getSegment(observation);
-          const { x, y, color } = getAnnotationInfo(observation, segment);
+          const { x, y, color } = getAnnotationInfo(observation, {
+            segment,
+            focusingSegment: true,
+          });
           const finalColor =
             color ?? (a.highlightType === "filled" ? a.color : undefined);
           const focused = activeField === a.key;

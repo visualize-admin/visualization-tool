@@ -33,10 +33,10 @@ export const HoverAnnotationDot = () => {
     return null;
   }
 
-  const { x, y, color } = getAnnotationInfo(
-    interaction.observation,
-    interaction.segment ?? ""
-  );
+  const { x, y, color } = getAnnotationInfo(interaction.observation, {
+    segment: interaction.segment ?? "",
+    focusingSegment: !!interaction.focusingSegment,
+  });
 
   return (
     <AnnotationCircle

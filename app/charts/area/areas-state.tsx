@@ -24,7 +24,7 @@ import {
   useAreasStateVariables,
 } from "@/charts/area/areas-state-props";
 import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/annotation-circle";
-import { AnnotationInfo } from "@/charts/shared/annotations";
+import { GetAnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -89,7 +89,7 @@ export type AreasState = CommonChartState &
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
     series: Series<{ [key: string]: number }, string>[];
-    getAnnotationInfo: (d: Observation, segment: string) => AnnotationInfo;
+    getAnnotationInfo: GetAnnotationInfo;
     getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
@@ -417,16 +417,16 @@ const useAreasState = (
 
   const isMobile = useIsMobile();
 
-  const getAnnotationInfo = useCallback(
-    (datum: Observation, segment: string): AnnotationInfo => {
-      const x = xScale(getX(datum));
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation, { segment }) => {
+      const x = xScale(getX(observation));
       const y = getStackedPosition({
-        observation: datum,
+        observation,
         series,
         key: xKey,
         getAxisValue: getXAsString,
         measureScale: yScale,
-        fallbackMeasureValue: yScale(getY(datum) ?? 0),
+        fallbackMeasureValue: yScale(getY(observation) ?? 0),
         segment,
       });
 

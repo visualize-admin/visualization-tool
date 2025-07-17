@@ -63,11 +63,11 @@ export const useAnnotationInteractions = ({
     (observation: Observation, { segment }: { segment?: string }) => {
       dispatchInteraction({
         type: "INTERACTION_UPDATE",
-          focusingSegment,
         value: {
           type: isEditingAnnotation ? "annotation" : "tooltip",
           visible: true,
           observation,
+          focusingSegment,
           segment,
         },
       });

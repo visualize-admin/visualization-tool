@@ -17,7 +17,7 @@ import {
   useLinesStateVariables,
 } from "@/charts/line/lines-state-props";
 import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/annotation-circle";
-import { AnnotationInfo } from "@/charts/shared/annotations";
+import { GetAnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -76,7 +76,7 @@ export type LinesState = CommonChartState &
     grouped: Map<string, Observation[]>;
     chartWideData: ArrayLike<Observation>;
     xKey: string;
-    getAnnotationInfo: (d: Observation, segment: string) => AnnotationInfo;
+    getAnnotationInfo: GetAnnotationInfo;
     getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
@@ -310,10 +310,10 @@ const useLinesState = (
 
   const isMobile = useIsMobile();
 
-  const getAnnotationInfo = useCallback(
-    (datum: Observation) => {
-      const x = xScale(getX(datum));
-      const y = yScale(getY(datum) ?? 0);
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation) => {
+      const x = xScale(getX(observation));
+      const y = yScale(getY(observation) ?? 0);
 
       return {
         x,

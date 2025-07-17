@@ -14,7 +14,7 @@ import {
   ShowPieValueLabelsVariables,
   useShowPieValueLabelsVariables,
 } from "@/charts/pie/show-values-utils";
-import { AnnotationInfo } from "@/charts/shared/annotations";
+import { GetAnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -51,7 +51,7 @@ export type PieState = CommonChartState &
     segments: string[];
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
-    getAnnotationInfo: (d: Observation, segment: string) => AnnotationInfo;
+    getAnnotationInfo: GetAnnotationInfo;
     getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
@@ -233,9 +233,10 @@ const usePieState = (
     .innerRadius(innerRadius)
     .outerRadius(outerRadius);
 
-  const getAnnotationInfo = useCallback(
-    (datum: Observation, segment: string): AnnotationInfo => {
-      const arc = arcs.find((d) => d.data === datum);
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation, { segment }) => {
+      const arc = arcs.find((d) => d.data === observation);
+
       if (!arc) {
         return {
           x: 0,

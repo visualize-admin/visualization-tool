@@ -9,7 +9,7 @@ import {
   useScatterplotStateData,
   useScatterplotStateVariables,
 } from "@/charts/scatterplot//scatterplot-state-props";
-import { AnnotationInfo } from "@/charts/shared/annotations";
+import { GetAnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -48,7 +48,7 @@ export type ScatterplotState = CommonChartState &
     segments: string[];
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
-    getAnnotationInfo: (d: Observation, segment: string) => AnnotationInfo;
+    getAnnotationInfo: GetAnnotationInfo;
     getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
@@ -197,10 +197,10 @@ const useScatterplotState = (
 
   const isMobile = useIsMobile();
 
-  const getAnnotationInfo = useCallback(
-    (datum: Observation, segment: string) => {
-      const x = xScale(getX(datum) ?? 0);
-      const y = yScale(getY(datum) ?? 0);
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation, { segment }) => {
+      const x = xScale(getX(observation) ?? 0);
+      const y = yScale(getY(observation) ?? 0);
 
       return {
         x,

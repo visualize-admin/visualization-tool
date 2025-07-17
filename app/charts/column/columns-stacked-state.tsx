@@ -27,7 +27,10 @@ import {
   useColumnsStackedStateVariables,
 } from "@/charts/column/columns-stacked-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
-import { AnnotationInfo } from "@/charts/shared/annotations";
+import {
+  ANNOTATION_SINGLE_SEGMENT_OFFSET,
+  GetAnnotationInfo,
+} from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -89,7 +92,7 @@ export type StackedColumnsState = CommonChartState &
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
     series: Series<{ [key: string]: number }, string>[];
-    getAnnotationInfo: (d: Observation, segment: string) => AnnotationInfo;
+    getAnnotationInfo: GetAnnotationInfo;
     getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
@@ -458,26 +461,38 @@ const useColumnsStackedState = (
     [xDimension, formatXDate, getXLabel]
   );
 
-  const getAnnotationInfo = useCallback(
-    (datum: Observation, segment: string) => {
-      const x = (xScale(getX(datum)) as number) + xScale.bandwidth() * 0.5;
-      const y = getStackedPosition({
-        observation: datum,
-        series,
-        key: xKey,
-        getAxisValue: getX,
-        measureScale: yScale,
-        fallbackMeasureValue: yScale(getY(datum) ?? 0),
-        segment,
-      });
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation, { segment, focusingSegment }) => {
+      const x = getX(observation);
+      let y: number;
+      let color: string | undefined;
+
+      if (focusingSegment) {
+        y = getStackedPosition({
+          observation,
+          series,
+          key: xKey,
+          getAxisValue: getX,
+          measureScale: yScale,
+          fallbackMeasureValue: yScale(getY(observation) ?? 0),
+          segment,
+        });
+        color = colors(segment);
+      } else {
+        const values = chartDataGroupedByX.get(x) ?? [];
+        const yValues = values.map(getY);
+        y =
+          yScale(sum(yValues.map((d) => d ?? 0))) -
+          ANNOTATION_SINGLE_SEGMENT_OFFSET;
+      }
 
       return {
-        x,
+        x: (xScale(x) as number) + xScale.bandwidth() * 0.5,
         y,
-        color: colors(segment),
+        color,
       };
     },
-    [colors, getX, getY, series, xKey, xScale, yScale]
+    [chartDataGroupedByX, colors, getX, getY, series, xKey, xScale, yScale]
   );
 
   const getTooltipInfo = useCallback(

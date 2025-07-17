@@ -20,7 +20,7 @@ import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/annotation-circle";
 import {
   ANNOTATION_SINGLE_SEGMENT_OFFSET,
-  AnnotationInfo,
+  GetAnnotationInfo,
 } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
@@ -72,7 +72,7 @@ export type ColumnsState = CommonChartState &
     segments: string[];
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
-    getAnnotationInfo: (d: Observation, segment: string) => AnnotationInfo;
+    getAnnotationInfo: GetAnnotationInfo;
     getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
@@ -313,11 +313,12 @@ const useColumnsState = (
     [xDimension, formatXDate, getXLabel]
   );
 
-  const getAnnotationInfo = useCallback(
-    (datum: Observation) => {
-      const x = (xScale(getX(datum)) as number) + xScale.bandwidth() * 0.5;
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation) => {
+      const x =
+        (xScale(getX(observation)) as number) + xScale.bandwidth() * 0.5;
       const y =
-        yScale(Math.max(getY(datum) ?? NaN, 0)) -
+        yScale(Math.max(getY(observation) ?? NaN, 0)) -
         ANNOTATION_SINGLE_SEGMENT_OFFSET;
 
       return {
