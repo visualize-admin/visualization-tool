@@ -73,6 +73,7 @@ import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 import { useEvent } from "@/utils/use-event";
+import clsx from "clsx";
 
 import "@mdxeditor/editor/style.css";
 
@@ -573,11 +574,15 @@ export const MarkdownInput = ({
   name,
   value,
   onChange,
+  disablePlugins,
   disableToolbar,
   characterLimit,
 }: {
   label?: string | ReactNode;
   characterLimit?: number;
+  disablePlugins?: {
+    headings?: boolean;
+  };
   disableToolbar?: {
     textStyles?: boolean;
     blockType?: boolean;
@@ -587,6 +592,7 @@ export const MarkdownInput = ({
 } & FieldProps) => {
   const classes = useMarkdownInputStyles();
   const [characterLimitReached, setCharacterLimitReached] = useState(false);
+  const { headings: disableHeadings } = disablePlugins ?? {};
 
   const handleMaxLengthReached = useEvent(
     ({ reachedMaxLength }: { reachedMaxLength: boolean }) => {
@@ -597,7 +603,10 @@ export const MarkdownInput = ({
   return (
     <div>
       <MDXEditor
-        className={classes.root}
+        className={clsx(
+          classes.root,
+          disableHeadings && classes.withoutHeadings
+        )}
         markdown={value ? `${value}` : ""}
         plugins={[
           toolbarPlugin({
@@ -626,7 +635,7 @@ export const MarkdownInput = ({
               </div>
             ),
           }),
-          headingsPlugin(),
+          ...(disableHeadings ? [] : [headingsPlugin()]),
           listsPlugin(),
           linkPlugin(),
           linkDialogPlugin(),
@@ -685,6 +694,11 @@ const useMarkdownInputStyles = makeStyles<Theme>((theme) => ({
       "& :last-child": {
         marginBottom: 0,
       },
+    },
+  },
+  withoutHeadings: {
+    "& [data-lexical-editor='true']": {
+      ...theme.typography.body3,
     },
   },
   toolbar: {
