@@ -23,6 +23,7 @@ import { useConfiguratorState } from "@/configurator/configurator-state";
 import { isConfiguring } from "@/configurator/configurator-state";
 import { Dimension } from "@/domain/data";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
+import { Icon } from "@/icons";
 import { Locale } from "@/locales/locales";
 import { useLocale, useOrderedLocales } from "@/locales/use-locale";
 import { PRIMARY_COLOR } from "@/themes/palette";
@@ -280,7 +281,13 @@ export const ChartAnnotationsSelector = () => {
       <AnnotationDrawer opened={drawerState.isOpen} close={drawerState.close} />
       <ControlSection hideTopBorder style={{ marginTop: "auto" }}>
         <ControlSectionContent>
-          <Button size="sm" onClick={handleDelete}>
+          <Button
+            variant="outlined"
+            size="sm"
+            color="error"
+            startIcon={<Icon name="trash" size={20} />}
+            onClick={handleDelete}
+          >
             <Trans id="controls.annotations.delete">Delete</Trans>
           </Button>
         </ControlSectionContent>
