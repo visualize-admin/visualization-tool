@@ -17,7 +17,6 @@ export const InteractionColumns = () => {
     bounds: { chartHeight, margins },
     getX,
     xScaleInteraction,
-    getSegment,
   } = chartState;
   const { onClick, onHover, onHoverOut } = useAnnotationInteractions();
   const bandwidth = xScaleInteraction.bandwidth();
@@ -27,7 +26,6 @@ export const InteractionColumns = () => {
       {chartData.map((d, i) => {
         const x = getX(d);
         const xScaled = xScaleInteraction(x) as number;
-        const segment = getSegment(d);
 
         return (
           <rect
@@ -39,9 +37,9 @@ export const InteractionColumns = () => {
             fill="hotpink"
             fillOpacity={0}
             stroke="none"
-            onMouseOver={() => onHover(d, { segment })}
+            onMouseOver={() => onHover(d, { segment: undefined })}
             onMouseOut={onHoverOut}
-            onClick={() => onClick(d, { segment })}
+            onClick={() => onClick(d, { segment: undefined })}
           />
         );
       })}

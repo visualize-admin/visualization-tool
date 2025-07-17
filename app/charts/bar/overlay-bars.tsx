@@ -13,15 +13,12 @@ export const InteractionBars = () => {
     bounds: { chartWidth, margins },
     getY,
     yScaleInteraction,
-    getSegment,
   } = useChartState() as BarsState | StackedBarsState | GroupedBarsState;
   const { onClick, onHover, onHoverOut } = useAnnotationInteractions();
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
       {chartData.map((d, i) => {
-        const segment = getSegment(d);
-
         return (
           <rect
             key={i}
@@ -32,9 +29,9 @@ export const InteractionBars = () => {
             stroke="none"
             fill="hotpink"
             fillOpacity={0}
-            onMouseOver={() => onHover(d, { segment })}
+            onMouseOver={() => onHover(d, { segment: undefined })}
             onMouseOut={onHoverOut}
-            onClick={() => onClick(d, { segment })}
+            onClick={() => onClick(d, { segment: undefined })}
           />
         );
       })}
