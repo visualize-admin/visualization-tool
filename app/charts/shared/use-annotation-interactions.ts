@@ -39,11 +39,9 @@ export const useAnnotationInteractions = ({
         return;
       }
 
-      const otherAnnotationWithSameTarget = annotations.find(
-        (a) =>
-          a.key !== activeField &&
-          matchesAnnotationTarget(observation, a.targets)
-      );
+      const otherAnnotationWithSameTarget = annotations
+        .filter((d) => d.targets.length === newTargets.length)
+        .find((a) => matchesAnnotationTarget(observation, a.targets));
 
       if (otherAnnotationWithSameTarget) {
         return;
