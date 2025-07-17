@@ -160,6 +160,7 @@ export const ChartAnnotationsSelector = () => {
     return null;
   }
 
+  const hasTargets = annotation.targets.length > 0;
   const label = annotation.text[locale];
 
   return (
@@ -172,7 +173,7 @@ export const ChartAnnotationsSelector = () => {
         </SectionTitle>
         <ControlSectionContent>
           <Typography variant="h6" component="p">
-            {annotationLabel ??
+            {annotationLabel ||
               t({
                 id: "controls.annotations.highlight.section.element.cta",
                 message: "Select an element in the chart...",
@@ -192,12 +193,14 @@ export const ChartAnnotationsSelector = () => {
               label={t({ id: "controls.none", message: "None" })}
               value="none"
               checked={annotation.highlightType === "none"}
+              disabled={!hasTargets}
               onChange={() => handleStyleTypeChange("none")}
             />
             <Radio
               label={t({ id: "controls.filled", message: "Filled" })}
               value="filled"
               checked={annotation.highlightType === "filled"}
+              disabled={!hasTargets}
               onChange={() => handleStyleTypeChange("filled")}
             />
           </RadioGroup>
@@ -239,12 +242,15 @@ export const ChartAnnotationsSelector = () => {
             icon="text"
             onClick={drawerState.open}
             value="text"
+            disabled={!hasTargets}
           />
           <Button
             variant="text"
             color="primary"
             size="xs"
-            disabled={Object.values(annotation.text).every((t) => !t)}
+            disabled={
+              !hasTargets || Object.values(annotation.text).every((t) => !t)
+            }
             onClick={() => handleClearText(annotation.key)}
             sx={{ width: "fit-content", ml: 4 }}
           >
@@ -267,6 +273,7 @@ export const ChartAnnotationsSelector = () => {
               message: "Show open by default",
             })}
             checked={annotation.defaultOpen}
+            disabled={!hasTargets}
             onChange={() => handleDefaultOpenChange(!annotation.defaultOpen)}
           />
         </ControlSectionContent>
