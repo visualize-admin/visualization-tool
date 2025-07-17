@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { StackedBarsState } from "@/charts/bar/bars-stacked-state";
@@ -66,6 +66,7 @@ export const Annotations = () => {
   const updateAnnotation = useChartInteractiveFilters(
     (d) => d.updateAnnotation
   );
+  const hasAutoOpened = useRef<string | null>(null);
 
   const handleAnnotationClick = useCallback(
     (annotation: Annotation) => {
@@ -196,23 +197,22 @@ export const Annotations = () => {
     processAnnotationWithoutSegmentFocus,
   ]);
 
-  // TODO: This makes it impossible to close the annotation when editing it.
   useEffect(() => {
     if (!isEditingAnnotation) {
+      hasAutoOpened.current = null;
       return;
     }
 
-    annotations.forEach((annotation) => {
-      if (
-        annotation.key === activeField &&
-        !interactiveAnnotations[annotation.key]
-      ) {
-        updateAnnotation(annotation.key, true);
-      }
-    });
+    if (
+      activeField &&
+      !interactiveAnnotations[activeField] &&
+      hasAutoOpened.current !== activeField
+    ) {
+      updateAnnotation(activeField, true);
+      hasAutoOpened.current = activeField;
+    }
   }, [
     activeField,
-    annotations,
     interactiveAnnotations,
     isEditingAnnotation,
     updateAnnotation,

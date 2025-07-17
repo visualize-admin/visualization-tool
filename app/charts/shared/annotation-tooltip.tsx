@@ -20,7 +20,9 @@ export const AnnotationTooltip = ({
   const locale = useLocale();
   const classes = useStyles();
   const annotations = useChartInteractiveFilters((d) => d.annotations);
-  const setAnnotations = useChartInteractiveFilters((d) => d.setAnnotations);
+  const updateAnnotation = useChartInteractiveFilters(
+    (d) => d.updateAnnotation
+  );
 
   const open = annotations[annotation.key];
   const text = annotation.text[locale];
@@ -56,8 +58,8 @@ export const AnnotationTooltip = ({
   }, [x, y, dimensions, width, height]);
 
   const handleClose = useCallback(() => {
-    setAnnotations({ ...annotations, [annotation.key]: false });
-  }, [annotation.key, annotations, setAnnotations]);
+    updateAnnotation(annotation.key, false);
+  }, [annotation.key, updateAnnotation]);
 
   return open && text ? (
     <>

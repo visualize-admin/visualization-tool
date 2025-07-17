@@ -256,14 +256,13 @@ export const InteractiveFiltersProvider = ({
     );
   }, [chartConfigs]);
 
-  const ctxValue = useMemo(
-    () => ({
+  const ctxValue = useMemo(() => {
+    return {
       potentialTimeRangeFilterIds,
       potentialDataFilterIds,
       stores,
-    }),
-    [potentialTimeRangeFilterIds, potentialDataFilterIds, stores]
-  );
+    };
+  }, [potentialTimeRangeFilterIds, potentialDataFilterIds, stores]);
 
   return (
     <InteractiveFiltersContext.Provider value={ctxValue}>
