@@ -160,6 +160,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: "auto 0",
   },
   closeButton: {
+    transform: "translate(25%, -25%)",
     padding: theme.spacing(1),
     color: theme.palette.text.primary,
   },
