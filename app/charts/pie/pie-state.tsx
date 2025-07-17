@@ -236,9 +236,23 @@ const usePieState = (
   const getAnnotationInfo = useCallback(
     (datum: Observation, segment: string): AnnotationInfo => {
       const arc = arcs.find((d) => d.data === datum);
-      const centroid = arcGenerator.centroid(arc);
-      const x = centroid[0] + chartWidth / 2;
-      const y = centroid[1] + bounds.chartHeight / 2 - 4;
+      if (!arc) {
+        return {
+          x: 0,
+          y: 0,
+          color: colors(segment),
+        };
+      }
+
+      const startAngle = arc.startAngle;
+      const endAngle = arc.endAngle;
+      const midAngle = (startAngle + endAngle) / 2;
+
+      const x = Math.cos(midAngle - Math.PI / 2) * outerRadius + chartWidth / 2;
+      const y =
+        Math.sin(midAngle - Math.PI / 2) * outerRadius +
+        bounds.chartHeight / 2 -
+        4;
 
       return {
         x,
@@ -246,7 +260,7 @@ const usePieState = (
         color: colors(segment),
       };
     },
-    [arcGenerator, arcs, bounds.chartHeight, chartWidth, colors]
+    [arcs, bounds.chartHeight, chartWidth, colors, outerRadius]
   );
 
   const getTooltipInfo = (datum: Observation): TooltipInfo => {
