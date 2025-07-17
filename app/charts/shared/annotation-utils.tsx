@@ -59,7 +59,7 @@ export const useGetAnnotationRenderState = () => {
       const interactionMatches =
         interaction.type === "annotation" &&
         interaction.visible &&
-        interaction.observation?.[axisComponentId] === axisValue;
+        interaction.observation?.[`${axisComponentId}/__iri__`] === axisValue;
 
       const targetsOtherAnnotations = chartConfig.annotations.some(
         (a) =>
@@ -120,7 +120,7 @@ export const getAnnotationTargetsFromObservation = (
       if (xComponentId) {
         targets.push({
           componentId: xComponentId,
-          value: `${observation[xComponentId]}`,
+          value: `${observation[`${xComponentId}/__iri__`]}`,
         });
       }
 
@@ -141,7 +141,7 @@ export const getAnnotationTargetsFromObservation = (
       if (yComponentId) {
         targets.push({
           componentId: yComponentId,
-          value: `${observation[yComponentId]}`,
+          value: `${observation[`${yComponentId}/__iri__`]}`,
         });
       }
 
