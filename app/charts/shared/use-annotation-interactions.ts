@@ -11,7 +11,11 @@ import { useConfiguratorState } from "@/configurator/configurator-state";
 import { Observation } from "@/domain/data";
 import { useEvent } from "@/utils/use-event";
 
-export const useAnnotationInteractions = () => {
+export const useAnnotationInteractions = ({
+  focusingSegment,
+}: {
+  focusingSegment: boolean;
+}) => {
   const [, dispatchInteraction] = useInteraction();
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
@@ -59,6 +63,7 @@ export const useAnnotationInteractions = () => {
     (observation: Observation, { segment }: { segment?: string }) => {
       dispatchInteraction({
         type: "INTERACTION_UPDATE",
+          focusingSegment,
         value: {
           type: isEditingAnnotation ? "annotation" : "tooltip",
           visible: true,

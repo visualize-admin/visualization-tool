@@ -54,7 +54,9 @@ export const Pie = () => {
     });
   }, [arcs, getY, getSegment, getRenderingKey, colors]);
 
-  const { onClick, onHover, onHoverOut } = useAnnotationInteractions();
+  const { onClick, onHover, onHoverOut } = useAnnotationInteractions({
+    focusingSegment: true,
+  });
   const handleHover = useEvent(
     (
       el: SVGPathElement,

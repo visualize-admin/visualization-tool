@@ -23,7 +23,9 @@ export const InteractionVoronoi = memo(function InteractionVoronoi({
     getSegment,
     colors,
   } = chartState;
-  const { onClick, onHover, onHoverOut } = useAnnotationInteractions();
+  const { onClick, onHover, onHoverOut } = useAnnotationInteractions({
+    focusingSegment: true,
+  });
 
   const voronoiPoints = useMemo(() => {
     return getVoronoiPoints(chartState);

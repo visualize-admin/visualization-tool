@@ -24,6 +24,7 @@ type TooltipInteraction = BaseInteraction & {
 
 type AnnotationInteraction = BaseInteraction & {
   type: "annotation";
+  focusingSegment?: boolean;
   segment?: string;
 };
 

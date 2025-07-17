@@ -18,7 +18,9 @@ export const InteractionColumns = () => {
     getX,
     xScaleInteraction,
   } = chartState;
-  const { onClick, onHover, onHoverOut } = useAnnotationInteractions();
+  const { onClick, onHover, onHoverOut } = useAnnotationInteractions({
+    focusingSegment: false,
+  });
   const bandwidth = xScaleInteraction.bandwidth();
 
   return (
@@ -52,7 +54,9 @@ export const InteractionColumnsStacked = () => {
     bounds: { height, margins },
     series,
   } = useChartState() as StackedColumnsState;
-  const { onClick, onHover, onHoverOut } = useAnnotationInteractions();
+  const { onClick, onHover, onHoverOut } = useAnnotationInteractions({
+    focusingSegment: true,
+  });
   const getRenderDatum = useGetRenderStackedColumnDatum();
   const renderData = useMemo(() => {
     return series.flatMap(getRenderDatum);

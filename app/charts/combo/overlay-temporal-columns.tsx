@@ -13,7 +13,9 @@ export const InteractionTemporalColumns = () => {
     formatXDate,
     xScaleInteraction,
   } = useChartState() as ComboLineColumnState;
-  const { onClick, onHover, onHoverOut } = useAnnotationInteractions();
+  const { onClick, onHover, onHoverOut } = useAnnotationInteractions({
+    focusingSegment: false,
+  });
   const getXValue = useCallback(
     (d: Observation) => {
       return formatXDate(getXAsDate(d));

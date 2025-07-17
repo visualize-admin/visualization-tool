@@ -14,7 +14,9 @@ export const InteractionBars = () => {
     getY,
     yScaleInteraction,
   } = useChartState() as BarsState | StackedBarsState | GroupedBarsState;
-  const { onClick, onHover, onHoverOut } = useAnnotationInteractions();
+  const { onClick, onHover, onHoverOut } = useAnnotationInteractions({
+    focusingSegment: false,
+  });
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
@@ -44,7 +46,9 @@ export const InteractionBarsStacked = () => {
     bounds: { height, margins },
     series,
   } = useChartState() as StackedBarsState;
-  const { onClick, onHover, onHoverOut } = useAnnotationInteractions();
+  const { onClick, onHover, onHoverOut } = useAnnotationInteractions({
+    focusingSegment: true,
+  });
   const getRenderDatum = useGetRenderStackedBarDatum();
   const renderData = useMemo(() => {
     return series.flatMap(getRenderDatum);
