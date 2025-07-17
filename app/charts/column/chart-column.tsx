@@ -13,6 +13,7 @@ import { ColumnChart } from "@/charts/column/columns-state";
 import {
   InteractionColumns,
   InteractionColumnsStacked,
+  StackedColumnAnnotationHighlight,
 } from "@/charts/column/overlay-columns";
 import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
 import { Annotations } from "@/charts/shared/annotations";
@@ -77,6 +78,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
                 <>
                   <InteractionColumns disableGaps={false} />
                   <InteractionColumnsStacked />
+                  <StackedColumnAnnotationHighlight />
                 </>
               ) : (
                 <InteractionColumns />

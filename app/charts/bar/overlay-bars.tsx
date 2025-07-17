@@ -1,11 +1,13 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
 import { StackedBarsState } from "@/charts/bar/bars-stacked-state";
 import { BarsState } from "@/charts/bar/bars-state";
 import { useGetRenderStackedBarDatum } from "@/charts/bar/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import { StackedAnnotationHighlight } from "@/charts/shared/overlay-rects";
 import { useAnnotationInteractions } from "@/charts/shared/use-annotation-interactions";
+import { Observation } from "@/domain/data";
 
 export const InteractionBars = ({
   disableGaps = true,
@@ -87,5 +89,36 @@ export const InteractionBarsStacked = () => {
         );
       })}
     </g>
+  );
+};
+
+export const StackedBarAnnotationHighlight = () => {
+  const {
+    bounds,
+    getY,
+    getX,
+    yScale,
+    xScale,
+    chartDataGroupedByY,
+    yDimension,
+  } = useChartState() as StackedBarsState;
+  const getValue = useCallback(
+    (d: Observation) => {
+      return getX(d) ?? 0;
+    },
+    [getX]
+  );
+
+  return (
+    <StackedAnnotationHighlight
+      bounds={bounds}
+      getValue={getValue}
+      getAxisValue={getY}
+      valueScale={xScale}
+      axisScale={yScale}
+      chartDataGrouped={chartDataGroupedByY}
+      dimension={yDimension}
+      isHorizontal
+    />
   );
 };

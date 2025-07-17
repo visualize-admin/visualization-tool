@@ -1,11 +1,13 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { GroupedColumnsState } from "@/charts/column/columns-grouped-state";
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import { ColumnsState } from "@/charts/column/columns-state";
 import { useGetRenderStackedColumnDatum } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
+import { StackedAnnotationHighlight } from "@/charts/shared/overlay-rects";
 import { useAnnotationInteractions } from "@/charts/shared/use-annotation-interactions";
+import { Observation } from "@/domain/data";
 
 export const InteractionColumns = ({
   disableGaps = true,
@@ -94,5 +96,36 @@ export const InteractionColumnsStacked = () => {
         );
       })}
     </g>
+  );
+};
+
+export const StackedColumnAnnotationHighlight = () => {
+  const {
+    bounds,
+    getY,
+    getX,
+    yScale,
+    xScale,
+    chartDataGroupedByX,
+    xDimension,
+  } = useChartState() as StackedColumnsState;
+  const getValue = useCallback(
+    (d: Observation) => {
+      return getY(d) ?? 0;
+    },
+    [getY]
+  );
+
+  return (
+    <StackedAnnotationHighlight
+      bounds={bounds}
+      getValue={getValue}
+      getAxisValue={getX}
+      valueScale={yScale}
+      axisScale={xScale}
+      chartDataGrouped={chartDataGroupedByX}
+      dimension={xDimension}
+      isHorizontal={false}
+    />
   );
 };

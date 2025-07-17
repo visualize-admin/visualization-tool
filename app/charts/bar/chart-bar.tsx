@@ -12,6 +12,7 @@ import { BarChart } from "@/charts/bar/bars-state";
 import {
   InteractionBars,
   InteractionBarsStacked,
+  StackedBarAnnotationHighlight,
 } from "@/charts/bar/overlay-bars";
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
@@ -77,6 +78,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
                 <>
                   <InteractionBars disableGaps={false} />
                   <InteractionBarsStacked />
+                  <StackedBarAnnotationHighlight />
                 </>
               ) : (
                 <InteractionBars />
