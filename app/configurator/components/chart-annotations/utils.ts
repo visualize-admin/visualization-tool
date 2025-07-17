@@ -26,6 +26,6 @@ export const getDefaultHighlightAnnotation = (): HighlightAnnotation => {
     },
     highlightType: "none",
     color: undefined,
-    defaultOpen: false,
+    defaultOpen: true,
   };
 };
