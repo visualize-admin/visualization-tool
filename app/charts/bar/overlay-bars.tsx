@@ -7,16 +7,23 @@ import { useGetRenderStackedBarDatum } from "@/charts/bar/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useAnnotationInteractions } from "@/charts/shared/use-annotation-interactions";
 
-export const InteractionBars = () => {
+export const InteractionBars = ({
+  disableGaps = true,
+}: {
+  disableGaps?: boolean;
+}) => {
   const {
     chartData,
     bounds: { chartWidth, margins },
     getY,
+    yScale,
     yScaleInteraction,
   } = useChartState() as BarsState | StackedBarsState | GroupedBarsState;
   const { onClick, onHover, onHoverOut } = useAnnotationInteractions({
     focusingSegment: false,
   });
+  const scale = disableGaps ? yScaleInteraction : yScale;
+  const bandwidth = scale.bandwidth();
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
@@ -25,8 +32,8 @@ export const InteractionBars = () => {
           <rect
             key={i}
             x={0}
-            y={yScaleInteraction(getY(d)) as number}
-            height={yScaleInteraction.bandwidth()}
+            y={scale(getY(d)) as number}
+            height={bandwidth}
             width={Math.max(0, chartWidth)}
             stroke="none"
             fill="hotpink"

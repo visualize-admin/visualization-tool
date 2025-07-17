@@ -7,7 +7,11 @@ import { useGetRenderStackedColumnDatum } from "@/charts/column/rendering-utils"
 import { useChartState } from "@/charts/shared/chart-state";
 import { useAnnotationInteractions } from "@/charts/shared/use-annotation-interactions";
 
-export const InteractionColumns = () => {
+export const InteractionColumns = ({
+  disableGaps = true,
+}: {
+  disableGaps?: boolean;
+}) => {
   const chartState = useChartState() as
     | ColumnsState
     | StackedColumnsState
@@ -16,18 +20,20 @@ export const InteractionColumns = () => {
     chartData,
     bounds: { chartHeight, margins },
     getX,
+    xScale,
     xScaleInteraction,
   } = chartState;
   const { onClick, onHover, onHoverOut } = useAnnotationInteractions({
     focusingSegment: false,
   });
-  const bandwidth = xScaleInteraction.bandwidth();
+  const scale = disableGaps ? xScaleInteraction : xScale;
+  const bandwidth = scale.bandwidth();
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
       {chartData.map((d, i) => {
         const x = getX(d);
-        const xScaled = xScaleInteraction(x) as number;
+        const xScaled = scale(x) as number;
 
         return (
           <rect
