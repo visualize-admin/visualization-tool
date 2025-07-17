@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { AreasState } from "@/charts/area/areas-state";
 import { StackedBarsState } from "@/charts/bar/bars-stacked-state";
@@ -10,7 +10,10 @@ import { PieState } from "@/charts/pie/pie-state";
 import { ScatterplotState } from "@/charts/scatterplot/scatterplot-state";
 import { AnnotationCircle } from "@/charts/shared/annotation-circle";
 import { AnnotationTooltip } from "@/charts/shared/annotation-tooltip";
-import { matchesAnnotationTarget } from "@/charts/shared/annotation-utils";
+import {
+  matchesAnnotationTarget,
+  useIsEditingAnnotation,
+} from "@/charts/shared/annotation-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { Annotation } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
@@ -45,21 +48,19 @@ export const Annotations = () => {
     getSegment,
     getAnnotationInfo,
   } = useChartState() as AnnotationEnabledChartState;
+  const isEditingAnnotation = useIsEditingAnnotation();
   const interactiveAnnotations = useChartInteractiveFilters(
     (d) => d.annotations
   );
-  const setInteractiveAnnotations = useChartInteractiveFilters(
-    (d) => d.setAnnotations
+  const updateAnnotation = useChartInteractiveFilters(
+    (d) => d.updateAnnotation
   );
 
   const handleAnnotationClick = useCallback(
     (annotation: Annotation) => {
-      setInteractiveAnnotations({
-        ...interactiveAnnotations,
-        [annotation.key]: !interactiveAnnotations[annotation.key],
-      });
+      updateAnnotation(annotation.key, !interactiveAnnotations[annotation.key]);
     },
-    [interactiveAnnotations, setInteractiveAnnotations]
+    [interactiveAnnotations, updateAnnotation]
   );
 
   const renderAnnotations = useMemo(() => {
@@ -105,6 +106,27 @@ export const Annotations = () => {
     activeField,
     margins.left,
     margins.top,
+  ]);
+
+  useEffect(() => {
+    if (!isEditingAnnotation) {
+      return;
+    }
+
+    annotations.forEach((annotation) => {
+      if (
+        annotation.key === activeField &&
+        !interactiveAnnotations[annotation.key]
+      ) {
+        updateAnnotation(annotation.key, true);
+      }
+    });
+  }, [
+    activeField,
+    annotations,
+    interactiveAnnotations,
+    isEditingAnnotation,
+    updateAnnotation,
   ]);
 
   return (
