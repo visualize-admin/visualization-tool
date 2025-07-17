@@ -347,6 +347,9 @@ const AnnotationDrawer = ({
                   label={getFieldLabel(locale)}
                   value={annotation.text[locale]}
                   characterLimit={500}
+                  disablePlugins={{
+                    headings: true,
+                  }}
                   disableToolbar={{
                     blockType: true,
                     listToggles: true,
