@@ -19,6 +19,7 @@ import { Annotation } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { Observation } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { useLocale } from "@/locales/use-locale";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
@@ -54,6 +55,7 @@ export const Annotations = () => {
   const {
     chartData,
     bounds: { width, height, margins },
+    segmentDimension,
     getSegment,
     getAnnotationInfo,
   } = useChartState() as AnnotationEnabledChartState;
@@ -72,6 +74,94 @@ export const Annotations = () => {
     [interactiveAnnotations, updateAnnotation]
   );
 
+  const createRenderAnnotation = useCallback(
+    (
+      annotation: Annotation,
+      x: number,
+      y: number,
+      color: string | undefined,
+      focused: boolean
+    ) => ({
+      annotation,
+      x: x + margins.left,
+      y: y + margins.top,
+      color,
+      focused,
+    }),
+    [margins.left, margins.top]
+  );
+
+  const findObservationForAnnotation = useCallback(
+    (annotation: Annotation) => {
+      return chartData.find((observation) => {
+        return annotation.targets.some(
+          (target) =>
+            observation[`${target.componentId}/__iri__`] === target.value &&
+            target.componentId !== segmentDimension?.id
+        );
+      });
+    },
+    [chartData, segmentDimension?.id]
+  );
+
+  const processAnnotationWithoutSegmentFocus = useCallback(
+    (annotation: Annotation) => {
+      const observation = findObservationForAnnotation(annotation);
+
+      if (!observation) {
+        return;
+      }
+
+      const { x, y, color } = getAnnotationInfo(observation, {
+        segment: "",
+        focusingSegment: false,
+      });
+
+      const focused = activeField === annotation.key;
+
+      return createRenderAnnotation(annotation, x, y, color, focused);
+    },
+    [
+      findObservationForAnnotation,
+      getAnnotationInfo,
+      activeField,
+      createRenderAnnotation,
+    ]
+  );
+
+  const processAnnotationWithSegmentFocus = useCallback(
+    (annotation: Annotation) => {
+      const focused = activeField === annotation.key;
+
+      return chartData.map((observation) => {
+        if (!matchesAnnotationTarget(observation, annotation.targets)) {
+          return;
+        }
+
+        const segment = getSegment(observation);
+        const { x, y, color } = getAnnotationInfo(observation, {
+          segment,
+          focusingSegment: true,
+        });
+
+        const finalColor =
+          color ??
+          (annotation.highlightType === "filled"
+            ? annotation.color
+            : undefined);
+
+        return createRenderAnnotation(annotation, x, y, finalColor, focused);
+      });
+    },
+    [
+      activeField,
+      chartData,
+      getSegment,
+      getAnnotationInfo,
+      createRenderAnnotation,
+    ]
+  );
+
   const renderAnnotations = useMemo(() => {
     // A "hack" to prevent using // eslint-disable-next-line @typescript-eslint/no-unused-vars
     // We need to re-compute the annotation positions when the chart width or height changes.
@@ -83,43 +173,30 @@ export const Annotations = () => {
     }
 
     return annotations
-      .flatMap((a) => {
-        return chartData.map((observation) => {
-          if (!matchesAnnotationTarget(observation, a.targets)) {
-            return null;
-          }
+      .flatMap((annotation) => {
+        const focusingSegment =
+          !segmentDimension ||
+          annotation.targets.some(
+            (target) => target.componentId === segmentDimension.id
+          );
 
-          const segment = getSegment(observation);
-          const { x, y, color } = getAnnotationInfo(observation, {
-            segment,
-            focusingSegment: true,
-          });
-          const finalColor =
-            color ?? (a.highlightType === "filled" ? a.color : undefined);
-          const focused = activeField === a.key;
+        if (focusingSegment) {
+          return processAnnotationWithSegmentFocus(annotation);
+        }
 
-          return {
-            annotation: a,
-            x: x + margins.left,
-            y: y + margins.top,
-            color: finalColor,
-            focused,
-          };
-        });
+        return processAnnotationWithoutSegmentFocus(annotation);
       })
-      .filter((d): d is RenderAnnotation => d !== null);
+      .filter(truthy);
   }, [
     width,
     height,
     annotations,
-    chartData,
-    getSegment,
-    getAnnotationInfo,
-    activeField,
-    margins.left,
-    margins.top,
+    segmentDimension,
+    processAnnotationWithSegmentFocus,
+    processAnnotationWithoutSegmentFocus,
   ]);
 
+  // TODO: This makes it impossible to close the annotation when editing it.
   useEffect(() => {
     if (!isEditingAnnotation) {
       return;
