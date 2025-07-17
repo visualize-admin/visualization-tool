@@ -1,3 +1,4 @@
+import isEqual from "lodash/isEqual";
 import uniq from "lodash/uniq";
 import {
   createContext,
@@ -246,6 +247,9 @@ export const InteractiveFiltersProvider = ({
         const store =
           storeRefs.current[chartConfig.key] ??
           create(interactiveFiltersStoreCreator);
+
+        storeRefs.current[chartConfig.key] = store;
+
         const ctxValue: InteractiveFiltersContextValue = [
           store.getState,
           createBoundUseStoreWithSelector(store),
@@ -256,13 +260,23 @@ export const InteractiveFiltersProvider = ({
     );
   }, [chartConfigs]);
 
-  const ctxValue = useMemo(() => {
-    return {
-      potentialTimeRangeFilterIds,
-      potentialDataFilterIds,
-      stores,
-    };
-  }, [potentialTimeRangeFilterIds, potentialDataFilterIds, stores]);
+  const ctxValueRef = useRef<{
+    potentialTimeRangeFilterIds: string[];
+    potentialDataFilterIds: string[];
+    stores: Record<ChartConfig["key"], InteractiveFiltersContextValue>;
+  }>();
+
+  const newCtxValue = {
+    potentialTimeRangeFilterIds,
+    potentialDataFilterIds,
+    stores,
+  };
+
+  if (!ctxValueRef.current || !isEqual(ctxValueRef.current, newCtxValue)) {
+    ctxValueRef.current = newCtxValue;
+  }
+
+  const ctxValue = ctxValueRef.current;
 
   return (
     <InteractiveFiltersContext.Provider value={ctxValue}>
