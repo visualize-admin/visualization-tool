@@ -75,6 +75,7 @@ export const useGetAnnotationRenderState = () => {
       return {
         color,
         focused,
+        isActive,
       };
     },
     [
