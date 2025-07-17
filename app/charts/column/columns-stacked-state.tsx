@@ -84,6 +84,7 @@ export type StackedColumnsState = CommonChartState &
   ColumnsStackedStateVariables &
   InteractiveXTimeRangeState & {
     chartType: "column";
+    chartDataGroupedByX: Map<string, Observation[]>;
     xScale: ScaleBand<string>;
     xScaleInteraction: ScaleBand<string>;
     yScale: ScaleLinear<number, number>;
@@ -597,6 +598,7 @@ const useColumnsStackedState = (
 
   return {
     chartType: "column",
+    chartDataGroupedByX,
     bounds,
     chartData,
     allData,

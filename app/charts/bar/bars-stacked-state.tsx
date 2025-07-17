@@ -88,6 +88,7 @@ export type StackedBarsState = CommonChartState &
   BarsStackedStateVariables &
   InteractiveYTimeRangeState & {
     chartType: "bar";
+    chartDataGroupedByY: Map<string, Observation[]>;
     yScale: ScaleBand<string>;
     yScaleInteraction: ScaleBand<string>;
     xScale: ScaleLinear<number, number>;
@@ -608,6 +609,7 @@ const useBarsStackedState = (
 
   return {
     chartType: "bar",
+    chartDataGroupedByY,
     bounds: {
       ...bounds,
       chartHeight: adjustedChartHeight,
