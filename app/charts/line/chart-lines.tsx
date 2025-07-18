@@ -53,6 +53,9 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
       <ChartContainer>
         <ChartSvg>
           <AxisHeightLinear />
+          <AxisHideXOverflowRect />
+          <AxisTime />
+          <AxisTimeDomain />
           <Lines
             dotSize={
               "showDots" in chartConfig.fields.y &&
@@ -62,9 +65,6 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
                 : undefined
             }
           />
-          <AxisHideXOverflowRect />
-          <AxisTime />
-          <AxisTimeDomain />
           <ErrorWhiskers />
           <VerticalLimits {...limits} />
           {isEditingAnnotation ? (

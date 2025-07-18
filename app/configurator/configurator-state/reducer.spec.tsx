@@ -692,6 +692,74 @@ describe("CHART_FIELD_DELETED", () => {
       color: "#1D4ED8",
     });
   });
+
+  it("should correctly clear calculation config when segment field is deleted", () => {
+    const state = {
+      state: "CONFIGURING_CHART",
+      dataSource: { type: "sparql", url: "test-url" },
+      chartConfigs: [
+        {
+          key: "test-chart",
+          chartType: "column",
+          cubes: [{ iri: "test-cube", filters: {} }],
+          fields: {
+            y: { componentId: "yComponentId" },
+            segment: {
+              componentId: "segmentComponentId",
+              type: "stacked",
+            },
+            color: {
+              type: "segment",
+              paletteId: "category10",
+              colorMapping: {},
+            },
+          },
+          interactiveFiltersConfig: {
+            legend: { active: false, componentId: "" },
+            timeRange: {
+              active: false,
+              componentId: "",
+              presets: { type: "range", from: "", to: "" },
+            },
+            dataFilters: { active: false, componentIds: [] },
+            calculation: { active: true, type: "percent" },
+          },
+          limits: {},
+          conversionUnitsByComponentId: {},
+        },
+      ],
+    };
+
+    getCachedComponents.mockReturnValue({
+      dimensions: [],
+      measures: [],
+    });
+
+    const newState = produce(state, (state: ConfiguratorState) => {
+      return handleChartFieldDeleted(state, {
+        type: "CHART_FIELD_DELETED",
+        value: {
+          locale: "en",
+          field: "segment",
+        },
+      });
+    });
+
+    const chartConfig = newState.chartConfigs[0];
+
+    expect(chartConfig.interactiveFiltersConfig?.calculation).toEqual({
+      active: false,
+      type: "identity",
+    });
+
+    expect(chartConfig.fields.segment).toBeUndefined();
+
+    expect(chartConfig.fields.color).toEqual({
+      type: "single",
+      paletteId: "category10",
+      color: "#1D4ED8",
+    });
+  });
 });
 
 describe("colorMapping", () => {

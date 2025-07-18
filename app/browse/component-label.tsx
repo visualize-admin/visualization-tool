@@ -20,7 +20,9 @@ export const ComponentLabel = ({
     </OpenMetadataPanelWrapper>
   ) : component.description ? (
     <MaybeTooltip title={component.description} tooltipProps={tooltipProps}>
-      <ComponentLabelInner component={component} />
+      <div>
+        <ComponentLabelInner component={component} />
+      </div>
     </MaybeTooltip>
   ) : (
     <ComponentLabelInner component={component} />
