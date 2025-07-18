@@ -1,12 +1,13 @@
 import { useCallback } from "react";
 
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { Annotation, AnnotationTarget, ChartConfig } from "@/config-types";
 import {
-  extractSingleFilters,
-  getChartConfig,
-  getChartConfigFilters,
-} from "@/config-utils";
+  Annotation,
+  AnnotationTarget,
+  ChartConfig,
+  Filters,
+} from "@/config-types";
+import { extractSingleFilters, getChartConfig } from "@/config-utils";
 import { isAnnotationField } from "@/configurator/components/chart-annotations/utils";
 import {
   isConfiguring,
@@ -95,17 +96,18 @@ export const getAnnotationTargetsFromObservation = (
   observation: Observation,
   {
     chartConfig,
+    definitiveFilters,
     segment,
   }: {
     chartConfig: ChartConfig;
+    definitiveFilters: Filters;
     /** This is needed for stacked charts, where the segment value is not in the observation,
      *  but in the getSegment function.
      */
     segment?: string;
   }
 ): Annotation["targets"] => {
-  const filters = getChartConfigFilters(chartConfig.cubes, { joined: true });
-  const singleFilters = extractSingleFilters(filters);
+  const singleFilters = extractSingleFilters(definitiveFilters);
   const targets: Annotation["targets"] = Object.entries(singleFilters).map(
     ([componentId, value]) => ({
       componentId,

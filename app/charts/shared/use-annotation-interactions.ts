@@ -5,7 +5,7 @@ import {
   useIsEditingAnnotation,
 } from "@/charts/shared/annotation-utils";
 import { useInteraction } from "@/charts/shared/use-interaction";
-import { getChartConfig } from "@/config-utils";
+import { getChartConfig, useDefinitiveFilters } from "@/config-utils";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { Observation } from "@/domain/data";
 import { useEvent } from "@/utils/use-event";
@@ -19,6 +19,7 @@ export const useAnnotationInteractions = ({
   const [state, dispatch] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const { activeField, annotations } = chartConfig;
+  const definitiveFilters = useDefinitiveFilters();
   const isEditingAnnotation = useIsEditingAnnotation();
   const activeAnnotation = annotations.find((a) => a.key === activeField);
 
@@ -32,6 +33,7 @@ export const useAnnotationInteractions = ({
         observation,
         {
           chartConfig,
+          definitiveFilters,
           segment,
         }
       );
@@ -42,6 +44,7 @@ export const useAnnotationInteractions = ({
           annotation.key !== activeField
             ? getAnnotationTargetsFromObservation(observation, {
                 chartConfig,
+                definitiveFilters,
                 segment,
               })
             : activeNewTargets;
