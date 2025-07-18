@@ -15,8 +15,10 @@ import { getTextSize } from "@/utils/get-text-size";
 
 export const AnnotationTooltip = ({
   renderAnnotation: { annotation, x, y },
+  closable,
 }: {
   renderAnnotation: RenderAnnotation;
+  closable: boolean;
 }) => {
   const locale = useLocale();
   const classes = useStyles();
@@ -80,7 +82,11 @@ export const AnnotationTooltip = ({
         <Typography className={classes.text} variant="caption">
           <MarkdownInheritFonts>{annotation.text[locale]}</MarkdownInheritFonts>
         </Typography>
-        <IconButton className={classes.closeButton} onClick={handleClose}>
+        <IconButton
+          className={classes.closeButton}
+          onClick={handleClose}
+          disabled={!closable}
+        >
           <Icon name="close" size={14} />
         </IconButton>
       </div>

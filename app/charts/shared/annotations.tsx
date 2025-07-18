@@ -233,7 +233,10 @@ export const Annotations = () => {
                 onClick={() => handleAnnotationClick(annotation)}
               />
             ) : null}
-            <AnnotationTooltip renderAnnotation={renderAnnotation} />
+            <AnnotationTooltip
+              renderAnnotation={renderAnnotation}
+              closable={!isEditingAnnotation || annotation.key !== activeField}
+            />
           </>
         );
       })}
