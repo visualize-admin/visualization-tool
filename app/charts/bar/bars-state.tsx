@@ -311,18 +311,32 @@ const useBarsState = (
     [yDimension, formatYDate, getYLabel]
   );
 
-  const getAnnotationInfo: GetAnnotationInfo = (observation) => {
-    const x =
-      xScale(Math.max(getX(observation) ?? NaN, 0)) +
-      ANNOTATION_SINGLE_SEGMENT_OFFSET;
-    const y = (yScale(getY(observation)) as number) + yScale.bandwidth() * 0.5;
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation) => {
+      const hasValueLabels = showValuesVariables.showValues;
+      const xOffset = hasValueLabels ? xValueLabelsOffset + 8 : 0;
+      const x =
+        xScale(Math.max(getX(observation) ?? NaN, 0)) +
+        ANNOTATION_SINGLE_SEGMENT_OFFSET +
+        xOffset;
+      const y =
+        (yScale(getY(observation)) as number) + yScale.bandwidth() * 0.5;
 
-    return {
-      x,
-      y,
-      color: DEFAULT_ANNOTATION_CIRCLE_COLOR,
-    };
-  };
+      return {
+        x,
+        y,
+        color: DEFAULT_ANNOTATION_CIRCLE_COLOR,
+      };
+    },
+    [
+      showValuesVariables.showValues,
+      xValueLabelsOffset,
+      xScale,
+      getX,
+      yScale,
+      getY,
+    ]
+  );
 
   const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const yAnchor = (yScale(getY(datum)) as number) + yScale.bandwidth() * 0.5;

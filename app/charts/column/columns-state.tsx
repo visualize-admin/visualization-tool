@@ -317,9 +317,12 @@ const useColumnsState = (
     (observation) => {
       const x =
         (xScale(getX(observation)) as number) + xScale.bandwidth() * 0.5;
+      const hasValueLabels = showValuesVariables.showValues;
+      const yOffset = hasValueLabels ? yValueLabelsOffset + 8 : 0;
       const y =
         yScale(Math.max(getY(observation) ?? NaN, 0)) -
-        ANNOTATION_SINGLE_SEGMENT_OFFSET;
+        ANNOTATION_SINGLE_SEGMENT_OFFSET -
+        yOffset;
 
       return {
         x,
@@ -327,7 +330,14 @@ const useColumnsState = (
         color: DEFAULT_ANNOTATION_CIRCLE_COLOR,
       };
     },
-    [xScale, yScale, getY, getX]
+    [
+      xScale,
+      getX,
+      showValuesVariables.showValues,
+      yValueLabelsOffset,
+      yScale,
+      getY,
+    ]
   );
 
   const getTooltipInfo = (datum: Observation): TooltipInfo => {
