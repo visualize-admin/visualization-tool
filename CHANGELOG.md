@@ -13,6 +13,7 @@ You can also check the
 
 - Features
   - Improved UX of interacting with conversion units multiplier input
+  - Updated WMS & WMTS providers list
 - Fixes
   - Interactive calculation is now correctly reset when removing segmentation
   - Tooltips are now correctly displayed in data preview table
