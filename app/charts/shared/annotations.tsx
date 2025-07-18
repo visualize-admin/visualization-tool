@@ -17,6 +17,7 @@ import {
 import { useChartState } from "@/charts/shared/chart-state";
 import { Annotation } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
+import { isAnnotationField } from "@/configurator/components/chart-annotations/utils";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
@@ -65,6 +66,7 @@ export const Annotations = () => {
     (d) => d.updateAnnotation
   );
   const hasAutoOpened = useRef<string | null>(null);
+  const previousActiveField = useRef<string | undefined>(activeField);
 
   const handleAnnotationClick = useCallback(
     (annotation: Annotation) => {
@@ -221,6 +223,24 @@ export const Annotations = () => {
     isEditingAnnotation,
     updateAnnotation,
   ]);
+
+  useEffect(() => {
+    const prevField = previousActiveField.current;
+
+    if (
+      prevField &&
+      isAnnotationField(prevField) &&
+      prevField !== activeField
+    ) {
+      const prevAnnotation = annotations.find((a) => a.key === prevField);
+
+      if (prevAnnotation && !prevAnnotation.defaultOpen) {
+        updateAnnotation(prevField, false);
+      }
+    }
+
+    previousActiveField.current = activeField;
+  }, [activeField, annotations, updateAnnotation]);
 
   return (
     <>

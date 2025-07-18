@@ -10,7 +10,7 @@ const getAnnotationKey = (type: Annotation["type"]) => {
 };
 
 export const isAnnotationField = (field: string | undefined) => {
-  return field?.startsWith(ANNOTATION_FIELD_PREFIX);
+  return !!field?.startsWith(ANNOTATION_FIELD_PREFIX);
 };
 
 export const getDefaultHighlightAnnotation = (): HighlightAnnotation => {
