@@ -24,11 +24,16 @@ export const AnnotationCircle = ({
 
   return (
     <ButtonBase
-      className={clsx(classes.outerCircle, focused && classes.focused)}
-      onClick={onClick}
+      className={clsx(classes.wrapper, onClick && classes.clickable)}
       style={{ left: x, top: y, pointerEvents: onClick ? "auto" : "none" }}
+      onClick={onClick}
     >
-      <div className={classes.innerCircle} style={{ backgroundColor: color }} />
+      <div className={clsx(classes.outerCircle, focused && classes.focused)}>
+        <div
+          className={classes.innerCircle}
+          style={{ backgroundColor: color }}
+        />
+      </div>
     </ButtonBase>
   );
 };
@@ -37,15 +42,17 @@ export const DEFAULT_ANNOTATION_CIRCLE_COLOR = "#6B7280";
 const SIZE = 16;
 
 const useStyles = makeStyles((theme: Theme) => ({
-  outerCircle: {
+  wrapper: {
     transform: "translate3d(-50%, -50%, 0)",
     position: "absolute",
+    padding: theme.spacing(1),
+  },
+  outerCircle: {
     width: SIZE,
     height: SIZE,
     borderRadius: "50%",
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[2],
-    cursor: "pointer",
   },
   innerCircle: {
     transform: "translate3d(-50%, -50%, 0)",
@@ -55,6 +62,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: SIZE / 2,
     height: SIZE / 2,
     borderRadius: "50%",
+  },
+  clickable: {
+    cursor: "pointer",
   },
   focused: {
     outline: `${ANNOTATION_FOCUS_WIDTH}px solid ${ANNOTATION_FOCUS_COLOR}`,
