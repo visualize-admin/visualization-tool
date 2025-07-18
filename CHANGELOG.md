@@ -21,6 +21,8 @@ You can also check the
     values
   - Color squares in color palette picker are now correctly reset when changing
     the palette
+  - Use most recent value toggle is now correctly displaying in the single
+    filters section
 - Security
   - Added additional protection against data source URL injection
   - Removed feature flag for custom GraphQL endpoint
