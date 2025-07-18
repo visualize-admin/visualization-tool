@@ -10,7 +10,7 @@ import {
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
-export const OverlayHighlightRect = ({
+const OverlayHighlightRect = ({
   x,
   y,
   width,

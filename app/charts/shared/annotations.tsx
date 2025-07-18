@@ -39,9 +39,7 @@ export type GetAnnotationInfo = (
     segment: string;
     focusingSegment: boolean;
   }
-) => AnnotationInfo;
-
-export type AnnotationInfo = {
+) => {
   x: number;
   y: number;
   color?: string;
