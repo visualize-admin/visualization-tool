@@ -11,11 +11,18 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - Improved UX of interacting with conversion units multiplier input
+  - Updated WMS & WMTS providers list
 - Fixes
   - Interactive calculation is now correctly reset when removing segmentation
   - Tooltips are now correctly displayed in data preview table
   - Grid lines do not overlap the chart elements anymore in case of negative
     values
+  - Color squares in color palette picker are now correctly reset when changing
+    the palette
+  - Use most recent value toggle is now correctly displaying in the single
+    filters section
 - Security
   - Added additional protection against data source URL injection
   - Removed feature flag for custom GraphQL endpoint

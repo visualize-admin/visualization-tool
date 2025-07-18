@@ -275,19 +275,35 @@ export const DataFilterSelect = ({
       size="sm"
       label={
         canUseMostRecentValue ? (
-          <Switch
-            label={label}
-            checked={usesMostRecentValue}
-            onChange={() =>
-              fieldProps.onChange({
-                target: {
-                  value: usesMostRecentValue
-                    ? `${maxValue}`
-                    : VISUALIZE_MOST_RECENT_VALUE,
-                },
-              })
-            }
-          />
+          <div style={{ width: "100%" }}>
+            <Flex justifyContent="flex-end" sx={{ mb: 0.5, mr: 7 }}>
+              <Switch
+                label={t({
+                  id: "controls.filter.use-most-recent",
+                  message: "Use most recent",
+                })}
+                size="sm"
+                checked={usesMostRecentValue}
+                onChange={() =>
+                  fieldProps.onChange({
+                    target: {
+                      value: usesMostRecentValue
+                        ? `${maxValue}`
+                        : VISUALIZE_MOST_RECENT_VALUE,
+                    },
+                  })
+                }
+              />
+            </Flex>
+            <Flex
+              justifyContent="space-between"
+              alignItems="center"
+              gap={1}
+              width="100%"
+            >
+              {label}
+            </Flex>
+          </div>
         ) : (
           <FieldLabel label={label} />
         )

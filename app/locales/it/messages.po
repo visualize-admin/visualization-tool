@@ -686,12 +686,20 @@ msgid "controls.convert-unit.enable"
 msgstr "Abilita conversione unità"
 
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.invalid-number-error"
+msgstr "Inserisci un numero valido"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.multiplier"
 msgstr "Moltiplicatore"
 
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.original"
 msgstr "Unità originale: {0}"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.positive-number-error"
+msgstr "Il moltiplicatore deve essere maggiore di 0"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx

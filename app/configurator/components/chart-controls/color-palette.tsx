@@ -240,7 +240,9 @@ export const ColorPalette = ({
             }
 
             return (
-              <Flex gap={0.5} flexWrap="wrap">
+              // Key to reset the color squares when the palette changes,
+              // otherwise the squares are duplicated
+              <Flex key={currentPalette?.value} gap={0.5} flexWrap="wrap">
                 {currentPalette
                   ? currentPalette.colors.map((color) => (
                       <ColorSquare

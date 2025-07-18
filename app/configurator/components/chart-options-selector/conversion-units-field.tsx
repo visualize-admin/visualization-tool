@@ -1,6 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { Box, Typography } from "@mui/material";
-import { ChangeEvent, ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { Flex } from "@/components/flex";
@@ -448,48 +448,20 @@ const ConversionUnitContent = ({
   const [_, dispatch] = useConfiguratorState(isConfiguring);
   const definedConversionUnit =
     conversionUnit ?? getDefaultConversionUnit({ originalUnit });
-  const [inputValue, setInputValue] = useState(
-    `${definedConversionUnit.multiplier}`
-  );
 
-  useEffect(() => {
-    setInputValue(`${definedConversionUnit.multiplier}`);
-  }, [definedConversionUnit.multiplier]);
-
-  const handleMultiplierChange = useEvent(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const newInputValue = e.target.value;
-      setInputValue(newInputValue);
-
-      if (newInputValue === "") {
-        return;
-      }
-
-      const newMultiplier = +newInputValue;
-
-      if (!isNaN(newMultiplier) && newMultiplier > 0) {
-        dispatch({
-          type: "CHART_FIELD_UPDATED",
-          value: {
-            locale,
-            field: null,
-            path: `conversionUnitsByComponentId["${componentId}"]`,
-            value: {
-              multiplier: newMultiplier,
-              labels: definedConversionUnit.labels,
-            },
-          },
-        });
-      }
-    }
-  );
-
-  const handleMultiplierBlur = useEvent(() => {
-    const numericValue = +inputValue;
-
-    if (inputValue === "" || isNaN(numericValue) || numericValue <= 0) {
-      setInputValue(`${definedConversionUnit.multiplier}`);
-    }
+  const handleMultiplierChange = useEvent((newMultiplier: number) => {
+    dispatch({
+      type: "CHART_FIELD_UPDATED",
+      value: {
+        locale,
+        field: null,
+        path: `conversionUnitsByComponentId["${componentId}"]`,
+        value: {
+          multiplier: newMultiplier,
+          labels: definedConversionUnit.labels,
+        },
+      },
+    });
   });
 
   const handleLabelChange = useEvent((locale: Locale, value: string) => {
@@ -519,16 +491,9 @@ const ConversionUnitContent = ({
             {originalUnit || t({ id: "controls.none", message: "None" })}
           </Trans>
         </Typography>
-        <Input
-          type="number"
-          label={t({
-            id: "controls.convert-unit.multiplier",
-            message: "Multiplier",
-          })}
-          name="multiplier"
-          value={inputValue}
-          onChange={handleMultiplierChange}
-          onBlur={handleMultiplierBlur}
+        <MultiplierInput
+          value={definedConversionUnit.multiplier}
+          onCommit={handleMultiplierChange}
         />
       </Flex>
       <Flex sx={{ flexDirection: "column", gap: 1 }}>
@@ -548,6 +513,71 @@ const ConversionUnitContent = ({
         ))}
       </Flex>
     </Box>
+  );
+};
+
+const MultiplierInput = ({
+  value,
+  onCommit,
+}: {
+  value: number;
+  onCommit: (newValue: number) => void;
+}) => {
+  const [inputValue, setInputValue] = useState(`${value}`);
+  const [error, setError] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    setInputValue(`${value}`);
+  }, [value]);
+
+  const handleCommit = () => {
+    const parsed = parseFloat(inputValue);
+
+    if (isNaN(parsed)) {
+      setError(
+        t({
+          id: "controls.convert-unit.invalid-number-error",
+          message: "Please enter a valid number",
+        })
+      );
+
+      return;
+    }
+
+    if (parsed <= 0) {
+      setError(
+        t({
+          id: "controls.convert-unit.positive-number-error",
+          message: "Multiplier must be greater than 0",
+        })
+      );
+
+      return;
+    }
+
+    setError(undefined);
+    onCommit(parsed);
+  };
+
+  return (
+    <Input
+      type="number"
+      label={t({
+        id: "controls.convert-unit.multiplier",
+        message: "Multiplier",
+      })}
+      name="multiplier"
+      value={inputValue}
+      onChange={(e) => setInputValue(e.currentTarget.value)}
+      onBlur={handleCommit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          handleCommit();
+        }
+      }}
+      error={!!error}
+      errorMessage={error}
+    />
   );
 };
 
