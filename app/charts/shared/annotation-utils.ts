@@ -13,8 +13,8 @@ import {
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
-import { Observation } from "@/domain/data";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { Observation } from "@/domain/data";
 
 export const useIsEditingAnnotation = () => {
   const [state] = useConfiguratorState();

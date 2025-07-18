@@ -39,6 +39,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useId } from "@reach/auto-id";
+import clsx from "clsx";
 import flatten from "lodash/flatten";
 import {
   ComponentProps,
@@ -73,7 +74,6 @@ import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { valueComparator } from "@/utils/sorting-values";
 import { useEvent } from "@/utils/use-event";
-import clsx from "clsx";
 
 import "@mdxeditor/editor/style.css";
 
