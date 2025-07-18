@@ -80,8 +80,8 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
         <Ruler />
         {isEditingAnnotation ? <HoverAnnotationDot /> : <HoverDotMultiple />}
         <Tooltip type={fields.segment ? "multiple" : "single"} />
-        <Annotations />
       </ChartContainer>
+      <Annotations />
       {(fields.segment || limits.limits.length > 0) && (
         <ChartControlsContainer>
           <LegendColor

@@ -50,8 +50,8 @@ const ChartPie = memo((props: ChartProps<PieConfig>) => {
         ) : (
           <Tooltip type="single" />
         )}
-        <Annotations />
       </ChartContainer>
+      <Annotations />
       <ChartControlsContainer>
         {fields.animation && (
           <TimeSlider

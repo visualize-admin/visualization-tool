@@ -90,8 +90,8 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
             ) : (
               <Tooltip type="multiple" />
             )}
-            <Annotations />
           </ChartContainer>
+          <Annotations />
           <ChartControlsContainer>
             {fields.animation && (
               <TimeSlider
@@ -160,8 +160,8 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
             ) : (
               <Tooltip type="single" />
             )}
-            <Annotations />
           </ChartContainer>
+          <Annotations />
           {fields.animation || limits.limits.length > 0 ? (
             <ChartControlsContainer>
               {limits.limits.length > 0 && (

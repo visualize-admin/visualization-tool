@@ -65,8 +65,8 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
           <Tooltip type={fields.segment ? "multiple" : "single"} />
         )}
         <Ruler />
-        <Annotations />
       </ChartContainer>
+      <Annotations />
       {(fields.segment || limits.limits.length > 0) && (
         <ChartControlsContainer>
           <LegendColor

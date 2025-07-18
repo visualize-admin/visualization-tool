@@ -58,8 +58,8 @@ const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
         ) : (
           <Tooltip type="single" />
         )}
-        <Annotations />
       </ChartContainer>
+      <Annotations />
       {(fields.animation || fields.segment) && (
         <ChartControlsContainer>
           {fields.animation && (
