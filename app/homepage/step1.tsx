@@ -8,9 +8,9 @@ export const Step1 = () => (
     xmlns="http://www.w3.org/2000/svg"
     style={{ aspectRatio: "416 / 266" }}
   >
-    <g clip-path="url(#clip0_6751_159831)" filter="url(#filter0_i_6751_159831)">
+    <g clipPath="url(#clip0_6751_159831)" filter="url(#filter0_i_6751_159831)">
       <rect width="416" height="265.778" fill="white" />
-      <g clip-path="url(#clip1_6751_159831)">
+      <g clipPath="url(#clip1_6751_159831)">
         <g filter="url(#filter1_d_6751_159831)">
           <rect
             x="124.223"
@@ -153,7 +153,7 @@ export const Step1 = () => (
           rx="0.577778"
           fill="#ACB4BD"
         />
-        <g clip-path="url(#clip2_6751_159831)">
+        <g clipPath="url(#clip2_6751_159831)">
           <rect
             x="124.367"
             y="88.2616"
@@ -513,11 +513,11 @@ export const Step1 = () => (
         />
       </g>
       <g
-        clip-path="url(#clip3_6751_159831)"
+        clipPath="url(#clip3_6751_159831)"
         filter="url(#filter4_i_6751_159831)"
       >
         <rect y="11.5586" width="416" height="27.7333" fill="white" />
-        <g clip-path="url(#clip4_6751_159831)">
+        <g clipPath="url(#clip4_6751_159831)">
           <rect y="11.5586" width="416" height="27.7333" fill="white" />
         </g>
         <path
@@ -542,9 +542,9 @@ export const Step1 = () => (
         width="416"
         height="265.777"
         filterUnits="userSpaceOnUse"
-        color-interpolation-filters="sRGB"
+        colorInterpolationFilters="sRGB"
       >
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend
           mode="normal"
           in="SourceGraphic"
@@ -576,9 +576,9 @@ export const Step1 = () => (
         width="274.444"
         height="57.7785"
         filterUnits="userSpaceOnUse"
-        color-interpolation-filters="sRGB"
+        colorInterpolationFilters="sRGB"
       >
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feColorMatrix
           in="SourceAlpha"
           type="matrix"
@@ -610,9 +610,9 @@ export const Step1 = () => (
         width="274.444"
         height="57.7785"
         filterUnits="userSpaceOnUse"
-        color-interpolation-filters="sRGB"
+        colorInterpolationFilters="sRGB"
       >
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feColorMatrix
           in="SourceAlpha"
           type="matrix"
@@ -644,9 +644,9 @@ export const Step1 = () => (
         width="274.444"
         height="57.7785"
         filterUnits="userSpaceOnUse"
-        color-interpolation-filters="sRGB"
+        colorInterpolationFilters="sRGB"
       >
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feColorMatrix
           in="SourceAlpha"
           type="matrix"
@@ -678,9 +678,9 @@ export const Step1 = () => (
         width="416"
         height="27.7324"
         filterUnits="userSpaceOnUse"
-        color-interpolation-filters="sRGB"
+        colorInterpolationFilters="sRGB"
       >
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend
           mode="normal"
           in="SourceGraphic"

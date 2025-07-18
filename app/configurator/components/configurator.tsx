@@ -43,11 +43,13 @@ import {
 } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import {
-  ChartAnnotationsSelector,
-  LayoutAnnotationsSelector,
-} from "@/configurator/components/annotation-options";
+  ChartAnnotatorSelector,
+  LayoutAnnotatorSelector,
+} from "@/configurator/components/annotator-options";
 import { Description, Title } from "@/configurator/components/annotators";
 import { LayoutBlocksSelector } from "@/configurator/components/block-options-selector";
+import { ChartAnnotationsSelector } from "@/configurator/components/chart-annotations/chart-annotations-selector";
+import { isAnnotationField } from "@/configurator/components/chart-annotations/utils";
 import { ChartConfigurator } from "@/configurator/components/chart-configurator";
 import { ChartOptionsSelector } from "@/configurator/components/chart-options-selector";
 import {
@@ -113,7 +115,7 @@ export const BackButton = ({
   );
 };
 
-export const isAnnotationField = (
+export const isAnnotatorField = (
   field: string | undefined
 ): field is MetaKey => {
   return field === "title" || field === "description" || field === "label";
@@ -398,7 +400,10 @@ const ConfigureChartStep = () => {
   const chartConfig = getChartConfig(state);
   const router = useRouter();
   const handleClosePanel = useEvent(() => {
-    dispatch({ type: "CHART_ACTIVE_FIELD_CHANGED", value: undefined });
+    dispatch({
+      type: "CHART_ACTIVE_FIELD_CHANGE",
+      value: undefined,
+    });
   });
   const handlePrevious = useEvent(() => {
     if (!configuring) {
@@ -485,11 +490,21 @@ const ConfigureChartStep = () => {
           hideBackdrop
           onClose={handleClosePanel}
         >
-          <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
-            {isAnnotationField(chartConfig.activeField) ? (
+          <div
+            data-testid="panel-drawer"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              width: DRAWER_WIDTH,
+            }}
+          >
+            {isAnnotatorField(chartConfig.activeField) ? (
+              <ChartAnnotatorSelector />
+            ) : isAnnotationField(chartConfig.activeField) ? (
               <ChartAnnotationsSelector />
             ) : (
-              <ChartOptionsSelector state={state} />
+              <ChartOptionsSelector />
             )}
           </div>
         </ConfiguratorDrawer>
@@ -502,12 +517,16 @@ const LayoutingStep = () => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const handleClosePanel = useEvent(() => {
-    dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value: undefined });
+    dispatch({
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE",
+      value: undefined,
+    });
   });
   const handlePrevious = useEvent(() => {
     if (state.state !== "LAYOUTING") {
       return;
     }
+
     dispatch({ type: "STEP_PREVIOUS" });
   });
 
@@ -710,7 +729,7 @@ const LayoutingStep = () => {
                   onClick={() => {
                     if (state.layout.activeField !== "title") {
                       dispatch({
-                        type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+                        type: "LAYOUT_ACTIVE_FIELD_CHANGE",
                         value: "title",
                       });
                     }
@@ -721,7 +740,7 @@ const LayoutingStep = () => {
                   onClick={() => {
                     if (state.layout.activeField !== "description") {
                       dispatch({
-                        type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+                        type: "LAYOUT_ACTIVE_FIELD_CHANGE",
                         value: "description",
                       });
                     }
@@ -741,8 +760,8 @@ const LayoutingStep = () => {
         onClose={handleClosePanel}
       >
         <div style={{ width: DRAWER_WIDTH }} data-testid="panel-drawer">
-          {isAnnotationField(state.layout.activeField) ? (
-            <LayoutAnnotationsSelector />
+          {isAnnotatorField(state.layout.activeField) ? (
+            <LayoutAnnotatorSelector />
           ) : (
             <LayoutBlocksSelector />
           )}

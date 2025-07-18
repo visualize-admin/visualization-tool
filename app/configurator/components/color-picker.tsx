@@ -22,6 +22,7 @@ const ChromePicker = dynamic(
 
 const useColorPickerStyles = makeStyles({
   swatches: {
+    display: "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(1rem, 1fr))",
     gap: 2,
     marginBottom: 2,
@@ -119,23 +120,25 @@ export const CustomColorPicker = ({
             style={{ width: "100%", height: "8px" }}
           />
         </Flex>
-        <Box display="grid" className={classes.swatches}>
-          {colorSwatches?.map((item, i) => (
-            <Swatch
-              key={`color-picker-swatch-${item.color}-${i}`}
-              color={item.color}
-              selected={item.color === hex && item.id === hsva.id}
-              onClick={() => {
-                const newHsva = hexToHsva(item.color);
-                setColor({
-                  hsva: { ...newHsva, id: item.id },
-                  hex: item.color,
-                });
-              }}
-            />
-          ))}
-        </Box>
-        <Flex sx={{ marginTop: "8px", alignItems: "center", gap: "8px" }}>
+        {colorSwatches ? (
+          <div className={classes.swatches}>
+            {colorSwatches.map((item, i) => (
+              <Swatch
+                key={`color-picker-swatch-${item.color}-${i}`}
+                color={item.color}
+                selected={item.color === hex && item.id === hsva.id}
+                onClick={() => {
+                  const newHsva = hexToHsva(item.color);
+                  setColor({
+                    hsva: { ...newHsva, id: item.id },
+                    hex: item.color,
+                  });
+                }}
+              />
+            ))}
+          </div>
+        ) : null}
+        <Flex sx={{ alignItems: "center", gap: 2, mt: 2 }}>
           <Input
             name="color-picker-input"
             value={hex}

@@ -115,6 +115,7 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
           color: "#1f77b4",
         },
       },
+      annotations: [],
     },
   ],
   activeChartKey: "8-5RW138pTDA",

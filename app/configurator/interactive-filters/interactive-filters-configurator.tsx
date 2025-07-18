@@ -90,7 +90,6 @@ export const InteractiveFiltersConfigurator = ({
         <SectionTitle id="controls-interactive-filters">
           <Trans id="controls.section.interactive.filters">Animations</Trans>
         </SectionTitle>
-
         <ControlSectionSkeleton showTitle={false} sx={{ mt: 0 }} />
       </ControlSection>
     );

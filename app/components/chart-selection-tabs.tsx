@@ -279,7 +279,7 @@ const TabsEditable = (props: TabsEditableProps) => {
               onClick={() => {
                 switchChart(tabsState.activeChartKey);
                 dispatch({
-                  type: "CHART_ACTIVE_FIELD_CHANGED",
+                  type: "CHART_ACTIVE_FIELD_CHANGE",
                   value: "label",
                 });
                 handleClose();
@@ -646,7 +646,7 @@ const TabContent = (props: {
 
           if (editable) {
             dispatch({
-              type: "CHART_ACTIVE_FIELD_CHANGED",
+              type: "CHART_ACTIVE_FIELD_CHANGE",
               value: undefined,
             });
           }

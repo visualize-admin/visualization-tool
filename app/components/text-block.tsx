@@ -59,7 +59,7 @@ export const TextBlock = forwardRef<
     }
 
     dispatch({
-      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE",
       value: block.key,
     });
   });

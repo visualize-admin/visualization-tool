@@ -487,6 +487,7 @@ describe("deriveFiltersFromFields", () => {
     expect(derived).toMatchInlineSnapshot(`
       {
         "activeField": undefined,
+        "annotations": [],
         "chartType": "pie",
         "conversionUnitsByComponentId": {},
         "cubes": [
@@ -608,7 +609,7 @@ describe("deriveFiltersFromFields", () => {
             "it": "",
           },
         },
-        "version": "4.5.0",
+        "version": "5.0.0",
       }
     `);
   });

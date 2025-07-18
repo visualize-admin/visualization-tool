@@ -1,11 +1,25 @@
 import { Button, ButtonProps } from "@mui/material";
+import { ComponentProps } from "react";
 
 import { Icon } from "@/icons";
 
-export const AddButton = (props: ButtonProps) => {
+export const AddButton = (props: Omit<ButtonProps, "startIcon">) => {
+  return (
+    <Button size="sm" startIcon={<Icon name="plus" size={20} />} {...props} />
+  );
+};
+
+export const ConfiguratorAddButton = (
+  props: ComponentProps<typeof AddButton>
+) => {
   const { sx, ...rest } = props;
 
   return (
-    <Button size="sm" startIcon={<Icon name="plus" size={20} />} {...rest} />
+    <AddButton
+      size="sm"
+      variant="outlined"
+      sx={{ width: "fit-content", mt: 4, ...sx }}
+      {...rest}
+    />
   );
 };

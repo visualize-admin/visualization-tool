@@ -98,7 +98,7 @@ const getLabels = (
       return {
         upperLabel: labelId ? getFieldLabel(labelId) : null,
         mainLabel: componentLabels?.[0] ?? (
-          <Trans id="controls.color.add">Add…</Trans>
+          <Trans id="controls.color.add">Add...</Trans>
         ),
       };
   }
@@ -136,12 +136,7 @@ const WarnIconTooltip = (props: WarnIconTooltipProps) => {
   );
 };
 
-type FieldEditIconProps = {
-  isActive: boolean;
-};
-
-const FieldEditIcon = (props: FieldEditIconProps) => {
-  const { isActive } = props;
+const FieldEditIcon = ({ isActive }: { isActive: boolean }) => {
   const classes = useIconStyles({ isActive });
 
   return <SvgIcPen className={classes.edit} />;
@@ -160,16 +155,10 @@ export const OnOffControlTab = ({
   icon: string;
   checked?: boolean;
   active?: boolean;
-  onClick: (x: string) => void;
+  onClick: (value: string) => void;
 }) => {
   return (
-    <Box
-      sx={{
-        width: "100%",
-        borderRadius: 1.5,
-        my: "2px",
-      }}
-    >
+    <div style={{ width: "100%", margin: "2px 0", borderRadius: 1.5 }}>
       <ControlTabButton checked={checked} value={value} onClick={onClick}>
         <ControlTabButtonInner
           iconName={getIconName(icon)}
@@ -179,7 +168,7 @@ export const OnOffControlTab = ({
           showIsActive
         />
       </ControlTabButton>
-    </Box>
+    </div>
   );
 };
 
@@ -203,18 +192,14 @@ export const ControlTab = ({
   mainLabel,
   lowerLabel,
   rightIcon,
+  disabled,
 }: ControlTabProps) => {
   return (
-    <Box
-      sx={{
-        width: "100%",
-        borderRadius: 1.5,
-        my: "2px",
-      }}
-    >
+    <div style={{ width: "100%", margin: "2px 0", borderRadius: 1.5 }}>
       <ControlTabButton
         checked={checked}
         value={value}
+        disabled={disabled}
         onClick={() => onClick(value)}
       >
         <ControlTabButtonInner
@@ -223,10 +208,11 @@ export const ControlTab = ({
           upperLabel={upperLabel}
           lowerLabel={lowerLabel}
           checked={checked}
+          disabled={disabled}
           rightIcon={rightIcon}
         />
       </ControlTabButton>
-    </Box>
+    </div>
   );
 };
 
@@ -349,6 +335,7 @@ const ControlTabButtonInner = ({
   mainLabel,
   lowerLabel,
   checked,
+  disabled,
   rightIcon,
   optional = false,
   isActive = false,
@@ -359,6 +346,7 @@ const ControlTabButtonInner = ({
   mainLabel: string | ReactNode;
   lowerLabel?: string | ReactNode;
   checked?: boolean;
+  disabled?: boolean;
   optional?: boolean;
   // On / Off indicator
   isActive?: boolean;
@@ -384,7 +372,7 @@ const ControlTabButtonInner = ({
             "& svg": {
               color: checked
                 ? "white"
-                : optional
+                : optional || disabled
                   ? "monochrome.300"
                   : "monochrome.800",
             },
@@ -405,7 +393,9 @@ const ControlTabButtonInner = ({
               variant="caption"
               sx={{
                 color:
-                  optional && !checked ? "monochrome.300" : "monochrome.500",
+                  (optional && !checked) || disabled
+                    ? "monochrome.300"
+                    : "monochrome.500",
               }}
             >
               {upperLabel}
@@ -424,7 +414,10 @@ const ControlTabButtonInner = ({
               WebkitBoxOrient: "vertical",
               WebkitLineClamp: "2",
               // ---
-              color: optional && !checked ? "monochrome.300" : "monochrome.800",
+              color:
+                (optional && !checked) || disabled
+                  ? "monochrome.300"
+                  : "monochrome.800",
             }}
           >
             {mainLabel}

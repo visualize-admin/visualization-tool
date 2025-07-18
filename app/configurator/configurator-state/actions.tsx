@@ -1,5 +1,6 @@
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import {
+  Annotation,
   BaseLayer,
   ChartConfig,
   ChartType,
@@ -63,7 +64,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_ACTIVE_FIELD_CHANGED";
+      type: "CHART_ACTIVE_FIELD_CHANGE";
       value: string | undefined;
     }
   | {
@@ -129,7 +130,7 @@ export type ConfiguratorStateAction =
       };
     }
   | {
-      type: "CHART_ANNOTATION_CHANGED";
+      type: "CHART_META_CHANGE";
       value: {
         path: string | string[];
         value: string;
@@ -278,6 +279,58 @@ export type ConfiguratorStateAction =
       };
     }
   | {
+      type: "CHART_ANNOTATION_ADD";
+      value: Annotation;
+    }
+  | {
+      type: "CHART_ANNOTATION_TARGETS_CHANGE";
+      value: {
+        key: string;
+        targets: Annotation["targets"];
+      };
+    }
+  | {
+      type: "CHART_ANNOTATION_HIGHLIGHT_TYPE_CHANGE";
+      value: {
+        key: string;
+        highlightType: Annotation["highlightType"];
+      };
+    }
+  | {
+      type: "CHART_ANNOTATION_COLOR_CHANGE";
+      value: {
+        key: string;
+        color: string;
+      };
+    }
+  | {
+      type: "CHART_ANNOTATION_DEFAULT_OPEN_CHANGE";
+      value: {
+        key: string;
+        defaultOpen: boolean;
+      };
+    }
+  | {
+      type: "CHART_ANNOTATION_TEXT_CHANGE";
+      value: {
+        key: string;
+        locale: Locale;
+        value: string;
+      };
+    }
+  | {
+      type: "CHART_ANNOTATION_TEXT_CLEAR";
+      value: {
+        key: string;
+      };
+    }
+  | {
+      type: "CHART_ANNOTATION_REMOVE";
+      value: {
+        key: string;
+      };
+    }
+  | {
       type: "LIMIT_SET";
       value: {
         measureId: string;
@@ -305,11 +358,11 @@ export type ConfiguratorStateAction =
       value: Layout;
     }
   | {
-      type: "LAYOUT_ACTIVE_FIELD_CHANGED";
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE";
       value: string | undefined;
     }
   | {
-      type: "LAYOUT_ANNOTATION_CHANGED";
+      type: "LAYOUT_META_CHANGE";
       value: {
         path: string | string[];
         value: string;

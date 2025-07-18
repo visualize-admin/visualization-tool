@@ -32,6 +32,10 @@ import {
   PADDING_OUTER,
 } from "@/charts/bar/constants";
 import {
+  ANNOTATION_SINGLE_SEGMENT_OFFSET,
+  GetAnnotationInfo,
+} from "@/charts/shared/annotations";
+import {
   AxisLabelSizeVariables,
   getChartWidth,
   useAxisLabelSizeVariables,
@@ -48,7 +52,7 @@ import {
   CommonChartState,
   InteractiveYTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -59,6 +63,7 @@ import {
   ValueLabelFormatter,
 } from "@/charts/shared/show-values-utils";
 import {
+  getStackedPosition,
   getStackedTooltipValueFormatter,
   getStackedXScale,
 } from "@/charts/shared/stacked-helpers";
@@ -83,6 +88,7 @@ export type StackedBarsState = CommonChartState &
   BarsStackedStateVariables &
   InteractiveYTimeRangeState & {
     chartType: "bar";
+    chartDataGroupedByY: Map<string, Observation[]>;
     yScale: ScaleBand<string>;
     yScaleInteraction: ScaleBand<string>;
     xScale: ScaleLinear<number, number>;
@@ -91,10 +97,8 @@ export type StackedBarsState = CommonChartState &
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
     series: Series<{ [key: string]: number }, string>[];
-    getAnnotationInfo: (
-      d: Observation,
-      orderedSegments: string[]
-    ) => TooltipInfo;
+    getAnnotationInfo: GetAnnotationInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -469,8 +473,41 @@ const useBarsStackedState = (
     [yDimension, formatYDate, getYLabel]
   );
 
-  // Tooltips
-  const getAnnotationInfo = useCallback(
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation, { segment, focusingSegment }) => {
+      const y = getY(observation);
+      let x: number;
+      let color: string | undefined;
+
+      if (focusingSegment) {
+        x = getStackedPosition({
+          observation,
+          series,
+          key: yKey,
+          getAxisValue: getY,
+          measureScale: xScale,
+          fallbackMeasureValue: xScale(getX(observation) ?? 0),
+          segment,
+        });
+        color = colors(segment);
+      } else {
+        const values = chartDataGroupedByY.get(y) ?? [];
+        const xValues = values.map(getX);
+        x =
+          xScale(sum(xValues.map((d) => d ?? 0))) +
+          ANNOTATION_SINGLE_SEGMENT_OFFSET;
+      }
+
+      return {
+        x,
+        y: (yScale(y) as number) + yScale.bandwidth() * 0.5,
+        color,
+      };
+    },
+    [colors, getX, getY, series, xScale, yKey, yScale, chartDataGroupedByY]
+  );
+
+  const getTooltipInfo = useCallback(
     (datum: Observation): TooltipInfo => {
       const bw = yScale.bandwidth();
       const y = getY(datum);
@@ -491,7 +528,7 @@ const useBarsStackedState = (
         formatNumber,
       });
 
-      const yAnchorRaw = (yScale(y) as number) + bw;
+      const yAnchorRaw = (yScale(y) as number) + bw * 0.5;
       const xAnchor = isMobile
         ? chartHeight
         : xScale(sum(xValues.map((d) => d ?? 0)));
@@ -505,7 +542,7 @@ const useBarsStackedState = (
       const yLabel = getYAbbreviationOrLabel(datum);
 
       return {
-        yAnchor: yAnchorRaw + (placement.y === "top" ? 0.5 : -0.5) * bw,
+        yAnchor: yAnchorRaw + (placement.y === "top" ? bw : 0),
         xAnchor,
         placement,
         value: formatYAxisTick(yLabel),
@@ -514,35 +551,52 @@ const useBarsStackedState = (
           value: xValueFormatter(getX(datum), getIdentityX(datum)),
           color: colors(getSegment(datum)),
         },
-        values: sortedTooltipValues.map((d) => ({
-          label: getSegmentAbbreviationOrLabel(d),
-          value: xValueFormatter(getX(d), getIdentityX(d)),
-          color: colors(getSegment(d)),
-        })),
+        values: sortedTooltipValues.map((d) => {
+          const segment = getSegment(d);
+          const x = getStackedPosition({
+            observation: d,
+            series,
+            key: yKey,
+            getAxisValue: getY,
+            measureScale: xScale,
+            fallbackMeasureValue: xScale(getX(d) ?? 0),
+            segment,
+          });
+
+          return {
+            label: getSegmentAbbreviationOrLabel(d),
+            value: xValueFormatter(getX(d), getIdentityX(d)),
+            axis: "x",
+            axisOffset: x,
+            color: colors(segment),
+          } satisfies TooltipValue;
+        }),
       };
     },
     [
-      getX,
-      xScale,
+      yScale,
+      getY,
       chartDataGroupedByY,
+      getX,
       segments,
       getSegment,
+      normalize,
       xMeasure.id,
       xMeasure.unit,
       formatters,
       formatNumber,
-      getYAbbreviationOrLabel,
+      isMobile,
+      chartHeight,
+      xScale,
+      chartWidth,
       fields.segment,
+      getYAbbreviationOrLabel,
+      formatYAxisTick,
       getSegmentAbbreviationOrLabel,
-      getY,
       getIdentityX,
       colors,
-      chartWidth,
-      chartHeight,
-      isMobile,
-      normalize,
-      yScale,
-      formatYAxisTick,
+      series,
+      yKey,
     ]
   );
 
@@ -555,6 +609,7 @@ const useBarsStackedState = (
 
   return {
     chartType: "bar",
+    chartDataGroupedByY,
     bounds: {
       ...bounds,
       chartHeight: adjustedChartHeight,
@@ -571,6 +626,7 @@ const useBarsStackedState = (
     chartWideData,
     series,
     getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,

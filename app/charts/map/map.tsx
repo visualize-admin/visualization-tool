@@ -191,7 +191,7 @@ export const MapComponent = ({
     };
   }, [customLayers, layersByKey, value]);
 
-  const [{ interaction }, dispatchInteraction] = useInteraction();
+  const [interaction, dispatchInteraction] = useInteraction();
   const [, setMapTooltipType] = useMapTooltip();
 
   const {
@@ -284,7 +284,10 @@ export const MapComponent = ({
         dispatchInteraction({
           type: "INTERACTION_UPDATE",
           value: {
-            interaction: { visible: true, mouse: { x, y }, d: observation },
+            type: "tooltip",
+            visible: true,
+            observation,
+            mouse: { x, y },
           },
         });
       } else {
@@ -369,7 +372,7 @@ export const MapComponent = ({
     }
 
     const shape = sortedShapes.features.find(
-      (d) => d.properties.observation === interaction.d
+      (d) => d.properties.observation === interaction.observation
     );
 
     if (shape) {
@@ -404,7 +407,7 @@ export const MapComponent = ({
   }, [
     afterAreaCustomLayers,
     areaLayer,
-    interaction.d,
+    interaction.observation,
     interaction.visible,
     sortedShapes,
   ]);

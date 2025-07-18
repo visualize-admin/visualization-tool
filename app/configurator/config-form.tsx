@@ -396,7 +396,10 @@ export const useActiveChartField = (
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const onClick = useCallback(() => {
-    dispatch({ type: "CHART_ACTIVE_FIELD_CHANGED", value });
+    dispatch({
+      type: "CHART_ACTIVE_FIELD_CHANGE",
+      value,
+    });
   }, [dispatch, value]);
   const checked = chartConfig.activeField === value;
 
@@ -415,7 +418,10 @@ export const useActiveLayoutField = (
   const { value } = props;
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const onClick = useCallback(() => {
-    dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value });
+    dispatch({
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE",
+      value,
+    });
   }, [dispatch, value]);
   const checked = state.layout.activeField === value;
 
@@ -690,10 +696,22 @@ export const useMetaField = ({
   const [, dispatch] = useConfiguratorState();
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
+      let dispatchType: "CHART_META_CHANGE" | "LAYOUT_META_CHANGE";
+
+      switch (type) {
+        case "chart":
+          dispatchType = "CHART_META_CHANGE";
+          break;
+        case "layout":
+          dispatchType = "LAYOUT_META_CHANGE";
+          break;
+        default:
+          const _exhaustiveCheck: never = type;
+          return _exhaustiveCheck;
+      }
+
       dispatch({
-        type: `${
-          type.toUpperCase() as Uppercase<typeof type>
-        }_ANNOTATION_CHANGED`,
+        type: dispatchType,
         value: {
           path: `${metaKey}.${locale}`,
           value: e.currentTarget.value,
