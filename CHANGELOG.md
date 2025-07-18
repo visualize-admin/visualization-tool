@@ -11,6 +11,8 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - Improved UX of interacting with conversion units multiplier input
 - Fixes
   - Interactive calculation is now correctly reset when removing segmentation
   - Tooltips are now correctly displayed in data preview table
