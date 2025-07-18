@@ -144,6 +144,7 @@ const Connector = ({
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
+    zIndex: 2,
     transform: "translate(0%, -100%)",
     position: "absolute",
     display: "flex",
@@ -162,11 +163,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: "auto 0",
   },
   closeButton: {
-    transform: "translate(25%, -25%)",
+    transform: "translate(25%, 0)",
+    marginTop: `-${theme.spacing(2)}`,
     padding: theme.spacing(1),
     color: theme.palette.text.primary,
   },
   connector: {
+    zIndex: 1,
     transform: "translateX(-50%)",
     position: "absolute",
     width: 1,
