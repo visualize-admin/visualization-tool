@@ -14,6 +14,7 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { Observation } from "@/domain/data";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 
 export const useIsEditingAnnotation = () => {
   const [state] = useConfiguratorState();
@@ -108,12 +109,12 @@ export const getAnnotationTargetsFromObservation = (
   }
 ): Annotation["targets"] => {
   const singleFilters = extractSingleFilters(definitiveFilters);
-  const targets: Annotation["targets"] = Object.entries(singleFilters).map(
-    ([componentId, value]) => ({
+  const targets: Annotation["targets"] = Object.entries(singleFilters)
+    .filter(([, v]) => v.value !== FIELD_VALUE_NONE)
+    .map(([componentId, value]) => ({
       componentId,
       value: `${value.value}`,
-    })
-  );
+    }));
 
   switch (chartConfig.chartType) {
     case "column":
