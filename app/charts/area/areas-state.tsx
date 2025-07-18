@@ -23,7 +23,6 @@ import {
   useAreasStateData,
   useAreasStateVariables,
 } from "@/charts/area/areas-state-props";
-import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/annotation-circle";
 import { GetAnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
@@ -433,10 +432,10 @@ const useAreasState = (
       return {
         x,
         y,
-        color: DEFAULT_ANNOTATION_CIRCLE_COLOR,
+        color: segment ? colors(segment) : undefined,
       };
     },
-    [xScale, getX, series, xKey, getXAsString, yScale, getY]
+    [xScale, getX, series, xKey, getXAsString, yScale, getY, colors]
   );
 
   const getTooltipInfo = useCallback(
