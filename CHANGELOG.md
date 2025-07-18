@@ -12,8 +12,12 @@ You can also check the
 # Unreleased
 
 - Features
+  - It's now possible to annotate charts manually
+  - Scatterplot charts need to have segmentation at all times
   - Improved UX of interacting with conversion units multiplier input
   - Updated WMS & WMTS providers list
+  - Consolidated some translations
+  - Aligned some UI elements with the design
 - Fixes
   - Interactive calculation is now correctly reset when removing segmentation
   - Tooltips are now correctly displayed in data preview table
@@ -23,9 +27,17 @@ You can also check the
     the palette
   - Use most recent value toggle is now correctly displaying in the single
     filters section
+- Performance
+  - Removed a separate query to unversion observations, as it's now done when
+    they are fetched
+  - `InteractiveFiltersProvider` is now re-created only when needed, not on
+    every chart config change
 - Security
   - Added additional protection against data source URL injection
   - Removed feature flag for custom GraphQL endpoint
+- Maintenance
+  - Observations now include original values under `componentId/__iri__` key and
+    are unversioned
 
 # 5.8.3 - 2025-06-10
 
