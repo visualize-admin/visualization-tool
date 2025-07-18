@@ -11,6 +11,8 @@ You can also check the
 
 # Unreleased
 
+- Fixes
+  - Interactive calculation is now correctly reset when removing segmentation
 - Security
   - Added additional protection against data source URL injection
 
