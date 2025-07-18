@@ -13,6 +13,7 @@ You can also check the
 
 - Fixes
   - Interactive calculation is now correctly reset when removing segmentation
+  - Tooltips are now correctly displayed in data preview table
 - Security
   - Added additional protection against data source URL injection
 
