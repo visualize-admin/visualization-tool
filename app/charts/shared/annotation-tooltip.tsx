@@ -11,6 +11,7 @@ import { MarkdownInheritFonts } from "@/components/markdown";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
+import { getTextSize } from "@/utils/get-text-size";
 
 export const AnnotationTooltip = ({
   renderAnnotation: { annotation, x, y },
@@ -30,32 +31,39 @@ export const AnnotationTooltip = ({
   const ref = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({
     width: 0,
+    minWidth: 0,
     height: 0,
   });
 
   useLayoutEffect(() => {
+    const { width: minWidth } = getTextSize(text, {
+      fontSize: 12,
+      width: 240,
+      fontWeight: 400,
+    });
+
     if (ref.current && open) {
       const rect = ref.current.getBoundingClientRect();
       setDimensions({
         width: rect.width,
+        minWidth,
         height: rect.height,
       });
     }
   }, [open, text]);
 
   const {
-    bounds: { width, height },
+    bounds: { width },
   } = useChartState() as AnnotationEnabledChartState;
 
   const { left, top } = useMemo(() => {
     return getAdjustedPosition({
       x,
       y,
-      dimensions,
+      minWidth: dimensions.minWidth,
       chartWidth: width,
-      chartHeight: height,
     });
-  }, [x, y, dimensions, width, height]);
+  }, [x, y, dimensions, width]);
 
   const handleClose = useCallback(() => {
     updateAnnotation(annotation.key, false);
@@ -64,7 +72,11 @@ export const AnnotationTooltip = ({
   return open && text ? (
     <>
       <Connector annotationX={x} annotationY={y} />
-      <div ref={ref} className={classes.root} style={{ left, top }}>
+      <div
+        ref={ref}
+        className={classes.root}
+        style={{ left, top, minWidth: dimensions.minWidth }}
+      >
         <Typography className={classes.text} variant="caption">
           <MarkdownInheritFonts>{annotation.text[locale]}</MarkdownInheritFonts>
         </Typography>
@@ -81,36 +93,25 @@ const Y_OFFSET = 12;
 const getAdjustedPosition = ({
   x,
   y,
-  dimensions,
+  minWidth,
   chartWidth,
-  chartHeight,
 }: {
   x: number;
   y: number;
-  dimensions: { width: number; height: number };
+  minWidth: number;
   chartWidth: number;
-  chartHeight: number;
 }) => {
-  const { width: tooltipWidth, height: tooltipHeight } = dimensions;
   const xOffset = -24;
 
   let adjustedX = x + xOffset;
   let adjustedY = y - Y_OFFSET;
 
-  if (adjustedX + tooltipWidth > chartWidth) {
-    adjustedX = chartWidth - tooltipWidth;
+  if (adjustedX + minWidth > chartWidth) {
+    adjustedX = chartWidth - minWidth;
   }
 
   if (adjustedX < 0) {
     adjustedX = 0;
-  }
-
-  if (adjustedY - tooltipHeight < 0) {
-    adjustedY = tooltipHeight;
-  }
-
-  if (adjustedY > chartHeight) {
-    adjustedY = chartHeight;
   }
 
   return {
