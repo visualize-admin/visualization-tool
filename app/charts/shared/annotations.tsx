@@ -73,14 +73,14 @@ export const Annotations = () => {
     [interactiveAnnotations, updateAnnotation]
   );
 
-  const createRenderAnnotation = useCallback(
-    (
-      annotation: Annotation,
-      x: number,
-      y: number,
-      color: string | undefined,
-      focused: boolean
-    ) => ({
+  const createRenderAnnotation: (
+    annotation: Annotation,
+    x: number,
+    y: number,
+    color: string | undefined,
+    focused: boolean
+  ) => RenderAnnotation = useCallback(
+    (annotation, x, y, color, focused) => ({
       annotation,
       x: x + margins.left,
       y: y + margins.top,
@@ -116,13 +116,16 @@ export const Annotations = () => {
         focusingSegment: false,
       });
 
-      const focused = activeField === annotation.key;
+      const focused = isEditingAnnotation
+        ? activeField === annotation.key
+        : false;
 
       return createRenderAnnotation(annotation, x, y, color, focused);
     },
     [
       findObservationForAnnotation,
       getAnnotationInfo,
+      isEditingAnnotation,
       activeField,
       createRenderAnnotation,
     ]
@@ -130,7 +133,9 @@ export const Annotations = () => {
 
   const processAnnotationWithSegmentFocus = useCallback(
     (annotation: Annotation) => {
-      const focused = activeField === annotation.key;
+      const focused = isEditingAnnotation
+        ? activeField === annotation.key
+        : false;
 
       return chartData.map((observation) => {
         if (!matchesAnnotationTarget(observation, annotation.targets)) {
@@ -153,6 +158,7 @@ export const Annotations = () => {
       });
     },
     [
+      isEditingAnnotation,
       activeField,
       chartData,
       getSegment,
