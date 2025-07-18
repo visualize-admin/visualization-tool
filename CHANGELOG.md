@@ -16,6 +16,8 @@ You can also check the
   - Tooltips are now correctly displayed in data preview table
   - Grid lines do not overlap the chart elements anymore in case of negative
     values
+  - Color squares in color palette picker are now correctly reset when changing
+    the palette
 - Security
   - Added additional protection against data source URL injection
   - Removed feature flag for custom GraphQL endpoint
