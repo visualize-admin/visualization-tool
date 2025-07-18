@@ -181,5 +181,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: "absolute",
     width: 1,
     backgroundColor: theme.palette.text.secondary,
+    pointerEvents: "none",
   },
 }));
