@@ -42,10 +42,10 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
       <ChartContainer>
         <ChartSvg>
           <AxisHeightLinear />
-          <Areas />
           <AxisHideXOverflowRect />
           <AxisTime />
           <AxisTimeDomain />
+          <Areas />
           <VerticalLimits {...limits} />
           <InteractionHorizontal />
           {interactiveFiltersConfig?.timeRange.active === true && <BrushTime />}

@@ -14,6 +14,8 @@ You can also check the
 - Fixes
   - Interactive calculation is now correctly reset when removing segmentation
   - Tooltips are now correctly displayed in data preview table
+  - Grid lines do not overlap the chart elements anymore in case of negative
+    values
 - Security
   - Added additional protection against data source URL injection
   - Removed feature flag for custom GraphQL endpoint
