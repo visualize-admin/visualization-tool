@@ -16,6 +16,7 @@ You can also check the
   - Tooltips are now correctly displayed in data preview table
 - Security
   - Added additional protection against data source URL injection
+  - Removed feature flag for custom GraphQL endpoint
 
 # 5.8.3 - 2025-06-10
 
