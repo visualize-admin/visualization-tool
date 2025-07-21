@@ -32,6 +32,14 @@ const useStyles = makeStyles<Theme>((theme) => ({
     "header header"
     "left middle"`,
     backgroundColor: theme.palette.monochrome[100],
+
+    [theme.breakpoints.down("md")]: {
+      gridTemplateColumns: `minmax(22rem, 1fr)`,
+      gridTemplateAreas: `
+      "header"
+      "left"
+      "middle"`,
+    },
   },
   MRPanelLayout: {
     gridTemplateColumns: `minmax(22rem, 1fr) ${DRAWER_WIDTH}px`,
@@ -39,6 +47,14 @@ const useStyles = makeStyles<Theme>((theme) => ({
     "header header"
     "middle right"`,
     backgroundColor: theme.palette.monochrome[100],
+
+    [theme.breakpoints.down("md")]: {
+      gridTemplateColumns: `minmax(22rem, 1fr)`,
+      gridTemplateAreas: `
+      "header"
+      "middle"
+      "right"`,
+    },
   },
   LMRPanelLayout: {
     gridTemplateColumns: `${DRAWER_WIDTH}px minmax(22rem, 1fr) ${DRAWER_WIDTH}px`,
@@ -46,6 +62,15 @@ const useStyles = makeStyles<Theme>((theme) => ({
     "header header header"
     "left middle right"`,
     backgroundColor: theme.palette.monochrome[100],
+
+    [theme.breakpoints.down("md")]: {
+      gridTemplateColumns: `minmax(22rem, 1fr)`,
+      gridTemplateAreas: `
+      "header"
+      "left"
+      "middle"
+      "right"`,
+    },
   },
   panelHeaderLayout: {
     gridArea: "header",

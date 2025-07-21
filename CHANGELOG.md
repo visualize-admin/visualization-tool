@@ -23,6 +23,7 @@ You can also check the
     the palette
   - Use most recent value toggle is now correctly displaying in the single
     filters section
+  - Dataset browse view is now correctly displayed on mobile devices
 - Security
   - Added additional protection against data source URL injection
   - Removed feature flag for custom GraphQL endpoint
