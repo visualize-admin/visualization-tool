@@ -1,4 +1,4 @@
-import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
+import { SOURCE_OPTIONS } from "@/domain/data-source/constants";
 
 const allowedSourceLabels = JSON.parse(
   process.env.WHITELISTED_DATA_SOURCES ?? "[]"

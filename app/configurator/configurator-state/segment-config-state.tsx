@@ -3,10 +3,9 @@ import { ChangeEvent } from "react";
 
 import { isSegmentInConfig } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
+import { isConfiguring } from "@/configurator/configurator-state";
 import { useConfiguratorState } from "@/src";
-import useEvent from "@/utils/use-event";
-
-import { isConfiguring } from ".";
+import { useEvent } from "@/utils/use-event";
 
 export const useLegendTitleVisibility = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);

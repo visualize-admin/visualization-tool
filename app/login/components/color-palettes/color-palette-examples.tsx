@@ -2,7 +2,7 @@ import { Trans } from "@lingui/macro";
 import { interpolatePurples, interpolateRdYlGn } from "d3-scale-chromatic";
 import { ReactNode } from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Label } from "@/components/form";
 import { CustomPaletteType } from "@/config-types";
 import { ColorSquare } from "@/configurator/components/chart-controls/color-palette";

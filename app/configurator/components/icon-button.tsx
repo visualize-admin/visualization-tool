@@ -1,6 +1,7 @@
 import { ButtonBase, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
+import { SyntheticEvent } from "react";
 
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
@@ -61,7 +62,7 @@ export const IconButton = ({
 }: {
   label: string;
   disabled?: boolean;
-  onClick: (e: React.SyntheticEvent<HTMLButtonElement>) => void;
+  onClick: (e: SyntheticEvent<HTMLButtonElement>) => void;
   iconSize?: number;
 } & FieldProps) => {
   const classes = useStyles();

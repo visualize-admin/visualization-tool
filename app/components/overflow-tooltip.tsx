@@ -1,7 +1,7 @@
 import { Tooltip, TooltipProps } from "@mui/material";
 import { MouseEvent, useState } from "react";
 
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 export const OverflowTooltip = ({
   children,

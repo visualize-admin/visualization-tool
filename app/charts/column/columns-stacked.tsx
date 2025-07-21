@@ -29,7 +29,7 @@ export const ColumnsStacked = () => {
   const { margins, height } = bounds;
   const bandwidth = xScale.bandwidth();
   const y0 = yScale(0);
-  const renderData: RenderColumnDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     return series.flatMap((s) => {
       const segmentLabel = s.key;
       const segment =
@@ -46,17 +46,18 @@ export const ColumnsStacked = () => {
         const valueLabelColor = valueLabel
           ? getContrastingColor(color)
           : undefined;
+        const y = yScale(d[1]) as number;
 
         return {
           key: getRenderingKey(observation, segmentLabel),
           x: xScale(getX(observation)) as number,
-          y: yScale(d[1]),
+          y,
           width: bandwidth,
-          height: Math.max(0, yScale(d[0]) - yScale(d[1])),
+          height: Math.max(0, yScale(d[0]) - y),
           color,
           valueLabel,
           valueLabelColor,
-        };
+        } satisfies RenderColumnDatum;
       });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

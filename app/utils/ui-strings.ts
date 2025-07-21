@@ -1,8 +1,9 @@
+import { ReactNode } from "react";
 import reactStringReplace from "react-string-replace";
 
 export const replaceLinks = (
   str: string,
-  replacer: (label: string, link: string) => React.ReactNode
+  replacer: (label: string, link: string) => ReactNode
 ) => {
   return reactStringReplace(str, /(\[.*\]\(.*\))/, (match) => {
     const splitIndex = match.indexOf("](");

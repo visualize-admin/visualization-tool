@@ -8,7 +8,7 @@ import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   LEGACY_PROD_DATA_SOURCE_URL,
   PROD_DATA_SOURCE_URL,
-} from "@/domain/datasource/constants";
+} from "@/domain/data-source/constants";
 import { client } from "@/graphql/client";
 import { isJoinById } from "@/graphql/join";
 import {

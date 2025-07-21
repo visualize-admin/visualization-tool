@@ -30,13 +30,12 @@ import {
 } from "@mui/material";
 import { Meta } from "@storybook/react";
 import { useSnackbar } from "notistack";
-import { ComponentProps, ReactNode, useState } from "react";
+import { ComponentProps, FC, ReactNode, useState } from "react";
 
+import { DialogCloseButton } from "@/components/dialog-close-button";
+import { useDisclosure } from "@/components/use-disclosure";
 import SvgIcChevronLeft from "@/icons/components/IcChevronLeft";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
-
-import { DialogCloseButton } from "../components/dialog-close-button";
-import useDisclosure from "../components/use-disclosure";
 
 const meta: Meta = {
   title: "Design system / Theme",
@@ -244,7 +243,7 @@ export const PaletteStory = () => {
 
 PaletteStory.storyName = "Palette";
 
-const ButtonsExample: React.FC = () => {
+const ButtonsExample: FC = () => {
   return (
     <Stack
       spacing={2}
@@ -312,7 +311,7 @@ const ButtonsExample: React.FC = () => {
   );
 };
 
-export const Components: React.FC = () => {
+export const Components: FC = () => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement>();
   const [inverted, setInverted] = useState(true);
 

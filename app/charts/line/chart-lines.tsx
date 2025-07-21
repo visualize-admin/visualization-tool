@@ -22,7 +22,7 @@ import { LineConfig } from "@/config-types";
 import { useLimits } from "@/config-utils";
 import { hasChartConfigs, useConfiguratorState } from "@/configurator";
 
-import { ChartProps, VisualizationProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/chart-props";
 
 export const ChartLinesVisualization = (
   props: VisualizationProps<LineConfig>
@@ -45,6 +45,9 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
       <ChartContainer>
         <ChartSvg>
           <AxisHeightLinear />
+          <AxisHideXOverflowRect />
+          <AxisTime />
+          <AxisTimeDomain />
           <Lines
             dotSize={
               "showDots" in chartConfig.fields.y &&
@@ -54,9 +57,6 @@ const ChartLines = memo((props: ChartProps<LineConfig>) => {
                 : undefined
             }
           />
-          <AxisHideXOverflowRect />
-          <AxisTime />
-          <AxisTimeDomain />
           <ErrorWhiskers />
           <VerticalLimits {...limits} />
           <InteractionHorizontal />

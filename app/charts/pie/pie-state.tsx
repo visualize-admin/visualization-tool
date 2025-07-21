@@ -3,7 +3,7 @@ import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import { Pie, pie, PieArcDatum } from "d3-shape";
 import orderBy from "lodash/orderBy";
-import { useMemo } from "react";
+import { PropsWithChildren, useMemo } from "react";
 
 import {
   PieStateVariables,
@@ -26,11 +26,11 @@ import {
   CommonChartState,
 } from "@/charts/shared/chart-state";
 import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
-import useChartFormatters from "@/charts/shared/use-chart-formatters";
+import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { PieConfig } from "@/configurator";
-import { Dimension, Observation } from "@/domain/data";
+import { Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import {
@@ -38,7 +38,7 @@ import {
   makeDimensionValueSorters,
 } from "@/utils/sorting-values";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type PieState = CommonChartState &
   PieStateVariables &
@@ -69,7 +69,7 @@ const usePieState = (
     yAxisLabel,
   } = variables;
   // Segment dimension is guaranteed to be present, because it is required.
-  const segmentDimension = _segmentDimension as Dimension;
+  const segmentDimension = _segmentDimension!;
   const { chartData, segmentData, allData } = data;
   const { fields } = chartConfig;
   const { y } = fields;
@@ -279,9 +279,7 @@ const usePieState = (
   };
 };
 
-const PieChartProvider = (
-  props: React.PropsWithChildren<ChartProps<PieConfig>>
-) => {
+const PieChartProvider = (props: PropsWithChildren<ChartProps<PieConfig>>) => {
   const { children, ...chartProps } = props;
   const variables = usePieStateVariables(chartProps);
   const data = usePieStateData(chartProps, variables);
@@ -292,9 +290,7 @@ const PieChartProvider = (
   );
 };
 
-export const PieChart = (
-  props: React.PropsWithChildren<ChartProps<PieConfig>>
-) => {
+export const PieChart = (props: PropsWithChildren<ChartProps<PieConfig>>) => {
   return (
     <InteractionProvider>
       <PieChartProvider {...props} />

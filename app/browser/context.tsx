@@ -6,8 +6,10 @@ import pickBy from "lodash/pickBy";
 import { Url } from "next/dist/shared/lib/router/router";
 import Link from "next/link";
 import { Router, useRouter } from "next/router";
-import React, {
+import {
+  ComponentProps,
   createContext,
+  ReactNode,
   useContext,
   useEffect,
   useMemo,
@@ -15,15 +17,15 @@ import React, {
   useState,
 } from "react";
 
-import { SearchCubeResultOrder } from "@/graphql/query-hooks";
-import { BrowseParams } from "@/pages/browse";
-import useEvent from "@/utils/use-event";
-
 import {
   BrowseFilter,
   getFiltersFromParams,
   getParamsFromFilters,
-} from "./filters";
+} from "@/browser/filters";
+import { truthy } from "@/domain/types";
+import { SearchCubeResultOrder } from "@/graphql/query-hooks";
+import { BrowseParams } from "@/pages/browse";
+import { useEvent } from "@/utils/use-event";
 
 export const getBrowseParamsFromQuery = (
   query: Router["query"]
@@ -75,10 +77,15 @@ export const getBrowseParamsFromQuery = (
   );
 };
 
-export const buildURLFromBrowseState = (browseState: BrowseParams) => {
-  const { type, iri, subtype, subiri, subsubtype, subsubiri, ...queryParams } =
-    browseState;
-
+export const buildURLFromBrowseState = ({
+  type,
+  iri,
+  subtype,
+  subiri,
+  subsubtype,
+  subsubiri,
+  ...queryParams
+}: BrowseParams) => {
   const typePart =
     type && iri
       ? `${encodeURIComponent(type)}/${encodeURIComponent(iri)}`
@@ -91,15 +98,16 @@ export const buildURLFromBrowseState = (browseState: BrowseParams) => {
     subsubtype && subsubiri
       ? `${encodeURIComponent(subsubtype)}/${encodeURIComponent(subsubiri)}`
       : undefined;
-
   const pathname = ["/browse", typePart, subtypePart, subsubtypePart]
-    .filter(Boolean)
+    .filter(truthy)
     .join("/");
+
   return {
     pathname,
     query: queryParams,
-  } as React.ComponentProps<typeof Link>["href"];
+  } satisfies ComponentProps<typeof Link>["href"];
 };
+
 const extractParamFromPath = (path: string, param: string) =>
   path.match(new RegExp(`[&?]${param}=(.*?)(&|$)`));
 
@@ -140,22 +148,22 @@ const useBrowseParamsStateWithUrlSync = (initialState: BrowseParams) => {
   }, [router.isReady, router.query]);
 
   const setState = useEvent(
-    (
-      stateUpdate: BrowseParams | ((prevState: BrowseParams) => BrowseParams)
-    ) => {
-      rawSetState((curState) => {
+    (stateUpdate: BrowseParams | ((prev: BrowseParams) => BrowseParams)) => {
+      rawSetState((prev) => {
         const newState = {
           ...(stateUpdate instanceof Function
-            ? stateUpdate(curState)
+            ? stateUpdate(prev)
             : stateUpdate),
-        } as BrowseParams;
+        } satisfies BrowseParams;
         router.replace(urlCodec.serialize(newState), undefined, {
           shallow: true,
         });
+
         return newState;
       });
     }
   );
+
   return [state, setState] as const;
 };
 
@@ -283,7 +291,7 @@ export const BrowseStateProvider = ({
   children,
   syncWithUrl,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   syncWithUrl: boolean;
 }) => {
   const browseState = useBrowseState({ syncWithUrl });

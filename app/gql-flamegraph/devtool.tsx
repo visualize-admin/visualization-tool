@@ -25,7 +25,7 @@ import minBy from "lodash/minBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import mitt from "mitt";
-import React, {
+import {
   ChangeEvent,
   Fragment,
   MouseEvent,
@@ -40,12 +40,12 @@ import { pipe, tap } from "wonka";
 
 import { Switch } from "@/components/form";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
-import useDisclosure from "@/components/use-disclosure";
+import { useDisclosure } from "@/components/use-disclosure";
 import { flag, useFlag, useFlags } from "@/flags";
 import { FlagName, FLAGS } from "@/flags/types";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import { Icon } from "@/icons";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 type Timings = Record<
   string,
@@ -491,7 +491,7 @@ export const gqlFlamegraphExchange: Exchange = ({ forward }) => {
     );
 };
 
-const DebugPanel = () => {
+export const DebugPanel = () => {
   const { isOpen, open, close } = useDisclosure();
   const [tab, setTab] = useState<"graphql" | "flags">("graphql");
   const gqlOperationsController = useGraphqlOperationsController();
@@ -588,5 +588,3 @@ const FlagSwitch = ({ flagName }: { flagName: FlagName }) => {
     </MaybeTooltip>
   );
 };
-
-export default DebugPanel;

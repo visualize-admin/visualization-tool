@@ -15,7 +15,7 @@ import { ComboLineDualConfig } from "@/config-types";
 import { hasChartConfigs } from "@/configurator";
 import { useConfiguratorState } from "@/src";
 
-import { ChartProps, VisualizationProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/chart-props";
 
 export const ChartComboLineDualVisualization = (
   props: VisualizationProps<ComboLineDualConfig>

@@ -2,7 +2,14 @@ import { t, Trans } from "@lingui/macro";
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import { forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  forwardRef,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { useStore } from "zustand";
 
 import { ChartDataTablePreview } from "@/browse/chart-data-table-preview";
@@ -27,7 +34,7 @@ import {
 import { ChartWithFilters } from "@/components/chart-with-filters";
 import { DashboardInteractiveFilters } from "@/components/dashboard-interactive-filters";
 import { EmbedQueryParams } from "@/components/embed-params";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { HintError, HintInfo, HintWarning } from "@/components/hint";
 import {
   createMetadataPanelStore,
@@ -48,7 +55,7 @@ import { DRAWER_WIDTH } from "@/configurator/components/drawers";
 import {
   DEFAULT_DATA_SOURCE,
   useIsTrustedDataSource,
-} from "@/domain/datasource";
+} from "@/domain/data-source";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
@@ -274,7 +281,7 @@ type ChartPublishInnerProps = {
   chartConfig: ChartConfig;
   configKey: string | undefined;
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
   metadataPanelStore: ReturnType<typeof createMetadataPanelStore>;
   embedParams?: EmbedQueryParams;
   shouldShrink?: boolean;

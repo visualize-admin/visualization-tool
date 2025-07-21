@@ -11,7 +11,7 @@ import { getIconName } from "@/configurator/components/ui-helpers";
 import { deserializeProps, Serialized, serializeProps } from "@/db/serialize";
 import { Icon } from "@/icons";
 import { defaultLocale } from "@/locales/locales";
-import { useLocale } from "@/src";
+import { useLocale } from "@/locales/use-locale";
 import { BaseStatsCard } from "@/statistics/base-stats-card";
 import { CardGrid } from "@/statistics/card-grid";
 import { formatInteger } from "@/statistics/formatters";

@@ -449,11 +449,6 @@ export const handleChartFieldDeleted = (
       joinBy: cube.joinBy,
     })),
   });
-  const dimensions = dataCubesComponents?.dimensions ?? [];
-  const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
-  const index = draft.chartConfigs.findIndex((d) => d.key === chartConfig.key);
-  draft.chartConfigs[index] = newConfig;
-
   if (action.value.field === "segment") {
     if (chartConfig.interactiveFiltersConfig) {
       chartConfig.interactiveFiltersConfig.calculation.active = false;
@@ -469,6 +464,11 @@ export const handleChartFieldDeleted = (
       chartConfig.fields.color = newColorField;
     }
   }
+
+  const dimensions = dataCubesComponents?.dimensions ?? [];
+  const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
+  const index = draft.chartConfigs.findIndex((d) => d.key === chartConfig.key);
+  draft.chartConfigs[index] = newConfig;
 
   const sideEffect = getChartFieldDeleteSideEffect(chartConfig, field);
   sideEffect?.({ chartConfig });

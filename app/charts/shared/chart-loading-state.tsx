@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from "react";
+import { createContext, PropsWithChildren, useContext, useMemo } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { Observable } from "@/utils/observables";
@@ -56,7 +56,8 @@ export const useLoadingState = () => {
   return ctx;
 };
 
-export const LoadingStateProvider = (props: React.PropsWithChildren<{}>) => {
+export const LoadingStateProvider = (props: PropsWithChildren<{}>) => {
   const loadingState = useMemo(() => new LoadingState(), []);
+
   return <LoadingStateContext.Provider value={loadingState} {...props} />;
 };

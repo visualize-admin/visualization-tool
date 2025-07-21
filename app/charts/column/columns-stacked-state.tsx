@@ -18,7 +18,7 @@ import {
   stackOrderReverse,
 } from "d3-shape";
 import orderBy from "lodash/orderBy";
-import React, { useCallback, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   ColumnsStackedStateData,
@@ -58,7 +58,7 @@ import {
   getStackedTooltipValueFormatter,
   getStackedYScale,
 } from "@/charts/shared/stacked-helpers";
-import useChartFormatters from "@/charts/shared/use-chart-formatters";
+import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { ColumnConfig } from "@/configurator";
@@ -73,7 +73,7 @@ import {
 } from "@/utils/sorting-values";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type StackedColumnsState = CommonChartState &
   ColumnsStackedStateVariables &
@@ -407,11 +407,7 @@ const useColumnsStackedState = (
       .offset(stackOffsetDiverging)
       .keys(segments);
 
-    return stacked(
-      chartWideData as {
-        [key: string]: number;
-      }[]
-    );
+    return stacked(chartWideData as { [key: string]: number }[]);
   }, [chartWideData, fields.segment?.sorting, segments]);
 
   /** Chart dimensions */
@@ -453,11 +449,13 @@ const useColumnsStackedState = (
 
   const isMobile = useIsMobile();
 
-  const maybeFormatDate = useCallback(
+  const formatXAxisTick = useCallback(
     (tick: string) => {
-      return isTemporalDimension(xDimension) ? formatXDate(tick) : tick;
+      return isTemporalDimension(xDimension)
+        ? formatXDate(tick)
+        : getXLabel(tick);
     },
-    [xDimension, formatXDate]
+    [xDimension, formatXDate, getXLabel]
   );
 
   // Tooltips
@@ -466,7 +464,7 @@ const useColumnsStackedState = (
       const bw = xScale.bandwidth();
       const x = getX(datum);
 
-      const tooltipValues = chartDataGroupedByX.get(x) as Observation[];
+      const tooltipValues = chartDataGroupedByX.get(x) ?? [];
       const yValues = tooltipValues.map(getY);
       const sortedTooltipValues = sortByIndex({
         data: tooltipValues,
@@ -499,16 +497,16 @@ const useColumnsStackedState = (
         xAnchor: xAnchorRaw + (placement.x === "right" ? 0.5 : -0.5) * bw,
         yAnchor,
         placement,
-        value: maybeFormatDate(xLabel),
+        value: formatXAxisTick(xLabel),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
           value: yValueFormatter(getY(datum), getIdentityY(datum)),
-          color: colors(getSegment(datum)) as string,
+          color: colors(getSegment(datum)),
         },
-        values: sortedTooltipValues.map((td) => ({
-          label: getSegmentAbbreviationOrLabel(td),
-          value: yValueFormatter(getY(td), getIdentityY(td)),
-          color: colors(getSegment(td)) as string,
+        values: sortedTooltipValues.map((d) => ({
+          label: getSegmentAbbreviationOrLabel(d),
+          value: yValueFormatter(getY(d), getIdentityY(d)),
+          color: colors(getSegment(d)),
         })),
       };
     },
@@ -533,7 +531,7 @@ const useColumnsStackedState = (
       isMobile,
       normalize,
       yScale,
-      maybeFormatDate,
+      formatXAxisTick,
     ]
   );
 
@@ -563,13 +561,13 @@ const useColumnsStackedState = (
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     valueLabelFormatter,
-    formatXAxisTick: maybeFormatDate,
+    formatXAxisTick: formatXAxisTick,
     ...variables,
   };
 };
 
 const StackedColumnsChartProvider = (
-  props: React.PropsWithChildren<ChartProps<ColumnConfig>>
+  props: PropsWithChildren<ChartProps<ColumnConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useColumnsStackedStateVariables(chartProps);
@@ -582,7 +580,7 @@ const StackedColumnsChartProvider = (
 };
 
 export const StackedColumnsChart = (
-  props: React.PropsWithChildren<ChartProps<ColumnConfig>>
+  props: PropsWithChildren<ChartProps<ColumnConfig>>
 ) => {
   return (
     <InteractionProvider>

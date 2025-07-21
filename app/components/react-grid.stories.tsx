@@ -14,7 +14,7 @@ import {
   generateLayout,
   GridLayout,
 } from "@/components/react-grid";
-import useLocalState from "@/utils/use-local-state";
+import { useLocalState } from "@/utils/use-local-state";
 
 const generateDOM = ({ count }: { count: number }): ReactNode => {
   return Array.from({ length: count }).map(function (_l, i) {

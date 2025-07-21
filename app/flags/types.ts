@@ -20,11 +20,6 @@ export const FLAGS = [
     type: "boolean" as FlagType,
   },
   {
-    name: "graphql.endpoint" as const,
-    description: "Specifies custom GraphQL endpoint for testing purposes.",
-    type: "text" as FlagType,
-  },
-  {
     name: "easter-eggs" as const,
     description: "Enables hidden easter egg features.",
     type: "boolean" as FlagType,

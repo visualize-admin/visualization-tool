@@ -23,7 +23,8 @@ import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
-import React, {
+import {
+  ChangeEvent,
   forwardRef,
   MouseEventHandler,
   MutableRefObject,
@@ -38,7 +39,7 @@ import React, {
 import { getChartSymbol } from "@/charts";
 import { makeGetClosestDatesFromDateRange } from "@/charts/shared/brush/utils";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Select, Switch } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
@@ -102,7 +103,7 @@ import {
 import { interlace } from "@/utils/interlace";
 import { valueComparator } from "@/utils/sorting-values";
 import { getTimeFilterOptions } from "@/utils/time-filter-options";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -1097,7 +1098,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
     : false;
 
   const onChangeFrom = useEvent(
-    (e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>) => {
+    (e: SelectChangeEvent<unknown> | ChangeEvent<HTMLSelectElement>) => {
       if (rangeActiveFilter) {
         const from = e.target.value as string;
         setFilterRange([from, rangeActiveFilter.to]);
@@ -1106,7 +1107,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
   );
 
   const onChangeTo = useEvent(
-    (e: SelectChangeEvent<unknown> | React.ChangeEvent<HTMLSelectElement>) => {
+    (e: SelectChangeEvent<unknown> | ChangeEvent<HTMLSelectElement>) => {
       if (rangeActiveFilter) {
         const to = e.target.value as string;
         setFilterRange([rangeActiveFilter.from, to]);
@@ -1172,13 +1173,13 @@ export const TimeFilter = (props: TimeFilterProps) => {
     });
 
     return (
-      <Box>
+      <div>
         {!disableInteractiveFilters && (
           <Flex sx={{ justifyContent: "flex-end", mb: 3 }}>
             <InteractiveTimeRangeToggle />
           </Flex>
         )}
-        <Box sx={{ display: "flex", gap: 1 }}>
+        <Flex sx={{ gap: 1 }}>
           {rangeActiveFilter ? (
             canRenderDatePickerField(timeUnit) ? (
               <LeftRightFormContainer
@@ -1227,6 +1228,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
                 left={
                   <Select
                     id="time-range-start"
+                    size="sm"
                     label={fromLabel}
                     options={fromOptions}
                     sortOptions={false}
@@ -1237,6 +1239,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
                 right={
                   <Select
                     id="time-range-end"
+                    size="sm"
                     label={toLabel}
                     options={toOptions}
                     sortOptions={false}
@@ -1247,7 +1250,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
               />
             )
           ) : null}
-        </Box>
+        </Flex>
         <EditorBrush
           timeExtent={[from, to]}
           timeRange={timeRange}
@@ -1268,7 +1271,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
           }}
         />
         {rangeActiveFilter && (
-          <Flex sx={{ display: "flex", alignItems: "center", gap: 1, mt: 3 }}>
+          <Flex sx={{ alignItems: "center", gap: 1, mt: 3 }}>
             <Switch
               label={t({
                 id: "controls.filter.use-most-recent",
@@ -1301,7 +1304,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
             </Tooltip>
           </Flex>
         )}
-      </Box>
+      </div>
     );
   } else {
     return <Loading />;
@@ -1320,20 +1323,18 @@ const LeftRightFormContainer = ({
   const sideElementSize = DRAWER_WIDTH / 2 - columnGap * 2 - middleElementSize;
 
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         display: "grid",
-        columnGap: `${columnGap}px`,
         gridTemplateColumns: `${sideElementSize}px ${middleElementSize}px ${sideElementSize}px`,
+        columnGap,
         alignItems: "center",
       }}
     >
       {left}
-      <Typography mt="1em" color="grey.700">
-        –
-      </Typography>
+      <Typography mt="1em">–</Typography>
       {right}
-    </Box>
+    </div>
   );
 };
 
@@ -1353,7 +1354,6 @@ const InteractiveTimeRangeToggle = () => {
   );
 };
 
-// This component is now only used in the Table Chart options.
 export const DimensionValuesSingleFilter = ({
   dimension,
 }: {
@@ -1367,13 +1367,13 @@ export const DimensionValuesSingleFilter = ({
 
   return dimension ? (
     <>
-      {sortedDimensionValues.map((dv) => {
+      {sortedDimensionValues.map((d) => {
         return (
           <SingleFilterField
-            key={dv.value}
+            key={d.value}
             filters={dimensionToFieldProps(dimension)}
-            label={dv.label}
-            value={`${dv.value}`}
+            label={d.label}
+            value={`${d.value}`}
           />
         );
       })}

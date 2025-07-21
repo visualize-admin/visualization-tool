@@ -1,6 +1,6 @@
-import React from "react";
+import { ReactNode } from "react";
 
-export const interlace = <T extends unknown, I extends React.ReactNode>(
+export const interlace = <T extends unknown, I extends ReactNode>(
   arr: T[],
   interlacer: I | ((i: number) => I)
 ) => {

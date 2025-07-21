@@ -52,7 +52,11 @@ interface ProviderExtraInfo {
   note?: string;
 }
 
-const ProviderInfoAlert = ({ extraInfo }: { extraInfo: ProviderExtraInfo }) => {
+export const ProviderInfoAlert = ({
+  extraInfo,
+}: {
+  extraInfo: ProviderExtraInfo;
+}) => {
   const classes = useStyles();
 
   const booleanAttributes = [
@@ -168,5 +172,3 @@ const ProviderInfoAlert = ({ extraInfo }: { extraInfo: ProviderExtraInfo }) => {
     </Alert>
   );
 };
-
-export default ProviderInfoAlert;

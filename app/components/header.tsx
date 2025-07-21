@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { DataSourceMenu } from "@/components/data-source-menu";
 import { __HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import contentRoutes from "@/content-routes.json";
-import { SOURCE_OPTIONS } from "@/domain/datasource/constants";
+import { SOURCE_OPTIONS } from "@/domain/data-source/constants";
 import localeConfig from "@/locales/locales.json";
 import { useLocale } from "@/locales/use-locale";
 import { LoginMenu } from "@/login/components/login-menu";

@@ -26,8 +26,9 @@ import omit from "lodash/omit";
 import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 import { useRouter } from "next/router";
-import React, {
+import {
   Fragment,
+  type MouseEvent,
   ReactNode,
   useCallback,
   useEffect,
@@ -41,10 +42,10 @@ import {
 } from "@/charts/shared/chart-helpers";
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import { useEmbedQueryParams } from "@/components/embed-params";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Error, Loading } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
-import { JoinByChip } from "@/components/JoinByChip";
+import { JoinByChip } from "@/components/join-by-chip";
 import {
   useMetadataPanelStore,
   useMetadataPanelStoreActions,
@@ -84,9 +85,9 @@ import SvgIcClose from "@/icons/components/IcClose";
 import { useLocale } from "@/locales/use-locale";
 import { useTransitionStore } from "@/stores/transition";
 import { assert } from "@/utils/assert";
-import { useEventEmitter } from "@/utils/eventEmitter";
+import { useEventEmitter } from "@/utils/event-emitter";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 const useDrawerStyles = makeStyles<Theme, { top: number | string }>((theme) => {
   return {
@@ -231,7 +232,7 @@ export const OpenMetadataPanelWrapper = ({
   const classes = useOtherStyles();
   const { openComponent, setOpen, setActiveSection } =
     useMetadataPanelStoreActions();
-  const handleClick = useEvent((e: React.MouseEvent) => {
+  const handleClick = useEvent((e: MouseEvent) => {
     e.stopPropagation();
     if (component) {
       openComponent(component);

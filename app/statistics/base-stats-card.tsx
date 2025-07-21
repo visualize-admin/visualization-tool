@@ -4,7 +4,7 @@ import { max, sum } from "d3-array";
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
 
-import useFlag from "@/flags/useFlag";
+import { useFlag } from "@/flags/use-flag";
 import { formatInteger } from "@/statistics/formatters";
 
 type Datum = [string, { count: number; label: ReactNode }];

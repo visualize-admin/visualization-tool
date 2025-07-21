@@ -14,7 +14,6 @@ import {
 import { makeStyles } from "@mui/styles";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
-import React from "react";
 import { useCallback, useMemo, useState } from "react";
 import createStore from "zustand";
 
@@ -25,9 +24,9 @@ import {
   makeKey,
   useWMTSorWMSLayers,
 } from "@/charts/map/wms-wmts-endpoint-utils";
-import ProviderAutocomplete from "@/charts/map/wms-wmts-providers-autocomplete";
+import { ProviderAutocomplete } from "@/charts/map/wms-wmts-providers-autocomplete";
 import { RemoteWMTSLayer } from "@/charts/map/wmts-utils";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { HintError, Spinner } from "@/components/hint";
 import { Tree, useSelectTree } from "@/components/select-tree";
 import { Icon } from "@/icons";
@@ -210,7 +209,6 @@ const TreeRow = ({
   );
 };
 
-// Zustand store for persistence across open/close
 const useInputValueStore = createStore<{
   inputValue: string;
   setInputValue: (inputValue: string) => void;
@@ -227,7 +225,7 @@ const useInputValueStore = createStore<{
   },
 }));
 
-const WMTSSelector = ({
+export const WMTSSelector = ({
   onLayerCheck,
   selected,
 }: {
@@ -423,5 +421,3 @@ const WMTSSelector = ({
     </Flex>
   );
 };
-
-export default WMTSSelector;

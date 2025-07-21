@@ -33,7 +33,6 @@ import {
 import { isTemporalDimension } from "@/domain/data";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { TimeUnit } from "@/graphql/query-hooks";
-import { useTimeout } from "@/hooks/use-timeout";
 import { useLocale } from "@/locales/use-locale";
 import {
   setDataFilter,
@@ -41,7 +40,8 @@ import {
 } from "@/stores/interactive-filters";
 import { useTransitionStore } from "@/stores/transition";
 import { assert } from "@/utils/assert";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
+import { useTimeout } from "@/utils/use-timeout";
 
 export const DashboardInteractiveFilters = (props: BoxProps) => {
   const { sx, ...rest } = props;

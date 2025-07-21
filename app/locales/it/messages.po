@@ -636,12 +636,20 @@ msgid "controls.convert-unit.enable"
 msgstr "Abilita conversione unità"
 
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.invalid-number-error"
+msgstr "Inserisci un numero valido"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.multiplier"
 msgstr "Moltiplicatore"
 
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.original"
 msgstr "Unità originale: {0}"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.positive-number-error"
+msgstr "Il moltiplicatore deve essere maggiore di 0"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx
@@ -745,7 +753,6 @@ msgstr "Descrizione"
 
 #: app/charts/shared/chart-data-filters.tsx
 #: app/charts/shared/chart-data-filters.tsx
-#: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.dimensionvalue.none"
 msgstr "Nessun filtro"
@@ -1295,7 +1302,6 @@ msgid "controls.select.measure"
 msgstr "Seleziona una misura"
 
 #: app/configurator/components/field.tsx
-#: app/configurator/components/field.tsx
 msgid "controls.select.optional"
 msgstr "opzionale"
 
@@ -1382,7 +1388,7 @@ msgstr "Rimuovi l'ordinamento"
 
 #: app/configurator/table/table-chart-sorting-options.tsx
 msgid "controls.sorting.selectDimension"
-msgstr "Seleziona una dimensione ..."
+msgstr "Seleziona una dimensione..."
 
 #: app/configurator/components/field-i18n.ts
 #: app/configurator/table/table-chart-sorting-options.tsx

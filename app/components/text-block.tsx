@@ -24,8 +24,8 @@ import {
   isLayouting,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
-import { useLocale } from "@/src";
-import useEvent from "@/utils/use-event";
+import { useLocale } from "@/locales/use-locale";
+import { useEvent } from "@/utils/use-event";
 
 const useTextBlockStyles = makeStyles<Theme, { layouting?: boolean }>(() => ({
   root: {

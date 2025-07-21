@@ -10,7 +10,7 @@ import {
   useChartState,
 } from "@/charts/shared/chart-state";
 import { RenderTotalValueLabelDatum } from "@/charts/shared/render-value-labels";
-import useChartFormatters from "@/charts/shared/use-chart-formatters";
+import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import {
   AreaFields,

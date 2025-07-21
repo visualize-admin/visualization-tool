@@ -25,7 +25,7 @@ import {
 } from "@/utils/chart-config/upgrade-cube";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 
-import { getLocalStorageKey } from "./localstorage";
+import { getLocalStorageKey } from "./local-storage";
 import { deriveFiltersFromFields, transitionStepNext } from "./reducer";
 
 import {

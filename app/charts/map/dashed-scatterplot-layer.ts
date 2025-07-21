@@ -1,6 +1,6 @@
 import { ScatterplotLayer } from "@deck.gl/layers";
 
-export default class DashedScatterplotLayer extends ScatterplotLayer {
+export class DashedScatterplotLayer extends ScatterplotLayer {
   getShaders() {
     const shaders = super.getShaders();
 

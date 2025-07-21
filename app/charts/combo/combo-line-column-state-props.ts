@@ -23,7 +23,7 @@ import { useRenderingKeyVariable } from "@/charts/shared/rendering-utils";
 import { useChartConfigFilters } from "@/config-utils";
 import { ComboLineColumnConfig } from "@/configurator";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 type NumericalYComboLineColumnVariables = {
   y: {

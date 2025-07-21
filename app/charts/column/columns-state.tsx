@@ -40,7 +40,7 @@ import {
   ShowBandValueLabelsVariables,
   useShowBandValueLabelsVariables,
 } from "@/charts/shared/show-values-utils";
-import useChartFormatters from "@/charts/shared/use-chart-formatters";
+import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { useLimits } from "@/config-utils";
@@ -54,7 +54,7 @@ import {
 } from "@/utils/sorting-values";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type ColumnsState = CommonChartState &
   ColumnsStateVariables &
@@ -294,11 +294,13 @@ const useColumnsState = (
   yScale.range([chartHeight, 0]);
   const isMobile = useIsMobile();
 
-  const maybeFormatDate = useCallback(
+  const formatXAxisTick = useCallback(
     (tick: string) => {
-      return isTemporalDimension(xDimension) ? formatXDate(tick) : tick;
+      return isTemporalDimension(xDimension)
+        ? formatXDate(tick)
+        : getXLabel(tick);
     },
-    [xDimension, formatXDate]
+    [xDimension, formatXDate, getXLabel]
   );
 
   // Tooltip
@@ -327,7 +329,7 @@ const useColumnsState = (
       xAnchor,
       yAnchor,
       placement,
-      value: maybeFormatDate(xLabel),
+      value: formatXAxisTick(xLabel),
       datum: {
         label: undefined,
         value: y !== null && isNaN(y) ? "-" : `${yValueUnitFormatter(getY(d))}`,
@@ -353,7 +355,7 @@ const useColumnsState = (
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
-    formatXAxisTick: maybeFormatDate,
+    formatXAxisTick,
     ...showValuesVariables,
     ...variables,
   };

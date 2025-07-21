@@ -30,7 +30,7 @@ import { getResolvedJoinById, isJoinById } from "@/graphql/join";
 import { useDataCubeDimensionGeoShapesQuery } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 
-import { ChartProps, VisualizationProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/chart-props";
 
 export const ChartMapVisualization = (props: VisualizationProps<MapConfig>) => {
   const { dataSource, chartConfig, componentIds } = props;

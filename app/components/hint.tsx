@@ -15,7 +15,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import { ReactNode, useEffect, useState } from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { MotionBox } from "@/components/presence";
 import { Icon, IconName } from "@/icons";
 

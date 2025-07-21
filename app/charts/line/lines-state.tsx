@@ -40,7 +40,7 @@ import {
   ShowTemporalValueLabelsVariables,
   useShowTemporalValueLabelsVariables,
 } from "@/charts/shared/show-values-utils";
-import useChartFormatters from "@/charts/shared/use-chart-formatters";
+import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { useLimits } from "@/config-utils";
@@ -59,7 +59,7 @@ import {
 } from "@/utils/sorting-values";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type LinesState = CommonChartState &
   LinesStateVariables &
@@ -308,7 +308,7 @@ const useLinesState = (
   const isMobile = useIsMobile();
 
   // Tooltip
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
+  const getAnnotationInfo = (datum: Observation) => {
     const x = getX(datum);
     const tooltipValues = chartData.filter(
       (d) => getX(d).getTime() === x.getTime()
@@ -348,17 +348,17 @@ const useLinesState = (
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
         error: getFormattedYUncertainty(datum),
-        color: colors(getSegment(datum)) as string,
+        color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map((td) => ({
-        hide: getY(td) === null,
-        label: getSegmentAbbreviationOrLabel(td),
-        value: yValueFormatter(getY(td)),
-        color: colors(getSegment(td)) as string,
-        yPos: yScale(getY(td) ?? 0),
+      values: sortedTooltipValues.map((d) => ({
+        hide: getY(d) === null,
+        label: getSegmentAbbreviationOrLabel(d),
+        value: yValueFormatter(getY(d)),
+        color: colors(getSegment(d)),
+        yPos: yScale(getY(d) ?? 0),
         symbol: "line",
       })),
-    };
+    } satisfies TooltipInfo;
   };
 
   return {

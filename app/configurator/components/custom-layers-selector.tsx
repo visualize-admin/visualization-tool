@@ -23,7 +23,7 @@ import {
   makeKey,
   useWMTSorWMSLayers,
 } from "@/charts/map/wms-wmts-endpoint-utils";
-import WMTSSelector from "@/charts/map/wms-wmts-selector";
+import { WMTSSelector } from "@/charts/map/wms-wmts-selector";
 import { RemoteWMTSLayer } from "@/charts/map/wmts-utils";
 import { Switch } from "@/components/form";
 import { MoveDragButton } from "@/components/move-drag-button";

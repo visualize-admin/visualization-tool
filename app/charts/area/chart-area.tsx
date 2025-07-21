@@ -20,7 +20,7 @@ import { InteractionHorizontal } from "@/charts/shared/overlay-horizontal";
 import { AreaConfig } from "@/config-types";
 import { useLimits } from "@/config-utils";
 
-import { ChartProps, VisualizationProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/chart-props";
 
 export const ChartAreasVisualization = (
   props: VisualizationProps<AreaConfig>
@@ -42,10 +42,10 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
       <ChartContainer>
         <ChartSvg>
           <AxisHeightLinear />
-          <Areas />
           <AxisHideXOverflowRect />
           <AxisTime />
           <AxisTimeDomain />
+          <Areas />
           <VerticalLimits {...limits} />
           <InteractionHorizontal />
           {interactiveFiltersConfig.timeRange.active && <BrushTime />}

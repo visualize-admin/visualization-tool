@@ -14,7 +14,7 @@ import {
   UpdateCustomColorPalette,
 } from "@/utils/chart-config/api";
 
-const UserController = controller({
+export const UserController = controller({
   createPalette: async ({ req, res }) => {
     const session = await getServerSession(req, res, nextAuthOptions);
     const userId = session?.user?.id;
@@ -44,5 +44,3 @@ const UserController = controller({
     await updatePaletteForUser(data);
   },
 });
-
-export default UserController;

@@ -17,7 +17,7 @@ import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 import { useTransitionStore } from "@/stores/transition";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 export const Pie = () => {
   const {
@@ -45,7 +45,7 @@ export const Pie = () => {
   const xTranslate = width / 2;
   const yTranslate = height / 2;
 
-  const renderData: RenderDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     const arcs = getPieData(chartData);
 
     return arcs.map((arcDatum) => {
@@ -55,9 +55,8 @@ export const Pie = () => {
         key: getRenderingKey(arcDatum.data),
         value: y === null || isNaN(y) ? 0 : y,
         arcDatum,
-        innerRadius,
         color: colors(getSegment(arcDatum.data)),
-      };
+      } satisfies RenderDatum;
     });
   }, [getPieData, chartData, getY, getRenderingKey, colors, getSegment]);
 

@@ -8,12 +8,7 @@ import uniqBy from "lodash/uniqBy";
 import Head from "next/head";
 import NextLink from "next/link";
 import { Router, useRouter } from "next/router";
-import React, {
-  ComponentProps,
-  type MouseEvent,
-  useCallback,
-  useMemo,
-} from "react";
+import { ComponentProps, type MouseEvent, useCallback, useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
 import {
@@ -36,7 +31,7 @@ import {
 import { BrowseFilter, DataCubeAbout } from "@/browser/filters";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { DatasetMetadata } from "@/components/dataset-metadata";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
   __BANNER_MARGIN_CSS_VAR,
@@ -52,7 +47,7 @@ import {
   PanelBodyWrapper,
   PanelLayout,
 } from "@/configurator/components/layout";
-import { sourceToLabel } from "@/domain/datasource";
+import { sourceToLabel } from "@/domain/data-source";
 import { truthy } from "@/domain/types";
 import {
   DataCubeOrganization,
@@ -131,9 +126,11 @@ const formatBackLink = (
   query: Router["query"]
 ): ComponentProps<typeof NextLink>["href"] => {
   const backParameters = softJSONParse(query.previous as string);
+
   if (!backParameters) {
     return "/browse";
   }
+
   return buildURLFromBrowseState(backParameters);
 };
 
@@ -299,10 +296,9 @@ const SelectDatasetStepContent = ({
 
   const pageTitle = useMemo(() => {
     return queryFilters
-      .map((d) => {
+      .map((queryFilter) => {
         const searchList = (() => {
-          const type = d.type;
-          switch (type) {
+          switch (queryFilter.type) {
             case SearchCubeFilterType.DataCubeTheme:
               return themes;
             case SearchCubeFilterType.DataCubeOrganization:
@@ -310,18 +306,18 @@ const SelectDatasetStepContent = ({
             case SearchCubeFilterType.DataCubeTermset:
               return termsets;
             case SearchCubeFilterType.DataCubeAbout:
-              return [];
             case SearchCubeFilterType.TemporalDimension:
               return [];
             default:
-              const check: never = type;
-              throw Error(`Invalid search cube filter type ${check}`);
+              const _exhaustiveCheck: never = queryFilter.type;
+              return _exhaustiveCheck;
           }
         })();
-        const item = (searchList as { iri: string; label?: string }[]).find(
-          ({ iri }) => iri === d.value
-        );
-        return (item ?? d).label;
+        const foundQueryFilter = (
+          searchList as { iri: string; label?: string }[]
+        ).find(({ iri }) => iri === queryFilter.value);
+
+        return (foundQueryFilter ?? queryFilter).label;
       })
       .join(", ");
   }, [orgs, queryFilters, termsets, themes]);
@@ -341,7 +337,7 @@ const SelectDatasetStepContent = ({
       sourceUrl: configState.dataSource.url,
       locale,
       cubeFilter: {
-        iri: dataset!,
+        iri: dataset ?? "",
       },
     },
     pause: !dataset,
@@ -665,9 +661,7 @@ const SelectDatasetStepContent = ({
   );
 };
 
-type SelectDatasetStepProps = React.ComponentProps<
-  typeof SelectDatasetStepContent
->;
+type SelectDatasetStepProps = ComponentProps<typeof SelectDatasetStepContent>;
 
 const DatasetMetadataSingleCubeAdapter = ({
   dataSource,

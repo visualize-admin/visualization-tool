@@ -10,7 +10,8 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, {
+import {
+  ComponentProps,
   createContext,
   ElementType,
   forwardRef,
@@ -21,7 +22,7 @@ import React, {
 } from "react";
 
 import { MaybeTooltip } from "@/components/maybe-tooltip";
-import useDisclosure from "@/components/use-disclosure";
+import { useDisclosure } from "@/components/use-disclosure";
 import { isConfiguring, isLayouting } from "@/configurator/configurator-state";
 import { Icon, IconName } from "@/icons";
 import { useConfiguratorState } from "@/src";
@@ -295,7 +296,7 @@ export const ControlSectionSkeleton = ({
   sx,
   showTitle = true,
 }: {
-  sx?: React.ComponentProps<typeof ControlSection>["sx"];
+  sx?: ComponentProps<typeof ControlSection>["sx"];
   showTitle?: boolean;
 }) => (
   <ControlSection sx={{ mt: 2, ...sx }}>

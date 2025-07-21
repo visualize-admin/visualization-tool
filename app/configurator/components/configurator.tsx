@@ -14,7 +14,7 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { enqueueSnackbar } from "notistack";
-import React, {
+import {
   PropsWithChildren,
   ReactNode,
   useCallback,
@@ -91,7 +91,7 @@ import { createConfig, updateConfig } from "@/utils/chart-config/api";
 import { objectToHashString } from "@/utils/hash-utils";
 import { getRouterChartId } from "@/utils/router/helpers";
 import { replaceLinks } from "@/utils/ui-strings";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 import { useMutate } from "@/utils/use-fetch-data";
 
 export const BackButton = ({

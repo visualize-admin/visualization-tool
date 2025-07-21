@@ -636,12 +636,20 @@ msgid "controls.convert-unit.enable"
 msgstr "Enable unit conversion"
 
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.invalid-number-error"
+msgstr "Please enter a valid number"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.multiplier"
 msgstr "Multiplier"
 
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.original"
 msgstr "Original unit: {0}"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.positive-number-error"
+msgstr "Multiplier must be greater than 0"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx
@@ -745,7 +753,6 @@ msgstr "Description"
 
 #: app/charts/shared/chart-data-filters.tsx
 #: app/charts/shared/chart-data-filters.tsx
-#: app/configurator/components/field.tsx
 #: app/configurator/components/field.tsx
 msgid "controls.dimensionvalue.none"
 msgstr "No Filter"
@@ -1295,7 +1302,6 @@ msgid "controls.select.measure"
 msgstr "Select a measure"
 
 #: app/configurator/components/field.tsx
-#: app/configurator/components/field.tsx
 msgid "controls.select.optional"
 msgstr "optional"
 
@@ -1382,7 +1388,7 @@ msgstr "Remove sorting dimension"
 
 #: app/configurator/table/table-chart-sorting-options.tsx
 msgid "controls.sorting.selectDimension"
-msgstr "Select a dimension …"
+msgstr "Select a dimension..."
 
 #: app/configurator/components/field-i18n.ts
 #: app/configurator/table/table-chart-sorting-options.tsx

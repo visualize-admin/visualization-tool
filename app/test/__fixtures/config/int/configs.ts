@@ -1,6 +1,6 @@
 import { TestConfig } from "../types";
 
-const configs: TestConfig[] = [
+export const configs: TestConfig[] = [
   {
     chartId: "nI6X4V_EcK2c",
     name: "Bathing water quality (interactive filters hierarchie)",
@@ -22,5 +22,3 @@ const configs: TestConfig[] = [
     slug: "scatterplot-palmer-penguins",
   },
 ];
-
-export default configs;

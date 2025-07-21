@@ -5,7 +5,7 @@ import { ComboLineColumnState } from "@/charts/combo/combo-line-column-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 export const InteractionColumns = ({ temporal }: { temporal?: boolean }) => {
   const [, dispatch] = useInteraction();
@@ -34,6 +34,7 @@ export const InteractionColumns = ({ temporal }: { temporal?: boolean }) => {
     },
     [formatXDate, getX, getXAsDate, temporal]
   );
+  const bandwidth = xScaleInteraction.bandwidth();
 
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
@@ -46,7 +47,7 @@ export const InteractionColumns = ({ temporal }: { temporal?: boolean }) => {
             key={i}
             x={xScaled}
             y={0}
-            width={xScaleInteraction.bandwidth()}
+            width={bandwidth}
             height={Math.max(0, chartHeight)}
             fill="hotpink"
             fillOpacity={0}

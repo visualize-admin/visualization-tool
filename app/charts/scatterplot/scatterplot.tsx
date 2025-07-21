@@ -1,5 +1,5 @@
 import { schemeCategory10 } from "d3-scale-chromatic";
-import React, { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import {
   renderCircles,
@@ -27,14 +27,14 @@ export const Scatterplot = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     return chartData.map((d) => {
       return {
         key: getRenderingKey(d),
         cx: xScale(getX(d) ?? NaN),
         cy: yScale(getY(d) ?? NaN),
         color: hasSegment ? colors(getSegment(d)) : schemeCategory10[0],
-      };
+      } satisfies RenderDatum;
     });
   }, [
     chartData,

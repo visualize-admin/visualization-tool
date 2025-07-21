@@ -2,6 +2,7 @@
   "extends": "next",
   "plugins": ["import", "visualize-admin", "deprecate", "unused-imports"],
   "rules": {
+    "no-duplicate-case": "error",
     "no-restricted-imports": [
       "error",
       {

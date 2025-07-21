@@ -24,7 +24,7 @@ import {
 import { useLimits } from "@/config-utils";
 import { LineConfig } from "@/configurator";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type LinesStateVariables = BaseVariables &
   SortingVariables &

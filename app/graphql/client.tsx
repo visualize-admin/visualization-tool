@@ -5,17 +5,8 @@ import { flag } from "@/flags/flag";
 // @ts-ignore - dynamic package import based on NODE_ENV
 import { devtoolsExchanges } from "@/graphql/devtools";
 
-const graphqlEndpointFlag = flag("graphql.endpoint");
-
-if (graphqlEndpointFlag) {
-  console.log("ℹ️ Using custom GraphQL endpoint:", graphqlEndpointFlag);
-}
-
 export const client = createClient({
-  url:
-    typeof graphqlEndpointFlag === "string"
-      ? graphqlEndpointFlag
-      : GRAPHQL_ENDPOINT,
+  url: GRAPHQL_ENDPOINT,
   exchanges: [...devtoolsExchanges, ...defaultExchanges],
   fetchOptions: {
     headers: getHeaders(),

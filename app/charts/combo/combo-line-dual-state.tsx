@@ -1,6 +1,7 @@
 import { max, mean, min } from "d3-array";
 import { ScaleLinear, scaleLinear, ScaleOrdinal, ScaleTime } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
+import { PropsWithChildren } from "react";
 
 import {
   ComboLineDualStateVariables,
@@ -27,7 +28,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -41,7 +42,7 @@ import { truthy } from "@/domain/types";
 import { getTextWidth } from "@/utils/get-text-width";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type ComboLineDualState = CommonChartState &
   ComboLineDualStateVariables &
@@ -178,7 +179,7 @@ const useComboLineDualState = (
   const isMobile = useIsMobile();
 
   // Tooltip
-  const getAnnotationInfo = (d: Observation): TooltipInfo => {
+  const getAnnotationInfo = (d: Observation) => {
     const x = getX(d);
     const xScaled = xScale(x);
 
@@ -197,7 +198,7 @@ const useComboLineDualState = (
           hide: y === null,
           yPos: yPos,
           symbol: "line",
-        };
+        } satisfies TooltipValue;
       })
       .filter(truthy);
     const yAnchor = isMobile
@@ -218,7 +219,7 @@ const useComboLineDualState = (
       value: timeFormatUnit(x, xDimension.timeUnit),
       placement,
       values,
-    } as TooltipInfo;
+    } satisfies TooltipInfo;
   };
 
   return {
@@ -247,7 +248,7 @@ const useComboLineDualState = (
 };
 
 const ComboLineDualChartProvider = (
-  props: React.PropsWithChildren<ChartProps<ComboLineDualConfig>>
+  props: PropsWithChildren<ChartProps<ComboLineDualConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useComboLineDualStateVariables(chartProps);
@@ -260,7 +261,7 @@ const ComboLineDualChartProvider = (
 };
 
 export const ComboLineDualChart = (
-  props: React.PropsWithChildren<ChartProps<ComboLineDualConfig>>
+  props: PropsWithChildren<ChartProps<ComboLineDualConfig>>
 ) => {
   return (
     <InteractionProvider>

@@ -10,7 +10,7 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
-import { useCallback, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   ColumnsGroupedStateVariables,
@@ -41,7 +41,7 @@ import {
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
-import useChartFormatters from "@/charts/shared/use-chart-formatters";
+import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { ColumnConfig } from "@/configurator";
@@ -55,7 +55,7 @@ import {
 } from "@/utils/sorting-values";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type GroupedColumnsState = CommonChartState &
   ColumnsGroupedStateVariables &
@@ -395,11 +395,13 @@ const useColumnsGroupedState = (
 
   const isMobile = useIsMobile();
 
-  const maybeFormatDate = useCallback(
+  const formatXAxisTick = useCallback(
     (tick: string) => {
-      return isTemporalDimension(xDimension) ? formatXDate(tick) : tick;
+      return isTemporalDimension(xDimension)
+        ? formatXDate(tick)
+        : getXLabel(tick);
     },
-    [xDimension, formatXDate]
+    [xDimension, formatXDate, getXLabel]
   );
 
   // Tooltip
@@ -440,20 +442,20 @@ const useColumnsGroupedState = (
       xAnchor: xAnchorRaw + (placement.x === "right" ? 0.5 : -0.5) * bw,
       yAnchor,
       placement,
-      value: maybeFormatDate(xLabel),
+      value: formatXAxisTick(xLabel),
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
         error: getFormattedYUncertainty(datum),
-        color: colors(getSegment(datum)) as string,
+        color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map((td) => ({
-        label: getSegmentAbbreviationOrLabel(td),
+      values: sortedTooltipValues.map((d) => ({
+        label: getSegmentAbbreviationOrLabel(d),
         value: yMeasure.unit
-          ? `${formatNumber(getY(td))} ${yMeasure.unit}`
-          : formatNumber(getY(td)),
-        error: getFormattedYUncertainty(td),
-        color: colors(getSegment(td)) as string,
+          ? `${formatNumber(getY(d))} ${yMeasure.unit}`
+          : formatNumber(getY(d)),
+        error: getFormattedYUncertainty(d),
+        color: colors(getSegment(d)),
       })),
     };
   };
@@ -476,13 +478,13 @@ const useColumnsGroupedState = (
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
-    formatXAxisTick: maybeFormatDate,
+    formatXAxisTick,
     ...variables,
   };
 };
 
 const GroupedColumnChartProvider = (
-  props: React.PropsWithChildren<ChartProps<ColumnConfig>>
+  props: PropsWithChildren<ChartProps<ColumnConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useColumnsGroupedStateVariables(chartProps);
@@ -495,7 +497,7 @@ const GroupedColumnChartProvider = (
 };
 
 export const GroupedColumnChart = (
-  props: React.PropsWithChildren<ChartProps<ColumnConfig>>
+  props: PropsWithChildren<ChartProps<ColumnConfig>>
 ) => {
   return (
     <InteractionProvider>

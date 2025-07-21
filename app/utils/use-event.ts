@@ -10,11 +10,13 @@ type Fn<ARGS extends unknown[], R> = (...args: ARGS) => R;
  *
  * @see https://github.com/reactjs/rfcs/pull/220
  */
-const useEvent = <A extends unknown[], R>(fn: Fn<A, R>): Fn<A, R> => {
+export const useEvent = <A extends unknown[], R>(fn: Fn<A, R>): Fn<A, R> => {
   const ref = useRef<Fn<A, R>>(fn);
+
   useLayoutEffect(() => {
     ref.current = fn;
   });
+
   return useMemo(
     () =>
       (...args: A): R => {
@@ -24,5 +26,3 @@ const useEvent = <A extends unknown[], R>(fn: Fn<A, R>): Fn<A, R> => {
     []
   );
 };
-
-export default useEvent;

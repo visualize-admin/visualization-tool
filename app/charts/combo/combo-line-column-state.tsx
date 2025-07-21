@@ -36,7 +36,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -52,7 +52,7 @@ import { getTimeInterval } from "@/intervals";
 import { getTextWidth } from "@/utils/get-text-width";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type ComboLineColumnState = CommonChartState &
   ComboLineColumnStateVariables &
@@ -193,7 +193,7 @@ const useComboLineColumnState = (
   const isMobile = useIsMobile();
 
   // Tooltip
-  const getAnnotationInfo = (d: Observation): TooltipInfo => {
+  const getAnnotationInfo = (d: Observation) => {
     const x = getXAsDate(d);
     const xScaled =
       (xScale(formatXDate(x)) as number) + xScale.bandwidth() * 0.5;
@@ -213,7 +213,7 @@ const useComboLineColumnState = (
           hide: y === null,
           yPos,
           symbol: chartType === "line" ? "line" : "square",
-        };
+        } satisfies TooltipValue;
       })
       .filter(truthy);
     const yAnchor = isMobile ? chartHeight : mean(values.map((d) => d.yPos));
@@ -229,10 +229,10 @@ const useComboLineColumnState = (
       datum: { label: "", value: "0", color: schemeCategory10[0] },
       xAnchor: xScaled,
       yAnchor,
-      value: timeFormatUnit(x, variables.xTimeUnit as TimeUnit),
+      value: timeFormatUnit(x, xTimeUnit),
       placement,
       values,
-    } as TooltipInfo;
+    } satisfies TooltipInfo;
   };
 
   return {

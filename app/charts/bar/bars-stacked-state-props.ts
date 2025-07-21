@@ -24,7 +24,7 @@ import { BarConfig } from "@/configurator";
 import { isTemporalEntityDimension, Observation } from "@/domain/data";
 import { sortByIndex } from "@/utils/array";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type BarsStackedStateVariables = BaseVariables &
   SortingVariables<{ plottableDataWide: Observation[] }> &

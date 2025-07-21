@@ -13,7 +13,7 @@ import { MapState } from "@/charts/map/map-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { rgbArrayToHex } from "@/charts/shared/colors";
 import { TooltipBox } from "@/charts/shared/interaction/tooltip-box";
-import useChartFormatters from "@/charts/shared/use-chart-formatters";
+import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
 import { useInteraction } from "@/charts/shared/use-interaction";
 import { truthy } from "@/domain/types";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";

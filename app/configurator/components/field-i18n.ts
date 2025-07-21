@@ -222,7 +222,6 @@ export function getFieldLabel(field: string): string {
   switch (field) {
     // Visual encodings (left column)
     case "column.x":
-    case "bar.x":
     case "line.x":
     case "area.x":
     case "scatterplot.x":
@@ -240,7 +239,6 @@ export function getFieldLabel(field: string): string {
     case "bar.y":
     case "line.y":
     case "area.y":
-    case "bar.y":
     case "comboLineSingle.y":
     case "comboLineDual.y":
     case "comboLineColumn.y":

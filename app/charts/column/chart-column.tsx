@@ -32,7 +32,7 @@ import { hasChartConfigs } from "@/configurator";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 import { useConfiguratorState } from "@/src";
 
-import { ChartProps, VisualizationProps } from "../shared/ChartProps";
+import { ChartProps, VisualizationProps } from "../shared/chart-props";
 
 export const ChartColumnsVisualization = (
   props: VisualizationProps<ColumnConfig>
@@ -62,10 +62,10 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear />
-              <ColumnsStacked />
               <AxisHideXOverflowRect />
               <AxisWidthBand />
               <AxisWidthBandDomain />
+              <ColumnsStacked />
               <InteractionColumns />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
@@ -93,10 +93,10 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear />
-              <ColumnsGrouped />
               <AxisHideXOverflowRect />
               <AxisWidthBand />
               <AxisWidthBandDomain />
+              <ColumnsGrouped />
               <ErrorWhiskersGrouped />
               <InteractionColumns />
               {showTimeBrush && <BrushTime />}
@@ -125,10 +125,10 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear />
-              <Columns />
               <AxisHideXOverflowRect />
               <AxisWidthBand />
               <AxisWidthBandDomain />
+              <Columns />
               <ErrorWhiskers />
               <VerticalLimits {...limits} />
               <InteractionColumns />

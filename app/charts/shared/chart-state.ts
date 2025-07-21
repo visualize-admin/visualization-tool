@@ -28,7 +28,7 @@ import {
   useTemporalEntityVariable,
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
-import { DimensionsById, MeasuresById } from "@/charts/shared/ChartProps";
+import { DimensionsById, MeasuresById } from "@/charts/shared/chart-props";
 import { Bounds } from "@/charts/shared/use-size";
 import { TableChartState } from "@/charts/table/table-state";
 import { useLimits } from "@/config-utils";

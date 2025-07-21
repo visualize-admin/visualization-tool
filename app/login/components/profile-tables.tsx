@@ -19,7 +19,7 @@ import {
 import { PUBLISHED_STATE } from "@prisma/client";
 import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
-import React, { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 
 import { MenuActionProps } from "@/components/menu-action-item";
 import { OverflowTooltip } from "@/components/overflow-tooltip";
@@ -30,16 +30,16 @@ import {
 } from "@/components/publish-actions";
 import { RenameDialog } from "@/components/rename-dialog";
 import { RowActions } from "@/components/row-actions";
-import useDisclosure from "@/components/use-disclosure";
+import { useDisclosure } from "@/components/use-disclosure";
 import { CONFIGURATOR_STATE_LAYOUTING } from "@/config-types";
 import { ParsedConfig } from "@/db/config";
-import { sourceToLabel } from "@/domain/datasource";
+import { sourceToLabel } from "@/domain/data-source";
 import { truthy } from "@/domain/types";
 import { useUserConfigs } from "@/domain/user-configs";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
+import { useLocale } from "@/locales/use-locale";
 import { useRootStyles } from "@/login/utils";
-import { useLocale } from "@/src";
 import { removeConfig, updateConfig } from "@/utils/chart-config/api";
 import { useMutate } from "@/utils/use-fetch-data";
 

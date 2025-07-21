@@ -12,7 +12,7 @@ import {
   Select,
   Switch,
 } from "@/components/form";
-import SelectTree, { TreeHierarchyValue } from "@/components/select-tree";
+import { SelectTree, TreeHierarchyValue } from "@/components/select-tree";
 
 const meta = {
   default: Switch,

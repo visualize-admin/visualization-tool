@@ -26,12 +26,13 @@ export const ErrorWhiskers = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderHorizontalWhiskerDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     if (!getXErrorRange || !showXUncertainty) {
       return [];
     }
 
     const bandwidth = yScaleIn.bandwidth();
+
     return grouped
       .filter((d) => d[1].some(getXErrorPresent))
       .flatMap(([segment, observations]) =>
@@ -39,13 +40,14 @@ export const ErrorWhiskers = () => {
           const y0 = yScaleIn(getSegment(d)) as number;
           const barHeight = Math.min(bandwidth, 15);
           const [x1, x2] = getXErrorRange(d);
+
           return {
             key: `${segment}-${getSegment(d)}`,
             y: (yScale(segment) as number) + y0 + bandwidth / 2 - barHeight / 2,
             x1: xScale(x1),
             x2: xScale(x2),
             height: barHeight,
-          } as RenderHorizontalWhiskerDatum;
+          } satisfies RenderHorizontalWhiskerDatum;
         })
       );
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -12,10 +12,41 @@ You can also check the
 # Unreleased
 
 - Features
+  - Improved UX of interacting with conversion units multiplier input
+  - Updated WMS & WMTS providers list
+- Fixes
+  - Interactive calculation is now correctly reset when removing segmentation
+  - Tooltips are now correctly displayed in data preview table
+  - Grid lines do not overlap the chart elements anymore in case of negative
+    values
+  - Color squares in color palette picker are now correctly reset when changing
+    the palette
+  - Use most recent value toggle is now correctly displaying in the single
+    filters section
+- Security
+  - Added additional protection against data source URL injection
+  - Removed feature flag for custom GraphQL endpoint
+
+# 5.8.3 - 2025-06-10
+
+- Fixes
+  - Segmented bar and column charts now correctly display value labels when
+    downloading an image
+  - Ticks of X and Y axes in bar and column charts are now correctly formatted
+
+# 5.8.2 - 2025-06-03
+
+- Features
   - Invalid URL error message is now translated
   - Improved UX of interacting with conversion units multiplier input
+  - Added additional WMS & WMTS providers
 - Fixes
   - Fixed an infinite render loop when adding a custom map layer
+- Styles
+  - Fixed some smaller UI inconsistencies, mostly in table charts
+- Maintenance
+  - Consolidated file names, to use kebab-case everywhere
+  - Simplified exports and imports, to prefer named exports over default exports
 
 # 5.8.1 - 2025-05-27
 

@@ -10,7 +10,7 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
-import { useCallback, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   BarsGroupedStateVariables,
@@ -41,7 +41,7 @@ import {
   MOBILE_TOOLTIP_PLACEMENT,
 } from "@/charts/shared/interaction/tooltip-box";
 import { DEFAULT_MARGIN_TOP } from "@/charts/shared/margins";
-import useChartFormatters from "@/charts/shared/use-chart-formatters";
+import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { BarConfig } from "@/configurator";
@@ -55,7 +55,7 @@ import {
 } from "@/utils/sorting-values";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type GroupedBarsState = CommonChartState &
   BarsGroupedStateVariables &
@@ -394,11 +394,13 @@ const useBarsGroupedState = (
 
   const isMobile = useIsMobile();
 
-  const maybeFormatDate = useCallback(
+  const formatYAxisTick = useCallback(
     (tick: string) => {
-      return isTemporalDimension(yDimension) ? formatYDate(tick) : tick;
+      return isTemporalDimension(yDimension)
+        ? formatYDate(tick)
+        : getYLabel(tick);
     },
-    [yDimension, formatYDate]
+    [yDimension, formatYDate, getYLabel]
   );
 
   // Tooltip
@@ -439,20 +441,20 @@ const useBarsGroupedState = (
       yAnchor: yAnchorRaw + (placement.y === "bottom" ? 0.5 : -0.5) * bw,
       xAnchor,
       placement,
-      value: maybeFormatDate(yLabel),
+      value: formatYAxisTick(yLabel),
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: xValueFormatter(getX(datum)),
         error: getFormattedXUncertainty(datum),
-        color: colors(getSegment(datum)) as string,
+        color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map((td) => ({
-        label: getSegmentAbbreviationOrLabel(td),
+      values: sortedTooltipValues.map((d) => ({
+        label: getSegmentAbbreviationOrLabel(d),
         value: xMeasure.unit
-          ? `${formatNumber(getX(td))} ${xMeasure.unit}`
-          : formatNumber(getX(td)),
-        error: getFormattedXUncertainty(td),
-        color: colors(getSegment(td)) as string,
+          ? `${formatNumber(getX(d))} ${xMeasure.unit}`
+          : formatNumber(getX(d)),
+        error: getFormattedXUncertainty(d),
+        color: colors(getSegment(d)),
       })),
     };
   };
@@ -475,13 +477,13 @@ const useBarsGroupedState = (
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
-    formatYAxisTick: maybeFormatDate,
+    formatYAxisTick,
     ...variables,
   };
 };
 
 const GroupedBarChartProvider = (
-  props: React.PropsWithChildren<ChartProps<BarConfig>>
+  props: PropsWithChildren<ChartProps<BarConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useBarsGroupedStateVariables(chartProps);
@@ -494,7 +496,7 @@ const GroupedBarChartProvider = (
 };
 
 export const GroupedBarChart = (
-  props: React.PropsWithChildren<ChartProps<BarConfig>>
+  props: PropsWithChildren<ChartProps<BarConfig>>
 ) => {
   return (
     <InteractionProvider>

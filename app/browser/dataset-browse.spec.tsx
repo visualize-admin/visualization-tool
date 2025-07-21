@@ -8,7 +8,7 @@ describe("getFiltersFromParams", () => {
     const params = {
       type: "organization",
       iri: "https://fake-iri-organization",
-    } as BrowseParams;
+    } satisfies BrowseParams;
     const filters = getFiltersFromParams(params);
     expect(filters).toEqual([
       {
@@ -24,7 +24,7 @@ describe("getFiltersFromParams", () => {
       iri: "https://fake-iri-theme",
       subtype: "organization",
       subiri: "https://fake-iri-organization",
-    } as BrowseParams;
+    } satisfies BrowseParams;
     const filters = getFiltersFromParams(params);
     expect(filters).toEqual([
       { iri: "https://fake-iri-theme", __typename: "DataCubeTheme" },
@@ -41,7 +41,7 @@ describe("getFiltersFromParams", () => {
       iri: "https://fake-iri-organization",
       subtype: "theme",
       subiri: "https://fake-iri-theme",
-    } as BrowseParams;
+    } satisfies BrowseParams;
     const filters = getFiltersFromParams(params);
     expect(filters).toEqual([
       {
@@ -59,7 +59,7 @@ describe("getFiltersFromParams", () => {
     const params = {
       type: "dataset",
       iri: "https://fake-iri-dataset",
-    } as BrowseParams;
+    } satisfies BrowseParams;
     const filters = getFiltersFromParams(params);
     expect(filters).toEqual([]);
   });

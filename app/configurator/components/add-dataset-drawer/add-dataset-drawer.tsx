@@ -24,7 +24,13 @@ import {
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import uniq from "lodash/uniq";
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  type KeyboardEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import {
   DatasetResults,
@@ -32,10 +38,19 @@ import {
   SearchDatasetResultsCount,
   SearchDatasetSortControl,
 } from "@/browser/dataset-browse";
-import Flex from "@/components/flex";
-import Tag from "@/components/tag";
-import VisuallyHidden from "@/components/visually-hidden";
+import { Flex } from "@/components/flex";
+import { Tag } from "@/components/tag";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import { ConfiguratorStateConfiguringChart } from "@/config-types";
+import {
+  CautionAlert,
+  useCautionAlert,
+} from "@/configurator/components/add-dataset-drawer/caution-alert";
+import { inferJoinBy } from "@/configurator/components/add-dataset-drawer/infer-join-by";
+import { PreviewDataTable } from "@/configurator/components/add-dataset-drawer/preview-table";
+import { SearchOptions } from "@/configurator/components/add-dataset-drawer/types";
+import { useAddDataset } from "@/configurator/components/add-dataset-drawer/use-add-dataset";
+import { useStyles } from "@/configurator/components/add-dataset-drawer/use-styles";
 import { RightDrawer } from "@/configurator/components/drawers";
 import {
   ComponentTermsets,
@@ -59,14 +74,7 @@ import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
-import { useEventEmitter } from "@/utils/eventEmitter";
-
-import { CautionAlert, useCautionAlert } from "./caution-alert";
-import { inferJoinBy } from "./infer-join-by";
-import PreviewDataTable from "./preview-table";
-import { SearchOptions } from "./types";
-import useAddDataset from "./use-add-dataset";
-import useStyles from "./use-styles";
+import { useEventEmitter } from "@/utils/event-emitter";
 
 const DialogCloseButton = (props: IconButtonProps) => {
   return (
@@ -407,7 +415,7 @@ export const AddDatasetDrawer = ({
   const inputRef = useRef<HTMLInputElement>();
 
   const handleKeyDown = useEventCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
+    (e: KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         setQuery(e.currentTarget.value);
       }

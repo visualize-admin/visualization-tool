@@ -6,15 +6,18 @@ import { color as d3Color } from "d3-color";
 import dynamic from "next/dynamic";
 import { MouseEventHandler, useCallback, useMemo, useRef } from "react";
 
-import useDisclosure from "@/components/use-disclosure";
-import VisuallyHidden from "@/components/visually-hidden";
+import { useDisclosure } from "@/components/use-disclosure";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import { Icon } from "@/icons";
 import { ColorItem } from "@/palettes";
 import { createColorId } from "@/utils/color-palette-utils";
 
 //have to import dynamically to avoid @uiw/react-color dependency issues with the server
 const CustomColorPicker = dynamic(
-  () => import("../../components/color-picker"),
+  () =>
+    import("../../components/color-picker").then(
+      (mod) => mod.CustomColorPicker
+    ),
   { ssr: false }
 );
 

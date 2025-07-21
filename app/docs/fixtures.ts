@@ -1,7 +1,7 @@
 import mapKeys from "lodash/mapKeys";
 
 import { Dimension, Measure, Observation } from "@/domain/data";
-import { DEFAULT_DATA_SOURCE } from "@/domain/datasource";
+import { DEFAULT_DATA_SOURCE } from "@/domain/data-source";
 import { stringifyComponentId } from "@/graphql/make-component-id";
 import { CONFIGURATOR_STATE_VERSION } from "@/utils/chart-config/constants";
 

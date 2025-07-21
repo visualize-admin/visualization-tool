@@ -8,7 +8,7 @@ import {
   ConfiguratorStatePublished,
   decodeConfiguratorState,
 } from "@/config-types";
-import { GraphqlProvider } from "@/graphql/GraphqlProvider";
+import { GraphqlProvider } from "@/graphql/graphql-provider";
 import { i18n } from "@/locales/locales";
 import { LocaleProvider, useLocale } from "@/locales/use-locale";
 import { ConfiguratorStateProvider } from "@/src";

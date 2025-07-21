@@ -18,7 +18,7 @@ import {
   stackOrderReverse,
 } from "d3-shape";
 import orderBy from "lodash/orderBy";
-import React, { useCallback, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   BarsStackedStateData,
@@ -62,7 +62,7 @@ import {
   getStackedTooltipValueFormatter,
   getStackedXScale,
 } from "@/charts/shared/stacked-helpers";
-import useChartFormatters from "@/charts/shared/use-chart-formatters";
+import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { BarConfig } from "@/configurator";
@@ -77,7 +77,7 @@ import {
 } from "@/utils/sorting-values";
 import { useIsMobile } from "@/utils/use-is-mobile";
 
-import { ChartProps } from "../shared/ChartProps";
+import { ChartProps } from "../shared/chart-props";
 
 export type StackedBarsState = CommonChartState &
   BarsStackedStateVariables &
@@ -403,17 +403,12 @@ const useBarsStackedState = (
           : stackOrderDescending
         : // Reverse segments here, so they're sorted from top to bottom
           stackOrderReverse;
-
     const stacked = stack()
       .order(stackOrder)
       .offset(stackOffsetDiverging)
       .keys(segments);
 
-    return stacked(
-      chartWideData as {
-        [key: string]: number;
-      }[]
-    );
+    return stacked(chartWideData as { [key: string]: number }[]);
   }, [chartWideData, fields.segment?.sorting, segments]);
 
   /** Chart dimensions */
@@ -465,11 +460,13 @@ const useBarsStackedState = (
 
   const isMobile = useIsMobile();
 
-  const maybeFormatDate = useCallback(
+  const formatYAxisTick = useCallback(
     (tick: string) => {
-      return isTemporalDimension(yDimension) ? formatYDate(tick) : tick;
+      return isTemporalDimension(yDimension)
+        ? formatYDate(tick)
+        : getYLabel(tick);
     },
-    [yDimension, formatYDate]
+    [yDimension, formatYDate, getYLabel]
   );
 
   // Tooltips
@@ -478,7 +475,7 @@ const useBarsStackedState = (
       const bw = yScale.bandwidth();
       const y = getY(datum);
 
-      const tooltipValues = chartDataGroupedByY.get(y) as Observation[];
+      const tooltipValues = chartDataGroupedByY.get(y) ?? [];
       const xValues = tooltipValues.map(getX);
       const sortedTooltipValues = sortByIndex({
         data: tooltipValues,
@@ -502,7 +499,6 @@ const useBarsStackedState = (
         ? MOBILE_TOOLTIP_PLACEMENT
         : getCenteredTooltipPlacement({
             chartWidth,
-            //NOTE: this might be wrong
             xAnchor,
             topAnchor: !fields.segment,
           });
@@ -512,16 +508,16 @@ const useBarsStackedState = (
         yAnchor: yAnchorRaw + (placement.y === "top" ? 0.5 : -0.5) * bw,
         xAnchor,
         placement,
-        value: maybeFormatDate(yLabel),
+        value: formatYAxisTick(yLabel),
         datum: {
           label: fields.segment && getSegmentAbbreviationOrLabel(datum),
           value: xValueFormatter(getX(datum), getIdentityX(datum)),
-          color: colors(getSegment(datum)) as string,
+          color: colors(getSegment(datum)),
         },
-        values: sortedTooltipValues.map((td) => ({
-          label: getSegmentAbbreviationOrLabel(td),
-          value: xValueFormatter(getX(td), getIdentityX(td)),
-          color: colors(getSegment(td)) as string,
+        values: sortedTooltipValues.map((d) => ({
+          label: getSegmentAbbreviationOrLabel(d),
+          value: xValueFormatter(getX(d), getIdentityX(d)),
+          color: colors(getSegment(d)),
         })),
       };
     },
@@ -546,7 +542,7 @@ const useBarsStackedState = (
       isMobile,
       normalize,
       yScale,
-      maybeFormatDate,
+      formatYAxisTick,
     ]
   );
 
@@ -579,13 +575,13 @@ const useBarsStackedState = (
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
     valueLabelFormatter,
-    formatYAxisTick: maybeFormatDate,
+    formatYAxisTick,
     ...variables,
   };
 };
 
 const StackedBarsChartProvider = (
-  props: React.PropsWithChildren<ChartProps<BarConfig>>
+  props: PropsWithChildren<ChartProps<BarConfig>>
 ) => {
   const { children, ...chartProps } = props;
   const variables = useBarsStackedStateVariables(chartProps);
@@ -598,7 +594,7 @@ const StackedBarsChartProvider = (
 };
 
 export const StackedBarsChart = (
-  props: React.PropsWithChildren<ChartProps<BarConfig>>
+  props: PropsWithChildren<ChartProps<BarConfig>>
 ) => {
   return (
     <InteractionProvider>

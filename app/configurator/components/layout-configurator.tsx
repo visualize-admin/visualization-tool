@@ -65,11 +65,11 @@ import {
 import { useTimeFormatLocale, useTimeFormatUnit } from "@/formatters";
 import { useConfigsCubeComponents } from "@/graphql/hooks";
 import { Icon } from "@/icons";
-import { useLocale } from "@/src";
+import { useLocale } from "@/locales/use-locale";
 import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";
 import { createId } from "@/utils/create-id";
 import { getTimeFilterOptions } from "@/utils/time-filter-options";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 export const LayoutConfigurator = () => {
   return (

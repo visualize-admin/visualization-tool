@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { MouseEvent, useState } from "react";
 
-const ConfirmationDialog = ({
+export const ConfirmationDialog = ({
   title,
   text,
   onClick,
@@ -27,6 +27,7 @@ const ConfirmationDialog = ({
   onClose: NonNullable<DialogProps["onClose"]>;
 }) => {
   const [loading, setLoading] = useState(false);
+
   return (
     <Dialog
       maxWidth="xs"
@@ -83,5 +84,3 @@ const ConfirmationDialog = ({
     </Dialog>
   );
 };
-
-export default ConfirmationDialog;

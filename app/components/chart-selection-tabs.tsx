@@ -10,14 +10,23 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  type MouseEvent,
+  PropsWithChildren,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 import { AddButton } from "@/components/add-button";
 import { ArrowMenuTopCenter } from "@/components/arrow-menu";
 import { DuplicateChartMenuActionItem } from "@/components/chart-shared";
 import { DragHandle } from "@/components/drag-handle";
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { MenuActionItem } from "@/components/menu-action-item";
 import { VisualizeTab, VisualizeTabList } from "@/components/tabs";
 import { getChartConfig } from "@/config-utils";
@@ -38,7 +47,7 @@ import { ChartTypeSelector } from "@/configurator/components/chart-type-selector
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/locales";
-import useEvent from "@/utils/use-event";
+import { useEvent } from "@/utils/use-event";
 
 type TabsState = {
   popoverOpen: boolean;
@@ -53,7 +62,7 @@ const TABS_STATE: TabsState = {
 };
 
 const TabsStateContext = createContext<
-  [TabsState, React.Dispatch<TabsState>] | undefined
+  [TabsState, Dispatch<TabsState>] | undefined
 >(undefined);
 
 const useTabsState = () => {
@@ -68,7 +77,7 @@ const useTabsState = () => {
   return ctx;
 };
 
-const TabsStateProvider = (props: React.PropsWithChildren<{}>) => {
+const TabsStateProvider = (props: PropsWithChildren<{}>) => {
   const { children } = props;
   const [state, dispatch] = useState<TabsState>(TABS_STATE);
 
@@ -350,7 +359,7 @@ const PassthroughTab = ({
   children,
   value: _value,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   value?: string;
 }) => {
   return <>{children}</>;
@@ -410,8 +419,8 @@ const TabsInner = ({
   addable: boolean;
   editable: boolean;
   draggable: boolean;
-  onChartAdd?: (e: React.MouseEvent<HTMLElement>) => void;
-  onChartEdit?: (e: React.MouseEvent<HTMLElement>, key: string) => void;
+  onChartAdd?: (e: MouseEvent<HTMLElement>) => void;
+  onChartEdit?: (e: MouseEvent<HTMLElement>, key: string) => void;
   onChartSwitch?: (key: string) => void;
 }) => {
   const classes = useTabsInnerStyles();
@@ -604,7 +613,7 @@ const TabContent = (props: {
   dragging?: boolean;
   label?: string;
   onChevronDownClick?: (
-    e: React.MouseEvent<HTMLElement>,
+    e: MouseEvent<HTMLElement>,
     activeChartKey: string
   ) => void;
   onSwitchClick?: () => void;

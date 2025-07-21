@@ -4,7 +4,7 @@ import { makeStyles } from "@mui/styles";
 import * as clipboard from "clipboard-polyfill/text";
 import { MouseEvent as ReactMouseEvent, ReactNode, useState } from "react";
 
-import Flex from "@/components/flex";
+import { Flex } from "@/components/flex";
 import { Icon } from "@/icons";
 
 const useActionTooltipStyles = makeStyles((theme: Theme) => ({
