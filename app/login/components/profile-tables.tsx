@@ -124,14 +124,14 @@ export const ProfileVisualizationsTable = ({
                     Dataset
                   </Trans>
                 </TableCell>
-                <TableCell component="th" width="12.5%">
-                  <Trans id="login.profile.my-visualizations.chart-updated-date">
-                    Last edit
-                  </Trans>
-                </TableCell>
                 <TableCell component="th" width="10%">
                   <Trans id="login.profile.my-visualizations.chart-views">
                     Views
+                  </Trans>
+                </TableCell>
+                <TableCell component="th" width="12.5%">
+                  <Trans id="login.profile.my-visualizations.chart-updated-date">
+                    Last edit
                   </Trans>
                 </TableCell>
                 <TableCell component="th" width="12.5%" />
@@ -413,15 +413,15 @@ const ProfileVisualizationsRow = ({
         )}
       </TableCell>
       <TableCell>
+        <Typography variant="body3" component="p" noWrap>
+          {formatInteger(config.viewCount)}
+        </Typography>
+      </TableCell>
+      <TableCell>
         {config.updated_at.toLocaleString("de", {
           dateStyle: "medium",
           timeStyle: "short",
         })}
-      </TableCell>
-      <TableCell>
-        <Typography variant="body3" component="p" noWrap>
-          {formatInteger(config.viewCount)}
-        </Typography>
       </TableCell>
       <TableCell align="right">
         <RowActions actions={actions} />
