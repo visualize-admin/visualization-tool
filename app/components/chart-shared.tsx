@@ -164,11 +164,13 @@ export const ChartMoreButton = ({
   chartKey,
   chartWrapperNode,
   components,
+  disableDatabaseRelatedActions,
 }: {
   configKey?: string;
   chartKey: string;
   chartWrapperNode?: HTMLElement | null;
   components: Component[];
+  disableDatabaseRelatedActions?: boolean;
 }) => {
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(hasChartConfigs);
@@ -227,7 +229,9 @@ export const ChartMoreButton = ({
                 />
               </>
             ) : null}
-            {state.layout.type !== "dashboard" && configKey ? (
+            {state.layout.type !== "dashboard" &&
+            configKey &&
+            !disableDatabaseRelatedActions ? (
               <>
                 <CopyChartMenuActionItem configKey={configKey} />
                 <ShareChartMenuActionItem configKey={configKey} />

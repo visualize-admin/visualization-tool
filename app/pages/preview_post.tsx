@@ -82,7 +82,11 @@ export default function Preview({ configuratorState, locale }: PageProps) {
                 chartId="published"
                 initialState={parsedState}
               >
-                <ChartPublished configKey="preview" {...parsedState} />
+                <ChartPublished
+                  configKey="preview"
+                  isPreview
+                  {...parsedState}
+                />
               </ConfiguratorStateProvider>
             ) : null}
           </ThemeProvider>
