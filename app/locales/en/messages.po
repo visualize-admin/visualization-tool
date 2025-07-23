@@ -1821,7 +1821,7 @@ msgstr "Home"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-color-palettes"
-msgstr "My color palettes"
+msgstr "My Color Palettes"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx
