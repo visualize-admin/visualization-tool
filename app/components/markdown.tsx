@@ -69,6 +69,39 @@ export const Markdown = (
   );
 };
 
+export const InlineMarkdown = ({
+  children,
+  ...rest
+}: Omit<ComponentProps<typeof ReactMarkdown>, "components">) => {
+  const inlineMarkdown = children?.replace(/\r?\n|\r/g, " ");
+
+  return (
+    <ReactMarkdown
+      components={{
+        p: ({ children }) => <>{children}</>,
+        strong: ({ children }) => <strong>{children}</strong>,
+        em: ({ children }) => <em>{children}</em>,
+        a: ({ children, href }) => <a href={href}>{children}</a>,
+        h1: () => null,
+        h2: () => null,
+        h3: () => null,
+        h4: () => null,
+        h5: () => null,
+        h6: () => null,
+        ul: () => null,
+        li: () => null,
+        blockquote: () => null,
+        code: ({ children }) => <code>{children}</code>,
+        br: () => <> </>,
+      }}
+      skipHtml
+      {...rest}
+    >
+      {inlineMarkdown}
+    </ReactMarkdown>
+  );
+};
+
 const componentsInheritFonts: ComponentProps<
   typeof ReactMarkdown
 >["components"] = {

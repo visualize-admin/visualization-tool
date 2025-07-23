@@ -21,6 +21,7 @@ import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
 import { ReactNode, useMemo, useState } from "react";
 
+import { InlineMarkdown, Markdown } from "@/components/markdown";
 import { MenuActionProps } from "@/components/menu-action-item";
 import { OverflowTooltip } from "@/components/overflow-tooltip";
 import {
@@ -361,9 +362,13 @@ const ProfileVisualizationsRow = (props: {
           legacyBehavior
         >
           <Link>
-            <OverflowTooltip arrow title={chartTitle} color="primary.main">
+            <OverflowTooltip
+              arrow
+              title={<Markdown>{chartTitle}</Markdown>}
+              color="primary.main"
+            >
               <Typography variant="body3" component="p" noWrap>
-                {chartTitle}
+                <InlineMarkdown>{chartTitle}</InlineMarkdown>
               </Typography>
             </OverflowTooltip>
           </Link>
