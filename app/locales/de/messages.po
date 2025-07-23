@@ -2049,6 +2049,10 @@ msgstr "Weniger anzeigen"
 msgid "table.column.no"
 msgstr "Spalte {0}"
 
+#: app/charts/table/table.tsx
+msgid "table.search.placeholder"
+msgstr "Suchen..."
+
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Day"
 msgstr "Tag"

@@ -2049,6 +2049,10 @@ msgstr "Mostra meno"
 msgid "table.column.no"
 msgstr "Colonna {0}"
 
+#: app/charts/table/table.tsx
+msgid "table.search.placeholder"
+msgstr "Ricerca..."
+
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Day"
 msgstr "Giorno"
