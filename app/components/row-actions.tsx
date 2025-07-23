@@ -1,5 +1,6 @@
-import { Box, IconButton } from "@mui/material";
+import { IconButton } from "@mui/material";
 
+import { Flex } from "@/components/flex";
 import { MenuActionItem, MenuActionProps } from "@/components/menu-action-item";
 import { useFlipMenu } from "@/components/use-flip-menu";
 import { Icon } from "@/icons";
@@ -20,7 +21,7 @@ export const RowActions = (props: { actions: MenuActionProps[] }) => {
     primaryAction.type === "button" ? { onDialogClose: handleClose } : {};
 
   return (
-    <Box gap="0.5rem" display="flex" alignItems="center">
+    <Flex gap="0.5rem" justifyContent="flex-end" alignItems="center">
       <MenuActionItem as="button" {...primaryAction} {...additionalProps} />
       <IconButton ref={buttonRef} onClick={handleOpenElClick}>
         <Icon name="more" size={16} />
@@ -47,6 +48,6 @@ export const RowActions = (props: { actions: MenuActionProps[] }) => {
           />
         ))}
       </Wrapper>
-    </Box>
+    </Flex>
   );
 };

@@ -106,31 +106,27 @@ export const ProfileVisualizationsTable = (
           <StyledTable>
             <TableHead>
               <TableRow>
-                <TableCell component="th">
+                <TableCell component="th" width="10%">
                   <Trans id="login.profile.my-visualizations.chart-type">
                     Type
                   </Trans>
                 </TableCell>
-                <TableCell component="th">
+                <TableCell component="th" width="30%">
                   <Trans id="login.profile.my-visualizations.chart-name">
                     Name
                   </Trans>
                 </TableCell>
-                <TableCell component="th">
+                <TableCell component="th" width="30%">
                   <Trans id="login.profile.my-visualizations.dataset-name">
                     Dataset
                   </Trans>
                 </TableCell>
-                <TableCell component="th">
+                <TableCell component="th" width="15%">
                   <Trans id="login.profile.my-visualizations.chart-updated-date">
                     Last edit
                   </Trans>
                 </TableCell>
-                <TableCell component="th">
-                  <Trans id="login.profile.my-visualizations.chart-actions">
-                    Actions
-                  </Trans>
-                </TableCell>
+                <TableCell component="th" width="15%" />
               </TableRow>
             </TableHead>
             <TableBody>
@@ -350,12 +346,12 @@ const ProfileVisualizationsRow = (props: {
 
   return (
     <TableRow>
-      <TableCell width="10%">
+      <TableCell>
         {isSingleChart
           ? t({ id: "controls.layout.chart", message: "Chart" })
           : t({ id: "controls.layout.dashboard", message: "Dashboard" })}
       </TableCell>
-      <TableCell width="30%">
+      <TableCell>
         <NextLink
           href={isPublished ? publishLink : editLink}
           passHref
@@ -374,7 +370,7 @@ const ProfileVisualizationsRow = (props: {
           </Link>
         </NextLink>
       </TableCell>
-      <TableCell width="30%">
+      <TableCell>
         {fetching ? (
           <Skeleton width="50%" height={32} />
         ) : dataSet ? (
@@ -406,13 +402,13 @@ const ProfileVisualizationsRow = (props: {
           </Typography>
         )}
       </TableCell>
-      <TableCell width="10%">
+      <TableCell>
         {config.updated_at.toLocaleString("de", {
           dateStyle: "medium",
           timeStyle: "short",
         })}
       </TableCell>
-      <TableCell width="20%" align="right">
+      <TableCell align="right">
         <RowActions actions={actions} />
         <TriggeredPopover
           popoverProps={{
