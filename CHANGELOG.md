@@ -29,6 +29,8 @@ You can also check the
   - Database-related actions are now hidden in preview mode (copy URL, share)
 - Styles
   - Scroll buttons in the chart selection tabs are now always shown when needed
+  - Chart titles in user profile are now correctly rendered
+  - Dataset tags can now wrap
 - Security
   - Added additional protection against data source URL injection
   - Removed feature flag for custom GraphQL endpoint
