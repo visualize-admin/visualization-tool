@@ -26,6 +26,7 @@ You can also check the
   - Use most recent value toggle is now correctly displaying in the single
     filters section
   - Dataset browse view is now correctly displayed on mobile devices
+  - Database-related actions are now hidden in preview mode (copy URL, share)
 - Security
   - Added additional protection against data source URL injection
   - Removed feature flag for custom GraphQL endpoint
