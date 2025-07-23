@@ -62,14 +62,14 @@ import { Contribute, Examples, Intro, Tutorial, Newsletter, BugReport, FeatureRe
   headline="New feature request"
   description="Submit your feature requests today and help shape the future of our platform!"
   buttonLabel="Submit"
- buttonUrl={createMailtoLink("en", {
-  recipients: {
-    to: "visualize@bafu.admin.ch",
-    bcc: "supprt@interactivethings.com",
-  },
-  template: featureRequestTemplates,
-  subject: "Visualize Feature Request",
-})}
+  buttonUrl={createMailtoLink("en", {
+    recipients: {
+      to: "visualize@bafu.admin.ch",
+      bcc: "support@interactivethings.com",
+    },
+    template: featureRequestTemplates,
+    subject: "Visualize Feature Request",
+  })}
 />
  <BugReport
   headline="Found a bug?"

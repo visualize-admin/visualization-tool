@@ -57,7 +57,6 @@ const HomepageStory = {
             buttonUrl: createMailtoLink("en", {
               recipients: {
                 to: OWNER_ORGANIZATION_EMAIL,
-                bcc: SUPPORT_EMAIL,
               },
               template: newsletterTemplates,
               subject: "Visualize Newsletter Subscribe",
