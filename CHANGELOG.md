@@ -31,6 +31,7 @@ You can also check the
   - Scroll buttons in the chart selection tabs are now always shown when needed
   - Chart titles in user profile are now correctly rendered
   - Dataset tags can now wrap
+  - Dataset browse side panel now sticks to the top of the page when scrolling
 - Security
   - Added additional protection against data source URL injection
   - Removed feature flag for custom GraphQL endpoint
