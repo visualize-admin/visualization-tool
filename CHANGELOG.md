@@ -16,6 +16,7 @@ You can also check the
   - Updated WMS & WMTS providers list
   - Added missing OpenGraph tags to the application (description, image) and
     updated the title
+  - Added chart view count to user profile
 - Fixes
   - Interactive calculation is now correctly reset when removing segmentation
   - Tooltips are now correctly displayed in data preview table

@@ -246,7 +246,6 @@ const CategoricalColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
           ))}
         </Box>
       )}
-
       <Button
         variant="text"
         fullWidth
