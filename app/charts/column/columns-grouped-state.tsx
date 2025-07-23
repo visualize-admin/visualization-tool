@@ -35,7 +35,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -69,7 +69,7 @@ export type GroupedColumnsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     grouped: [string, Observation[]][];
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -404,8 +404,7 @@ const useColumnsGroupedState = (
     [xDimension, formatXDate, getXLabel]
   );
 
-  // Tooltip
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const bw = xScale.bandwidth();
     const x = getX(datum);
 
@@ -449,14 +448,20 @@ const useColumnsGroupedState = (
         error: getFormattedYUncertainty(datum),
         color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map((d) => ({
-        label: getSegmentAbbreviationOrLabel(d),
-        value: yMeasure.unit
-          ? `${formatNumber(getY(d))} ${yMeasure.unit}`
-          : formatNumber(getY(d)),
-        error: getFormattedYUncertainty(d),
-        color: colors(getSegment(d)),
-      })),
+      values: sortedTooltipValues.map((d) => {
+        const segment = getSegment(d);
+
+        return {
+          label: getSegmentAbbreviationOrLabel(d),
+          value: yMeasure.unit
+            ? `${formatNumber(getY(d))} ${yMeasure.unit}`
+            : formatNumber(getY(d)),
+          axis: "y",
+          axisOffset: yScale(getY(d) ?? 0),
+          error: getFormattedYUncertainty(d),
+          color: colors(segment),
+        } satisfies TooltipValue;
+      }),
     };
   };
 
@@ -474,7 +479,7 @@ const useColumnsGroupedState = (
     colors,
     getColorLabel: getSegmentLabel,
     grouped,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,

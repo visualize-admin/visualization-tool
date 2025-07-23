@@ -1557,6 +1557,26 @@ export const chartConfigMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    from: "4.5.0",
+    to: "5.0.0",
+    description: `all {
+        + annotations
+      }
+    `,
+    up: (config) => {
+      const newConfig = { ...config, version: "5.0.0" };
+      newConfig.annotations = [];
+
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "4.5.0" };
+      delete newConfig.annotations;
+
+      return newConfig;
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -2175,6 +2195,12 @@ export const configuratorStateMigrations: Migration[] = [
     toVersion: "4.6.0",
     fromChartConfigVersion: "4.4.0",
     toChartConfigVersion: "4.5.0",
+  }),
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "4.6.0",
+    toVersion: "4.7.0",
+    fromChartConfigVersion: "4.5.0",
+    toChartConfigVersion: "5.0.0",
   }),
 ];
 

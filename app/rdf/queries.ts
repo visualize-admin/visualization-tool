@@ -16,7 +16,7 @@ import {
   shouldLoadMinMaxValues,
 } from "@/domain/data";
 import { isMostRecentValue } from "@/domain/most-recent-value";
-import { PromiseValue, truthy } from "@/domain/types";
+import { PromiseValue } from "@/domain/types";
 import {
   ComponentId,
   parseComponentId,
@@ -38,7 +38,6 @@ import {
   loadMaxDimensionValue,
   loadMinMaxDimensionValues,
 } from "@/rdf/query-dimension-values";
-import { loadUnversionedResources } from "@/rdf/query-sameas";
 import { loadUnits } from "@/rdf/query-unit-labels";
 import { getQueryLocales } from "@/rdf/query-utils";
 
@@ -47,6 +46,7 @@ const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 /** Adds a suffix to an iri to mark its label */
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
 const iriDimensionIri = (iri: string) => `${iri}/__iri__`;
+const unversionedDimensionIri = (iri: string) => `${iri}/__unversioned__`;
 
 const getDimensionUnits = (d: CubeDimension) => {
   // Keeping qudt:unit format for backwards compatibility.
@@ -458,45 +458,14 @@ export const getCubeObservations = async ({
 
   const serverFilter =
     Object.keys(serverFilters).length > 0
-      ? makeServerFilter(serverFilters)
+      ? makeServerFilter(serverFilters, resolvedDimensionsByIri)
       : null;
   const filteredObservationsRaw: typeof observationsRaw = [];
   const observations: Observation[] = [];
   const observationParser = parseObservation(resolvedDimensions, raw);
 
-  // As we keep unversioned values in the config, and fetch versioned values in the
-  // observations, we need to unversion the observations to match the filters.
-  const unversionedServerFilters = serverFilter
-    ? await unversionServerFilters(serverFilters, {
-        observationsRaw,
-        resolvedDimensionsByIri,
-        sparqlClient,
-        cache,
-      })
-    : null;
-
   for (const d of observationsRaw) {
-    if (
-      !serverFilter ||
-      serverFilter(d) ||
-      (unversionedServerFilters &&
-        serverFilter({
-          ...d,
-          // Unversion the values to match the unversioned filters.
-          ...Object.entries(unversionedServerFilters).reduce(
-            (acc, [iri, values]) => {
-              const value = d[iri];
-              const unversionedValue = values[value.value].sameAs;
-
-              return {
-                ...acc,
-                [iri]: unversionedValue ?? value,
-              };
-            },
-            {}
-          ),
-        }))
-    ) {
+    if (!serverFilter || serverFilter(d)) {
       const obs = observationParser(d);
       observations.push(obs);
       filteredObservationsRaw.push(d);
@@ -516,7 +485,10 @@ export const getCubeObservations = async ({
   };
 };
 
-const makeServerFilter = (filters: Record<string, FilterValueMulti>) => {
+const makeServerFilter = (
+  filters: Record<string, FilterValueMulti>,
+  resolvedDimensionsByIri: Record<string, ResolvedDimension>
+) => {
   const sets = new Map<string, Set<ObservationValue>>();
 
   for (const [iri, filter] of Object.entries(filters)) {
@@ -526,53 +498,18 @@ const makeServerFilter = (filters: Record<string, FilterValueMulti>) => {
 
   return (d: RDFObservation) => {
     for (const [iri, valueSet] of sets.entries()) {
-      return valueSet.has(d[iri]?.value);
+      const resolvedDimension = resolvedDimensionsByIri[iri];
+      const isVersioned =
+        resolvedDimension && dimensionIsVersioned(resolvedDimension.dimension);
+      const valueToCheck = isVersioned
+        ? (d[unversionedDimensionIri(iri)]?.value ?? d[iri]?.value)
+        : d[iri]?.value;
+
+      return valueSet.has(valueToCheck);
     }
 
     return true;
   };
-};
-
-const unversionServerFilters = async (
-  serverFilters: Record<string, FilterValueMulti>,
-  {
-    observationsRaw,
-    resolvedDimensionsByIri,
-    sparqlClient,
-    cache,
-  }: {
-    observationsRaw: RDFObservation[];
-    resolvedDimensionsByIri: Record<string, ResolvedDimension>;
-    sparqlClient: ParsingClient;
-    cache: LRUCache | undefined;
-  }
-) => {
-  const unversionedServerFilters = await Promise.all(
-    Object.keys(serverFilters).map(async (iri) => {
-      const resolvedDimension = resolvedDimensionsByIri[iri];
-
-      if (
-        resolvedDimension &&
-        dimensionIsVersioned(resolvedDimension.dimension)
-      ) {
-        const unversionedValues = await loadUnversionedResources({
-          ids: observationsRaw
-            .map((d) => rdf.namedNode(d[iri]?.value))
-            .filter(truthy),
-          sparqlClient,
-          cache,
-        });
-        const unversionedValuesByValue = keyBy(
-          unversionedValues,
-          (d) => d.iri.value
-        );
-
-        return [iri, unversionedValuesByValue] as const;
-      }
-    })
-  ).then((d) => d.filter(truthy));
-
-  return Object.fromEntries(unversionedServerFilters);
 };
 
 // Experimental method to unversion a dimension value locally. To be used / removed
@@ -841,6 +778,7 @@ function parseObservation(
     for (const d of cubeDimensions) {
       const label = obs[labelDimensionIri(d.data.iri)]?.value;
       const termType = obs[d.data.iri]?.termType;
+      const isVersioned = dimensionIsVersioned(d.dimension);
 
       const value =
         termType === "Literal" &&
@@ -852,11 +790,18 @@ function parseObservation(
             : obs[d.data.iri]?.value;
 
       const rawValue = parseObservationValue({ value: obs[d.data.iri] });
-      if (d.data.hasHierarchy) {
-        res[iriDimensionIri(d.data.iri)] = obs[d.data.iri]?.value;
-      }
-      res[d.data.iri] = raw ? rawValue : (label ?? value ?? null);
+
+      const unversionedValue = isVersioned
+        ? obs[unversionedDimensionIri(d.data.iri)]?.value
+        : undefined;
+      const finalValue = unversionedValue ?? obs[d.data.iri]?.value ?? null;
+
+      res[iriDimensionIri(d.data.iri)] = finalValue;
+      res[d.data.iri] = raw
+        ? rawValue
+        : (label ?? unversionedValue ?? value ?? null);
     }
+
     return res;
   };
 }
@@ -891,6 +836,11 @@ function buildDimensions({
     ({ data: { isLiteral } }) => !isLiteral
   );
 
+  // Find versioned dimensions for unversioning
+  const versionedDimensions = resolvedDimensions.filter(({ dimension }) =>
+    dimensionIsVersioned(dimension)
+  );
+
   const lookupSource = LookupSource.fromSource(cube.source);
   lookupSource.queryPrefix = pragmas;
 
@@ -913,6 +863,23 @@ function buildDimensions({
     observationFilters.push(
       labelDimension.filter.lang(getQueryLocales(locale))
     );
+  }
+
+  for (const dimension of versionedDimensions) {
+    const baseDimension = cubeView.dimension({
+      cubeDimension: dimension.data.iri,
+    });
+
+    if (baseDimension) {
+      const unversionedDimension = cubeView.createDimension({
+        source: lookupSource,
+        path: ns.schema.sameAs,
+        join: baseDimension,
+        as: unversionedDimensionIri(dimension.data.iri),
+      });
+
+      observationDimensions.push(unversionedDimension);
+    }
   }
 
   return observationDimensions;

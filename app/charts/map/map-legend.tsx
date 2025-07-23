@@ -358,7 +358,7 @@ const CircleLegend = ({
 }) => {
   const width = useLegendWidth();
 
-  const [{ interaction }] = useInteraction();
+  const [interaction] = useInteraction();
   const { labelColor } = useChartTheme();
   const { symbolLayer } = useChartState() as MapState;
   const {
@@ -370,15 +370,16 @@ const CircleLegend = ({
     radiusScale,
   } = symbolLayer as NonNullable<MapState["symbolLayer"]>;
 
-  const maybeValue = interaction.d && getValue(interaction.d);
+  const maybeValue =
+    interaction.observation && getValue(interaction.observation);
   const value = typeof maybeValue === "number" ? maybeValue : undefined;
 
   // @ts-ignore - value can be undefined, D3 types are wrong here
   const radius = radiusScale(value);
   const maxRadius = radiusScale.range()[1];
 
-  const color = interaction.d
-    ? rgbArrayToHex(getColor(interaction.d))
+  const color = interaction.observation
+    ? rgbArrayToHex(getColor(interaction.observation))
     : undefined;
 
   const domainObservations = useMemo(
@@ -415,16 +416,15 @@ const CircleLegend = ({
             );
           }
         })}
-
         {/* Hovered data point indicator */}
-        {interaction.d &&
+        {interaction.observation &&
           interaction.visible &&
           value !== undefined &&
           radius !== undefined &&
           color !== undefined && (
             <Circle
               value={valueFormatter(value)}
-              label={getLabel(interaction.d)}
+              label={getLabel(interaction.observation)}
               fill={color}
               stroke={labelColor}
               radius={radius}
@@ -826,25 +826,22 @@ const DataPointIndicator = ({
   scale: ScaleLinear<number, number>;
   getValue: (d: Observation) => number | null;
 }) => {
-  const [state] = useInteraction();
+  const [{ visible, observation }] = useInteraction();
   const { labelColor } = useChartTheme();
   const classes = useDataPointIndicatorStyles();
+
   return (
     <>
-      {state.interaction.d &&
-        state.interaction.visible &&
-        !isNaN(getValue(state.interaction.d) ?? NaN) && (
-          <polygon
-            fill={labelColor}
-            points="-4,0 4,0 0,4"
-            className={classes.root}
-            style={{
-              transform: `translate(${scale(
-                getValue(state.interaction.d) ?? 0
-              )}px, 0)`,
-            }}
-          />
-        )}
+      {observation && visible && !isNaN(getValue(observation) ?? NaN) && (
+        <polygon
+          fill={labelColor}
+          points="-4,0 4,0 0,4"
+          className={classes.root}
+          style={{
+            transform: `translate(${scale(getValue(observation) ?? 0)}px, 0)`,
+          }}
+        />
+      )}
     </>
   );
 };

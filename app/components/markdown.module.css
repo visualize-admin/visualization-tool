@@ -1,6 +1,15 @@
 .common {
   margin-top: 0;
   line-height: 1.2;
+  word-break: break-word;
+
+  &:only-child {
+    margin-block: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .inheritFonts {

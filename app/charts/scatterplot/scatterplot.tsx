@@ -1,4 +1,3 @@
-import { schemeCategory10 } from "d3-scale-chromatic";
 import { useEffect, useMemo, useRef } from "react";
 
 import {
@@ -18,7 +17,6 @@ export const Scatterplot = () => {
     xScale,
     getY,
     yScale,
-    hasSegment,
     getSegment,
     colors,
     getRenderingKey,
@@ -29,23 +27,24 @@ export const Scatterplot = () => {
   const transitionDuration = useTransitionStore((state) => state.duration);
   const renderData = useMemo(() => {
     return chartData.map((d) => {
+      const segment = getSegment(d);
+
       return {
         key: getRenderingKey(d),
         cx: xScale(getX(d) ?? NaN),
         cy: yScale(getY(d) ?? NaN),
-        color: hasSegment ? colors(getSegment(d)) : schemeCategory10[0],
+        color: colors(segment),
       } satisfies RenderDatum;
     });
   }, [
     chartData,
-    colors,
     getSegment,
-    getX,
-    getY,
-    hasSegment,
-    xScale,
-    yScale,
     getRenderingKey,
+    xScale,
+    getX,
+    yScale,
+    getY,
+    colors,
   ]);
 
   useEffect(() => {

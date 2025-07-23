@@ -1,5 +1,10 @@
+import { getContrastingColor } from "@uiw/react-color";
 import { select, Selection } from "d3-selection";
+import { Series } from "d3-shape";
+import { useCallback } from "react";
 
+import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
+import { useChartState } from "@/charts/shared/chart-state";
 import {
   setSegmentValueLabelProps,
   setSegmentWrapperValueLabelProps,
@@ -7,7 +12,9 @@ import {
 import {
   maybeTransition,
   RenderOptions,
+  toggleFocusBorder,
 } from "@/charts/shared/rendering-utils";
+import { Observation } from "@/domain/data";
 
 export type RenderColumnDatum = {
   key: string;
@@ -16,8 +23,71 @@ export type RenderColumnDatum = {
   width: number;
   height: number;
   color: string;
+  focused?: boolean;
   valueLabel?: string;
   valueLabelColor?: string;
+  segment?: string;
+  observation: Observation;
+};
+
+export const useGetRenderStackedColumnDatum = () => {
+  const {
+    colors,
+    showValuesBySegmentMapping,
+    valueLabelFormatter,
+    xScale,
+    yScale,
+    getX,
+    getSegmentLabel,
+    getRenderingKey,
+  } = useChartState() as StackedColumnsState;
+  const bandwidth = xScale.bandwidth();
+
+  return useCallback(
+    (s: Series<{ [key: string]: number }, string>) => {
+      const segment = s.key;
+      const segmentLabel = getSegmentLabel(segment);
+      const color = colors(segment);
+
+      return s.map((d) => {
+        const observation = d.data;
+        const value = observation[segmentLabel];
+        const valueLabel =
+          segment && showValuesBySegmentMapping[segment]
+            ? valueLabelFormatter(value)
+            : undefined;
+        const valueLabelColor = valueLabel
+          ? getContrastingColor(color)
+          : undefined;
+        const xRaw = getX(observation);
+        const y = yScale(d[1]) as number;
+
+        return {
+          key: getRenderingKey(observation, segmentLabel),
+          x: xScale(xRaw) as number,
+          y,
+          width: bandwidth,
+          height: Math.max(0, yScale(d[0]) - y),
+          color,
+          valueLabel,
+          valueLabelColor,
+          observation,
+          segment,
+        } satisfies RenderColumnDatum;
+      });
+    },
+    [
+      bandwidth,
+      colors,
+      getRenderingKey,
+      getSegmentLabel,
+      getX,
+      showValuesBySegmentMapping,
+      valueLabelFormatter,
+      xScale,
+      yScale,
+    ]
+  );
 };
 
 export const renderColumns = (
@@ -73,8 +143,10 @@ export const renderColumns = (
               })
               .text((d) => d.valueLabel ?? "")
           ),
-      (update) =>
-        maybeTransition(update, {
+      (update) => {
+        toggleFocusBorder(update.select("rect"));
+
+        return maybeTransition(update, {
           s: (g) =>
             g
               .call((g) =>
@@ -100,7 +172,8 @@ export const renderColumns = (
                   .text((d) => d.valueLabel ?? "")
               ),
           transition,
-        }),
+        });
+      },
       (exit) =>
         maybeTransition(exit, {
           transition,

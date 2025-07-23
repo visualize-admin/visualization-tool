@@ -23,6 +23,7 @@ import {
   useAreasStateData,
   useAreasStateVariables,
 } from "@/charts/area/areas-state-props";
+import { GetAnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -42,7 +43,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -53,6 +54,7 @@ import {
   useShowTemporalValueLabelsVariables,
 } from "@/charts/shared/show-values-utils";
 import {
+  getStackedPosition,
   getStackedTooltipValueFormatter,
   getStackedYScale,
 } from "@/charts/shared/stacked-helpers";
@@ -86,7 +88,8 @@ export type AreasState = CommonChartState &
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
     series: Series<{ [key: string]: number }, string>[];
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getAnnotationInfo: GetAnnotationInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -413,8 +416,29 @@ const useAreasState = (
 
   const isMobile = useIsMobile();
 
-  /** Tooltip */
-  const getAnnotationInfo = useCallback(
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation, { segment }) => {
+      const x = xScale(getX(observation));
+      const y = getStackedPosition({
+        observation,
+        series,
+        key: xKey,
+        getAxisValue: getXAsString,
+        measureScale: yScale,
+        fallbackMeasureValue: yScale(getY(observation) ?? 0),
+        segment,
+      });
+
+      return {
+        x,
+        y,
+        color: segment ? colors(segment) : undefined,
+      };
+    },
+    [xScale, getX, series, xKey, getXAsString, yScale, getY, colors]
+  );
+
+  const getTooltipInfo = useCallback(
     (datum: Observation): TooltipInfo => {
       const x = getXAsString(datum);
       const tooltipValues = chartDataGroupedByX.get(x) ?? [];
@@ -458,38 +482,53 @@ const useAreasState = (
           value: yValueFormatter(getY(datum), getIdentityY(datum)),
           color: colors(getSegment(datum)),
         },
-        values: fields.segment
-          ? sortedTooltipValues.map((d) => ({
-              label: getSegmentAbbreviationOrLabel(d),
-              value: yValueFormatter(getY(d), getIdentityY(d)),
-              color: colors(getSegment(d)),
-            }))
-          : undefined,
+        values: sortedTooltipValues.map((d) => {
+          const segment = getSegment(d);
+          const y = getStackedPosition({
+            observation: d,
+            series,
+            key: xKey,
+            getAxisValue: getXAsString,
+            measureScale: yScale,
+            fallbackMeasureValue: yScale(getY(d) ?? 0),
+            segment,
+          });
+
+          return {
+            label: getSegmentAbbreviationOrLabel(d),
+            value: yValueFormatter(getY(d), getIdentityY(d)),
+            axis: "y",
+            axisOffset: y,
+            color: colors(segment),
+          } satisfies TooltipValue;
+        }),
       };
     },
     [
-      yScale,
-      colors,
-      fields.segment,
-      formatNumber,
-      formatters,
-      getSegment,
-      getSegmentAbbreviationOrLabel,
-      getX,
       getXAsString,
-      getY,
       chartDataGroupedByX,
+      getY,
       segments,
-      timeFormatUnit,
-      xDimension.timeUnit,
-      xScale,
+      getSegment,
+      normalize,
       yMeasure.id,
       yMeasure.unit,
-      normalize,
-      getIdentityY,
-      chartWidth,
-      chartHeight,
+      formatters,
+      formatNumber,
+      xScale,
+      getX,
+      yScale,
+      fields.segment,
       isMobile,
+      chartHeight,
+      chartWidth,
+      timeFormatUnit,
+      xDimension.timeUnit,
+      getSegmentAbbreviationOrLabel,
+      getIdentityY,
+      colors,
+      series,
+      xKey,
     ]
   );
 
@@ -507,6 +546,7 @@ const useAreasState = (
     chartWideData,
     series,
     getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,

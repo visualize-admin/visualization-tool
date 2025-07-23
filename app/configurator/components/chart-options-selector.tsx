@@ -16,7 +16,6 @@ import { SelectOption } from "@/components/form";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import {
   ChartConfig,
-  ConfiguratorStateConfiguringChart,
   GenericField,
   isAnimationInConfig,
   isComboChartConfig,
@@ -56,6 +55,10 @@ import {
 } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getComponentLabel } from "@/configurator/components/ui-helpers";
+import {
+  isConfiguring,
+  useConfiguratorState,
+} from "@/configurator/configurator-state";
 import { TableColumnOptions } from "@/configurator/table/table-chart-options";
 import {
   Component,
@@ -76,11 +79,8 @@ import {
 } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
 
-export const ChartOptionsSelector = ({
-  state,
-}: {
-  state: ConfiguratorStateConfiguringChart;
-}) => {
+export const ChartOptionsSelector = () => {
+  const [state] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const { dataSource } = state;
   const { activeField } = chartConfig;
@@ -391,7 +391,7 @@ const EncodingOptionsPanel = ({
           <SectionTitle closable>
             {getFieldLabel(`${chartConfig.chartType}.${encoding.field}`)}
           </SectionTitle>
-          <ControlSectionContent gap="large">
+          <ControlSectionContent gap="lg">
             {!encoding.customComponent && (
               <ChartFieldField
                 field={encoding.field}

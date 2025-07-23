@@ -162,7 +162,7 @@ export const components: Components = {
 
         const variant = ownerState.variant ?? "contained";
         const getPaletteColor = (
-          color: "primary" | "secondary" | "red" | "inherit"
+          color: "primary" | "secondary" | "error" | "inherit"
         ) => {
           if (color === "primary") {
             return palette.blue;
@@ -170,6 +170,10 @@ export const components: Components = {
 
           if (color === "secondary") {
             return palette.cobalt;
+          }
+
+          if (color === "error") {
+            return palette.red;
           }
 
           if (color === "inherit") {
@@ -463,6 +467,11 @@ export const components: Components = {
       elevation: 0,
     },
   },
+  MuiPopover: {
+    defaultProps: {
+      elevation: 0,
+    },
+  },
   MuiRadio: {
     defaultProps: {
       icon: <RadioIcon />,
@@ -491,7 +500,9 @@ export const components: Components = {
   MuiSelect: {
     defaultProps: {
       size: "md",
-      notched: false,
+      // MUI types are not correct here - browser is not happy with
+      // a boolean passed to DOM.
+      notched: "false" as any,
       MenuProps: {
         slotProps: {
           paper: {
