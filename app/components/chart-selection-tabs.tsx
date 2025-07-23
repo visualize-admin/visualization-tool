@@ -456,13 +456,11 @@ const TabsInner = ({
                     style={{ cursor: disabled ? "auto" : "pointer" }}
                     variant="text"
                   >
-                    {disabled ? null : (
-                      <Icon
-                        name={
-                          direction === "left" ? "chevronLeft" : "chevronRight"
-                        }
-                      />
-                    )}
+                    <Icon
+                      name={
+                        direction === "left" ? "chevronLeft" : "chevronRight"
+                      }
+                    />
                   </Button>
                 )}
               >
