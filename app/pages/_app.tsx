@@ -75,6 +75,7 @@ export default function App({
         <title key="title">visualize.admin.ch</title>
         <meta property="og:type" content="website" />
         <meta property="og:title" content={"visualize.admin.ch"} />
+        <meta property="og:image" content={`${PUBLIC_URL}/og-image.png`} />
         <meta property="og:url" content={`${PUBLIC_URL}${asPath}`} />
         {federalTheme.preloadFonts?.map((src) => (
           <link
