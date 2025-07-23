@@ -27,6 +27,8 @@ You can also check the
     filters section
   - Dataset browse view is now correctly displayed on mobile devices
   - Database-related actions are now hidden in preview mode (copy URL, share)
+- Styles
+  - Scroll buttons in the chart selection tabs are now always shown when needed
 - Security
   - Added additional protection against data source URL injection
   - Removed feature flag for custom GraphQL endpoint
