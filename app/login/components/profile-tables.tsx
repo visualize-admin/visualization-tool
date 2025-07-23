@@ -362,7 +362,7 @@ const ProfileVisualizationsRow = (props: {
         >
           <Link>
             <OverflowTooltip arrow title={chartTitle} color="primary.main">
-              <Typography variant="body3" noWrap>
+              <Typography variant="body3" component="p" noWrap>
                 {chartTitle}
               </Typography>
             </OverflowTooltip>
