@@ -28,6 +28,8 @@ You can also check the
   - Dataset browse view is now correctly displayed on mobile devices
   - Database-related actions are now hidden in preview mode (copy URL, share)
   - Chart titles in user profile are now correctly rendered
+- Styles
+  - Dataset tags can now wrap
 - Security
   - Added additional protection against data source URL injection
   - Removed feature flag for custom GraphQL endpoint
