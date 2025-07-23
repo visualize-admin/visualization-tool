@@ -522,6 +522,8 @@ export const Input = ({
   name,
   value,
   defaultValue,
+  endAdornment,
+  placeholder,
   onBlur,
   onKeyDown,
   disabled,
@@ -533,6 +535,8 @@ export const Input = ({
   label?: string | ReactNode;
   disabled?: boolean;
   defaultValue?: FieldProps["value"];
+  endAdornment?: ReactNode;
+  placeholder?: string;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
   error?: boolean;
@@ -553,6 +557,8 @@ export const Input = ({
       onBlur={onBlur}
       onChange={onChange}
       onKeyDown={onKeyDown}
+      placeholder={placeholder}
+      endAdornment={endAdornment}
       sx={error ? { ...sx, borderColor: "error.main" } : sx}
     />
     {error && errorMessage ? (
