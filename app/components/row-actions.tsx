@@ -5,8 +5,7 @@ import { MenuActionItem, MenuActionProps } from "@/components/menu-action-item";
 import { useFlipMenu } from "@/components/use-flip-menu";
 import { Icon } from "@/icons";
 
-export const RowActions = (props: { actions: MenuActionProps[] }) => {
-  const { actions } = props;
+export const RowActions = ({ actions }: { actions: MenuActionProps[] }) => {
   const [primaryAction, ...otherActions] = actions;
   const {
     buttonRef,

@@ -4,8 +4,9 @@ import { Box, Tab, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import groupBy from "lodash/groupBy";
-import { SyntheticEvent, useMemo, useState } from "react";
+import { type SyntheticEvent, useMemo, useState } from "react";
 
+import { ParsedConfigWithViewCount } from "@/db/config";
 import { useUserConfigs } from "@/domain/user-configs";
 import { ProfileColorPaletteContent } from "@/login/components/color-palettes/profile-color-palette-content";
 import { ProfileVisualizationsTable } from "@/login/components/profile-tables";
@@ -48,6 +49,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
   const { userId } = props;
 
   const { data: userConfigs } = useUserConfigs();
+
   const [value, setValue] = useState("home");
   const handleChange = useEvent((_: SyntheticEvent, v: string) => {
     setValue(v);
@@ -59,7 +61,7 @@ export const ProfileContentTabs = (props: ProfileContentTabsProps) => {
     useMemo(() => {
       return groupBy(
         userConfigs,
-        (x: { published_state: any }) => x.published_state
+        (config: ParsedConfigWithViewCount) => config.published_state
       );
     }, [userConfigs]);
 

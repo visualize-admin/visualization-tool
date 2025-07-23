@@ -33,7 +33,7 @@ import { RenameDialog } from "@/components/rename-dialog";
 import { RowActions } from "@/components/row-actions";
 import { useDisclosure } from "@/components/use-disclosure";
 import { CONFIGURATOR_STATE_LAYOUTING } from "@/config-types";
-import { ParsedConfig } from "@/db/config";
+import { ParsedConfigWithViewCount } from "@/db/config";
 import { sourceToLabel } from "@/domain/data-source";
 import { truthy } from "@/domain/types";
 import { useUserConfigs } from "@/domain/user-configs";
@@ -41,6 +41,7 @@ import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { useRootStyles } from "@/login/utils";
+import { formatInteger } from "@/statistics/formatters";
 import { removeConfig, updateConfig } from "@/utils/chart-config/api";
 import { useMutate } from "@/utils/use-fetch-data";
 
@@ -71,7 +72,7 @@ export const SectionContent = ({
 type ProfileVisualizationsTableProps = {
   title: string;
   userId: number;
-  userConfigs: ParsedConfig[];
+  userConfigs: ParsedConfigWithViewCount[];
   preview?: boolean;
   onShowAll?: () => void;
 };
@@ -94,11 +95,13 @@ const StyledTable = styled(Table)(({ theme }) => ({
   },
 }));
 
-export const ProfileVisualizationsTable = (
-  props: ProfileVisualizationsTableProps
-) => {
-  const { title, userId, userConfigs, preview, onShowAll } = props;
-
+export const ProfileVisualizationsTable = ({
+  title,
+  userId,
+  userConfigs,
+  preview,
+  onShowAll,
+}: ProfileVisualizationsTableProps) => {
   return (
     <SectionContent title={title}>
       {userConfigs.length > 0 ? (
@@ -111,22 +114,27 @@ export const ProfileVisualizationsTable = (
                     Type
                   </Trans>
                 </TableCell>
-                <TableCell component="th" width="30%">
+                <TableCell component="th" width="27.5%">
                   <Trans id="login.profile.my-visualizations.chart-name">
                     Name
                   </Trans>
                 </TableCell>
-                <TableCell component="th" width="30%">
+                <TableCell component="th" width="27.5%">
                   <Trans id="login.profile.my-visualizations.dataset-name">
                     Dataset
                   </Trans>
                 </TableCell>
-                <TableCell component="th" width="15%">
+                <TableCell component="th" width="12.5%">
                   <Trans id="login.profile.my-visualizations.chart-updated-date">
                     Last edit
                   </Trans>
                 </TableCell>
-                <TableCell component="th" width="15%" />
+                <TableCell component="th" width="10%">
+                  <Trans id="login.profile.my-visualizations.chart-views">
+                    Views
+                  </Trans>
+                </TableCell>
+                <TableCell component="th" width="12.5%" />
               </TableRow>
             </TableHead>
             <TableBody>
@@ -169,11 +177,13 @@ export const ProfileVisualizationsTable = (
   );
 };
 
-const ProfileVisualizationsRow = (props: {
+const ProfileVisualizationsRow = ({
+  userId,
+  config,
+}: {
   userId: number;
-  config: ParsedConfig;
+  config: ParsedConfigWithViewCount;
 }) => {
-  const { userId, config } = props;
   const { dataSource } = config.data;
   const dataSets = Array.from(
     new Set(config.data.chartConfigs.flatMap((d) => d.cubes.map((d) => d.iri)))
@@ -407,6 +417,11 @@ const ProfileVisualizationsRow = (props: {
           dateStyle: "medium",
           timeStyle: "short",
         })}
+      </TableCell>
+      <TableCell>
+        <Typography variant="body3" component="p" noWrap>
+          {formatInteger(config.viewCount)}
+        </Typography>
       </TableCell>
       <TableCell align="right">
         <RowActions actions={actions} />
