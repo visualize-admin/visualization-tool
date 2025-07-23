@@ -14,6 +14,8 @@ You can also check the
 - Features
   - Improved UX of interacting with conversion units multiplier input
   - Updated WMS & WMTS providers list
+  - Added missing OpenGraph tags to the application (description, image) and
+    updated the title
 - Fixes
   - Interactive calculation is now correctly reset when removing segmentation
   - Tooltips are now correctly displayed in data preview table
