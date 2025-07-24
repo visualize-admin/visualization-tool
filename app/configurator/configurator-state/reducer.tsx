@@ -412,17 +412,16 @@ export const handleChartFieldChanged = (
   });
 
   // Remove the component from interactive data filters.
-  if (chartConfig.interactiveFiltersConfig?.dataFilters) {
-    const componentIds =
-      chartConfig.interactiveFiltersConfig.dataFilters.componentIds.filter(
-        (d) => d !== componentId
-      );
-    const active = componentIds.length > 0;
-    chartConfig.interactiveFiltersConfig.dataFilters = {
-      active,
-      componentIds,
-    };
-  }
+
+  const componentIds =
+    chartConfig.interactiveFiltersConfig.dataFilters.componentIds.filter(
+      (d) => d !== componentId
+    );
+  const active = componentIds.length > 0;
+  chartConfig.interactiveFiltersConfig.dataFilters = {
+    active,
+    componentIds,
+  };
 
   const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
   const index = draft.chartConfigs.findIndex((d) => d.key === chartConfig.key);
