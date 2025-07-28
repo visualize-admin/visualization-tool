@@ -11,6 +11,10 @@ You can also check the
 
 # Unreleased
 
+Nothing yet.
+
+# 5.9.0 - 2025-07-28
+
 - Features
   - Improved UX of interacting with conversion units multiplier input
   - Updated WMS & WMTS providers list
