@@ -34,6 +34,7 @@ You can also check the
   - Dataset tags can now wrap
   - Dataset browse side panel now sticks to the top of the page when scrolling
   - Search input in table charts has better affordance now
+  - Locale switcher has new appearance, in line with other selects
 - Security
   - Added additional protection against data source URL injection
   - Removed feature flag for custom GraphQL endpoint
