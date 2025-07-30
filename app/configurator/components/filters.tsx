@@ -369,7 +369,7 @@ const MultiFilterContent = ({
     segment?.showValuesMapping ?? {}
   );
 
-  const interactiveFilterProps = useInteractiveFiltersToggle("legend");
+  const interactiveFilterProps = useInteractiveFiltersToggle();
   const visibleLegendProps = useLegendTitleVisibility();
   const chartSymbol = getChartSymbol(chartConfig.chartType);
 

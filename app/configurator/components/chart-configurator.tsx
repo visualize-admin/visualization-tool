@@ -592,7 +592,7 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
 }));
 
 const InteractiveDataFilterToggle = ({ id }: { id: string }) => {
-  const { checked, toggle } = useInteractiveDataFilterToggle(id);
+  const { checked, onChange } = useInteractiveDataFilterToggle(id);
 
   return (
     <Switch
@@ -602,7 +602,7 @@ const InteractiveDataFilterToggle = ({ id }: { id: string }) => {
         message: "Interactive",
       })}
       checked={checked}
-      onChange={toggle}
+      onChange={onChange}
     />
   );
 };

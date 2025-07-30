@@ -10,15 +10,15 @@ import {
 } from "@/configurator/configurator-state";
 import { useEvent } from "@/utils/use-event";
 
-export const useInteractiveFiltersToggle = (target: "legend") => {
+export const useInteractiveFiltersToggle = () => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
-    if (chartConfig.interactiveFiltersConfig[target]) {
+    if (chartConfig.interactiveFiltersConfig.legend) {
       const newConfig = produce(
         chartConfig.interactiveFiltersConfig,
         (draft) => {
-          draft[target].active = e.currentTarget.checked;
+          draft.legend.active = e.currentTarget.checked;
         }
       );
 
@@ -29,14 +29,11 @@ export const useInteractiveFiltersToggle = (target: "legend") => {
     }
   });
 
-  const stateValue = get(
-    chartConfig,
-    `interactiveFiltersConfig.${target}.active`
-  );
+  const stateValue = get(chartConfig, "interactiveFiltersConfig.legend.active");
   const checked = stateValue ? stateValue : false;
 
   return {
-    name: target,
+    name: "legend",
     checked,
     onChange,
   };
@@ -48,7 +45,7 @@ export const useInteractiveFiltersToggle = (target: "legend") => {
 export const useInteractiveDataFilterToggle = (dimensionId: string) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
-  const toggle = useEvent(() => {
+  const onChange = useEvent(() => {
     const { interactiveFiltersConfig } = chartConfig;
     const newIFConfig = toggleInteractiveFilterDataDimension(
       interactiveFiltersConfig,
@@ -65,7 +62,7 @@ export const useInteractiveDataFilterToggle = (dimensionId: string) => {
       dimensionId
     );
 
-  return { checked, toggle };
+  return { checked, onChange };
 };
 
 // Add or remove a dimension from the interactive  data filters dimensions list
