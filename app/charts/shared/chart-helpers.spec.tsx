@@ -7,12 +7,7 @@ import {
   prepareCubeQueryFilters,
   useQueryFilters,
 } from "@/charts/shared/chart-helpers";
-import {
-  ChartConfig,
-  ChartType,
-  Filters,
-  InteractiveFiltersConfig,
-} from "@/configurator";
+import { ChartConfig, Filters, InteractiveFiltersConfig } from "@/configurator";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { mkJoinById } from "@/graphql/join";
 import {
@@ -94,7 +89,6 @@ const commonInteractiveFiltersState: InteractiveFiltersState = {
 describe("useQueryFilters", () => {
   it("should not merge interactive filters state if interactive filters are disabled at publish time", () => {
     const queryFilters = prepareCubeQueryFilters({
-      chartType: line1Fixture.data.chartConfig.chartType as ChartType,
       cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
       animationField: undefined,
       interactiveFiltersConfig: commonInteractiveFiltersConfig,
@@ -109,7 +103,6 @@ describe("useQueryFilters", () => {
 
   it("should merge interactive filters state if interactive filters are active at publish time", () => {
     const queryFilters = prepareCubeQueryFilters({
-      chartType: line1Fixture.data.chartConfig.chartType as ChartType,
       cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
       animationField: undefined,
       interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
@@ -129,7 +122,6 @@ describe("useQueryFilters", () => {
 
   it("should omit none values since they should not be passed to graphql layer", () => {
     const queryFilters = prepareCubeQueryFilters({
-      chartType: line1Fixture.data.chartConfig.chartType as ChartType,
       cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
       animationField: undefined,
       interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {

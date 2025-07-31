@@ -9,19 +9,14 @@ import { TableConfig } from "@/configurator";
 import { ChartProps, VisualizationProps } from "../shared/chart-props";
 
 export const ChartTableVisualization = (
-  props: Omit<VisualizationProps<TableConfig>, "observationQueryFilters">
+  props: VisualizationProps<TableConfig>
 ) => {
-  const { chartConfig, componentIds } = props;
+  const { observationQueryFilters } = props;
 
   return (
     <ChartDataWrapper
       {...props}
-      observationQueryFilters={chartConfig.cubes.map((cube) => ({
-        iri: cube.iri,
-        componentIds,
-        filters: cube.filters,
-        joinBy: cube.joinBy,
-      }))}
+      observationQueryFilters={observationQueryFilters}
       Component={ChartTable}
     />
   );

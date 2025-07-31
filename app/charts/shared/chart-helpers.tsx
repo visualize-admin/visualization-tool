@@ -12,7 +12,6 @@ import { useObservationLabels } from "@/charts/shared/observation-labels";
 import {
   AnimationField,
   ChartConfig,
-  ChartType,
   Filters,
   ImputationType,
   InteractiveFiltersConfig,
@@ -54,7 +53,6 @@ import {
 //   if applicable
 // - removes none values since they should not be sent as part of the GraphQL query
 export const prepareCubeQueryFilters = ({
-  chartType,
   cubeFilters,
   animationField,
   interactiveFiltersConfig,
@@ -62,7 +60,6 @@ export const prepareCubeQueryFilters = ({
   interactiveDataFilters,
   allowNoneValues = false,
 }: {
-  chartType: ChartType;
   cubeFilters: Filters;
   animationField: AnimationField | undefined;
   interactiveFiltersConfig: InteractiveFiltersConfig;
@@ -72,27 +69,25 @@ export const prepareCubeQueryFilters = ({
 }): Filters => {
   const queryFilters = { ...cubeFilters };
 
-  if (chartType !== "table") {
-    for (const [k, v] of Object.entries(
-      dashboardFilters?.dataFilters.filters ?? {}
-    )) {
-      if (
-        k in cubeFilters &&
-        dashboardFilters?.dataFilters.componentIds?.includes(k) &&
-        animationField?.componentId !== k
-      ) {
-        queryFilters[k] = v;
-      }
+  for (const [k, v] of Object.entries(
+    dashboardFilters?.dataFilters.filters ?? {}
+  )) {
+    if (
+      k in cubeFilters &&
+      dashboardFilters?.dataFilters.componentIds?.includes(k) &&
+      animationField?.componentId !== k
+    ) {
+      queryFilters[k] = v;
     }
+  }
 
-    for (const [k, v] of Object.entries(interactiveDataFilters)) {
-      if (
-        (interactiveFiltersConfig.dataFilters.active ||
-          dashboardFilters?.dataFilters.componentIds?.includes(k)) &&
-        animationField?.componentId !== k
-      ) {
-        queryFilters[k] = v;
-      }
+  for (const [k, v] of Object.entries(interactiveDataFilters)) {
+    if (
+      (interactiveFiltersConfig.dataFilters.active ||
+        dashboardFilters?.dataFilters.componentIds?.includes(k)) &&
+      animationField?.componentId !== k
+    ) {
+      queryFilters[k] = v;
     }
   }
 
@@ -135,7 +130,6 @@ export const useQueryFilters = ({
       );
 
       const preparedFilters = prepareCubeQueryFilters({
-        chartType: chartConfig.chartType,
         cubeFilters,
         animationField,
         interactiveFiltersConfig: chartConfig.interactiveFiltersConfig,
@@ -144,18 +138,15 @@ export const useQueryFilters = ({
         allowNoneValues,
       });
 
-      const filters: DataCubeObservationFilter = {
+      return {
         iri: cube.iri,
         componentIds,
         filters: preparedFilters,
         joinBy: cube.joinBy,
-      };
-
-      return filters;
+      } satisfies DataCubeObservationFilter;
     });
   }, [
     chartConfig.cubes,
-    chartConfig.chartType,
     chartConfig.interactiveFiltersConfig,
     chartInteractiveFilters,
     animationField,

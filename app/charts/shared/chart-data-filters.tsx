@@ -212,17 +212,14 @@ export const ChartDataFiltersToggle = ({
   );
 };
 
-export const ChartDataFiltersList = (
-  props: ReturnType<typeof useChartDataFiltersState>
-) => {
-  const {
-    open,
-    dataSource,
-    chartConfig,
-    loading,
-    preparedFilters,
-    componentIds,
-  } = props;
+export const ChartDataFiltersList = ({
+  open,
+  dataSource,
+  chartConfig,
+  loading,
+  preparedFilters,
+  componentIds,
+}: ReturnType<typeof useChartDataFiltersState>) => {
   const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
 
   return componentIds && componentIds.length > 0 ? (
