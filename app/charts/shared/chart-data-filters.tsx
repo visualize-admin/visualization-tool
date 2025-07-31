@@ -545,7 +545,8 @@ export const DataFilterHierarchyDimension = ({
     }
 
     if (configFilter.type === "multi") {
-      return [noneOption, ...opts.filter((d) => configFilter.values[d.value])];
+      const filteredOptions = filterTreeRecursively(opts, configFilter);
+      return [noneOption, ...filteredOptions];
     }
 
     if (!isKeyDimension || configFilter.type !== "single") {
@@ -772,4 +773,49 @@ const useEnsurePossibleInteractiveFilters = ({
   ]);
 
   return { error };
+};
+
+const filterTreeRecursively = (
+  options: Tree,
+  configFilter: Filters[string]
+): Tree => {
+  if (!configFilter || configFilter.type !== "multi") {
+    return options;
+  }
+
+  const shouldIncludeNode = (node: Tree[number]): boolean => {
+    if (configFilter.values[node.value]) {
+      return true;
+    }
+
+    if (node.children && node.children.length > 0) {
+      return node.children.some(shouldIncludeNode);
+    }
+
+    return false;
+  };
+
+  const filterNode = (node: Tree[number]): Tree[number] | null => {
+    if (shouldIncludeNode(node)) {
+      const filteredChildren = node.children
+        ? node.children
+            .map(filterNode)
+            .filter((child): child is Tree[number] => child !== null)
+        : undefined;
+
+      return {
+        ...node,
+        children: filteredChildren,
+        selectable: configFilter
+          ? !!configFilter.values[node.value]
+          : !!node.hasValue,
+      };
+    }
+
+    return null;
+  };
+
+  return options
+    .map(filterNode)
+    .filter((node): node is Tree[number] => node !== null);
 };
