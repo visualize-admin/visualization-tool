@@ -271,6 +271,135 @@ describe("useQueryFilters", () => {
       },
     ]);
   });
+
+  it("should handle multi-filter with FIELD_VALUE_NONE", () => {
+    const cubeFiltersWithMulti: Filters = {
+      [col("3")]: {
+        type: "multi" as const,
+        values: {
+          [val("3", "1")]: true,
+          [val("3", "2")]: true,
+        },
+      },
+    };
+
+    const interactiveDataFiltersWithNone = {
+      [col("3")]: { type: "single" as const, value: FIELD_VALUE_NONE },
+    };
+
+    const queryFilters = prepareCubeQueryFilters({
+      cubeFilters: cubeFiltersWithMulti,
+      animationField: undefined,
+      interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
+        dataFilters: {
+          active: true,
+        },
+      }),
+      dashboardFilters: undefined,
+      interactiveDataFilters: interactiveDataFiltersWithNone,
+    });
+
+    expect(queryFilters[col("3")]).toEqual({
+      type: "multi",
+      values: {
+        [val("3", "1")]: true,
+        [val("3", "2")]: true,
+      },
+    });
+  });
+
+  it("should handle animation field exclusion with multi-filters", () => {
+    const animationField = {
+      componentId: col("3"),
+      showPlayButton: false,
+      type: "continuous" as const,
+      duration: 1000,
+      dynamicScales: false,
+    };
+
+    const queryFilters = prepareCubeQueryFilters({
+      cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
+      animationField,
+      interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
+        dataFilters: {
+          active: true,
+        },
+      }),
+      dashboardFilters: undefined,
+      interactiveDataFilters: commonInteractiveFiltersState.dataFilters,
+    });
+
+    expect(queryFilters[col("3")]).toEqual({
+      type: "single",
+      value: val("3", "0"),
+    });
+  });
+
+  it("should prioritize dashboard filters over interactive filters", () => {
+    const dashboardFilters = {
+      timeRange: {
+        active: false,
+        timeUnit: "ms",
+        presets: {
+          from: "2021-01-01",
+          to: "2021-12-31",
+        },
+      },
+      dataFilters: {
+        componentIds: [col("3")],
+        filters: {
+          [col("3")]: { type: "single" as const, value: val("3", "dashboard") },
+        },
+      },
+    };
+
+    const queryFilters = prepareCubeQueryFilters({
+      cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
+      animationField: undefined,
+      interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
+        dataFilters: {
+          active: true,
+        },
+      }),
+      dashboardFilters,
+      interactiveDataFilters: {},
+    });
+
+    expect(queryFilters[col("3")]).toEqual({
+      type: "single",
+      value: val("3", "dashboard"),
+    });
+  });
+
+  it("should handle allowNoneValues parameter", () => {
+    const interactiveDataFiltersWithNone = {
+      [col("3")]: { type: "single" as const, value: FIELD_VALUE_NONE },
+      [col("4")]: { type: "single" as const, value: val("4", "valid") },
+    };
+
+    const queryFilters = prepareCubeQueryFilters({
+      cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
+      animationField: undefined,
+      interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
+        dataFilters: {
+          active: true,
+          componentIds: [col("3"), col("4")],
+        },
+      }),
+      dashboardFilters: undefined,
+      interactiveDataFilters: interactiveDataFiltersWithNone,
+      allowNoneValues: true,
+    });
+
+    expect(queryFilters[col("3")]).toEqual({
+      type: "single",
+      value: FIELD_VALUE_NONE,
+    });
+    expect(queryFilters[col("4")]).toEqual({
+      type: "single",
+      value: val("4", "valid"),
+    });
+  });
 });
 
 describe("getChartConfigComponentsIds", () => {
