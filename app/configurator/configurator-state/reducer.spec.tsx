@@ -571,6 +571,7 @@ describe("deriveFiltersFromFields", () => {
           "dataFilters": {
             "active": false,
             "componentIds": [],
+            "defaultValueOverrides": {},
           },
           "legend": {
             "active": false,
@@ -1195,6 +1196,7 @@ describe("colorMapping", () => {
             dataFilters: {
               active: false,
               componentIds: [],
+              defaultValueOverrides: {},
               defaultOpen: true,
             },
             calculation: {
