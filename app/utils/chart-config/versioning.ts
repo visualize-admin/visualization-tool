@@ -1592,6 +1592,9 @@ export const chartConfigMigrations: Migration[] = [
             type: "identity",
           },
         };
+      } else {
+        newConfig.interactiveFiltersConfig.dataFilters.defaultValueOverrides =
+          {};
       }
 
       return newConfig;
