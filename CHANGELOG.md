@@ -11,7 +11,9 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Features
+  - It's now possible to enable interactive filters for multi-filter panel
+    fields
 
 # 5.9.0 - 2025-07-28
 

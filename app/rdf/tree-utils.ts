@@ -149,7 +149,7 @@ export const regroupTrees = (
           children: t[0].children,
           dimensionId: t[0].dimensionId,
           label: t[0].hierarchyName!,
-          depth: -1,
+          depth: 0,
         })),
       },
     ];

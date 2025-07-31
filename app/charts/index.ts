@@ -197,6 +197,7 @@ const getInitialInteractiveFiltersConfig = (options?: {
     dataFilters: {
       active: false,
       componentIds: [],
+      defaultValueOverrides: {},
       defaultOpen: true,
     },
     calculation: {
@@ -386,6 +387,7 @@ export const getInitialConfig = (
           };
         }
       }),
+      interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
       limits: {},
       conversionUnitsByComponentId: {},
       activeField: undefined,
@@ -507,7 +509,6 @@ export const getInitialConfig = (
       return {
         ...getGenericConfig(makeInitialFiltersForArea(areaDimension)),
         chartType,
-        interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         baseLayer: {
           show: true,
           locked: false,
@@ -542,7 +543,6 @@ export const getInitialConfig = (
       return {
         ...getGenericConfig(),
         chartType,
-        interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         fields: {
           y: { componentId: numericalMeasures[0].id },
           segment: {
@@ -571,7 +571,6 @@ export const getInitialConfig = (
       return {
         ...getGenericConfig(),
         chartType: "scatterplot",
-        interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         fields: {
           x: { componentId: numericalMeasures[0].id },
           y: {
@@ -612,7 +611,6 @@ export const getInitialConfig = (
       return {
         ...getGenericConfig(),
         chartType,
-        interactiveFiltersConfig: undefined,
         settings: {
           showSearch: true,
           showAllRows: false,
@@ -976,10 +974,23 @@ const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
           const validComponentIds = oldComponentIds.filter(
             (d) => !fieldComponentIds.includes(d)
           );
+
+          const newDefaultValueOverrides = {
+            ...oldValue.defaultValueOverrides,
+          };
+          const removedComponentIds = oldComponentIds.filter(
+            (d) => !validComponentIds.includes(d)
+          );
+          removedComponentIds.forEach((id) => {
+            delete newDefaultValueOverrides[id];
+          });
+
           draft.interactiveFiltersConfig.dataFilters.active =
             validComponentIds.length > 0;
           draft.interactiveFiltersConfig.dataFilters.componentIds =
             validComponentIds;
+          draft.interactiveFiltersConfig.dataFilters.defaultValueOverrides =
+            newDefaultValueOverrides;
         } else {
           draft.interactiveFiltersConfig.dataFilters = oldValue;
         }

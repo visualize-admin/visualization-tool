@@ -35,6 +35,7 @@ import {
   DatePickerField,
 } from "@/configurator/components/field-date-picker";
 import { extractDataPickerOptionsFromDimension } from "@/configurator/components/ui-helpers";
+import { Option } from "@/configurator/config-form";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   Dimension,
@@ -76,17 +77,17 @@ export const useChartDataFiltersState = ({
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
 }) => {
-  const dataFiltersConfig = chartConfig.interactiveFiltersConfig?.dataFilters;
-  const active = dataFiltersConfig?.active;
-  const defaultOpen = dataFiltersConfig?.defaultOpen;
-  const componentIds = dataFiltersConfig?.componentIds;
+  const dataFiltersConfig = chartConfig.interactiveFiltersConfig.dataFilters;
+  const active = dataFiltersConfig.active;
+  const defaultOpen = dataFiltersConfig.defaultOpen;
+  const componentIds = dataFiltersConfig.componentIds;
   const [open, setOpen] = useState<boolean>(!!defaultOpen);
 
   useEffect(() => {
-    if (componentIds?.length === 0) {
+    if (componentIds.length === 0) {
       setOpen(false);
     }
-  }, [componentIds?.length]);
+  }, [componentIds.length]);
 
   useEffect(() => {
     setOpen(!!defaultOpen);
@@ -108,12 +109,28 @@ export const useChartDataFiltersState = ({
       });
       const { unmappedFilters, mappedFilters } = filtersByMappingStatus;
       const unmappedKeys = Object.keys(unmappedFilters);
-      const unmappedEntries = Object.entries(
-        cubeQueryFilters.filters as Filters
-      ).filter(([k]) => unmappedKeys.includes(k));
-      const interactiveFiltersList = unmappedEntries.filter(([k]) =>
-        componentIds?.includes(k)
+      const filters = cubeQueryFilters.filters ?? {};
+      const unmappedEntries = Object.entries(filters).filter(
+        ([unmappedComponentId]) => unmappedKeys.includes(unmappedComponentId)
       );
+      const cubeComponentIds = [
+        ...Object.keys(filters),
+        ...Object.keys(chartConfig.fields),
+        ...Object.values(chartConfig.fields).map((field) => field.componentId),
+      ];
+      const interactiveFiltersList = componentIds
+        .filter((componentId) => cubeComponentIds.includes(componentId))
+        .map((componentId) => {
+          const existingEntry = unmappedEntries.find(
+            ([unmappedComponentId]) => unmappedComponentId === componentId
+          );
+
+          if (existingEntry) {
+            return existingEntry;
+          }
+
+          return [componentId, undefined];
+        });
 
       return {
         cubeIri: cube.iri,
@@ -212,17 +229,14 @@ export const ChartDataFiltersToggle = ({
   );
 };
 
-export const ChartDataFiltersList = (
-  props: ReturnType<typeof useChartDataFiltersState>
-) => {
-  const {
-    open,
-    dataSource,
-    chartConfig,
-    loading,
-    preparedFilters,
-    componentIds,
-  } = props;
+export const ChartDataFiltersList = ({
+  open,
+  dataSource,
+  chartConfig,
+  loading,
+  preparedFilters,
+  componentIds,
+}: ReturnType<typeof useChartDataFiltersState>) => {
   const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
 
   return componentIds && componentIds.length > 0 ? (
@@ -329,9 +343,13 @@ const DataFilter = ({
     // It can be invalid when the application is ensuring possible filters.
     if (
       (dataFilterValue && values.includes(dataFilterValue)) ||
-      dataFilterValue === FIELD_VALUE_NONE
+      dataFilterValue === FIELD_VALUE_NONE ||
+      !configFilter
     ) {
-      updateDataFilter(dimensionId, dataFilterValue);
+      updateDataFilter(
+        dimensionId,
+        dataFilterValue ? dataFilterValue : FIELD_VALUE_NONE
+      );
       chartLoadingState.set(`interactive-filter-${dimensionId}`, fetching);
     } else if (fetching || values.length === 0) {
       chartLoadingState.set(`interactive-filter-${dimensionId}`, fetching);
@@ -345,6 +363,7 @@ const DataFilter = ({
     setDataFilter,
     configFilterValue,
     updateDataFilter,
+    configFilter,
   ]);
 
   return dimension ? (
@@ -361,6 +380,7 @@ const DataFilter = ({
     >
       {isTemporalDimension(dimension) ? (
         <DataFilterTemporalDimension
+          configFilter={configFilter}
           value={value as string}
           dimension={dimension}
           onChange={setDataFilter}
@@ -368,6 +388,7 @@ const DataFilter = ({
         />
       ) : hierarchy ? (
         <DataFilterHierarchyDimension
+          configFilter={configFilter}
           dimension={dimension}
           onChange={setDataFilter}
           hierarchy={hierarchy}
@@ -376,6 +397,7 @@ const DataFilter = ({
         />
       ) : (
         <DataFilterGenericDimension
+          configFilter={configFilter}
           dimension={dimension}
           onChange={setDataFilter}
           value={value as string}
@@ -399,16 +421,25 @@ export const getInteractiveQueryFilters = ({
 }) => {
   const nonInteractiveFilters = pickBy(
     filters,
-    (_, k) => !(k in interactiveFilters)
+    (_, componentId) => !(componentId in interactiveFilters)
   );
   let i = 0;
-  return mapValues(
-    { ...nonInteractiveFilters, ...interactiveFilters },
-    (v) => ({ ...v, position: i++ })
-  );
+
+  return mapValues({ ...nonInteractiveFilters, ...interactiveFilters }, (v) => {
+    if (v === undefined) {
+      return {
+        type: "single" as const,
+        value: FIELD_VALUE_NONE,
+        position: i++,
+      };
+    }
+
+    return { ...v, position: i++ };
+  });
 };
 
 export type DataFilterGenericDimensionProps = {
+  configFilter?: Filters[string];
   dimension: Dimension;
   value: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
@@ -416,28 +447,40 @@ export type DataFilterGenericDimensionProps = {
   disabled: boolean;
 };
 
-export const DataFilterGenericDimension = (
-  props: DataFilterGenericDimensionProps
-) => {
-  const { dimension, value, onChange, options: propOptions, disabled } = props;
+export const DataFilterGenericDimension = ({
+  configFilter,
+  dimension,
+  value,
+  onChange,
+  options: _options,
+  disabled,
+}: DataFilterGenericDimensionProps) => {
   const { label, isKeyDimension } = dimension;
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
     message: "No Filter",
   });
-  const options = propOptions ?? dimension.values;
-  const allOptions = useMemo(() => {
-    return isKeyDimension
-      ? options
-      : [
-          {
-            value: FIELD_VALUE_NONE,
-            label: noneLabel,
-            isNoneValue: true,
-          },
-          ...options,
-        ];
-  }, [isKeyDimension, options, noneLabel]);
+  const options: Option[] = _options ?? dimension.values;
+  const allOptions: Option[] = useMemo(() => {
+    const noneOption = {
+      value: FIELD_VALUE_NONE,
+      label: noneLabel,
+      isNoneValue: true,
+    };
+
+    if (!configFilter) {
+      return [noneOption, ...options];
+    }
+
+    if (configFilter.type === "multi") {
+      return [
+        noneOption,
+        ...options.filter((d) => configFilter.values[d.value]),
+      ];
+    }
+
+    return isKeyDimension ? options : [noneOption, ...options];
+  }, [noneLabel, configFilter, isKeyDimension, options]);
 
   return (
     <Select
@@ -460,24 +503,34 @@ export const DataFilterGenericDimension = (
   );
 };
 
-type DataFilterHierarchyDimensionProps = {
+export const DataFilterHierarchyDimension = ({
+  configFilter,
+  dimension,
+  value,
+  onChange,
+  hierarchy,
+  disabled,
+}: {
+  configFilter?: Filters[string];
   dimension: Dimension;
   value: string;
   onChange: (e: { target: { value: string } }) => void;
   hierarchy?: HierarchyValue[];
   disabled: boolean;
-};
-
-export const DataFilterHierarchyDimension = (
-  props: DataFilterHierarchyDimensionProps
-) => {
-  const { dimension, value, onChange, hierarchy, disabled } = props;
+}) => {
   const { label, isKeyDimension, values: dimensionValues } = dimension;
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
     message: `No Filter`,
   });
   const options: Tree = useMemo(() => {
+    const noneOption = {
+      value: FIELD_VALUE_NONE,
+      label: noneLabel,
+      isNoneValue: true,
+      hasValue: true,
+    };
+
     const opts = (
       hierarchy
         ? hierarchyToOptions(
@@ -492,17 +545,21 @@ export const DataFilterHierarchyDimension = (
       hasValue: boolean;
     }[];
 
-    if (!isKeyDimension) {
-      opts.unshift({
-        value: FIELD_VALUE_NONE,
-        label: noneLabel,
-        isNoneValue: true,
-        hasValue: true,
-      });
+    if (!configFilter) {
+      return [noneOption, ...opts];
+    }
+
+    if (configFilter.type === "multi") {
+      const filteredOptions = filterTreeRecursively(opts, configFilter);
+      return [noneOption, ...filteredOptions];
+    }
+
+    if (!isKeyDimension || configFilter.type !== "single") {
+      opts.unshift(noneOption);
     }
 
     return opts;
-  }, [hierarchy, isKeyDimension, dimensionValues, noneLabel]);
+  }, [noneLabel, hierarchy, dimensionValues, configFilter, isKeyDimension]);
 
   return (
     <SelectTree
@@ -524,11 +581,13 @@ export const DataFilterHierarchyDimension = (
 };
 
 export const DataFilterTemporalDimension = ({
+  configFilter,
   dimension,
   value,
   onChange,
   disabled,
 }: {
+  configFilter?: Filters[string];
   dimension: TemporalDimension;
   value: string;
   onChange: (
@@ -572,6 +631,7 @@ export const DataFilterTemporalDimension = ({
     />
   ) : (
     <DataFilterGenericDimension
+      configFilter={configFilter}
       dimension={dimension}
       options={options}
       value={value}
@@ -718,4 +778,49 @@ const useEnsurePossibleInteractiveFilters = ({
   ]);
 
   return { error };
+};
+
+const filterTreeRecursively = (
+  options: Tree,
+  configFilter: Filters[string]
+): Tree => {
+  if (!configFilter || configFilter.type !== "multi") {
+    return options;
+  }
+
+  const shouldIncludeNode = (node: Tree[number]): boolean => {
+    if (configFilter.values[node.value]) {
+      return true;
+    }
+
+    if (node.children && node.children.length > 0) {
+      return node.children.some(shouldIncludeNode);
+    }
+
+    return false;
+  };
+
+  const filterNode = (node: Tree[number]): Tree[number] | null => {
+    if (shouldIncludeNode(node)) {
+      const filteredChildren = node.children
+        ? node.children
+            .map(filterNode)
+            .filter((child): child is Tree[number] => child !== null)
+        : undefined;
+
+      return {
+        ...node,
+        children: filteredChildren,
+        selectable: configFilter
+          ? !!configFilter.values[node.value]
+          : !!node.hasValue,
+      };
+    }
+
+    return null;
+  };
+
+  return options
+    .map(filterNode)
+    .filter((node): node is Tree[number] => node !== null);
 };
