@@ -95,11 +95,33 @@ export const useSyncInteractiveFilters = (
         newPotentialInteractiveDataFilters.reduce(
           (obj, iri) => {
             const configFilter = filters[iri];
+
             if (Object.keys(dataFilters).includes(iri)) {
               obj[iri] = dataFilters[iri];
             } else if (configFilter?.type === "single") {
               obj[iri] = configFilter;
+            } else if (configFilter?.type === "multi" || !configFilter) {
+              const defaultValueOverride =
+                interactiveFiltersConfig.dataFilters.defaultValueOverrides[iri];
+
+              if (
+                defaultValueOverride &&
+                (configFilter?.values[defaultValueOverride] || !configFilter)
+              ) {
+                obj[iri] = {
+                  type: "single",
+                  value: defaultValueOverride,
+                };
+              } else {
+                obj[iri] = {
+                  type: "single",
+                  value: FIELD_VALUE_NONE,
+                };
+                delete interactiveFiltersConfig.dataFilters
+                  .defaultValueOverrides[iri];
+              }
             }
+
             return obj;
           },
           {} as { [key: string]: FilterValueSingle }

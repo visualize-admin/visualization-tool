@@ -343,9 +343,13 @@ const DataFilter = ({
     // It can be invalid when the application is ensuring possible filters.
     if (
       (dataFilterValue && values.includes(dataFilterValue)) ||
-      dataFilterValue === FIELD_VALUE_NONE
+      dataFilterValue === FIELD_VALUE_NONE ||
+      !configFilter
     ) {
-      updateDataFilter(dimensionId, dataFilterValue);
+      updateDataFilter(
+        dimensionId,
+        dataFilterValue ? dataFilterValue : FIELD_VALUE_NONE
+      );
       chartLoadingState.set(`interactive-filter-${dimensionId}`, fetching);
     } else if (fetching || values.length === 0) {
       chartLoadingState.set(`interactive-filter-${dimensionId}`, fetching);
@@ -359,6 +363,7 @@ const DataFilter = ({
     setDataFilter,
     configFilterValue,
     updateDataFilter,
+    configFilter,
   ]);
 
   return dimension ? (

@@ -974,10 +974,23 @@ const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
           const validComponentIds = oldComponentIds.filter(
             (d) => !fieldComponentIds.includes(d)
           );
+
+          const newDefaultValueOverrides = {
+            ...oldValue.defaultValueOverrides,
+          };
+          const removedComponentIds = oldComponentIds.filter(
+            (d) => !validComponentIds.includes(d)
+          );
+          removedComponentIds.forEach((id) => {
+            delete newDefaultValueOverrides[id];
+          });
+
           draft.interactiveFiltersConfig.dataFilters.active =
             validComponentIds.length > 0;
           draft.interactiveFiltersConfig.dataFilters.componentIds =
             validComponentIds;
+          draft.interactiveFiltersConfig.dataFilters.defaultValueOverrides =
+            newDefaultValueOverrides;
         } else {
           draft.interactiveFiltersConfig.dataFilters = oldValue;
         }

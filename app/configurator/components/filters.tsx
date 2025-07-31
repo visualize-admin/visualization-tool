@@ -70,8 +70,10 @@ import {
   DatePickerField,
 } from "@/configurator/components/field-date-picker";
 import { useLegendTitleVisibility } from "@/configurator/configurator-state/segment-config-state";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { EditorBrush } from "@/configurator/interactive-filters/editor-brush";
 import {
+  useDefaultValueOverride,
   useInteractiveDataFilterToggle,
   useInteractiveFiltersToggle,
   useInteractiveTimeRangeToggle,
@@ -381,6 +383,21 @@ const MultiFilterContent = ({
   const visibleLegendProps = useLegendTitleVisibility();
   const chartSymbol = getChartSymbol(chartConfig.chartType);
 
+  const defaultValueOverrideProps = useDefaultValueOverride(dimensionId);
+  const defaultValueOptions = useMemo(() => {
+    return [
+      {
+        value: FIELD_VALUE_NONE,
+        label: t({
+          id: "controls.none",
+          message: "None",
+        }),
+        isNoneValue: true,
+      },
+      ...values.map(({ value, label }) => ({ value, label })),
+    ];
+  }, [values]);
+
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
@@ -393,6 +410,17 @@ const MultiFilterContent = ({
                 message: "Show legend titles",
               })}
               {...visibleLegendProps}
+            />
+          ) : interactiveFilterProps.checked ? (
+            <Select
+              id={`default-value-${dimensionId}`}
+              size="sm"
+              label={t({
+                id: "controls.filters.default-value.label",
+                message: "Default value",
+              })}
+              options={defaultValueOptions}
+              {...defaultValueOverrideProps}
             />
           ) : null}
         </Flex>
@@ -1011,8 +1039,7 @@ const DrawerContent = forwardRef<
             setPendingValues(newValues);
           }}
         />
-
-        <Box className={classes.autocompleteApplyButtonContainer}>
+        <div className={classes.autocompleteApplyButtonContainer}>
           <Button
             size="sm"
             className={classes.autocompleteApplyButton}
@@ -1021,7 +1048,7 @@ const DrawerContent = forwardRef<
           >
             <Trans id="controls.set-values-apply">Apply filters</Trans>
           </Button>
-        </Box>
+        </div>
       </div>
     );
   }

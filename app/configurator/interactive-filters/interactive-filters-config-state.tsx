@@ -1,3 +1,4 @@
+import { SelectChangeEvent } from "@mui/material";
 import produce from "immer";
 import get from "lodash/get";
 import { ChangeEvent } from "react";
@@ -8,6 +9,7 @@ import {
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { useEvent } from "@/utils/use-event";
 
 export const useInteractiveFiltersToggle = () => {
@@ -82,10 +84,20 @@ export const toggleInteractiveFilterDataDimension = produce(
     const newComponentIds = shouldAdd
       ? [...currentComponentIds, id]
       : config.dataFilters.componentIds.filter((d) => d !== id);
+
+    const newDefaultValueOverrides = {
+      ...config.dataFilters.defaultValueOverrides,
+    };
+
+    if (!shouldAdd) {
+      delete newDefaultValueOverrides[id];
+    }
+
     const newDataFilters: NonNullable<InteractiveFiltersConfig>["dataFilters"] =
       {
         ...config.dataFilters,
         componentIds: newComponentIds,
+        defaultValueOverrides: newDefaultValueOverrides,
       };
     newDataFilters.active = newComponentIds.length > 0;
 
@@ -129,4 +141,34 @@ const toggleInteractiveTimeRangeFilter = (config: InteractiveFiltersConfig) => {
   };
 
   return { ...config, timeRange: newTimeRange };
+};
+
+export const useDefaultValueOverride = (dimensionId: string) => {
+  const [state, dispatch] = useConfiguratorState(isConfiguring);
+  const chartConfig = getChartConfig(state);
+  const currentValue =
+    chartConfig.interactiveFiltersConfig.dataFilters.defaultValueOverrides[
+      dimensionId
+    ] || FIELD_VALUE_NONE;
+
+  const onChange = useEvent((e: SelectChangeEvent<unknown>) => {
+    const newValue = e.target.value as string;
+    const newConfig = produce(chartConfig.interactiveFiltersConfig, (draft) => {
+      if (newValue === FIELD_VALUE_NONE) {
+        delete draft.dataFilters.defaultValueOverrides[dimensionId];
+      } else {
+        draft.dataFilters.defaultValueOverrides[dimensionId] = newValue;
+      }
+    });
+
+    dispatch({
+      type: "INTERACTIVE_FILTER_CHANGED",
+      value: newConfig,
+    });
+  });
+
+  return {
+    value: currentValue,
+    onChange,
+  };
 };
