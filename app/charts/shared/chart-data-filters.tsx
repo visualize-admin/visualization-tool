@@ -374,6 +374,7 @@ const DataFilter = ({
     >
       {isTemporalDimension(dimension) ? (
         <DataFilterTemporalDimension
+          configFilter={configFilter}
           value={value as string}
           dimension={dimension}
           onChange={setDataFilter}
@@ -381,6 +382,7 @@ const DataFilter = ({
         />
       ) : hierarchy ? (
         <DataFilterHierarchyDimension
+          configFilter={configFilter}
           dimension={dimension}
           onChange={setDataFilter}
           hierarchy={hierarchy}
@@ -389,6 +391,7 @@ const DataFilter = ({
         />
       ) : (
         <DataFilterGenericDimension
+          configFilter={configFilter}
           dimension={dimension}
           onChange={setDataFilter}
           value={value as string}
@@ -430,6 +433,7 @@ export const getInteractiveQueryFilters = ({
 };
 
 export type DataFilterGenericDimensionProps = {
+  configFilter?: Filters[string];
   dimension: Dimension;
   value: string;
   onChange: (e: SelectChangeEvent<unknown>) => void;
@@ -437,10 +441,14 @@ export type DataFilterGenericDimensionProps = {
   disabled: boolean;
 };
 
-export const DataFilterGenericDimension = (
-  props: DataFilterGenericDimensionProps
-) => {
-  const { dimension, value, onChange, options: propOptions, disabled } = props;
+export const DataFilterGenericDimension = ({
+  configFilter,
+  dimension,
+  value,
+  onChange,
+  options: propOptions,
+  disabled,
+}: DataFilterGenericDimensionProps) => {
   const { label, isKeyDimension } = dimension;
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
@@ -448,7 +456,7 @@ export const DataFilterGenericDimension = (
   });
   const options = propOptions ?? dimension.values;
   const allOptions = useMemo(() => {
-    return isKeyDimension
+    return isKeyDimension && configFilter?.type === "single"
       ? options
       : [
           {
@@ -458,7 +466,7 @@ export const DataFilterGenericDimension = (
           },
           ...options,
         ];
-  }, [isKeyDimension, options, noneLabel]);
+  }, [isKeyDimension, configFilter?.type, options, noneLabel]);
 
   return (
     <Select
@@ -481,18 +489,21 @@ export const DataFilterGenericDimension = (
   );
 };
 
-type DataFilterHierarchyDimensionProps = {
+export const DataFilterHierarchyDimension = ({
+  configFilter,
+  dimension,
+  value,
+  onChange,
+  hierarchy,
+  disabled,
+}: {
+  configFilter?: Filters[string];
   dimension: Dimension;
   value: string;
   onChange: (e: { target: { value: string } }) => void;
   hierarchy?: HierarchyValue[];
   disabled: boolean;
-};
-
-export const DataFilterHierarchyDimension = (
-  props: DataFilterHierarchyDimensionProps
-) => {
-  const { dimension, value, onChange, hierarchy, disabled } = props;
+}) => {
   const { label, isKeyDimension, values: dimensionValues } = dimension;
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
@@ -513,7 +524,7 @@ export const DataFilterHierarchyDimension = (
       hasValue: boolean;
     }[];
 
-    if (!isKeyDimension) {
+    if (!isKeyDimension || configFilter?.type !== "single") {
       opts.unshift({
         value: FIELD_VALUE_NONE,
         label: noneLabel,
@@ -523,7 +534,13 @@ export const DataFilterHierarchyDimension = (
     }
 
     return opts;
-  }, [hierarchy, isKeyDimension, dimensionValues, noneLabel]);
+  }, [
+    hierarchy,
+    dimensionValues,
+    isKeyDimension,
+    configFilter?.type,
+    noneLabel,
+  ]);
 
   return (
     <SelectTree
@@ -545,11 +562,13 @@ export const DataFilterHierarchyDimension = (
 };
 
 export const DataFilterTemporalDimension = ({
+  configFilter,
   dimension,
   value,
   onChange,
   disabled,
 }: {
+  configFilter?: Filters[string];
   dimension: TemporalDimension;
   value: string;
   onChange: (
@@ -593,6 +612,7 @@ export const DataFilterTemporalDimension = ({
     />
   ) : (
     <DataFilterGenericDimension
+      configFilter={configFilter}
       dimension={dimension}
       options={options}
       value={value}
