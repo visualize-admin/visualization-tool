@@ -1827,7 +1827,7 @@ msgstr "Home"
 #: app/login/components/profile-content-tabs.tsx
 #: app/login/components/profile-content-tabs.tsx
 msgid "login.profile.my-color-palettes"
-msgstr "My color palettes"
+msgstr "My Color Palettes"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
 #: app/configurator/components/chart-controls/color-ramp.tsx
@@ -1868,10 +1868,6 @@ msgid "login.profile.my-visualizations"
 msgstr "My visualizations"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.profile.my-visualizations.chart-actions"
-msgstr "Actions"
-
-#: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-name"
 msgstr "Name"
 
@@ -1882,6 +1878,10 @@ msgstr "Type"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-updated-date"
 msgstr "Updated"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-views"
+msgstr "Views"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.dataset-name"
@@ -2054,6 +2054,10 @@ msgstr "Show less"
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "table.column.no"
 msgstr "Column {0}"
+
+#: app/charts/table/table.tsx
+msgid "table.search.placeholder"
+msgstr "Search..."
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Day"

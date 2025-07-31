@@ -8,10 +8,10 @@ import {
   ConfiguratorStatePublished,
   decodeConfiguratorState,
 } from "@/config-types";
+import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { GraphqlProvider } from "@/graphql/graphql-provider";
 import { i18n } from "@/locales/locales";
 import { LocaleProvider, useLocale } from "@/locales/use-locale";
-import { ConfiguratorStateProvider } from "@/src";
 import * as federalTheme from "@/themes/theme";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 import { hashStringToObject } from "@/utils/hash-utils";
@@ -101,7 +101,7 @@ export default function Preview() {
                 chartId="published"
                 initialState={state}
               >
-                <ChartPublished configKey="preview" {...state} />
+                <ChartPublished configKey="preview" isPreview {...state} />
               </ConfiguratorStateProvider>
             ) : null}
           </ThemeProvider>

@@ -1868,10 +1868,6 @@ msgid "login.profile.my-visualizations"
 msgstr "Le mie visualizzazioni"
 
 #: app/login/components/profile-tables.tsx
-msgid "login.profile.my-visualizations.chart-actions"
-msgstr "Azioni"
-
-#: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-name"
 msgstr "Nome"
 
@@ -1882,6 +1878,10 @@ msgstr "Tipo"
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.chart-updated-date"
 msgstr "Aggiornato"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-views"
+msgstr "Visualizzazioni"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.profile.my-visualizations.dataset-name"
@@ -2054,6 +2054,10 @@ msgstr "Mostra meno"
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "table.column.no"
 msgstr "Colonna {0}"
+
+#: app/charts/table/table.tsx
+msgid "table.search.placeholder"
+msgstr "Ricerca..."
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Day"

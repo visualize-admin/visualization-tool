@@ -85,17 +85,31 @@ const useStyles = makeStyles<
     transition: "margin-top 0.5s ease",
   },
   panelLeft: {
-    minHeight: "100vh",
+    marginBottom: theme.spacing(12),
     boxShadow: "none",
     outline: "none",
     transition: "padding-top 0.5s ease",
+
+    [theme.breakpoints.up("md")]: {
+      position: ({ datasetPresent }) => (datasetPresent ? "static" : "sticky"),
+      top: ({ datasetPresent }) => (datasetPresent ? 0 : theme.spacing(8)),
+      overflowY: "auto",
+      minHeight: "100vh",
+      maxHeight: ({ datasetPresent }) => (datasetPresent ? "none" : "100vh"),
+      marginBottom: "unset",
+      paddingBottom: ({ datasetPresent }) =>
+        datasetPresent ? 0 : theme.spacing(16),
+    },
   },
   panelMiddle: {
     gridColumnStart: "middle",
     gridColumnEnd: "right",
-    marginLeft: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(8)),
     backgroundColor: theme.palette.background.paper,
     transition: "padding-top 0.5s ease",
+
+    [theme.breakpoints.up("md")]: {
+      marginLeft: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(8)),
+    },
   },
   panelBannerOuterWrapper: {
     backgroundColor: theme.palette.monochrome[100],
@@ -405,12 +419,16 @@ const SelectDatasetStepContent = ({
                 style={{ width: "100%" }}
               >
                 <Flex
-                  sx={{
+                  sx={(theme) => ({
                     justifyContent: odsIframe ? "flex-end" : "space-between",
                     alignItems: "center",
                     pt: odsIframe ? 12 : variant == "drawer" ? 10 : 6,
                     pb: 6,
-                  }}
+
+                    [theme.breakpoints.down("md")]: {
+                      flexWrap: "wrap",
+                    },
+                  })}
                 >
                   {odsIframe ? null : (
                     <NextLink href={backLink} passHref legacyBehavior>

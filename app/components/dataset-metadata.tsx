@@ -234,15 +234,15 @@ const DatasetTags = ({ cube }: { cube: DataCubeMetadata }) => {
   );
 };
 
-type DatasetMetadataTagProps = {
+const DatasetMetadataTag = ({
+  type,
+  iri,
+  label,
+}: {
   type: "organization" | "theme";
   iri: string;
   label?: string | null;
-};
-
-const DatasetMetadataTag = (props: DatasetMetadataTagProps) => {
-  const { type, iri, label } = props;
-
+}) => {
   return (
     <NextLink
       key={iri}
@@ -256,10 +256,9 @@ const DatasetMetadataTag = (props: DatasetMetadataTagProps) => {
         underline="none"
         title={label ?? undefined}
         sx={{
+          display: "inline-block",
           maxWidth: "100%",
-          whiteSpace: "nowrap",
-          textOverflow: "ellipsis",
-          overflow: "hidden",
+          borderRadius: "16px",
           color: "text.primary",
         }}
       >

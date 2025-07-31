@@ -281,8 +281,20 @@ export const getUserConfigs = async (userId: number) => {
     },
   });
   const parsedConfigs = await Promise.all(configs.map(parseDbConfig));
+  const upgradedConfigs = await Promise.all(parsedConfigs.map(upgradeDbConfig));
 
-  return await Promise.all(parsedConfigs.map(upgradeDbConfig));
+  const configsWithViewCount = await Promise.all(
+    upgradedConfigs.map(async (config) => {
+      return {
+        ...config,
+        viewCount: await getConfigViewCount(config.key),
+      };
+    })
+  );
+  return configsWithViewCount;
 };
 
 export type ParsedConfig = Awaited<ReturnType<typeof parseDbConfig>>;
+export type ParsedConfigWithViewCount = Awaited<
+  ReturnType<typeof getUserConfigs>
+>[number];

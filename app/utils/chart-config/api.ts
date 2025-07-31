@@ -109,6 +109,10 @@ export const fetchChartConfigs = async () => {
   return await apiFetch<ParsedConfig[]>(`/api/config/list`);
 };
 
+export const fetchChartViewCount = async (id: string) => {
+  return await apiFetch<number>(`/api/config/view?id=${id}`);
+};
+
 export const createCustomColorPalette = async (
   options: CreateCustomColorPalette
 ) => {

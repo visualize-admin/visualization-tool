@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Popover, styled, Typography } from "@mui/material";
+import { Box, Button, Popover, styled } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { hexToHsva, hsvaToHex } from "@uiw/react-color";
 import { color as d3Color } from "d3-color";
@@ -73,18 +73,21 @@ const ColorPickerButton = styled(Button)({
 
 const ColorPickerBox = styled(Box)(({ theme }) => ({
   lineHeight: "16px",
+
   "& > button": {
     backgroundColor: theme.palette.grey[100],
     borderRadius: 4,
     overflow: "hidden",
     borderWidth: 1,
-    p: 0,
+    padding: 0,
   },
+
   "& > button:hover": {
     backgroundColor: "transparent",
     cursor: "pointer",
     opacity: 0.8,
   },
+
   "& > button[disabled]": {
     backgroundColor: "transparent",
   },
@@ -124,8 +127,8 @@ export const ColorPickerMenu = ({
   );
 
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         opacity: disabled ? 0.5 : 1,
         pointerEvents: disabled ? "none" : "auto",
       }}
@@ -143,17 +146,11 @@ export const ColorPickerMenu = ({
           <Icon name="swatch" size={16} />
         </ColorPickerButton>
         {colorId && onRemove && (
-          <ColorPickerButton onClick={() => onRemove(colorId)}>
+          <ColorPickerButton variant="text" onClick={() => onRemove(colorId)}>
             <VisuallyHidden>
               <Trans id="controls.colorpicker.remove">Remove Color</Trans>
             </VisuallyHidden>
-            <Typography
-              aria-hidden
-              color="secondary"
-              sx={{ backgroundColor: "transparent" }}
-            >
-              <Icon name="close" size={24} />
-            </Typography>
+            <Icon name="close" size={16} />
           </ColorPickerButton>
         )}
       </ColorPickerBox>
@@ -167,7 +164,7 @@ export const ColorPickerMenu = ({
         onClose={close}
         slotProps={{ paper: { sx: { boxShadow: 4 } } }}
       >
-        <Box ref={popoverRef}>
+        <div ref={popoverRef}>
           <CustomColorPicker
             defaultSelection={initialSelected}
             onChange={handleColorChange}
@@ -177,8 +174,8 @@ export const ColorPickerMenu = ({
                 : colors) as ColorItem[]
             }
           />
-        </Box>
+        </div>
       </Popover>
-    </Box>
+    </div>
   );
 };

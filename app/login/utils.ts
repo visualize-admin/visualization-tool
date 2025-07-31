@@ -23,7 +23,7 @@ export const useRootStyles = makeStyles<Theme>((theme) => ({
   },
   sectionContent: {
     width: "100%",
-    maxWidth: 1400,
+    maxWidth: 1548,
     margin: "0 auto",
   },
 }));
