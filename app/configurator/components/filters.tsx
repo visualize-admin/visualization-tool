@@ -255,6 +255,7 @@ const MultiFilterContent = ({
   const locale = useLocale();
   const [config, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(config);
+  const isSegmentField = chartConfig.activeField === "segment";
   const { cubeIri, dimensionId, activeKeys, allValues, colorConfigPath } =
     useMultiFilterContext();
   const filters = useChartConfigFilters(chartConfig);
@@ -364,7 +365,7 @@ const MultiFilterContent = ({
     : undefined;
   const enableSettingShowValuesBySegment =
     segment &&
-    chartConfig.activeField === "segment" &&
+    isSegmentField &&
     shouldEnableSettingShowValuesBySegment(chartConfig);
   const showValuesMappingBooleans: boolean[] = Object.values(
     segment?.showValuesMapping ?? {}
@@ -374,10 +375,9 @@ const MultiFilterContent = ({
   const interactiveLegendFilterProps = useInteractiveFiltersToggle();
   const interactiveDataFilterProps =
     useInteractiveDataFilterToggle(dimensionId);
-  const interactiveFilterProps =
-    chartConfig.activeField === "segment"
-      ? interactiveLegendFilterProps
-      : interactiveDataFilterProps;
+  const interactiveFilterProps = isSegmentField
+    ? interactiveLegendFilterProps
+    : interactiveDataFilterProps;
   const visibleLegendProps = useLegendTitleVisibility();
   const chartSymbol = getChartSymbol(chartConfig.chartType);
 
@@ -386,7 +386,7 @@ const MultiFilterContent = ({
       <Box mb={4}>
         <Flex sx={{ flexDirection: "column", gap: 3, mb: 3 }}>
           <InteractiveToggle {...interactiveFilterProps} />
-          {chartConfig.activeField === "segment" ? (
+          {isSegmentField ? (
             <Switch
               label={t({
                 id: "controls.filters.show-legend.toggle",
@@ -1045,12 +1045,12 @@ export const DimensionValuesMultiFilter = ({
   dimension,
   colorConfigPath,
   colorComponent,
-  field = "segment",
+  field,
 }: {
   dimension: Dimension;
   colorConfigPath?: string;
   colorComponent?: Component;
-  field?: string;
+  field: string;
 }) => {
   const [state] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
