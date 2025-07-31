@@ -122,10 +122,14 @@ export const useQueryFilters = ({
       const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
         cubeIri: cube.iri,
       });
-      const cubeFiltersKeys = Object.keys(cubeFilters);
+      const cubeComponentIds = [
+        ...Object.keys(cubeFilters),
+        ...Object.keys(chartConfig.fields),
+        ...Object.values(chartConfig.fields).map((field) => field.componentId),
+      ];
       const cubeInteractiveDataFilters = Object.fromEntries(
-        Object.entries(chartInteractiveFilters).filter(([key]) =>
-          cubeFiltersKeys.includes(key)
+        Object.entries(chartInteractiveFilters).filter(([componentId]) =>
+          cubeComponentIds.includes(componentId)
         )
       );
 
@@ -147,6 +151,7 @@ export const useQueryFilters = ({
     });
   }, [
     chartConfig.cubes,
+    chartConfig.fields,
     chartConfig.interactiveFiltersConfig,
     chartInteractiveFilters,
     animationField,

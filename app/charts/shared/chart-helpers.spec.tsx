@@ -166,6 +166,7 @@ describe("useQueryFilters", () => {
           },
         },
       ],
+      fields: {},
     } as any as ChartConfig;
     const { result: queryFilters } = renderHook<
       ReturnType<typeof useQueryFilters>,
@@ -221,6 +222,7 @@ describe("useQueryFilters", () => {
           },
         },
       ],
+      fields: {},
     } as any as ChartConfig;
     const { result: queryFilters } = renderHook<
       ReturnType<typeof useQueryFilters>,

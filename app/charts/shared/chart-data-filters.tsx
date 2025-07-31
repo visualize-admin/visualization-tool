@@ -83,10 +83,10 @@ export const useChartDataFiltersState = ({
   const [open, setOpen] = useState<boolean>(!!defaultOpen);
 
   useEffect(() => {
-    if (componentIds?.length === 0) {
+    if (componentIds.length === 0) {
       setOpen(false);
     }
-  }, [componentIds?.length]);
+  }, [componentIds.length]);
 
   useEffect(() => {
     setOpen(!!defaultOpen);
@@ -108,12 +108,28 @@ export const useChartDataFiltersState = ({
       });
       const { unmappedFilters, mappedFilters } = filtersByMappingStatus;
       const unmappedKeys = Object.keys(unmappedFilters);
-      const unmappedEntries = Object.entries(
-        cubeQueryFilters.filters as Filters
-      ).filter(([k]) => unmappedKeys.includes(k));
-      const interactiveFiltersList = unmappedEntries.filter(([k]) =>
-        componentIds?.includes(k)
+      const filters = cubeQueryFilters.filters ?? {};
+      const unmappedEntries = Object.entries(filters).filter(
+        ([unmappedComponentId]) => unmappedKeys.includes(unmappedComponentId)
       );
+      const cubeComponentIds = [
+        ...Object.keys(filters),
+        ...Object.keys(chartConfig.fields),
+        ...Object.values(chartConfig.fields).map((field) => field.componentId),
+      ];
+      const interactiveFiltersList = componentIds
+        .filter((componentId) => cubeComponentIds.includes(componentId))
+        .map((componentId) => {
+          const existingEntry = unmappedEntries.find(
+            ([unmappedComponentId]) => unmappedComponentId === componentId
+          );
+
+          if (existingEntry) {
+            return existingEntry;
+          }
+
+          return [componentId, undefined];
+        });
 
       return {
         cubeIri: cube.iri,
@@ -396,13 +412,21 @@ export const getInteractiveQueryFilters = ({
 }) => {
   const nonInteractiveFilters = pickBy(
     filters,
-    (_, k) => !(k in interactiveFilters)
+    (_, componentId) => !(componentId in interactiveFilters)
   );
   let i = 0;
-  return mapValues(
-    { ...nonInteractiveFilters, ...interactiveFilters },
-    (v) => ({ ...v, position: i++ })
-  );
+
+  return mapValues({ ...nonInteractiveFilters, ...interactiveFilters }, (v) => {
+    if (v === undefined) {
+      return {
+        type: "single" as const,
+        value: FIELD_VALUE_NONE,
+        position: i++,
+      };
+    }
+
+    return { ...v, position: i++ };
+  });
 };
 
 export type DataFilterGenericDimensionProps = {
