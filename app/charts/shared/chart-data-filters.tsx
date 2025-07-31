@@ -35,6 +35,7 @@ import {
   DatePickerField,
 } from "@/configurator/components/field-date-picker";
 import { extractDataPickerOptionsFromDimension } from "@/configurator/components/ui-helpers";
+import { Option } from "@/configurator/config-form";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   Dimension,
@@ -446,7 +447,7 @@ export const DataFilterGenericDimension = ({
   dimension,
   value,
   onChange,
-  options: propOptions,
+  options: _options,
   disabled,
 }: DataFilterGenericDimensionProps) => {
   const { label, isKeyDimension } = dimension;
@@ -454,19 +455,27 @@ export const DataFilterGenericDimension = ({
     id: "controls.dimensionvalue.none",
     message: "No Filter",
   });
-  const options = propOptions ?? dimension.values;
-  const allOptions = useMemo(() => {
-    return isKeyDimension && configFilter?.type === "single"
-      ? options
-      : [
-          {
-            value: FIELD_VALUE_NONE,
-            label: noneLabel,
-            isNoneValue: true,
-          },
-          ...options,
-        ];
-  }, [isKeyDimension, configFilter?.type, options, noneLabel]);
+  const options: Option[] = _options ?? dimension.values;
+  const allOptions: Option[] = useMemo(() => {
+    const noneOption = {
+      value: FIELD_VALUE_NONE,
+      label: noneLabel,
+      isNoneValue: true,
+    };
+
+    if (!configFilter) {
+      return [noneOption, ...options];
+    }
+
+    if (configFilter.type === "multi") {
+      return [
+        noneOption,
+        ...options.filter((d) => configFilter.values[d.value]),
+      ];
+    }
+
+    return isKeyDimension ? options : [noneOption, ...options];
+  }, [noneLabel, configFilter, isKeyDimension, options]);
 
   return (
     <Select
@@ -510,6 +519,13 @@ export const DataFilterHierarchyDimension = ({
     message: `No Filter`,
   });
   const options: Tree = useMemo(() => {
+    const noneOption = {
+      value: FIELD_VALUE_NONE,
+      label: noneLabel,
+      isNoneValue: true,
+      hasValue: true,
+    };
+
     const opts = (
       hierarchy
         ? hierarchyToOptions(
@@ -524,23 +540,20 @@ export const DataFilterHierarchyDimension = ({
       hasValue: boolean;
     }[];
 
-    if (!isKeyDimension || configFilter?.type !== "single") {
-      opts.unshift({
-        value: FIELD_VALUE_NONE,
-        label: noneLabel,
-        isNoneValue: true,
-        hasValue: true,
-      });
+    if (!configFilter) {
+      return [noneOption, ...opts];
+    }
+
+    if (configFilter.type === "multi") {
+      return [noneOption, ...opts.filter((d) => configFilter.values[d.value])];
+    }
+
+    if (!isKeyDimension || configFilter.type !== "single") {
+      opts.unshift(noneOption);
     }
 
     return opts;
-  }, [
-    hierarchy,
-    dimensionValues,
-    isKeyDimension,
-    configFilter?.type,
-    noneLabel,
-  ]);
+  }, [noneLabel, hierarchy, dimensionValues, configFilter, isKeyDimension]);
 
   return (
     <SelectTree
