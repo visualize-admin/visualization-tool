@@ -54,6 +54,7 @@ export const chartConfig: ColumnConfig = {
     dataFilters: {
       active: false,
       componentIds: [],
+      defaultValueOverrides: {},
     },
     timeRange: {
       presets: {

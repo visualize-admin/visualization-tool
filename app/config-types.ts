@@ -144,6 +144,7 @@ const InteractiveFiltersDataConfig = t.intersection([
   t.type({
     active: t.boolean,
     componentIds: t.array(t.string),
+    defaultValueOverrides: t.record(t.string, t.string),
   }),
   t.partial({
     defaultOpen: t.boolean,

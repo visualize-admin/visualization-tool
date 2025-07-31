@@ -76,10 +76,6 @@ export const toggleInteractiveFilterDataDimension = produce(
     id: string,
     newValue?: boolean
   ): InteractiveFiltersConfig => {
-    if (!config?.dataFilters.componentIds) {
-      return config;
-    }
-
     const currentComponentIds = config.dataFilters.componentIds;
     const shouldAdd =
       newValue === undefined ? !currentComponentIds.includes(id) : newValue;

@@ -197,6 +197,7 @@ const getInitialInteractiveFiltersConfig = (options?: {
     dataFilters: {
       active: false,
       componentIds: [],
+      defaultValueOverrides: {},
       defaultOpen: true,
     },
     calculation: {

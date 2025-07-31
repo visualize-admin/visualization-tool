@@ -19,6 +19,7 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
   dataFilters: {
     active: false,
     componentIds: [],
+    defaultValueOverrides: {},
   },
   calculation: {
     active: false,

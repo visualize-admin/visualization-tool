@@ -1584,6 +1584,7 @@ export const chartConfigMigrations: Migration[] = [
           dataFilters: {
             active: false,
             componentIds: [],
+            defaultValueOverrides: {},
             defaultOpen: true,
           },
           calculation: {
@@ -1600,6 +1601,9 @@ export const chartConfigMigrations: Migration[] = [
 
       if (newConfig.chartType === "table") {
         newConfig.interactiveFiltersConfig = undefined;
+      } else if (newConfig.interactiveFiltersConfig) {
+        delete newConfig.interactiveFiltersConfig.dataFilters
+          .defaultValueOverrides;
       }
 
       return newConfig;

@@ -313,6 +313,7 @@ describe("chart type switch", () => {
           componentIds: [
             "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing",
           ],
+          defaultValueOverrides: {},
         },
         calculation: {
           active: false,

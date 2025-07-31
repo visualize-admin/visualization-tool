@@ -412,7 +412,6 @@ export const handleChartFieldChanged = (
   });
 
   // Remove the component from interactive data filters.
-
   const componentIds =
     chartConfig.interactiveFiltersConfig.dataFilters.componentIds.filter(
       (d) => d !== componentId
@@ -421,6 +420,11 @@ export const handleChartFieldChanged = (
   chartConfig.interactiveFiltersConfig.dataFilters = {
     active,
     componentIds,
+    defaultValueOverrides: Object.fromEntries(
+      Object.entries(
+        chartConfig.interactiveFiltersConfig.dataFilters.defaultValueOverrides
+      ).filter(([k]) => k !== componentId)
+    ),
   };
 
   const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });

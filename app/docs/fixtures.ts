@@ -90,6 +90,7 @@ export const states: ConfiguratorState[] = [
           dataFilters: {
             active: false,
             componentIds: [],
+            defaultValueOverrides: {},
           },
           calculation: {
             active: false,
@@ -1129,6 +1130,7 @@ export const tableConfig: TableConfig = {
     dataFilters: {
       active: false,
       componentIds: [],
+      defaultValueOverrides: {},
       defaultOpen: true,
     },
     calculation: {

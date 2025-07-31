@@ -47,6 +47,7 @@ export const configStateMock = {
           dataFilters: {
             active: false,
             componentIds: [],
+            defaultValueOverrides: {},
             defaultOpen: true,
           },
           calculation: {
@@ -179,6 +180,7 @@ export const configStateMock = {
           dataFilters: {
             active: false,
             componentIds: [],
+            defaultValueOverrides: {},
           },
           calculation: {
             active: false,
@@ -1199,6 +1201,7 @@ export const configJoinedCubes: Partial<
       dataFilters: {
         active: false,
         componentIds: [],
+        defaultValueOverrides: {},
         defaultOpen: true,
       },
       calculation: {
@@ -1674,7 +1677,11 @@ export const configJoinedCubes: Partial<
         componentId: "",
         presets: { type: "range", from: "", to: "" },
       },
-      dataFilters: { active: false, componentIds: [] },
+      dataFilters: {
+        active: false,
+        componentIds: [],
+        defaultValueOverrides: {},
+      },
       calculation: { active: false, type: "identity" },
     },
     fields: {
