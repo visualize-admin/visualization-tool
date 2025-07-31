@@ -72,6 +72,7 @@ import {
 import { useLegendTitleVisibility } from "@/configurator/configurator-state/segment-config-state";
 import { EditorBrush } from "@/configurator/interactive-filters/editor-brush";
 import {
+  useInteractiveDataFilterToggle,
   useInteractiveFiltersToggle,
   useInteractiveTimeRangeToggle,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
@@ -369,34 +370,23 @@ const MultiFilterContent = ({
     segment?.showValuesMapping ?? {}
   );
 
-  const interactiveFilterProps = useInteractiveFiltersToggle();
+  // TODO: separate interactive legend and data filters
+  const interactiveLegendFilterProps = useInteractiveFiltersToggle();
+  const interactiveDataFilterProps =
+    useInteractiveDataFilterToggle(dimensionId);
+  const interactiveFilterProps =
+    chartConfig.activeField === "segment"
+      ? interactiveLegendFilterProps
+      : interactiveDataFilterProps;
   const visibleLegendProps = useLegendTitleVisibility();
   const chartSymbol = getChartSymbol(chartConfig.chartType);
 
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
-        {chartConfig.activeField === "segment" ? (
-          <Flex sx={{ flexDirection: "column", gap: 3, mb: 3 }}>
-            <Switch
-              label={
-                <MaybeTooltip
-                  tooltipProps={{ enterDelay: 600 }}
-                  title={
-                    <Trans id="controls.filters.interactive.tooltip">
-                      Allow users to change filters
-                    </Trans>
-                  }
-                >
-                  <div>
-                    <Trans id="controls.filters.interactive.toggle">
-                      Interactive
-                    </Trans>
-                  </div>
-                </MaybeTooltip>
-              }
-              {...interactiveFilterProps}
-            />
+        <Flex sx={{ flexDirection: "column", gap: 3, mb: 3 }}>
+          <InteractiveToggle {...interactiveFilterProps} />
+          {chartConfig.activeField === "segment" ? (
             <Switch
               label={t({
                 id: "controls.filters.show-legend.toggle",
@@ -404,8 +394,8 @@ const MultiFilterContent = ({
               })}
               {...visibleLegendProps}
             />
-          </Flex>
-        ) : null}
+          ) : null}
+        </Flex>
         <Button
           variant="outlined"
           size="sm"
@@ -542,6 +532,38 @@ const MultiFilterContent = ({
         </ClickAwayListener>
       </ConfiguratorDrawer>
     </Box>
+  );
+};
+
+const InteractiveToggle = ({
+  name,
+  checked,
+  onChange,
+}: {
+  name: string;
+  checked: boolean;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+}) => {
+  return (
+    <Switch
+      name={name}
+      label={
+        <MaybeTooltip
+          tooltipProps={{ enterDelay: 600 }}
+          title={
+            <Trans id="controls.filters.interactive.tooltip">
+              Allow users to change filters
+            </Trans>
+          }
+        >
+          <div>
+            <Trans id="controls.filters.interactive.toggle">Interactive</Trans>
+          </div>
+        </MaybeTooltip>
+      }
+      checked={checked}
+      onChange={onChange}
+    />
   );
 };
 

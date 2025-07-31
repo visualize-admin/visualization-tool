@@ -62,7 +62,11 @@ export const useInteractiveDataFilterToggle = (dimensionId: string) => {
       dimensionId
     );
 
-  return { checked, onChange };
+  return {
+    name: "dataFilters",
+    checked,
+    onChange,
+  };
 };
 
 // Add or remove a dimension from the interactive  data filters dimensions list
