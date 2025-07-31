@@ -447,6 +447,7 @@ export const Select = ({
 export const selectMenuProps: SelectProps["MenuProps"] = {
   slotProps: {
     paper: {
+      elevation: 0,
       sx: {
         "& .MuiList-root": {
           width: "auto",
