@@ -11,7 +11,9 @@ You can also check the
 
 # Unreleased
 
-Nothing yet.
+- Fixes
+  - Chart more button is now correctly hidden when there are no actions
+    available
 
 # 5.9.0 - 2025-07-28
 
