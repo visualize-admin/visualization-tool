@@ -81,6 +81,9 @@ export const DatePickerField = ({
           components={{
             OpenPickerIcon: (props) => <Icon name="calendar" {...props} />,
           }}
+          PaperProps={{
+            elevation: 4,
+          }}
           inputFormat={getInputFormat(timeUnit)}
           views={getViews(timeUnit)}
           value={value}
