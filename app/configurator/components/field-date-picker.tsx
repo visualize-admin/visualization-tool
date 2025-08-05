@@ -12,7 +12,7 @@ import { Icon } from "@/icons";
 export type DatePickerFieldProps = {
   name: string;
   label?: ReactNode;
-  value: Date;
+  value: Date | null;
   onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
   disabled?: boolean;
   isDateDisabled: (date: Date) => boolean;
@@ -83,7 +83,7 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
             return (
               <PickersDay
                 {...dayPickerProps}
-                selected={value.getTime() === day.getTime()}
+                selected={value?.getTime() === day.getTime()}
               />
             );
           }}
