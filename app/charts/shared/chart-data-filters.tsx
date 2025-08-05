@@ -628,6 +628,7 @@ export const DataFilterTemporalDimension = ({
       maxDate={maxDate}
       disabled={disabled}
       parseDate={parseDate}
+      showClearButton={configFilter?.type !== "single"}
     />
   ) : (
     <DataFilterGenericDimension
