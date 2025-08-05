@@ -1809,7 +1809,14 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
   table: {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.cubes = oldValue;
+        draft.cubes = oldValue.map((cube) => ({
+          ...cube,
+          filters: Object.fromEntries(
+            Object.entries(cube.filters).filter(
+              ([_, value]) => value.type !== "range"
+            )
+          ),
+        }));
       });
     },
     fields: ({ oldValue, newChartConfig }) => {
