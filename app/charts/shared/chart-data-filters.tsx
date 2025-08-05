@@ -59,6 +59,7 @@ import {
 } from "@/stores/interactive-filters";
 import { assert } from "@/utils/assert";
 import { hierarchyToOptions } from "@/utils/hierarchy";
+import { useResolveMostRecentValue } from "@/utils/most-recent-value";
 import { useEvent } from "@/utils/use-event";
 
 type PreparedFilter = {
@@ -334,7 +335,17 @@ const DataFilter = ({
       ? configFilter.value
       : undefined;
   const dataFilterValue = dimension ? dataFilters[dimension.id]?.value : null;
-  const value = dataFilterValue ?? configFilterValue ?? FIELD_VALUE_NONE;
+
+  const resolvedDataFilterValue = useResolveMostRecentValue(
+    dataFilterValue,
+    dimension
+  );
+  const resolvedConfigFilterValue = useResolveMostRecentValue(
+    configFilterValue,
+    dimension
+  );
+  const value =
+    resolvedDataFilterValue ?? resolvedConfigFilterValue ?? FIELD_VALUE_NONE;
 
   useEffect(() => {
     const values = dimension?.values.map((d) => d.value) ?? [];
@@ -342,13 +353,13 @@ const DataFilter = ({
     // We only want to disable loading state when the filter is actually valid.
     // It can be invalid when the application is ensuring possible filters.
     if (
-      (dataFilterValue && values.includes(dataFilterValue)) ||
-      dataFilterValue === FIELD_VALUE_NONE ||
+      (resolvedDataFilterValue && values.includes(resolvedDataFilterValue)) ||
+      resolvedDataFilterValue === FIELD_VALUE_NONE ||
       !configFilter
     ) {
       updateDataFilter(
         dimensionId,
-        dataFilterValue ? dataFilterValue : FIELD_VALUE_NONE
+        resolvedDataFilterValue ? resolvedDataFilterValue : FIELD_VALUE_NONE
       );
       chartLoadingState.set(`interactive-filter-${dimensionId}`, fetching);
     } else if (fetching || values.length === 0) {
@@ -364,6 +375,7 @@ const DataFilter = ({
     configFilterValue,
     updateDataFilter,
     configFilter,
+    resolvedDataFilterValue,
   ]);
 
   return dimension ? (

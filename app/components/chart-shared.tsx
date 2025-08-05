@@ -13,6 +13,7 @@ import deburr from "lodash/deburr";
 import uniqBy from "lodash/uniqBy";
 import {
   ComponentProps,
+  ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -195,7 +196,144 @@ export const ChartMoreButton = ({
     return `${date}_${label}`;
   }, [chartConfig.meta.title, chartConfig.chartType, locale]);
 
-  return disableButton ? null : (
+  const getPublishedActions = useCallback(() => {
+    const actions: ReactNode[] = [];
+
+    if (chartConfig.chartType !== "table") {
+      actions.push(
+        <TableViewChartMenuActionItem
+          chartType={chartConfig.chartType}
+          onSuccess={handleClose}
+        />
+      );
+      actions.push(
+        <DownloadPNGImageMenuActionItem
+          configKey={configKey}
+          chartKey={chartKey}
+          components={components}
+          screenshotName={screenshotName}
+          screenshotNode={chartWrapperNode}
+        />
+      );
+    }
+
+    if (
+      state.layout.type !== "dashboard" &&
+      configKey &&
+      !disableDatabaseRelatedActions
+    ) {
+      actions.push(<CopyChartMenuActionItem configKey={configKey} />);
+      actions.push(<ShareChartMenuActionItem configKey={configKey} />);
+    }
+
+    return actions;
+  }, [
+    chartConfig.chartType,
+    state.layout.type,
+    configKey,
+    disableDatabaseRelatedActions,
+    handleClose,
+    chartKey,
+    components,
+    screenshotName,
+    chartWrapperNode,
+  ]);
+
+  const getUnpublishedActions = useCallback(() => {
+    const actions: ReactNode[] = [];
+
+    if (!isConfiguring(state)) {
+      actions.push(
+        <MenuActionItem
+          type="button"
+          as="menuitem"
+          onClick={() => {
+            dispatch({ type: "CONFIGURE_CHART", value: { chartKey } });
+            handleClose();
+          }}
+          leadingIconName="pen"
+          label={<Trans id="chart-controls.edit">Edit</Trans>}
+        />
+      );
+    }
+
+    actions.push(
+      <DuplicateChartMenuActionItem
+        chartConfig={chartConfig}
+        onSuccess={handleClose}
+      />
+    );
+
+    if (chartConfig.chartType !== "table") {
+      actions.push(
+        <TableViewChartMenuActionItem
+          chartType={chartConfig.chartType}
+          onSuccess={handleClose}
+        />
+      );
+      actions.push(
+        <DownloadPNGImageMenuActionItem
+          configKey={configKey}
+          chartKey={chartKey}
+          components={components}
+          screenshotName={screenshotName}
+          screenshotNode={chartWrapperNode}
+        />
+      );
+    }
+
+    if (state.chartConfigs.length > 1) {
+      actions.push(
+        <MenuActionItem
+          type="button"
+          as="menuitem"
+          color="red"
+          requireConfirmation
+          confirmationTitle={t({
+            id: "chart-controls.delete.title",
+            message: "Delete chart?",
+          })}
+          confirmationText={t({
+            id: "chart-controls.delete.confirmation",
+            message: "Are you sure you want to delete this chart?",
+          })}
+          onClick={() => {
+            dispatch({
+              type: "CHART_CONFIG_REMOVE",
+              value: { chartKey },
+            });
+            handleClose();
+          }}
+          leadingIconName="trash"
+          label={<Trans id="chart-controls.delete">Delete</Trans>}
+        />
+      );
+    }
+
+    return actions;
+  }, [
+    state,
+    chartConfig,
+    handleClose,
+    dispatch,
+    chartKey,
+    configKey,
+    components,
+    screenshotName,
+    chartWrapperNode,
+  ]);
+
+  const published = isPublished(state);
+
+  const availableActions = useMemo(() => {
+    return published ? getPublishedActions() : getUnpublishedActions();
+  }, [getPublishedActions, getUnpublishedActions, published]);
+
+  if (disableButton || availableActions.length === 0) {
+    return null;
+  }
+
+  return (
     <>
       <IconButton
         {...DISABLE_SCREENSHOT_ATTR}
@@ -212,92 +350,7 @@ export const ChartMoreButton = ({
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         transformOrigin={{ horizontal: "right", vertical: "top" }}
       >
-        {isPublished(state) ? (
-          <div>
-            {chartConfig.chartType !== "table" ? (
-              <>
-                <TableViewChartMenuActionItem
-                  chartType={chartConfig.chartType}
-                  onSuccess={handleClose}
-                />
-                <DownloadPNGImageMenuActionItem
-                  configKey={configKey}
-                  chartKey={chartKey}
-                  components={components}
-                  screenshotName={screenshotName}
-                  screenshotNode={chartWrapperNode}
-                />
-              </>
-            ) : null}
-            {state.layout.type !== "dashboard" &&
-            configKey &&
-            !disableDatabaseRelatedActions ? (
-              <>
-                <CopyChartMenuActionItem configKey={configKey} />
-                <ShareChartMenuActionItem configKey={configKey} />
-              </>
-            ) : null}
-          </div>
-        ) : (
-          <div>
-            {isConfiguring(state) ? null : (
-              <MenuActionItem
-                type="button"
-                as="menuitem"
-                onClick={() => {
-                  dispatch({ type: "CONFIGURE_CHART", value: { chartKey } });
-                  handleClose();
-                }}
-                leadingIconName="pen"
-                label={<Trans id="chart-controls.edit">Edit</Trans>}
-              />
-            )}
-            <DuplicateChartMenuActionItem
-              chartConfig={chartConfig}
-              onSuccess={handleClose}
-            />
-            {chartConfig.chartType !== "table" ? (
-              <>
-                <TableViewChartMenuActionItem
-                  chartType={chartConfig.chartType}
-                  onSuccess={handleClose}
-                />
-                <DownloadPNGImageMenuActionItem
-                  configKey={configKey}
-                  chartKey={chartKey}
-                  components={components}
-                  screenshotName={screenshotName}
-                  screenshotNode={chartWrapperNode}
-                />
-              </>
-            ) : null}
-            {state.chartConfigs.length > 1 ? (
-              <MenuActionItem
-                type="button"
-                as="menuitem"
-                color="red"
-                requireConfirmation
-                confirmationTitle={t({
-                  id: "chart-controls.delete.title",
-                  message: "Delete chart?",
-                })}
-                confirmationText={t({
-                  id: "chart-controls.delete.confirmation",
-                  message: "Are you sure you want to delete this chart?",
-                })}
-                onClick={() => {
-                  dispatch({
-                    type: "CHART_CONFIG_REMOVE",
-                    value: { chartKey },
-                  });
-                  handleClose();
-                }}
-                leadingIconName="trash"
-                label={<Trans id="chart-controls.delete">Delete</Trans>}
-              />
-            ) : null}
-          </div>
-        )}
+        {availableActions}
       </ArrowMenuTopBottom>
     </>
   );
