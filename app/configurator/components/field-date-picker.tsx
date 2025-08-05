@@ -1,11 +1,13 @@
+import { t } from "@lingui/macro";
 import { DatePicker, DatePickerProps, PickersDay } from "@mui/lab";
 import { DatePickerView } from "@mui/lab/DatePicker/shared";
-import { Box, TextField } from "@mui/material";
+import { Box, IconButton, TextField } from "@mui/material";
 import { timeFormat } from "d3-time-format";
 import { ChangeEvent, ReactNode, useCallback } from "react";
 
 import { Flex } from "@/components/flex";
 import { Label } from "@/components/form";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 
@@ -20,25 +22,26 @@ export type DatePickerFieldProps = {
   timeUnit?: DatePickerTimeUnit;
   dateFormat?: (d: Date) => string;
   parseDate: (s: string) => Date | null;
+  showClearButton?: boolean;
 } & Omit<
   DatePickerProps<Date>,
   "value" | "onChange" | "shouldDisableDate" | "inputFormat" | "renderInput"
 >;
 
-export const DatePickerField = (props: DatePickerFieldProps) => {
-  const {
-    name,
-    label,
-    value,
-    onChange,
-    disabled,
-    isDateDisabled,
-    sideControls,
-    timeUnit = TimeUnit.Day,
-    dateFormat = timeFormat("%Y-%m-%d"),
-    parseDate,
-    ...rest
-  } = props;
+export const DatePickerField = ({
+  name,
+  label,
+  value,
+  onChange,
+  disabled,
+  isDateDisabled,
+  sideControls,
+  timeUnit = TimeUnit.Day,
+  dateFormat = timeFormat("%Y-%m-%d"),
+  parseDate,
+  showClearButton,
+  ...rest
+}: DatePickerFieldProps) => {
   const handleChange = useCallback(
     (date: Date | null) => {
       if (!date || isDateDisabled(date)) {
@@ -55,6 +58,16 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
     },
     [isDateDisabled, onChange, dateFormat]
   );
+
+  const handleNoFilter = useCallback(() => {
+    const e = {
+      target: {
+        value: FIELD_VALUE_NONE,
+      },
+    } as ChangeEvent<HTMLSelectElement>;
+
+    onChange(e);
+  }, [onChange]);
 
   const dateLimitProps = getDateRenderProps(timeUnit, isDateDisabled);
 
@@ -92,6 +105,15 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
               hiddenLabel
               size="small"
               {...params}
+              inputProps={{
+                ...params.inputProps,
+                value: value
+                  ? dateFormat(value)
+                  : t({
+                      id: "controls.dimensionvalue.none",
+                      message: "No Filter",
+                    }),
+              }}
               onChange={(e) => {
                 handleChange(parseDate(e.target.value));
               }}
@@ -116,6 +138,26 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
                 "& svg": {
                   color: "text.primary",
                 },
+              }}
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    {showClearButton && value && (
+                      <IconButton
+                        size="small"
+                        onClick={handleNoFilter}
+                        sx={{
+                          p: 1,
+                          mr: -0.5,
+                        }}
+                      >
+                        <Icon name="close" />
+                      </IconButton>
+                    )}
+                    {params.InputProps?.endAdornment}
+                  </Box>
+                ),
               }}
             />
           )}
