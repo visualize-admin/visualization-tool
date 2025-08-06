@@ -14,11 +14,30 @@ You can also check the
 - Features
   - It's now possible to annotate charts manually
   - Scatterplot charts need to have segmentation at all times
+  - Consolidated some translations
+- Performance
+  - Removed a separate query to unversion observations, as it's now done when
+    they are fetched
+  - `InteractiveFiltersProvider` is now re-created only when needed, not on
+    every chart config change
+- Styles
+  - Aligned some UI elements with the design
+- Fixes
+  - Chart more button is now correctly hidden when there are no actions
+    available
+  - Most recent value is now correctly resolved in interactive filters
+- Maintenance
+  - Observations now include original values under `componentId/__iri__` key and
+    are unversioned
+
+# 5.9.0 - 2025-07-28
+
+- Features
   - Improved UX of interacting with conversion units multiplier input
   - Updated WMS & WMTS providers list
-  - Consolidated some translations
   - Added missing OpenGraph tags to the application (description, image) and
     updated the title
+  - Added chart view count to user profile
 - Fixes
   - Interactive calculation is now correctly reset when removing segmentation
   - Tooltips are now correctly displayed in data preview table
@@ -31,21 +50,15 @@ You can also check the
   - Dataset browse view is now correctly displayed on mobile devices
   - Database-related actions are now hidden in preview mode (copy URL, share)
 - Styles
-  - Aligned some UI elements with the design
   - Scroll buttons in the chart selection tabs are now always shown when needed
   - Chart titles in user profile are now correctly rendered
   - Dataset tags can now wrap
-- Performance
-  - Removed a separate query to unversion observations, as it's now done when
-    they are fetched
-  - `InteractiveFiltersProvider` is now re-created only when needed, not on
-    every chart config change
+  - Dataset browse side panel now sticks to the top of the page when scrolling
+  - Search input in table charts has better affordance now
+  - Locale switcher has new appearance, in line with other selects
 - Security
   - Added additional protection against data source URL injection
   - Removed feature flag for custom GraphQL endpoint
-- Maintenance
-  - Observations now include original values under `componentId/__iri__` key and
-    are unversioned
 
 # 5.8.3 - 2025-06-10
 

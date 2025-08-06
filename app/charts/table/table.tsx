@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import FlexSearch from "flexsearch";
@@ -25,6 +25,7 @@ import { TableChartState } from "@/charts/table/table-state";
 import { Flex } from "@/components/flex";
 import { Input, Switch } from "@/components/form";
 import { Observation } from "@/domain/data";
+import { Icon } from "@/icons";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 const MOBILE_VIEW_THRESHOLD = 384;
@@ -298,6 +299,11 @@ export const Table = () => {
           <Input
             type="text"
             name="search-input"
+            placeholder={t({
+              id: "table.search.placeholder",
+              message: "Search...",
+            })}
+            endAdornment={<Icon name="search" />}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.currentTarget.value)}
           />

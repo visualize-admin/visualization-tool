@@ -91,8 +91,14 @@ const useStyles = makeStyles<
     transition: "padding-top 0.5s ease",
 
     [theme.breakpoints.up("md")]: {
+      position: ({ datasetPresent }) => (datasetPresent ? "static" : "sticky"),
+      top: ({ datasetPresent }) => (datasetPresent ? 0 : theme.spacing(8)),
+      overflowY: "auto",
       minHeight: "100vh",
+      maxHeight: ({ datasetPresent }) => (datasetPresent ? "none" : "100vh"),
       marginBottom: "unset",
+      paddingBottom: ({ datasetPresent }) =>
+        datasetPresent ? 0 : theme.spacing(16),
     },
   },
   panelMiddle: {
