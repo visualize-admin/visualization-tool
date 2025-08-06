@@ -58,6 +58,12 @@ module.exports = withPreconstruct(
           ],
         });
 
+        // Add CORS headers
+        headers[0].headers.push({
+          key: "Access-Control-Allow-Origin",
+          value: "*",
+        });
+
         // See https://content-security-policy.com/ & https://developers.google.com/tag-platform/security/guides/csp
         if (!(process.env.DISABLE_CSP && process.env.DISABLE_CSP === "true")) {
           headers[0].headers.push({
