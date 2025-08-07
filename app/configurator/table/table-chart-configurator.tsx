@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Theme, Typography } from "@mui/material";
+import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { DragDropContext } from "react-beautiful-dnd";
 
@@ -11,6 +11,7 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { ShowFilterAreaOpen } from "@/configurator/components/chart-controls/show-filter-area-open";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { DatasetsControlSection } from "@/configurator/components/dataset-control-section";
 import { ChartAnnotatorTabField } from "@/configurator/components/field";
@@ -108,6 +109,16 @@ export const ChartConfiguratorTable = ({
           />
         </ControlSectionContent>
       </ControlSection>
+      <ControlSection collapse>
+        <SectionTitle id="controls-data">
+          <Trans id="controls.section.data.filters">Filters</Trans>
+        </SectionTitle>
+        <ControlSectionContent>
+          <Box sx={{ my: 2 }}>
+            <ShowFilterAreaOpen chartConfig={chartConfig} />
+          </Box>
+        </ControlSectionContent>
+      </ControlSection>
       <DragDropContext
         onDragEnd={(result) =>
           handleDragEnd({
@@ -126,7 +137,6 @@ export const ChartConfiguratorTable = ({
           isDropDisabled={isGroupsDropDisabled}
           emptyComponent={<EmptyGroups />}
         />
-
         <TabDropZone
           id="columns"
           title={<Trans id="controls.section.columns">Columns</Trans>}
