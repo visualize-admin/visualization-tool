@@ -38,7 +38,6 @@ export const useGetRenderStackedBarDatum = () => {
     xScale,
     yScale,
     getY,
-    getSegmentLabel,
     getRenderingKey,
   } = useChartState() as StackedBarsState;
   const bandwidth = yScale.bandwidth();
@@ -46,12 +45,11 @@ export const useGetRenderStackedBarDatum = () => {
   return useCallback(
     (s: Series<{ [key: string]: number }, string>) => {
       const segment = s.key;
-      const segmentLabel = getSegmentLabel(segment);
       const color = colors(segment);
 
       return s.map((d) => {
         const observation = d.data;
-        const value = observation[segmentLabel];
+        const value = observation[segment];
         const valueLabel =
           segment && showValuesBySegmentMapping[segment]
             ? valueLabelFormatter(value)
@@ -64,7 +62,7 @@ export const useGetRenderStackedBarDatum = () => {
         const y = yScale(yRaw) as number;
 
         return {
-          key: getRenderingKey(observation, segmentLabel),
+          key: getRenderingKey(observation, segment),
           y,
           x,
           height: bandwidth,
@@ -81,7 +79,6 @@ export const useGetRenderStackedBarDatum = () => {
       bandwidth,
       colors,
       getRenderingKey,
-      getSegmentLabel,
       getY,
       showValuesBySegmentMapping,
       valueLabelFormatter,

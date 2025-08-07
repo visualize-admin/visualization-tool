@@ -38,7 +38,6 @@ export const useGetRenderStackedColumnDatum = () => {
     xScale,
     yScale,
     getX,
-    getSegmentLabel,
     getRenderingKey,
   } = useChartState() as StackedColumnsState;
   const bandwidth = xScale.bandwidth();
@@ -46,12 +45,12 @@ export const useGetRenderStackedColumnDatum = () => {
   return useCallback(
     (s: Series<{ [key: string]: number }, string>) => {
       const segment = s.key;
-      const segmentLabel = getSegmentLabel(segment);
+
       const color = colors(segment);
 
       return s.map((d) => {
         const observation = d.data;
-        const value = observation[segmentLabel];
+        const value = observation[segment];
         const valueLabel =
           segment && showValuesBySegmentMapping[segment]
             ? valueLabelFormatter(value)
@@ -63,7 +62,7 @@ export const useGetRenderStackedColumnDatum = () => {
         const y = yScale(d[1]) as number;
 
         return {
-          key: getRenderingKey(observation, segmentLabel),
+          key: getRenderingKey(observation, segment),
           x: xScale(xRaw) as number,
           y,
           width: bandwidth,
@@ -80,7 +79,6 @@ export const useGetRenderStackedColumnDatum = () => {
       bandwidth,
       colors,
       getRenderingKey,
-      getSegmentLabel,
       getX,
       showValuesBySegmentMapping,
       valueLabelFormatter,
