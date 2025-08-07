@@ -65,10 +65,10 @@ import {
   ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { ShowFilterAreaOpen } from "@/configurator/components/chart-controls/show-filter-area-open";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { DatasetsControlSection } from "@/configurator/components/dataset-control-section";
 import {
-  ChartOptionCheckboxField,
   ControlTabField,
   DataFilterSelect,
   DataFilterTemporal,
@@ -734,17 +734,7 @@ export const ChartConfigurator = ({
               </Typography>
             ) : (
               <Box sx={{ my: 2 }}>
-                <ChartOptionCheckboxField
-                  label={t({
-                    id: "controls.section.data.filters.default-open",
-                    message: "Show filter area open",
-                  })}
-                  field={null}
-                  path="interactiveFiltersConfig.dataFilters.defaultOpen"
-                  disabled={
-                    !chartConfig.interactiveFiltersConfig.dataFilters.active
-                  }
-                />
+                <ShowFilterAreaOpen chartConfig={chartConfig} />
               </Box>
             )}
             {Object.entries(filterDimensionsByCubeIri)
