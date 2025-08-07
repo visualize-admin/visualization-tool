@@ -4,6 +4,7 @@ import { Series } from "d3-shape";
 import { useCallback } from "react";
 
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
+import { hasSegmentAnnotation } from "@/charts/shared/annotation-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   setSegmentValueLabelProps,
@@ -14,6 +15,8 @@ import {
   RenderOptions,
   toggleFocusBorder,
 } from "@/charts/shared/rendering-utils";
+import { getChartConfig, useDefinitiveFilters } from "@/config-utils";
+import { useConfiguratorState } from "@/configurator/configurator-state";
 import { Observation } from "@/domain/data";
 
 export type RenderColumnDatum = {
@@ -28,6 +31,7 @@ export type RenderColumnDatum = {
   valueLabelColor?: string;
   segment?: string;
   observation: Observation;
+  valueLabelOffset?: number;
 };
 
 export const useGetRenderStackedColumnDatum = () => {
@@ -40,12 +44,14 @@ export const useGetRenderStackedColumnDatum = () => {
     getX,
     getRenderingKey,
   } = useChartState() as StackedColumnsState;
+  const [state] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
+  const definitiveFilters = useDefinitiveFilters();
   const bandwidth = xScale.bandwidth();
 
   return useCallback(
     (s: Series<{ [key: string]: number }, string>) => {
       const segment = s.key;
-
       const color = colors(segment);
 
       return s.map((d) => {
@@ -61,6 +67,15 @@ export const useGetRenderStackedColumnDatum = () => {
         const xRaw = getX(observation);
         const y = yScale(d[1]) as number;
 
+        const hasAnnotation = hasSegmentAnnotation(
+          observation,
+          segment,
+          chartConfig,
+          definitiveFilters
+        );
+
+        const valueLabelOffset = hasAnnotation ? 20 : 0;
+
         return {
           key: getRenderingKey(observation, segment),
           x: xScale(xRaw) as number,
@@ -72,6 +87,7 @@ export const useGetRenderStackedColumnDatum = () => {
           valueLabelColor,
           observation,
           segment,
+          valueLabelOffset,
         } satisfies RenderColumnDatum;
       });
     },
@@ -84,6 +100,8 @@ export const useGetRenderStackedColumnDatum = () => {
       valueLabelFormatter,
       xScale,
       yScale,
+      chartConfig,
+      definitiveFilters,
     ]
   );
 };
@@ -129,7 +147,7 @@ export const renderColumns = (
               .call((g) =>
                 maybeTransition(g, {
                   transition,
-                  s: (g) => g.attr("y", (d) => d.y),
+                  s: (g) => g.attr("y", (d) => d.y + (d.valueLabelOffset ?? 0)),
                 })
               )
               .append("xhtml:div")
@@ -160,7 +178,7 @@ export const renderColumns = (
                 g
                   .select("foreignObject")
                   .attr("x", (d) => d.x)
-                  .attr("y", (d) => d.y)
+                  .attr("y", (d) => d.y + (d.valueLabelOffset ?? 0))
                   .attr("width", (d) => d.width)
                   .attr("height", (d) => d.height)
                   .select("p")

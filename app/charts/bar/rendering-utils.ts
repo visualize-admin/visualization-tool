@@ -4,6 +4,7 @@ import { Series } from "d3-shape";
 import { useCallback } from "react";
 
 import { StackedBarsState } from "@/charts/bar/bars-stacked-state";
+import { hasSegmentAnnotation } from "@/charts/shared/annotation-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import {
   setSegmentValueLabelProps,
@@ -14,6 +15,8 @@ import {
   RenderOptions,
   toggleFocusBorder,
 } from "@/charts/shared/rendering-utils";
+import { getChartConfig, useDefinitiveFilters } from "@/config-utils";
+import { useConfiguratorState } from "@/configurator/configurator-state";
 import { Observation } from "@/domain/data";
 
 export type RenderBarDatum = {
@@ -28,6 +31,7 @@ export type RenderBarDatum = {
   valueLabelColor?: string;
   observation: Observation;
   segment?: string;
+  valueLabelOffset?: number;
 };
 
 export const useGetRenderStackedBarDatum = () => {
@@ -40,6 +44,9 @@ export const useGetRenderStackedBarDatum = () => {
     getY,
     getRenderingKey,
   } = useChartState() as StackedBarsState;
+  const [state] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
+  const definitiveFilters = useDefinitiveFilters();
   const bandwidth = yScale.bandwidth();
 
   return useCallback(
@@ -61,6 +68,15 @@ export const useGetRenderStackedBarDatum = () => {
         const yRaw = getY(observation);
         const y = yScale(yRaw) as number;
 
+        const hasAnnotation = hasSegmentAnnotation(
+          observation,
+          segment,
+          chartConfig,
+          definitiveFilters
+        );
+
+        const valueLabelOffset = hasAnnotation ? 20 : 0;
+
         return {
           key: getRenderingKey(observation, segment),
           y,
@@ -72,6 +88,7 @@ export const useGetRenderStackedBarDatum = () => {
           valueLabelColor,
           observation,
           segment,
+          valueLabelOffset,
         } satisfies RenderBarDatum;
       });
     },
@@ -84,6 +101,8 @@ export const useGetRenderStackedBarDatum = () => {
       valueLabelFormatter,
       xScale,
       yScale,
+      chartConfig,
+      definitiveFilters,
     ]
   );
 };
@@ -133,7 +152,7 @@ export const renderBars = (
               .call((g) =>
                 maybeTransition(g, {
                   transition,
-                  s: (g) => g.attr("x", (d) => d.x),
+                  s: (g) => g.attr("x", (d) => d.x + (d.valueLabelOffset ?? 0)),
                 })
               )
               .append("xhtml:div")
@@ -163,7 +182,7 @@ export const renderBars = (
               .call((g) =>
                 g
                   .select("foreignObject")
-                  .attr("x", (d) => d.x)
+                  .attr("x", (d) => d.x + (d.valueLabelOffset ?? 0))
                   .attr("y", (d) => d.y)
                   .attr("width", (d) => d.width)
                   .attr("height", (d) => d.height)

@@ -6,6 +6,7 @@ import {
   AnnotationTarget,
   ChartConfig,
   Filters,
+  isSegmentInConfig,
 } from "@/config-types";
 import { extractSingleFilters, getChartConfig } from "@/config-utils";
 import { isAnnotationField } from "@/configurator/components/chart-annotations/utils";
@@ -218,4 +219,56 @@ export const matchesAnnotationTarget = (
   }
 
   return true;
+};
+
+export const hasSegmentAnnotation = (
+  observation: Observation,
+  segment: string,
+  chartConfig: ChartConfig,
+  definitiveFilters: Filters
+) => {
+  if (!isSegmentInConfig(chartConfig)) {
+    return false;
+  }
+
+  const segmentComponentId = chartConfig.fields.segment?.componentId;
+  if (!segmentComponentId) {
+    return false;
+  }
+
+  return chartConfig.annotations.some((annotation) => {
+    const observationTargets = getAnnotationTargetsFromObservation(
+      observation,
+      {
+        chartConfig,
+        definitiveFilters,
+        segment,
+      }
+    );
+
+    if (annotation.targets.length === 0 || observationTargets.length === 0) {
+      return false;
+    }
+
+    const relevantAnnotationTargets = annotation.targets.filter(
+      (annotationTarget) => {
+        return observationTargets.some((observationTarget) => {
+          return annotationTarget.componentId === observationTarget.componentId;
+        });
+      }
+    );
+
+    if (relevantAnnotationTargets.length === 0) {
+      return false;
+    }
+
+    return relevantAnnotationTargets.every((annotationTarget) => {
+      return observationTargets.some((observationTarget) => {
+        return (
+          annotationTarget.componentId === observationTarget.componentId &&
+          annotationTarget.value === observationTarget.value
+        );
+      });
+    });
+  });
 };
