@@ -2,6 +2,7 @@ import { IconButton, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 
+import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/annotation-circle";
 import {
   AnnotationEnabledChartState,
   RenderAnnotation,
@@ -180,7 +181,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     transform: "translateX(-50%)",
     position: "absolute",
     width: 1,
-    backgroundColor: theme.palette.text.secondary,
+    backgroundColor: DEFAULT_ANNOTATION_CIRCLE_COLOR,
     pointerEvents: "none",
   },
 }));

@@ -38,7 +38,7 @@ export const AnnotationCircle = ({
   );
 };
 
-export const DEFAULT_ANNOTATION_CIRCLE_COLOR = "#6B7280";
+export const DEFAULT_ANNOTATION_CIRCLE_COLOR = "#1F2937";
 const SIZE = 16;
 
 const useStyles = makeStyles((theme: Theme) => ({
