@@ -808,8 +808,8 @@ msgid "controls.dimensionvalue.none"
 msgstr "No Filter"
 
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
-msgid "controls.filled"
-msgstr "Filled"
+msgid "controls.fill-and-text"
+msgstr "Fill and text box"
 
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.nb-elements"
@@ -1033,7 +1033,6 @@ msgstr "Back to editing"
 msgid "controls.nav.back-to-preview"
 msgstr "Back to preview"
 
-#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 #: app/configurator/components/chart-options-selector/combo-y-field.tsx
 #: app/configurator/components/chart-options-selector/combo-y-field.tsx
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
@@ -1494,6 +1493,10 @@ msgstr "Sorting"
 #: app/configurator/table/table-chart-options.tsx
 msgid "controls.tableSettings.showSearch"
 msgstr "Show search field"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.text-only"
+msgstr "Text box only"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.title"

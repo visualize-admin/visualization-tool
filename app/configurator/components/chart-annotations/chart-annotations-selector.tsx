@@ -192,14 +192,17 @@ export const ChartAnnotationsSelector = () => {
         <ControlSectionContent gap="xl">
           <RadioGroup>
             <Radio
-              label={t({ id: "controls.none", message: "None" })}
+              label={t({ id: "controls.text-only", message: "Text box only" })}
               value="none"
               checked={annotation.highlightType === "none"}
               disabled={!hasTargets}
               onChange={() => handleStyleTypeChange("none")}
             />
             <Radio
-              label={t({ id: "controls.filled", message: "Filled" })}
+              label={t({
+                id: "controls.fill-and-text",
+                message: "Fill and text box",
+              })}
               value="filled"
               checked={annotation.highlightType === "filled"}
               disabled={!hasTargets}
