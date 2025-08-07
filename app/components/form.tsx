@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import {
   headingsPlugin,
   linkPlugin,
@@ -668,9 +668,11 @@ export const MarkdownInput = ({
       />
       {characterLimitReached && (
         <Typography variant="caption" color="error">
-          <Trans id="controls.form.max-length-reached">
-            Character limit reached
-          </Trans>
+          {t({
+            id: "controls.form.max-length-reached",
+            message: "Character limit ({limit}) reached",
+            values: { limit: characterLimit },
+          })}
         </Typography>
       )}
     </div>

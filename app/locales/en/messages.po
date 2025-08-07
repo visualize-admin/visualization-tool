@@ -894,7 +894,7 @@ msgstr "Show legend titles"
 
 #: app/components/form.tsx
 msgid "controls.form.max-length-reached"
-msgstr "Character limit reached"
+msgstr "Character limit ({limit}) reached"
 
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
