@@ -89,6 +89,7 @@ const commonInteractiveFiltersState: InteractiveFiltersState = {
   calculation: {
     type: "identity",
   },
+  annotations: {},
 };
 
 describe("useQueryFilters", () => {

@@ -39,7 +39,7 @@ export const BlockMoreButton = ({ blockKey }: { blockKey: string }) => {
       },
     });
     dispatch({
-      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE",
       value: key,
     });
   });
@@ -54,7 +54,7 @@ export const BlockMoreButton = ({ blockKey }: { blockKey: string }) => {
 
     if (layout.activeField === blockKey) {
       dispatch({
-        type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+        type: "LAYOUT_ACTIVE_FIELD_CHANGE",
         value: undefined,
       });
     }

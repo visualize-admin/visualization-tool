@@ -28,6 +28,10 @@ import {
 } from "@/charts/column/columns-stacked-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
 import {
+  ANNOTATION_SINGLE_SEGMENT_OFFSET,
+  GetAnnotationInfo,
+} from "@/charts/shared/annotations";
+import {
   AxisLabelSizeVariables,
   getChartWidth,
   useAxisLabelSizeVariables,
@@ -44,7 +48,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -55,6 +59,7 @@ import {
   ValueLabelFormatter,
 } from "@/charts/shared/show-values-utils";
 import {
+  getStackedPosition,
   getStackedTooltipValueFormatter,
   getStackedYScale,
 } from "@/charts/shared/stacked-helpers";
@@ -79,6 +84,7 @@ export type StackedColumnsState = CommonChartState &
   ColumnsStackedStateVariables &
   InteractiveXTimeRangeState & {
     chartType: "column";
+    chartDataGroupedByX: Map<string, Observation[]>;
     xScale: ScaleBand<string>;
     xScaleInteraction: ScaleBand<string>;
     yScale: ScaleLinear<number, number>;
@@ -87,10 +93,8 @@ export type StackedColumnsState = CommonChartState &
     getColorLabel: (segment: string) => string;
     chartWideData: ArrayLike<Observation>;
     series: Series<{ [key: string]: number }, string>[];
-    getAnnotationInfo: (
-      d: Observation,
-      orderedSegments: string[]
-    ) => TooltipInfo;
+    getAnnotationInfo: GetAnnotationInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -226,7 +230,7 @@ const useColumnsStackedState = (
       allSegments: segments,
       imputationType: "zeros",
     });
-  }, [getSegment, getY, chartDataGroupedByX, segments, xKey]);
+  }, [chartDataGroupedByX, xKey, getY, getSegment, segments]);
 
   const xFilter = chartConfig.cubes.find((d) => d.iri === xDimension.cubeIri)
     ?.filters[xDimension.id];
@@ -458,8 +462,41 @@ const useColumnsStackedState = (
     [xDimension, formatXDate, getXLabel]
   );
 
-  // Tooltips
-  const getAnnotationInfo = useCallback(
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation, { segment, focusingSegment }) => {
+      const x = getX(observation);
+      let y: number;
+      let color: string | undefined;
+
+      if (focusingSegment) {
+        y = getStackedPosition({
+          observation,
+          series,
+          key: xKey,
+          getAxisValue: getX,
+          measureScale: yScale,
+          fallbackMeasureValue: yScale(getY(observation) ?? 0),
+          segment,
+        });
+        color = colors(segment);
+      } else {
+        const values = chartDataGroupedByX.get(x) ?? [];
+        const yValues = values.map(getY);
+        y =
+          yScale(sum(yValues.map((d) => d ?? 0))) -
+          ANNOTATION_SINGLE_SEGMENT_OFFSET;
+      }
+
+      return {
+        x: (xScale(x) as number) + xScale.bandwidth() * 0.5,
+        y,
+        color,
+      };
+    },
+    [chartDataGroupedByX, colors, getX, getY, series, xKey, xScale, yScale]
+  );
+
+  const getTooltipInfo = useCallback(
     (datum: Observation): TooltipInfo => {
       const bw = xScale.bandwidth();
       const x = getX(datum);
@@ -503,35 +540,52 @@ const useColumnsStackedState = (
           value: yValueFormatter(getY(datum), getIdentityY(datum)),
           color: colors(getSegment(datum)),
         },
-        values: sortedTooltipValues.map((d) => ({
-          label: getSegmentAbbreviationOrLabel(d),
-          value: yValueFormatter(getY(d), getIdentityY(d)),
-          color: colors(getSegment(d)),
-        })),
+        values: sortedTooltipValues.map((d) => {
+          const segment = getSegment(d);
+          const y = getStackedPosition({
+            observation: d,
+            series,
+            key: xKey,
+            getAxisValue: getX,
+            measureScale: yScale,
+            fallbackMeasureValue: yScale(getY(d) ?? 0),
+            segment,
+          });
+
+          return {
+            label: getSegmentAbbreviationOrLabel(d),
+            value: yValueFormatter(getY(d), getIdentityY(d)),
+            axis: "y",
+            axisOffset: y,
+            color: colors(segment),
+          } satisfies TooltipValue;
+        }),
       };
     },
     [
-      getX,
       xScale,
+      getX,
       chartDataGroupedByX,
+      getY,
       segments,
       getSegment,
+      normalize,
       yMeasure.id,
       yMeasure.unit,
       formatters,
       formatNumber,
-      getXAbbreviationOrLabel,
+      isMobile,
+      chartHeight,
+      yScale,
+      chartWidth,
       fields.segment,
+      getXAbbreviationOrLabel,
+      formatXAxisTick,
       getSegmentAbbreviationOrLabel,
-      getY,
       getIdentityY,
       colors,
-      chartWidth,
-      chartHeight,
-      isMobile,
-      normalize,
-      yScale,
-      formatXAxisTick,
+      series,
+      xKey,
     ]
   );
 
@@ -544,6 +598,7 @@ const useColumnsStackedState = (
 
   return {
     chartType: "column",
+    chartDataGroupedByX,
     bounds,
     chartData,
     allData,
@@ -557,6 +612,7 @@ const useColumnsStackedState = (
     chartWideData,
     series,
     getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,

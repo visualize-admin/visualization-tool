@@ -35,7 +35,7 @@ import {
   CommonChartState,
   InteractiveYTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -69,7 +69,7 @@ export type GroupedBarsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     grouped: [string, Observation[]][];
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -403,8 +403,7 @@ const useBarsGroupedState = (
     [yDimension, formatYDate, getYLabel]
   );
 
-  // Tooltip
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const bw = yScale.bandwidth();
     const y = getY(datum);
 
@@ -448,14 +447,18 @@ const useBarsGroupedState = (
         error: getFormattedXUncertainty(datum),
         color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map((d) => ({
-        label: getSegmentAbbreviationOrLabel(d),
-        value: xMeasure.unit
-          ? `${formatNumber(getX(d))} ${xMeasure.unit}`
-          : formatNumber(getX(d)),
-        error: getFormattedXUncertainty(d),
-        color: colors(getSegment(d)),
-      })),
+      values: sortedTooltipValues.map((d) => {
+        const segment = getSegment(d);
+
+        return {
+          label: getSegmentAbbreviationOrLabel(d),
+          value: xMeasure.unit
+            ? `${formatNumber(getX(d))} ${xMeasure.unit}`
+            : formatNumber(getX(d)),
+          error: getFormattedXUncertainty(d),
+          color: colors(segment),
+        } satisfies TooltipValue;
+      }),
     };
   };
 
@@ -473,7 +476,7 @@ const useBarsGroupedState = (
     colors,
     getColorLabel: getSegmentLabel,
     grouped,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,

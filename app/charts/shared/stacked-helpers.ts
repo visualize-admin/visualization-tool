@@ -1,5 +1,6 @@
 import { group, sum } from "d3-array";
 import { NumberValue, ScaleLinear, scaleLinear } from "d3-scale";
+import { Series } from "d3-shape";
 
 import {
   NumericalValueGetter,
@@ -148,4 +149,34 @@ export const getStackedTooltipValueFormatter = ({
 
     return formatNumberWithUnit(d, format, measureUnit);
   };
+};
+
+export const getStackedPosition = <T extends { [key: string]: any }>({
+  observation,
+  series,
+  key,
+  getAxisValue,
+  measureScale,
+  fallbackMeasureValue,
+  segment,
+}: {
+  observation: Observation;
+  series: Series<T, string>[];
+  key: string;
+  getAxisValue: (d: Observation) => string;
+  measureScale: ScaleLinear<number, number>;
+  fallbackMeasureValue: number;
+  segment: string;
+}) => {
+  const axisValue = getAxisValue(observation);
+  const segmentSeries = series.find((s) => s.key === segment);
+  const seriesPoint = segmentSeries?.find((s) => s.data[key] === axisValue);
+
+  if (!seriesPoint) {
+    return fallbackMeasureValue;
+  }
+
+  const [y0, y1] = seriesPoint;
+
+  return measureScale(series.length === 1 ? y1 : (y0 + y1) * 0.5);
 };

@@ -77,6 +77,10 @@ type _InteractiveFiltersAdjusters = {
 
 type BaseAdjusters<NewChartConfigType extends ChartConfig> = {
   cubes: FieldAdjuster<NewChartConfigType, GenericChartConfig["cubes"]>;
+  annotations: FieldAdjuster<
+    NewChartConfigType,
+    GenericChartConfig["annotations"]
+  >;
   limits: FieldAdjuster<NewChartConfigType, GenericChartConfig["limits"]>;
   conversionUnitsByComponentId: FieldAdjuster<
     NewChartConfigType,

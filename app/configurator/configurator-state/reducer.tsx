@@ -705,7 +705,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "CHART_ACTIVE_FIELD_CHANGED":
+    case "CHART_ACTIVE_FIELD_CHANGE":
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         chartConfig.activeField = action.value;
@@ -812,7 +812,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_ANNOTATION_CHANGED":
+    case "CHART_META_CHANGE":
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         setWith(
@@ -1131,6 +1131,108 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
+    case "CHART_ANNOTATION_ADD":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+        chartConfig.annotations.push(action.value);
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_HIGHLIGHT_TYPE_CHANGE":
+      if (isConfiguring(draft)) {
+        const { key, highlightType } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.highlightType = highlightType;
+        }
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_COLOR_CHANGE":
+      if (isConfiguring(draft)) {
+        const { key, color } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.color = color;
+        }
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_DEFAULT_OPEN_CHANGE":
+      if (isConfiguring(draft)) {
+        const { key, defaultOpen } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.defaultOpen = defaultOpen;
+        }
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_TEXT_CHANGE":
+      if (isConfiguring(draft)) {
+        const { key, locale, value } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.text[locale] = value;
+        }
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_TEXT_CLEAR":
+      if (isConfiguring(draft)) {
+        const { key } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.text = {
+            en: "",
+            de: "",
+            fr: "",
+            it: "",
+          };
+        }
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_REMOVE":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+        chartConfig.annotations = chartConfig.annotations.filter(
+          (a) => a.key !== action.value.key
+        );
+        chartConfig.activeField = undefined;
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_TARGETS_CHANGE":
+      if (isConfiguring(draft)) {
+        const { key, targets } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.targets = targets;
+        }
+      }
+
+      return draft;
+
     case "LIMIT_SET":
       if (isConfiguring(draft)) {
         const { measureId, ...limit } = action.value;
@@ -1230,14 +1332,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "LAYOUT_ACTIVE_FIELD_CHANGED":
+    case "LAYOUT_ACTIVE_FIELD_CHANGE":
       if (draft.state === "LAYOUTING") {
         draft.layout.activeField = action.value;
       }
 
       return draft;
 
-    case "LAYOUT_ANNOTATION_CHANGED":
+    case "LAYOUT_META_CHANGE":
       if (draft.state === "LAYOUTING") {
         setWith(
           draft,

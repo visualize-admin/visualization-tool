@@ -52,6 +52,7 @@ const Columns = () => {
         width: bandwidth,
         height,
         color,
+        observation: d,
       } satisfies RenderColumnDatum;
     });
   }, [

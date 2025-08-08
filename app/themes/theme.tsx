@@ -14,7 +14,7 @@ export const theme = createTheme({
   breakpoints,
   spacing, // 4
   shape: {
-    borderRadius: 2,
+    borderRadius: 4,
   },
   shadows,
   typography,

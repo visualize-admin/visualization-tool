@@ -419,7 +419,7 @@ const ConversionUnitSection = ({
       <SectionTitle iconName="balance">
         <Trans id="controls.convert-unit">Unit Conversion</Trans>
       </SectionTitle>
-      <ControlSectionContent gap="large">
+      <ControlSectionContent gap="lg">
         <Checkbox
           label={t({
             id: "controls.convert-unit.enable",

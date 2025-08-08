@@ -386,6 +386,7 @@ export const getInitialConfig = (
           };
         }
       }),
+      annotations: [],
       limits: {},
       conversionUnitsByComponentId: {},
       activeField: undefined,
@@ -1009,6 +1010,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         draft.cubes = oldValue;
       });
     },
+    annotations: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.annotations = oldValue;
+      });
+    },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.limits = mapValues(oldValue, (limits) =>
@@ -1149,6 +1155,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    annotations: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.annotations = oldValue;
       });
     },
     limits: ({ oldValue, newChartConfig }) => {
@@ -1302,6 +1313,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         draft.cubes = oldValue;
       });
     },
+    annotations: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.annotations = oldValue;
+      });
+    },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.limits = mapValues(oldValue, (limits) =>
@@ -1425,6 +1441,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    annotations: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.annotations = oldValue;
       });
     },
     limits: ({ oldValue, newChartConfig }) => {
@@ -1564,6 +1585,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         draft.cubes = oldValue;
       });
     },
+    annotations: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.annotations = oldValue;
+      });
+    },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.limits = mapValues(oldValue, (limits) =>
@@ -1700,6 +1726,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    annotations: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.annotations = oldValue;
       });
     },
     limits: ({ oldValue, newChartConfig }) => {
@@ -1851,6 +1882,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         }
       });
     },
+    annotations: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.annotations = oldValue;
+      });
+    },
     limits: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.limits = mapValues(oldValue, (limits) =>
@@ -1906,6 +1942,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    annotations: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.annotations = oldValue;
       });
     },
     limits: ({ oldValue, newChartConfig }) => {
@@ -1982,6 +2023,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    annotations: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.annotations = oldValue;
       });
     },
     limits: ({ oldValue, newChartConfig }) => {
@@ -2125,6 +2171,11 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
         draft.cubes = oldValue;
+      });
+    },
+    annotations: ({ oldValue, newChartConfig }) => {
+      return produce(newChartConfig, (draft) => {
+        draft.annotations = oldValue;
       });
     },
     limits: ({ oldValue, newChartConfig }) => {

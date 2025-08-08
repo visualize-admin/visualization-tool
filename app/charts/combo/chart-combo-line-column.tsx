@@ -1,10 +1,10 @@
 import { memo } from "react";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
-import { InteractionColumns } from "@/charts/column/overlay-columns";
 import { AxisHeightLinearDual } from "@/charts/combo/axis-height-linear-dual";
 import { ComboLineColumn } from "@/charts/combo/combo-line-column";
 import { ComboLineColumnChart } from "@/charts/combo/combo-line-column-state";
+import { InteractionTemporalColumns } from "@/charts/combo/overlay-temporal-columns";
 import { AxisWidthBand } from "@/charts/shared/axis-width-band";
 import { BrushTime, shouldShowBrush } from "@/charts/shared/brush";
 import { ChartContainer, ChartSvg } from "@/charts/shared/containers";
@@ -36,7 +36,7 @@ const ChartComboLineColumn = memo(
             <AxisHeightLinearDual orientation="right" />
             <AxisWidthBand />
             <ComboLineColumn />
-            <InteractionColumns temporal />
+            <InteractionTemporalColumns />
             {shouldShowBrush(
               interactiveFiltersConfig,
               dashboardFilters?.timeRange

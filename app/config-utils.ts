@@ -178,7 +178,7 @@ export const useDefinitiveTemporalFilterValue = ({
   return temporalFilters.length === 1 ? temporalFilters[0].value : undefined;
 };
 
-const useDefinitiveFilters = () => {
+export const useDefinitiveFilters = () => {
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const filters = useChartConfigFilters(chartConfig);

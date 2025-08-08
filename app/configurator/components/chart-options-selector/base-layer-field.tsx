@@ -60,7 +60,7 @@ export const BaseLayerField = ({ chartConfig }: { chartConfig: MapConfig }) => {
       <SectionTitle closable>
         <Trans id="chart.map.layers.base">Base map</Trans>
       </SectionTitle>
-      <ControlSectionContent gap="large">
+      <ControlSectionContent gap="lg">
         <ChartOptionCheckboxField
           label={t({
             id: "chart.map.layers.base.show",

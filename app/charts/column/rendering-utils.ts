@@ -1,5 +1,11 @@
+import { getContrastingColor } from "@uiw/react-color";
 import { select, Selection } from "d3-selection";
+import { Series } from "d3-shape";
+import { useCallback } from "react";
 
+import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
+import { hasSegmentAnnotation } from "@/charts/shared/annotation-utils";
+import { useChartState } from "@/charts/shared/chart-state";
 import {
   setSegmentValueLabelProps,
   setSegmentWrapperValueLabelProps,
@@ -7,7 +13,11 @@ import {
 import {
   maybeTransition,
   RenderOptions,
+  toggleFocusBorder,
 } from "@/charts/shared/rendering-utils";
+import { getChartConfig, useDefinitiveFilters } from "@/config-utils";
+import { useConfiguratorState } from "@/configurator/configurator-state";
+import { Observation } from "@/domain/data";
 
 export type RenderColumnDatum = {
   key: string;
@@ -16,8 +26,84 @@ export type RenderColumnDatum = {
   width: number;
   height: number;
   color: string;
+  focused?: boolean;
   valueLabel?: string;
   valueLabelColor?: string;
+  segment?: string;
+  observation: Observation;
+  valueLabelOffset?: number;
+};
+
+export const useGetRenderStackedColumnDatum = () => {
+  const {
+    colors,
+    showValuesBySegmentMapping,
+    valueLabelFormatter,
+    xScale,
+    yScale,
+    getX,
+    getRenderingKey,
+  } = useChartState() as StackedColumnsState;
+  const [state] = useConfiguratorState();
+  const chartConfig = getChartConfig(state);
+  const definitiveFilters = useDefinitiveFilters();
+  const bandwidth = xScale.bandwidth();
+
+  return useCallback(
+    (s: Series<{ [key: string]: number }, string>) => {
+      const segment = s.key;
+      const color = colors(segment);
+
+      return s.map((d) => {
+        const observation = d.data;
+        const value = observation[segment];
+        const valueLabel =
+          segment && showValuesBySegmentMapping[segment]
+            ? valueLabelFormatter(value)
+            : undefined;
+        const valueLabelColor = valueLabel
+          ? getContrastingColor(color)
+          : undefined;
+        const xRaw = getX(observation);
+        const y = yScale(d[1]) as number;
+
+        const hasAnnotation = hasSegmentAnnotation(
+          observation,
+          segment,
+          chartConfig,
+          definitiveFilters
+        );
+
+        const valueLabelOffset = hasAnnotation ? 20 : 0;
+
+        return {
+          key: getRenderingKey(observation, segment),
+          x: xScale(xRaw) as number,
+          y,
+          width: bandwidth,
+          height: Math.max(0, yScale(d[0]) - y),
+          color,
+          valueLabel,
+          valueLabelColor,
+          observation,
+          segment,
+          valueLabelOffset,
+        } satisfies RenderColumnDatum;
+      });
+    },
+    [
+      bandwidth,
+      colors,
+      getRenderingKey,
+      getX,
+      showValuesBySegmentMapping,
+      valueLabelFormatter,
+      xScale,
+      yScale,
+      chartConfig,
+      definitiveFilters,
+    ]
+  );
 };
 
 export const renderColumns = (
@@ -61,7 +147,7 @@ export const renderColumns = (
               .call((g) =>
                 maybeTransition(g, {
                   transition,
-                  s: (g) => g.attr("y", (d) => d.y),
+                  s: (g) => g.attr("y", (d) => d.y + (d.valueLabelOffset ?? 0)),
                 })
               )
               .append("xhtml:div")
@@ -73,8 +159,10 @@ export const renderColumns = (
               })
               .text((d) => d.valueLabel ?? "")
           ),
-      (update) =>
-        maybeTransition(update, {
+      (update) => {
+        toggleFocusBorder(update.select("rect"));
+
+        return maybeTransition(update, {
           s: (g) =>
             g
               .call((g) =>
@@ -90,7 +178,7 @@ export const renderColumns = (
                 g
                   .select("foreignObject")
                   .attr("x", (d) => d.x)
-                  .attr("y", (d) => d.y)
+                  .attr("y", (d) => d.y + (d.valueLabelOffset ?? 0))
                   .attr("width", (d) => d.width)
                   .attr("height", (d) => d.height)
                   .select("p")
@@ -100,7 +188,8 @@ export const renderColumns = (
                   .text((d) => d.valueLabel ?? "")
               ),
           transition,
-        }),
+        });
+      },
       (exit) =>
         maybeTransition(exit, {
           transition,

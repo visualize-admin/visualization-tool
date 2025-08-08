@@ -26,18 +26,18 @@ msgstr "Trascina i filtri per riorganizzarli"
 msgid "No results"
 msgstr "Nessun risultato"
 
-#: app/configurator/components/annotators.tsx
-msgid "annotation.add.description"
-msgstr "[ Nessuna descrizione ]"
-
 #: app/components/text-block.tsx
 msgid "annotation.add.text"
 msgstr "[ Aggiungi testo ]"
 
 #: app/configurator/components/annotators.tsx
+msgid "annotator.add.description"
+msgstr " [ Aggiungi descrizione ]"
+
+#: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
-msgid "annotation.add.title"
-msgstr "[ Nessun titolo ]"
+msgid "annotator.add.title"
+msgstr "[ Aggiungi titolo ]"
 
 #: app/components/dashboard-shared.tsx
 msgid "block-controls.delete"
@@ -369,6 +369,56 @@ msgstr "Il minimo deve essere inferiore al massimo"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.animation"
 msgstr "Animazione"
+
+#: app/configurator/components/chart-annotations/add-annotation-button.tsx
+msgid "controls.annotations.add"
+msgstr "Aggiungere"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.annotation"
+msgstr "Annotazione"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+#: app/configurator/components/chart-annotations/chart-annotations.tsx
+msgid "controls.annotations.annotation.add.text"
+msgstr "Aggiungi testo..."
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.annotation.clear-text"
+msgstr "Cancella il testo"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.delete"
+msgstr "Cancellare"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.annotation.title"
+msgstr "Annotazione"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.display.default-open"
+msgstr "Mostra aperto per impostazione predefinita"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.display.title"
+msgstr "Display"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.element.cta"
+msgstr "Seleziona un elemento nel grafico..."
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.element.title"
+msgstr "Annotare l'elemento"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.style.title"
+msgstr "Stile"
+
+#: app/configurator/components/chart-annotations/chart-annotations.tsx
+msgid "controls.annotations.label"
+msgstr "Etichetta"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -757,6 +807,10 @@ msgstr "Descrizione"
 msgid "controls.dimensionvalue.none"
 msgstr "Nessun filtro"
 
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.fill-and-text"
+msgstr "Riempimento e casella di testo"
+
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.nb-elements"
 msgstr "{0} di {1}"
@@ -837,6 +891,10 @@ msgstr "Alla"
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.show-legend.toggle"
 msgstr "Mostra i titoli delle leggende"
+
+#: app/components/form.tsx
+msgid "controls.form.max-length-reached"
+msgstr "Limite di caratteri ({limit}) raggiunto"
 
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.groups.empty-help"
@@ -1047,6 +1105,10 @@ msgstr "Usare il tipo a gradini per far saltare l'animazione tra i punti di dati
 #: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.type.stepped"
 msgstr "A gradini"
+
+#: app/configurator/components/chart-annotations/chart-annotations.tsx
+msgid "controls.section.annotations"
+msgstr "Annotazioni"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.block-options"
@@ -1431,6 +1493,10 @@ msgstr "Ordinamento"
 #: app/configurator/table/table-chart-options.tsx
 msgid "controls.tableSettings.showSearch"
 msgstr "Mostra il campo di ricerca"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.text-only"
+msgstr "Solo casella di testo"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.title"
