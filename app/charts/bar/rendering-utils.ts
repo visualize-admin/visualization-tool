@@ -18,6 +18,7 @@ import {
 import { getChartConfig, useDefinitiveFilters } from "@/config-utils";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { Observation } from "@/domain/data";
+import { getTextWidth } from "@/utils/get-text-width";
 
 export type RenderBarDatum = {
   key: string;
@@ -75,7 +76,10 @@ export const useGetRenderStackedBarDatum = () => {
           definitiveFilters
         );
 
-        const valueLabelOffset = hasAnnotation ? 20 : 0;
+        const valueLabelOffset =
+          hasAnnotation && valueLabel
+            ? -(getTextWidth(valueLabel, { fontSize: 12 }) + 2)
+            : 0;
 
         return {
           key: getRenderingKey(observation, segment),
