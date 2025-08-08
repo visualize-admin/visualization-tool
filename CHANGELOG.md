@@ -15,6 +15,8 @@ You can also check the
   - Chart more button is now correctly hidden when there are no actions
     available
   - Most recent value is now correctly resolved in interactive filters
+- Miscellaneous
+  - Added CORS for admin.ch domains
 
 # 5.9.0 - 2025-07-28
 
