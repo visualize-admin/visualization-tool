@@ -8,6 +8,7 @@ import { Checkbox, MarkdownInput, Radio, RadioGroup } from "@/components/form";
 import { Markdown } from "@/components/markdown";
 import { useDisclosure } from "@/components/use-disclosure";
 import { Annotation, AnnotationTarget } from "@/config-types";
+import { isSegmentInConfig } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import { getDefaultHighlightAnnotation } from "@/configurator/components/chart-annotations/utils";
 import { ControlTab } from "@/configurator/components/chart-controls/control-tab";
@@ -164,6 +165,10 @@ export const ChartAnnotationsSelector = () => {
   const hasTargets = annotation.targets.length > 0;
   const hasText = Object.values(annotation.text).some((t) => t);
   const label = annotation.text[locale];
+  const isSegmented =
+    isSegmentInConfig(chartConfig) &&
+    "segment" in chartConfig.fields &&
+    !!chartConfig.fields.segment;
 
   return (
     <>
@@ -183,42 +188,47 @@ export const ChartAnnotationsSelector = () => {
           </Typography>
         </ControlSectionContent>
       </ControlSection>
-      <ControlSection collapse>
-        <SectionTitle>
-          <Trans id="controls.annotations.highlight.section.style.title">
-            Style
-          </Trans>
-        </SectionTitle>
-        <ControlSectionContent gap="xl">
-          <RadioGroup>
-            <Radio
-              label={t({ id: "controls.text-only", message: "Text box only" })}
-              value="none"
-              checked={annotation.highlightType === "none"}
-              disabled={!hasTargets}
-              onChange={() => handleStyleTypeChange("none")}
-            />
-            <Radio
-              label={t({
-                id: "controls.fill-and-text",
-                message: "Fill and text box",
-              })}
-              value="filled"
-              checked={annotation.highlightType === "filled"}
-              disabled={!hasTargets}
-              onChange={() => handleStyleTypeChange("filled")}
-            />
-          </RadioGroup>
-          {annotation.highlightType === "filled" && annotation.color && (
-            <ColorPicker
-              label={annotation.color}
-              color={annotation.color}
-              symbol="square"
-              onChange={handleColorChange}
-            />
-          )}
-        </ControlSectionContent>
-      </ControlSection>
+      {isSegmented ? null : (
+        <ControlSection collapse>
+          <SectionTitle>
+            <Trans id="controls.annotations.highlight.section.style.title">
+              Style
+            </Trans>
+          </SectionTitle>
+          <ControlSectionContent gap="xl">
+            <RadioGroup>
+              <Radio
+                label={t({
+                  id: "controls.text-only",
+                  message: "Text box only",
+                })}
+                value="none"
+                checked={annotation.highlightType === "none"}
+                disabled={!hasTargets}
+                onChange={() => handleStyleTypeChange("none")}
+              />
+              <Radio
+                label={t({
+                  id: "controls.fill-and-text",
+                  message: "Fill and text box",
+                })}
+                value="filled"
+                checked={annotation.highlightType === "filled"}
+                disabled={!hasTargets}
+                onChange={() => handleStyleTypeChange("filled")}
+              />
+            </RadioGroup>
+            {annotation.highlightType === "filled" && annotation.color && (
+              <ColorPicker
+                label={annotation.color}
+                color={annotation.color}
+                symbol="square"
+                onChange={handleColorChange}
+              />
+            )}
+          </ControlSectionContent>
+        </ControlSection>
+      )}
       <ControlSection collapse>
         <SectionTitle>
           <Trans id="controls.annotations.highlight.section.annotation.title">
