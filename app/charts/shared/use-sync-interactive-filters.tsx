@@ -39,11 +39,11 @@ export const useSyncInteractiveFilters = (
 
   // Time range filter
   const presetFrom =
-    interactiveFiltersConfig?.timeRange.presets.from &&
-    parseDate(interactiveFiltersConfig?.timeRange.presets.from);
+    interactiveFiltersConfig.timeRange.presets.from &&
+    parseDate(interactiveFiltersConfig.timeRange.presets.from);
   const presetTo =
-    interactiveFiltersConfig?.timeRange.presets.to &&
-    parseDate(interactiveFiltersConfig?.timeRange.presets.to);
+    interactiveFiltersConfig.timeRange.presets.to &&
+    parseDate(interactiveFiltersConfig.timeRange.presets.to);
 
   const presetFromStr = presetFrom?.toString();
   const presetToStr = presetTo?.toString();
@@ -56,7 +56,7 @@ export const useSyncInteractiveFilters = (
   }, [setTimeRange, presetFromStr, presetToStr]);
 
   // Data Filters
-  const componentIds = interactiveFiltersConfig?.dataFilters.componentIds;
+  const componentIds = interactiveFiltersConfig.dataFilters.componentIds;
   const dashboardComponentIds = dashboardFilters?.dataFilters.componentIds;
   const newPotentialInteractiveDataFilters = useMemo(() => {
     if (componentIds) {
@@ -95,11 +95,33 @@ export const useSyncInteractiveFilters = (
         newPotentialInteractiveDataFilters.reduce(
           (obj, iri) => {
             const configFilter = filters[iri];
+
             if (Object.keys(dataFilters).includes(iri)) {
               obj[iri] = dataFilters[iri];
             } else if (configFilter?.type === "single") {
               obj[iri] = configFilter;
+            } else if (configFilter?.type === "multi" || !configFilter) {
+              const defaultValueOverride =
+                interactiveFiltersConfig.dataFilters.defaultValueOverrides[iri];
+
+              if (
+                defaultValueOverride &&
+                (configFilter?.values[defaultValueOverride] || !configFilter)
+              ) {
+                obj[iri] = {
+                  type: "single",
+                  value: defaultValueOverride,
+                };
+              } else {
+                obj[iri] = {
+                  type: "single",
+                  value: FIELD_VALUE_NONE,
+                };
+                delete interactiveFiltersConfig.dataFilters
+                  .defaultValueOverrides[iri];
+              }
             }
+
             return obj;
           },
           {} as { [key: string]: FilterValueSingle }
@@ -141,8 +163,9 @@ export const useSyncInteractiveFilters = (
   );
 
   // Calculation
-  const calculationActive = interactiveFiltersConfig?.calculation.active;
-  const calculationType = interactiveFiltersConfig?.calculation.type;
+  const calculationActive = interactiveFiltersConfig.calculation.active;
+  const calculationType = interactiveFiltersConfig.calculation.type;
+
   useEffect(() => {
     if (calculationType) {
       setCalculationType(calculationType);

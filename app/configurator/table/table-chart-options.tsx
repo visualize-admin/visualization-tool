@@ -28,7 +28,6 @@ import {
 import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter,
-  TimeFilter,
 } from "@/configurator/components/filters";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FieldProps } from "@/configurator/config-form";
@@ -347,10 +346,10 @@ export const TableColumnOptions = ({
                 timeFormat={component.timeFormat}
               />
             ) : (
-              <TimeFilter
+              <DimensionValuesMultiFilter
                 key={component.id}
                 dimension={component}
-                disableInteractiveFilters
+                field={activeField}
               />
             )}
           </ControlSectionContent>

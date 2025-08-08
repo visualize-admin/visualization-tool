@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { DraggableLocation, OnDragStartResponder } from "react-beautiful-dnd";
 
-import { ConfiguratorStateConfiguringChart, TableFields } from "@/config-types";
+import { ConfiguratorStateConfiguringChart, TableConfig } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import {
   isConfiguring,
@@ -16,7 +16,7 @@ export const useTableChartController = (
 ) => {
   const locale = useLocale();
   const [, dispatch] = useConfiguratorState(isConfiguring);
-  const chartConfig = getChartConfig(state);
+  const chartConfig = getChartConfig(state) as TableConfig;
   const [{ data: components }] = useDataCubesComponentsQuery({
     chartConfig,
     variables: {
@@ -82,9 +82,6 @@ export const useTableChartController = (
     currentDraggableId,
     handleDragStart,
     handleDragEnd,
-    chartConfig: {
-      ...chartConfig,
-      fields: chartConfig.fields as TableFields,
-    },
+    chartConfig,
   };
 };

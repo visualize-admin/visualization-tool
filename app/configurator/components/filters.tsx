@@ -70,8 +70,11 @@ import {
   DatePickerField,
 } from "@/configurator/components/field-date-picker";
 import { useLegendTitleVisibility } from "@/configurator/configurator-state/segment-config-state";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { EditorBrush } from "@/configurator/interactive-filters/editor-brush";
 import {
+  useDefaultValueOverride,
+  useInteractiveDataFilterToggle,
   useInteractiveFiltersToggle,
   useInteractiveTimeRangeToggle,
 } from "@/configurator/interactive-filters/interactive-filters-config-state";
@@ -254,6 +257,7 @@ const MultiFilterContent = ({
   const locale = useLocale();
   const [config, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(config);
+  const isSegmentField = chartConfig.activeField === "segment";
   const { cubeIri, dimensionId, activeKeys, allValues, colorConfigPath } =
     useMultiFilterContext();
   const filters = useChartConfigFilters(chartConfig);
@@ -363,40 +367,43 @@ const MultiFilterContent = ({
     : undefined;
   const enableSettingShowValuesBySegment =
     segment &&
-    chartConfig.activeField === "segment" &&
+    isSegmentField &&
     shouldEnableSettingShowValuesBySegment(chartConfig);
   const showValuesMappingBooleans: boolean[] = Object.values(
     segment?.showValuesMapping ?? {}
   );
 
-  const interactiveFilterProps = useInteractiveFiltersToggle("legend");
+  // TODO: separate interactive legend and data filters
+  const interactiveLegendFilterProps = useInteractiveFiltersToggle();
+  const interactiveDataFilterProps =
+    useInteractiveDataFilterToggle(dimensionId);
+  const interactiveFilterProps = isSegmentField
+    ? interactiveLegendFilterProps
+    : interactiveDataFilterProps;
   const visibleLegendProps = useLegendTitleVisibility();
   const chartSymbol = getChartSymbol(chartConfig.chartType);
+
+  const defaultValueOverrideProps = useDefaultValueOverride(dimensionId);
+  const defaultValueOptions = useMemo(() => {
+    return [
+      {
+        value: FIELD_VALUE_NONE,
+        label: t({
+          id: "controls.none",
+          message: "None",
+        }),
+        isNoneValue: true,
+      },
+      ...values.map(({ value, label }) => ({ value, label })),
+    ];
+  }, [values]);
 
   return (
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
-        {chartConfig.activeField === "segment" ? (
-          <Flex sx={{ flexDirection: "column", gap: 3, mb: 3 }}>
-            <Switch
-              label={
-                <MaybeTooltip
-                  tooltipProps={{ enterDelay: 600 }}
-                  title={
-                    <Trans id="controls.filters.interactive.tooltip">
-                      Allow users to change filters
-                    </Trans>
-                  }
-                >
-                  <div>
-                    <Trans id="controls.filters.interactive.toggle">
-                      Interactive
-                    </Trans>
-                  </div>
-                </MaybeTooltip>
-              }
-              {...interactiveFilterProps}
-            />
+        <Flex sx={{ flexDirection: "column", gap: 3, mb: 3 }}>
+          <InteractiveToggle {...interactiveFilterProps} />
+          {isSegmentField ? (
             <Switch
               label={t({
                 id: "controls.filters.show-legend.toggle",
@@ -404,8 +411,19 @@ const MultiFilterContent = ({
               })}
               {...visibleLegendProps}
             />
-          </Flex>
-        ) : null}
+          ) : interactiveFilterProps.checked ? (
+            <Select
+              id={`default-value-${dimensionId}`}
+              size="sm"
+              label={t({
+                id: "controls.filters.default-value.label",
+                message: "Default value",
+              })}
+              options={defaultValueOptions}
+              {...defaultValueOverrideProps}
+            />
+          ) : null}
+        </Flex>
         <Button
           variant="outlined"
           size="sm"
@@ -542,6 +560,38 @@ const MultiFilterContent = ({
         </ClickAwayListener>
       </ConfiguratorDrawer>
     </Box>
+  );
+};
+
+const InteractiveToggle = ({
+  name,
+  checked,
+  onChange,
+}: {
+  name: string;
+  checked: boolean;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+}) => {
+  return (
+    <Switch
+      name={name}
+      label={
+        <MaybeTooltip
+          tooltipProps={{ enterDelay: 600 }}
+          title={
+            <Trans id="controls.filters.interactive.tooltip">
+              Allow users to change filters
+            </Trans>
+          }
+        >
+          <div>
+            <Trans id="controls.filters.interactive.toggle">Interactive</Trans>
+          </div>
+        </MaybeTooltip>
+      }
+      checked={checked}
+      onChange={onChange}
+    />
   );
 };
 
@@ -989,8 +1039,7 @@ const DrawerContent = forwardRef<
             setPendingValues(newValues);
           }}
         />
-
-        <Box className={classes.autocompleteApplyButtonContainer}>
+        <div className={classes.autocompleteApplyButtonContainer}>
           <Button
             size="sm"
             className={classes.autocompleteApplyButton}
@@ -999,7 +1048,7 @@ const DrawerContent = forwardRef<
           >
             <Trans id="controls.set-values-apply">Apply filters</Trans>
           </Button>
-        </Box>
+        </div>
       </div>
     );
   }
@@ -1023,12 +1072,12 @@ export const DimensionValuesMultiFilter = ({
   dimension,
   colorConfigPath,
   colorComponent,
-  field = "segment",
+  field,
 }: {
   dimension: Dimension;
   colorConfigPath?: string;
   colorComponent?: Component;
-  field?: string;
+  field: string;
 }) => {
   const [state] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);

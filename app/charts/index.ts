@@ -197,6 +197,7 @@ const getInitialInteractiveFiltersConfig = (options?: {
     dataFilters: {
       active: false,
       componentIds: [],
+      defaultValueOverrides: {},
       defaultOpen: true,
     },
     calculation: {
@@ -386,6 +387,7 @@ export const getInitialConfig = (
           };
         }
       }),
+      interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
       limits: {},
       conversionUnitsByComponentId: {},
       activeField: undefined,
@@ -507,7 +509,6 @@ export const getInitialConfig = (
       return {
         ...getGenericConfig(makeInitialFiltersForArea(areaDimension)),
         chartType,
-        interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         baseLayer: {
           show: true,
           locked: false,
@@ -542,7 +543,6 @@ export const getInitialConfig = (
       return {
         ...getGenericConfig(),
         chartType,
-        interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         fields: {
           y: { componentId: numericalMeasures[0].id },
           segment: {
@@ -571,7 +571,6 @@ export const getInitialConfig = (
       return {
         ...getGenericConfig(),
         chartType: "scatterplot",
-        interactiveFiltersConfig: getInitialInteractiveFiltersConfig(),
         fields: {
           x: { componentId: numericalMeasures[0].id },
           y: {
@@ -612,7 +611,6 @@ export const getInitialConfig = (
       return {
         ...getGenericConfig(),
         chartType,
-        interactiveFiltersConfig: undefined,
         settings: {
           showSearch: true,
           showAllRows: false,
@@ -914,9 +912,7 @@ const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
   legend: ({ oldValue, oldChartConfig, newChartConfig }) => {
     if ((oldChartConfig.fields as any).segment !== undefined) {
       return produce(newChartConfig, (draft) => {
-        if (draft.interactiveFiltersConfig) {
-          draft.interactiveFiltersConfig.legend = oldValue;
-        }
+        draft.interactiveFiltersConfig.legend = oldValue;
       });
     }
 
@@ -925,78 +921,77 @@ const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
   timeRange: {
     active: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        if (draft.interactiveFiltersConfig) {
-          draft.interactiveFiltersConfig.timeRange.active = oldValue;
-        }
+        draft.interactiveFiltersConfig.timeRange.active = oldValue;
       });
     },
     componentId: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        if (draft.interactiveFiltersConfig) {
-          draft.interactiveFiltersConfig.timeRange.componentId = oldValue;
-        }
+        draft.interactiveFiltersConfig.timeRange.componentId = oldValue;
       });
     },
     presets: {
       type: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
-          if (draft.interactiveFiltersConfig) {
-            draft.interactiveFiltersConfig.timeRange.presets.type = oldValue;
-          }
+          draft.interactiveFiltersConfig.timeRange.presets.type = oldValue;
         });
       },
       from: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
-          if (draft.interactiveFiltersConfig) {
-            draft.interactiveFiltersConfig.timeRange.presets.from = oldValue;
-          }
+          draft.interactiveFiltersConfig.timeRange.presets.from = oldValue;
         });
       },
       to: ({ oldValue, newChartConfig }) => {
         return produce(newChartConfig, (draft) => {
-          if (draft.interactiveFiltersConfig) {
-            draft.interactiveFiltersConfig.timeRange.presets.to = oldValue;
-          }
+          draft.interactiveFiltersConfig.timeRange.presets.to = oldValue;
         });
       },
     },
   },
   dataFilters: ({ oldValue, newChartConfig }) => {
     return produce(newChartConfig, (draft) => {
-      if (draft.interactiveFiltersConfig) {
-        const oldComponentIds = oldValue.componentIds ?? [];
+      const oldComponentIds = oldValue.componentIds ?? [];
 
-        if (oldComponentIds.length > 0) {
-          const fieldComponentIds = Object.values<GenericField>(
-            // @ts-ignore - we are only interested in component ids.
-            draft.fields
-          ).map((d) => d.componentId);
-          // Remove component ids that are not in the new chart config, as they
-          // can't be used as interactive data filters then.
-          const validComponentIds = oldComponentIds.filter(
-            (d) => !fieldComponentIds.includes(d)
-          );
-          draft.interactiveFiltersConfig.dataFilters.active =
-            validComponentIds.length > 0;
-          draft.interactiveFiltersConfig.dataFilters.componentIds =
-            validComponentIds;
-        } else {
-          draft.interactiveFiltersConfig.dataFilters = oldValue;
-        }
+      if (oldComponentIds.length > 0) {
+        const fieldComponentIds = Object.values<GenericField>(
+          // @ts-ignore - we are only interested in component ids.
+          draft.fields
+        ).map((d) => d.componentId);
+        // Remove component ids that are not in the new chart config, as they
+        // can't be used as interactive data filters then.
+        const validComponentIds = oldComponentIds.filter(
+          (d) => !fieldComponentIds.includes(d)
+        );
+
+        const newDefaultValueOverrides = {
+          ...oldValue.defaultValueOverrides,
+        };
+        const removedComponentIds = oldComponentIds.filter(
+          (d) => !validComponentIds.includes(d)
+        );
+        removedComponentIds.forEach((id) => {
+          delete newDefaultValueOverrides[id];
+        });
+
+        draft.interactiveFiltersConfig.dataFilters.active =
+          validComponentIds.length > 0;
+        draft.interactiveFiltersConfig.dataFilters.componentIds =
+          validComponentIds;
+        draft.interactiveFiltersConfig.dataFilters.defaultValueOverrides =
+          newDefaultValueOverrides;
+      } else {
+        draft.interactiveFiltersConfig.dataFilters = oldValue;
       }
     });
   },
   calculation: ({ oldValue, newChartConfig }) => {
     return produce(newChartConfig, (draft) => {
-      if (draft.interactiveFiltersConfig) {
-        if (canBeNormalized(newChartConfig)) {
-          draft.interactiveFiltersConfig.calculation = oldValue;
-        } else {
-          draft.interactiveFiltersConfig.calculation = {
-            active: false,
-            type: "identity",
-          };
-        }
+      if (canBeNormalized(newChartConfig)) {
+        draft.interactiveFiltersConfig.calculation = oldValue;
+      } else {
+        draft.interactiveFiltersConfig.calculation = {
+          active: false,
+          type: "identity",
+        };
       }
     });
   },
@@ -1814,7 +1809,14 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
   table: {
     cubes: ({ oldValue, newChartConfig }) => {
       return produce(newChartConfig, (draft) => {
-        draft.cubes = oldValue;
+        draft.cubes = oldValue.map((cube) => ({
+          ...cube,
+          filters: Object.fromEntries(
+            Object.entries(cube.filters).filter(
+              ([_, value]) => value.type !== "range"
+            )
+          ),
+        }));
       });
     },
     fields: ({ oldValue, newChartConfig }) => {

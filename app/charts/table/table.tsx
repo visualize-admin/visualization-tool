@@ -78,7 +78,7 @@ export const getTableUIElementsOffset = ({
   width: number;
 }) => {
   return (
-    (showSearch ? 48 : 0) + (shouldShowCompactMobileView(width) ? 48 : 0) + 4
+    (showSearch ? 48 : 0) + (shouldShowCompactMobileView(width) ? 48 : 0) + 54
   );
 };
 

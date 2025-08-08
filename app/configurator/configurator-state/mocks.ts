@@ -30,8 +30,31 @@ export const configStateMock = {
         chartType: "map",
         version: CHART_CONFIG_VERSION,
         meta: {} as ConfiguratorStateConfiguringChart["chartConfigs"][0]["meta"],
-        interactiveFiltersConfig:
-          {} as ConfiguratorStateConfiguringChart["chartConfigs"][0]["interactiveFiltersConfig"],
+        interactiveFiltersConfig: {
+          legend: {
+            active: false,
+            componentId: "",
+          },
+          timeRange: {
+            active: false,
+            componentId: "",
+            presets: {
+              type: "range",
+              from: "",
+              to: "",
+            },
+          },
+          dataFilters: {
+            active: false,
+            componentIds: [],
+            defaultValueOverrides: {},
+            defaultOpen: true,
+          },
+          calculation: {
+            active: false,
+            type: "identity",
+          },
+        },
         baseLayer: {} as Extract<
           ConfiguratorStateConfiguringChart["chartConfigs"][0],
           { chartType: "map" }
@@ -157,6 +180,7 @@ export const configStateMock = {
           dataFilters: {
             active: false,
             componentIds: [],
+            defaultValueOverrides: {},
           },
           calculation: {
             active: false,
@@ -1160,7 +1184,31 @@ export const configJoinedCubes: Partial<
     key: "NF9PKwRtOaOI",
     version: CHART_CONFIG_VERSION,
     activeField: undefined,
-    interactiveFiltersConfig: undefined,
+    interactiveFiltersConfig: {
+      legend: {
+        active: false,
+        componentId: "",
+      },
+      timeRange: {
+        active: false,
+        componentId: "",
+        presets: {
+          type: "range",
+          from: "",
+          to: "",
+        },
+      },
+      dataFilters: {
+        active: false,
+        componentIds: [],
+        defaultValueOverrides: {},
+        defaultOpen: true,
+      },
+      calculation: {
+        active: false,
+        type: "identity",
+      },
+    },
     meta: {
       title: { en: "", de: "", fr: "", it: "" },
       description: { en: "", de: "", fr: "", it: "" },
@@ -1629,7 +1677,11 @@ export const configJoinedCubes: Partial<
         componentId: "",
         presets: { type: "range", from: "", to: "" },
       },
-      dataFilters: { active: false, componentIds: [] },
+      dataFilters: {
+        active: false,
+        componentIds: [],
+        defaultValueOverrides: {},
+      },
       calculation: { active: false, type: "identity" },
     },
     fields: {

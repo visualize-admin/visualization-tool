@@ -11,6 +11,9 @@ You can also check the
 
 # Unreleased
 
+- Features
+  - It's now possible to enable interactive filters for multi-filter panel
+    fields
 - Fixes
   - Chart more button is now correctly hidden when there are no actions
     available
