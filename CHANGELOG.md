@@ -29,6 +29,8 @@ You can also check the
 - Maintenance
   - Observations now include original values under `componentId/__iri__` key and
     are unversioned
+- Miscellaneous
+  - Added CORS for admin.ch domains
 
 # 5.9.0 - 2025-07-28
 
