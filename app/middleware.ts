@@ -7,29 +7,38 @@ export const config = {
 };
 
 export function middleware(request: NextRequest) {
-  const origin = request.headers.get("origin");
-  const isNullOrigin = !origin || origin === "null";
+  const origin = request.headers.get("origin") || "";
+  const isNullOrigin = origin === "null" || origin === "";
 
-  const response = NextResponse.next();
+  const allowed = origin.endsWith(".admin.ch") || isNullOrigin;
 
-  if ((origin && origin.endsWith(".admin.ch")) || isNullOrigin) {
-    response.headers.set(
+  if (request.method === "OPTIONS") {
+    const res = new NextResponse(null, { status: 204 });
+    if (allowed) {
+      res.headers.set(
+        "Access-Control-Allow-Origin",
+        isNullOrigin ? "null" : origin
+      );
+      res.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+      res.headers.set(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Authorization"
+      );
+    }
+    return res;
+  }
+
+  const res = NextResponse.next();
+  if (allowed) {
+    res.headers.set(
       "Access-Control-Allow-Origin",
       isNullOrigin ? "null" : origin
     );
-    response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    response.headers.set(
+    res.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.headers.set(
       "Access-Control-Allow-Headers",
       "Content-Type, Authorization"
     );
   }
-
-  if (request.method === "OPTIONS") {
-    return new Response(null, {
-      status: 204,
-      headers: response.headers,
-    });
-  }
-
-  return response;
+  return res;
 }
