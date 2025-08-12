@@ -58,24 +58,6 @@ module.exports = withPreconstruct(
           ],
         });
 
-        headers.push({
-          source: "/static/fonts/:path*",
-          headers: [
-            {
-              key: "Access-Control-Allow-Origin",
-              value: "*",
-            },
-            {
-              key: "Access-Control-Allow-Methods",
-              value: "GET, OPTIONS",
-            },
-            {
-              key: "Access-Control-Allow-Headers",
-              value: "Content-Type, Authorization",
-            },
-          ],
-        });
-
         // See https://content-security-policy.com/ & https://developers.google.com/tag-platform/security/guides/csp
         if (!(process.env.DISABLE_CSP && process.env.DISABLE_CSP === "true")) {
           headers[0].headers.push({
