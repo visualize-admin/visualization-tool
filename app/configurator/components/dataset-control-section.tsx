@@ -214,15 +214,18 @@ export const DatasetsControlSection = () => {
   };
 
   return (
-    <ControlSection collapse defaultExpanded hideTopBorder>
+    <ControlSection
+      role="tablist"
+      aria-labelledby="controls-data"
+      collapse
+      defaultExpanded
+      hideTopBorder
+    >
       <SectionTitle id="controls-data">
         <Trans id="controls.section.datasets.title">Datasets</Trans>{" "}
         <DatasetsBadge sx={{ ml: "auto", mr: 2 }} />
       </SectionTitle>
-      <ControlSectionContent
-        aria-labelledby="controls-data"
-        data-testid="configurator-datasets"
-      >
+      <ControlSectionContent data-testid="configurator-datasets">
         <Flex sx={{ flexDirection: "column", gap: 6 }}>
           {metadataQuery.data?.dataCubesMetadata.map((cube) => {
             return (

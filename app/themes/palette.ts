@@ -44,9 +44,11 @@ const green: PaletteOptions["green"] = {
   900: "#064E3B",
 };
 
+export const PRIMARY_COLOR = blue[700];
+
 export const palette = {
   primary: {
-    main: blue[700],
+    main: PRIMARY_COLOR,
     dark: blue[900],
     contrastText: "#fff",
   },

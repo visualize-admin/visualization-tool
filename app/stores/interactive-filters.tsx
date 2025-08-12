@@ -1,3 +1,4 @@
+import isEqual from "lodash/isEqual";
 import uniq from "lodash/uniq";
 import {
   createContext,
@@ -13,7 +14,7 @@ import {
   CalculationType,
   ChartConfig,
   FilterValueSingle,
-} from "@/configurator";
+} from "@/config-types";
 import { truthy } from "@/domain/types";
 import { getOriginalIds, isJoinById } from "@/graphql/join";
 import {
@@ -35,6 +36,9 @@ export type InteractiveFiltersState = {
   dataFilters: DataFilters;
   calculation: {
     type: CalculationType | undefined;
+  };
+  annotations: {
+    [x: string]: boolean;
   };
 };
 
@@ -64,6 +68,8 @@ type InteractiveFiltersStateActions = {
   ) => void;
   resetDataFilters: () => void;
   setCalculationType: (calculationType: CalculationType) => void;
+  setAnnotations: (annotations: InteractiveFiltersState["annotations"]) => void;
+  updateAnnotation: (key: string, show: boolean) => void;
 };
 
 type State = InteractiveFiltersState & InteractiveFiltersStateActions;
@@ -136,6 +142,18 @@ const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
     },
     setCalculationType: (calculationType: CalculationType) => {
       set({ calculation: { type: calculationType } });
+    },
+    annotations: {},
+    setAnnotations: (annotations: InteractiveFiltersState["annotations"]) => {
+      set({ annotations });
+    },
+    updateAnnotation: (key: string, show: boolean) => {
+      set((state) => ({
+        annotations: {
+          ...state.annotations,
+          [key]: show,
+        },
+      }));
     },
   };
 };
@@ -229,6 +247,9 @@ export const InteractiveFiltersProvider = ({
         const store =
           storeRefs.current[chartConfig.key] ??
           create(interactiveFiltersStoreCreator);
+
+        storeRefs.current[chartConfig.key] = store;
+
         const ctxValue: InteractiveFiltersContextValue = [
           store.getState,
           createBoundUseStoreWithSelector(store),
@@ -239,14 +260,23 @@ export const InteractiveFiltersProvider = ({
     );
   }, [chartConfigs]);
 
-  const ctxValue = useMemo(
-    () => ({
-      potentialTimeRangeFilterIds,
-      potentialDataFilterIds,
-      stores,
-    }),
-    [potentialTimeRangeFilterIds, potentialDataFilterIds, stores]
-  );
+  const ctxValueRef = useRef<{
+    potentialTimeRangeFilterIds: string[];
+    potentialDataFilterIds: string[];
+    stores: Record<ChartConfig["key"], InteractiveFiltersContextValue>;
+  }>();
+
+  const newCtxValue = {
+    potentialTimeRangeFilterIds,
+    potentialDataFilterIds,
+    stores,
+  };
+
+  if (!ctxValueRef.current || !isEqual(ctxValueRef.current, newCtxValue)) {
+    ctxValueRef.current = newCtxValue;
+  }
+
+  const ctxValue = ctxValueRef.current;
 
   return (
     <InteractiveFiltersContext.Provider value={ctxValue}>

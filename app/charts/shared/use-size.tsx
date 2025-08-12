@@ -22,7 +22,6 @@ export type Bounds = {
   height: number;
   margins: Margins;
   chartWidth: number;
-  yAxisTitleHeight?: number;
   chartHeight: number;
   aspectRatio: number;
 };

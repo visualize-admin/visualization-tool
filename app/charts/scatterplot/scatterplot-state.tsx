@@ -2,13 +2,14 @@ import { max } from "d3-array";
 import { ScaleLinear, scaleLinear, ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   ScatterplotStateVariables,
   useScatterplotStateData,
   useScatterplotStateVariables,
 } from "@/charts/scatterplot//scatterplot-state-props";
+import { GetAnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -44,10 +45,11 @@ export type ScatterplotState = CommonChartState &
     chartType: "scatterplot";
     xScale: ScaleLinear<number, number>;
     yScale: ScaleLinear<number, number>;
-    hasSegment: boolean;
+    segments: string[];
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
-    getAnnotationInfo: (d: Observation, values: Observation[]) => TooltipInfo;
+    getAnnotationInfo: GetAnnotationInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -100,11 +102,13 @@ const useScatterplotState = (
     .domain([paddingYMinValue, paddingYMaxValue])
     .nice();
 
-  const hasSegment = fields.segment ? true : false;
   const segmentFilter = segmentDimension?.id
     ? chartConfig.cubes.find((d) => d.iri === segmentDimension.cubeIri)
         ?.filters[segmentDimension.id]
     : undefined;
+
+  // TODO: Verify is segments creation logic is correct
+  // (it's not consistent with other charts).
   const allSegments = useMemo(() => {
     const allUniqueSegments = Array.from(new Set(segmentData.map(getSegment)));
     const sorting = {
@@ -193,8 +197,21 @@ const useScatterplotState = (
 
   const isMobile = useIsMobile();
 
-  // Tooltip
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation, { segment }) => {
+      const x = xScale(getX(observation) ?? 0);
+      const y = yScale(getY(observation) ?? 0);
+
+      return {
+        x,
+        y,
+        color: colors(segment),
+      };
+    },
+    [xScale, getX, yScale, getY, colors]
+  );
+
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const xRef = xScale(getX(datum) ?? NaN);
     const yRef = yScale(getY(datum) ?? NaN);
     const xAnchor = xRef;
@@ -246,10 +263,11 @@ const useScatterplotState = (
     allData,
     xScale,
     yScale,
-    hasSegment,
+    segments: allSegments,
     colors,
     getColorLabel: getSegmentLabel,
     getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,

@@ -59,6 +59,7 @@ import {
 import { getChartConfig, getChartConfigFilters } from "@/config-utils";
 import { ChartAnnotator } from "@/configurator/components/annotators";
 import { FiltersBadge } from "@/configurator/components/badges";
+import { ChartAnnotations } from "@/configurator/components/chart-annotations/chart-annotations";
 import {
   ControlSection,
   ControlSectionContent,
@@ -665,8 +666,12 @@ export const ChartConfigurator = ({
   return (
     <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
       <DatasetsControlSection />
-      <ControlSection collapse>
-        <SectionTitle id="controls-design">
+      <ControlSection
+        role="tablist"
+        aria-labelledby="controls-chart-type"
+        collapse
+      >
+        <SectionTitle id="controls-chart-type">
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </SectionTitle>
         <ControlSectionContent>
@@ -677,16 +682,15 @@ export const ChartConfigurator = ({
           />
         </ControlSectionContent>
       </ControlSection>
-      <ControlSection collapse>
-        <SectionTitle id="controls-design">
+      <ControlSection
+        role="tablist"
+        aria-labelledby="controls-chart-options"
+        collapse
+      >
+        <SectionTitle id="controls-chart-options">
           <Trans id="controls.section.chart.options">Chart Options</Trans>
         </SectionTitle>
-        <ControlSectionContent
-          gap="none"
-          px="none"
-          role="tablist"
-          aria-labelledby="controls-design"
-        >
+        <ControlSectionContent gap="none" px="none" role="tablist">
           <ChartFields
             dataSource={state.dataSource}
             chartConfig={chartConfig}
@@ -828,6 +832,7 @@ export const ChartConfigurator = ({
         </ControlSection>
       )}
       <ChartAnnotator />
+      <ChartAnnotations />
       {chartConfig.chartType !== "table" && (
         <InteractiveFiltersConfigurator state={state} />
       )}

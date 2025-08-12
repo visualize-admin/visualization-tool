@@ -3,6 +3,8 @@ import { memo } from "react";
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { Scatterplot } from "@/charts/scatterplot/scatterplot";
 import { ScatterplotChart } from "@/charts/scatterplot/scatterplot-state";
+import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
+import { Annotations } from "@/charts/shared/annotations";
 import {
   AxisHeightLinear,
   AxisHeightLinearDomain,
@@ -16,6 +18,8 @@ import {
   ChartControlsContainer,
   ChartSvg,
 } from "@/charts/shared/containers";
+import { HoverAnnotationDot } from "@/charts/shared/interaction/hover-annotation-dot";
+import { Ruler } from "@/charts/shared/interaction/ruler";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { InteractionVoronoi } from "@/charts/shared/overlay-voronoi";
@@ -24,7 +28,6 @@ import { useChartConfigFilters } from "@/config-utils";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
 
 import { ChartProps, VisualizationProps } from "../shared/chart-props";
-import { Ruler } from "../shared/interaction/ruler";
 
 export const ChartScatterplotVisualization = (
   props: VisualizationProps<ScatterPlotConfig>
@@ -36,6 +39,7 @@ const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
   const { chartConfig, dimensions, dimensionsById } = props;
   const { fields, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
+  const isEditingAnnotation = useIsEditingAnnotation();
 
   return (
     <ScatterplotChart {...props}>
@@ -49,8 +53,13 @@ const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
           <InteractionVoronoi />
         </ChartSvg>
         <Ruler />
-        <Tooltip type="single" />
+        {isEditingAnnotation ? (
+          <HoverAnnotationDot />
+        ) : (
+          <Tooltip type="single" />
+        )}
       </ChartContainer>
+      <Annotations />
       {(fields.animation || fields.segment) && (
         <ChartControlsContainer>
           {fields.animation && (

@@ -376,3 +376,15 @@ export const renderHorizontalWhisker = (
         })
     );
 };
+
+export const toggleFocusBorder = <T extends { focused?: boolean }>(
+  s: Selection<SVGGElement, T, SVGGElement, unknown>
+) => {
+  s.attr("stroke", (d) => (d.focused ? ANNOTATION_FOCUS_COLOR : "none")).attr(
+    "stroke-width",
+    (d) => (d.focused ? ANNOTATION_FOCUS_WIDTH : 0)
+  );
+};
+
+export const ANNOTATION_FOCUS_COLOR = "#A332DE";
+export const ANNOTATION_FOCUS_WIDTH = 4;

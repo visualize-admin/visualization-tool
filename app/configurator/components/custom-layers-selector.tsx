@@ -220,7 +220,7 @@ export const CustomLayersSelector = () => {
           ) : null}
         </Box>
       </LeftDrawer>
-      <ControlSectionContent gap="large">
+      <ControlSectionContent gap="lg">
         {configLayers.length === 0 && (
           <Typography variant="body3" color="text.secondary">
             <Trans id="chart.map.layers.no-layers">No imported maps</Trans>

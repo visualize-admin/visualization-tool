@@ -516,7 +516,7 @@ const ChartPreviewInner = ({
                         configuring
                           ? () =>
                               dispatch({
-                                type: "CHART_ACTIVE_FIELD_CHANGED",
+                                type: "CHART_ACTIVE_FIELD_CHANGE",
                                 value: "title",
                               })
                           : undefined
@@ -548,7 +548,7 @@ const ChartPreviewInner = ({
                       configuring
                         ? () => {
                             dispatch({
-                              type: "CHART_ACTIVE_FIELD_CHANGED",
+                              type: "CHART_ACTIVE_FIELD_CHANGE",
                               value: "description",
                             });
                           }
