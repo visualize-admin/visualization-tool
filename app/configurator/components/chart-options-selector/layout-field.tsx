@@ -73,7 +73,7 @@ export const LayoutField = ({
       <SectionTitle iconName="swatch">
         <Trans id="controls.section.layout-options">Layout options</Trans>
       </SectionTitle>
-      <ControlSectionContent gap="large">
+      <ControlSectionContent gap="lg">
         {hasSubType && (
           <ChartSubType
             encoding={encoding}

@@ -116,6 +116,7 @@ module.exports = {
           }
 
           if (
+            property.value &&
             property.value.type === "Literal" &&
             isThemeColor(property.value.value)
           ) {
@@ -126,15 +127,18 @@ module.exports = {
             });
           }
         };
-
         const items = [...classNames.properties];
         while (items.length > 0) {
           const item = items.shift();
-          if (!item.value.properties || !item.value.properties.length) {
+          if (
+            !item.value ||
+            !item.value.properties ||
+            !item.value.properties.length
+          ) {
             continue;
           }
           for (let property of item.value.properties) {
-            if (property.value.type === "ObjectExpression") {
+            if (property.value && property.value.type === "ObjectExpression") {
               items.push(property);
               if (
                 property.key &&

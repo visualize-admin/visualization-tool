@@ -70,7 +70,7 @@ export type ComboLineColumnState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (label: string) => string;
     chartWideData: ArrayLike<Observation>;
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     maxRightTickWidth: number;
     leftAxisLabelSize: AxisLabelSizeVariables;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -192,31 +192,33 @@ const useComboLineColumnState = (
 
   const isMobile = useIsMobile();
 
-  // Tooltip
-  const getAnnotationInfo = (d: Observation) => {
-    const x = getXAsDate(d);
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
+    const x = getXAsDate(datum);
     const xScaled =
       (xScale(formatXDate(x)) as number) + xScale.bandwidth() * 0.5;
     const values = [variables.y.left, variables.y.right]
       .map(({ orientation, getY, id, label, chartType }) => {
-        const y = getY(d);
-        const yPos = yOrientationScales[orientation](y ?? 0);
+        const yRaw = getY(datum);
 
-        if (!Number.isFinite(y) || y === null) {
+        if (!Number.isFinite(yRaw) || yRaw === null) {
           return null;
         }
 
+        const axisOffset = yOrientationScales[orientation](yRaw ?? 0);
+
         return {
           label,
-          value: `${y}`,
+          value: `${yRaw}`,
           color: colors(id),
-          hide: y === null,
-          yPos,
+          axis: "y",
+          axisOffset,
           symbol: chartType === "line" ? "line" : "square",
         } satisfies TooltipValue;
       })
       .filter(truthy);
-    const yAnchor = isMobile ? chartHeight : mean(values.map((d) => d.yPos));
+    const yAnchor = isMobile
+      ? chartHeight
+      : mean(values.map((d) => d.axisOffset));
     const placement = isMobile
       ? MOBILE_TOOLTIP_PLACEMENT
       : getCenteredTooltipPlacement({
@@ -226,13 +228,17 @@ const useComboLineColumnState = (
         });
 
     return {
-      datum: { label: "", value: "0", color: schemeCategory10[0] },
+      datum: {
+        label: "",
+        value: "0",
+        color: schemeCategory10[0],
+      },
       xAnchor: xScaled,
       yAnchor,
       value: timeFormatUnit(x, xTimeUnit),
       placement,
       values,
-    } satisfies TooltipInfo;
+    };
   };
 
   return {
@@ -251,7 +257,7 @@ const useComboLineColumnState = (
     colors,
     getColorLabel: (label) => label,
     chartWideData,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize: {
       width: Math.max(leftAxisLabelSize.width, rightAxisLabelSize.width),
       height: Math.max(leftAxisLabelSize.height, rightAxisLabelSize.height),

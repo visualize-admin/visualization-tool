@@ -1,5 +1,5 @@
 import { interpolate } from "d3-interpolate";
-import { select } from "d3-selection";
+import { Selection } from "d3-selection";
 import { Arc, PieArcDatum } from "d3-shape";
 import { Transition } from "d3-transition";
 
@@ -9,19 +9,26 @@ import {
 } from "@/charts/shared/rendering-utils";
 import { Observation } from "@/domain/data";
 
-import type { Selection } from "d3-selection";
-
 export type RenderDatum = {
   key: string;
   value: number;
   arcDatum: PieArcDatum<Observation>;
   color: string;
+  segment: string;
 };
 
 type RenderPieOptions = RenderOptions & {
   arcGenerator: Arc<any, any>;
-  handleMouseEnter: (d: PieArcDatum<Observation>) => void;
-  handleMouseLeave: () => void;
+  onClick: (
+    observation: Observation,
+    { segment }: { segment?: string }
+  ) => void;
+  onHover: (
+    el: SVGPathElement,
+    observation: Observation,
+    { segment }: { segment: string }
+  ) => void;
+  onHoverOut: (el: SVGPathElement) => void;
 };
 
 export const renderPies = (
@@ -29,8 +36,7 @@ export const renderPies = (
   renderData: RenderDatum[],
   options: RenderPieOptions
 ) => {
-  const { arcGenerator, transition, handleMouseEnter, handleMouseLeave } =
-    options;
+  const { arcGenerator, transition, onClick, onHover, onHoverOut } = options;
 
   g.selectAll<SVGPathElement, RenderDatum>("path")
     .data(renderData, (d) => d.key)
@@ -42,13 +48,14 @@ export const renderPies = (
           .attr("fill", (d) => d.color)
           .attr("stroke", "black")
           .attr("stroke-width", 0)
+          .on("click", (_, d) => {
+            onClick(d.arcDatum.data, { segment: d.segment });
+          })
           .on("mouseenter", function (_, d) {
-            handleMouseEnter(d.arcDatum);
-            select<SVGPathElement, RenderDatum>(this).attr("stroke-width", 1);
+            onHover(this, d.arcDatum.data, { segment: d.segment });
           })
           .on("mouseleave", function () {
-            handleMouseLeave();
-            select<SVGPathElement, RenderDatum>(this).attr("stroke-width", 0);
+            onHoverOut(this);
           })
           .call((enter) =>
             maybeTransition(enter, {

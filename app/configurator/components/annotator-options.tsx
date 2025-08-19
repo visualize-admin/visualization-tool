@@ -1,10 +1,10 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { useEffect, useRef } from "react";
 
 import { Meta } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import {
-  isAnnotationField,
+  isAnnotatorField,
   isConfiguring,
   isLayouting,
   useConfiguratorState,
@@ -14,17 +14,18 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { ConfirmButton } from "@/configurator/components/confirm-button";
 import { MetaInputField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { useOrderedLocales } from "@/locales/use-locale";
 import { useEvent } from "@/utils/use-event";
 
-export const ChartAnnotationsSelector = () => {
+export const ChartAnnotatorSelector = () => {
   const [state] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
 
   return (
-    <AnnotationOptions
+    <AnnotatorOptions
       type="chart"
       activeField={chartConfig.activeField}
       meta={chartConfig.meta}
@@ -32,11 +33,11 @@ export const ChartAnnotationsSelector = () => {
   );
 };
 
-export const LayoutAnnotationsSelector = () => {
+export const LayoutAnnotatorSelector = () => {
   const [state] = useConfiguratorState(isLayouting);
 
   return (
-    <AnnotationOptions
+    <AnnotatorOptions
       type="layout"
       activeField={state.layout.activeField}
       meta={state.layout.meta}
@@ -44,14 +45,15 @@ export const LayoutAnnotationsSelector = () => {
   );
 };
 
-type AnnotationOptionsProps = {
+const AnnotatorOptions = ({
+  type,
+  activeField,
+  meta,
+}: {
   type: "chart" | "layout";
   activeField: string | undefined;
   meta: Meta;
-};
-
-const AnnotationOptions = (props: AnnotationOptionsProps) => {
-  const { type, activeField, meta } = props;
+}) => {
   const [_, dispatch] = useConfiguratorState();
   const orderedLocales = useOrderedLocales();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -59,8 +61,8 @@ const AnnotationOptions = (props: AnnotationOptionsProps) => {
     dispatch({
       type:
         type === "chart"
-          ? "CHART_ACTIVE_FIELD_CHANGED"
-          : "LAYOUT_ACTIVE_FIELD_CHANGED",
+          ? "CHART_ACTIVE_FIELD_CHANGE"
+          : "LAYOUT_ACTIVE_FIELD_CHANGE",
       value: undefined,
     });
   });
@@ -71,7 +73,7 @@ const AnnotationOptions = (props: AnnotationOptionsProps) => {
     }
   }, [activeField]);
 
-  if (!activeField || !isAnnotationField(activeField)) {
+  if (!activeField || !isAnnotatorField(activeField)) {
     return null;
   }
 
@@ -79,8 +81,8 @@ const AnnotationOptions = (props: AnnotationOptionsProps) => {
     <Box
       ref={panelRef}
       role="tabpanel"
-      id={`annotation-panel-${activeField}`}
-      aria-labelledby={`annotation-tab-${activeField}`}
+      id={`annotator-panel-${activeField}`}
+      aria-labelledby={`annotator-tab-${activeField}`}
       tabIndex={-1}
       sx={{ overflowX: "hidden", overflowY: "auto" }}
     >
@@ -104,13 +106,7 @@ const AnnotationOptions = (props: AnnotationOptionsProps) => {
               />
             </div>
           ))}
-          <Button
-            size="sm"
-            onClick={handleClosePanel}
-            sx={{ alignSelf: "flex-end", mt: 2, px: 5 }}
-          >
-            <Typography component="span">Ok</Typography>
-          </Button>
+          <ConfirmButton onClick={handleClosePanel} />
         </ControlSectionContent>
       </ControlSection>
     </Box>

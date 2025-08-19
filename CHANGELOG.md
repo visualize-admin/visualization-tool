@@ -14,10 +14,25 @@ You can also check the
 - Features
   - It's now possible to enable interactive filters for multi-filter panel
     fields
+  - It's now possible to annotate charts manually
+  - Scatterplot charts need to have segmentation at all times
+  - Consolidated some translations
+- Performance
+  - Removed a separate query to unversion observations, as it's now done when
+    they are fetched
+  - `InteractiveFiltersProvider` is now re-created only when needed, not on
+    every chart config change
+- Styles
+  - Aligned some UI elements with the design
 - Fixes
   - Chart more button is now correctly hidden when there are no actions
     available
   - Most recent value is now correctly resolved in interactive filters
+- Maintenance
+  - Observations now include original values under `componentId/__iri__` key and
+    are unversioned
+- Miscellaneous
+  - Added CORS for admin.ch domains
 
 # 5.9.0 - 2025-07-28
 

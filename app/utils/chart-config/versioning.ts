@@ -1608,6 +1608,27 @@ export const chartConfigMigrations: Migration[] = [
         delete newConfig.interactiveFiltersConfig.dataFilters
           .defaultValueOverrides;
       }
+      delete newConfig.annotations;
+
+      return newConfig;
+    },
+  },
+  {
+    from: "4.6.0",
+    to: "5.0.0",
+    description: `all {
+        + annotations
+      }
+    `,
+    up: (config) => {
+      const newConfig = { ...config, version: "5.0.0" };
+      newConfig.annotations = [];
+
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "4.5.0" };
+      delete newConfig.annotations;
 
       return newConfig;
     },
@@ -2236,6 +2257,12 @@ export const configuratorStateMigrations: Migration[] = [
     toVersion: "4.7.0",
     fromChartConfigVersion: "4.5.0",
     toChartConfigVersion: "4.6.0",
+  }),
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "4.7.0",
+    toVersion: "5.0.0",
+    fromChartConfigVersion: "4.6.0",
+    toChartConfigVersion: "5.0.0",
   }),
 ];
 

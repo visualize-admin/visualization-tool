@@ -277,6 +277,52 @@ const Cube = t.intersection([
 ]);
 export type Cube = t.TypeOf<typeof Cube>;
 
+const AnnotationTarget = t.type({
+  componentId: t.string,
+  value: t.string,
+});
+export type AnnotationTarget = t.TypeOf<typeof AnnotationTarget>;
+
+const HighlightAnnotation = t.type({
+  key: t.string,
+  type: t.literal("highlight"),
+  targets: t.array(AnnotationTarget),
+  text: t.type({
+    de: t.string,
+    fr: t.string,
+    it: t.string,
+    en: t.string,
+  }),
+  highlightType: t.union([t.literal("none"), t.literal("filled")]),
+  color: t.union([t.string, t.undefined]),
+  defaultOpen: t.boolean,
+});
+export type HighlightAnnotation = t.TypeOf<typeof HighlightAnnotation>;
+
+const Annotation = HighlightAnnotation;
+export type Annotation = t.TypeOf<typeof Annotation>;
+
+export const supportsAnnotations = (chartConfig: ChartConfig) => {
+  switch (chartConfig.chartType) {
+    case "area":
+    case "bar":
+    case "column":
+    case "line":
+    case "pie":
+    case "scatterplot":
+      return true;
+    case "comboLineColumn":
+    case "comboLineDual":
+    case "comboLineSingle":
+    case "map":
+    case "table":
+      return false;
+    default:
+      const _exhaustiveCheck: never = chartConfig;
+      return _exhaustiveCheck;
+  }
+};
+
 const Limit = t.intersection([
   t.type({
     related: t.array(
@@ -315,6 +361,7 @@ const GenericChartConfig = t.type({
   meta: Meta,
   cubes: t.array(Cube),
   interactiveFiltersConfig: InteractiveFiltersConfig,
+  annotations: t.array(Annotation),
   limits: t.record(t.string, t.array(Limit)),
   conversionUnitsByComponentId: t.record(t.string, ConversionUnit),
   activeField: t.union([t.string, t.undefined]),

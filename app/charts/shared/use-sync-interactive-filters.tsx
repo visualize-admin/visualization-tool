@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import {
   ChartConfig,
@@ -24,7 +24,7 @@ export const useSyncInteractiveFilters = (
   chartConfig: ChartConfig,
   dashboardFilters: DashboardFiltersConfig | undefined
 ) => {
-  const { interactiveFiltersConfig } = chartConfig;
+  const { annotations, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig);
   const resetCategories = useChartInteractiveFilters((d) => d.resetCategories);
   const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
@@ -171,4 +171,23 @@ export const useSyncInteractiveFilters = (
       setCalculationType(calculationType);
     }
   }, [calculationActive, calculationType, setCalculationType]);
+
+  // Annotations
+  const annotationsInitializedRef = useRef(false);
+  const interactiveAnnotations = useChartInteractiveFilters(
+    (d) => d.annotations
+  );
+  const updateAnnotation = useChartInteractiveFilters(
+    (d) => d.updateAnnotation
+  );
+  useEffect(() => {
+    if (!annotationsInitializedRef.current) {
+      annotations.forEach((annotation) => {
+        if (interactiveAnnotations[annotation.key] !== annotation.defaultOpen) {
+          updateAnnotation(annotation.key, annotation.defaultOpen);
+        }
+      });
+      annotationsInitializedRef.current = true;
+    }
+  }, [annotations, interactiveAnnotations, updateAnnotation]);
 };

@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import {
   headingsPlugin,
   linkPlugin,
@@ -39,6 +39,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useId } from "@reach/auto-id";
+import clsx from "clsx";
 import flatten from "lodash/flatten";
 import {
   ComponentProps,
@@ -61,6 +62,7 @@ import { BoldItalicUnderlineToggles } from "@/components/mdx-editor/bold-italic-
 import { linkDialogPlugin } from "@/components/mdx-editor/link-dialog";
 import { LinkDialogToggle } from "@/components/mdx-editor/link-dialog-toggle";
 import { ListToggles } from "@/components/mdx-editor/list-toggles";
+import { maxLengthPlugin } from "@/components/mdx-editor/max-length-plugin";
 import { VisuallyHidden } from "@/components/visually-hidden";
 import {
   FieldProps,
@@ -579,9 +581,15 @@ export const MarkdownInput = ({
   name,
   value,
   onChange,
+  disablePlugins,
   disableToolbar,
+  characterLimit,
 }: {
   label?: string | ReactNode;
+  characterLimit?: number;
+  disablePlugins?: {
+    headings?: boolean;
+  };
   disableToolbar?: {
     textStyles?: boolean;
     blockType?: boolean;
@@ -590,59 +598,85 @@ export const MarkdownInput = ({
   };
 } & FieldProps) => {
   const classes = useMarkdownInputStyles();
+  const [characterLimitReached, setCharacterLimitReached] = useState(false);
+  const { headings: disableHeadings } = disablePlugins ?? {};
+
+  const handleMaxLengthReached = useEvent(
+    ({ reachedMaxLength }: { reachedMaxLength: boolean }) => {
+      setCharacterLimitReached(reachedMaxLength);
+    }
+  );
 
   return (
-    <MDXEditor
-      className={classes.root}
-      markdown={value ? `${value}` : ""}
-      plugins={[
-        toolbarPlugin({
-          toolbarClassName: classes.toolbar,
-          toolbarContents: () => (
-            <div>
-              <Box sx={{ display: "flex", gap: 2 }}>
-                {disableToolbar?.textStyles ? null : (
-                  <BoldItalicUnderlineToggles />
-                )}
-                {disableToolbar?.blockType ? null : <BlockTypeMenu />}
-                {disableToolbar?.listToggles ? null : (
-                  <>
-                    <Divider flexItem orientation="vertical" />
-                    <ListToggles />
-                  </>
-                )}
-                {disableToolbar?.link ? null : (
-                  <>
-                    <Divider flexItem orientation="vertical" />
-                    <LinkDialogToggle />
-                  </>
-                )}
-              </Box>
-              {label && name ? <Label htmlFor={name}>{label}</Label> : null}
-            </div>
-          ),
-        }),
-        headingsPlugin(),
-        listsPlugin(),
-        linkPlugin(),
-        linkDialogPlugin(),
-        quotePlugin(),
-        markdownShortcutPlugin(),
-        thematicBreakPlugin(),
-      ]}
-      onChange={(newValue) => {
-        onChange?.({
-          currentTarget: {
-            value: newValue
-              // Remove backslashes from the string, as they are not supported in react-markdown
-              .replaceAll("\\", "")
-              // <u> is not supported in react-markdown we use for rendering.
-              .replaceAll("<u>", "<ins>")
-              .replace("</u>", "</ins>"),
-          },
-        } as any);
-      }}
-    />
+    <div>
+      <MDXEditor
+        className={clsx(
+          classes.root,
+          disableHeadings && classes.withoutHeadings
+        )}
+        markdown={value ? `${value}` : ""}
+        plugins={[
+          toolbarPlugin({
+            toolbarClassName: classes.toolbar,
+            toolbarContents: () => (
+              <div>
+                <Flex gap={2}>
+                  {disableToolbar?.textStyles ? null : (
+                    <BoldItalicUnderlineToggles />
+                  )}
+                  {disableToolbar?.blockType ? null : <BlockTypeMenu />}
+                  {disableToolbar?.listToggles ? null : (
+                    <>
+                      <Divider flexItem orientation="vertical" />
+                      <ListToggles />
+                    </>
+                  )}
+                  {disableToolbar?.link ? null : (
+                    <>
+                      <Divider flexItem orientation="vertical" />
+                      <LinkDialogToggle />
+                    </>
+                  )}
+                </Flex>
+                {label && name ? <Label htmlFor={name}>{label}</Label> : null}
+              </div>
+            ),
+          }),
+          ...(disableHeadings ? [] : [headingsPlugin()]),
+          listsPlugin(),
+          linkPlugin(),
+          linkDialogPlugin(),
+          quotePlugin(),
+          markdownShortcutPlugin(),
+          thematicBreakPlugin(),
+          maxLengthPlugin({
+            maxLength: characterLimit,
+            onChange: handleMaxLengthReached,
+          }),
+        ]}
+        onChange={(newValue) => {
+          onChange?.({
+            currentTarget: {
+              value: newValue
+                // Remove backslashes from the string, as they are not supported in react-markdown
+                .replaceAll("\\", "")
+                // <u> is not supported in react-markdown we use for rendering.
+                .replaceAll("<u>", "<ins>")
+                .replace("</u>", "</ins>"),
+            },
+          } as any);
+        }}
+      />
+      {characterLimitReached && (
+        <Typography variant="caption" color="error">
+          {t({
+            id: "controls.form.max-length-reached",
+            message: "Character limit ({limit}) reached",
+            values: { limit: characterLimit },
+          })}
+        </Typography>
+      )}
+    </div>
   );
 };
 
@@ -669,6 +703,11 @@ const useMarkdownInputStyles = makeStyles<Theme>((theme) => ({
       "& :last-child": {
         marginBottom: 0,
       },
+    },
+  },
+  withoutHeadings: {
+    "& [data-lexical-editor='true']": {
+      ...theme.typography.body3,
     },
   },
   toolbar: {

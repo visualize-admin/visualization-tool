@@ -22,19 +22,22 @@ const RulerStory = {
               label: "Zürich",
               value: "450",
               color: "Orchid",
-              yPos: 450 - 450,
+              axis: "y",
+              axisOffset: 450 - 450,
             },
             {
               label: "Lausanne",
               value: "435",
               color: "LightSeaGreen",
-              yPos: 450 - 435,
+              axis: "y",
+              axisOffset: 450 - 435,
             },
             {
               label: "Bern",
               value: "235",
               color: "Orange",
-              yPos: 450 - 235,
+              axis: "y",
+              axisOffset: 450 - 235,
             },
           ]}
           chartHeight={450}

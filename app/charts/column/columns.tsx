@@ -6,6 +6,7 @@ import {
   renderColumns,
 } from "@/charts/column/rendering-utils";
 import { useColumnValueLabelsData } from "@/charts/column/show-values-utils";
+import { useGetAnnotationRenderState } from "@/charts/shared/annotation-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { renderTotalValueLabels } from "@/charts/shared/render-value-labels";
 import {
@@ -91,7 +92,8 @@ export const ErrorWhiskers = () => {
 export const Columns = () => {
   const {
     chartData,
-    bounds,
+    bounds: { margins },
+    xDimension,
     getX,
     xScale,
     getY,
@@ -100,25 +102,27 @@ export const Columns = () => {
     colors,
     rotateValues,
   } = useChartState() as ColumnsState;
-  const { margins } = bounds;
   const { labelFontSize, fontFamily } = useChartTheme();
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const bandwidth = xScale.bandwidth();
   const y0 = yScale(0);
+  const getAnnotationRenderState = useGetAnnotationRenderState();
   const columnsData = useMemo(() => {
     return chartData.map((d) => {
       const key = getRenderingKey(d);
       const valueRaw = getY(d);
-      const xScaled = xScale(getX(d)) as number;
+      const x = getX(d);
+      const xScaled = xScale(x) as number;
       const value = valueRaw === null || isNaN(valueRaw) ? 0 : valueRaw;
       const y = yScale(value);
       const yRender = yScale(Math.max(value, 0));
       const height = Math.max(0, Math.abs(y - y0));
-      // Calling colors(key) directly results in every key being added to the domain,
-      // which is not what we want.
-      const color = colors.copy()(key);
+      const { color, focused } = getAnnotationRenderState(d, {
+        axisComponentId: xDimension.id,
+        axisValue: x,
+      });
 
       return {
         key,
@@ -126,19 +130,25 @@ export const Columns = () => {
         y: yRender,
         width: bandwidth,
         height,
-        color,
+        // Calling colors(key) directly results in every key being added to the domain,
+        // which is not what we want.
+        color: color ?? colors.copy()(key),
+        focused,
+        observation: d,
       } satisfies RenderColumnDatum;
     });
   }, [
     chartData,
-    bandwidth,
-    getX,
+    getRenderingKey,
     getY,
+    getX,
     xScale,
     yScale,
     y0,
+    getAnnotationRenderState,
+    xDimension.id,
+    bandwidth,
     colors,
-    getRenderingKey,
   ]);
 
   const valueLabelsData = useColumnValueLabelsData();

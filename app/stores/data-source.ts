@@ -18,14 +18,22 @@ type DataSourceStore = {
 const PARAM_KEY = "dataSource";
 
 const saveToLocalStorage = (value: DataSource) => {
-  localStorage.setItem(PARAM_KEY, sourceToLabel(value));
+  try {
+    localStorage.setItem(PARAM_KEY, sourceToLabel(value));
+  } catch (error) {
+    console.error("Error saving data source to localStorage", error);
+  }
 };
 
 export const getDataSourceFromLocalStorage = () => {
-  const dataSourceLabel = localStorage.getItem(PARAM_KEY);
+  try {
+    const dataSourceLabel = localStorage.getItem(PARAM_KEY);
 
-  if (dataSourceLabel) {
-    return parseSourceByLabel(dataSourceLabel);
+    if (dataSourceLabel) {
+      return parseSourceByLabel(dataSourceLabel);
+    }
+  } catch (error) {
+    console.error("Error getting data source from localStorage", error);
   }
 };
 

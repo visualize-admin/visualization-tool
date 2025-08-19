@@ -1,42 +1,124 @@
+import { useCallback, useMemo } from "react";
+
+import { GroupedBarsState } from "@/charts/bar/bars-grouped-state";
+import { StackedBarsState } from "@/charts/bar/bars-stacked-state";
 import { BarsState } from "@/charts/bar/bars-state";
+import { useGetRenderStackedBarDatum } from "@/charts/bar/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
-import { useInteraction } from "@/charts/shared/use-interaction";
+import { StackedAnnotationHighlight } from "@/charts/shared/overlay-rects";
+import { useAnnotationInteractions } from "@/charts/shared/use-annotation-interactions";
 import { Observation } from "@/domain/data";
 
-export const InteractionBars = () => {
-  const [, dispatch] = useInteraction();
+export const InteractionBars = ({
+  disableGaps = true,
+}: {
+  disableGaps?: boolean;
+}) => {
+  const {
+    chartData,
+    bounds: { chartWidth, margins },
+    getY,
+    yScale,
+    yScaleInteraction,
+  } = useChartState() as BarsState | StackedBarsState | GroupedBarsState;
+  const { onClick, onHover, onHoverOut } = useAnnotationInteractions({
+    focusingSegment: false,
+  });
+  const scale = disableGaps ? yScaleInteraction : yScale;
+  const bandwidth = scale.bandwidth();
 
-  const { chartData, bounds, getY, yScaleInteraction } =
-    useChartState() as BarsState;
-  const { margins, chartWidth } = bounds;
-
-  const showTooltip = (d: Observation) => {
-    dispatch({
-      type: "INTERACTION_UPDATE",
-      value: { interaction: { visible: true, d } },
-    });
-  };
-  const hideTooltip = () => {
-    dispatch({
-      type: "INTERACTION_HIDE",
-    });
-  };
   return (
     <g transform={`translate(${margins.left} ${margins.top})`}>
-      {chartData.map((d, i) => (
-        <rect
-          key={i}
-          x={0}
-          y={yScaleInteraction(getY(d)) as number}
-          height={yScaleInteraction.bandwidth()}
-          width={Math.max(0, chartWidth)}
-          fill="hotpink"
-          fillOpacity={0}
-          stroke="none"
-          onMouseOut={hideTooltip}
-          onMouseOver={() => showTooltip(d)}
-        />
-      ))}
+      {chartData.map((d, i) => {
+        return (
+          <rect
+            key={i}
+            x={0}
+            y={scale(getY(d)) as number}
+            height={bandwidth}
+            width={Math.max(0, chartWidth)}
+            stroke="none"
+            fill="hotpink"
+            fillOpacity={0}
+            onMouseOver={() => onHover(d, { segment: undefined })}
+            onMouseOut={onHoverOut}
+            onClick={() => onClick(d, { segment: undefined })}
+          />
+        );
+      })}
     </g>
+  );
+};
+
+export const InteractionBarsStacked = () => {
+  const {
+    bounds: { height, margins },
+    series,
+  } = useChartState() as StackedBarsState;
+  const { onClick, onHover, onHoverOut } = useAnnotationInteractions({
+    focusingSegment: true,
+  });
+  const getRenderDatum = useGetRenderStackedBarDatum();
+  const renderData = useMemo(() => {
+    return series.flatMap(getRenderDatum);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    getRenderDatum,
+    series,
+    // We need to reset the yRange on height change.
+    height,
+  ]);
+
+  return (
+    <g transform={`translate(${margins.left} ${margins.top})`}>
+      {renderData.map((d) => {
+        return (
+          <rect
+            key={d.key}
+            x={d.x}
+            y={d.y}
+            width={d.width}
+            height={d.height}
+            fill="hotpink"
+            fillOpacity={0}
+            stroke="none"
+            onMouseOver={() => onHover(d.observation, { segment: d.segment })}
+            onMouseOut={onHoverOut}
+            onClick={() => onClick(d.observation, { segment: d.segment })}
+          />
+        );
+      })}
+    </g>
+  );
+};
+
+export const StackedBarAnnotationHighlight = () => {
+  const {
+    bounds,
+    getY,
+    getX,
+    yScale,
+    xScale,
+    chartDataGroupedByY,
+    yDimension,
+  } = useChartState() as StackedBarsState;
+  const getValue = useCallback(
+    (d: Observation) => {
+      return getX(d) ?? 0;
+    },
+    [getX]
+  );
+
+  return (
+    <StackedAnnotationHighlight
+      bounds={bounds}
+      getValue={getValue}
+      getAxisValue={getY}
+      valueScale={xScale}
+      axisScale={yScale}
+      chartDataGrouped={chartDataGroupedByY}
+      dimension={yDimension}
+      isHorizontal
+    />
   );
 };

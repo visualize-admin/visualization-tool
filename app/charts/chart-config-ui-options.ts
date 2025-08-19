@@ -1350,7 +1350,7 @@ const chartConfigOptionsUISpec: ChartSpecs = {
       {
         idAttributes: ["componentId"],
         field: "segment",
-        optional: true,
+        optional: false,
         componentTypes: SEGMENT_ENABLED_COMPONENTS,
         filters: true,
         onChange: defaultSegmentOnChange,
