@@ -45,7 +45,7 @@ vi.mock("@/configurator/configurator-state", () => ({
     };
     mockDispatch = vi.fn((action) => {
       if (action.type === "INTERACTIVE_FILTER_CHANGED") {
-        mockState.chartConfigs[0].interactiveFiltersConfig = action.payload;
+        mockState.chartConfigs[0].interactiveFiltersConfig = action.value;
       }
     });
     return [mockState, mockDispatch];
@@ -78,6 +78,7 @@ vi.mock("@/config-utils", () => ({
     };
     return mockState.chartConfigs[0];
   }),
+  useChartConfigFilters: vi.fn(() => ({})),
 }));
 
 describe("Interactive Filters Config State", () => {
