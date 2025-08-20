@@ -231,6 +231,9 @@ export const InteractiveFiltersProvider = ({
   chartConfigs: ChartConfig[];
 }>) => {
   const storeRefs = useRef<Record<ChartConfig["key"], StoreApi<State>>>({});
+  const boundSelectorRefs = useRef<
+    Record<ChartConfig["key"], UseBoundStoreWithSelector<StoreApi<State>>>
+  >({});
 
   const potentialTimeRangeFilterIds = useMemo(() => {
     return getPotentialTimeRangeFilterIds(chartConfigs);
@@ -250,11 +253,17 @@ export const InteractiveFiltersProvider = ({
 
         storeRefs.current[chartConfig.key] = store;
 
+        if (!boundSelectorRefs.current[chartConfig.key]) {
+          boundSelectorRefs.current[chartConfig.key] =
+            createBoundUseStoreWithSelector(store);
+        }
+
         const ctxValue: InteractiveFiltersContextValue = [
           store.getState,
-          createBoundUseStoreWithSelector(store),
+          boundSelectorRefs.current[chartConfig.key],
           store,
         ];
+
         return [chartConfig.key, ctxValue];
       })
     );
