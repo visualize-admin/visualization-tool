@@ -18,6 +18,7 @@ import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { SelectTree, Tree } from "@/components/select-tree";
+import { isTableConfig } from "@/config-types";
 import { useChartConfigFilters } from "@/config-utils";
 import {
   areDataFiltersActive,
@@ -34,6 +35,7 @@ import {
   canRenderDatePickerField,
   DatePickerField,
 } from "@/configurator/components/field-date-picker";
+import { getOrderedTableColumns } from "@/configurator/components/ui-helpers";
 import { extractDataPickerOptionsFromDimension } from "@/configurator/components/ui-helpers";
 import { Option } from "@/configurator/config-form";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
@@ -81,7 +83,18 @@ export const useChartDataFiltersState = ({
   const dataFiltersConfig = chartConfig.interactiveFiltersConfig.dataFilters;
   const active = dataFiltersConfig.active;
   const defaultOpen = dataFiltersConfig.defaultOpen;
-  const componentIds = dataFiltersConfig.componentIds;
+  const configComponentIds = dataFiltersConfig.componentIds;
+  const componentIds = useMemo(() => {
+    if (isTableConfig(chartConfig)) {
+      const orderedIds = getOrderedTableColumns(chartConfig.fields).map(
+        (c) => c.componentId
+      );
+
+      return orderedIds.filter((id) => configComponentIds.includes(id));
+    }
+
+    return configComponentIds;
+  }, [chartConfig, configComponentIds]);
   const [open, setOpen] = useState<boolean>(!!defaultOpen);
 
   useEffect(() => {
