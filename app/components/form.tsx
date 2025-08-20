@@ -583,6 +583,7 @@ export const MarkdownInput = ({
   disablePlugins,
   disableToolbar,
   characterLimit,
+  toolbarEndSlot,
 }: {
   label?: string | ReactNode;
   characterLimit?: number;
@@ -595,6 +596,7 @@ export const MarkdownInput = ({
     listToggles?: boolean;
     link?: boolean;
   };
+  toolbarEndSlot?: ReactNode;
 } & FieldProps) => {
   const classes = useMarkdownInputStyles();
   const [characterLimitReached, setCharacterLimitReached] = useState(false);
@@ -618,24 +620,34 @@ export const MarkdownInput = ({
           toolbarPlugin({
             toolbarClassName: classes.toolbar,
             toolbarContents: () => (
-              <div>
-                <Flex gap={2}>
-                  {disableToolbar?.textStyles ? null : (
-                    <BoldItalicUnderlineToggles />
-                  )}
-                  {disableToolbar?.blockType ? null : <BlockTypeMenu />}
-                  {disableToolbar?.listToggles ? null : (
-                    <>
-                      <Divider flexItem orientation="vertical" />
-                      <ListToggles />
-                    </>
-                  )}
-                  {disableToolbar?.link ? null : (
-                    <>
-                      <Divider flexItem orientation="vertical" />
-                      <LinkDialogToggle />
-                    </>
-                  )}
+              <div style={{ width: "100%" }}>
+                <Flex
+                  sx={{
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 2,
+                    width: "100%",
+                  }}
+                >
+                  <Flex gap={2}>
+                    {disableToolbar?.textStyles ? null : (
+                      <BoldItalicUnderlineToggles />
+                    )}
+                    {disableToolbar?.blockType ? null : <BlockTypeMenu />}
+                    {disableToolbar?.listToggles ? null : (
+                      <>
+                        <Divider flexItem orientation="vertical" />
+                        <ListToggles />
+                      </>
+                    )}
+                    {disableToolbar?.link ? null : (
+                      <>
+                        <Divider flexItem orientation="vertical" />
+                        <LinkDialogToggle />
+                      </>
+                    )}
+                  </Flex>
+                  {toolbarEndSlot}
                 </Flex>
                 {label && name ? <Label htmlFor={name}>{label}</Label> : null}
               </div>

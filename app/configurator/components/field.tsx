@@ -616,6 +616,7 @@ export const MetaInputField = ({
   locale,
   value,
   disableToolbar,
+  toolbarEndSlot,
 }: {
   type: "chart" | "layout";
   inputType: "text" | "markdown";
@@ -624,6 +625,7 @@ export const MetaInputField = ({
   locale: string;
   value?: string;
   disableToolbar?: ComponentProps<typeof MarkdownInput>["disableToolbar"];
+  toolbarEndSlot?: ComponentProps<typeof MarkdownInput>["toolbarEndSlot"];
 }) => {
   const field = useMetaField({ type, metaKey, locale, value });
 
@@ -636,6 +638,7 @@ export const MetaInputField = ({
           label={label}
           {...field}
           disableToolbar={disableToolbar}
+          toolbarEndSlot={toolbarEndSlot}
         />
       );
     default:
