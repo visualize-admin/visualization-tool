@@ -1,9 +1,11 @@
 import { Box } from "@mui/material";
 import { useEffect, useRef } from "react";
 
+import { GenerateMetaButton } from "@/components/ai/generate-meta-button";
 import { Meta } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import {
+  hasChartConfigs,
   isAnnotatorField,
   isConfiguring,
   isLayouting,
@@ -54,7 +56,7 @@ const AnnotatorOptions = ({
   activeField: string | undefined;
   meta: Meta;
 }) => {
-  const [_, dispatch] = useConfiguratorState();
+  const [_, dispatch] = useConfiguratorState(hasChartConfigs);
   const orderedLocales = useOrderedLocales();
   const panelRef = useRef<HTMLDivElement>(null);
   const handleClosePanel = useEvent(() => {
@@ -103,6 +105,20 @@ const AnnotatorOptions = ({
                   listToggles: activeField === "title",
                   link: activeField === "title",
                 }}
+                toolbarEndSlot={
+                  activeField === "label" || type === "layout" ? null : (
+                    <GenerateMetaButton
+                      field={activeField as "title" | "description"}
+                      locale={locale}
+                      onResult={(value) => {
+                        dispatch({
+                          type: "CHART_META_CHANGE",
+                          value: { path: `${activeField}.${locale}`, value },
+                        });
+                      }}
+                    />
+                  )
+                }
               />
             </div>
           ))}

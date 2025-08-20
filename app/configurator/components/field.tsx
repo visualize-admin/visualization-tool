@@ -622,7 +622,7 @@ export const MetaInputField = ({
   inputType: "text" | "markdown";
   label: string | ReactNode;
   metaKey: string;
-  locale: string;
+  locale: Locale;
   value?: string;
   disableToolbar?: ComponentProps<typeof MarkdownInput>["disableToolbar"];
   toolbarEndSlot?: ComponentProps<typeof MarkdownInput>["toolbarEndSlot"];
