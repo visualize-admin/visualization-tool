@@ -49,6 +49,7 @@ import {
   RefObject,
   SyntheticEvent,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -601,6 +602,16 @@ export const MarkdownInput = ({
   const classes = useMarkdownInputStyles();
   const [characterLimitReached, setCharacterLimitReached] = useState(false);
   const { headings: disableHeadings } = disablePlugins ?? {};
+  const [markdown, setMarkdown] = useState(value ? `${value}` : "");
+  const [editorKey, setEditorKey] = useState(0);
+
+  useEffect(() => {
+    const incoming = value ? `${value}` : "";
+    if (incoming !== markdown) {
+      setMarkdown(incoming);
+      setEditorKey((k) => k + 1);
+    }
+  }, [markdown, value]);
 
   const handleMaxLengthReached = useEvent(
     ({ reachedMaxLength }: { reachedMaxLength: boolean }) => {
@@ -611,11 +622,12 @@ export const MarkdownInput = ({
   return (
     <div>
       <MDXEditor
+        key={editorKey}
         className={clsx(
           classes.root,
           disableHeadings && classes.withoutHeadings
         )}
-        markdown={value ? `${value}` : ""}
+        markdown={markdown}
         plugins={[
           toolbarPlugin({
             toolbarClassName: classes.toolbar,
@@ -666,14 +678,18 @@ export const MarkdownInput = ({
           }),
         ]}
         onChange={(newValue) => {
+          const v = newValue
+            // Remove backslashes from the string, as they are not supported in react-markdown
+            .replaceAll("\\", "")
+            // <u> is not supported in react-markdown we use for rendering.
+            .replaceAll("<u>", "<ins>")
+            .replace("</u>", "</ins>")
+            .replaceAll("\\", "");
+
+          setMarkdown(v);
           onChange?.({
             currentTarget: {
-              value: newValue
-                // Remove backslashes from the string, as they are not supported in react-markdown
-                .replaceAll("\\", "")
-                // <u> is not supported in react-markdown we use for rendering.
-                .replaceAll("<u>", "<ins>")
-                .replace("</u>", "</ins>"),
+              value: v,
             },
           } as any);
         }}
