@@ -1,3 +1,4 @@
+import isEqual from "lodash/isEqual";
 import { useEffect, useMemo, useRef } from "react";
 
 import {
@@ -10,7 +11,6 @@ import { useChartConfigFilters } from "@/config-utils";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { useFilterChanges } from "@/configurator/use-filter-changes";
-import { truthy } from "@/domain/types";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
 /**
@@ -36,6 +36,7 @@ export const useSyncInteractiveFilters = (
   const setCalculationType = useChartInteractiveFilters(
     (d) => d.setCalculationType
   );
+  const lastOverridesRef = useRef<Record<string, string | undefined>>({});
 
   // Time range filter
   const presetFrom =
@@ -68,69 +69,84 @@ export const useSyncInteractiveFilters = (
   }, [componentIds, dashboardComponentIds]);
 
   useEffect(() => {
-    if (newPotentialInteractiveDataFilters) {
-      const newInteractiveDataFilters = Object.fromEntries(
-        Object.entries(newPotentialInteractiveDataFilters)
-          .map(([iri]) => {
-            const dashboardFilter = dashboardFilters?.dataFilters.filters[iri];
-            return dashboardFilter?.type === "single"
-              ? ([iri, dashboardFilter] as const)
-              : null;
-          })
-          .filter(truthy)
-      );
-
-      setDataFilters(newInteractiveDataFilters);
+    if (!newPotentialInteractiveDataFilters) {
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    const next = newPotentialInteractiveDataFilters.reduce(
+      (acc, iri) => {
+        const dashboardFilter = dashboardFilters?.dataFilters.filters[iri];
+        if (dashboardFilter?.type === "single") {
+          acc[iri] = dashboardFilter;
+          return acc;
+        }
+
+        const configFilter = filters[iri];
+
+        if (!configFilter || configFilter.type === "multi") {
+          const allowed = configFilter?.values ?? {};
+          const isAllowed = (val: string | number | undefined) =>
+            val !== undefined ? !configFilter || !!allowed[`${val}`] : false;
+          const current = dataFilters[iri];
+          const override =
+            interactiveFiltersConfig.dataFilters.defaultValueOverrides[iri];
+          const lastOverride = lastOverridesRef.current[iri];
+          const overrideChanged = override !== lastOverride;
+
+          if (overrideChanged && override && isAllowed(override)) {
+            acc[iri] = { type: "single", value: override };
+            return acc;
+          }
+
+          if (current?.type === "single" && isAllowed(current.value)) {
+            acc[iri] = current;
+            return acc;
+          }
+
+          if (override && isAllowed(override)) {
+            acc[iri] = { type: "single", value: override };
+            return acc;
+          }
+
+          acc[iri] = { type: "single", value: FIELD_VALUE_NONE };
+          return acc;
+        }
+
+        const current = dataFilters[iri];
+
+        if (current?.type === "single" && current.value !== FIELD_VALUE_NONE) {
+          acc[iri] = current;
+        } else if (configFilter?.type === "single") {
+          acc[iri] = configFilter;
+        } else {
+          acc[iri] = { type: "single", value: FIELD_VALUE_NONE };
+        }
+
+        return acc;
+      },
+      {} as { [key: string]: FilterValueSingle }
+    );
+
+    if (!isEqual(next, dataFilters)) {
+      setDataFilters(next);
+    }
+
+    const latestOverrides: Record<string, string | undefined> = {};
+
+    for (const iri of newPotentialInteractiveDataFilters) {
+      latestOverrides[iri] =
+        interactiveFiltersConfig.dataFilters.defaultValueOverrides[iri];
+    }
+
+    lastOverridesRef.current = latestOverrides;
   }, [
-    newPotentialInteractiveDataFilters,
-    dashboardComponentIds,
     dashboardFilters?.dataFilters.filters,
+    dataFilters,
+    filters,
+    interactiveFiltersConfig.dataFilters.defaultValueOverrides,
+    newPotentialInteractiveDataFilters,
+    setDataFilters,
   ]);
-
-  useEffect(() => {
-    if (newPotentialInteractiveDataFilters) {
-      const newInteractiveDataFilters =
-        newPotentialInteractiveDataFilters.reduce(
-          (obj, iri) => {
-            const configFilter = filters[iri];
-
-            if (Object.keys(dataFilters).includes(iri)) {
-              obj[iri] = dataFilters[iri];
-            } else if (configFilter?.type === "single") {
-              obj[iri] = configFilter;
-            } else if (configFilter?.type === "multi" || !configFilter) {
-              const defaultValueOverride =
-                interactiveFiltersConfig.dataFilters.defaultValueOverrides[iri];
-
-              if (
-                defaultValueOverride &&
-                (configFilter?.values[defaultValueOverride] || !configFilter)
-              ) {
-                obj[iri] = {
-                  type: "single",
-                  value: defaultValueOverride,
-                };
-              } else {
-                obj[iri] = {
-                  type: "single",
-                  value: FIELD_VALUE_NONE,
-                };
-                delete interactiveFiltersConfig.dataFilters
-                  .defaultValueOverrides[iri];
-              }
-            }
-
-            return obj;
-          },
-          {} as { [key: string]: FilterValueSingle }
-        );
-
-      setDataFilters(newInteractiveDataFilters);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newPotentialInteractiveDataFilters, setDataFilters]);
 
   const changes = useFilterChanges(filters);
   useEffect(() => {
