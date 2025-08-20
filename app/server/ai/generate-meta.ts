@@ -1,4 +1,4 @@
-import { CompactAIContext } from "@/ai/context";
+import { ChartAIContext } from "@/ai/use-chart-ai-context";
 import type { Locale } from "@/locales/locales";
 import { ai } from "@/server/ai/client";
 import { extractText, getLanguageName } from "@/server/ai/utils";
@@ -10,7 +10,7 @@ export const generateMeta = async ({
 }: {
   field: "title" | "description";
   locale: Locale;
-  context: CompactAIContext;
+  context: ChartAIContext;
 }) => {
   const systemInstruction = getSystemInstruction({ field, locale });
   const prompt = `Context (JSON):\n${JSON.stringify(context)}`;

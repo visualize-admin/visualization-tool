@@ -1,4 +1,4 @@
-import { CompactAIContext } from "@/ai/context";
+import { ChartAIContext } from "@/ai/use-chart-ai-context";
 import { Locale } from "@/locales/locales";
 import { generateMeta } from "@/server/ai/generate-meta";
 import { api } from "@/server/nextkit";
@@ -6,7 +6,7 @@ import { api } from "@/server/nextkit";
 type Body = {
   field: "title" | "description";
   locale: Locale;
-  context: CompactAIContext;
+  context: ChartAIContext;
 };
 
 const route = api({
