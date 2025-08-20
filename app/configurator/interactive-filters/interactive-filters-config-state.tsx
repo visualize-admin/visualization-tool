@@ -1,10 +1,11 @@
 import { SelectChangeEvent } from "@mui/material";
 import produce from "immer";
 import get from "lodash/get";
+import { useEffect } from "react";
 import { ChangeEvent } from "react";
 
 import { InteractiveFiltersConfig } from "@/config-types";
-import { getChartConfig } from "@/config-utils";
+import { getChartConfig, useChartConfigFilters } from "@/config-utils";
 import {
   isConfiguring,
   useConfiguratorState,
@@ -146,6 +147,7 @@ const toggleInteractiveTimeRangeFilter = (config: InteractiveFiltersConfig) => {
 export const useDefaultValueOverride = (dimensionId: string) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
+  const filters = useChartConfigFilters(chartConfig);
   const currentValue =
     chartConfig.interactiveFiltersConfig.dataFilters.defaultValueOverrides[
       dimensionId
@@ -166,6 +168,28 @@ export const useDefaultValueOverride = (dimensionId: string) => {
       value: newConfig,
     });
   });
+
+  useEffect(() => {
+    const f = filters[dimensionId];
+    const override =
+      chartConfig.interactiveFiltersConfig.dataFilters.defaultValueOverrides[
+        dimensionId
+      ];
+
+    if (f?.type === "multi" && override && !f.values[override]) {
+      const newConfig = produce(
+        chartConfig.interactiveFiltersConfig,
+        (draft) => {
+          delete draft.dataFilters.defaultValueOverrides[dimensionId];
+        }
+      );
+
+      dispatch({
+        type: "INTERACTIVE_FILTER_CHANGED",
+        value: newConfig,
+      });
+    }
+  }, [chartConfig.interactiveFiltersConfig, filters, dimensionId, dispatch]);
 
   return {
     value: currentValue,
