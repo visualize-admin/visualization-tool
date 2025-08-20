@@ -26,6 +26,7 @@
     "@dnd-kit/utilities": "3.2.2",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
+    "@google/genai": "^1.15.0",
     "@graphql-tools/schema": "^7.1.5",
     "@interactivethings/swiss-federal-ci": "^3.1.0",
     "@juggle/resize-observer": "^3.4.0",
