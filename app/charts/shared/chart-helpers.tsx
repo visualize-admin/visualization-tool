@@ -88,7 +88,7 @@ export const prepareCubeQueryFilters = ({
         dashboardFilters?.dataFilters.componentIds?.includes(k)) &&
       animationField?.componentId !== k
     ) {
-      if (queryFilters[k]?.type === "multi" && v.value === FIELD_VALUE_NONE) {
+      if (v.value === FIELD_VALUE_NONE) {
         continue;
       }
 

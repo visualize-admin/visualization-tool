@@ -98,6 +98,11 @@ export const useSyncInteractiveFilters = (
             return acc;
           }
 
+          if (overrideChanged && lastOverride && override === undefined) {
+            acc[iri] = { type: "single", value: FIELD_VALUE_NONE };
+            return acc;
+          }
+
           if (current?.type === "single" && isAllowed(current.value)) {
             acc[iri] = current;
             return acc;
