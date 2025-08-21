@@ -25,7 +25,7 @@ export const useSyncInteractiveFilters = (
   dashboardFilters: DashboardFiltersConfig | undefined
 ) => {
   const { annotations, interactiveFiltersConfig } = chartConfig;
-  const filters = useChartConfigFilters(chartConfig);
+  const filters = useChartConfigFilters(chartConfig, { joined: true });
   const resetCategories = useChartInteractiveFilters((d) => d.resetCategories);
   const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
   const setDataFilters = useChartInteractiveFilters((d) => d.setDataFilters);

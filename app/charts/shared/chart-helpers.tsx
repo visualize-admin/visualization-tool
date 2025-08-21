@@ -53,19 +53,19 @@ import {
 //   if applicable
 // - removes none values since they should not be sent as part of the GraphQL query
 export const prepareCubeQueryFilters = ({
+  chartConfig,
   cubeFilters,
   animationField,
   interactiveFiltersConfig,
   dashboardFilters,
   interactiveDataFilters,
-  allowNoneValues = false,
 }: {
+  chartConfig: ChartConfig;
   cubeFilters: Filters;
   animationField: AnimationField | undefined;
   interactiveFiltersConfig: InteractiveFiltersConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
   interactiveDataFilters: InteractiveFiltersState["dataFilters"];
-  allowNoneValues?: boolean;
 }): Filters => {
   const queryFilters = { ...cubeFilters };
   const dashboardFiltersComponentIds =
@@ -83,56 +83,52 @@ export const prepareCubeQueryFilters = ({
     }
   }
 
+  const resolvedInteractiveFiltersConfigComponentIds =
+    interactiveFiltersConfig.dataFilters.componentIds.flatMap((k) =>
+      isJoinById(k) ? getOriginalIds(k, chartConfig) : [k]
+    );
+
   for (const [k, v] of Object.entries(interactiveDataFilters)) {
     const interactiveActiveForKey =
       interactiveFiltersConfig.dataFilters.active &&
-      (interactiveFiltersConfig.dataFilters.componentIds
-        ? interactiveFiltersConfig.dataFilters.componentIds.includes(k)
-        : k in cubeFilters);
+      resolvedInteractiveFiltersConfigComponentIds.includes(k);
 
     if (
       (interactiveActiveForKey || dashboardFiltersComponentIds.includes(k)) &&
       animationField?.componentId !== k
     ) {
-      if (v.value === FIELD_VALUE_NONE) {
-        if (allowNoneValues) {
-          queryFilters[k] = v;
-        } else {
-          const hasCubeMultiFilter = cubeFilters[k]?.type === "multi";
-          const isDashboardFilter = dashboardFiltersComponentIds.includes(k);
-
-          if (!hasCubeMultiFilter && !isDashboardFilter) {
-            delete queryFilters[k];
-          }
-        }
-      } else {
-        queryFilters[k] = v;
-      }
+      queryFilters[k] = v;
     }
   }
 
-  return allowNoneValues
-    ? queryFilters
-    : omitBy(
-        queryFilters,
-        (v) => v.type === "single" && v.value === FIELD_VALUE_NONE
-      );
+  return omitBy(
+    queryFilters,
+    (v) => v.type === "single" && v.value === FIELD_VALUE_NONE
+  );
 };
 
 export const useQueryFilters = ({
   chartConfig,
   dashboardFilters,
-  allowNoneValues,
   componentIds,
 }: {
   chartConfig: ChartConfig;
   dashboardFilters: DashboardFiltersConfig | undefined;
-  allowNoneValues?: boolean;
   componentIds?: string[];
 }): DataCubeObservationFilter[] => {
   const chartInteractiveFilters = useChartInteractiveFilters(
     (d) => d.dataFilters
   );
+  const resolvedChartInteractiveFilters = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(chartInteractiveFilters).flatMap(([k, v]) => {
+        const resolvedIds = isJoinById(k)
+          ? getOriginalIds(k, chartConfig)
+          : [k];
+        return resolvedIds.map((id) => [id, v]);
+      })
+    );
+  }, [chartInteractiveFilters, chartConfig]);
   const animationField = isAnimationInConfig(chartConfig)
     ? chartConfig.fields.animation
     : undefined;
@@ -148,18 +144,18 @@ export const useQueryFilters = ({
         ...Object.values(chartConfig.fields).map((field) => field.componentId),
       ];
       const cubeInteractiveDataFilters = Object.fromEntries(
-        Object.entries(chartInteractiveFilters).filter(([componentId]) =>
-          cubeComponentIds.includes(componentId)
+        Object.entries(resolvedChartInteractiveFilters).filter(
+          ([componentId]) => cubeComponentIds.includes(componentId)
         )
       );
 
       const preparedFilters = prepareCubeQueryFilters({
+        chartConfig,
         cubeFilters,
         animationField,
         interactiveFiltersConfig: chartConfig.interactiveFiltersConfig,
         dashboardFilters,
         interactiveDataFilters: cubeInteractiveDataFilters,
-        allowNoneValues,
       });
 
       return {
@@ -170,13 +166,10 @@ export const useQueryFilters = ({
       } satisfies DataCubeObservationFilter;
     });
   }, [
-    chartConfig.cubes,
-    chartConfig.fields,
-    chartConfig.interactiveFiltersConfig,
-    chartInteractiveFilters,
+    chartConfig,
+    resolvedChartInteractiveFilters,
     animationField,
     dashboardFilters,
-    allowNoneValues,
     componentIds,
   ]);
 };

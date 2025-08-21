@@ -47,6 +47,7 @@ import {
 } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
+import { getOriginalIds, isJoinById } from "@/graphql/join";
 import {
   PossibleFiltersDocument,
   PossibleFiltersQuery,
@@ -69,6 +70,7 @@ type PreparedFilter = {
   interactiveFilters: Filters;
   unmappedFilters: SingleFilters;
   mappedFilters: Filters;
+  componentIdResolution: Record<string, string>;
 };
 
 export const useChartDataFiltersState = ({
@@ -84,6 +86,7 @@ export const useChartDataFiltersState = ({
   const active = dataFiltersConfig.active;
   const defaultOpen = dataFiltersConfig.defaultOpen;
   const configComponentIds = dataFiltersConfig.componentIds;
+
   const componentIds = useMemo(() => {
     const excludeDashboardFilters = (id: string) => {
       return !dashboardFilters?.dataFilters.componentIds.includes(id);
@@ -111,7 +114,6 @@ export const useChartDataFiltersState = ({
   const queryFilters = useQueryFilters({
     chartConfig,
     dashboardFilters,
-    allowNoneValues: true,
     componentIds,
   });
   const preparedFilters = useMemo(() => {
@@ -131,26 +133,50 @@ export const useChartDataFiltersState = ({
         ...Object.keys(filters),
         ...Object.keys(chartConfig.fields),
         ...Object.values(chartConfig.fields).map((field) => field.componentId),
-      ];
-      const interactiveFiltersList = componentIds
-        .filter((componentId) => cubeComponentIds.includes(componentId))
-        .map((componentId) => {
+      ]
+        .filter(Boolean)
+        .flatMap((id) =>
+          isJoinById(id) ? getOriginalIds(id, chartConfig) : [id]
+        )
+
+        .filter((id) => !isJoinById(id));
+      const componentIdPairs = componentIds
+        .map((originalId) => {
+          const resolvedId = isJoinById(originalId)
+            ? getOriginalIds(originalId, chartConfig)[0]
+            : originalId;
+
+          return { originalId, resolvedId };
+        })
+        .filter(({ resolvedId }) => cubeComponentIds.includes(resolvedId));
+
+      const componentIdResolution = Object.fromEntries(
+        componentIdPairs.map(({ originalId, resolvedId }) => [
+          originalId,
+          resolvedId,
+        ])
+      );
+
+      const interactiveFiltersList = componentIdPairs.map(
+        ({ originalId, resolvedId }) => {
           const existingEntry = unmappedEntries.find(
-            ([unmappedComponentId]) => unmappedComponentId === componentId
+            ([unmappedComponentId]) => unmappedComponentId === resolvedId
           );
 
           if (existingEntry) {
-            return existingEntry;
+            return [originalId, existingEntry[1]];
           }
 
-          return [componentId, undefined];
-        });
+          return [originalId, undefined];
+        }
+      );
 
       return {
         cubeIri: cube.iri,
         interactiveFilters: Object.fromEntries(interactiveFiltersList),
         unmappedFilters: Object.fromEntries(unmappedEntries) as SingleFilters,
         mappedFilters,
+        componentIdResolution,
       };
     });
   }, [chartConfig, componentIds, queryFilters]);
@@ -263,22 +289,28 @@ export const ChartDataFiltersList = ({
         gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
       }}
     >
-      {preparedFilters.map(({ cubeIri, interactiveFilters }) => {
-        return Object.keys(interactiveFilters).map((dimensionId) => {
-          return (
-            <DataFilter
-              key={dimensionId}
-              cubeIri={cubeIri}
-              dimensionId={dimensionId}
-              dataSource={dataSource}
-              chartConfig={chartConfig}
-              dataFilters={dataFilters}
-              interactiveFilters={interactiveFilters}
-              disabled={loading}
-            />
-          );
-        });
-      })}
+      {preparedFilters.map(
+        ({ cubeIri, interactiveFilters, componentIdResolution }) => {
+          return Object.keys(interactiveFilters).map((dimensionId) => {
+            const resolvedDimensionId =
+              componentIdResolution[dimensionId] ?? dimensionId;
+            return (
+              <DataFilter
+                key={dimensionId}
+                cubeIri={cubeIri}
+                dimensionId={dimensionId}
+                resolvedDimensionId={resolvedDimensionId}
+                dataSource={dataSource}
+                chartConfig={chartConfig}
+                dataFilters={dataFilters}
+                interactiveFilters={interactiveFilters}
+                componentIdResolution={componentIdResolution}
+                disabled={loading}
+              />
+            );
+          });
+        }
+      )}
     </Box>
   ) : null;
 };
@@ -286,18 +318,22 @@ export const ChartDataFiltersList = ({
 const DataFilter = ({
   cubeIri,
   dimensionId,
+  resolvedDimensionId,
   dataSource,
   chartConfig,
   dataFilters,
   interactiveFilters,
+  componentIdResolution,
   disabled,
 }: {
   cubeIri: string;
   dimensionId: string;
+  resolvedDimensionId: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dataFilters: DataFilters;
   interactiveFilters: Filters;
+  componentIdResolution: Record<string, string>;
   disabled: boolean;
 }) => {
   const locale = useLocale();
@@ -306,9 +342,28 @@ const DataFilter = ({
   const updateDataFilter = useChartInteractiveFilters(
     (d) => d.updateDataFilter
   );
+  const interactiveFiltersResolved = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(interactiveFilters).map(([k, v]) => [
+        componentIdResolution[k] ?? k,
+        v,
+      ])
+    ) as Filters;
+  }, [interactiveFilters, componentIdResolution]);
   const queryFilters = useMemo(() => {
-    return getInteractiveQueryFilters({ filters, interactiveFilters });
-  }, [filters, interactiveFilters]);
+    return getInteractiveQueryFilters({
+      filters,
+      interactiveFilters: interactiveFiltersResolved,
+    });
+  }, [filters, interactiveFiltersResolved]);
+  const resolvedQueryFilters = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(queryFilters).map(([k, v]) => {
+        const resolved = componentIdResolution[k] ?? k;
+        return [resolved, v];
+      })
+    );
+  }, [queryFilters, componentIdResolution]);
   const [{ data, fetching }] = useDataCubesComponentsQuery({
     chartConfig,
     variables: {
@@ -318,8 +373,8 @@ const DataFilter = ({
       cubeFilters: [
         {
           iri: cubeIri,
-          componentIds: [dimensionId],
-          filters: queryFilters,
+          componentIds: [resolvedDimensionId],
+          filters: resolvedQueryFilters,
           loadValues: true,
         },
       ],
@@ -328,12 +383,13 @@ const DataFilter = ({
       // If this is not present, we'll have outdated dimension
       // values after we change the filter order.
       // @ts-ignore
-      filterKeys: Object.keys(queryFilters).join(", "),
+      filterKeys: Object.keys(resolvedQueryFilters).join(", "),
     },
     keepPreviousData: true,
   });
 
   const dimension = data?.dataCubesComponents.dimensions[0];
+
   const hierarchy = dimension?.hierarchy;
 
   const setDataFilter = useEvent(
@@ -347,7 +403,7 @@ const DataFilter = ({
     configFilter && configFilter.type === "single"
       ? configFilter.value
       : undefined;
-  const dataFilterValue = dimension ? dataFilters[dimension.id]?.value : null;
+  const dataFilterValue = dimension ? dataFilters[dimensionId]?.value : null;
 
   const resolvedDataFilterValue = useResolveMostRecentValue(
     dataFilterValue,
