@@ -68,13 +68,15 @@ export const prepareCubeQueryFilters = ({
   allowNoneValues?: boolean;
 }): Filters => {
   const queryFilters = { ...cubeFilters };
+  const dashboardFiltersComponentIds =
+    dashboardFilters?.dataFilters.componentIds ?? [];
 
   for (const [k, v] of Object.entries(
     dashboardFilters?.dataFilters.filters ?? {}
   )) {
     if (
       k in cubeFilters &&
-      dashboardFilters?.dataFilters.componentIds?.includes(k) &&
+      dashboardFiltersComponentIds.includes(k) &&
       animationField?.componentId !== k
     ) {
       queryFilters[k] = v;
@@ -82,17 +84,30 @@ export const prepareCubeQueryFilters = ({
   }
 
   for (const [k, v] of Object.entries(interactiveDataFilters)) {
+    const interactiveActiveForKey =
+      interactiveFiltersConfig.dataFilters.active &&
+      (interactiveFiltersConfig.dataFilters.componentIds
+        ? interactiveFiltersConfig.dataFilters.componentIds.includes(k)
+        : k in cubeFilters);
+
     if (
-      ((interactiveFiltersConfig.dataFilters.active &&
-        interactiveFiltersConfig.dataFilters.componentIds?.includes(k)) ||
-        dashboardFilters?.dataFilters.componentIds?.includes(k)) &&
+      (interactiveActiveForKey || dashboardFiltersComponentIds.includes(k)) &&
       animationField?.componentId !== k
     ) {
       if (v.value === FIELD_VALUE_NONE) {
-        continue;
-      }
+        if (allowNoneValues) {
+          queryFilters[k] = v;
+        } else {
+          const hasCubeMultiFilter = cubeFilters[k]?.type === "multi";
+          const isDashboardFilter = dashboardFiltersComponentIds.includes(k);
 
-      queryFilters[k] = v;
+          if (!hasCubeMultiFilter && !isDashboardFilter) {
+            delete queryFilters[k];
+          }
+        }
+      } else {
+        queryFilters[k] = v;
+      }
     }
   }
 
