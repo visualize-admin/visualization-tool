@@ -28,6 +28,7 @@ You can also check the
   - Chart more button is now correctly hidden when there are no actions
     available
   - Most recent value is now correctly resolved in interactive filters
+  - Fixed overflow issues in dashboards
 - Maintenance
   - Observations now include original values under `componentId/__iri__` key and
     are unversioned
