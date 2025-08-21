@@ -104,12 +104,6 @@ export const useChartDataFiltersState = ({
   const [open, setOpen] = useState(!!defaultOpen);
 
   useEffect(() => {
-    if (componentIds.length === 0) {
-      setOpen(false);
-    }
-  }, [componentIds.length]);
-
-  useEffect(() => {
     setOpen(!!defaultOpen);
   }, [active, defaultOpen]);
 
@@ -228,7 +222,7 @@ export const ChartDataFiltersToggle = ({
               px: 2,
               py: 1,
             }}
-            onClick={() => setOpen(!open)}
+            onClick={() => setOpen((prev) => !prev)}
           >
             {loading && (
               <span style={{ marginTop: "0.1rem", marginRight: "0.5rem" }}>
