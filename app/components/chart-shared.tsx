@@ -71,6 +71,7 @@ export const useChartStyles = makeStyles<Theme, { removeBorder?: boolean }>(
   (theme) => ({
     root: {
       flexGrow: 1,
+      minWidth: 0,
       padding: theme.spacing(8),
       backgroundColor: theme.palette.background.paper,
       border: ({ removeBorder }) =>
@@ -79,6 +80,13 @@ export const useChartStyles = makeStyles<Theme, { removeBorder?: boolean }>(
       [`.${chartPanelLayoutGridClasses.root} &`]: {
         display: "flex",
         flexDirection: "column",
+      },
+
+      // Make sure that all children have min-width: 0 and max-width: 100%
+      // to prevent overflow issues.
+      "& > *": {
+        minWidth: 0,
+        maxWidth: "100%",
       },
     },
     editing: {
