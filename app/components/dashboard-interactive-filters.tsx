@@ -30,7 +30,7 @@ import {
   timeUnitToFormatter,
   timeUnitToParser,
 } from "@/configurator/components/ui-helpers";
-import { isTemporalDimension } from "@/domain/data";
+import { Dimension, isTemporalDimension } from "@/domain/data";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
@@ -296,31 +296,58 @@ export const saveDataFiltersSnapshot = (
 };
 
 const DashboardDataFilters = ({ componentIds }: { componentIds: string[] }) => {
+  const locale = useLocale();
+  const [state] = useConfiguratorState(hasChartConfigs);
+  const { chartConfigs, dataSource } = state;
   const classes = useDataFilterStyles();
+  const [{ data }] = useDataCubesComponentsQuery({
+    // Non-relevant here.
+    chartConfig: chartConfigs[0],
+    variables: {
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
+      locale,
+      cubeFilters: chartConfigs.flatMap((config) =>
+        config.cubes.map((cube) => ({
+          iri: cube.iri,
+        }))
+      ),
+    },
+    keepPreviousData: true,
+  });
+
   return (
     <div className={classes.wrapper}>
       {componentIds.map((componentId) => (
-        <DataFilter key={componentId} componentId={componentId} />
+        <DataFilter
+          key={componentId}
+          componentId={componentId}
+          dimensions={data?.dataCubesComponents.dimensions ?? []}
+        />
       ))}
     </div>
   );
 };
 
-const DataFilter = ({ componentId }: { componentId: string }) => {
+const DataFilter = ({
+  componentId,
+  dimensions,
+}: {
+  componentId: string;
+  dimensions: Dimension[];
+}) => {
   const locale = useLocale();
   const classes = useDataFilterStyles();
   const [{ chartConfigs, dataSource, dashboardFilters }] =
     useConfiguratorState(hasChartConfigs);
   const dashboardInteractiveFilters = useDashboardInteractiveFilters();
-  const relevantChartConfigs = chartConfigs.filter((config) =>
-    config.cubes.some((cube) => Object.keys(cube.filters).includes(componentId))
-  );
   const cubeIris = uniq(
-    chartConfigs.flatMap((config) =>
-      config.cubes
-        .filter((cube) => Object.keys(cube.filters).includes(componentId))
-        .map((cube) => cube.iri)
-    )
+    dimensions
+      .filter((dimension) => dimension.id === componentId)
+      .map((dimension) => dimension.cubeIri)
+  );
+  const relevantChartConfigs = chartConfigs.filter((config) =>
+    config.cubes.some((cube) => cubeIris.includes(cube.iri))
   );
 
   if (cubeIris.length > 1) {
@@ -346,6 +373,7 @@ const DataFilter = ({ componentId }: { componentId: string }) => {
       ],
     },
     keepPreviousData: true,
+    pause: !cubeIri,
   });
 
   const dimension = data?.dataCubesComponents.dimensions[0];

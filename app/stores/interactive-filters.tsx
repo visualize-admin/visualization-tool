@@ -207,16 +207,22 @@ const getPotentialTimeRangeFilterIds = (chartConfigs: ChartConfig[]) => {
   return temporalDimensions.map((dimension) => dimension.componentId);
 };
 
-const getPotentialDataFilterIds = (chartConfigs: ChartConfig[]) => {
+const getPotentialDataFilterIds = (
+  chartConfigs: ChartConfig[],
+  interactiveDataFilterIds: string[]
+) => {
   return uniq(
     chartConfigs.flatMap((config) => {
-      return config.cubes
-        .map((cube) => cube.filters)
-        .flatMap((filters) => {
-          return Object.entries(filters)
-            .filter(([_, filter]) => filter.type === "single")
-            .map(([dimensionId]) => dimensionId);
-        });
+      return uniq(
+        config.cubes
+          .map((cube) => cube.filters)
+          .flatMap((filters) => {
+            return Object.entries(filters)
+              .filter(([_, filter]) => filter.type === "single")
+              .map(([dimensionId]) => dimensionId);
+          })
+          .concat(interactiveDataFilterIds)
+      );
     })
   );
 };
@@ -239,7 +245,15 @@ export const InteractiveFiltersProvider = ({
     return getPotentialTimeRangeFilterIds(chartConfigs);
   }, [chartConfigs]);
   const potentialDataFilterIds = useMemo(() => {
-    return getPotentialDataFilterIds(chartConfigs);
+    const interactiveDataFilterIds = storeRefs.current
+      ? uniq(
+          Object.values(storeRefs.current)
+            .map((store) => store.getState().dataFilters)
+            .flatMap((filter) => Object.keys(filter))
+        )
+      : [];
+
+    return getPotentialDataFilterIds(chartConfigs, interactiveDataFilterIds);
   }, [chartConfigs]);
 
   const stores = useMemo<
