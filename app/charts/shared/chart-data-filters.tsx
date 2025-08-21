@@ -85,17 +85,23 @@ export const useChartDataFiltersState = ({
   const defaultOpen = dataFiltersConfig.defaultOpen;
   const configComponentIds = dataFiltersConfig.componentIds;
   const componentIds = useMemo(() => {
+    const excludeDashboardFilters = (id: string) => {
+      return !dashboardFilters?.dataFilters.componentIds.includes(id);
+    };
+
     if (isTableConfig(chartConfig)) {
       const orderedIds = getOrderedTableColumns(chartConfig.fields).map(
         (c) => c.componentId
       );
 
-      return orderedIds.filter((id) => configComponentIds.includes(id));
+      return orderedIds.filter(
+        (id) => configComponentIds.includes(id) && excludeDashboardFilters(id)
+      );
     }
 
-    return configComponentIds;
-  }, [chartConfig, configComponentIds]);
-  const [open, setOpen] = useState<boolean>(!!defaultOpen);
+    return configComponentIds.filter(excludeDashboardFilters);
+  }, [chartConfig, configComponentIds, dashboardFilters]);
+  const [open, setOpen] = useState(!!defaultOpen);
 
   useEffect(() => {
     if (componentIds.length === 0) {
