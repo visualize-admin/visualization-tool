@@ -155,12 +155,6 @@ export const TableColumnOptions = ({
 
   // FIXME: table encoding should be added to UI encodings
   // @ts-ignore
-  if (activeField === "table-settings") {
-    return <TableSettings />;
-  }
-
-  // FIXME: table encoding should be added to UI encodings
-  // @ts-ignore
   if (activeField === "table-sorting") {
     return (
       <TableSortingOptions
@@ -486,25 +480,5 @@ const ColumnStyleSubOptions = ({
         </Box>
       ) : null}
     </>
-  );
-};
-
-const TableSettings = () => {
-  return (
-    <ControlSection hideTopBorder>
-      <SectionTitle closable>
-        <Trans id="controls.section.tableSettings">Table Settings</Trans>
-      </SectionTitle>
-      <ControlSectionContent>
-        <ChartOptionCheckboxField
-          label={t({
-            id: "controls.tableSettings.showSearch",
-            message: "Show Search",
-          })}
-          field={null}
-          path="settings.showSearch"
-        />
-      </ControlSectionContent>
-    </ControlSection>
   );
 };

@@ -1,5 +1,5 @@
-import { Trans } from "@lingui/macro";
-import { Box, Theme, Typography } from "@mui/material";
+import { t, Trans } from "@lingui/macro";
+import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { DragDropContext } from "react-beautiful-dnd";
 
@@ -14,7 +14,10 @@ import {
 import { ShowFilterAreaOpen } from "@/configurator/components/chart-controls/show-filter-area-open";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { DatasetsControlSection } from "@/configurator/components/dataset-control-section";
-import { ChartAnnotatorTabField } from "@/configurator/components/field";
+import {
+  ChartAnnotatorTabField,
+  ChartOptionCheckboxField,
+} from "@/configurator/components/field";
 import { useOrderedTableColumns } from "@/configurator/components/ui-helpers";
 import { useTableChartController } from "@/configurator/table/table-chart-configurator.hook";
 
@@ -117,10 +120,16 @@ export const ChartConfiguratorTable = ({
         <SectionTitle id="controls-data">
           <Trans id="controls.section.data.filters">Filters</Trans>
         </SectionTitle>
-        <ControlSectionContent>
-          <Box sx={{ my: 2 }}>
-            <ShowFilterAreaOpen chartConfig={chartConfig} />
-          </Box>
+        <ControlSectionContent sx={{ my: 2 }}>
+          <ShowFilterAreaOpen chartConfig={chartConfig} />
+          <ChartOptionCheckboxField
+            label={t({
+              id: "controls.tableSettings.showSearch",
+              message: "Show Search",
+            })}
+            field={null}
+            path="settings.showSearch"
+          />
         </ControlSectionContent>
       </ControlSection>
       <DragDropContext
