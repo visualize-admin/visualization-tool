@@ -78,7 +78,7 @@ export type GroupedPreparedFilter = {
   entries: GroupedPreparedFilterEntry[];
 };
 
-export type GroupedPreparedFilterEntry = {
+type GroupedPreparedFilterEntry = {
   cubeIri: string;
   resolvedDimensionId: string;
   interactiveFilters: Filters;
