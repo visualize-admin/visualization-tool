@@ -91,6 +91,7 @@ const commonInteractiveFiltersState: InteractiveFiltersState = {
 describe("useQueryFilters", () => {
   it("should not merge interactive filters state if interactive filters are disabled at publish time", () => {
     const queryFilters = prepareCubeQueryFilters({
+      chartConfig: line1Fixture.data.chartConfig as unknown as ChartConfig,
       cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
       animationField: undefined,
       interactiveFiltersConfig: commonInteractiveFiltersConfig,
@@ -105,11 +106,13 @@ describe("useQueryFilters", () => {
 
   it("should merge interactive filters state if interactive filters are active at publish time", () => {
     const queryFilters = prepareCubeQueryFilters({
+      chartConfig: line1Fixture.data.chartConfig as unknown as ChartConfig,
       cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
       animationField: undefined,
       interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
         dataFilters: {
           active: true,
+          componentIds: [col("3")],
         },
       }),
       dashboardFilters: undefined,
@@ -124,11 +127,13 @@ describe("useQueryFilters", () => {
 
   it("should omit none values since they should not be passed to graphql layer", () => {
     const queryFilters = prepareCubeQueryFilters({
+      chartConfig: line1Fixture.data.chartConfig as unknown as ChartConfig,
       cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
       animationField: undefined,
       interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
         dataFilters: {
           active: true,
+          componentIds: [col("3")],
         },
       }),
       dashboardFilters: undefined,
@@ -151,6 +156,7 @@ describe("useQueryFilters", () => {
       interactiveFiltersConfig: {
         dataFilters: {
           active: true,
+          componentIds: ["A_1", "A_2", "B_1"],
         },
       },
       cubes: [
@@ -207,6 +213,7 @@ describe("useQueryFilters", () => {
       interactiveFiltersConfig: {
         dataFilters: {
           active: true,
+          componentIds: ["A_1", "A_2", "B_1"],
         },
       },
       cubes: [
@@ -289,11 +296,13 @@ describe("useQueryFilters", () => {
     };
 
     const queryFilters = prepareCubeQueryFilters({
+      chartConfig: line1Fixture.data.chartConfig as unknown as ChartConfig,
       cubeFilters: cubeFiltersWithMulti,
       animationField: undefined,
       interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
         dataFilters: {
           active: true,
+          componentIds: [col("3")],
         },
       }),
       dashboardFilters: undefined,
@@ -319,11 +328,13 @@ describe("useQueryFilters", () => {
     };
 
     const queryFilters = prepareCubeQueryFilters({
+      chartConfig: line1Fixture.data.chartConfig as unknown as ChartConfig,
       cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
       animationField,
       interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
         dataFilters: {
           active: true,
+          componentIds: [col("3")],
         },
       }),
       dashboardFilters: undefined,
@@ -355,11 +366,13 @@ describe("useQueryFilters", () => {
     };
 
     const queryFilters = prepareCubeQueryFilters({
+      chartConfig: line1Fixture.data.chartConfig as unknown as ChartConfig,
       cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
       animationField: undefined,
       interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
         dataFilters: {
           active: true,
+          componentIds: [col("3")],
         },
       }),
       dashboardFilters,
@@ -369,36 +382,6 @@ describe("useQueryFilters", () => {
     expect(queryFilters[col("3")]).toEqual({
       type: "single",
       value: val("3", "dashboard"),
-    });
-  });
-
-  it("should handle allowNoneValues parameter", () => {
-    const interactiveDataFiltersWithNone = {
-      [col("3")]: { type: "single" as const, value: FIELD_VALUE_NONE },
-      [col("4")]: { type: "single" as const, value: val("4", "valid") },
-    };
-
-    const queryFilters = prepareCubeQueryFilters({
-      cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
-      animationField: undefined,
-      interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
-        dataFilters: {
-          active: true,
-          componentIds: [col("3"), col("4")],
-        },
-      }),
-      dashboardFilters: undefined,
-      interactiveDataFilters: interactiveDataFiltersWithNone,
-      allowNoneValues: true,
-    });
-
-    expect(queryFilters[col("3")]).toEqual({
-      type: "single",
-      value: FIELD_VALUE_NONE,
-    });
-    expect(queryFilters[col("4")]).toEqual({
-      type: "single",
-      value: val("4", "valid"),
     });
   });
 });

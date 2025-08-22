@@ -97,7 +97,13 @@ export const prepareCubeQueryFilters = ({
       (interactiveActiveForKey || dashboardFiltersComponentIds.includes(k)) &&
       animationField?.componentId !== k
     ) {
-      queryFilters[k] = v;
+      if (v.type === "single" && v.value === FIELD_VALUE_NONE) {
+        if (!(k in cubeFilters) || cubeFilters[k].type !== "multi") {
+          delete queryFilters[k];
+        }
+      } else {
+        queryFilters[k] = v;
+      }
     }
   }
 
