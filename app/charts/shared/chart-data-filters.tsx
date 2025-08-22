@@ -19,7 +19,7 @@ import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { SelectTree, Tree } from "@/components/select-tree";
 import { isTableConfig } from "@/config-types";
-import { useChartConfigFilters } from "@/config-utils";
+import { getChartConfigFilters } from "@/config-utils";
 import {
   areDataFiltersActive,
   ChartConfig,
@@ -65,12 +65,65 @@ import { hierarchyToOptions } from "@/utils/hierarchy";
 import { useResolveMostRecentValue } from "@/utils/most-recent-value";
 import { useEvent } from "@/utils/use-event";
 
-type PreparedFilter = {
+export type PreparedFilter = {
   cubeIri: string;
   interactiveFilters: Filters;
   unmappedFilters: SingleFilters;
   mappedFilters: Filters;
   componentIdResolution: Record<string, string>;
+};
+
+export type GroupedPreparedFilter = {
+  dimensionId: string;
+  entries: GroupedPreparedFilterEntry[];
+};
+
+export type GroupedPreparedFilterEntry = {
+  cubeIri: string;
+  resolvedDimensionId: string;
+  interactiveFilters: Filters;
+  componentIdResolution: Record<string, string>;
+};
+
+export const groupPreparedFiltersByDimension = (
+  preparedFilters: PreparedFilter[],
+  componentIds: string[]
+): GroupedPreparedFilter[] => {
+  const groups: Record<string, GroupedPreparedFilterEntry[]> = {};
+
+  for (const preparedFilter of preparedFilters) {
+    for (const id of componentIds) {
+      const resolved = preparedFilter.componentIdResolution[id];
+      if (isJoinById(id)) {
+        if (!resolved) {
+          continue;
+        }
+
+        groups[id] = groups[id] ?? [];
+        groups[id].push({
+          cubeIri: preparedFilter.cubeIri,
+          resolvedDimensionId: resolved,
+          interactiveFilters: preparedFilter.interactiveFilters,
+          componentIdResolution: preparedFilter.componentIdResolution,
+        });
+      } else {
+        if (resolved === id) {
+          groups[id] = groups[id] ?? [];
+          groups[id].push({
+            cubeIri: preparedFilter.cubeIri,
+            resolvedDimensionId: id,
+            interactiveFilters: preparedFilter.interactiveFilters,
+            componentIdResolution: preparedFilter.componentIdResolution,
+          });
+        }
+      }
+    }
+  }
+
+  return Object.entries(groups).map(([dimensionId, entries]) => ({
+    dimensionId,
+    entries,
+  }));
 };
 
 export const useChartDataFiltersState = ({
@@ -180,6 +233,9 @@ export const useChartDataFiltersState = ({
       };
     });
   }, [chartConfig, componentIds, queryFilters]);
+  const groupedPreparedFilters = useMemo<GroupedPreparedFilter[]>(() => {
+    return groupPreparedFiltersByDimension(preparedFilters, componentIds);
+  }, [preparedFilters, componentIds]);
   const { error } = useEnsurePossibleInteractiveFilters({
     dataSource,
     chartConfig,
@@ -196,6 +252,7 @@ export const useChartDataFiltersState = ({
     loading,
     error,
     preparedFilters,
+    groupedPreparedFilters,
     componentIds,
   };
 };
@@ -274,7 +331,7 @@ export const ChartDataFiltersList = ({
   dataSource,
   chartConfig,
   loading,
-  preparedFilters,
+  groupedPreparedFilters,
   componentIds,
 }: ReturnType<typeof useChartDataFiltersState>) => {
   const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
@@ -289,103 +346,89 @@ export const ChartDataFiltersList = ({
         gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
       }}
     >
-      {preparedFilters.map(
-        ({ cubeIri, interactiveFilters, componentIdResolution }) => {
-          return Object.keys(interactiveFilters).map((dimensionId) => {
-            const resolvedDimensionId =
-              componentIdResolution[dimensionId] ?? dimensionId;
-            return (
-              <DataFilter
-                key={dimensionId}
-                cubeIri={cubeIri}
-                dimensionId={dimensionId}
-                resolvedDimensionId={resolvedDimensionId}
-                dataSource={dataSource}
-                chartConfig={chartConfig}
-                dataFilters={dataFilters}
-                interactiveFilters={interactiveFilters}
-                componentIdResolution={componentIdResolution}
-                disabled={loading}
-              />
-            );
-          });
-        }
-      )}
+      {groupedPreparedFilters.map(({ dimensionId, entries }) => (
+        <DataFilter
+          key={dimensionId}
+          filters={entries}
+          dimensionId={dimensionId}
+          dataSource={dataSource}
+          chartConfig={chartConfig}
+          dataFilters={dataFilters}
+          disabled={loading}
+        />
+      ))}
     </Box>
   ) : null;
 };
 
-// TODO: Render one filter in case of joined dimensions, fetch and join all
-// dimensions, not only the first one.
 const DataFilter = ({
-  cubeIri,
   dimensionId,
-  resolvedDimensionId,
   dataSource,
   chartConfig,
   dataFilters,
-  interactiveFilters,
-  componentIdResolution,
+  filters,
   disabled,
 }: {
-  cubeIri: string;
   dimensionId: string;
-  resolvedDimensionId: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dataFilters: DataFilters;
-  interactiveFilters: Filters;
-  componentIdResolution: Record<string, string>;
+  filters: GroupedPreparedFilterEntry[];
   disabled: boolean;
 }) => {
   const locale = useLocale();
-  const filters = useChartConfigFilters(chartConfig, { cubeIri });
   const chartLoadingState = useLoadingState();
   const updateDataFilter = useChartInteractiveFilters(
     (d) => d.updateDataFilter
   );
-  const interactiveFiltersResolved = useMemo(() => {
-    return Object.fromEntries(
-      Object.entries(interactiveFilters).map(([k, v]) => [
-        componentIdResolution[k] ?? k,
-        v,
-      ])
-    ) as Filters;
-  }, [interactiveFilters, componentIdResolution]);
-  const queryFilters = useMemo(() => {
-    return getInteractiveQueryFilters({
-      filters,
-      interactiveFilters: interactiveFiltersResolved,
+  const perCube = useMemo(() => {
+    return filters.map((f) => {
+      const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
+        cubeIri: f.cubeIri,
+      });
+      const interactiveFiltersResolved = Object.fromEntries(
+        Object.entries(f.interactiveFilters).map(([k, v]) => [
+          f.componentIdResolution[k] ?? k,
+          v,
+        ])
+      ) as Filters;
+      const interactiveQueryFilters = getInteractiveQueryFilters({
+        filters: cubeFilters,
+        interactiveFilters: interactiveFiltersResolved,
+      });
+      const resolvedQueryFilters = Object.fromEntries(
+        Object.entries(interactiveQueryFilters).map(([k, v]) => [
+          f.componentIdResolution[k] ?? k,
+          v,
+        ])
+      );
+      return {
+        cubeIri: f.cubeIri,
+        resolvedDimensionId: f.resolvedDimensionId,
+        resolvedQueryFilters,
+      };
     });
-  }, [filters, interactiveFiltersResolved]);
-  const resolvedQueryFilters = useMemo(() => {
-    return Object.fromEntries(
-      Object.entries(queryFilters).map(([k, v]) => {
-        const resolved = componentIdResolution[k] ?? k;
-        return [resolved, v];
-      })
-    );
-  }, [queryFilters, componentIdResolution]);
+  }, [filters, chartConfig.cubes]);
   const [{ data, fetching }] = useDataCubesComponentsQuery({
     chartConfig,
     variables: {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      cubeFilters: [
-        {
-          iri: cubeIri,
-          componentIds: [resolvedDimensionId],
-          filters: resolvedQueryFilters,
-          loadValues: true,
-        },
-      ],
+      cubeFilters: perCube.map((d) => ({
+        iri: d.cubeIri,
+        componentIds: [d.resolvedDimensionId],
+        filters: d.resolvedQueryFilters,
+        loadValues: true,
+      })),
       // This is important for urql not to think that filters
       // are the same  while the order of the keys has changed.
       // If this is not present, we'll have outdated dimension
       // values after we change the filter order.
       // @ts-ignore
-      filterKeys: Object.keys(resolvedQueryFilters).join(", "),
+      filterKeys: perCube
+        .map((d) => Object.keys(d.resolvedQueryFilters).join(", "))
+        .join(" | "),
     },
     keepPreviousData: true,
   });
@@ -400,7 +443,16 @@ const DataFilter = ({
     }
   );
 
-  const configFilter = dimension ? filters[dimension.id] : undefined;
+  const singleEntry = filters.length === 1 ? filters[0] : undefined;
+  const configFilter = useMemo(() => {
+    if (!singleEntry || !dimension) {
+      return undefined;
+    }
+    const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
+      cubeIri: singleEntry.cubeIri,
+    });
+    return cubeFilters[dimension.id];
+  }, [dimension, chartConfig.cubes, singleEntry]);
   const configFilterValue =
     configFilter && configFilter.type === "single"
       ? configFilter.value
