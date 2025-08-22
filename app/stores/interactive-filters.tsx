@@ -190,15 +190,17 @@ const getPotentialTimeRangeFilterIds = (chartConfigs: ChartConfig[]) => {
               config.fields[encoding.field]
             : undefined;
         if (field && "componentId" in field) {
-          return {
-            /** Unjoined dimension */
-            componentId: isJoinById(field.componentId as string)
-              ? getOriginalIds(field.componentId, config)[0]
-              : field.componentId,
+          const candidateIds = isJoinById(field.componentId as string)
+            ? getOriginalIds(field.componentId, config)
+            : [field.componentId];
+
+          return candidateIds.map((componentId) => ({
+            componentId,
             chartKey: config.key,
-          };
+          }));
         }
       })
+      .flat()
       .filter(truthy);
 
     return chartTemporalDimensions;

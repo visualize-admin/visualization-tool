@@ -41,7 +41,11 @@ import {
   ObservationValue,
 } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { getOriginalIds, isJoinById } from "@/graphql/join";
+import {
+  getOriginalIds,
+  getResolvedJoinById,
+  isJoinById,
+} from "@/graphql/join";
 import { DataCubeObservationFilter } from "@/graphql/resolver-types";
 import {
   InteractiveFiltersState,
@@ -148,7 +152,9 @@ export const useQueryFilters = ({
         ...Object.keys(cubeFilters),
         ...Object.keys(chartConfig.fields),
         ...Object.values(chartConfig.fields).map((field) => field.componentId),
-      ];
+      ].map((id) =>
+        isJoinById(id) ? (getResolvedJoinById(cube, id) ?? id) : id
+      );
       const cubeInteractiveDataFilters = Object.fromEntries(
         Object.entries(resolvedChartInteractiveFilters).filter(
           ([componentId]) => cubeComponentIds.includes(componentId)

@@ -47,7 +47,7 @@ import {
 } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
-import { getOriginalIds, isJoinById } from "@/graphql/join";
+import { getResolvedJoinById, isJoinById } from "@/graphql/join";
 import {
   PossibleFiltersDocument,
   PossibleFiltersQuery,
@@ -122,6 +122,7 @@ export const useChartDataFiltersState = ({
       assert(cubeQueryFilters, "Cube query filters not found.");
       const filtersByMappingStatus = getFiltersByMappingStatus(chartConfig, {
         cubeIri: cube.iri,
+        joinByIds: componentIds.filter(isJoinById),
       });
       const { unmappedFilters, mappedFilters } = filtersByMappingStatus;
       const unmappedKeys = Object.keys(unmappedFilters);
@@ -133,22 +134,21 @@ export const useChartDataFiltersState = ({
         ...Object.keys(filters),
         ...Object.keys(chartConfig.fields),
         ...Object.values(chartConfig.fields).map((field) => field.componentId),
-      ]
-        .filter(Boolean)
-        .flatMap((id) =>
-          isJoinById(id) ? getOriginalIds(id, chartConfig) : [id]
-        )
+      ].filter(Boolean);
 
-        .filter((id) => !isJoinById(id));
       const componentIdPairs = componentIds
         .map((originalId) => {
           const resolvedId = isJoinById(originalId)
-            ? getOriginalIds(originalId, chartConfig)[0]
+            ? (getResolvedJoinById(cube, originalId) ?? originalId)
             : originalId;
 
           return { originalId, resolvedId };
         })
-        .filter(({ resolvedId }) => cubeComponentIds.includes(resolvedId));
+        .filter(({ resolvedId, originalId }) => {
+          return resolvedId === originalId
+            ? cubeComponentIds.includes(resolvedId)
+            : true;
+        });
 
       const componentIdResolution = Object.fromEntries(
         componentIdPairs.map(({ originalId, resolvedId }) => [
@@ -315,6 +315,8 @@ export const ChartDataFiltersList = ({
   ) : null;
 };
 
+// TODO: Render one filter in case of joined dimensions, fetch and join all
+// dimensions, not only the first one.
 const DataFilter = ({
   cubeIri,
   dimensionId,
