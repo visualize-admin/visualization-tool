@@ -327,16 +327,13 @@ export const Select = ({
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const locale = useLocale();
-  const sortedOptions = useMemo(() => {
+  const sortedOptions: SelectOption[] = useMemo(() => {
     if (optionGroups) {
       return flatten(
-        optionGroups.map(
-          ([group, values]) =>
-            [
-              { type: group ? "group" : "", ...group },
-              ...getSelectOptions(values, { sort, locale }),
-            ] as const
-        )
+        optionGroups.map(([group, values]) => [
+          { isGroupHeader: !!group, ...group },
+          ...getSelectOptions(values, { sort, locale }),
+        ])
       );
     } else {
       return getSelectOptions(options, { sort, locale });
@@ -395,13 +392,13 @@ export const Select = ({
           sx={{ maxWidth: sideControls ? "calc(100% - 28px)" : "100%" }}
         >
           {sortedOptions.map((opt) => {
-            if (!opt.value && opt.type !== "group") {
+            if (!opt.value && !opt.isGroupHeader) {
               return null;
             }
 
             const isSelected = value === opt.value;
 
-            return opt.type === "group" ? (
+            return opt.isGroupHeader ? (
               opt.label && (
                 <ListSubheader key={opt.label}>
                   <Typography

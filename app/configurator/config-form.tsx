@@ -47,6 +47,7 @@ import { isMultiHierarchyNode } from "@/utils/hierarchy";
 import { useEvent } from "@/utils/use-event";
 
 export type Option = {
+  isGroupHeader?: boolean;
   group?: string;
   value: string | $FixMe;
   label: string | $FixMe;
