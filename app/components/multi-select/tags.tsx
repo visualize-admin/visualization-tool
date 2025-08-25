@@ -83,6 +83,10 @@ export const MultiSelectTags = ({
             py: 0.5,
             backgroundColor: "#F0F4F7",
 
+            "&:hover": {
+              backgroundColor: "cobalt.100",
+            },
+
             "& .MuiChip-deleteIcon": {
               color: "text.primary",
               transition: "color 0.2s ease",
