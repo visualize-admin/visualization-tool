@@ -33,6 +33,10 @@ export const MultiSelectInput = ({
           width: 0,
           minWidth: "0px !important",
           p: 0,
+
+          "&::placeholder": {
+            opacity: 1,
+          },
         },
       }}
       sx={{ p: 0 }}
