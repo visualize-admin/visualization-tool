@@ -101,6 +101,18 @@ export const components: Components = {
       root: {
         flex: 1,
         minWidth: 0,
+        padding: 0,
+
+        "&:hover": {
+          "& .MuiAutocomplete-inputRoot": {
+            borderColor: palette.cobalt[500],
+          },
+
+          "& .MuiAutocomplete-endAdornment": {
+            boxShadow: `-1px 0 0 0 ${palette.monochrome[500]}`,
+            backgroundColor: palette.cobalt[50],
+          },
+        },
       },
       inputRoot: {
         flexWrap: "nowrap",
@@ -108,10 +120,19 @@ export const components: Components = {
         alignItems: "center",
         minWidth: 0,
         minHeight: 42,
-        padding: 0,
+        padding: "0 !important",
+        cursor: "pointer",
       },
-      input: {
-        minWidth: "16px !important",
+      endAdornment: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 46,
+        height: "100%",
+        right: "0 !important",
+        boxShadow: `-1px 0 0 0 ${palette.monochrome[300]}`,
+        backgroundColor: "#ffffff",
+        transition: "all 0.2s ease",
       },
       paper: {
         borderRadius: 4,
@@ -179,6 +200,12 @@ export const components: Components = {
         fontWeight: 700,
       },
       popupIndicator: {
+        width: 46,
+        height: "100%",
+        marginRight: 0,
+        padding: 0,
+        borderRadius: 0,
+        backgroundColor: "transparent !important",
         color: `${palette.monochrome[800]} !important`,
         transition: "color 0.2s ease, transform 0.2s ease !important",
 
