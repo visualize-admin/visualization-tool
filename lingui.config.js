@@ -1,11 +1,13 @@
+import { formatter } from "@lingui/format-po";
+
 const { locales } = require("./app/locales/locales.json");
 
 module.exports = {
   locales,
   catalogs: [
     {
-      path: "<rootDir>/app/locales/{locale}/messages",
-      include: ["<rootDir>/app"],
+      path: "app/locales/{locale}/messages",
+      include: ["app"],
       exclude: [
         "**/node_modules/**",
         "**/.next/**",
@@ -21,4 +23,5 @@ module.exports = {
   fallbackLocales: {
     default: "en",
   },
+  format: formatter({ explicitIdAsDefault: true }),
 };
