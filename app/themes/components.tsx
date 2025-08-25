@@ -93,6 +93,94 @@ export const components: Components = {
       },
     },
   },
+  MuiAutocomplete: {
+    defaultProps: {
+      popupIcon: (
+        <Icon
+          name="chevronDown"
+          style={{
+            cursor: "pointer",
+            color: palette.monochrome[800],
+            transition: "transform 0.2s ease",
+          }}
+        />
+      ),
+    },
+    styleOverrides: {
+      paper: {
+        borderRadius: 4,
+        boxShadow: shadows[4],
+      },
+      listbox: {
+        width: "auto",
+        padding: "4px 0",
+        cursor: "default",
+
+        "& > .MuiAutocomplete-option": {
+          padding: "10px 16px",
+          transition: "background-color 0.2s ease, color 0.2s ease",
+          backgroundColor: "transparent",
+          color: palette.monochrome[500],
+          ...typography.body3,
+          lineHeight: "1 !important",
+
+          "&:hover": {
+            backgroundColor: `${palette.cobalt[50]} !important`,
+            color: `${palette.monochrome[800]} !important`,
+          },
+        },
+
+        "& > .MuiAutocomplete-option[data-focus='true']": {
+          backgroundColor: palette.cobalt[50],
+          color: palette.monochrome[800],
+        },
+
+        "& > .MuiAutocomplete-option[aria-selected='true']": {
+          backgroundColor: "transparent",
+          color: palette.monochrome[800],
+        },
+      },
+      // @ts-ignore
+      option: {
+        padding: "10px 16px",
+        transition: "background-color 0.2s ease, color 0.2s ease",
+        backgroundColor: "transparent",
+        color: palette.monochrome[500],
+        ...typography.body3,
+        lineHeight: "1 !important",
+
+        "&:hover": {
+          backgroundColor: `${palette.cobalt[50]} !important`,
+          color: `${palette.monochrome[800]} !important`,
+        },
+
+        "&.Mui-focused, &.MuiAutocomplete-option[data-focus='true']": {
+          backgroundColor: palette.cobalt[50],
+          color: palette.monochrome[800],
+        },
+
+        "&.MuiAutocomplete-option[aria-selected='true']": {
+          backgroundColor: "transparent",
+          color: palette.monochrome[800],
+        },
+      },
+      groupLabel: {
+        ...typography.h6,
+        padding: 12,
+        color: palette.text.primary,
+        lineHeight: 1,
+        fontWeight: 700,
+      },
+      popupIndicator: {
+        color: `${palette.monochrome[800]} !important`,
+        transition: "color 0.2s ease, transform 0.2s ease !important",
+
+        "&.MuiAutocomplete-popupIndicatorOpen": {
+          transform: "rotate(180deg)",
+        },
+      },
+    },
+  },
   MuiBadge: {
     styleOverrides: {
       root: {
@@ -395,21 +483,6 @@ export const components: Components = {
       },
     },
   },
-  MuiMenuItem: {
-    styleOverrides: {
-      // @ts-ignore
-      root: {
-        padding: "10px 16px",
-        color: palette.monochrome[500],
-        ...typography.body3,
-        transition: "background-color 0.2s ease",
-
-        "&:hover": {
-          backgroundColor: palette.cobalt[50],
-        },
-      },
-    },
-  },
   MuiListSubheader: {
     defaultProps: {
       disableGutters: true,
@@ -431,6 +504,21 @@ export const components: Components = {
       paper: {
         borderRadius: 4,
         boxShadow: shadows[4],
+      },
+    },
+  },
+  MuiMenuItem: {
+    styleOverrides: {
+      // @ts-ignore
+      root: {
+        padding: "10px 16px",
+        color: palette.monochrome[500],
+        ...typography.body3,
+        transition: "background-color 0.2s ease",
+
+        "&:hover": {
+          backgroundColor: palette.cobalt[50],
+        },
       },
     },
   },
