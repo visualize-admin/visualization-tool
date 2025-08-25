@@ -269,15 +269,20 @@ export const Checkbox = ({
   />
 );
 
-const getSelectOptions = (
+export const getSelectOptions = (
   options: Option[],
-  sortOptions: boolean,
-  locale: string
+  {
+    sort,
+    locale,
+  }: {
+    sort: boolean;
+    locale: string;
+  }
 ) => {
   const noneOptions = options.filter((o) => o.isNoneValue);
   const restOptions = options.filter((o) => !o.isNoneValue);
 
-  if (sortOptions) {
+  if (sort) {
     restOptions.sort(valueComparator(locale));
   }
 
@@ -300,7 +305,7 @@ export const Select = ({
   options,
   optionGroups,
   onChange,
-  sortOptions = true,
+  sort = true,
   sideControls,
   open,
   onClose,
@@ -314,7 +319,7 @@ export const Select = ({
   optionGroups?: SelectOptionGroup[];
   label?: ReactNode;
   disabled?: boolean;
-  sortOptions?: boolean;
+  sort?: boolean;
   sideControls?: ReactNode;
   loading?: boolean;
   hint?: string;
@@ -329,14 +334,14 @@ export const Select = ({
           ([group, values]) =>
             [
               { type: group ? "group" : "", ...group },
-              ...getSelectOptions(values, sortOptions, locale),
+              ...getSelectOptions(values, { sort, locale }),
             ] as const
         )
       );
     } else {
-      return getSelectOptions(options, sortOptions, locale);
+      return getSelectOptions(options, { sort, locale });
     }
-  }, [optionGroups, sortOptions, locale, options]);
+  }, [optionGroups, sort, locale, options]);
   const handleOpen = useEvent((e: SyntheticEvent) => {
     setWidth(ref.current?.getBoundingClientRect().width ?? 0);
     onOpen?.(e);

@@ -205,7 +205,7 @@ const ComboLineSingleYField = ({
                 }
                 options={[]}
                 optionGroups={options}
-                sortOptions={false}
+                sort={false}
                 value={id}
                 onChange={(e) => {
                   const newId = e.target.value as string;
@@ -241,7 +241,7 @@ const ComboLineSingleYField = ({
               })}
               options={[]}
               optionGroups={addNewMeasureOptions}
-              sortOptions={false}
+              sort={false}
               onChange={(e) => {
                 const id = e.target.value as string;
 
@@ -327,7 +327,7 @@ const ComboLineDualYField = ({
             id={`measure-${y.leftAxisComponentId}`}
             options={[]}
             optionGroups={getOptionGroups("left")}
-            sortOptions={false}
+            sort={false}
             label={t({
               id: "controls.chart.combo.y.left-axis-measure",
               message: "Left axis measure",
@@ -352,7 +352,7 @@ const ComboLineDualYField = ({
             size="sm"
             options={[]}
             optionGroups={getOptionGroups("right")}
-            sortOptions={false}
+            sort={false}
             label={t({
               id: "controls.chart.combo.y.right-axis-measure",
               message: "Right axis measure",
@@ -442,7 +442,7 @@ const ComboLineColumnYField = ({
             size="sm"
             options={[]}
             optionGroups={getOptionGroups("column")}
-            sortOptions={false}
+            sort={false}
             label={t({
               id: "controls.chart.combo.y.column-measure",
               message: "Left axis (column)",
@@ -467,7 +467,7 @@ const ComboLineColumnYField = ({
             size="sm"
             options={[]}
             optionGroups={getOptionGroups("line")}
-            sortOptions={false}
+            sort={false}
             label={t({
               id: "controls.chart.combo.y.line-measure",
               message: "Right axis (line)",

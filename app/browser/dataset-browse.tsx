@@ -313,7 +313,7 @@ export const SearchDatasetSortControl = ({
         }}
         value={value}
         options={options}
-        sortOptions={false}
+        sort={false}
         sx={{ width: "fit-content" }}
       />
     </Box>

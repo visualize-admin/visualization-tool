@@ -310,7 +310,7 @@ export const DataFilterSelect = ({
       }
       disabled={disabled || usesMostRecentValue}
       options={allValues}
-      sortOptions={false}
+      sort={false}
       sideControls={sideControls}
       open={isOpen}
       onClose={handleClose}
@@ -476,7 +476,7 @@ export const DataFilterSelectTime = ({
         label={label}
         disabled={disabled}
         options={options}
-        sortOptions={false}
+        sort={false}
         {...fieldProps}
       />
     );
