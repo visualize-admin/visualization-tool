@@ -95,18 +95,24 @@ export const components: Components = {
   },
   MuiAutocomplete: {
     defaultProps: {
-      popupIcon: (
-        <Icon
-          name="chevronDown"
-          style={{
-            cursor: "pointer",
-            color: palette.monochrome[800],
-            transition: "transform 0.2s ease",
-          }}
-        />
-      ),
+      popupIcon: <Icon name="chevronDown" />,
     },
     styleOverrides: {
+      root: {
+        flex: 1,
+        minWidth: 0,
+      },
+      inputRoot: {
+        flexWrap: "nowrap",
+        overflowX: "hidden",
+        alignItems: "center",
+        minWidth: 0,
+        minHeight: 42,
+        padding: 0,
+      },
+      input: {
+        minWidth: "16px !important",
+      },
       paper: {
         borderRadius: 4,
         boxShadow: shadows[4],
@@ -135,10 +141,11 @@ export const components: Components = {
           color: palette.monochrome[800],
         },
 
-        "& > .MuiAutocomplete-option[aria-selected='true']": {
-          backgroundColor: "transparent",
-          color: palette.monochrome[800],
-        },
+        "& > .MuiAutocomplete-option[aria-selected='true'], & > .MuiAutocomplete-option[aria-selected='true'].Mui-focused":
+          {
+            backgroundColor: "transparent",
+            color: palette.monochrome[800],
+          },
       },
       // @ts-ignore
       option: {
