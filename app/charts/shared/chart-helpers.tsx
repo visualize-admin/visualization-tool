@@ -105,6 +105,10 @@ export const prepareCubeQueryFilters = ({
         if (!(k in cubeFilters) || cubeFilters[k].type !== "multi") {
           delete queryFilters[k];
         }
+      } else if (v.type === "multi" && Object.keys(v.values).length === 0) {
+        if (!(k in cubeFilters) || cubeFilters[k].type !== "multi") {
+          delete queryFilters[k];
+        }
       } else {
         queryFilters[k] = v;
       }
@@ -152,9 +156,11 @@ export const useQueryFilters = ({
         ...Object.keys(cubeFilters),
         ...Object.keys(chartConfig.fields),
         ...Object.values(chartConfig.fields).map((field) => field.componentId),
-      ].map((id) =>
-        isJoinById(id) ? (getResolvedJoinById(cube, id) ?? id) : id
-      );
+      ]
+        .filter(truthy)
+        .map((id) =>
+          isJoinById(id) ? (getResolvedJoinById(cube, id) ?? id) : id
+        );
       const cubeInteractiveDataFilters = Object.fromEntries(
         Object.entries(resolvedChartInteractiveFilters).filter(
           ([componentId]) => cubeComponentIds.includes(componentId)

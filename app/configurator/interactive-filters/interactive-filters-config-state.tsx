@@ -1,16 +1,17 @@
-import { SelectChangeEvent } from "@mui/material";
 import produce from "immer";
 import get from "lodash/get";
 import { useEffect } from "react";
 import { ChangeEvent } from "react";
 
-import { InteractiveFiltersConfig } from "@/config-types";
+import {
+  InteractiveDataFilterType,
+  InteractiveFiltersConfig,
+} from "@/config-types";
 import { getChartConfig, useChartConfigFilters } from "@/config-utils";
 import {
   isConfiguring,
   useConfiguratorState,
 } from "@/configurator/configurator-state";
-import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { useEvent } from "@/utils/use-event";
 
 export const useInteractiveFiltersToggle = () => {
@@ -45,14 +46,19 @@ export const useInteractiveFiltersToggle = () => {
 /**
  * Toggles a single data filter
  */
-export const useInteractiveDataFilterToggle = (dimensionId: string) => {
+export const useInteractiveDataFilterToggle = (
+  dimensionId: string,
+  filterType: InteractiveDataFilterType = "single"
+) => {
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const onChange = useEvent(() => {
     const { interactiveFiltersConfig } = chartConfig;
     const newIFConfig = toggleInteractiveFilterDataDimension(
       interactiveFiltersConfig,
-      dimensionId
+      dimensionId,
+      undefined,
+      filterType
     );
 
     dispatch({
@@ -77,7 +83,8 @@ export const toggleInteractiveFilterDataDimension = produce(
   (
     config: InteractiveFiltersConfig,
     id: string,
-    newValue?: boolean
+    newValue?: boolean,
+    filterType?: InteractiveDataFilterType
   ): InteractiveFiltersConfig => {
     const currentComponentIds = config.dataFilters.componentIds;
     const shouldAdd =
@@ -94,11 +101,19 @@ export const toggleInteractiveFilterDataDimension = produce(
       delete newDefaultValueOverrides[id];
     }
 
+    const newFilterTypes = { ...config.dataFilters.filterTypes };
+    if (!shouldAdd) {
+      delete newFilterTypes[id];
+    } else if (filterType) {
+      newFilterTypes[id] = filterType;
+    }
+
     const newDataFilters: NonNullable<InteractiveFiltersConfig>["dataFilters"] =
       {
         ...config.dataFilters,
         componentIds: newComponentIds,
         defaultValueOverrides: newDefaultValueOverrides,
+        filterTypes: newFilterTypes,
       };
     newDataFilters.active = newComponentIds.length > 0;
 
@@ -151,12 +166,11 @@ export const useDefaultValueOverride = (dimensionId: string) => {
   const currentValue =
     chartConfig.interactiveFiltersConfig.dataFilters.defaultValueOverrides[
       dimensionId
-    ] || FIELD_VALUE_NONE;
+    ] ?? [];
 
-  const onChange = useEvent((e: SelectChangeEvent<unknown>) => {
-    const newValue = e.target.value as string;
+  const onChange = useEvent((newValue: string[]) => {
     const newConfig = produce(chartConfig.interactiveFiltersConfig, (draft) => {
-      if (newValue === FIELD_VALUE_NONE) {
+      if (newValue.length === 0) {
         delete draft.dataFilters.defaultValueOverrides[dimensionId];
       } else {
         draft.dataFilters.defaultValueOverrides[dimensionId] = newValue;
@@ -176,18 +190,27 @@ export const useDefaultValueOverride = (dimensionId: string) => {
         dimensionId
       ];
 
-    if (f?.type === "multi" && override && !f.values[override]) {
-      const newConfig = produce(
-        chartConfig.interactiveFiltersConfig,
-        (draft) => {
-          delete draft.dataFilters.defaultValueOverrides[dimensionId];
-        }
-      );
+    if (f?.type === "multi" && override && Array.isArray(override)) {
+      const invalidValues = override.filter((v) => !f.values[v]);
 
-      dispatch({
-        type: "INTERACTIVE_FILTER_CHANGED",
-        value: newConfig,
-      });
+      if (invalidValues.length > 0) {
+        const validValues = override.filter((v) => f.values[v]);
+        const newConfig = produce(
+          chartConfig.interactiveFiltersConfig,
+          (draft) => {
+            if (validValues.length > 0) {
+              draft.dataFilters.defaultValueOverrides[dimensionId] =
+                validValues;
+            } else {
+              delete draft.dataFilters.defaultValueOverrides[dimensionId];
+            }
+          }
+        );
+        dispatch({
+          type: "INTERACTIVE_FILTER_CHANGED",
+          value: newConfig,
+        });
+      }
     }
   }, [chartConfig.interactiveFiltersConfig, filters, dimensionId, dispatch]);
 

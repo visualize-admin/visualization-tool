@@ -43,6 +43,7 @@ import { Flex } from "@/components/flex";
 import { Select, Switch } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
+import { MultiSelect } from "@/components/multi-select";
 import { ChartConfig, ColorMapping, isColorInConfig } from "@/config-types";
 import { getChartConfig, useChartConfigFilters } from "@/config-utils";
 import { isSegmentInConfig } from "@/configurator";
@@ -376,7 +377,7 @@ const MultiFilterContent = ({
   // TODO: separate interactive legend and data filters
   const interactiveLegendFilterProps = useInteractiveFiltersToggle();
   const interactiveDataFilterProps =
-    useInteractiveDataFilterToggle(dimensionId);
+    useInteractiveDataFilterToggle(dimensionId, "multi");
   const interactiveFilterProps = isSegmentField
     ? interactiveLegendFilterProps
     : interactiveDataFilterProps;
@@ -412,12 +413,16 @@ const MultiFilterContent = ({
               {...visibleLegendProps}
             />
           ) : interactiveFilterProps.checked ? (
-            <Select
+            <MultiSelect
               id={`default-value-${dimensionId}`}
               size="sm"
               label={t({
                 id: "controls.filters.default-value.label",
                 message: "Default value",
+              })}
+              placeholder={t({
+                id: "controls.dimensionvalue.none",
+                message: "No filter",
               })}
               options={defaultValueOptions}
               {...defaultValueOverrideProps}

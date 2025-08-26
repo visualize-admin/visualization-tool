@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 import {
   ChartConfig,
   DashboardFiltersConfig,
-  FilterValueSingle,
+  FilterValue,
   isSegmentInConfig,
 } from "@/config-types";
 import { useChartConfigFilters } from "@/config-utils";
@@ -36,7 +36,9 @@ export const useSyncInteractiveFilters = (
   const setCalculationType = useChartInteractiveFilters(
     (d) => d.setCalculationType
   );
-  const lastOverridesRef = useRef<Record<string, string | undefined>>({});
+  const lastOverridesRef = useRef<
+    Record<string, string[] | string | undefined>
+  >({});
 
   // Time range filter
   const presetFrom =
@@ -91,9 +93,41 @@ export const useSyncInteractiveFilters = (
           const override =
             interactiveFiltersConfig.dataFilters.defaultValueOverrides[iri];
           const lastOverride = lastOverridesRef.current[iri];
-          const overrideChanged = override !== lastOverride;
+          const overrideChanged = !isEqual(override, lastOverride);
 
-          if (overrideChanged && override && isAllowed(override)) {
+          if (overrideChanged && override && Array.isArray(override)) {
+            const validOverrides = override.filter((val) => isAllowed(val));
+            const configuredFilterType =
+              interactiveFiltersConfig.dataFilters.filterTypes[iri];
+
+            if (configuredFilterType === "multi") {
+              acc[iri] = {
+                type: "multi",
+                values: Object.fromEntries(
+                  validOverrides.map((v) => [v, true])
+                ),
+              };
+            } else if (validOverrides.length > 1) {
+              acc[iri] = {
+                type: "multi",
+                values: Object.fromEntries(
+                  validOverrides.map((v) => [v, true])
+                ),
+              };
+            } else if (validOverrides.length === 1) {
+              acc[iri] = { type: "single", value: validOverrides[0] };
+            } else {
+              acc[iri] = { type: "single", value: FIELD_VALUE_NONE };
+            }
+            return acc;
+          }
+
+          if (
+            overrideChanged &&
+            override &&
+            typeof override === "string" &&
+            isAllowed(override)
+          ) {
             acc[iri] = { type: "single", value: override };
             return acc;
           }
@@ -108,12 +142,58 @@ export const useSyncInteractiveFilters = (
             return acc;
           }
 
-          if (override && isAllowed(override)) {
-            acc[iri] = { type: "single", value: override };
+          if (current?.type === "multi") {
+            const validValues = Object.keys(current.values).filter(isAllowed);
+            const configuredFilterType =
+              interactiveFiltersConfig.dataFilters.filterTypes[iri];
+
+            if (configuredFilterType === "multi") {
+              acc[iri] = {
+                type: "multi",
+                values: Object.fromEntries(validValues.map((v) => [v, true])),
+              };
+            } else if (validValues.length > 1) {
+              acc[iri] = {
+                type: "multi",
+                values: Object.fromEntries(validValues.map((v) => [v, true])),
+              };
+            } else if (validValues.length === 1) {
+              acc[iri] = { type: "single", value: validValues[0] };
+            } else {
+              acc[iri] = { type: "single", value: FIELD_VALUE_NONE };
+            }
             return acc;
           }
 
-          acc[iri] = { type: "single", value: FIELD_VALUE_NONE };
+          if (Array.isArray(override)) {
+            const validOverrides = override.filter(isAllowed);
+            const configuredFilterType =
+              interactiveFiltersConfig.dataFilters.filterTypes[iri];
+
+            if (configuredFilterType === "multi") {
+              acc[iri] = {
+                type: "multi",
+                values: Object.fromEntries(
+                  validOverrides.map((v) => [v, true])
+                ),
+              };
+            } else if (validOverrides.length > 1) {
+              acc[iri] = {
+                type: "multi",
+                values: Object.fromEntries(
+                  validOverrides.map((v) => [v, true])
+                ),
+              };
+            } else if (validOverrides.length === 1) {
+              acc[iri] = { type: "single", value: validOverrides[0] };
+            } else {
+              acc[iri] = { type: "single", value: FIELD_VALUE_NONE };
+            }
+          } else if (typeof override === "string" && isAllowed(override)) {
+            acc[iri] = { type: "single", value: override };
+          } else {
+            acc[iri] = { type: "single", value: FIELD_VALUE_NONE };
+          }
           return acc;
         }
 
@@ -129,7 +209,7 @@ export const useSyncInteractiveFilters = (
 
         return acc;
       },
-      {} as { [key: string]: FilterValueSingle }
+      {} as { [key: string]: FilterValue }
     );
 
     if (!isEqual(next, dataFilters)) {

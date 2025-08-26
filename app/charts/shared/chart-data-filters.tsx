@@ -17,8 +17,13 @@ import { Flex } from "@/components/flex";
 import { Select } from "@/components/form";
 import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import { MultiSelect } from "@/components/multi-select";
 import { SelectTree, Tree } from "@/components/select-tree";
-import { isTableConfig } from "@/config-types";
+import {
+  FilterValueMulti,
+  FilterValueSingle,
+  isTableConfig,
+} from "@/config-types";
 import { getChartConfigFilters } from "@/config-utils";
 import {
   areDataFiltersActive,
@@ -381,6 +386,9 @@ const DataFilter = ({
   const updateDataFilter = useChartInteractiveFilters(
     (d) => d.updateDataFilter
   );
+  const setMultiDataFilter = useChartInteractiveFilters(
+    (d) => d.setMultiDataFilter
+  );
   const perCube = useMemo(() => {
     return filters.map((f) => {
       const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
@@ -438,26 +446,58 @@ const DataFilter = ({
   const hierarchy = dimension?.hierarchy;
 
   const setDataFilter = useEvent(
-    (e: SelectChangeEvent<unknown> | { target: { value: string } }) => {
-      updateDataFilter(dimensionId, e.target.value as string);
+    (
+      e: SelectChangeEvent<unknown> | { target: { value: string | string[] } }
+    ) => {
+      const value = e.target.value as string | string[];
+
+      if (Array.isArray(value)) {
+        setMultiDataFilter(dimensionId, value);
+      } else {
+        updateDataFilter(dimensionId, value);
+      }
     }
   );
+
+  const handleMultiChange = useEvent((values: string[]) => {
+    setMultiDataFilter(dimensionId, values);
+  });
 
   const singleEntry = filters.length === 1 ? filters[0] : undefined;
   const configFilter = useMemo(() => {
     if (!singleEntry || !dimension) {
       return undefined;
     }
+
     const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
       cubeIri: singleEntry.cubeIri,
     });
+
     return cubeFilters[dimension.id];
   }, [dimension, chartConfig.cubes, singleEntry]);
   const configFilterValue =
     configFilter && configFilter.type === "single"
       ? configFilter.value
       : undefined;
-  const dataFilterValue = dimension ? dataFilters[dimensionId]?.value : null;
+  const dataFilterValue = dimension
+    ? dataFilters[dimensionId]?.type === "single"
+      ? (dataFilters[dimensionId] as FilterValueSingle).value
+      : null
+    : null;
+
+  const dataFilterValues = dimension
+    ? dataFilters[dimensionId]?.type === "multi"
+      ? Object.keys((dataFilters[dimensionId] as FilterValueMulti).values)
+      : dataFilters[dimensionId].type === "single"
+        ? [(dataFilters[dimensionId] as FilterValueSingle).value as string]
+        : []
+    : [];
+
+  const filterType =
+    chartConfig.interactiveFiltersConfig.dataFilters.filterTypes[dimensionId] ??
+    (configFilter?.type === "multi" ? "multi" : "single");
+
+  const isMultiFilter = filterType === "multi";
 
   const resolvedDataFilterValue = useResolveMostRecentValue(
     dataFilterValue,
@@ -470,8 +510,17 @@ const DataFilter = ({
   const value =
     resolvedDataFilterValue ?? resolvedConfigFilterValue ?? FIELD_VALUE_NONE;
 
+  const multiValue = isMultiFilter
+    ? dataFilterValues
+    : [value].filter((v) => v !== FIELD_VALUE_NONE).map((v) => String(v));
+
   useEffect(() => {
     const values = dimension?.values.map((d) => d.value) ?? [];
+
+    if (isMultiFilter) {
+      chartLoadingState.set(`interactive-filter-${dimensionId}`, fetching);
+      return;
+    }
 
     // We only want to disable loading state when the filter is actually valid.
     // It can be invalid when the application is ensuring possible filters.
@@ -499,6 +548,7 @@ const DataFilter = ({
     updateDataFilter,
     configFilter,
     resolvedDataFilterValue,
+    isMultiFilter,
   ]);
 
   return dimension ? (
@@ -536,6 +586,9 @@ const DataFilter = ({
           dimension={dimension}
           onChange={setDataFilter}
           value={value as string}
+          values={multiValue}
+          isMulti={isMultiFilter}
+          onMultiChange={handleMultiChange}
           disabled={disabled}
         />
       )}
@@ -577,7 +630,10 @@ export type DataFilterGenericDimensionProps = {
   configFilter?: Filters[string];
   dimension: Dimension;
   value: string;
+  values?: string[];
+  isMulti?: boolean;
   onChange: (e: SelectChangeEvent<unknown>) => void;
+  onMultiChange?: (values: string[]) => void;
   options?: Array<{ label: string; value: string }>;
   disabled: boolean;
 };
@@ -586,7 +642,10 @@ export const DataFilterGenericDimension = ({
   configFilter,
   dimension,
   value,
+  values = [],
+  isMulti = false,
   onChange,
+  onMultiChange,
   options: _options,
   disabled,
 }: DataFilterGenericDimensionProps) => {
@@ -595,41 +654,68 @@ export const DataFilterGenericDimension = ({
     id: "controls.dimensionvalue.none",
     message: "No filter",
   });
+  const clearSelectionLabel = t({
+    id: "controls.clear-selection",
+    message: "Clear selection",
+  });
   const options: Option[] = _options ?? dimension.values;
   const allOptions: Option[] = useMemo(() => {
-    const noneOption = {
+    const clearSelectionOption = {
       value: FIELD_VALUE_NONE,
-      label: noneLabel,
+      label: clearSelectionLabel,
       isNoneValue: true,
     };
 
     if (!configFilter) {
-      return [noneOption, ...options];
+      return [clearSelectionOption, ...options];
     }
 
     if (configFilter.type === "multi") {
       return [
-        noneOption,
+        clearSelectionOption,
         ...options.filter((d) => configFilter.values[d.value]),
       ];
     }
 
-    return isKeyDimension ? options : [noneOption, ...options];
-  }, [noneLabel, configFilter, isKeyDimension, options]);
+    return isKeyDimension
+      ? options
+      : [
+          { value: FIELD_VALUE_NONE, label: noneLabel, isNoneValue: true },
+          ...options,
+        ];
+  }, [clearSelectionLabel, configFilter, isKeyDimension, options, noneLabel]);
+
+  const fieldLabel = (
+    <FieldLabel
+      label={
+        <OpenMetadataPanelWrapper component={dimension}>
+          {label}
+        </OpenMetadataPanelWrapper>
+      }
+    />
+  );
+
+  if (isMulti && onMultiChange) {
+    const displayValues = values.filter((value) => value !== FIELD_VALUE_NONE);
+
+    return (
+      <MultiSelect
+        id="dataFilterBaseDimension"
+        label={fieldLabel}
+        options={allOptions}
+        value={displayValues}
+        onChange={onMultiChange}
+        disabled={disabled}
+        placeholder={noneLabel}
+      />
+    );
+  }
 
   return (
     <Select
       id="dataFilterBaseDimension"
       size="sm"
-      label={
-        <FieldLabel
-          label={
-            <OpenMetadataPanelWrapper component={dimension}>
-              {label}
-            </OpenMetadataPanelWrapper>
-          }
-        />
-      }
+      label={fieldLabel}
       options={allOptions}
       value={value}
       onChange={onChange}

@@ -143,15 +143,20 @@ export type InteractiveFiltersTimeRange = t.TypeOf<
 const DefaultValueOverrides = t.record(t.string, t.array(t.string));
 export type DefaultValueOverrides = t.TypeOf<typeof DefaultValueOverrides>;
 
+const InteractiveDataFilterType = t.union([
+  t.literal("single"),
+  t.literal("multi"),
+]);
+export type InteractiveDataFilterType = t.TypeOf<
+  typeof InteractiveDataFilterType
+>;
+
 const InteractiveFiltersDataConfig = t.intersection([
   t.type({
     active: t.boolean,
     componentIds: t.array(t.string),
     defaultValueOverrides: DefaultValueOverrides,
-    filterTypes: t.record(
-      t.string,
-      t.union([t.literal("single"), t.literal("multi")])
-    ),
+    filterTypes: t.record(t.string, InteractiveDataFilterType),
   }),
   t.partial({
     defaultOpen: t.boolean,
