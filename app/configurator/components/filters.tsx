@@ -1280,7 +1280,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
                     size="sm"
                     label={fromLabel}
                     options={fromOptions}
-                    sortOptions={false}
+                    sort={false}
                     value={rangeActiveFilter.from}
                     onChange={onChangeFrom}
                   />
@@ -1291,7 +1291,7 @@ export const TimeFilter = (props: TimeFilterProps) => {
                     size="sm"
                     label={toLabel}
                     options={toOptions}
-                    sortOptions={false}
+                    sort={false}
                     value={rangeActiveFilter.to}
                     onChange={onChangeTo}
                   />
