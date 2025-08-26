@@ -13,6 +13,7 @@ import { getChartSpec } from "@/charts/chart-config-ui-options";
 import {
   CalculationType,
   ChartConfig,
+  FilterValue,
   FilterValueSingle,
 } from "@/config-types";
 import { truthy } from "@/domain/types";
@@ -42,7 +43,7 @@ export type InteractiveFiltersState = {
   };
 };
 
-export type DataFilters = Record<string, FilterValueSingle>;
+export type DataFilters = Record<string, FilterValue>;
 
 type TimeSlider =
   | {
@@ -66,6 +67,9 @@ type InteractiveFiltersStateActions = {
     dimensionId: string,
     dimensionValue: FilterValueSingle["value"]
   ) => void;
+  setMultiDataFilter: (dimensionId: string, values: string[]) => void;
+  addDataFilterValue: (dimensionId: string, value: string) => void;
+  removeDataFilterValue: (dimensionId: string, value: string) => void;
   resetDataFilters: () => void;
   setCalculationType: (calculationType: CalculationType) => void;
   setAnnotations: (annotations: InteractiveFiltersState["annotations"]) => void;
@@ -133,6 +137,110 @@ const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
           },
         },
       }));
+    },
+    setMultiDataFilter: (dimensionId: string, values: string[]) => {
+      set((state) => ({
+        dataFilters: {
+          ...state.dataFilters,
+          [dimensionId]: {
+            type: "multi",
+            values: Object.fromEntries(values.map((v) => [v, true])),
+          },
+        },
+      }));
+    },
+    addDataFilterValue: (dimensionId: string, value: string) => {
+      set((state) => {
+        const currentFilter = state.dataFilters[dimensionId];
+
+        if (currentFilter?.type === "single") {
+          return {
+            dataFilters: {
+              ...state.dataFilters,
+              [dimensionId]: {
+                type: "multi",
+                values: {
+                  [currentFilter.value as string]: true,
+                  [value]: true,
+                },
+              },
+            },
+          };
+        }
+
+        if (currentFilter?.type === "multi") {
+          return {
+            dataFilters: {
+              ...state.dataFilters,
+              [dimensionId]: {
+                type: "multi",
+                values: {
+                  ...currentFilter.values,
+                  [value]: true,
+                },
+              },
+            },
+          };
+        }
+
+        return {
+          dataFilters: {
+            ...state.dataFilters,
+            [dimensionId]: {
+              type: "multi",
+              values: { [value]: true },
+            },
+          },
+        };
+      });
+    },
+    removeDataFilterValue: (dimensionId: string, value: string) => {
+      set((state) => {
+        const currentFilter = state.dataFilters[dimensionId];
+
+        if (currentFilter?.type === "multi") {
+          const newValues = { ...currentFilter.values };
+          delete newValues[value];
+
+          const remainingValues = Object.keys(newValues);
+
+          if (remainingValues.length === 1) {
+            return {
+              dataFilters: {
+                ...state.dataFilters,
+                [dimensionId]: {
+                  type: "single",
+                  value: remainingValues[0],
+                },
+              },
+            };
+          }
+
+          if (remainingValues.length === 0) {
+            const newDataFilters = { ...state.dataFilters };
+            delete newDataFilters[dimensionId];
+            return { dataFilters: newDataFilters };
+          }
+
+          return {
+            dataFilters: {
+              ...state.dataFilters,
+              [dimensionId]: {
+                type: "multi",
+                values: newValues,
+              },
+            },
+          };
+        }
+
+        if (currentFilter?.type === "single" && currentFilter.value === value) {
+          const newDataFilters = { ...state.dataFilters };
+          delete newDataFilters[dimensionId];
+          return { dataFilters: newDataFilters };
+        }
+
+        return { dataFilters: state.dataFilters };
+      });
     },
     resetDataFilters: () => {
       set({ dataFilters: {} });
