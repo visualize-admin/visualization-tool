@@ -96,9 +96,17 @@ export const prepareCubeQueryFilters = ({
     const interactiveActiveForKey =
       interactiveFiltersConfig.dataFilters.active &&
       resolvedInteractiveFiltersConfigComponentIds.includes(k);
+    
+    const hasFilterValue = 
+      (v.type === "single" && v.value !== FIELD_VALUE_NONE) ||
+      (v.type === "multi" && Object.keys(v.values).length > 0);
+    
+    const shouldApplyInteractiveFilter = 
+      interactiveActiveForKey || 
+      (resolvedInteractiveFiltersConfigComponentIds.includes(k) && hasFilterValue);
 
     if (
-      (interactiveActiveForKey || dashboardFiltersComponentIds.includes(k)) &&
+      (shouldApplyInteractiveFilter || dashboardFiltersComponentIds.includes(k)) &&
       animationField?.componentId !== k
     ) {
       if (v.type === "single" && v.value === FIELD_VALUE_NONE) {

@@ -90,7 +90,9 @@ const commonInteractiveFiltersState: InteractiveFiltersState = {
 };
 
 describe("useQueryFilters", () => {
-  it("should not merge interactive filters state if interactive filters are disabled at publish time", () => {
+  it("should merge interactive filters with meaningful values even when disabled at publish time", () => {
+    // Updated test: Now that we fixed the published chart bug, filters with meaningful values
+    // should be applied even when dataFilters.active is false (for published charts)
     const queryFilters = prepareCubeQueryFilters({
       chartConfig: line1Fixture.data.chartConfig as unknown as ChartConfig,
       cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
@@ -101,7 +103,7 @@ describe("useQueryFilters", () => {
     });
     expect(queryFilters[col("3")]).toEqual({
       type: "single",
-      value: val("3", "0"),
+      value: val("3", "1"), // Now expects the interactive value, not the original cube value
     });
   });
 
@@ -383,6 +385,44 @@ describe("useQueryFilters", () => {
     expect(queryFilters[col("3")]).toEqual({
       type: "single",
       value: val("3", "dashboard"),
+    });
+  });
+
+  it("should apply multi-filters in published charts", () => {
+    const interactiveDataFiltersWithMulti = {
+      [col("3")]: {
+        type: "multi" as const,
+        values: {
+          [val("3", "filtered1")]: true,
+          [val("3", "filtered2")]: true,
+        },
+      },
+    };
+
+    const queryFilters = prepareCubeQueryFilters({
+      chartConfig: line1Fixture.data.chartConfig as unknown as ChartConfig,
+      cubeFilters: line1Fixture.data.chartConfig.filters as Filters,
+      animationField: undefined,
+      interactiveFiltersConfig: merge({}, commonInteractiveFiltersConfig, {
+        dataFilters: {
+          active: true,
+          componentIds: [col("3")],
+          defaultValueOverrides: {
+            [col("3")]: ["filtered1", "filtered2"],
+          },
+        },
+      }),
+      dashboardFilters: undefined,
+      interactiveDataFilters:
+        interactiveDataFiltersWithMulti as InteractiveFiltersState["dataFilters"],
+    });
+
+    expect(queryFilters[col("3")]).toEqual({
+      type: "multi",
+      values: {
+        [val("3", "filtered1")]: true,
+        [val("3", "filtered2")]: true,
+      },
     });
   });
 });
