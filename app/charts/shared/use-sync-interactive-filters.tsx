@@ -136,7 +136,7 @@ export const useSyncInteractiveFilters = (
       setDataFilters(next);
     }
 
-    const latestOverrides: Record<string, string | undefined> = {};
+    const latestOverrides: Record<string, string[] | string | undefined> = {};
 
     for (const iri of newPotentialInteractiveDataFilters) {
       latestOverrides[iri] =
@@ -149,6 +149,7 @@ export const useSyncInteractiveFilters = (
     dataFilters,
     filters,
     interactiveFiltersConfig.dataFilters.defaultValueOverrides,
+    interactiveFiltersConfig.dataFilters.filterTypes,
     newPotentialInteractiveDataFilters,
     setDataFilters,
   ]);

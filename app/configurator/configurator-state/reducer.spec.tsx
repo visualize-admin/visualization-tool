@@ -1198,6 +1198,7 @@ describe("colorMapping", () => {
               active: false,
               componentIds: [],
               defaultValueOverrides: {},
+              filterTypes: {},
               defaultOpen: true,
             },
             calculation: {

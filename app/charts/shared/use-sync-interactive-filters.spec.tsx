@@ -251,7 +251,7 @@ describe("useSyncInteractiveFilters", () => {
         dataFilters: {
           ...chartConfig.interactiveFiltersConfig.dataFilters,
           componentIds: [dimId],
-          defaultValueOverrides: { [dimId]: val0 },
+          defaultValueOverrides: { [dimId]: [val0] },
           active: true,
         },
       },
@@ -271,7 +271,7 @@ describe("useSyncInteractiveFilters", () => {
                 ...modifiedChartConfig.interactiveFiltersConfig,
                 dataFilters: {
                   ...modifiedChartConfig.interactiveFiltersConfig.dataFilters,
-                  defaultValueOverrides: { [dimId]: val1 },
+                  defaultValueOverrides: { [dimId]: [val1] },
                 },
               },
             }
@@ -447,7 +447,7 @@ describe("useSyncInteractiveFilters", () => {
         dataFilters: {
           ...chartConfig.interactiveFiltersConfig.dataFilters,
           componentIds: [dimId],
-          defaultValueOverrides: { [dimId]: val0 },
+          defaultValueOverrides: { [dimId]: [val0] },
           active: true,
         },
       },
@@ -508,7 +508,7 @@ describe("useSyncInteractiveFilters", () => {
         dataFilters: {
           ...chartConfig.interactiveFiltersConfig.dataFilters,
           componentIds: [dimId],
-          defaultValueOverrides: { [dimId]: val0 },
+          defaultValueOverrides: { [dimId]: [val0] },
           active: true,
         },
       },
@@ -526,7 +526,7 @@ describe("useSyncInteractiveFilters", () => {
             ...initial.interactiveFiltersConfig,
             dataFilters: {
               ...initial.interactiveFiltersConfig.dataFilters,
-              defaultValueOverrides: { [dimId]: override },
+              defaultValueOverrides: { [dimId]: [override] },
             },
           },
         },

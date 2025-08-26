@@ -1,4 +1,3 @@
-import { SelectChangeEvent } from "@mui/material";
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -27,6 +26,7 @@ vi.mock("@/configurator/configurator-state", () => ({
               active: false,
               componentIds: [],
               defaultValueOverrides: {},
+              filterTypes: {},
             },
             timeRange: {
               active: false,
@@ -64,6 +64,7 @@ vi.mock("@/config-utils", () => ({
               active: false,
               componentIds: [],
               defaultValueOverrides: {},
+              filterTypes: {},
             },
             timeRange: {
               active: false,
@@ -94,6 +95,7 @@ describe("Interactive Filters Config State", () => {
           active: false,
           componentIds: [],
           defaultValueOverrides: {},
+          filterTypes: {},
         },
         timeRange: {
           active: false,
@@ -118,7 +120,8 @@ describe("Interactive Filters Config State", () => {
         dataFilters: {
           active: true,
           componentIds: ["test-dimension"],
-          defaultValueOverrides: { "test-dimension": "default-value" },
+          defaultValueOverrides: { "test-dimension": ["default-value"] },
+          filterTypes: {},
         },
         timeRange: {
           active: false,
@@ -147,6 +150,7 @@ describe("Interactive Filters Config State", () => {
           active: false,
           componentIds: [],
           defaultValueOverrides: {},
+          filterTypes: {},
         },
         timeRange: {
           active: false,
@@ -172,7 +176,8 @@ describe("Interactive Filters Config State", () => {
         dataFilters: {
           active: true,
           componentIds: ["test-dimension"],
-          defaultValueOverrides: { "test-dimension": "default-value" },
+          defaultValueOverrides: { "test-dimension": ["default-value"] },
+          filterTypes: {},
         },
         timeRange: {
           active: false,
@@ -201,6 +206,7 @@ describe("Interactive Filters Config State", () => {
           active: false,
           componentIds: [],
           defaultValueOverrides: {},
+          filterTypes: {},
         },
         timeRange: {
           active: false,
@@ -223,6 +229,7 @@ describe("Interactive Filters Config State", () => {
           active: false,
           componentIds: [],
           defaultValueOverrides: {},
+          filterTypes: {},
         },
         timeRange: {
           active: true,
@@ -276,9 +283,7 @@ describe("Interactive Filters Config State", () => {
       );
 
       act(() => {
-        result.current.onChange({
-          target: { value: "new-value" },
-        } as SelectChangeEvent<unknown>);
+        result.current.onChange(["new-value"]);
       });
 
       expect(mockDispatch).toHaveBeenCalledWith({
@@ -299,9 +304,7 @@ describe("Interactive Filters Config State", () => {
       );
 
       act(() => {
-        result.current.onChange({
-          target: { value: FIELD_VALUE_NONE },
-        } as SelectChangeEvent<unknown>);
+        result.current.onChange([]);
       });
 
       expect(mockDispatch).toHaveBeenCalledWith({

@@ -48,6 +48,7 @@ export const configStateMock = {
             active: false,
             componentIds: [],
             defaultValueOverrides: {},
+            filterTypes: {},
             defaultOpen: true,
           },
           calculation: {
@@ -183,6 +184,7 @@ export const configStateMock = {
             active: false,
             componentIds: [],
             defaultValueOverrides: {},
+            filterTypes: {},
           },
           calculation: {
             active: false,
@@ -1204,6 +1206,7 @@ export const configJoinedCubes: Partial<
         active: false,
         componentIds: [],
         defaultValueOverrides: {},
+        filterTypes: {},
         defaultOpen: true,
       },
       calculation: {
@@ -1685,6 +1688,7 @@ export const configJoinedCubes: Partial<
         active: false,
         componentIds: [],
         defaultValueOverrides: {},
+        filterTypes: {},
       },
       calculation: { active: false, type: "identity" },
     },

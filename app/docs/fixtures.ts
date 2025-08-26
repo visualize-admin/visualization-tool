@@ -92,6 +92,7 @@ export const states: ConfiguratorState[] = [
             active: false,
             componentIds: [],
             defaultValueOverrides: {},
+            filterTypes: {},
           },
           calculation: {
             active: false,
@@ -1133,6 +1134,7 @@ export const tableConfig: TableConfig = {
       active: false,
       componentIds: [],
       defaultValueOverrides: {},
+      filterTypes: {},
       defaultOpen: true,
     },
     calculation: {

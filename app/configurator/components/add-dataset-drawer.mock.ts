@@ -91,6 +91,7 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
           active: false,
           componentIds: [],
           defaultValueOverrides: {},
+          filterTypes: {},
         },
         calculation: {
           active: false,

@@ -20,6 +20,7 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
     active: false,
     componentIds: [],
     defaultValueOverrides: {},
+    filterTypes: {},
   },
   calculation: {
     active: false,

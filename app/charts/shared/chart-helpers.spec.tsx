@@ -58,6 +58,7 @@ const commonInteractiveFiltersConfig: InteractiveFiltersConfig = {
     active: false,
     componentIds: [col("3"), col("4")],
     defaultValueOverrides: {},
+    filterTypes: {},
   },
   calculation: {
     active: false,
