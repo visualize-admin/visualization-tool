@@ -1585,6 +1585,7 @@ export const chartConfigMigrations: Migration[] = [
             active: false,
             componentIds: [],
             defaultValueOverrides: {},
+            filterTypes: {},
             defaultOpen: true,
           },
           calculation: {
@@ -1595,6 +1596,12 @@ export const chartConfigMigrations: Migration[] = [
       } else {
         newConfig.interactiveFiltersConfig.dataFilters.defaultValueOverrides =
           {};
+        newConfig.interactiveFiltersConfig.dataFilters.filterTypes =
+          Object.fromEntries(
+            newConfig.interactiveFiltersConfig.dataFilters.componentIds.map(
+              (id: string) => [id, "single"]
+            )
+          );
       }
 
       return newConfig;
@@ -1607,8 +1614,8 @@ export const chartConfigMigrations: Migration[] = [
       } else if (newConfig.interactiveFiltersConfig) {
         delete newConfig.interactiveFiltersConfig.dataFilters
           .defaultValueOverrides;
+        delete newConfig.interactiveFiltersConfig.dataFilters.filterTypes;
       }
-      delete newConfig.annotations;
 
       return newConfig;
     },
