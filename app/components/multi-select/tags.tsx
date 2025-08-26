@@ -70,7 +70,7 @@ export const MultiSelectTags = ({
             height: "fit-content",
             mr: 0.5,
             px: 1,
-            py: 0.5,
+            py: 0.25,
             backgroundColor: "#F0F4F7",
 
             "&:hover": {
