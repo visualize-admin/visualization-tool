@@ -2,6 +2,7 @@ import {
   Autocomplete,
   Box,
   CircularProgress,
+  ClickAwayListener,
   SxProps,
   Typography,
 } from "@mui/material";
@@ -57,12 +58,13 @@ export const MultiSelect = ({
   sideControls?: ReactNode;
   sx?: SxProps;
 }) => {
+  const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const locale = useLocale();
   const [anchorX, setAnchorX] = useState(0);
   const [anchorY, setAnchorY] = useState(0);
-  const handleOpen = useEvent(() => {
+  const setDimensions = useEvent(() => {
     const el = ref.current;
 
     if (!el) {
@@ -109,95 +111,98 @@ export const MultiSelect = ({
   );
 
   return (
-    <Box ref={ref} sx={{ width: "100%", ...sx }}>
-      {label && (
-        <Label
-          htmlFor={id}
-          sx={{ display: "flex", alignItems: "center", mb: 1 }}
-        >
-          {label}
-          {loading && (
-            <CircularProgress
-              size={12}
-              sx={{ display: "inline-block", marginLeft: 2 }}
-            />
-          )}
-        </Label>
-      )}
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <Autocomplete
-          id={id}
-          onOpen={handleOpen}
-          openOnFocus
-          options={normalizedOptions}
-          value={valueOptions}
-          onChange={(_, newValue) => {
-            if (newValue.some((o) => o.isNoneValue)) {
-              onChange([]);
-            } else {
-              onChange(newValue.map((o) => o.value));
+    <ClickAwayListener onClickAway={() => setOpen(false)}>
+      <Box ref={ref} sx={{ width: "100%", ...sx }}>
+        {label && (
+          <Label
+            htmlFor={id}
+            sx={{ display: "flex", alignItems: "center", mb: 1 }}
+          >
+            {label}
+            {loading && (
+              <CircularProgress
+                size={12}
+                sx={{ display: "inline-block", marginLeft: 2 }}
+              />
+            )}
+          </Label>
+        )}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Autocomplete
+            id={id}
+            open={open}
+            onOpen={setDimensions}
+            options={normalizedOptions}
+            value={valueOptions}
+            onChange={(_, newValue) => {
+              if (newValue.some((o) => o.isNoneValue)) {
+                onChange([]);
+              } else {
+                onChange(newValue.map((o) => o.value));
+              }
+            }}
+            disabled={disabled}
+            multiple
+            disableCloseOnSelect
+            disableClearable
+            groupBy={
+              optionGroups && optionGroups.length > 0
+                ? (o) => o.group ?? ""
+                : undefined
             }
-          }}
-          disabled={disabled}
-          multiple
-          disableCloseOnSelect
-          disableClearable
-          groupBy={
-            optionGroups && optionGroups.length > 0
-              ? (o) => o.group ?? ""
-              : undefined
-          }
-          getOptionLabel={(o) => o.label}
-          isOptionEqualToValue={(o, v) => o.value === v.value}
-          getOptionDisabled={(o) => !!o.disabled}
-          PopperComponent={StableTransitionPopper}
-          sx={{
-            "& .MuiInputBase-root > .MuiInputBase-input": {
-              pl: value.length === 0 ? 5 : 1,
-              typography: selectSizeToTypography[size],
-            },
-          }}
-          renderOption={(props, option, state) => {
-            return (
-              <MultiSelectOption
-                props={props}
-                option={option}
-                state={state}
-                size={size}
-                width={width}
-              />
-            );
-          }}
-          renderTags={(options, getTagProps) => {
-            return (
-              <MultiSelectTags
-                options={options}
-                getTagProps={getTagProps}
-                size={size}
-              />
-            );
-          }}
-          renderInput={(params) => {
-            return (
-              <MultiSelectInput
-                params={params}
-                value={value}
-                placeholder={placeholder}
-                variant={variant}
-                size={size}
-              />
-            );
-          }}
-        />
-        {sideControls}
-      </Box>
-      {hint ? (
-        <Box sx={{ mt: 0.5 }}>
-          <Typography variant="caption" color="text.secondary">
-            {hint}
-          </Typography>
+            getOptionLabel={(o) => o.label}
+            isOptionEqualToValue={(o, v) => o.value === v.value}
+            getOptionDisabled={(o) => !!o.disabled}
+            PopperComponent={StableTransitionPopper}
+            renderOption={(props, option, state) => {
+              return (
+                <MultiSelectOption
+                  props={props}
+                  option={option}
+                  state={state}
+                  size={size}
+                  width={width}
+                />
+              );
+            }}
+            renderTags={(options, getTagProps) => {
+              return (
+                <MultiSelectTags
+                  options={options}
+                  getTagProps={getTagProps}
+                  size={size}
+                />
+              );
+            }}
+            renderInput={(params) => {
+              return (
+                <MultiSelectInput
+                  params={params}
+                  value={value}
+                  placeholder={placeholder}
+                  variant={variant}
+                  size={size}
+                  onClick={() => setOpen(!open)}
+                />
+              );
+            }}
+            sx={{
+              "& .MuiInputBase-root > .MuiInputBase-input": {
+                pl: value.length === 0 ? 5 : 1,
+                typography: selectSizeToTypography[size],
+              },
+            }}
+          />
+          {sideControls}
         </Box>
-      ) : null}
-    </Box>
+        {hint ? (
+          <Box sx={{ mt: 0.5 }}>
+            <Typography variant="caption" color="text.secondary">
+              {hint}
+            </Typography>
+          </Box>
+        ) : null}
+      </Box>
+    </ClickAwayListener>
   );
 };

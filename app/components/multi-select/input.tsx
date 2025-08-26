@@ -10,12 +10,14 @@ export const MultiSelectInput = ({
   placeholder,
   variant,
   size,
+  onClick,
 }: {
   params: AutocompleteRenderInputParams;
   value: string[];
   placeholder?: string;
   variant: ComponentProps<typeof MultiSelect>["variant"];
   size: ComponentProps<typeof MultiSelect>["size"];
+  onClick: () => void;
 }) => {
   const noneLabel = t({ id: "controls.none", message: "None" });
 
@@ -24,9 +26,10 @@ export const MultiSelectInput = ({
       {...params}
       placeholder={value.length === 0 ? (placeholder ?? noneLabel) : undefined}
       variant={variant}
-      onClick={params.inputProps.onClick}
+      onClick={onClick}
       inputProps={{
         ...params.inputProps,
+        onClick: undefined,
         readOnly: true,
         size,
         sx: {

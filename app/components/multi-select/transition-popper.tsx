@@ -1,5 +1,7 @@
+"use client";
+
 import { Grow, Popper, PopperProps } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const TransitionPopper = ({
   children,
@@ -11,11 +13,13 @@ export const TransitionPopper = ({
   anchorX: number;
   anchorY: number;
 }): JSX.Element => {
+  const [isClosing, setIsClosing] = useState(false);
   const childrenRef = useRef<typeof children>();
 
   // Make sure the children do not disappear mid-transition.
   useEffect(() => {
     if (open) {
+      setIsClosing(false);
       childrenRef.current = children;
     }
   }, [children, open]);
@@ -56,9 +60,10 @@ export const TransitionPopper = ({
       {({ TransitionProps }) => (
         <Grow
           {...TransitionProps}
+          onExit={() => setIsClosing(true)}
           style={{ transformOrigin: `var(--transform-origin)` }}
         >
-          <div>{childrenRef.current}</div>
+          <div>{isClosing ? childrenRef.current : children}</div>
         </Grow>
       )}
     </Popper>

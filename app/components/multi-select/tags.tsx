@@ -4,7 +4,7 @@ import {
   Chip,
   Typography,
 } from "@mui/material";
-import { ComponentProps, MouseEvent } from "react";
+import { ComponentProps } from "react";
 
 import { Flex } from "@/components/flex";
 import {
@@ -24,22 +24,8 @@ export const MultiSelectTags = ({
   getTagProps: AutocompleteRenderGetTagProps;
   size: NonNullable<ComponentProps<typeof MultiSelect>["size"]>;
 }) => {
-  const handleClick = (e: MouseEvent) => {
-    const el = e.currentTarget;
-    const target = e.target;
-
-    if (target !== el) {
-      return;
-    }
-
-    const root =
-      el.closest(".MuiAutocomplete-root") || el.closest(".MuiInputBase-root");
-    root?.querySelector("input")?.blur();
-  };
-
   return (
     <Flex
-      onClick={handleClick}
       sx={{
         flexWrap: "nowrap",
         overflowX: "auto",
@@ -75,6 +61,10 @@ export const MultiSelectTags = ({
           }
           deleteIcon={<Icon name="close" size={16} />}
           size="small"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
           sx={{
             maxWidth: "100% !important",
             height: "fit-content",
