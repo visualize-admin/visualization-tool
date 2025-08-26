@@ -573,6 +573,7 @@ describe("deriveFiltersFromFields", () => {
             "active": false,
             "componentIds": [],
             "defaultValueOverrides": {},
+            "filterTypes": {},
           },
           "legend": {
             "active": false,

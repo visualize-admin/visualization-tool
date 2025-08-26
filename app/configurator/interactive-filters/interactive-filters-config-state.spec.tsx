@@ -2,7 +2,6 @@ import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { InteractiveFiltersConfig } from "@/config-types";
-import { FIELD_VALUE_NONE } from "@/configurator/constants";
 
 import {
   toggleInteractiveFilterDataDimension,
@@ -273,7 +272,7 @@ describe("Interactive Filters Config State", () => {
         useDefaultValueOverride("test-dimension")
       );
 
-      expect(result.current.value).toBe(FIELD_VALUE_NONE);
+      expect(result.current.value).toEqual([]);
       expect(typeof result.current.onChange).toBe("function");
     });
 
@@ -291,7 +290,7 @@ describe("Interactive Filters Config State", () => {
         value: expect.objectContaining({
           dataFilters: expect.objectContaining({
             defaultValueOverrides: expect.objectContaining({
-              "test-dimension": "new-value",
+              "test-dimension": ["new-value"],
             }),
           }),
         }),
