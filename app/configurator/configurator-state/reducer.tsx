@@ -425,6 +425,11 @@ export const handleChartFieldChanged = (
         chartConfig.interactiveFiltersConfig.dataFilters.defaultValueOverrides
       ).filter(([k]) => k !== componentId)
     ),
+    filterTypes: Object.fromEntries(
+      Object.entries(
+        chartConfig.interactiveFiltersConfig.dataFilters.filterTypes
+      ).filter(([k]) => k !== componentId)
+    ),
   };
 
   const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });

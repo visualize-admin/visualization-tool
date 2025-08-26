@@ -13,11 +13,6 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: app/browser/dataset-browse.tsx
-#: app/components/select-tree.tsx
-msgid "No results"
-msgstr "No results"
-
 #: app/components/chart-footnotes.tsx
 #: app/components/chart-published.tsx
 #: app/components/chart-shared.tsx
@@ -57,26 +52,6 @@ msgstr "Show Data Points"
 msgid "select.controls.filters.search"
 msgstr "Search"
 
-#: app/login/components/color-palettes/color-palette-examples.tsx
-msgid "controls.custom-color-palettes.example"
-msgstr "Example"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.base"
-msgstr "Base color"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.start"
-msgstr "Starting color"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.mid"
-msgstr "Middle Color"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.end"
-msgstr "Ending color"
-
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.categorical-contrast-warning"
 msgstr "The selected color is difficult to read against a white background. Choose a color with higher contrast to improve accessibility."
@@ -89,10 +64,6 @@ msgstr "The selected color lacks sufficient contrast. Consider using a darker co
 msgid "controls.custom-color-palettes.diverging-contrast-warning"
 msgstr "The selected color lacks sufficient contrast. Consider using a darker color for a diverging palette."
 
-#: app/login/components/color-palettes/profile-color-palette-content.tsx
-msgid "login.profile.my-color-palettes.description"
-msgstr "Save a custom color palette to easily choose your colors while creating a visualization."
-
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.sequential"
 msgstr "Sequential"
@@ -104,10 +75,6 @@ msgstr "Diverging"
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.categorical"
 msgstr "Categorical"
-
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.type"
-msgstr "Select a color palette type"
 
 #: app/configurator/components/chart-options-selector/imputation-field.tsx
 #: app/configurator/components/field-i18n.ts
@@ -411,6 +378,10 @@ msgstr "Bar Chart"
 msgid "controls.chart.type.bar"
 msgstr "Bars"
 
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.base"
+msgstr "Base color"
+
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/chart-options-selector/base-layer-field.tsx
 #: app/configurator/components/field-i18n.ts
@@ -503,6 +474,7 @@ msgstr "Choose contrasting colors for the start and end points. These colors wil
 msgid "controls.search.clear"
 msgstr "Clear search field"
 
+#: app/charts/shared/chart-data-filters.tsx
 #: app/components/multi-select/option.tsx
 msgid "controls.clear-selection"
 msgstr "Clear selection"
@@ -865,10 +837,18 @@ msgstr "Enable dynamic scaling to adjust the chart's scale based on the data ran
 msgid "controls.convert-unit.enable"
 msgstr "Enable unit conversion"
 
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.end"
+msgstr "Ending color"
+
 #: app/components/rename-dialog.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.language.english"
 msgstr "English"
+
+#: app/login/components/color-palettes/color-palette-examples.tsx
+msgid "controls.custom-color-palettes.example"
+msgstr "Example"
 
 #: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.description"
@@ -1179,6 +1159,10 @@ msgstr "Measure"
 msgid "controls.section.dots-size.medium"
 msgstr "Medium"
 
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.mid"
+msgstr "Middle color"
+
 #: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.min-error"
 msgstr "Min must be smaller than max"
@@ -1316,6 +1300,11 @@ msgstr "No imported maps"
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.no-label"
 msgstr "No label"
+
+#: app/browser/dataset-browse.tsx
+#: app/components/select-tree.tsx
+msgid "No results"
+msgstr "No results"
 
 #: app/configurator/components/chart-options-selector/combo-y-field.tsx
 msgid "controls.chart.combo.y.no-unit"
@@ -1543,6 +1532,10 @@ msgstr "Right axis (line)"
 msgid "controls.chart.combo.y.right-axis-measure"
 msgstr "Right axis measure"
 
+#: app/login/components/color-palettes/profile-color-palette-content.tsx
+msgid "login.profile.my-color-palettes.description"
+msgstr "Save a custom color palette to easily choose your colors while creating a visualization."
+
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes.set-values-apply"
 msgstr "Save color palette"
@@ -1598,6 +1591,10 @@ msgstr "Select a color"
 #: app/configurator/components/chart-controls/color-ramp.tsx
 msgid "controls.color.palette.select"
 msgstr "Select a color palette"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.type"
+msgstr "Select a color palette type"
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
@@ -1858,6 +1855,10 @@ msgstr "Stacked"
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
 msgstr "Stacked layout can only be enabled if the vertical axis dimension has a ratio scale."
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.start"
+msgstr "Starting color"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.static"

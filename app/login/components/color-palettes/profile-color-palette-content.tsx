@@ -71,7 +71,10 @@ export const ProfileColorPaletteContent = ({ title }: ProfileContentProps) => {
             </Flex>
           ) : (
             <Typography variant="body2">
-              <Trans id="login.profile.my-color-palettes.description" />
+              <Trans id="login.profile.my-color-palettes.description">
+                Save a custom color palette to easily choose your colors while
+                creating a visualization.
+              </Trans>
             </Typography>
           )}
           <Button

@@ -898,7 +898,7 @@ export const DatasetResults = ({
         variant="h2"
         sx={{ color: "grey.600", mt: 8, textAlign: "center" }}
       >
-        <Trans id="No results" />
+        <Trans id="No results">No results</Trans>
       </Typography>
     );
   }

@@ -63,7 +63,7 @@ export const ColorPaletteExample = ({ type }: ColorPaletteExampleProps) => {
   return (
     <Flex flexDirection={"column"}>
       <Label htmlFor="custom-color-palette-example">
-        <Trans id="controls.custom-color-palettes.example" />
+        <Trans id="controls.custom-color-palettes.example">Example</Trans>
       </Label>
       {example}
     </Flex>

@@ -1,4 +1,5 @@
-import { t, Trans } from "@lingui/macro";
+import { i18n } from "@lingui/core";
+import { defineMessage, Trans } from "@lingui/macro";
 import {
   headingsPlugin,
   linkPlugin,
@@ -671,11 +672,13 @@ export const MarkdownInput = ({
       />
       {characterLimitReached && (
         <Typography variant="caption" color="error">
-          {t({
-            id: "controls.form.max-length-reached",
-            message: "Character limit ({limit}) reached",
-            values: { limit: characterLimit },
-          })}
+          {i18n._(
+            defineMessage({
+              id: "controls.form.max-length-reached",
+              message: "Character limit ({limit}) reached",
+            }) as unknown as string,
+            { limit: characterLimit }
+          )}
         </Typography>
       )}
     </div>

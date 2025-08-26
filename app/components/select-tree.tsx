@@ -607,7 +607,7 @@ export const SelectTree = ({
             component="p"
             sx={{ py: 2, textAlign: "center" }}
           >
-            <Trans id="No results" />
+            <Trans id="No results">No results</Trans>
           </Typography>
         ) : (
           <TreeView

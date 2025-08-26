@@ -1,4 +1,5 @@
-import { t } from "@lingui/macro";
+import { i18n } from "@lingui/core";
+import { defineMessage, t } from "@lingui/macro";
 import { extent, group } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
@@ -478,15 +479,18 @@ export const ANIMATION_FIELD_SPEC: EncodingSpec<
     if (temporalDimensions.length === temporalFieldComponentIds.length) {
       return {
         disabled: true,
-        warnMessage: t({
-          id: "controls.section.animation.no-available-temporal-dimensions",
-          message: `There are no available temporal dimensions to use. Change some of the following encodings: {fields} to enable animation.`,
-          values: {
+        warnMessage: i18n._(
+          defineMessage({
+            id: "controls.section.animation.no-available-temporal-dimensions",
+            message:
+              "There are no available temporal dimensions to use. Change some of the following encodings: {fields} to enable animation.",
+          }) as unknown as string,
+          {
             fields: temporalFieldComponentIds
               .map((d) => getFieldLabel(fieldComponentsMap[d.id]))
               .join(", "),
-          },
-        }),
+          }
+        ),
       };
     }
 

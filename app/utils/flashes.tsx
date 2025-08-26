@@ -79,11 +79,7 @@ export const Flashes = () => {
               }
               sx={{ px: 4, py: 1, backgroundColor: "red", boxShadow: 2 }}
             >
-              {ErrorComponent ? (
-                <ErrorComponent />
-              ) : (
-                <Trans id={`flashes.error.${errorId}`} />
-              )}
+              <ErrorComponent />
             </HintError>
           </motion.div>
         ) : null}

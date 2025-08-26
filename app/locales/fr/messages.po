@@ -13,11 +13,6 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: app/browser/dataset-browse.tsx
-#: app/components/select-tree.tsx
-msgid "No results"
-msgstr "Aucun résultat"
-
 #: app/components/chart-footnotes.tsx
 #: app/components/chart-published.tsx
 #: app/components/chart-shared.tsx
@@ -57,26 +52,6 @@ msgstr "Afficher les points de données"
 msgid "select.controls.filters.search"
 msgstr "Chercher"
 
-#: app/login/components/color-palettes/color-palette-examples.tsx
-msgid "controls.custom-color-palettes.example"
-msgstr "Exemple"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.base"
-msgstr "Couleur de base"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.start"
-msgstr "Couleur de départ"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.mid"
-msgstr "Couleur moyenne"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.end"
-msgstr "Couleur finale"
-
 #: app/login/components/color-palettes/color-palette-types.tsx
 msgid "controls.custom-color-palettes.categorical-contrast-warning"
 msgstr "La couleur choisie est difficile à lire sur fond blanc. Choisissez une couleur avec plus de contraste pour améliorer l'accessibilité."
@@ -89,10 +64,6 @@ msgstr "La couleur sélectionnée n'offre pas assez de contraste. Veuillez chois
 msgid "controls.custom-color-palettes.diverging-contrast-warning"
 msgstr "La couleur choisie n'a pas un contraste suffisant. Utilisez une couleur plus foncée pour créer une palette divergente."
 
-#: app/login/components/color-palettes/profile-color-palette-content.tsx
-msgid "login.profile.my-color-palettes.description"
-msgstr "Enregistrez une palette de couleurs personnalisée pour sélectionner facilement les couleurs de vos visualisations."
-
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.sequential"
 msgstr "Séquentiel"
@@ -104,10 +75,6 @@ msgstr "Divergents"
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.categorical"
 msgstr "Catégorique"
-
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.type"
-msgstr "Sélectionner un type de palette de couleurs"
 
 #: app/configurator/components/chart-options-selector/imputation-field.tsx
 #: app/configurator/components/field-i18n.ts
@@ -411,6 +378,10 @@ msgstr "Barres"
 msgid "controls.chart.type.bar"
 msgstr "Barres"
 
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.base"
+msgstr "Couleur de base"
+
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/chart-options-selector/base-layer-field.tsx
 #: app/configurator/components/field-i18n.ts
@@ -503,9 +474,10 @@ msgstr "Choisissez des couleurs contrastées pour les points de départ et d'arr
 msgid "controls.search.clear"
 msgstr "Effacer la recherche"
 
+#: app/charts/shared/chart-data-filters.tsx
 #: app/components/multi-select/option.tsx
 msgid "controls.clear-selection"
-msgstr ""
+msgstr "Sélection claire"
 
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.annotation.clear-text"
@@ -865,10 +837,18 @@ msgstr "Activez la mise à l'échelle dynamique pour ajuster l'échelle du graph
 msgid "controls.convert-unit.enable"
 msgstr "Activer la conversion d'unité"
 
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.end"
+msgstr "Couleur finale"
+
 #: app/components/rename-dialog.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.language.english"
 msgstr "Anglais"
+
+#: app/login/components/color-palettes/color-palette-examples.tsx
+msgid "controls.custom-color-palettes.example"
+msgstr "Exemple"
 
 #: app/browser/select-dataset-step.tsx
 msgid "browse.datasets.description"
@@ -1179,6 +1159,10 @@ msgstr "Variable mesurée"
 msgid "controls.section.dots-size.medium"
 msgstr "Moyen"
 
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.mid"
+msgstr "Couleur moyenne"
+
 #: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.min-error"
 msgstr "Le minimum doit être inférieur au maximum"
@@ -1316,6 +1300,11 @@ msgstr "Aucune carte importée"
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.no-label"
 msgstr "Pas de Titre"
+
+#: app/browser/dataset-browse.tsx
+#: app/components/select-tree.tsx
+msgid "No results"
+msgstr "Aucun résultat"
 
 #: app/configurator/components/chart-options-selector/combo-y-field.tsx
 msgid "controls.chart.combo.y.no-unit"
@@ -1543,6 +1532,10 @@ msgstr "Axe droit (ligne)"
 msgid "controls.chart.combo.y.right-axis-measure"
 msgstr "Mesure de l'axe droit"
 
+#: app/login/components/color-palettes/profile-color-palette-content.tsx
+msgid "login.profile.my-color-palettes.description"
+msgstr "Enregistrez une palette de couleurs personnalisée pour sélectionner facilement les couleurs de vos visualisations."
+
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 msgid "controls.custom-color-palettes.set-values-apply"
 msgstr "Enregistrer la palette de couleurs"
@@ -1598,6 +1591,10 @@ msgstr "Sélectionner une couleur"
 #: app/configurator/components/chart-controls/color-ramp.tsx
 msgid "controls.color.palette.select"
 msgstr "Choisir une palette de couleurs"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.type"
+msgstr "Sélectionner un type de palette de couleurs"
 
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
@@ -1858,6 +1855,10 @@ msgstr "Empilés"
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.segment.stacked.disabled-by-scale-type"
 msgstr "Le graphique en barres empilées ne peut être activé que si la dimension de l'axe vertical a une échelle de type ratio."
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.start"
+msgstr "Couleur de départ"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.static"
