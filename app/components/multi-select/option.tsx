@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import {
   AutocompleteRenderOptionState,
   ListSubheader,
@@ -18,7 +19,14 @@ import { Icon } from "@/icons";
 
 export const MultiSelectOption = ({
   props,
-  option: { isGroupHeader, value, label, disabled, disabledMessage },
+  option: {
+    isGroupHeader,
+    isNoneValue,
+    value,
+    label,
+    disabled,
+    disabledMessage,
+  },
   state,
   size,
   width,
@@ -52,10 +60,14 @@ export const MultiSelectOption = ({
         justifyContent: "space-between !important",
         alignItems: "center",
         gap: 1,
+        borderBottom: (t) =>
+          isNoneValue ? `1px solid ${t.palette.divider}` : "none",
         typography: selectSizeToTypography[size],
       }}
     >
-      {label}
+      {isNoneValue
+        ? t({ id: "controls.clear-selection", message: "Clear selection" })
+        : label}
       <Flex
         sx={{
           justifyContent: "flex-end",

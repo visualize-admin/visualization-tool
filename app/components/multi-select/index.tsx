@@ -131,7 +131,13 @@ export const MultiSelect = ({
           openOnFocus
           options={normalizedOptions}
           value={valueOptions}
-          onChange={(_, newValue) => onChange(newValue.map((o) => o.value))}
+          onChange={(_, newValue) => {
+            if (newValue.some((o) => o.isNoneValue)) {
+              onChange([]);
+            } else {
+              onChange(newValue.map((o) => o.value));
+            }
+          }}
           disabled={disabled}
           multiple
           disableCloseOnSelect
