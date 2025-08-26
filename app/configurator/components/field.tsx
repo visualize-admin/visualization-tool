@@ -203,7 +203,7 @@ export const DataFilterSelect = ({
   const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
-    message: "No Filter",
+    message: "No filter",
   });
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(dimension);

@@ -517,7 +517,7 @@ const ColorSelection = ({
   return (
     <ControlSection collapse>
       <SectionTitle iconName="swatch">
-        <Trans id="controls.section.layout-options">Layout options</Trans>
+        <Trans id="controls.section.layout-options">Layout Options</Trans>
       </SectionTitle>
       <ControlSectionContent component="fieldset" gap="none" sx={{ mt: 2 }}>
         <ColorPalette

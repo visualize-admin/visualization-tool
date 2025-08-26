@@ -593,7 +593,7 @@ export const DataFilterGenericDimension = ({
   const { label, isKeyDimension } = dimension;
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
-    message: "No Filter",
+    message: "No filter",
   });
   const options: Option[] = _options ?? dimension.values;
   const allOptions: Option[] = useMemo(() => {
@@ -656,7 +656,7 @@ export const DataFilterHierarchyDimension = ({
   const { label, isKeyDimension, values: dimensionValues } = dimension;
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
-    message: `No Filter`,
+    message: "No filter",
   });
   const options: Tree = useMemo(() => {
     const noneOption = {

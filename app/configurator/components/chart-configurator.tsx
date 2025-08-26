@@ -859,7 +859,7 @@ const AddFilterButton = ({ dims }: { dims: Dimension[] }) => {
         onClick={openMenu}
         startIcon={<Icon name="plus" size={20} />}
       >
-        <Trans>Add filter</Trans>
+        <Trans id="controls.add-filter">Add filter</Trans>
       </Button>
       <Menu anchorEl={ref.current} open={isMenuOpen} onClose={closeMenu}>
         {dims.map((dim) => (

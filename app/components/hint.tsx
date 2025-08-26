@@ -118,7 +118,7 @@ export const Loading = ({ delayMs = 1000 }: { delayMs?: number }) => {
       <Spinner />
       <div>
         <Typography variant="h3" component="p">
-          <Trans id="hint.loading.data">Loading data…</Trans>
+          <Trans id="hint.loading.data">Loading data...</Trans>
         </Typography>
         {variant === "long" ? (
           <Typography variant="h3" component="p">
@@ -155,7 +155,7 @@ export const InlineLoading = ({ delayMs = 1000 }: { delayMs?: number }) => {
     >
       <Spinner />
       <Typography>
-        <Trans id="hint.loading.data">Loading data…</Trans>
+        <Trans id="hint.loading.data">Loading data...</Trans>
       </Typography>
     </Box>
   );
