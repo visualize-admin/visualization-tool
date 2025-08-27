@@ -229,9 +229,9 @@ export const useSyncInteractiveFilters = (
 
     lastOverridesRef.current = latestOverrides;
     isFirstRunRef.current = false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     dashboardFilters?.dataFilters.filters,
-    dataFilters,
     filters,
     interactiveFiltersConfig.dataFilters.defaultValueOverrides,
     interactiveFiltersConfig.dataFilters.filterTypes,
