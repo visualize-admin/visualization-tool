@@ -435,7 +435,11 @@ const DataFilter = ({
       // values after we change the filter order.
       // @ts-ignore
       filterKeys: perCube
-        .map((d) => Object.keys(d.resolvedQueryFilters).join(", "))
+        .map((d) => [
+          ...Object.entries(d.resolvedQueryFilters).map(
+            ([k, v]) => `${k}: ${JSON.stringify(v)}`
+          ),
+        ])
         .join(" | "),
     },
     keepPreviousData: true,
@@ -791,15 +795,19 @@ export const DataFilterHierarchyDimension = ({
     return opts;
   }, [noneLabel, hierarchy, dimensionValues, configFilter, isKeyDimension]);
 
-  const handleChange = useEvent((e: { target: { value: string | string[] } }) => {
-    if (isMulti && onMultiChange && Array.isArray(e.target.value)) {
-      onMultiChange(e.target.value);
-    } else if (!isMulti && typeof e.target.value === "string") {
-      onChange({ target: { value: e.target.value } });
+  const handleChange = useEvent(
+    (e: { target: { value: string | string[] } }) => {
+      if (isMulti && onMultiChange && Array.isArray(e.target.value)) {
+        onMultiChange(e.target.value);
+      } else if (!isMulti && typeof e.target.value === "string") {
+        onChange({ target: { value: e.target.value } });
+      }
     }
-  });
+  );
 
-  const displayValues = isMulti ? values.filter((value) => value !== FIELD_VALUE_NONE) : [];
+  const displayValues = isMulti
+    ? values.filter((value) => value !== FIELD_VALUE_NONE)
+    : [];
   const displayValue = isMulti ? displayValues : value;
 
   return (
