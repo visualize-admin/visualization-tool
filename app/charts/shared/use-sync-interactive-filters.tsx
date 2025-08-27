@@ -40,6 +40,8 @@ export const useSyncInteractiveFilters = (
     Record<string, string[] | string | undefined>
   >({});
 
+  const isFirstRunRef = useRef(true);
+
   // Time range filter
   const presetFrom =
     interactiveFiltersConfig.timeRange.presets.from &&
@@ -93,7 +95,9 @@ export const useSyncInteractiveFilters = (
           const override =
             interactiveFiltersConfig.dataFilters.defaultValueOverrides[iri];
           const lastOverride = lastOverridesRef.current[iri];
-          const overrideChanged = !isEqual(override, lastOverride);
+
+          const overrideChanged =
+            isFirstRunRef.current || !isEqual(override, lastOverride);
 
           if (overrideChanged && override && Array.isArray(override)) {
             const validOverrides = override.filter((val) => isAllowed(val));
@@ -224,6 +228,7 @@ export const useSyncInteractiveFilters = (
     }
 
     lastOverridesRef.current = latestOverrides;
+    isFirstRunRef.current = false;
   }, [
     dashboardFilters?.dataFilters.filters,
     dataFilters,
