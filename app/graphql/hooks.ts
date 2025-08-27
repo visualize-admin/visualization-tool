@@ -106,9 +106,11 @@ export const makeUseQuery =
             prev.queryKey === queryKey || keepPreviousData ? prev.data : null,
           queryKey,
         }));
+
         if (check) {
           check(options.variables);
         }
+
         const result = await fetch(client, options.variables, () => {
           if (currentQueryRef.current === currentQuery) {
             setRawResult((prev) => ({
@@ -118,10 +120,11 @@ export const makeUseQuery =
           }
         });
 
-        const finalResult = { ...result, queryKey };
-
-        queryResultsCache.set(queryKey, finalResult);
-        setRawResult(finalResult);
+        if (currentQueryRef.current === currentQuery) {
+          const finalResult = { ...result, queryKey };
+          queryResultsCache.set(queryKey, finalResult);
+          setRawResult(finalResult);
+        }
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [queryKey]
@@ -274,6 +277,7 @@ export const executeDataCubesComponentsQuery = async (
   const fetching = !error && queries.some((q) => !q.data);
 
   if (error || fetching) {
+    console.log("Error or fetching", { error, fetching });
     return {
       data: undefined,
       error,

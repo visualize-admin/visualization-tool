@@ -949,9 +949,21 @@ const interactiveFiltersAdjusters: InteractiveFiltersAdjusters = {
       },
     },
   },
-  dataFilters: ({ oldValue, newChartConfig }) => {
+  dataFilters: ({ oldValue, newChartConfig, oldChartConfig }) => {
     return produce(newChartConfig, (draft) => {
       const oldComponentIds = oldValue.componentIds ?? [];
+
+      // Do not migrate filters from table, as they have different types anyway.
+      if (oldChartConfig.chartType === "table") {
+        draft.interactiveFiltersConfig.dataFilters = {
+          active: false,
+          componentIds: [],
+          defaultValueOverrides: {},
+          defaultOpen: true,
+          filterTypes: {},
+        };
+        return;
+      }
 
       if (oldComponentIds.length > 0) {
         const fieldComponentIds = Object.values<GenericField>(

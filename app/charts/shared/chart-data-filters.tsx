@@ -417,6 +417,17 @@ const DataFilter = ({
       };
     });
   }, [filters, chartConfig.cubes]);
+
+  const filterKeys = useMemo(() => {
+    return perCube
+      .map((d) => {
+        return Object.entries(d.resolvedQueryFilters)
+          .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+          .join(",");
+      })
+      .join(" | ");
+  }, [perCube]);
+
   const [{ data, fetching }] = useDataCubesComponentsQuery({
     chartConfig,
     variables: {
@@ -434,17 +445,10 @@ const DataFilter = ({
       // If this is not present, we'll have outdated dimension
       // values after we change the filter order.
       // @ts-ignore
-      filterKeys: perCube
-        .map((d) => [
-          ...Object.entries(d.resolvedQueryFilters).map(
-            ([k, v]) => `${k}: ${JSON.stringify(v)}`
-          ),
-        ])
-        .join(" | "),
+      filterKeys,
     },
     keepPreviousData: true,
   });
-  console.log({ data, fetching });
 
   const dimension = data?.dataCubesComponents.dimensions[0];
 
