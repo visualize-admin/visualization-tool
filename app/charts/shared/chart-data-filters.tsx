@@ -576,8 +576,11 @@ const DataFilter = ({
           configFilter={configFilter}
           dimension={dimension}
           onChange={setDataFilter}
+          onMultiChange={handleMultiChange}
           hierarchy={hierarchy}
           value={value as string}
+          values={multiValue}
+          isMulti={isMultiFilter}
           disabled={disabled}
         />
       ) : (
@@ -728,14 +731,20 @@ export const DataFilterHierarchyDimension = ({
   configFilter,
   dimension,
   value,
+  values = [],
+  isMulti = false,
   onChange,
+  onMultiChange,
   hierarchy,
   disabled,
 }: {
   configFilter?: Filters[string];
   dimension: Dimension;
   value: string;
+  values?: string[];
+  isMulti?: boolean;
   onChange: (e: { target: { value: string } }) => void;
+  onMultiChange?: (values: string[]) => void;
   hierarchy?: HierarchyValue[];
   disabled: boolean;
 }) => {
@@ -782,11 +791,23 @@ export const DataFilterHierarchyDimension = ({
     return opts;
   }, [noneLabel, hierarchy, dimensionValues, configFilter, isKeyDimension]);
 
+  const handleChange = useEvent((e: { target: { value: string | string[] } }) => {
+    if (isMulti && onMultiChange && Array.isArray(e.target.value)) {
+      onMultiChange(e.target.value);
+    } else if (!isMulti && typeof e.target.value === "string") {
+      onChange({ target: { value: e.target.value } });
+    }
+  });
+
+  const displayValues = isMulti ? values.filter((value) => value !== FIELD_VALUE_NONE) : [];
+  const displayValue = isMulti ? displayValues : value;
+
   return (
     <SelectTree
-      value={value}
+      value={displayValue}
       options={options}
-      onChange={onChange}
+      onChange={handleChange}
+      isMulti={isMulti}
       label={
         <FieldLabel
           label={

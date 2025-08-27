@@ -258,7 +258,10 @@ export const DataFilterSelect = ({
         open={isOpen}
         disabled={disabled}
         sideControls={sideControls}
-        {...fieldProps}
+        value={fieldProps.value}
+        onChange={(e) => {
+          fieldProps.onChange({ target: { value: e.target.value as string } });
+        }}
       />
     );
   }
