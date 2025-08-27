@@ -99,6 +99,7 @@ export const groupPreparedFiltersByDimension = (
   for (const preparedFilter of preparedFilters) {
     for (const id of componentIds) {
       const resolved = preparedFilter.componentIdResolution[id];
+
       if (isJoinById(id)) {
         if (!resolved) {
           continue;
