@@ -11,7 +11,10 @@ import { useChartConfigFilters } from "@/config-utils";
 import { parseDate } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { useFilterChanges } from "@/configurator/use-filter-changes";
-import { useChartInteractiveFilters } from "@/stores/interactive-filters";
+import {
+  useChartInteractiveFilters,
+  useInteractiveFiltersGetState,
+} from "@/stores/interactive-filters";
 
 /**
  * Makes sure interactive filters are in sync with chart config.
@@ -27,8 +30,8 @@ export const useSyncInteractiveFilters = (
   const { annotations, interactiveFiltersConfig } = chartConfig;
   const filters = useChartConfigFilters(chartConfig, { joined: true });
   const resetCategories = useChartInteractiveFilters((d) => d.resetCategories);
-  const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
   const setDataFilters = useChartInteractiveFilters((d) => d.setDataFilters);
+  const getInteractiveFiltersState = useInteractiveFiltersGetState();
   const updateDataFilter = useChartInteractiveFilters(
     (d) => d.updateDataFilter
   );
@@ -77,6 +80,7 @@ export const useSyncInteractiveFilters = (
       return;
     }
 
+    const currentDataFilters = getInteractiveFiltersState().dataFilters;
     const next = newPotentialInteractiveDataFilters.reduce(
       (acc, iri) => {
         const dashboardFilter = dashboardFilters?.dataFilters.filters[iri];
@@ -91,7 +95,7 @@ export const useSyncInteractiveFilters = (
           const allowed = configFilter?.values ?? {};
           const isAllowed = (val: string | number | undefined) =>
             val !== undefined ? !configFilter || !!allowed[`${val}`] : false;
-          const current = dataFilters[iri];
+          const current = currentDataFilters[iri];
           const override =
             interactiveFiltersConfig.dataFilters.defaultValueOverrides[iri];
           const lastOverride = lastOverridesRef.current[iri];
@@ -201,7 +205,7 @@ export const useSyncInteractiveFilters = (
           return acc;
         }
 
-        const current = dataFilters[iri];
+        const current = currentDataFilters[iri];
 
         if (current?.type === "single" && current.value !== FIELD_VALUE_NONE) {
           acc[iri] = current;
@@ -216,7 +220,7 @@ export const useSyncInteractiveFilters = (
       {} as { [key: string]: FilterValue }
     );
 
-    if (!isEqual(next, dataFilters)) {
+    if (!isEqual(next, currentDataFilters)) {
       setDataFilters(next);
     }
 
@@ -229,10 +233,10 @@ export const useSyncInteractiveFilters = (
 
     lastOverridesRef.current = latestOverrides;
     isFirstRunRef.current = false;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     dashboardFilters?.dataFilters.filters,
     filters,
+    getInteractiveFiltersState,
     interactiveFiltersConfig.dataFilters.defaultValueOverrides,
     interactiveFiltersConfig.dataFilters.filterTypes,
     newPotentialInteractiveDataFilters,

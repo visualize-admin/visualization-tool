@@ -444,6 +444,7 @@ const DataFilter = ({
     },
     keepPreviousData: true,
   });
+  console.log({ data, fetching });
 
   const dimension = data?.dataCubesComponents.dimensions[0];
 
@@ -491,8 +492,11 @@ const DataFilter = ({
 
   const dataFilterValues = dimension
     ? dataFilters[dimensionId]?.type === "multi"
-      ? Object.keys((dataFilters[dimensionId] as FilterValueMulti).values)
-      : dataFilters[dimensionId].type === "single"
+      ? Object.keys(
+          (dataFilters[dimensionId] as FilterValueMulti | undefined)?.values ??
+            {}
+        )
+      : dataFilters[dimensionId]?.type === "single"
         ? [(dataFilters[dimensionId] as FilterValueSingle).value as string]
         : []
     : [];
