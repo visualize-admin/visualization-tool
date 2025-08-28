@@ -51,10 +51,6 @@ import {
 } from "@/configurator/components/field-date-picker";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import {
-  getTimeIntervalFormattedSelectOptions,
-  getTimeIntervalWithProps,
-} from "@/configurator/components/ui-helpers";
-import {
   isMultiFilterFieldChecked,
   Option,
   useActiveChartField,
@@ -88,7 +84,6 @@ import {
   VISUALIZE_MOST_RECENT_VALUE,
 } from "@/domain/most-recent-value";
 import { useTimeFormatLocale } from "@/formatters";
-import { TimeUnit } from "@/graphql/query-hooks";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { ColorItem, getPalette } from "@/palettes";
@@ -430,71 +425,6 @@ export const DataFilterTemporal = ({
         />
       </Box>
     </>
-  );
-};
-
-export const DataFilterSelectTime = ({
-  dimension,
-  label,
-  from,
-  to,
-  timeUnit,
-  timeFormat,
-  id,
-  disabled,
-}: {
-  dimension: Dimension;
-  label: ReactNode;
-  from: string;
-  to: string;
-  timeUnit: TimeUnit;
-  timeFormat: string;
-  id: string;
-  disabled?: boolean;
-}) => {
-  const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
-  const formatLocale = useTimeFormatLocale();
-
-  const timeIntervalWithProps = useMemo(() => {
-    return getTimeIntervalWithProps(
-      from,
-      to,
-      timeUnit,
-      timeFormat,
-      formatLocale
-    );
-  }, [from, to, timeUnit, timeFormat, formatLocale]);
-
-  const options = useMemo(() => {
-    return timeIntervalWithProps.range > 100
-      ? []
-      : getTimeIntervalFormattedSelectOptions(timeIntervalWithProps);
-  }, [timeIntervalWithProps]);
-
-  if (options.length) {
-    return (
-      <Select
-        id={id}
-        size="sm"
-        label={label}
-        disabled={disabled}
-        options={options}
-        sort={false}
-        {...fieldProps}
-      />
-    );
-  }
-
-  return (
-    <TimeInput
-      id={id}
-      label={label}
-      value={fieldProps.value}
-      timeFormat={timeFormat}
-      formatLocale={formatLocale}
-      isOptional={false}
-      onChange={fieldProps.onChange}
-    />
   );
 };
 
