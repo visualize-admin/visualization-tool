@@ -15,10 +15,12 @@ import {
   DataFilterGenericDimension,
   DataFilterHierarchyDimension,
   DataFilterTemporalDimension,
+} from "@/charts/shared/chart-data-filters";
+import {
   GroupedPreparedFilter,
   groupPreparedFiltersByDimension,
   PreparedFilter,
-} from "@/charts/shared/chart-data-filters";
+} from "@/charts/shared/chart-data-filters/group-filters";
 import { useCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
 import {
   ChartConfig,
