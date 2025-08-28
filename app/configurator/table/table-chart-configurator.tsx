@@ -103,12 +103,6 @@ export const ChartConfiguratorTable = ({
           aria-labelledby="controls-settings"
         >
           <ChartAnnotatorTabField
-            key="settings"
-            value="table-settings"
-            icon="settings"
-            mainLabel={<Trans id="controls.table.settings">Settings</Trans>}
-          />
-          <ChartAnnotatorTabField
             key="sorting"
             value="table-sorting"
             icon="sort"

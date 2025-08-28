@@ -1673,10 +1673,6 @@ msgstr "Separate URLs"
 msgid "controls.color.palette.sequential"
 msgstr "Sequential"
 
-#: app/configurator/table/table-chart-configurator.tsx
-msgid "controls.table.settings"
-msgstr "Settings"
-
 #: app/components/chart-shared.tsx
 #: app/components/publish-actions.tsx
 msgid "button.share"
