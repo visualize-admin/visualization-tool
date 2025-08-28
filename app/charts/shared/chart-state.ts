@@ -380,8 +380,9 @@ export const useTemporalMaybeXVariables = (
   }
 
   const getXTemporal = useTemporalVariable(componentId);
-  const dimensionValues = dimensionsById[componentId].values;
-  const relatedLimitValues = dimensionsById[componentId].relatedLimitValues;
+  const dimensionValues = dimensionsById[componentId]?.values ?? [];
+  const relatedLimitValues =
+    dimensionsById[componentId]?.relatedLimitValues ?? [];
   const values = uniqBy(
     [...dimensionValues, ...relatedLimitValues],
     (d) => d.value
