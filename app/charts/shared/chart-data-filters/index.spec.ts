@@ -1,13 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import type {
-  GroupedPreparedFilter,
-  PreparedFilter,
-} from "@/charts/shared/chart-data-filters";
+import { getInteractiveQueryFilters } from "@/charts/shared/chart-data-filters";
 import {
-  getInteractiveQueryFilters,
+  GroupedPreparedFilter,
   groupPreparedFiltersByDimension,
-} from "@/charts/shared/chart-data-filters";
+  PreparedFilter,
+} from "@/charts/shared/chart-data-filters/group-filters";
 import { Filters } from "@/configurator";
 
 describe("getInteractiveQueryFilters", () => {

@@ -1,5 +1,5 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Button, SelectChangeEvent, Typography } from "@mui/material";
+import { Button, SelectChangeEvent, Typography } from "@mui/material";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import mapValues from "lodash/mapValues";
@@ -7,6 +7,10 @@ import pickBy from "lodash/pickBy";
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useClient } from "urql";
 
+import {
+  groupPreparedFiltersByDimension,
+  PreparedFilter,
+} from "@/charts/shared/chart-data-filters/group-filters";
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { useLoadingState } from "@/charts/shared/chart-loading-state";
 import {
@@ -15,16 +19,10 @@ import {
 } from "@/charts/shared/possible-filters";
 import { Flex } from "@/components/flex";
 import { Select } from "@/components/form";
-import { Loading } from "@/components/hint";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
 import { MultiSelect } from "@/components/multi-select";
 import { SelectTree, Tree } from "@/components/select-tree";
-import {
-  FilterValueMulti,
-  FilterValueSingle,
-  isTableConfig,
-} from "@/config-types";
-import { getChartConfigFilters } from "@/config-utils";
+import { isTableConfig } from "@/config-types";
 import {
   areDataFiltersActive,
   ChartConfig,
@@ -44,14 +42,8 @@ import { getOrderedTableColumns } from "@/configurator/components/ui-helpers";
 import { extractDataPickerOptionsFromDimension } from "@/configurator/components/ui-helpers";
 import { Option } from "@/configurator/config-form";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import {
-  Dimension,
-  HierarchyValue,
-  isTemporalDimension,
-  TemporalDimension,
-} from "@/domain/data";
+import { Dimension, HierarchyValue, TemporalDimension } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
-import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { getResolvedJoinById, isJoinById } from "@/graphql/join";
 import {
   PossibleFiltersDocument,
@@ -59,78 +51,13 @@ import {
   PossibleFiltersQueryVariables,
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
-import { useLocale } from "@/locales/use-locale";
 import {
-  DataFilters,
   useChartInteractiveFilters,
   useInteractiveFiltersGetState,
 } from "@/stores/interactive-filters";
 import { assert } from "@/utils/assert";
 import { hierarchyToOptions } from "@/utils/hierarchy";
-import { useResolveMostRecentValue } from "@/utils/most-recent-value";
 import { useEvent } from "@/utils/use-event";
-
-export type PreparedFilter = {
-  cubeIri: string;
-  interactiveFilters: Filters;
-  unmappedFilters: SingleFilters;
-  mappedFilters: Filters;
-  componentIdResolution: Record<string, string>;
-};
-
-export type GroupedPreparedFilter = {
-  dimensionId: string;
-  entries: GroupedPreparedFilterEntry[];
-};
-
-type GroupedPreparedFilterEntry = {
-  cubeIri: string;
-  resolvedDimensionId: string;
-  interactiveFilters: Filters;
-  componentIdResolution: Record<string, string>;
-};
-
-export const groupPreparedFiltersByDimension = (
-  preparedFilters: PreparedFilter[],
-  componentIds: string[]
-): GroupedPreparedFilter[] => {
-  const groups: Record<string, GroupedPreparedFilterEntry[]> = {};
-
-  for (const preparedFilter of preparedFilters) {
-    for (const id of componentIds) {
-      const resolved = preparedFilter.componentIdResolution[id];
-
-      if (isJoinById(id)) {
-        if (!resolved) {
-          continue;
-        }
-
-        groups[id] = groups[id] ?? [];
-        groups[id].push({
-          cubeIri: preparedFilter.cubeIri,
-          resolvedDimensionId: resolved,
-          interactiveFilters: preparedFilter.interactiveFilters,
-          componentIdResolution: preparedFilter.componentIdResolution,
-        });
-      } else {
-        if (resolved === id) {
-          groups[id] = groups[id] ?? [];
-          groups[id].push({
-            cubeIri: preparedFilter.cubeIri,
-            resolvedDimensionId: id,
-            interactiveFilters: preparedFilter.interactiveFilters,
-            componentIdResolution: preparedFilter.componentIdResolution,
-          });
-        }
-      }
-    }
-  }
-
-  return Object.entries(groups).map(([dimensionId, entries]) => ({
-    dimensionId,
-    entries,
-  }));
-};
 
 export const useChartDataFiltersState = ({
   dataSource,
@@ -239,7 +166,7 @@ export const useChartDataFiltersState = ({
       };
     });
   }, [chartConfig, componentIds, queryFilters]);
-  const groupedPreparedFilters = useMemo<GroupedPreparedFilter[]>(() => {
+  const groupedPreparedFilters = useMemo(() => {
     return groupPreparedFiltersByDimension(preparedFilters, componentIds);
   }, [preparedFilters, componentIds]);
   const { error } = useEnsurePossibleInteractiveFilters({
@@ -329,288 +256,6 @@ export const ChartDataFiltersToggle = ({
         )}
       </Flex>
     </Flex>
-  );
-};
-
-export const ChartDataFiltersList = ({
-  open,
-  dataSource,
-  chartConfig,
-  loading,
-  groupedPreparedFilters,
-  componentIds,
-}: ReturnType<typeof useChartDataFiltersState>) => {
-  const dataFilters = useChartInteractiveFilters((d) => d.dataFilters);
-
-  return componentIds && componentIds.length > 0 ? (
-    <Box
-      data-testid="published-chart-interactive-filters"
-      sx={{
-        display: open ? "grid" : "none",
-        columnGap: 3,
-        rowGap: 2,
-        gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-      }}
-    >
-      {groupedPreparedFilters.map(({ dimensionId, entries }) => (
-        <DataFilter
-          key={dimensionId}
-          filters={entries}
-          dimensionId={dimensionId}
-          dataSource={dataSource}
-          chartConfig={chartConfig}
-          dataFilters={dataFilters}
-          disabled={loading}
-        />
-      ))}
-    </Box>
-  ) : null;
-};
-
-const DataFilter = ({
-  dimensionId,
-  dataSource,
-  chartConfig,
-  dataFilters,
-  filters,
-  disabled,
-}: {
-  dimensionId: string;
-  dataSource: DataSource;
-  chartConfig: ChartConfig;
-  dataFilters: DataFilters;
-  filters: GroupedPreparedFilterEntry[];
-  disabled: boolean;
-}) => {
-  const locale = useLocale();
-  const chartLoadingState = useLoadingState();
-  const updateDataFilter = useChartInteractiveFilters(
-    (d) => d.updateDataFilter
-  );
-  const setMultiDataFilter = useChartInteractiveFilters(
-    (d) => d.setMultiDataFilter
-  );
-  const perCube = useMemo(() => {
-    return filters.map((f) => {
-      const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
-        cubeIri: f.cubeIri,
-      });
-      const interactiveFiltersResolved = Object.fromEntries(
-        Object.entries(f.interactiveFilters).map(([k, v]) => [
-          f.componentIdResolution[k] ?? k,
-          v,
-        ])
-      ) as Filters;
-      const interactiveQueryFilters = getInteractiveQueryFilters({
-        filters: cubeFilters,
-        interactiveFilters: interactiveFiltersResolved,
-      });
-      const resolvedQueryFilters = Object.fromEntries(
-        Object.entries(interactiveQueryFilters).map(([k, v]) => [
-          f.componentIdResolution[k] ?? k,
-          v,
-        ])
-      );
-      return {
-        cubeIri: f.cubeIri,
-        resolvedDimensionId: f.resolvedDimensionId,
-        resolvedQueryFilters,
-      };
-    });
-  }, [filters, chartConfig.cubes]);
-
-  const filterKeys = useMemo(() => {
-    return perCube
-      .map((d) => {
-        return Object.entries(d.resolvedQueryFilters)
-          .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
-          .join(",");
-      })
-      .join(" | ");
-  }, [perCube]);
-
-  const [{ data, fetching }] = useDataCubesComponentsQuery({
-    chartConfig,
-    variables: {
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-      locale,
-      cubeFilters: perCube.map((d) => ({
-        iri: d.cubeIri,
-        componentIds: [d.resolvedDimensionId],
-        filters: d.resolvedQueryFilters,
-        loadValues: true,
-      })),
-      // This is important for urql not to think that filters
-      // are the same  while the order of the keys has changed.
-      // If this is not present, we'll have outdated dimension
-      // values after we change the filter order.
-      // @ts-ignore
-      filterKeys,
-    },
-    keepPreviousData: true,
-  });
-
-  const dimension = data?.dataCubesComponents.dimensions[0];
-
-  const hierarchy = dimension?.hierarchy;
-
-  const setDataFilter = useEvent(
-    (
-      e: SelectChangeEvent<unknown> | { target: { value: string | string[] } }
-    ) => {
-      const value = e.target.value as string | string[];
-
-      if (Array.isArray(value)) {
-        setMultiDataFilter(dimensionId, value);
-      } else {
-        updateDataFilter(dimensionId, value);
-      }
-    }
-  );
-
-  const handleMultiChange = useEvent((values: string[]) => {
-    setMultiDataFilter(dimensionId, values);
-  });
-
-  const singleEntry = filters.length === 1 ? filters[0] : undefined;
-  const configFilter = useMemo(() => {
-    if (!singleEntry || !dimension) {
-      return undefined;
-    }
-
-    const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
-      cubeIri: singleEntry.cubeIri,
-    });
-
-    return cubeFilters[dimension.id];
-  }, [dimension, chartConfig.cubes, singleEntry]);
-  const configFilterValue =
-    configFilter && configFilter.type === "single"
-      ? configFilter.value
-      : undefined;
-  const dataFilterValue = dimension
-    ? dataFilters[dimensionId]?.type === "single"
-      ? (dataFilters[dimensionId] as FilterValueSingle).value
-      : null
-    : null;
-
-  const dataFilterValues = dimension
-    ? dataFilters[dimensionId]?.type === "multi"
-      ? Object.keys(
-          (dataFilters[dimensionId] as FilterValueMulti | undefined)?.values ??
-            {}
-        )
-      : dataFilters[dimensionId]?.type === "single"
-        ? [(dataFilters[dimensionId] as FilterValueSingle).value as string]
-        : []
-    : [];
-
-  const filterType =
-    chartConfig.interactiveFiltersConfig.dataFilters.filterTypes[dimensionId] ??
-    (configFilter?.type === "multi" ? "multi" : "single");
-
-  const isMultiFilter = filterType === "multi";
-
-  const resolvedDataFilterValue = useResolveMostRecentValue(
-    dataFilterValue,
-    dimension
-  );
-  const resolvedConfigFilterValue = useResolveMostRecentValue(
-    configFilterValue,
-    dimension
-  );
-  const value =
-    resolvedDataFilterValue ?? resolvedConfigFilterValue ?? FIELD_VALUE_NONE;
-
-  const multiValue = isMultiFilter
-    ? dataFilterValues
-    : [value].filter((v) => v !== FIELD_VALUE_NONE).map((v) => String(v));
-
-  useEffect(() => {
-    const values = dimension?.values.map((d) => d.value) ?? [];
-
-    if (isMultiFilter) {
-      chartLoadingState.set(`interactive-filter-${dimensionId}`, fetching);
-      return;
-    }
-
-    // We only want to disable loading state when the filter is actually valid.
-    // It can be invalid when the application is ensuring possible filters.
-    if (
-      (resolvedDataFilterValue && values.includes(resolvedDataFilterValue)) ||
-      resolvedDataFilterValue === FIELD_VALUE_NONE ||
-      !configFilter
-    ) {
-      updateDataFilter(
-        dimensionId,
-        resolvedDataFilterValue ? resolvedDataFilterValue : FIELD_VALUE_NONE
-      );
-      chartLoadingState.set(`interactive-filter-${dimensionId}`, fetching);
-    } else if (fetching || values.length === 0) {
-      chartLoadingState.set(`interactive-filter-${dimensionId}`, fetching);
-    }
-  }, [
-    chartLoadingState,
-    dataFilterValue,
-    dimension?.values,
-    dimensionId,
-    fetching,
-    setDataFilter,
-    configFilterValue,
-    updateDataFilter,
-    configFilter,
-    resolvedDataFilterValue,
-    isMultiFilter,
-  ]);
-
-  return dimension ? (
-    <Flex
-      sx={{
-        mr: 3,
-        width: "100%",
-        flex: "1 1 100%",
-        ":last-of-type": {
-          mr: 0,
-        },
-        " > div": { width: "100%" },
-      }}
-    >
-      {isTemporalDimension(dimension) ? (
-        <DataFilterTemporalDimension
-          configFilter={configFilter}
-          value={value as string}
-          dimension={dimension}
-          onChange={setDataFilter}
-          disabled={disabled}
-        />
-      ) : hierarchy ? (
-        <DataFilterHierarchyDimension
-          configFilter={configFilter}
-          dimension={dimension}
-          onChange={setDataFilter}
-          onMultiChange={handleMultiChange}
-          hierarchy={hierarchy}
-          value={value as string}
-          values={multiValue}
-          isMulti={isMultiFilter}
-          disabled={disabled}
-        />
-      ) : (
-        <DataFilterGenericDimension
-          configFilter={configFilter}
-          dimension={dimension}
-          onChange={setDataFilter}
-          value={value as string}
-          values={multiValue}
-          isMulti={isMultiFilter}
-          onMultiChange={handleMultiChange}
-          disabled={disabled}
-        />
-      )}
-    </Flex>
-  ) : (
-    <Loading />
   );
 };
 

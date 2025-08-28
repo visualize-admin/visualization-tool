@@ -22,10 +22,10 @@ import {
 import { createRoot } from "react-dom/client";
 
 import {
-  ChartDataFiltersList,
   ChartDataFiltersToggle,
   useChartDataFiltersState,
 } from "@/charts/shared/chart-data-filters";
+import { ChartDataFiltersList } from "@/charts/shared/chart-data-filters/filters-list";
 import { extractChartConfigUsedComponents } from "@/charts/shared/chart-helpers";
 import { ArrowMenuTopBottom } from "@/components/arrow-menu";
 import {

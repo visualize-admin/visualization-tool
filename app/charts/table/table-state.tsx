@@ -101,7 +101,7 @@ export type ColumnMeta =
   | TextColumnMeta
   | MKColumnMeta<{ type: "other" }>;
 
-export type TableInteractiveTimeRangeState = {
+type TableInteractiveTimeRangeState = {
   xDimension?: TemporalDimension | TemporalEntityDimension;
   getX: (d: Observation) => Date;
   xScaleTimeRange: ScaleTime<number, number>;
