@@ -123,7 +123,8 @@ export type ChartWithInteractiveXTimeRangeState =
   | LinesState
   | ComboLineSingleState
   | ComboLineColumnState
-  | ComboLineDualState;
+  | ComboLineDualState
+  | TableChartState;
 
 export type ChartWithInteractiveYTimeRangeState = BarsState;
 
@@ -356,6 +357,40 @@ export const useTemporalXVariables = (
     xDimension,
     getX: isTemporalDimension(xDimension) ? getXTemporal : getXTemporalEntity,
     getXAsString,
+  };
+};
+
+export type TemporalMaybeXVariables = {
+  xDimension: TemporalDimension | TemporalEntityDimension | undefined;
+  getX: TemporalValueGetter;
+};
+
+export const useTemporalMaybeXVariables = (
+  { componentId = "" }: { componentId: string | undefined },
+  { dimensionsById }: { dimensionsById: DimensionsById }
+): TemporalMaybeXVariables => {
+  const xDimension = dimensionsById[componentId];
+
+  if (
+    xDimension &&
+    !isTemporalDimension(xDimension) &&
+    !isTemporalEntityDimension(xDimension)
+  ) {
+    throw Error(`Dimension <${componentId}> is not temporal!`);
+  }
+
+  const getXTemporal = useTemporalVariable(componentId);
+  const dimensionValues = dimensionsById[componentId].values;
+  const relatedLimitValues = dimensionsById[componentId].relatedLimitValues;
+  const values = uniqBy(
+    [...dimensionValues, ...relatedLimitValues],
+    (d) => d.value
+  );
+  const getXTemporalEntity = useTemporalEntityVariable(values)(componentId);
+
+  return {
+    xDimension,
+    getX: isTemporalDimension(xDimension) ? getXTemporal : getXTemporalEntity,
   };
 };
 
