@@ -29,6 +29,8 @@ You can also check the
     available
   - Most recent value is now correctly resolved in interactive filters
   - Fixed overflow issues in dashboards
+  - Removing a merged dataset when in the table chart won't result in an
+    application crash anymore
 - Maintenance
   - Observations now include original values under `componentId/__iri__` key and
     are unversioned
