@@ -137,7 +137,7 @@ export const BrushTime = ({ yOffset }: { yOffset?: number }) => {
   const getClosestObservationFromRangeDates = useCallback(
     ([from, to]: [Date, Date]): [Date, Date] => {
       const getClosestDatesFromDateRange = makeGetClosestDatesFromDateRange(
-        fullData,
+        fullData.sort((a, b) => getDate(a).getTime() - getDate(b).getTime()),
         getDate
       );
 
