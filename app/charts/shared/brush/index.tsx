@@ -43,7 +43,7 @@ export const shouldShowBrush = (
   return !dashboardTimeRange?.active && chartTimeRange?.active;
 };
 
-export const BrushTime = () => {
+export const BrushTime = ({ yOffset }: { yOffset?: number }) => {
   const ref = useRef<SVGGElement>(null);
   const timeRange = useChartInteractiveFilters((d) => d.timeRange);
   const setTimeRange = useChartInteractiveFilters((d) => d.setTimeRange);
@@ -399,9 +399,7 @@ export const BrushTime = () => {
   return fullData.length ? (
     <g
       {...DISABLE_SCREENSHOT_ATTR}
-      transform={`translate(0, ${
-        chartHeight + margins.top + margins.bottom - HEIGHT * 1.5
-      })`}
+      transform={`translate(0, ${yOffset ?? chartHeight + margins.top + margins.bottom - HEIGHT * 1.5})`}
     >
       {/* Selected Dates */}
       <g>
