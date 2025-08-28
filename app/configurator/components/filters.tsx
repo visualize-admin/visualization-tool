@@ -374,10 +374,11 @@ const MultiFilterContent = ({
     segment?.showValuesMapping ?? {}
   );
 
-  // TODO: separate interactive legend and data filters
+  const interactiveDataFilterProps = useInteractiveDataFilterToggle(
+    dimensionId,
+    "multi"
+  );
   const interactiveLegendFilterProps = useInteractiveFiltersToggle();
-  const interactiveDataFilterProps =
-    useInteractiveDataFilterToggle(dimensionId, "multi");
   const interactiveFilterProps = isSegmentField
     ? interactiveLegendFilterProps
     : interactiveDataFilterProps;

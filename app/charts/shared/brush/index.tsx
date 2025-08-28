@@ -16,14 +16,7 @@ import type {
 } from "@/charts/shared/chart-state";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
-import {
-  ColumnConfig,
-  ComboLineColumnConfig,
-  ComboLineDualConfig,
-  ComboLineSingleConfig,
-  DashboardTimeRangeFilter,
-  LineConfig,
-} from "@/configurator";
+import { DashboardTimeRangeFilter } from "@/configurator";
 import {
   Observation,
   TemporalDimension,
@@ -43,13 +36,7 @@ const BRUSH_HEIGHT = 4;
 const HEIGHT = HANDLE_HEIGHT + BRUSH_HEIGHT;
 
 export const shouldShowBrush = (
-  interactiveFiltersConfig: (
-    | LineConfig
-    | ComboLineSingleConfig
-    | ComboLineDualConfig
-    | ComboLineColumnConfig
-    | ColumnConfig
-  )["interactiveFiltersConfig"],
+  interactiveFiltersConfig: { timeRange: { active: boolean } },
   dashboardTimeRange: DashboardTimeRangeFilter | undefined
 ) => {
   const chartTimeRange = interactiveFiltersConfig.timeRange;
@@ -146,6 +133,7 @@ export const BrushTime = () => {
     () => brushWidthScale.domain().map((d) => d.getTime()),
     [brushWidthScale]
   );
+
   const getClosestObservationFromRangeDates = useCallback(
     ([from, to]: [Date, Date]): [Date, Date] => {
       const getClosestDatesFromDateRange = makeGetClosestDatesFromDateRange(
@@ -223,7 +211,7 @@ export const BrushTime = () => {
 
           if (!e.selection && ref.current) {
             const g = select(ref.current);
-            const [mx] = pointer(event, this);
+            const [mx] = pointer(e, this);
             const x = mx < 0 ? 0 : mx > brushWidth ? brushWidth : mx;
             g.call(brush.move, [x, x]);
           }
