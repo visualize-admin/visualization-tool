@@ -136,18 +136,17 @@ export const ChartDataFilter = ({
     setMultiDataFilter(dimensionId, values);
   });
 
-  const singleEntry = filters.length === 1 ? filters[0] : undefined;
   const configFilter = useMemo(() => {
-    if (!singleEntry || !dimension) {
+    if (!dimension) {
       return undefined;
     }
 
     const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
-      cubeIri: singleEntry.cubeIri,
+      cubeIri: dimension.cubeIri,
     });
 
     return cubeFilters[dimension.id];
-  }, [dimension, chartConfig.cubes, singleEntry]);
+  }, [dimension, chartConfig.cubes]);
   const configFilterValue =
     configFilter && configFilter.type === "single"
       ? configFilter.value
