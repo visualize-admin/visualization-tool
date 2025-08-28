@@ -23,11 +23,11 @@ import {
   ChartOptionCheckboxField,
   ChartOptionSelectField,
   ColorPickerField,
-  DataFilterSelectTime,
 } from "@/configurator/components/field";
 import {
   DimensionValuesMultiFilter,
   DimensionValuesSingleFilter,
+  TimeFilter,
 } from "@/configurator/components/filters";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FieldProps } from "@/configurator/config-form";
@@ -46,6 +46,7 @@ import {
   isDimension,
   isNumericalMeasure,
   isTemporalDimension,
+  isTemporalEntityDimension,
   Measure,
 } from "@/domain/data";
 import {
@@ -317,7 +318,8 @@ export const TableColumnOptions = ({
           </ControlSectionContent>
         </ControlSection>
       )}
-      {isTemporalDimension(component) ? (
+      {isTemporalDimension(component) ||
+      isTemporalEntityDimension(component) ? (
         <ControlSection collapse>
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
@@ -326,26 +328,7 @@ export const TableColumnOptions = ({
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
-            {component.isKeyDimension && isHidden && !isGroup ? (
-              <DataFilterSelectTime
-                id="select-single-filter-time"
-                dimension={component}
-                label={component.label}
-                from={`${component.values[0].value}`}
-                to={`${
-                  component.values[component.values.length - 1]?.value ??
-                  component.values[0].value
-                }`}
-                timeUnit={component.timeUnit}
-                timeFormat={component.timeFormat}
-              />
-            ) : (
-              <DimensionValuesMultiFilter
-                key={component.id}
-                dimension={component}
-                field={activeField}
-              />
-            )}
+            <TimeFilter dimension={component} />
           </ControlSectionContent>
         </ControlSection>
       ) : isDimension(component) ? (
