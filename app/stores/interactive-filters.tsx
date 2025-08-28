@@ -317,24 +317,36 @@ const getPotentialTimeRangeFilterIds = (chartConfigs: ChartConfig[]) => {
   return temporalDimensions.map((dimension) => dimension.componentId);
 };
 
-const getPotentialDataFilterIds = (
-  chartConfigs: ChartConfig[],
-  interactiveDataFilterIds: string[]
-) => {
-  return uniq(
-    chartConfigs.flatMap((config) => {
-      return uniq(
-        config.cubes
-          .map((cube) => cube.filters)
-          .flatMap((filters) => {
-            return Object.entries(filters)
-              .filter(([_, filter]) => filter.type === "single")
-              .map(([dimensionId]) => dimensionId);
-          })
-          .concat(interactiveDataFilterIds)
+const getPotentialDataFilterIds = (chartConfigs: ChartConfig[]) => {
+  const dimensionIdCounts = new Map<string, number>();
+
+  chartConfigs.forEach((config) => {
+    const dimensionIds = uniq(
+      config.cubes
+        .map((cube) => cube.filters)
+        .flatMap((filters) => {
+          return Object.entries(filters)
+            .filter(
+              ([_, filter]) =>
+                filter.type === "single" || filter.type === "multi"
+            )
+            .map(([dimensionId]) => dimensionId);
+        })
+    );
+
+    dimensionIds.forEach((dimensionId) => {
+      dimensionIdCounts.set(
+        dimensionId,
+        (dimensionIdCounts.get(dimensionId) ?? 0) + 1
       );
-    })
-  );
+    });
+  });
+
+  const sharedDimensionIds = Array.from(dimensionIdCounts.entries())
+    .filter(([_, count]) => count > 1)
+    .map(([dimensionId]) => dimensionId);
+
+  return sharedDimensionIds;
 };
 
 /**
@@ -355,15 +367,7 @@ export const InteractiveFiltersProvider = ({
     return getPotentialTimeRangeFilterIds(chartConfigs);
   }, [chartConfigs]);
   const potentialDataFilterIds = useMemo(() => {
-    const interactiveDataFilterIds = storeRefs.current
-      ? uniq(
-          Object.values(storeRefs.current)
-            .map((store) => store.getState().dataFilters)
-            .flatMap((filter) => Object.keys(filter))
-        )
-      : [];
-
-    return getPotentialDataFilterIds(chartConfigs, interactiveDataFilterIds);
+    return getPotentialDataFilterIds(chartConfigs);
   }, [chartConfigs]);
 
   const stores = useMemo<
