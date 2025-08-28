@@ -25,7 +25,7 @@ test("the application shouldn't crash in case of adding a global, week-based fil
   const dateFiltersText = await dateFilters.inputValue();
 
   // Make sure the content is not empty and the date is formatted correctly.
-  expect(dateFiltersText).toContain(".");
+  expect(dateFiltersText).toContain("-");
 });
 
 const CONFIGURATOR_STATE = {
