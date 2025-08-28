@@ -143,10 +143,12 @@ export const ChartDataFilter = ({
 
     const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
       cubeIri: dimension.cubeIri,
+      joined: true,
     });
 
-    return cubeFilters[dimension.id];
-  }, [dimension, chartConfig.cubes]);
+    return cubeFilters[dimensionId];
+  }, [dimension, chartConfig.cubes, dimensionId]);
+
   const configFilterValue =
     configFilter && configFilter.type === "single"
       ? configFilter.value

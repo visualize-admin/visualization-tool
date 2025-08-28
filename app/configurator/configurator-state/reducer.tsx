@@ -68,7 +68,11 @@ import {
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { Dimension, isGeoDimension, isJoinByComponent } from "@/domain/data";
-import { getOriginalDimension, isJoinByCube } from "@/graphql/join";
+import {
+  getOriginalDimension,
+  getOriginalIds,
+  isJoinByCube,
+} from "@/graphql/join";
 import { PossibleFilterValue } from "@/graphql/query-hooks";
 import { DEFAULT_CATEGORICAL_PALETTE_ID } from "@/palettes";
 import { findInHierarchy } from "@/rdf/tree-utils";
@@ -984,10 +988,20 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (isConfiguring(draft)) {
         const { cubeIri, dimensionId, values } = action.value;
         const chartConfig = getChartConfig(draft);
-        const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+        const resolvedCubeIris = isJoinByCube(cubeIri)
+          ? getOriginalIds(cubeIri, chartConfig)
+          : [cubeIri];
 
-        if (cube) {
-          cube.filters[dimensionId] = makeMultiFilter(values);
+        for (const resolvedCubeIri of resolvedCubeIris) {
+          const cube = chartConfig.cubes.find(
+            (cube) =>
+              cube.iri === resolvedCubeIri ||
+              cube.joinBy?.includes(resolvedCubeIri)
+          );
+
+          if (cube) {
+            cube.filters[dimensionId] = makeMultiFilter(values);
+          }
         }
       }
 

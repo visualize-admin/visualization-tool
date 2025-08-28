@@ -645,6 +645,7 @@ export const MultiFilterContextProvider = ({
 }) => {
   const [state] = useConfiguratorState();
   const activeFilter = getFilterValue(state, dimension);
+
   const allValues = useMemo(() => {
     return dimension.values.map((d) => `${d.value}`) ?? [];
   }, [dimension.values]);
@@ -656,6 +657,7 @@ export const MultiFilterContextProvider = ({
           ? Object.keys(activeFilter.values)
           : []
       : allValues;
+
     return new Set(activeKeys);
   }, [activeFilter, allValues]);
 

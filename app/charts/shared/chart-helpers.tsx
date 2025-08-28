@@ -96,17 +96,19 @@ export const prepareCubeQueryFilters = ({
     const interactiveActiveForKey =
       interactiveFiltersConfig.dataFilters.active &&
       resolvedInteractiveFiltersConfigComponentIds.includes(k);
-    
-    const hasFilterValue = 
+
+    const hasFilterValue =
       (v.type === "single" && v.value !== FIELD_VALUE_NONE) ||
       (v.type === "multi" && Object.keys(v.values).length > 0);
-    
-    const shouldApplyInteractiveFilter = 
-      interactiveActiveForKey || 
-      (resolvedInteractiveFiltersConfigComponentIds.includes(k) && hasFilterValue);
+
+    const shouldApplyInteractiveFilter =
+      interactiveActiveForKey ||
+      (resolvedInteractiveFiltersConfigComponentIds.includes(k) &&
+        hasFilterValue);
 
     if (
-      (shouldApplyInteractiveFilter || dashboardFiltersComponentIds.includes(k)) &&
+      (shouldApplyInteractiveFilter ||
+        dashboardFiltersComponentIds.includes(k)) &&
       animationField?.componentId !== k
     ) {
       if (v.type === "single" && v.value === FIELD_VALUE_NONE) {
@@ -157,9 +159,15 @@ export const useQueryFilters = ({
 
   return useMemo(() => {
     return chartConfig.cubes.map((cube) => {
-      const cubeFilters = getChartConfigFilters(chartConfig.cubes, {
+      const rawCubeFilters = getChartConfigFilters(chartConfig.cubes, {
         cubeIri: cube.iri,
       });
+      const cubeFilters = Object.fromEntries(
+        Object.entries(rawCubeFilters).map(([key, value]) => [
+          isJoinById(key) ? (getResolvedJoinById(cube, key) ?? key) : key,
+          value,
+        ])
+      );
       const cubeComponentIds = [
         ...Object.keys(cubeFilters),
         ...Object.keys(chartConfig.fields),
