@@ -118,6 +118,30 @@ query DataCubeObservations(
   )
 }
 
+query DataCubeObservationsPaginated(
+  $sourceType: String!
+  $sourceUrl: DataSourceUrl!
+  $locale: String!
+  $cubeFilter: DataCubeObservationFilter!
+) {
+  dataCubeObservationsPaginated(
+    sourceType: $sourceType
+    sourceUrl: $sourceUrl
+    locale: $locale
+    cubeFilter: $cubeFilter
+  ) {
+    data
+    pagination {
+      hasNextPage
+      hasPreviousPage
+      totalCount
+      limit
+      offset
+    }
+    sparqlEditorUrl
+  }
+}
+
 query DataCubePreview(
   $sourceType: String!
   $sourceUrl: DataSourceUrl!

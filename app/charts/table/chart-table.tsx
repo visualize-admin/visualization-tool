@@ -1,9 +1,9 @@
 import { memo } from "react";
 
-import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { BrushTime, shouldShowBrush } from "@/charts/shared/brush";
 import { ChartContainer } from "@/charts/shared/containers";
 import { Table, TABLE_TIME_RANGE_HEIGHT } from "@/charts/table/table";
+import { TablePaginatedDataWrapper } from "@/charts/table/table-paginated-data-wrapper";
 import { TableChart } from "@/charts/table/table-state";
 import { TableConfig } from "@/configurator";
 import { hasChartConfigs, useConfiguratorState } from "@/configurator";
@@ -16,7 +16,7 @@ export const ChartTableVisualization = (
   const { observationQueryFilters } = props;
 
   return (
-    <ChartDataWrapper
+    <TablePaginatedDataWrapper
       {...props}
       observationQueryFilters={observationQueryFilters}
       Component={ChartTable}
@@ -25,7 +25,7 @@ export const ChartTableVisualization = (
 };
 
 const ChartTable = memo(function ChartTable(props: ChartProps<TableConfig>) {
-  const { chartConfig } = props;
+  const { chartConfig, pagination } = props;
   const { interactiveFiltersConfig } = chartConfig;
   const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
   const showTimeBrush = shouldShowBrush(
@@ -47,7 +47,7 @@ const ChartTable = memo(function ChartTable(props: ChartProps<TableConfig>) {
             <BrushTime yOffset={10} />
           </svg>
         )}
-        <Table />
+        <Table pagination={pagination} />
       </ChartContainer>
     </TableChart>
   );

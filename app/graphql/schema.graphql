@@ -10,6 +10,20 @@ scalar HierarchyValue
 scalar DataCubeComponents
 scalar DataCubeMetadata
 scalar DataCubeObservations
+
+type PaginationInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  totalCount: Int
+  limit: Int
+  offset: Int
+}
+
+type DataCubeObservationsPage {
+  data: DataCubeObservations!
+  pagination: PaginationInfo!
+  sparqlEditorUrl: String!
+}
 scalar DataCubePreview
 scalar Termset
 scalar ComponentTermsets
@@ -123,6 +137,19 @@ input DataCubeObservationFilter {
   filters: Filters
   componentIds: [String!]
   joinBy: [String!]
+  limit: Int
+  offset: Int
+  orderBy: [OrderByClause!]
+}
+
+input OrderByClause {
+  componentId: String!
+  order: SortOrder!
+}
+
+enum SortOrder {
+  ASC
+  DESC
 }
 
 input DataCubeLatestIriFilter {
@@ -186,6 +213,12 @@ type Query {
     locale: String!
     cubeFilter: DataCubeObservationFilter!
   ): DataCubeObservations!
+  dataCubeObservationsPaginated(
+    sourceType: String!
+    sourceUrl: DataSourceUrl!
+    locale: String!
+    cubeFilter: DataCubeObservationFilter!
+  ): DataCubeObservationsPage!
   dataCubePreview(
     sourceType: String!
     sourceUrl: DataSourceUrl!
