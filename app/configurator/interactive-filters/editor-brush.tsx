@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { brushX } from "d3-brush";
+import { brushX, D3BrushEvent } from "d3-brush";
 import { scaleTime } from "d3-scale";
 import { pointer, select, Selection } from "d3-selection";
 import { CountableTimeInterval } from "d3-time";
@@ -16,7 +16,15 @@ const HANDLE_OFFSET = HANDLE_SIZE / 8;
 const BRUSH_HEIGHT = 1;
 const MARGIN = HANDLE_SIZE / 2;
 
-type EditorBrushProps = {
+export const EditorBrush = ({
+  timeExtent,
+  timeRange,
+  timeInterval,
+  timeUnit,
+  onChange,
+  disabled = false,
+  hideEndHandle = false,
+}: {
   timeExtent: Date[];
   timeRange: Date[];
   timeInterval: CountableTimeInterval;
@@ -24,34 +32,21 @@ type EditorBrushProps = {
   onChange: (extent: Date[]) => void;
   disabled?: boolean;
   hideEndHandle?: boolean;
-};
-
-export const EditorBrush = (props: EditorBrushProps) => {
-  const {
-    timeExtent,
-    timeRange,
-    timeInterval,
-    timeUnit,
-    onChange,
-    disabled = false,
-    hideEndHandle = false,
-  } = props;
+}) => {
   const [resizeRef, width] = useResizeObserver<HTMLDivElement>();
   const brushRef = useRef<SVGGElement>(null);
-  const theme = useTheme();
+  const { palette } = useTheme();
   const timeFormatUnit = useTimeFormatUnit();
 
   const brushWidth = width - (MARGIN + HANDLE_OFFSET) * 2;
   const timeScale = scaleTime().domain(timeExtent).range([0, brushWidth]);
 
   const getClosestDimensionValue = useCallback(
-    (date: Date): Date => {
-      return timeInterval.round(date);
-    },
+    (date: Date) => timeInterval.round(date),
     [timeInterval]
   );
 
-  function brushed(e: $FixMe) {
+  function brushed(e: D3BrushEvent<unknown>) {
     const selection = e.selection as [number, number] | undefined;
 
     if (selection) {
@@ -77,25 +72,21 @@ export const EditorBrush = (props: EditorBrushProps) => {
 
   useEffect(() => {
     const g = select(brushRef.current);
-    const mkBrush = (g: Selection<SVGGElement, unknown, null, undefined>) => {
+    const fill = disabled ? palette.grey[300] : palette.primary.main;
+    const pointerEvents = disabled ? "none" : "auto";
+    const mkBrush = (g: BrushSelection) => {
       g.select(".overlay")
-        .attr("pointer-events", disabled && "none")
-        .attr("fill", theme.palette.grey[300])
+        .attr("pointer-events", pointerEvents)
+        .attr("fill", palette.grey[300])
         .attr("fill-opacity", 0.9);
       g.select(".selection")
-        .attr("pointer-events", disabled && "none")
-        .attr(
-          "fill",
-          disabled ? theme.palette.grey[500] : theme.palette.primary.main
-        )
+        .attr("pointer-events", pointerEvents)
+        .attr("fill", fill)
         .attr("fill-opacity", 1)
         .attr("stroke", "none");
       g.selectAll(".handle")
-        .attr("pointer-events", disabled && "none")
-        .attr(
-          "fill",
-          disabled ? theme.palette.grey[500] : theme.palette.primary.main
-        )
+        .attr("pointer-events", pointerEvents)
+        .attr("fill", fill)
         .style("y", `-${HANDLE_SIZE / 2 - 1}px`)
         .style("width", `${HANDLE_SIZE}px`)
         .style("height", `${HANDLE_SIZE}px`)
@@ -108,14 +99,8 @@ export const EditorBrush = (props: EditorBrushProps) => {
       g.call(brush);
     };
 
-    mkBrush(g as Selection<SVGGElement, unknown, null, undefined>);
-  }, [
-    brush,
-    disabled,
-    hideEndHandle,
-    theme.palette.grey,
-    theme.palette.primary.main,
-  ]);
+    mkBrush(g as BrushSelection);
+  }, [brush, disabled, hideEndHandle, palette.grey, palette.primary.main]);
 
   // Set default selection to full extent
   const [fromPx, toPx] = timeRange.map(timeScale);
@@ -123,17 +108,13 @@ export const EditorBrush = (props: EditorBrushProps) => {
   // FIXME: fix dependency array but don't include brush.move!
   useEffect(() => {
     const g = select(brushRef.current);
-    (g as Selection<SVGGElement, unknown, null, undefined>).call(brush.move, [
-      fromPx,
-      toPx,
-    ]);
-
+    (g as BrushSelection).call(brush.move, [fromPx, toPx]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromPx, toPx]);
 
   return (
     <Box sx={{ mt: 4 }}>
-      <Box ref={resizeRef} id="editor-brush">
+      <div ref={resizeRef} id="editor-brush">
         {width > 0 && (
           <svg width={width} height={BRUSH_HEIGHT + MARGIN * 2}>
             <g
@@ -142,13 +123,11 @@ export const EditorBrush = (props: EditorBrushProps) => {
             />
           </svg>
         )}
-      </Box>
+      </div>
       <Flex
-        sx={{
-          mt: 1,
-          justifyContent: "space-between",
-          px: `${HANDLE_OFFSET}px`,
-        }}
+        justifyContent="space-between"
+        mt={1}
+        sx={{ px: `${HANDLE_OFFSET}px` }}
       >
         <Typography component="div" variant="caption">
           {timeFormatUnit(timeExtent[0], timeUnit)}
@@ -160,3 +139,5 @@ export const EditorBrush = (props: EditorBrushProps) => {
     </Box>
   );
 };
+
+type BrushSelection = Selection<SVGGElement, unknown, null, undefined>;
