@@ -22,10 +22,10 @@ import {
 import { createRoot } from "react-dom/client";
 
 import {
-  ChartDataFiltersList,
   ChartDataFiltersToggle,
   useChartDataFiltersState,
 } from "@/charts/shared/chart-data-filters";
+import { ChartDataFiltersList } from "@/charts/shared/chart-data-filters/filters-list";
 import { extractChartConfigUsedComponents } from "@/charts/shared/chart-helpers";
 import { ArrowMenuTopBottom } from "@/components/arrow-menu";
 import {
@@ -71,6 +71,7 @@ export const useChartStyles = makeStyles<Theme, { removeBorder?: boolean }>(
   (theme) => ({
     root: {
       flexGrow: 1,
+      minWidth: 0,
       padding: theme.spacing(8),
       backgroundColor: theme.palette.background.paper,
       border: ({ removeBorder }) =>
@@ -79,6 +80,13 @@ export const useChartStyles = makeStyles<Theme, { removeBorder?: boolean }>(
       [`.${chartPanelLayoutGridClasses.root} &`]: {
         display: "flex",
         flexDirection: "column",
+      },
+
+      // Make sure that all children have min-width: 0 and max-width: 100%
+      // to prevent overflow issues.
+      "& > *": {
+        minWidth: 0,
+        maxWidth: "100%",
       },
     },
     editing: {
@@ -108,11 +116,11 @@ export const ChartControls = ({
     "dataSource" | "chartConfig" | "dashboardFilters"
   >;
 }) => {
-  const chartDataFilters = chartConfig.interactiveFiltersConfig?.dataFilters;
+  const chartDataFilters = chartConfig.interactiveFiltersConfig.dataFilters;
   const dashboardDataFilters = dashboardFilters?.dataFilters;
   const showFilters =
-    chartDataFilters?.active &&
-    chartDataFilters?.componentIds.some(
+    chartDataFilters.active &&
+    chartDataFilters.componentIds.some(
       (id) => !dashboardDataFilters?.componentIds.includes(id)
     );
   const chartFiltersState = useChartDataFiltersState({

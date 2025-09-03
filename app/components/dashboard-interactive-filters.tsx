@@ -16,13 +16,20 @@ import {
   DataFilterHierarchyDimension,
   DataFilterTemporalDimension,
 } from "@/charts/shared/chart-data-filters";
+import {
+  GroupedPreparedFilter,
+  groupPreparedFiltersByDimension,
+  PreparedFilter,
+} from "@/charts/shared/chart-data-filters/group-filters";
 import { useCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
 import {
   ChartConfig,
   DashboardTimeRangeFilter,
+  getFiltersByMappingStatus,
   hasChartConfigs,
   InteractiveFiltersTimeRange,
   isLayouting,
+  SingleFilters,
   useConfiguratorState,
 } from "@/configurator";
 import {
@@ -31,7 +38,9 @@ import {
   timeUnitToParser,
 } from "@/configurator/components/ui-helpers";
 import { isTemporalDimension } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
+import { getResolvedJoinById, isJoinById } from "@/graphql/join";
 import { TimeUnit } from "@/graphql/query-hooks";
 import { useLocale } from "@/locales/use-locale";
 import {
@@ -296,40 +305,106 @@ export const saveDataFiltersSnapshot = (
 };
 
 const DashboardDataFilters = ({ componentIds }: { componentIds: string[] }) => {
+  const [state] = useConfiguratorState(hasChartConfigs);
+  const { chartConfigs, dataSource } = state;
   const classes = useDataFilterStyles();
+
+  const groupedPreparedFilters = useMemo(() => {
+    const allPreparedFilters: PreparedFilter[] = [];
+
+    chartConfigs.forEach((chartConfig) => {
+      chartConfig.cubes.forEach((cube) => {
+        const filtersByMappingStatus = getFiltersByMappingStatus(chartConfig, {
+          cubeIri: cube.iri,
+          joinByIds: componentIds.filter(isJoinById),
+        });
+        const { unmappedFilters, mappedFilters } = filtersByMappingStatus;
+
+        const cubeComponentIds = [
+          ...Object.keys(cube.filters),
+          ...Object.keys(chartConfig.fields),
+          ...Object.values(chartConfig.fields).map(
+            (field) => field.componentId
+          ),
+        ].filter(truthy);
+
+        const componentIdPairs = componentIds
+          .map((originalId) => {
+            const resolvedId = isJoinById(originalId)
+              ? (getResolvedJoinById(cube, originalId) ?? originalId)
+              : originalId;
+            return { originalId, resolvedId };
+          })
+          .filter(({ resolvedId, originalId }) => {
+            return resolvedId === originalId
+              ? cubeComponentIds.includes(resolvedId)
+              : true;
+          });
+
+        const componentIdResolution = Object.fromEntries(
+          componentIdPairs.map(({ originalId, resolvedId }) => [
+            originalId,
+            resolvedId,
+          ])
+        );
+
+        allPreparedFilters.push({
+          cubeIri: cube.iri,
+          interactiveFilters: {},
+          unmappedFilters: unmappedFilters as SingleFilters,
+          mappedFilters,
+          componentIdResolution,
+        });
+      });
+    });
+
+    return groupPreparedFiltersByDimension(allPreparedFilters, componentIds);
+  }, [chartConfigs, componentIds]);
+
   return (
     <div className={classes.wrapper}>
-      {componentIds.map((componentId) => (
-        <DataFilter key={componentId} componentId={componentId} />
+      {groupedPreparedFilters.map(({ dimensionId, entries }) => (
+        <DataFilter
+          key={dimensionId}
+          dimensionId={dimensionId}
+          entries={entries}
+          dataSource={dataSource}
+          chartConfigs={chartConfigs}
+        />
       ))}
     </div>
   );
 };
 
-const DataFilter = ({ componentId }: { componentId: string }) => {
+const DataFilter = ({
+  dimensionId,
+  entries,
+  dataSource,
+  chartConfigs,
+}: {
+  dimensionId: string;
+  entries: GroupedPreparedFilter["entries"];
+  dataSource: { type: string; url: string };
+  chartConfigs: ChartConfig[];
+}) => {
   const locale = useLocale();
   const classes = useDataFilterStyles();
-  const [{ chartConfigs, dataSource, dashboardFilters }] =
-    useConfiguratorState(hasChartConfigs);
+  const [{ dashboardFilters }] = useConfiguratorState(hasChartConfigs);
   const dashboardInteractiveFilters = useDashboardInteractiveFilters();
+
+  const cubeIris = uniq(entries.map((entry) => entry.cubeIri));
+
   const relevantChartConfigs = chartConfigs.filter((config) =>
-    config.cubes.some((cube) => Object.keys(cube.filters).includes(componentId))
-  );
-  const cubeIris = uniq(
-    chartConfigs.flatMap((config) =>
-      config.cubes
-        .filter((cube) => Object.keys(cube.filters).includes(componentId))
-        .map((cube) => cube.iri)
-    )
+    config.cubes.some((cube) => cubeIris.includes(cube.iri))
   );
 
-  if (cubeIris.length > 1) {
-    console.error(
-      `Data filter ${componentId} is used in multiple cubes: ${cubeIris.join(", ")}`
-    );
-  }
-
-  const cubeIri = cubeIris[0];
+  const cubeFilters = useMemo(() => {
+    return entries.map((entry) => ({
+      iri: entry.cubeIri,
+      componentIds: [entry.resolvedDimensionId],
+      loadValues: true,
+    }));
+  }, [entries]);
 
   const [{ data }] = useDataCubesComponentsQuery({
     chartConfig: relevantChartConfigs[0],
@@ -337,15 +412,10 @@ const DataFilter = ({ componentId }: { componentId: string }) => {
       sourceType: dataSource.type,
       sourceUrl: dataSource.url,
       locale,
-      cubeFilters: [
-        {
-          iri: cubeIri,
-          componentIds: [componentId],
-          loadValues: true,
-        },
-      ],
+      cubeFilters,
     },
     keepPreviousData: true,
+    pause: cubeFilters.length === 0,
   });
 
   const dimension = data?.dataCubesComponents.dimensions[0];
@@ -367,7 +437,7 @@ const DataFilter = ({ componentId }: { componentId: string }) => {
         if (
           relevantChartConfigs.map((config) => config.key).includes(chartKey)
         ) {
-          setDataFilter(store, componentId, newValue);
+          setDataFilter(store, dimensionId, newValue);
         }
       }
     }
@@ -375,22 +445,23 @@ const DataFilter = ({ componentId }: { componentId: string }) => {
 
   // Syncs the interactive filter value with the config value
   useEffect(() => {
-    const value = dashboardFilters?.dataFilters.filters[componentId].value as
+    const value = dashboardFilters?.dataFilters.filters[dimensionId].value as
       | string
       | undefined;
+
     if (value) {
       handleChange({ target: { value } });
     }
-  }, [componentId, handleChange, dashboardFilters?.dataFilters.filters]);
+  }, [dimensionId, handleChange, dashboardFilters?.dataFilters.filters]);
 
   useEffect(() => {
     const restoreSnapshot = saveDataFiltersSnapshot(
       relevantChartConfigs,
       dashboardInteractiveFilters.stores,
-      componentId
+      dimensionId
     );
 
-    const value = dashboardFilters?.dataFilters.filters[componentId]?.value as
+    const value = dashboardFilters?.dataFilters.filters[dimensionId]?.value as
       | string
       | undefined;
 

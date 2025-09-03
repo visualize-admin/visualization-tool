@@ -347,7 +347,7 @@ const ProfileVisualizationsRow = ({
       ? config.data.chartConfigs[0].meta.title[locale]
       : config.data.layout.meta.title[locale];
 
-    return title || t({ id: "annotator.add.title", message: "[ No Title ]" });
+    return title || t({ id: "annotator.add.title", message: "[ Add Title ]" });
   }, [
     config.data.chartConfigs,
     config.data.layout.meta.title,

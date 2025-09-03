@@ -68,7 +68,11 @@ import {
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { Dimension, isGeoDimension, isJoinByComponent } from "@/domain/data";
-import { getOriginalDimension, isJoinByCube } from "@/graphql/join";
+import {
+  getOriginalDimension,
+  getOriginalIds,
+  isJoinByCube,
+} from "@/graphql/join";
 import { PossibleFilterValue } from "@/graphql/query-hooks";
 import { DEFAULT_CATEGORICAL_PALETTE_ID } from "@/palettes";
 import { findInHierarchy } from "@/rdf/tree-utils";
@@ -412,17 +416,25 @@ export const handleChartFieldChanged = (
   });
 
   // Remove the component from interactive data filters.
-  if (chartConfig.interactiveFiltersConfig?.dataFilters) {
-    const componentIds =
-      chartConfig.interactiveFiltersConfig.dataFilters.componentIds.filter(
-        (d) => d !== componentId
-      );
-    const active = componentIds.length > 0;
-    chartConfig.interactiveFiltersConfig.dataFilters = {
-      active,
-      componentIds,
-    };
-  }
+  const componentIds =
+    chartConfig.interactiveFiltersConfig.dataFilters.componentIds.filter(
+      (d) => d !== componentId
+    );
+  const active = componentIds.length > 0;
+  chartConfig.interactiveFiltersConfig.dataFilters = {
+    active,
+    componentIds,
+    defaultValueOverrides: Object.fromEntries(
+      Object.entries(
+        chartConfig.interactiveFiltersConfig.dataFilters.defaultValueOverrides
+      ).filter(([k]) => k !== componentId)
+    ),
+    filterTypes: Object.fromEntries(
+      Object.entries(
+        chartConfig.interactiveFiltersConfig.dataFilters.filterTypes
+      ).filter(([k]) => k !== componentId)
+    ),
+  };
 
   const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
   const index = draft.chartConfigs.findIndex((d) => d.key === chartConfig.key);
@@ -976,10 +988,20 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (isConfiguring(draft)) {
         const { cubeIri, dimensionId, values } = action.value;
         const chartConfig = getChartConfig(draft);
-        const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+        const resolvedCubeIris = isJoinByCube(cubeIri)
+          ? getOriginalIds(cubeIri, chartConfig)
+          : [cubeIri];
 
-        if (cube) {
-          cube.filters[dimensionId] = makeMultiFilter(values);
+        for (const resolvedCubeIri of resolvedCubeIris) {
+          const cube = chartConfig.cubes.find(
+            (cube) =>
+              cube.iri === resolvedCubeIri ||
+              cube.joinBy?.includes(resolvedCubeIri)
+          );
+
+          if (cube) {
+            cube.filters[dimensionId] = makeMultiFilter(values);
+          }
         }
       }
 

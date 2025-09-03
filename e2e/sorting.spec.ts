@@ -218,6 +218,5 @@ test("Sorting with values with same label as other values in the tree", async ({
     })
   );
 
-  // Zürich has id 261 while Bern has id 351
   expect(texts).toEqual(["Zürich", "Bern"]);
 });

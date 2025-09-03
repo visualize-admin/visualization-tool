@@ -75,7 +75,7 @@ export const Header = ({
               label: locale.toUpperCase(),
               value: locale,
             }))}
-            sortOptions={false}
+            sort={false}
             sx={{
               width: "fit-content",
               color: "white !important",

@@ -9,9 +9,11 @@ and this project adheres to
 You can also check the
 [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
-# Unreleased
+## Unreleased
 
 - Features
+  - It's now possible to enable interactive filters for multi-filter panel
+    fields
   - It's now possible to annotate charts manually
   - Scatterplot charts need to have segmentation at all times
   - Consolidated some translations
@@ -26,13 +28,16 @@ You can also check the
   - Chart more button is now correctly hidden when there are no actions
     available
   - Most recent value is now correctly resolved in interactive filters
+  - Fixed overflow issues in dashboards
+  - Removing a merged dataset when in the table chart won't result in an
+    application crash anymore
 - Maintenance
   - Observations now include original values under `componentId/__iri__` key and
     are unversioned
 - Miscellaneous
   - Added CORS for admin.ch domains
 
-# 5.9.0 - 2025-07-28
+### 5.9.0 - 2025-07-28
 
 - Features
   - Improved UX of interacting with conversion units multiplier input
@@ -62,14 +67,14 @@ You can also check the
   - Added additional protection against data source URL injection
   - Removed feature flag for custom GraphQL endpoint
 
-# 5.8.3 - 2025-06-10
+### 5.8.3 - 2025-06-10
 
 - Fixes
   - Segmented bar and column charts now correctly display value labels when
     downloading an image
   - Ticks of X and Y axes in bar and column charts are now correctly formatted
 
-# 5.8.2 - 2025-06-03
+### 5.8.2 - 2025-06-03
 
 - Features
   - Invalid URL error message is now translated
@@ -83,7 +88,7 @@ You can also check the
   - Consolidated file names, to use kebab-case everywhere
   - Simplified exports and imports, to prefer named exports over default exports
 
-# 5.8.1 - 2025-05-27
+### 5.8.1 - 2025-05-27
 
 - Features
   - Added support for time range limits
@@ -111,7 +116,7 @@ You can also check the
 - Documentation
   - Aligned and updated for new Parametrized URLs functionality
 
-# 5.8.0 - 2025-05-20
+### 5.8.0 - 2025-05-20
 
 - Features
   - Added a way to set custom conversion units for numerical measures
@@ -128,7 +133,7 @@ You can also check the
   - Common CI / CD components (Header, Logo, TopBar) should now have correct
     styling
 
-# 5.7.7 - 2025-05-13
+### 5.7.7 - 2025-05-13
 
 - Features
   - Limit values displayed in the legend now include the unit if it's available
@@ -144,7 +149,7 @@ You can also check the
   - Update providers list according to
     https://rdataflow.github.io/WMTS-WMS-monitor
 
-# 5.7.6 - 2025-05-06
+### 5.7.6 - 2025-05-06
 
 - WMTS / WMS layers
   - Features
@@ -164,19 +169,19 @@ You can also check the
     cube are joined
   - Improved cut-off and overlapping labels in combo charts
 
-# 5.7.5 - 2025-04-29
+### 5.7.5 - 2025-04-29
 
 - Fixes
   - Nested layers appear on the map
 
-# 5.7.4 - 2025-04-29
+### 5.7.4 - 2025-04-29
 
 - Smaller improvements
   - OK button in "Text object" settings
   - Better spacing/line-height for title & description of dashboards
   - Better spacing for tick label of time animation slider
 
-# 5.7.3 - 2025-04-29
+### 5.7.3 - 2025-04-29
 
 - Features
   - Added a way to set custom numerical scale domains
@@ -192,12 +197,12 @@ You can also check the
   - External WMTS layers Tilematrix set are parsed and layers are not added if
     its projection cannot be inferred to be ESPG:3857
 
-# [5.7.2] - 2025-04-28
+### [5.7.2] - 2025-04-28
 
 - Fixes
   - WMTS providers autocomplete could not be closed
 
-# [5.7.1] - 2025-04-25
+### [5.7.1] - 2025-04-25
 
 - Features
   - It's now possible to use triangle symbol for single-value limits
@@ -217,7 +222,7 @@ You can also check the
     characters
   - Value labels are not gray anymore when downloading an image
 
-# [5.7.0] - 2025-04-16
+### [5.7.0] - 2025-04-16
 
 - Features
   - Ability to merge more than 2 datasets
@@ -234,7 +239,7 @@ You can also check the
     same line in footnotes when using "minimal" embed mode
   - Improved ODS dataset preview iframe's appearance
 
-# [5.6.0] - 2025-04-15
+### [5.6.0] - 2025-04-15
 
 - Features
   - Future limit values are now displayed for line charts
@@ -244,7 +249,7 @@ You can also check the
 - Maintenance
   - Updated Next.js
 
-# [5.5.0] - 2025-03-24
+### [5.5.0] - 2025-03-24
 
 - Features
   - Added advanced embed options
@@ -267,7 +272,7 @@ You can also check the
 - Maintenance
   - Extended maximum URL length in Node to 64KB
 
-# [5.4.1] - 2025-03-18
+### [5.4.1] - 2025-03-18
 
 - Features
   - It's now possible to show segment value labels in column and bar charts
@@ -291,13 +296,13 @@ You can also check the
   - Optimized the custom map legends loading indicator appearance
   - Line-based limits now take the full bar / column width
 
-# [5.4.0] - 2025-03-11
+### [5.4.0] - 2025-03-11
 
 - Features
   - Added an option to show all values in area, bar, column, line and pie charts
   - X axis titles are now always displayed
 
-# [5.3.1] - 2025-03-04
+### [5.3.1] - 2025-03-04
 
 - Features
   - It's now possible to preview charts by passing configurator state as a query
@@ -315,7 +320,7 @@ You can also check the
 - Maintenance
   - Updated documentation
 
-# [5.3.0] - 2025-02-25
+### [5.3.0] - 2025-02-25
 
 - Features
   - It's now possible to add custom WMTS layers coming from wmts.geo.admin.ch to
@@ -328,7 +333,7 @@ You can also check the
   - Added dynamic descriptions for custom color palette types
   - Show line dot sizes are now translated
 
-# [5.2.6] - 2025-02-18
+### [5.2.6] - 2025-02-18
 
 - Features
   - Added a way to display limit values and targets coming from the data with
@@ -339,7 +344,7 @@ You can also check the
   - Publishing of a dashboard with text blocks doesn't crash the application in
     some rare cases anymore
 
-# [5.2.5] - 2025-02-18
+### [5.2.5] - 2025-02-18
 
 - Features
   - Added option for hiding legend titles using a toggle switch
@@ -369,18 +374,18 @@ You can also check the
   - Added authentication method to e2e tests
   - Added authentication to Vercel previews for easier testing
 
-# [5.2.4] - 2025-02-06
+### [5.2.4] - 2025-02-06
 
 - Fixes
   - Duplicating chart in layout mode works correctly again
 
-# [5.2.3] - 2025-02-05
+### [5.2.3] - 2025-02-05
 
 - Fixes
   - Charts that use most recent date filter and interactive time range filter
     are initialized correctly now
 
-# [5.2.2] - 2025-02-05
+### [5.2.2] - 2025-02-05
 
 - Fixes
   - Weekly-based temporal dimensions now work correctly when used in dashboard
@@ -408,13 +413,11 @@ You can also check the
 - Maintenance
   - Increased the number of charts pre-loaded to Varnish cache from 25 to 250
 
-# [5.2.1] - 2025-01-29
+### [5.2.1] - 2025-01-29
 
 - Features
-
   - Created by visualize.admin.ch Link now navigates users to the corresponding
     Chart
-
 - Fixes
   - Bar chart tooltip doesn't go off the screen anymore during scroll
   - Bar chart interactive switch on y axis
@@ -431,7 +434,7 @@ You can also check the
   - Scatterplot overlap with the y axis label
   - Input fields do not extend anymore when hitting Enter
 
-# [5.2.0] - 2025-01-22
+### [5.2.0] - 2025-01-22
 
 - Features
   - Added a way to add text objects to dashboard layouts (hidden behind an
@@ -453,7 +456,7 @@ You can also check the
   - Preview via API now works correctly for map charts
   - GraphQL debug panel now displays the queries correctly when in debug mode
 
-# [5.1.0] - 2025-01-14
+### [5.1.0] - 2025-01-14
 
 - Features
   - Added a new chart type - bar
@@ -505,7 +508,7 @@ You can also check the
   - Added auto-generated JSON Schema files for configurator state and chart
     config and improved preview charts via API documentation
 
-# [5.0.2] - 2024-11-28
+### [5.0.2] - 2024-11-28
 
 - Features
   - Made it possible to sort the cube search results and filter by draft
@@ -516,7 +519,7 @@ You can also check the
   - Datasets section in the sidebar is now correctly shown at all times
   - Improved prevention of overlapping axis titles for combo charts
 
-# [5.0.1] - 2024-11-26
+### [5.0.1] - 2024-11-26
 
 - Features
   - Improved formatting of confidence intervals in tooltips
@@ -525,7 +528,7 @@ You can also check the
   - Ensured undefined / unavailable data is represented as "-" for downloaded
     data files
 
-# [5.0.0] - 2024-11-25
+### [5.0.0] - 2024-11-25
 
 Bumped to a new major version to celebrate all the improvements and new features
 introduced since v4.0.0 🎉
@@ -557,7 +560,7 @@ introduced since v4.0.0 🎉
   - Added a way to do local visual regression testing of charts between
     different branches
 
-# [4.9.5] - 2024-11-22
+### [4.9.5] - 2024-11-22
 
 - Features
   - Added Newsletter, Bug Report and Feature Request sections to the home page
@@ -573,17 +576,17 @@ introduced since v4.0.0 🎉
   - Dual line Chart Tooltip indicators are now fixed for smaller screens
   - Fixed tooltip position for pie charts for smaller screens
 
-# [4.9.4] - 2024-11-06
+### [4.9.4] - 2024-11-06
 
 - Features
   - Removed a flag for shared dashboard filters
 
-# [4.9.3] - 2024-10-29
+### [4.9.3] - 2024-10-29
 
 - Fixes
   - Last table row is no longer cut
 
-# [4.9.2] - 2024-10-04
+### [4.9.2] - 2024-10-04
 
 - Features
   - Added most recent charts (all time and last 30 days) to the the Statistics
@@ -594,12 +597,12 @@ introduced since v4.0.0 🎉
   - Fixed positioning of Menu Popover in the login profile row actions on small
     screens
 
-# [4.9.1] - 2024-10-03
+### [4.9.1] - 2024-10-03
 
 - Performance
   - Added pragmas to the SPARQL query button
 
-# [4.9.0] - 2024-10-01
+### [4.9.0] - 2024-10-01
 
 - Features
   - Added a new preview option (xl) in the layouting step
@@ -632,7 +635,7 @@ introduced since v4.0.0 🎉
   - Metadata panel is not longer shared between separate charts in a dashboard
   - Segmented line charts' whiskers have now the same color as the line
 
-# [4.8.0] - 2024-09-11
+### [4.8.0] - 2024-09-11
 
 - Features
   - It's now possible to label individual chart tabs
@@ -668,7 +671,7 @@ introduced since v4.0.0 🎉
 - Maintenance
   - Updated cube-hierarchy-query library to 3.0.0
 
-# [4.7.4] - 2024-07-23
+### [4.7.4] - 2024-07-23
 
 - Features
   - Measure's unit is now displayed in map legend
@@ -680,22 +683,22 @@ introduced since v4.0.0 🎉
   - Toast notifications are not overlapped by other content anymore
   - Chart selection tabs popover's arrow is now correctly centered
 
-# [4.7.3] - 2024-07-18
+### [4.7.3] - 2024-07-18
 
 - Fixes
   - Cube preview speed should be fine again with new Stardog version
 
-# [4.7.2] - 2024-07-08
+### [4.7.2] - 2024-07-08
 
 - Fixes
   - Going back to edit mode from free canvas layout no longer hides the chart
 
-# [4.7.1] - 2024-07-08
+### [4.7.1] - 2024-07-08
 
 - Fixes
   - Caching per cube iri is now correctly done for geo queries
 
-# [4.7.0] - 2024-07-03
+### [4.7.0] - 2024-07-03
 
 - Features
   - Added `TemporalEntityDimension` support for global dashboard filters
@@ -767,13 +770,13 @@ introduced since v4.0.0 🎉
   - Removed unnecessary row gaps in the dashboard layout when e.g. title or
     description is missing
 
-# [4.6.1] - 2024-06-05
+### [4.6.1] - 2024-06-05
 
 - Fix
   - Use bounded cache for Apollo Server, removing vulnerability from DDOS
     attacks
 
-# [4.6.0] - 2024-06-05
+### [4.6.0] - 2024-06-05
 
 - Features
   - :flag: :new: Add the "Free canvas" layout, allowing users to freely resize
@@ -785,13 +788,13 @@ introduced since v4.0.0 🎉
 - Style
   - Improved the styles of metadata panel and interactive filters toggle buttons
 
-# [4.5.1] - 2024-05-21
+### [4.5.1] - 2024-05-21
 
 - Fixes
   - If there is an error on a chart contained in a dashboard, the layout is not
     be broken
 
-# [4.5.0] - 2024-05-21
+### [4.5.0] - 2024-05-21
 
 - Features
   - Improvements to add dataset workflow (columns, text, toasts when adding a
@@ -799,7 +802,7 @@ introduced since v4.0.0 🎉
 - Development
   - Preparation for dashboards
 
-# [4.4.0] - 2024-05-08
+### [4.4.0] - 2024-05-08
 
 - Features
   - Ability to merge two cubes on multiple columns (for example on year and
@@ -815,13 +818,13 @@ introduced since v4.0.0 🎉
   - Cube upgrade is done only once at client side, instead of being re-fetched
     in every server-side query
 
-# [4.3.0] - 2024-04-25
+### [4.3.0] - 2024-04-25
 
 - Features
   - Added preview when joining two cubes
   - Removed flag for add-dataset, in favor of beta label
 
-# [4.2.0] - 2024-04-23
+### [4.2.0] - 2024-04-23
 
 - Features
   - Added support for using dynamic most recent date in temporal X axis
@@ -841,7 +844,7 @@ introduced since v4.0.0 🎉
   - DataCubesObservations query no longer waits for DataCubesComponents query to
     finish in order to start executing
 
-# [4.1.0] - 2024-04-10
+### [4.1.0] - 2024-04-10
 
 - Features
   - Added support for monthly and yearly temporal entities (via a new
@@ -873,24 +876,24 @@ introduced since v4.0.0 🎉
   - Removed some unused dependencies
   - Reduced bundle size by optimizing d3 imports
 
-# [4.0.0] - 2024-03-26
+### [4.0.0] - 2024-03-26
 
 Bumped to a new major version to celebrate all the improvements and new features
 introduced since v3.0.0 🎉
 
-# [3.27.3] - 2024-03-22
+### [3.27.3] - 2024-03-22
 
 - Fixes
   - Full data download now correctly includes all cube dimensions again
 
-# [3.27.2] - 2024-03-19
+### [3.27.2] - 2024-03-19
 
 - Performance
   - Dimension values are now fetched in parallel in case of fetching for several
     dimensions at once
   - Refactored shapes and coordinates fetching to not rely on resolver chains
 
-# [3.27.1] - 2024-03-15
+### [3.27.1] - 2024-03-15
 
 - Performance
   - Hierarchies are now fetched in parallel with dimension values, rather than
@@ -899,7 +902,7 @@ introduced since v3.0.0 🎉
 - Maintenance
   - Increased the number of Playwright workers to 4
 
-# [3.27.0] - 2024-03-12
+### [3.27.0] - 2024-03-12
 
 - Features
   - Slightly increased initial map zoom level
@@ -922,7 +925,7 @@ introduced since v3.0.0 🎉
   - Initial zoom map is now correctly (and consistently) applied again
   - Optional filters can be added again
 
-# [3.26.3] - 2024-03-05
+### [3.26.3] - 2024-03-05
 
 - Fixes
   - Fixed an issue with fetching filter values that sometimes included values
@@ -941,7 +944,7 @@ introduced since v3.0.0 🎉
   - Optimized performance of getting dataset preview and cube metadata by not
     fetching whole cube shape
 
-# [3.26.2] - 2024-02-23
+### [3.26.2] - 2024-02-23
 
 - Fixes
   - The application no longer breaks in specific cases when filters were
@@ -949,12 +952,12 @@ introduced since v3.0.0 🎉
 - Maintenance
   - Increased timeout duration for GQL API (Vercel deployments)
 
-# [3.26.1] - 2024-02-22
+## [3.26.1] - 2024-02-22
 
 - Fixes
   - Ability to copy/edit previous charts
 
-# [3.26.0] - 2024-02-20
+## [3.26.0] - 2024-02-20
 
 - Features
   - Layout step is now available without using a flag
@@ -975,7 +978,7 @@ introduced since v3.0.0 🎉
 - Maintenance
   - Added GQL performance monitoring tests
 
-# [3.25.0] - 2023-12-12
+### [3.25.0] - 2023-12-12
 
 - Features
   - Added a layout step to the chart creation flow (tab layout, vertical or tall
@@ -990,7 +993,7 @@ introduced since v3.0.0 🎉
   - Copying a link to a new visualization from a dataset preview now correctly
     includes a data source
 
-# [3.24.2] - 2023-11-28
+### [3.24.2] - 2023-11-28
 
 - Features
   - Implemented initial version of merging the cubes (not yet exposed through
@@ -1001,7 +1004,7 @@ introduced since v3.0.0 🎉
   - Fixed switching between segmentation dimensions in column charts
   - Added UTF-8 formatting to CSV and XLSX files (data download)
 
-# [3.24.1] - 2023-11-13
+### [3.24.1] - 2023-11-13
 
 - Features
   - Match drag and drop behavior for table chart and filter panel
@@ -1015,7 +1018,7 @@ introduced since v3.0.0 🎉
   - Vastly improved performance of dataset preview by using a new version of
     `cube-view-query` library (`View.preview`)
 
-# [3.24.0] - 2023-11-08
+### [3.24.0] - 2023-11-08
 
 - Features
   - It's now possible to adjust Combo charts colors 🧑‍🎨
@@ -1050,7 +1053,7 @@ introduced since v3.0.0 🎉
     visually indicate resolving times)
   - Removed deprecated `validThrough` cube filters
 
-# [3.23.0] - 2023-10-17
+### [3.23.0] - 2023-10-17
 
 - Features
   - Added a new group of charts – Combo charts – that includes multi-measure
@@ -1062,7 +1065,7 @@ introduced since v3.0.0 🎉
     limit)
   - It's now again possible to enable interactive segment filters
 
-# [3.22.9] - 2023-10-06
+### [3.22.9] - 2023-10-06
 
 - Fixes
   - Cascading filters are not stuck anymore in the loading mode in some cases
@@ -1074,7 +1077,7 @@ introduced since v3.0.0 🎉
 - Docs
   - Added chart preview via API section to the documentation
 
-# [3.22.8] - 2023-09-29
+### [3.22.8] - 2023-09-29
 
 - Fixes
   - Cube checker now correctly checks if dimensions are present
@@ -1085,7 +1088,7 @@ introduced since v3.0.0 🎉
   - Dataset preview should now load quicker as we no longer fetch dimension
     values along with it
 
-# [3.22.6] - 2023-09-19
+### [3.22.6] - 2023-09-19
 
 - Features
   - Animated charts now show latest data as default
@@ -1096,7 +1099,7 @@ introduced since v3.0.0 🎉
   - Changing the locale when previewing a larger cube no longer triggers
     multiple locale switches
 
-# [3.22.5] - 2023-09-12
+### [3.22.5] - 2023-09-12
 
 - Fixes
   - It's now again possible to map all colors for hierarchical dimensions used
@@ -1104,28 +1107,28 @@ introduced since v3.0.0 🎉
 - Misc
   - Improved `langString` error message
 
-# [3.22.4] - 2023-09-06
+### [3.22.4] - 2023-09-06
 
 - Docs
   - Update legal framework
 
-# [3.22.3] - 2023-09-05
+### [3.22.3] - 2023-09-05
 
 - Fixes
   - Animation field not updating
   - Infinite loading of homepage chart
 
-# [3.22.2] - 2023-09-05
+### [3.22.2] - 2023-09-05
 
 - Fixes
   - Fixed sorting of dates in XLSX download
 
-# [3.22.1] - 2023-09-05
+### [3.22.1] - 2023-09-05
 
 - Fixes
   - Revert removal of `--openssl-legacy-provider``
 
-# [3.22.0] - 2023-09-05
+### [3.22.0] - 2023-09-05
 
 - Features
   - Interactive filters now work in cascading mode
@@ -1149,7 +1152,7 @@ introduced since v3.0.0 🎉
   - Numerical color legends now dynamically adjust heights to prevent cutting
     longer tick labels
 
-# [3.21.1] - 2023-08-22
+### [3.21.1] - 2023-08-22
 
 - Features
   - Introduced preferred chart type order, which makes the table chart the least
@@ -1171,7 +1174,7 @@ introduced since v3.0.0 🎉
     will result in better performance monitoring (`vercel`, `test`, `int`,
     `prod`)
 
-# [3.21.0] - 2023-08-15
+### [3.21.0] - 2023-08-15
 
 - Features
   - It's now possible to animate the Map Chart 🎬 🗺️
@@ -1221,7 +1224,7 @@ introduced since v3.0.0 🎉
   - Consolidated chart state computation logic, which should make the charts
     less error-prone
 
-# [3.20.3] - 2023-07-04
+### [3.20.3] - 2023-07-04
 
 - Fixes
   - Dimension values are now correctly sorted is dimension is numerical
@@ -1232,7 +1235,7 @@ introduced since v3.0.0 🎉
 - Tests
   - Introduced load tests using k6
 
-# [3.20.2] - 2023-06-20
+### [3.20.2] - 2023-06-20
 
 - Performance
   - The debug data is now only sent along with the payload when the debug mode
@@ -1240,13 +1243,13 @@ introduced since v3.0.0 🎉
   - ContentMDXProvider is now only imported within the pages that actually need
     it instead of being included in the root of the app
 
-# [3.20.1] - 2023-06-19
+### [3.20.1] - 2023-06-19
 
 - Fixes
   - Color legend for hierarchical dimensions now shows only values that actually
     appear in the chart
 
-# [3.20.0] - 2023-06-15
+### [3.20.0] - 2023-06-15
 
 - Fixes
   - Sorting now works correctly for horizontal axis in column charts
@@ -1256,26 +1259,26 @@ introduced since v3.0.0 🎉
   - Interactive time range filter is now again correctly migrated to a new chart
     type
 
-# [3.19.20] - 2023-06-08
+### [3.19.20] - 2023-06-08
 
 - Fixes
   - Sorting now works correctly for temporal dimensions
 
-# [3.19.19] - 2023-06-06
+### [3.19.19] - 2023-06-06
 
 - Fixes
   - Bars with negative values are now correctly attached to 0 again.
   - Sorting now works correctly in line chart color legend and tables.
   - Color legend is again properly interactive.
 
-## [3.19.18] - 2023-05-16
+### [3.19.18] - 2023-05-16
 
 - Fixes
   - Columns now animate correctly when window is resized
 - Misc
   - Hidden Animation field behind feature flag
 
-## [3.19.17] - 2023-05-16
+### [3.19.17] - 2023-05-16
 
 - Features
   - Added Animation field for Column, Pie and Scatter charts 🎬
@@ -1290,19 +1293,19 @@ introduced since v3.0.0 🎉
 - Misc
   - Updated Spinner text (which appears when data takes a long time to load)
 
-## [3.19.16] - 2023-05-12
+### [3.19.16] - 2023-05-12
 
 - Features
   - Updated the design of minimal embed mode
 - Fixes
   - Temporal dimensions usage with X axes (Column chart)
 
-## 3.19
+### 3.19
 
 A particular focus was given on data fetching performance. Interactions with
 visualize.admin.ch are now noticeable faster.
 
-### Performance
+#### Performance
 
 - Improved performance of cube data fetching
 
@@ -1317,26 +1320,26 @@ visualize.admin.ch are now noticeable faster.
   - Display number of SPARQL queries in query list
   - Sorted queries by duration
 
-### Features
+#### Features
 
 - Embed options (ability to either embed minimal or standard chart). Publish
   actions have moved to the top of the published chart for better visibility.
 
-## [3.17.0] - 2022-12-06
+### [3.17.0] - 2022-12-06
 
 - Metadata is now shown in a dedicated panel that can be reached both from
   editor & published mode
 - It's now possible to use abbreviations in color segmentations and X fields for
   dimension values with schema:alternateName properties
 
-## [3.15.0] - 2022-11-29
+### [3.15.0] - 2022-11-29
 
 - Add search to filters with hierarchy
 - Move interactive filters in place
 - Diminish banner height in search
 - Increase depth limit of hierarchies to 6
 
-## [3.13.0] - 2022-11-22
+### [3.13.0] - 2022-11-22
 
 - Enhancements:
   - Cube Checker:
@@ -1348,7 +1351,7 @@ visualize.admin.ch are now noticeable faster.
   - Correctly retrieve min & max values for Temporal dimensions when scaleType
     is not equal to Interval
 
-## [3.12.0] - 2022-11-15
+### [3.12.0] - 2022-11-15
 
 - Editor:
   - Introduced a loading state when switching dimension iris and a dataset is
@@ -1371,7 +1374,7 @@ visualize.admin.ch are now noticeable faster.
   - Introduced a structure to hierarchical dimensions in select elements in
     published charts
 
-## [3.11.0] - 2022-10-26
+### [3.11.0] - 2022-10-26
 
 - Charts:
   - Enable sorting of geo dimensions
@@ -1390,50 +1393,50 @@ visualize.admin.ch are now noticeable faster.
 - Tests:
   - It's now easier and speedier to write E2E tests
 
-## [3.10.0] - 2022-10-19
+### [3.10.0] - 2022-10-19
 
 - Improve loading performance for larger cubes
 
-## [3.9.6] - 2022-10-12
+### [3.9.6] - 2022-10-12
 
 - Fix: IRIs of NFI cubes (previously there was None-None- includes in IRI; it
   was removed recently and we now migrate old IRIs to new IRIs)
 
-## [3.9.5] - 2022-10-04
+### [3.9.5] - 2022-10-04
 
 - Charts: fix bugs that caused scatterplot and pie charts to crash in case no
   categorical dimensions were present in a dataset
 - Embed: introduce chart config migrations to embed mode
 
-## [3.9.4] - 2022-09-29
+### [3.9.4] - 2022-09-29
 
 - Metadata: fix dimension metadata display for Grouped and Stacked column charts
 
-## [3.9.3] - 2022-09-29
+### [3.9.3] - 2022-09-29
 
 - Map: Retain filters when switching from another chart type to map
 - Charts: Tooltip describing dimensions shown at more places.
 - Search: Improvements concerning categories & themes.
 - Metadata: Dimensions metadata is shown in more places within the UI
 
-## [3.9.2] - 2022-09-20
+### [3.9.2] - 2022-09-20
 
 - Map: fix a layer offset problem on Windows Edge.
 - Search: Cubes without description were not returned
 
-## [3.9.0] - 2022-09-19
+### [3.9.0] - 2022-09-19
 
-### Features
+#### Features
 
 - Dataset preview and chart edition: tooltips displaying dimension description
   are shown
 
-### Fixes
+#### Fixes
 
 - Search: improve response times
 - Maps: Lakes are above dataviz layer
 
-## [3.8.0] - 2022-09-15
+### [3.8.0] - 2022-09-15
 
 - Search
   - Improve search time
@@ -1454,7 +1457,7 @@ visualize.admin.ch are now noticeable faster.
 
 Note: We will try in the future to better follow semantic versioning.
 
-## [3.7.11] - 2022-09-09
+### [3.7.11] - 2022-09-09
 
 - 🚀 Maps
   - Symbols can now be colored according to a measure
@@ -1463,11 +1466,11 @@ Note: We will try in the future to better follow semantic versioning.
   multiple roots
 - 🐛 Table view: bug fix when switching from chart view on published view
 
-## [3.7.10] - 2022-08-26
+### [3.7.10] - 2022-08-26
 
 - Font adjustment in filters menu
 
-## [3.7.9] - 2022-08-25
+### [3.7.9] - 2022-08-25
 
 - Column order is based on the shacl:order defined in the data
   - For the dataset preview
@@ -1482,13 +1485,13 @@ Note: We will try in the future to better follow semantic versioning.
 - Add landing page link to chart footnotes
 - Reintroduce chart selector panel section (additionally to popup on future tab)
 
-## [3.7.8] - 2022-08-22
+### [3.7.8] - 2022-08-22
 
 - Fixed organization search
 - Explanation on how to create groups for tables
 - Fixed delay in setting datasource
 
-## [3.7.7] - 2022-08-17
+### [3.7.7] - 2022-08-17
 
 - Add an option to see cubes from different LINDAS environments within one
   Visualize instance
@@ -1504,22 +1507,22 @@ Note: We will try in the future to better follow semantic versioning.
   bar
 - Ability to lock a map to the current viewed bounding box
 
-## [3.7.4] - 2022-05-31
+### [3.7.4] - 2022-05-31
 
 - Do not show "Run SPARQL query" button if SPARQL_EDITOR variable not set
 - Add link top opendata.swiss when the cube is published there (chart
   footnotes + chart preview info panel)
 - Repair homepage examples on test
 
-## [3.7.2] - 2022-05-24
+### [3.7.2] - 2022-05-24
 
 - Support for filtering values from a dimension with monthly data (fix #564)
 
-## [3.7.1] - 2022-05-23
+### [3.7.1] - 2022-05-23
 
 - Fix page jump when switching from chart to table (published and editing mode)
 
-## [3.7.0] - 2022-05-05
+### [3.7.0] - 2022-05-05
 
 - Maps: Use neutral map style
 - Interactive filters: time brush is more stable
@@ -1529,11 +1532,11 @@ Note: We will try in the future to better follow semantic versioning.
 - Navigation: Back button in editor 1st screen brings back to dataset preview
 - Add status page link in the footer
 
-## [3.6.3] - 2022-05-05
+### [3.6.3] - 2022-05-05
 
 - Maps symbols are shown over all layers
 
-## [3.6.2] - 2022-04-26
+### [3.6.2] - 2022-04-26
 
 - Polished data download UI
 - Ability to switch to table view on any chart
@@ -1548,7 +1551,7 @@ Note: We will try in the future to better follow semantic versioning.
 - Implemented logic to keep as much chart configuration as possible when
   switching chart type
 
-## [3.4.10] - 2022-04-11
+### [3.4.10] - 2022-04-11
 
 - Search improvements (handles trailing space and casing)
 - Data download improvements (new UI with an ability to select XLSX file format)
@@ -1558,7 +1561,7 @@ Note: We will try in the future to better follow semantic versioning.
 - Changed pie chart legend symbol from line to square
 - Migration to MUI
 
-## [3.4.7] - 2022-02-18
+### [3.4.7] - 2022-02-18
 
 - Search has been improved
   https://github.com/visualize-admin/visualization-tool/pull/256
@@ -1566,7 +1569,7 @@ Note: We will try in the future to better follow semantic versioning.
   - Less fuzzy search
   - Ability to search inside creator, themes, keywords
 
-## [3.4.5] - 2022-02-25
+### [3.4.5] - 2022-02-25
 
 - Switch to a global vector tile service for the maps
 - Do not allow numerical dimensions in the options fields
@@ -1574,13 +1577,13 @@ Note: We will try in the future to better follow semantic versioning.
 - Improve placement of tooltips and fix tooltips being cut
 - Change example on homepage
 
-## [3.4.4] - 2022-02-23
+### [3.4.4] - 2022-02-23
 
 - Show unit and standard error inside map tooltip
 - Prevent geo coordinates display error when all shapes on a map are deselected
 - Show "-" inside a map tooltip when no value is present
 
-## [3.4.2] - 2022-02-21
+### [3.4.2] - 2022-02-21
 
 - Hide all elements related to labels, not only text by @bprusinowski in
   https://github.com/visualize-admin/visualization-tool/pull/387
@@ -1593,9 +1596,9 @@ Note: We will try in the future to better follow semantic versioning.
 - Map improvements by @bprusinowski in
   https://github.com/visualize-admin/visualization-tool/pull/397
 
-## [3.4.0] - 2022-02-18
+### [3.4.0] - 2022-02-18
 
-### Features
+#### Features
 
 #### Navigation
 
@@ -1632,16 +1635,16 @@ Note: We will try in the future to better follow semantic versioning.
 - Tooltip for simple column chart contain the standard error.
   [#366](https://github.com/visualize-admin/visualization-tool/pull/366)
 
-### Bugs
+#### Bugs
 
 - Fix selection of optional date filter
   [#332](https://github.com/visualize-admin/visualization-tool/pull/332)
 - Fix discrete color scales with less than 3 observations
   [#309](https://github.com/visualize-admin/visualization-tool/pull/309)
 
-## [3.3.0] - 2022-02-07
+### [3.3.0] - 2022-02-07
 
-### Maps
+#### Maps
 
 It is now possible to use maps as a new visualization type. Quantities can be
 encoded as a scatterplot on the map. Datasets which have GeoShapes or
@@ -1656,7 +1659,7 @@ GeoCoordinates dimensions can be charted on a map.
 [#301](https://github.com/visualize-admin/visualization-tool/pull/301)
 [#302](https://github.com/visualize-admin/visualization-tool/pull/302)
 
-### Cascading filters
+#### Cascading filters
 
 Now the left panel filters are cascading filters: values chosen for above
 filters will be taken into account for below filters. Also, optional filters are
@@ -1664,7 +1667,7 @@ not shown at first but can be added via a menu.
 
 [#271](https://github.com/visualize-admin/visualization-tool/pull/271)
 
-### Misc
+#### Misc
 
 - Banner and icons have been removed on the homepage
   [#297](https://github.com/visualize-admin/visualization-tool/pull/297)
@@ -1686,44 +1689,44 @@ not shown at first but can be added via a menu.
   [#303](https://github.com/visualize-admin/visualization-tool/pull/303)
   [#314](https://github.com/visualize-admin/visualization-tool/pull/314)
 
-## [0.6.0] - 2020-05-25
+### [0.6.0] - 2020-05-25
 
-### Added
+#### Added
 
 - Option for sorting elements in charts (e.g. sorting column charts by value
   instead of alphabetically)
 - Option for defining custom colors for individual values.
 
-### Fixed
+#### Fixed
 
 - Only allow temporal dimensions for line and area chart x-axis
 - Only show scrollbars when necessary
 - Show loading indicator in editor when data is reloading
 
-## [0.5.2] – 2020-05-04
+### [0.5.2] – 2020-05-04
 
-### Added
+#### Added
 
 - To prevent search indexing of staging environments, the header `X-Robots-Tag`
   will be set to `noindex, nofollow` unless the env variable
   `ALLOW_SEARCH_BOTS=true` is set.
 
-### Fixed
+#### Fixed
 
 - Disabled compilation of dependencies in node_modules with Babel. This resolves
   some build issues.
 
-## [0.5.1] – 2020-04-29
+### [0.5.1] – 2020-04-29
 
-### Fixed
+#### Fixed
 
 - Remove "none" from pie partition options
 - Add a hint when negative values are used in the pie
 - Fix number of time axis ticks in partitioned charts
 
-## [0.5.0] - 2020-04-22
+### [0.5.0] - 2020-04-22
 
-### Added
+#### Added
 
 - Tooltips for all chart types
 - Automated snapshot regression tests
@@ -1734,7 +1737,7 @@ not shown at first but can be added via a menu.
 - Home page and UI translations for all languages
 - Make core app usable as npm package
 
-### Changed
+#### Changed
 
 - Improved wording on home page
 - Fetch configs directly from DB on server
@@ -1742,7 +1745,7 @@ not shown at first but can be added via a menu.
 - Refactor to use next.js `getServerSideProps` where applicable
 - Enable CORS on GraphQL endpoint
 
-### Fixed
+#### Fixed
 
 - i18n: Set html lang attribute
 - Handle single-measure temporal datasets
@@ -1751,23 +1754,23 @@ not shown at first but can be added via a menu.
 - Viewport meta tag for AEM embeds
 - Various QA fixes
 
-## [0.4.0] - 2020-02-12
+### [0.4.0] - 2020-02-12
 
-### Added
+#### Added
 
 - GraphQL API: Move all SPARQL/Data Cube fetching and transformation logic
   behind a GraphQL API
 - "Copy Visualization" feature
 
-### Changed
+#### Changed
 
 - Remove dependency on [vega](https://vega.github.io/vega/) and replace with
   custom React + D3 charts
 
-### Removed
+#### Removed
 
 - Remote Data logic, SWR (both replaced by GraphQL)
 
-## [0.3.0]
+### [0.3.0]
 
 TODO

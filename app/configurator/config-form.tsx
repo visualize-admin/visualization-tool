@@ -47,6 +47,8 @@ import { isMultiHierarchyNode } from "@/utils/hierarchy";
 import { useEvent } from "@/utils/use-event";
 
 export type Option = {
+  isGroupHeader?: boolean;
+  group?: string;
   value: string | $FixMe;
   label: string | $FixMe;
   position?: DimensionValue["position"];
@@ -643,6 +645,7 @@ export const MultiFilterContextProvider = ({
 }) => {
   const [state] = useConfiguratorState();
   const activeFilter = getFilterValue(state, dimension);
+
   const allValues = useMemo(() => {
     return dimension.values.map((d) => `${d.value}`) ?? [];
   }, [dimension.values]);
@@ -654,6 +657,7 @@ export const MultiFilterContextProvider = ({
           ? Object.keys(activeFilter.values)
           : []
       : allValues;
+
     return new Set(activeKeys);
   }, [activeFilter, allValues]);
 

@@ -104,7 +104,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
-              interactive={interactiveFiltersConfig?.legend.active}
+              interactive={interactiveFiltersConfig.legend.active}
               showTitle={fields.segment.showTitle}
             />
           </ChartControlsContainer>
@@ -136,7 +136,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
-              interactive={interactiveFiltersConfig?.legend.active}
+              interactive={interactiveFiltersConfig.legend.active}
               showTitle={fields.segment.showTitle}
             />
           </ChartControlsContainer>

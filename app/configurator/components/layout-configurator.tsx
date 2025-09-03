@@ -387,7 +387,8 @@ const DashboardTimeRangeFilterOptions = ({
           const interactiveFiltersState = getInteractiveFiltersState();
           const { from, to } = interactiveFiltersState.timeRange;
           const setTimeRangeFilter = interactiveFiltersState.setTimeRange;
-          if (from && to && interactiveFiltersConfig?.timeRange.componentId) {
+
+          if (from && to && interactiveFiltersConfig.timeRange.componentId) {
             setTimeRangeFilter(newDate, to);
           }
         }
@@ -404,7 +405,8 @@ const DashboardTimeRangeFilterOptions = ({
           const interactiveFiltersState = getInteractiveFiltersState();
           const { from, to } = interactiveFiltersState.timeRange;
           const setTimeRangeFilter = interactiveFiltersState.setTimeRange;
-          if (from && to && interactiveFiltersConfig?.timeRange.componentId) {
+
+          if (from && to && interactiveFiltersConfig.timeRange.componentId) {
             setTimeRangeFilter(from, newDate);
           }
         }

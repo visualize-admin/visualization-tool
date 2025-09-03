@@ -13,6 +13,7 @@ import { getChartSpec } from "@/charts/chart-config-ui-options";
 import {
   CalculationType,
   ChartConfig,
+  FilterValue,
   FilterValueSingle,
 } from "@/config-types";
 import { truthy } from "@/domain/types";
@@ -42,7 +43,7 @@ export type InteractiveFiltersState = {
   };
 };
 
-export type DataFilters = Record<string, FilterValueSingle>;
+export type DataFilters = Record<string, FilterValue>;
 
 type TimeSlider =
   | {
@@ -66,6 +67,9 @@ type InteractiveFiltersStateActions = {
     dimensionId: string,
     dimensionValue: FilterValueSingle["value"]
   ) => void;
+  setMultiDataFilter: (dimensionId: string, values: string[]) => void;
+  addDataFilterValue: (dimensionId: string, value: string) => void;
+  removeDataFilterValue: (dimensionId: string, value: string) => void;
   resetDataFilters: () => void;
   setCalculationType: (calculationType: CalculationType) => void;
   setAnnotations: (annotations: InteractiveFiltersState["annotations"]) => void;
@@ -134,6 +138,110 @@ const interactiveFiltersStoreCreator: StateCreator<State> = (set) => {
         },
       }));
     },
+    setMultiDataFilter: (dimensionId: string, values: string[]) => {
+      set((state) => ({
+        dataFilters: {
+          ...state.dataFilters,
+          [dimensionId]: {
+            type: "multi",
+            values: Object.fromEntries(values.map((v) => [v, true])),
+          },
+        },
+      }));
+    },
+    addDataFilterValue: (dimensionId: string, value: string) => {
+      set((state) => {
+        const currentFilter = state.dataFilters[dimensionId];
+
+        if (currentFilter?.type === "single") {
+          return {
+            dataFilters: {
+              ...state.dataFilters,
+              [dimensionId]: {
+                type: "multi",
+                values: {
+                  [currentFilter.value as string]: true,
+                  [value]: true,
+                },
+              },
+            },
+          };
+        }
+
+        if (currentFilter?.type === "multi") {
+          return {
+            dataFilters: {
+              ...state.dataFilters,
+              [dimensionId]: {
+                type: "multi",
+                values: {
+                  ...currentFilter.values,
+                  [value]: true,
+                },
+              },
+            },
+          };
+        }
+
+        return {
+          dataFilters: {
+            ...state.dataFilters,
+            [dimensionId]: {
+              type: "multi",
+              values: { [value]: true },
+            },
+          },
+        };
+      });
+    },
+    removeDataFilterValue: (dimensionId: string, value: string) => {
+      set((state) => {
+        const currentFilter = state.dataFilters[dimensionId];
+
+        if (currentFilter?.type === "multi") {
+          const newValues = { ...currentFilter.values };
+          delete newValues[value];
+
+          const remainingValues = Object.keys(newValues);
+
+          if (remainingValues.length === 1) {
+            return {
+              dataFilters: {
+                ...state.dataFilters,
+                [dimensionId]: {
+                  type: "single",
+                  value: remainingValues[0],
+                },
+              },
+            };
+          }
+
+          if (remainingValues.length === 0) {
+            const newDataFilters = { ...state.dataFilters };
+            delete newDataFilters[dimensionId];
+            return { dataFilters: newDataFilters };
+          }
+
+          return {
+            dataFilters: {
+              ...state.dataFilters,
+              [dimensionId]: {
+                type: "multi",
+                values: newValues,
+              },
+            },
+          };
+        }
+
+        if (currentFilter?.type === "single" && currentFilter.value === value) {
+          const newDataFilters = { ...state.dataFilters };
+          delete newDataFilters[dimensionId];
+          return { dataFilters: newDataFilters };
+        }
+
+        return { dataFilters: state.dataFilters };
+      });
+    },
     resetDataFilters: () => {
       set({ dataFilters: {} });
     },
@@ -190,15 +298,17 @@ const getPotentialTimeRangeFilterIds = (chartConfigs: ChartConfig[]) => {
               config.fields[encoding.field]
             : undefined;
         if (field && "componentId" in field) {
-          return {
-            /** Unjoined dimension */
-            componentId: isJoinById(field.componentId as string)
-              ? getOriginalIds(field.componentId, config)[0]
-              : field.componentId,
+          const candidateIds = isJoinById(field.componentId as string)
+            ? getOriginalIds(field.componentId, config)
+            : [field.componentId];
+
+          return candidateIds.map((componentId) => ({
+            componentId,
             chartKey: config.key,
-          };
+          }));
         }
       })
+      .flat()
       .filter(truthy);
 
     return chartTemporalDimensions;
@@ -208,17 +318,35 @@ const getPotentialTimeRangeFilterIds = (chartConfigs: ChartConfig[]) => {
 };
 
 const getPotentialDataFilterIds = (chartConfigs: ChartConfig[]) => {
-  return uniq(
-    chartConfigs.flatMap((config) => {
-      return config.cubes
+  const dimensionIdCounts = new Map<string, number>();
+
+  chartConfigs.forEach((config) => {
+    const dimensionIds = uniq(
+      config.cubes
         .map((cube) => cube.filters)
         .flatMap((filters) => {
           return Object.entries(filters)
-            .filter(([_, filter]) => filter.type === "single")
+            .filter(
+              ([_, filter]) =>
+                filter.type === "single" || filter.type === "multi"
+            )
             .map(([dimensionId]) => dimensionId);
-        });
-    })
-  );
+        })
+    );
+
+    dimensionIds.forEach((dimensionId) => {
+      dimensionIdCounts.set(
+        dimensionId,
+        (dimensionIdCounts.get(dimensionId) ?? 0) + 1
+      );
+    });
+  });
+
+  const sharedDimensionIds = Array.from(dimensionIdCounts.entries())
+    .filter(([_, count]) => count > 1)
+    .map(([dimensionId]) => dimensionId);
+
+  return sharedDimensionIds;
 };
 
 /**
@@ -231,6 +359,9 @@ export const InteractiveFiltersProvider = ({
   chartConfigs: ChartConfig[];
 }>) => {
   const storeRefs = useRef<Record<ChartConfig["key"], StoreApi<State>>>({});
+  const boundSelectorRefs = useRef<
+    Record<ChartConfig["key"], UseBoundStoreWithSelector<StoreApi<State>>>
+  >({});
 
   const potentialTimeRangeFilterIds = useMemo(() => {
     return getPotentialTimeRangeFilterIds(chartConfigs);
@@ -250,11 +381,17 @@ export const InteractiveFiltersProvider = ({
 
         storeRefs.current[chartConfig.key] = store;
 
+        if (!boundSelectorRefs.current[chartConfig.key]) {
+          boundSelectorRefs.current[chartConfig.key] =
+            createBoundUseStoreWithSelector(store);
+        }
+
         const ctxValue: InteractiveFiltersContextValue = [
           store.getState,
-          createBoundUseStoreWithSelector(store),
+          boundSelectorRefs.current[chartConfig.key],
           store,
         ];
+
         return [chartConfig.key, ctxValue];
       })
     );

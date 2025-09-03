@@ -69,16 +69,23 @@ const shouldShowCompactMobileView = (width: number) => {
   return width < MOBILE_VIEW_THRESHOLD;
 };
 
+export const TABLE_TIME_RANGE_HEIGHT = 40;
+
 /** Use to make sure we don't cut the table off by having other UI elements enabled */
 export const getTableUIElementsOffset = ({
   showSearch,
   width,
+  showTimeRange,
 }: {
   showSearch: boolean;
   width: number;
+  showTimeRange: boolean;
 }) => {
   return (
-    (showSearch ? 48 : 0) + (shouldShowCompactMobileView(width) ? 48 : 0) + 4
+    (showSearch ? 48 : 0) +
+    (shouldShowCompactMobileView(width) ? 48 : 0) +
+    (showTimeRange ? TABLE_TIME_RANGE_HEIGHT : 0) +
+    54
   );
 };
 

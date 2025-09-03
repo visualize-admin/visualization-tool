@@ -51,10 +51,6 @@ import {
 } from "@/configurator/components/field-date-picker";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import {
-  getTimeIntervalFormattedSelectOptions,
-  getTimeIntervalWithProps,
-} from "@/configurator/components/ui-helpers";
-import {
   isMultiFilterFieldChecked,
   Option,
   useActiveChartField,
@@ -88,7 +84,6 @@ import {
   VISUALIZE_MOST_RECENT_VALUE,
 } from "@/domain/most-recent-value";
 import { useTimeFormatLocale } from "@/formatters";
-import { TimeUnit } from "@/graphql/query-hooks";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { ColorItem, getPalette } from "@/palettes";
@@ -203,7 +198,7 @@ export const DataFilterSelect = ({
   const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
   const noneLabel = t({
     id: "controls.dimensionvalue.none",
-    message: "No Filter",
+    message: "No filter",
   });
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(dimension);
@@ -258,7 +253,10 @@ export const DataFilterSelect = ({
         open={isOpen}
         disabled={disabled}
         sideControls={sideControls}
-        {...fieldProps}
+        value={fieldProps.value}
+        onChange={(e) => {
+          fieldProps.onChange({ target: { value: e.target.value as string } });
+        }}
       />
     );
   }
@@ -310,7 +308,7 @@ export const DataFilterSelect = ({
       }
       disabled={disabled || usesMostRecentValue}
       options={allValues}
-      sortOptions={false}
+      sort={false}
       sideControls={sideControls}
       open={isOpen}
       onClose={handleClose}
@@ -427,71 +425,6 @@ export const DataFilterTemporal = ({
         />
       </Box>
     </>
-  );
-};
-
-export const DataFilterSelectTime = ({
-  dimension,
-  label,
-  from,
-  to,
-  timeUnit,
-  timeFormat,
-  id,
-  disabled,
-}: {
-  dimension: Dimension;
-  label: ReactNode;
-  from: string;
-  to: string;
-  timeUnit: TimeUnit;
-  timeFormat: string;
-  id: string;
-  disabled?: boolean;
-}) => {
-  const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
-  const formatLocale = useTimeFormatLocale();
-
-  const timeIntervalWithProps = useMemo(() => {
-    return getTimeIntervalWithProps(
-      from,
-      to,
-      timeUnit,
-      timeFormat,
-      formatLocale
-    );
-  }, [from, to, timeUnit, timeFormat, formatLocale]);
-
-  const options = useMemo(() => {
-    return timeIntervalWithProps.range > 100
-      ? []
-      : getTimeIntervalFormattedSelectOptions(timeIntervalWithProps);
-  }, [timeIntervalWithProps]);
-
-  if (options.length) {
-    return (
-      <Select
-        id={id}
-        size="sm"
-        label={label}
-        disabled={disabled}
-        options={options}
-        sortOptions={false}
-        {...fieldProps}
-      />
-    );
-  }
-
-  return (
-    <TimeInput
-      id={id}
-      label={label}
-      value={fieldProps.value}
-      timeFormat={timeFormat}
-      formatLocale={formatLocale}
-      isOptional={false}
-      onChange={fieldProps.onChange}
-    />
   );
 };
 

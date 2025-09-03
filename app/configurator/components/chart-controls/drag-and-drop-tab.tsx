@@ -89,6 +89,10 @@ export const TabDropZone = ({
                         { innerRef, draggableProps, dragHandleProps },
                         { isDragging }
                       ) => {
+                        const component = components.find(
+                          (d) => d.id === componentId
+                        );
+
                         return (
                           <Box
                             ref={innerRef}
@@ -96,20 +100,20 @@ export const TabDropZone = ({
                             {...dragHandleProps}
                             className={classes.filterRow}
                           >
-                            <DraggableTabField
-                              key={componentId}
-                              component={
-                                components.find((d) => d.id === componentId)!
-                              }
-                              value={componentId}
-                              upperLabel={
-                                <Trans id="table.column.no">
-                                  Column {index + 1}
-                                </Trans>
-                              }
-                              isDragging={isDragging}
-                              disabled={isHidden}
-                            />
+                            {component ? (
+                              <DraggableTabField
+                                key={componentId}
+                                component={component}
+                                value={componentId}
+                                upperLabel={
+                                  <Trans id="table.column.no">
+                                    Column {index + 1}
+                                  </Trans>
+                                }
+                                isDragging={isDragging}
+                                disabled={isHidden}
+                              />
+                            ) : null}
                             <Box className={classes.dragButtons}>
                               <MoveDragButton />
                             </Box>

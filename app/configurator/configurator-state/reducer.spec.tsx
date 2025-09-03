@@ -572,6 +572,8 @@ describe("deriveFiltersFromFields", () => {
           "dataFilters": {
             "active": false,
             "componentIds": [],
+            "defaultValueOverrides": {},
+            "filterTypes": {},
           },
           "legend": {
             "active": false,
@@ -1179,10 +1181,36 @@ describe("colorMapping", () => {
               filters: {},
             },
           ],
+          interactiveFiltersConfig: {
+            legend: {
+              active: false,
+              componentId: "",
+            },
+            timeRange: {
+              active: false,
+              componentId: "",
+              presets: {
+                type: "range",
+                from: "",
+                to: "",
+              },
+            },
+            dataFilters: {
+              active: false,
+              componentIds: [],
+              defaultValueOverrides: {},
+              filterTypes: {},
+              defaultOpen: true,
+            },
+            calculation: {
+              active: false,
+              type: "identity",
+            },
+          },
         },
       ],
       activeChartKey: "abc",
-    } as ConfiguratorStateConfiguringChart;
+    } as unknown as ConfiguratorStateConfiguringChart;
 
     handleChartFieldChanged(state, {
       type: "CHART_FIELD_CHANGED",

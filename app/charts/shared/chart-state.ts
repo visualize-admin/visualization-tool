@@ -123,7 +123,8 @@ export type ChartWithInteractiveXTimeRangeState =
   | LinesState
   | ComboLineSingleState
   | ComboLineColumnState
-  | ComboLineDualState;
+  | ComboLineDualState
+  | TableChartState;
 
 export type ChartWithInteractiveYTimeRangeState = BarsState;
 
@@ -356,6 +357,41 @@ export const useTemporalXVariables = (
     xDimension,
     getX: isTemporalDimension(xDimension) ? getXTemporal : getXTemporalEntity,
     getXAsString,
+  };
+};
+
+export type TemporalMaybeXVariables = {
+  xDimension: TemporalDimension | TemporalEntityDimension | undefined;
+  getX: TemporalValueGetter;
+};
+
+export const useTemporalMaybeXVariables = (
+  { componentId = "" }: { componentId: string | undefined },
+  { dimensionsById }: { dimensionsById: DimensionsById }
+): TemporalMaybeXVariables => {
+  const xDimension = dimensionsById[componentId];
+
+  if (
+    xDimension &&
+    !isTemporalDimension(xDimension) &&
+    !isTemporalEntityDimension(xDimension)
+  ) {
+    throw Error(`Dimension <${componentId}> is not temporal!`);
+  }
+
+  const getXTemporal = useTemporalVariable(componentId);
+  const dimensionValues = dimensionsById[componentId]?.values ?? [];
+  const relatedLimitValues =
+    dimensionsById[componentId]?.relatedLimitValues ?? [];
+  const values = uniqBy(
+    [...dimensionValues, ...relatedLimitValues],
+    (d) => d.value
+  );
+  const getXTemporalEntity = useTemporalEntityVariable(values)(componentId);
+
+  return {
+    xDimension,
+    getX: isTemporalDimension(xDimension) ? getXTemporal : getXTemporalEntity,
   };
 };
 
@@ -763,7 +799,7 @@ export const useInteractiveFiltersVariables = (
   interactiveFiltersConfig: ChartConfig["interactiveFiltersConfig"],
   { dimensionsById }: { dimensionsById: DimensionsById }
 ): InteractiveFiltersVariables => {
-  const id = interactiveFiltersConfig?.timeRange.componentId ?? "";
+  const id = interactiveFiltersConfig.timeRange.componentId;
   const dimension = dimensionsById[id];
   const getTimeRangeDate = useTemporalVariable(id);
   const dimensionValues = dimension?.values ?? [];
@@ -897,12 +933,12 @@ export const useChartData = (
   const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
 
   // time range
-  const interactiveTimeRange = interactiveFiltersConfig?.timeRange;
-  const timeRangeFromTime = interactiveTimeRange?.presets.from
-    ? parseDate(interactiveTimeRange?.presets.from).getTime()
+  const interactiveTimeRange = interactiveFiltersConfig.timeRange;
+  const timeRangeFromTime = interactiveTimeRange.presets.from
+    ? parseDate(interactiveTimeRange.presets.from).getTime()
     : undefined;
-  const timeRangeToTime = interactiveTimeRange?.presets.to
-    ? parseDate(interactiveTimeRange?.presets.to).getTime()
+  const timeRangeToTime = interactiveTimeRange.presets.to
+    ? parseDate(interactiveTimeRange.presets.to).getTime()
     : undefined;
   const timeRangeFilters = useMemo(() => {
     const timeRangeFilter: ValuePredicate | null =
@@ -981,7 +1017,7 @@ export const useChartData = (
   const interactiveLegendFilters = useMemo(() => {
     const legendItems = Object.keys(categories);
     const interactiveLegendFilter: ValuePredicate | null =
-      interactiveFiltersConfig?.legend?.active && getSegmentAbbreviationOrLabel
+      interactiveFiltersConfig.legend.active && getSegmentAbbreviationOrLabel
         ? (d: Observation) => {
             return !legendItems.includes(getSegmentAbbreviationOrLabel(d));
           }
@@ -991,7 +1027,7 @@ export const useChartData = (
   }, [
     categories,
     getSegmentAbbreviationOrLabel,
-    interactiveFiltersConfig?.legend?.active,
+    interactiveFiltersConfig.legend.active,
   ]);
 
   const chartData = useMemo(() => {

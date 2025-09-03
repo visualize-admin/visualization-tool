@@ -91,6 +91,8 @@ export const states: ConfiguratorState[] = [
           dataFilters: {
             active: false,
             componentIds: [],
+            defaultValueOverrides: {},
+            filterTypes: {},
           },
           calculation: {
             active: false,
@@ -1114,7 +1116,32 @@ export const tableConfig: TableConfig = {
   limits: {},
   conversionUnitsByComponentId: {},
   chartType: "table",
-  interactiveFiltersConfig: undefined,
+  interactiveFiltersConfig: {
+    legend: {
+      active: false,
+      componentId: "",
+    },
+    timeRange: {
+      active: false,
+      componentId: "",
+      presets: {
+        type: "range",
+        from: "",
+        to: "",
+      },
+    },
+    dataFilters: {
+      active: false,
+      componentIds: [],
+      defaultValueOverrides: {},
+      filterTypes: {},
+      defaultOpen: true,
+    },
+    calculation: {
+      active: false,
+      type: "identity",
+    },
+  },
   settings: { showSearch: true, showAllRows: true },
   sorting: [
     {

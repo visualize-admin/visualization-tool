@@ -254,7 +254,7 @@ const AddTableSortingOption = ({
       size="sm"
       value="-"
       options={options}
-      sortOptions={false}
+      sort={false}
       label={t({
         id: "controls.sorting.addDimension",
         message: "Add dimension",

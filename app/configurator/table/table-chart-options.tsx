@@ -23,7 +23,6 @@ import {
   ChartOptionCheckboxField,
   ChartOptionSelectField,
   ColorPickerField,
-  DataFilterSelectTime,
 } from "@/configurator/components/field";
 import {
   DimensionValuesMultiFilter,
@@ -47,6 +46,7 @@ import {
   isDimension,
   isNumericalMeasure,
   isTemporalDimension,
+  isTemporalEntityDimension,
   Measure,
 } from "@/domain/data";
 import {
@@ -152,12 +152,6 @@ export const TableColumnOptions = ({
 
   if (!activeField || chartConfig.chartType !== "table") {
     return null;
-  }
-
-  // FIXME: table encoding should be added to UI encodings
-  // @ts-ignore
-  if (activeField === "table-settings") {
-    return <TableSettings />;
   }
 
   // FIXME: table encoding should be added to UI encodings
@@ -324,7 +318,8 @@ export const TableColumnOptions = ({
           </ControlSectionContent>
         </ControlSection>
       )}
-      {isTemporalDimension(component) ? (
+      {isTemporalDimension(component) ||
+      isTemporalEntityDimension(component) ? (
         <ControlSection collapse>
           <SectionTitle disabled={!component} iconName="filter">
             <Trans id="controls.section.filter">Filter</Trans>
@@ -333,26 +328,7 @@ export const TableColumnOptions = ({
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
-            {component.isKeyDimension && isHidden && !isGroup ? (
-              <DataFilterSelectTime
-                id="select-single-filter-time"
-                dimension={component}
-                label={component.label}
-                from={`${component.values[0].value}`}
-                to={`${
-                  component.values[component.values.length - 1]?.value ??
-                  component.values[0].value
-                }`}
-                timeUnit={component.timeUnit}
-                timeFormat={component.timeFormat}
-              />
-            ) : (
-              <TimeFilter
-                key={component.id}
-                dimension={component}
-                disableInteractiveFilters
-              />
-            )}
+            <TimeFilter dimension={component} />
           </ControlSectionContent>
         </ControlSection>
       ) : isDimension(component) ? (
@@ -487,25 +463,5 @@ const ColumnStyleSubOptions = ({
         </Box>
       ) : null}
     </>
-  );
-};
-
-const TableSettings = () => {
-  return (
-    <ControlSection hideTopBorder>
-      <SectionTitle closable>
-        <Trans id="controls.section.tableSettings">Table Settings</Trans>
-      </SectionTitle>
-      <ControlSectionContent>
-        <ChartOptionCheckboxField
-          label={t({
-            id: "controls.tableSettings.showSearch",
-            message: "Show Search",
-          })}
-          field={null}
-          path="settings.showSearch"
-        />
-      </ControlSectionContent>
-    </ControlSection>
   );
 };

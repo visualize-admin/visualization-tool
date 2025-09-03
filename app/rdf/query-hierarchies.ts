@@ -59,7 +59,7 @@ const toTree = (
               .filter(truthy)
               .filter((d) => d.label)
           ),
-          position: parseTerm(node.resource.out(ns.schema.position).term),
+          position: parseTerm(node.resource.out(ns.schema.position).term) ?? 0,
           identifier,
           depth,
           dimensionId,
@@ -164,10 +164,10 @@ export const parseHierarchy = (
     .map((d) => ({
       label: d.label || "ADDITIONAL",
       value: `${d.value}`,
-      depth: -1,
+      depth: 0,
       dimensionId,
       hasValue: true,
-      position: -1,
+      position: 9999,
       identifier: "",
       children: [],
     }));

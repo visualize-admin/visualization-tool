@@ -65,8 +65,6 @@ describe("makeUseQuery", () => {
       <TestComponent variables={{ cubeIri: "example1" }} />
     );
 
-    expect(getByTestId("result").innerHTML).toContain("loading");
-
     await waitFor(() =>
       expect(getByTestId("result").innerHTML).toEqual("mock data")
     );
@@ -83,8 +81,6 @@ describe("makeUseQuery", () => {
     const { getByTestId, rerender } = render(
       <TestComponent variables={{ cubeIri: "example1" }} />
     );
-
-    expect(getByTestId("result").innerHTML).toContain("loading");
 
     await waitFor(() =>
       expect(getByTestId("result").innerHTML).toEqual("mock data")

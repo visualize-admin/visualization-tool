@@ -374,12 +374,14 @@ describe("getFilterValue", () => {
         cubes: [
           {
             iri: "foo",
+            joinBy: ["first"],
             filters: {
               first: f,
             },
           },
           {
             iri: "bar",
+            joinBy: ["second"],
             filters: {
               second: f,
             },
@@ -389,6 +391,7 @@ describe("getFilterValue", () => {
     ],
   } as any as ConfiguratorState;
   const dimension = {
+    id: "joinBy__0",
     isJoinByDimension: true,
     originalIds: [{ dimensionId: "first" }, { dimensionId: "second" }],
   } as any as Dimension;

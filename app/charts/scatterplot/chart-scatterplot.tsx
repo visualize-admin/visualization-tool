@@ -74,7 +74,7 @@ const ChartScatterplot = memo((props: ChartProps<ScatterPlotConfig>) => {
               dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="circle"
-              interactive={interactiveFiltersConfig?.legend.active}
+              interactive={interactiveFiltersConfig.legend.active}
               showTitle={fields.segment.showTitle}
             />
           )}

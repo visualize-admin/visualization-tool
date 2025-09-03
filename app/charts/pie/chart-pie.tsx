@@ -64,9 +64,7 @@ const ChartPie = memo((props: ChartProps<PieConfig>) => {
           dimensionsById={dimensionsById}
           chartConfig={chartConfig}
           symbol="square"
-          interactive={
-            fields.segment && interactiveFiltersConfig?.legend.active
-          }
+          interactive={fields.segment && interactiveFiltersConfig.legend.active}
           showTitle={fields.segment.showTitle}
         />
       </ChartControlsContainer>

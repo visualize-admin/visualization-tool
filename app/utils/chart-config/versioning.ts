@@ -1559,6 +1559,69 @@ export const chartConfigMigrations: Migration[] = [
   },
   {
     from: "4.5.0",
+    to: "4.6.0",
+    description: `ALL {
+      interactiveFiltersConfig can't be undefined anymore
+    }`,
+    up: (config) => {
+      const newConfig = { ...config, version: "4.6.0" };
+
+      if (!newConfig.interactiveFiltersConfig) {
+        newConfig.interactiveFiltersConfig = {
+          legend: {
+            active: false,
+            componentId: "",
+          },
+          timeRange: {
+            active: false,
+            componentId: "",
+            presets: {
+              type: "range",
+              from: "",
+              to: "",
+            },
+          },
+          dataFilters: {
+            active: false,
+            componentIds: [],
+            defaultValueOverrides: {},
+            filterTypes: {},
+            defaultOpen: true,
+          },
+          calculation: {
+            active: false,
+            type: "identity",
+          },
+        };
+      } else {
+        newConfig.interactiveFiltersConfig.dataFilters.defaultValueOverrides =
+          {};
+        newConfig.interactiveFiltersConfig.dataFilters.filterTypes =
+          Object.fromEntries(
+            newConfig.interactiveFiltersConfig.dataFilters.componentIds.map(
+              (id: string) => [id, "single"]
+            )
+          );
+      }
+
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "4.5.0" };
+
+      if (newConfig.chartType === "table") {
+        newConfig.interactiveFiltersConfig = undefined;
+      } else if (newConfig.interactiveFiltersConfig) {
+        delete newConfig.interactiveFiltersConfig.dataFilters
+          .defaultValueOverrides;
+        delete newConfig.interactiveFiltersConfig.dataFilters.filterTypes;
+      }
+
+      return newConfig;
+    },
+  },
+  {
+    from: "4.6.0",
     to: "5.0.0",
     description: `all {
         + annotations
@@ -2200,6 +2263,12 @@ export const configuratorStateMigrations: Migration[] = [
     fromVersion: "4.6.0",
     toVersion: "4.7.0",
     fromChartConfigVersion: "4.5.0",
+    toChartConfigVersion: "4.6.0",
+  }),
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "4.7.0",
+    toVersion: "5.0.0",
+    fromChartConfigVersion: "4.6.0",
     toChartConfigVersion: "5.0.0",
   }),
 ];

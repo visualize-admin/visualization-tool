@@ -57,7 +57,7 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
           ) : (
             <InteractionHorizontal />
           )}
-          {interactiveFiltersConfig?.timeRange.active === true && <BrushTime />}
+          {interactiveFiltersConfig.timeRange.active && <BrushTime />}
         </ChartSvg>
         {isEditingAnnotation ? (
           <HoverAnnotationDot />
@@ -72,7 +72,7 @@ const ChartAreas = memo((props: ChartProps<AreaConfig>) => {
           <LegendColor
             chartConfig={chartConfig}
             symbol="square"
-            interactive={interactiveFiltersConfig?.legend.active}
+            interactive={interactiveFiltersConfig.legend.active}
             showTitle={fields.segment?.showTitle}
             dimensionsById={dimensionsById}
             limits={limits}

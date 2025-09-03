@@ -1,4 +1,5 @@
-import { t, Trans } from "@lingui/macro";
+import { i18n } from "@lingui/core";
+import { defineMessage, Trans } from "@lingui/macro";
 import {
   headingsPlugin,
   linkPlugin,
@@ -269,15 +270,20 @@ export const Checkbox = ({
   />
 );
 
-const getSelectOptions = (
+export const getSelectOptions = (
   options: Option[],
-  sortOptions: boolean,
-  locale: string
+  {
+    sort,
+    locale,
+  }: {
+    sort: boolean;
+    locale: string;
+  }
 ) => {
   const noneOptions = options.filter((o) => o.isNoneValue);
   const restOptions = options.filter((o) => !o.isNoneValue);
 
-  if (sortOptions) {
+  if (sort) {
     restOptions.sort(valueComparator(locale));
   }
 
@@ -300,7 +306,7 @@ export const Select = ({
   options,
   optionGroups,
   onChange,
-  sortOptions = true,
+  sort = true,
   sideControls,
   open,
   onClose,
@@ -314,7 +320,7 @@ export const Select = ({
   optionGroups?: SelectOptionGroup[];
   label?: ReactNode;
   disabled?: boolean;
-  sortOptions?: boolean;
+  sort?: boolean;
   sideControls?: ReactNode;
   loading?: boolean;
   hint?: string;
@@ -322,21 +328,18 @@ export const Select = ({
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const locale = useLocale();
-  const sortedOptions = useMemo(() => {
+  const sortedOptions: SelectOption[] = useMemo(() => {
     if (optionGroups) {
       return flatten(
-        optionGroups.map(
-          ([group, values]) =>
-            [
-              { type: group ? "group" : "", ...group },
-              ...getSelectOptions(values, sortOptions, locale),
-            ] as const
-        )
+        optionGroups.map(([group, values]) => [
+          { isGroupHeader: !!group, ...group },
+          ...getSelectOptions(values, { sort, locale }),
+        ])
       );
     } else {
-      return getSelectOptions(options, sortOptions, locale);
+      return getSelectOptions(options, { sort, locale });
     }
-  }, [optionGroups, sortOptions, locale, options]);
+  }, [optionGroups, sort, locale, options]);
   const handleOpen = useEvent((e: SyntheticEvent) => {
     setWidth(ref.current?.getBoundingClientRect().width ?? 0);
     onOpen?.(e);
@@ -390,13 +393,13 @@ export const Select = ({
           sx={{ maxWidth: sideControls ? "calc(100% - 28px)" : "100%" }}
         >
           {sortedOptions.map((opt) => {
-            if (!opt.value && opt.type !== "group") {
+            if (!opt.value && !opt.isGroupHeader) {
               return null;
             }
 
             const isSelected = value === opt.value;
 
-            return opt.type === "group" ? (
+            return opt.isGroupHeader ? (
               opt.label && (
                 <ListSubheader key={opt.label}>
                   <Typography
@@ -449,6 +452,7 @@ export const Select = ({
 export const selectMenuProps: SelectProps["MenuProps"] = {
   slotProps: {
     paper: {
+      elevation: 0,
       sx: {
         "& .MuiList-root": {
           width: "auto",
@@ -668,11 +672,13 @@ export const MarkdownInput = ({
       />
       {characterLimitReached && (
         <Typography variant="caption" color="error">
-          {t({
-            id: "controls.form.max-length-reached",
-            message: "Character limit ({limit}) reached",
-            values: { limit: characterLimit },
-          })}
+          {i18n._(
+            defineMessage({
+              id: "controls.form.max-length-reached",
+              message: "Character limit ({limit}) reached",
+            }) as unknown as string,
+            { limit: characterLimit }
+          )}
         </Typography>
       )}
     </div>

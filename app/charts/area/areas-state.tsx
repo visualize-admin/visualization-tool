@@ -336,7 +336,7 @@ const useAreasState = (
     //  When the user can toggle between absolute and relative values, we use the
     // absolute values to calculate the yScale domain, so that the yScale doesn't
     // change when the user toggles between absolute and relative values.
-    if (interactiveFiltersConfig?.calculation.active) {
+    if (interactiveFiltersConfig.calculation.active) {
       const scale = getStackedYScale(paddingData, {
         normalize: false,
         getX: getXAsString,
@@ -362,7 +362,7 @@ const useAreasState = (
       customDomain: y.customDomain,
     });
   }, [
-    interactiveFiltersConfig?.calculation.active,
+    interactiveFiltersConfig.calculation.active,
     paddingData,
     normalize,
     getXAsString,
