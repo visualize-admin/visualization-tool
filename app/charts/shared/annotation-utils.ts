@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 
 import { useInteraction } from "@/charts/shared/use-interaction";
 import {
@@ -26,10 +26,14 @@ export const useIsEditingAnnotation = () => {
 
 export const useGetAnnotationRenderState = () => {
   const [interaction] = useInteraction();
+  const interactionRef = useRef(interaction);
+  interactionRef.current = interaction;
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const { activeField } = chartConfig;
   const isEditing = useIsEditingAnnotation();
+  const annotationsRef = useRef(chartConfig.annotations);
+  annotationsRef.current = chartConfig.annotations;
 
   const getAnnotationRenderState = useCallback(
     (
@@ -44,7 +48,7 @@ export const useGetAnnotationRenderState = () => {
     ) => {
       let annotation: Annotation | undefined;
 
-      for (const a of chartConfig.annotations) {
+      for (const a of annotationsRef.current) {
         const matches = matchesAnnotationTarget(observation, a.targets);
 
         if (matches) {
@@ -59,12 +63,14 @@ export const useGetAnnotationRenderState = () => {
         color = annotation.color;
       }
 
+      const currentInteraction = interactionRef.current;
       const interactionMatches =
-        interaction.type === "annotation" &&
-        interaction.visible &&
-        interaction.observation?.[`${axisComponentId}/__iri__`] === axisValue;
+        currentInteraction.type === "annotation" &&
+        currentInteraction.visible &&
+        currentInteraction.observation?.[`${axisComponentId}/__iri__`] ===
+          axisValue;
 
-      const targetsOtherAnnotations = chartConfig.annotations.some(
+      const targetsOtherAnnotations = annotationsRef.current.some(
         (a) =>
           a.key !== activeField &&
           matchesAnnotationTarget(observation, a.targets)
@@ -81,14 +87,7 @@ export const useGetAnnotationRenderState = () => {
         isActive,
       };
     },
-    [
-      activeField,
-      chartConfig.annotations,
-      interaction.observation,
-      interaction.type,
-      interaction.visible,
-      isEditing,
-    ]
+    [activeField, isEditing]
   );
 
   return getAnnotationRenderState;
