@@ -45,12 +45,19 @@ export const MultiSelectTags = ({
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 0.5,
-                py: 1,
+                maxWidth: "100%",
+                overflow: "hidden",
               }}
             >
               <Typography
                 variant={selectSizeToTypography[size]}
-                style={{ lineHeight: 1 }}
+                sx={{
+                  lineHeight: 1,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  minWidth: 0,
+                }}
               >
                 {option.label}
               </Typography>

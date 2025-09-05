@@ -215,7 +215,17 @@ const TreeItemContent = forwardRef<
     >
       <div className={clsx(classes.iconContainer)}>{icon}</div>
       <div className={classes.label}>
-        <Typography variant={selectSizeToTypography[size]} component="span">
+        <Typography
+          variant={selectSizeToTypography[size]}
+          component="span"
+          sx={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            display: "inline-block",
+            maxWidth: "100%",
+          }}
+        >
           {label}
         </Typography>
         {selectable && hasChildren ? (
@@ -648,11 +658,19 @@ export const SelectTree = ({
                             alignItems: "center",
                             gap: 0.5,
                             py: 1,
+                            maxWidth: "100%",
+                            overflow: "hidden",
                           }}
                         >
                           <Typography
                             variant={selectSizeToTypography[size]}
-                            style={{ lineHeight: 1 }}
+                            sx={{
+                              lineHeight: 1,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              minWidth: 0,
+                            }}
                           >
                             {labelsByValue[nodeId]}
                           </Typography>
@@ -695,7 +713,19 @@ export const SelectTree = ({
               return <Trans id="No filter">No filter</Trans>;
             }
 
-            return <>{value ? labelsByValue[value as string] : undefined}</>;
+            return (
+              <Typography
+                variant={selectSizeToTypography[size]}
+                sx={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  display: "block",
+                }}
+              >
+                {value ? labelsByValue[value as string] : undefined}
+              </Typography>
+            );
           }}
           sx={{
             "& svg": {
