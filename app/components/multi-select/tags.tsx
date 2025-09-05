@@ -45,7 +45,6 @@ export const MultiSelectTags = ({
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 0.5,
-                py: 1,
                 maxWidth: "100%",
                 overflow: "hidden",
               }}
