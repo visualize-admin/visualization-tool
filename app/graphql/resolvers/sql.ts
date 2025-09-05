@@ -220,6 +220,25 @@ export const dataCubeObservations: NonNullable<
   };
 };
 
+export const dataCubeObservationsPaginated: NonNullable<
+  QueryResolvers["dataCubeObservationsPaginated"]
+> = async () => {
+  return {
+    data: {
+      data: [],
+      sparqlEditorUrl: "",
+    },
+    pagination: {
+      hasNextPage: false,
+      hasPreviousPage: false,
+      totalCount: 0,
+      limit: 0,
+      offset: 0,
+    },
+    sparqlEditorUrl: "",
+  };
+};
+
 export const dataCubePreview: NonNullable<
   QueryResolvers["dataCubePreview"]
 > = async () => {

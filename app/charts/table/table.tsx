@@ -1,18 +1,20 @@
 import { t, Trans } from "@lingui/macro";
-import { Box, Theme, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  MenuItem,
+  Select,
+  Theme,
+  Typography,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import FlexSearch from "flexsearch";
-import { forwardRef, useCallback, useMemo, useState } from "react";
-import {
-  useExpanded,
-  useFlexLayout,
-  useGroupBy,
-  useSortBy,
-  useTable,
-} from "react-table";
+import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
+import { useExpanded, useFlexLayout, useGroupBy, useTable } from "react-table";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList, VariableSizeList } from "react-window";
 
+import { PaginationControls } from "@/charts/shared/chart-props";
 import { useChartState } from "@/charts/shared/chart-state";
 import { CellDesktop } from "@/charts/table/cell-desktop";
 import { DDContent } from "@/charts/table/cell-mobile";
@@ -89,7 +91,7 @@ export const getTableUIElementsOffset = ({
   );
 };
 
-export const Table = () => {
+export const Table = ({ pagination }: { pagination?: PaginationControls }) => {
   const {
     bounds,
     rowHeight,
@@ -129,13 +131,90 @@ export const Table = () => {
   }, [tableColumnsMeta, chartData]);
 
   const filteredData = useMemo(() => {
+    // For server-side sorting (pagination), don't apply client-side filtering
+    // as it would mess up the server-sorted order
+    if (pagination) {
+      return chartData;
+    }
+
+    // For client-side sorting, apply search filtering
     const result =
       searchTerm === ""
         ? chartData
         : searchIndex.search({ query: `${searchTerm}` });
 
     return result as Observation[];
-  }, [chartData, searchTerm, searchIndex]);
+  }, [chartData, searchTerm, searchIndex, pagination]);
+
+  // Manual sort state for server-side sorting
+  const [manualSortBy, setManualSortBy] = useState<
+    Array<{ id: string; desc: boolean }>
+  >([]);
+
+  // Handle manual sort icon clicks for server-side sorting
+  const handleSortClick = useCallback(
+    (columnId: string) => {
+      if (!pagination) return; // Only for server-side sorting
+
+      setManualSortBy((prevSort) => {
+        const existingSort = prevSort.find((s) => s.id === columnId);
+        let newSort: Array<{ id: string; desc: boolean }>;
+
+        if (!existingSort) {
+          // Add new sort ascending
+          newSort = [{ id: columnId, desc: false }];
+        } else if (!existingSort.desc) {
+          // Change to descending
+          newSort = [{ id: columnId, desc: true }];
+        } else {
+          // Remove sort
+          newSort = [];
+        }
+
+        return newSort;
+      });
+    },
+    [pagination]
+  );
+
+  // Send manual sort changes to server
+  useEffect(() => {
+    if (pagination && manualSortBy.length > 0) {
+      const sortByWithOriginalIds = manualSortBy.map((sort) => {
+        const originalComponentId =
+          Object.values(tableColumnsMeta).find(
+            (meta: any) => meta.slugifiedId === sort.id
+          )?.id || sort.id;
+        return {
+          ...sort,
+          id: originalComponentId,
+        };
+      });
+      pagination.setSortBy(sortByWithOriginalIds);
+    }
+  }, [manualSortBy, pagination, tableColumnsMeta]);
+
+  // Table configuration - completely disable sorting for server-side
+  const tableConfig = useMemo(() => {
+    const config = {
+      columns: pagination
+        ? tableColumns.map((col) => ({
+            ...col,
+            disableSortBy: true, // Disable react-table sorting completely
+          }))
+        : tableColumns,
+      data: filteredData,
+      autoResetExpanded: false,
+      initialState: {
+        groupBy: groupingIds,
+        hiddenColumns: hiddenIds,
+      },
+    };
+
+    // No sorting logic at all
+
+    return config;
+  }, [pagination, tableColumns, filteredData, groupingIds, hiddenIds]);
 
   // Table Instance
   const {
@@ -146,35 +225,15 @@ export const Table = () => {
     totalColumnsWidth,
     prepareRow,
     visibleColumns,
-    state: tableState,
   } = useTable<Observation>(
-    {
-      columns: tableColumns,
-      data: filteredData,
-      autoResetExpanded: false,
-      useControlledState: (state) => {
-        return useMemo(
-          () => ({
-            ...state,
-            sortBy: [...state.sortBy, ...sortingIds],
-            groupBy: groupingIds,
-            hiddenColumns: hiddenIds,
-          }),
-          // eslint does not detect correctly the dependencies here due to the
-          // hook not being in the body of the component.
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-          [state, groupingIds, hiddenIds, sortingIds]
-        );
-      },
-    },
+    tableConfig,
     useFlexLayout,
     useGroupBy,
-    useSortBy,
     useExpanded
   );
 
-  // If the table has a custom sort, the tableState.sortBy has these items prepended.
-  const customSortCount = tableState.sortBy.length - sortingIds.length;
+  // If the table has a custom sort, count them
+  const customSortCount = sortingIds.length;
 
   // Desktop row
   const renderDesktopRow = useCallback(
@@ -296,6 +355,8 @@ export const Table = () => {
     ]
   );
 
+  console.log({ filteredData });
+
   return (
     <>
       {showSearch && (
@@ -370,6 +431,8 @@ export const Table = () => {
               tableColumnsMeta={tableColumnsMeta}
               customSortCount={customSortCount}
               totalColumnsWidth={totalColumnsWidth}
+              handleSortClick={pagination ? handleSortClick : undefined}
+              manualSortBy={pagination ? manualSortBy : undefined}
             >
               <AutoSizer disableWidth>
                 {({ height }: { height: number }) => (
@@ -389,13 +452,56 @@ export const Table = () => {
           </div>
         </Box>
       )}
-      <Typography
-        variant="body3"
-        sx={{ display: "flex", justifyContent: "flex-end", mb: 5 }}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 5,
+        }}
       >
-        <Trans id="chart.table.number.of.lines">Total number of rows:</Trans>{" "}
-        {filteredData.length}
-      </Typography>
+        <Typography variant="body3">
+          <Trans id="chart.table.number.of.lines">Total number of rows:</Trans>{" "}
+          {pagination ? pagination.totalCount : filteredData.length}
+        </Typography>
+
+        {pagination && (
+          <Flex sx={{ alignItems: "center", gap: 2 }}>
+            <Typography variant="body3">
+              Page {pagination.pageIndex + 1} of{" "}
+              {Math.ceil(pagination.totalCount / pagination.pageSize)}
+            </Typography>
+
+            <Select
+              size="sm"
+              value={pagination.pageSize}
+              onChange={(e) => pagination.setPageSize(Number(e.target.value))}
+              sx={{ minWidth: 80 }}
+            >
+              <MenuItem value={25}>25</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+              <MenuItem value={100}>100</MenuItem>
+              <MenuItem value={200}>200</MenuItem>
+            </Select>
+
+            <Button
+              size="sm"
+              onClick={pagination.previousPage}
+              disabled={!pagination.canPreviousPage}
+            >
+              <Trans id="pagination.previous">Previous</Trans>
+            </Button>
+
+            <Button
+              size="sm"
+              onClick={pagination.nextPage}
+              disabled={!pagination.canNextPage}
+            >
+              <Trans id="pagination.next">Next</Trans>
+            </Button>
+          </Flex>
+        )}
+      </Box>
     </>
   );
 };

@@ -127,6 +127,7 @@ const useTableState = (
   const { chartConfig, dimensions, measures } = chartProps;
   const { getX } = variables;
   const { chartData, allData, timeRangeData } = data;
+  console.log({ chartData });
   const { fields, settings, sorting } = chartConfig;
   const formatNumber = useFormatNumber();
 

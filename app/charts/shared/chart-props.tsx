@@ -7,6 +7,19 @@ export type DimensionsById = Record<string, Dimension>;
 
 export type MeasuresById = Record<string, Measure>;
 
+export type PaginationControls = {
+  pageIndex: number;
+  pageSize: number;
+  canNextPage: boolean;
+  canPreviousPage: boolean;
+  totalCount: number;
+  nextPage: () => void;
+  previousPage: () => void;
+  gotoPage: (pageIndex: number) => void;
+  setPageSize: (pageSize: number) => void;
+  setSortBy: (sortBy: Array<{ id: string; desc: boolean }>) => void;
+};
+
 export type BaseChartProps = {
   observations: Observation[];
   dimensions: Dimension[];
@@ -14,6 +27,7 @@ export type BaseChartProps = {
   measures: Measure[];
   measuresById: MeasuresById;
   embedParams?: EmbedQueryParams;
+  pagination?: PaginationControls;
 };
 
 export type ChartProps<TChartConfig extends ChartConfig> = BaseChartProps & {

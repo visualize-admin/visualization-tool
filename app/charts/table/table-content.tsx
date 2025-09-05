@@ -16,6 +16,8 @@ type TableContentProps = {
   tableColumnsMeta: Record<string, ColumnMeta>;
   customSortCount: number;
   totalColumnsWidth: number;
+  handleSortClick?: (columnId: string) => void;
+  manualSortBy?: Array<{ id: string; desc: boolean }>;
 };
 
 const TableContentContext = createContext<TableContentProps | undefined>(
@@ -27,6 +29,8 @@ export const TableContentProvider = ({
   tableColumnsMeta,
   customSortCount,
   totalColumnsWidth,
+  handleSortClick,
+  manualSortBy,
   children,
 }: TableContentProps & { children: ReactNode }) => {
   const value = useMemo(() => {
@@ -35,8 +39,17 @@ export const TableContentProvider = ({
       tableColumnsMeta,
       customSortCount,
       totalColumnsWidth,
+      handleSortClick,
+      manualSortBy,
     };
-  }, [headerGroups, tableColumnsMeta, customSortCount, totalColumnsWidth]);
+  }, [
+    headerGroups,
+    tableColumnsMeta,
+    customSortCount,
+    totalColumnsWidth,
+    handleSortClick,
+    manualSortBy,
+  ]);
 
   return (
     <TableContentContext.Provider value={value}>
@@ -75,8 +88,14 @@ export const TableContent = ({ children }: { children: ReactNode }) => {
     throw Error("Please wrap TableContent in TableContentProvider");
   }
 
-  const { headerGroups, tableColumnsMeta, customSortCount, totalColumnsWidth } =
-    ctx;
+  const {
+    headerGroups,
+    tableColumnsMeta,
+    customSortCount,
+    totalColumnsWidth,
+    handleSortClick,
+    manualSortBy,
+  } = ctx;
 
   return (
     <>
@@ -89,8 +108,25 @@ export const TableContent = ({ children }: { children: ReactNode }) => {
               {headerGroup.headers.map((column) => {
                 const { dim, columnComponentType } =
                   tableColumnsMeta[column.id];
-                // We assume that the customSortCount items are at the beginning of the sorted array, so any item with a lower index must be a custom sorted one
+
+                // For manual sorting (server-side), check manualSortBy state
+                const manualSort = manualSortBy?.find(
+                  (s) => s.id === column.id
+                );
+                const isManualSorted = !!manualSort;
+                const manualSortDirection = manualSort?.desc ? "desc" : "asc";
+
+                // For react-table sorting (client-side), use existing logic
                 const isCustomSorted = column.sortedIndex < customSortCount;
+
+                const isActive = handleSortClick
+                  ? isManualSorted
+                  : isCustomSorted;
+                const direction = handleSortClick
+                  ? manualSortDirection
+                  : column.isSortedDesc
+                    ? "desc"
+                    : "asc";
 
                 return (
                   // eslint-disable-next-line react/jsx-key
@@ -101,11 +137,11 @@ export const TableContent = ({ children }: { children: ReactNode }) => {
                         ? classes.headerGroupMeasure
                         : undefined
                     )}
-                    {...column.getHeaderProps(column.getSortByToggleProps())}
                   >
                     <TableSortLabel
-                      active={isCustomSorted}
-                      direction={column.isSortedDesc ? "desc" : "asc"}
+                      active={isActive}
+                      direction={direction}
+                      onClick={() => handleSortClick?.(column.id)}
                     >
                       <OpenMetadataPanelWrapper component={dim}>
                         <span style={{ fontWeight: "bold" }}>

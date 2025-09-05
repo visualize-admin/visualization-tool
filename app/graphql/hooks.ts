@@ -32,6 +32,9 @@ import {
   DataCubeMetadataQueryVariables,
   DataCubeObservationFilter,
   DataCubeObservationsDocument,
+  DataCubeObservationsPaginatedDocument,
+  DataCubeObservationsPaginatedQuery,
+  DataCubeObservationsPaginatedQueryVariables,
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
 } from "./query-hooks";
@@ -731,4 +734,169 @@ export const useDataCubesComponentTermsetsQuery = makeUseQuery<
   Awaited<ReturnType<typeof executeDataCubesTermsetsQuery>>["data"]
 >({
   fetch: executeDataCubesTermsetsQuery,
+});
+
+export type DataCubesObservationsPaginatedOptions = {
+  variables: Omit<DataCubeObservationsPaginatedQueryVariables, "cubeFilter"> & {
+    cubeFilters: DataCubeObservationFilter[];
+  };
+  pause?: boolean;
+};
+
+type DataCubesObservationsPaginatedData = {
+  dataCubesObservationsPaginated: {
+    data: DataCubesObservations;
+    pagination: {
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+      totalCount?: number | null;
+      limit?: number | null;
+      offset?: number | null;
+    };
+    sparqlEditorUrl: string;
+  };
+};
+
+export const executeDataCubesObservationsPaginatedQuery = async (
+  client: Client,
+  variables: DataCubesObservationsPaginatedOptions["variables"],
+  onFetching?: () => void
+) => {
+  const { locale, sourceType, sourceUrl, cubeFilters } = variables;
+
+  if (cubeFilters.length !== 1) {
+    throw new Error("Pagination currently only supports single cube queries");
+  }
+
+  const cubeFilter = cubeFilters[0];
+  const cubeVariables = { locale, sourceType, sourceUrl, cubeFilter };
+
+  const cached = client.readQuery<
+    DataCubeObservationsPaginatedQuery,
+    DataCubeObservationsPaginatedQueryVariables
+  >(DataCubeObservationsPaginatedDocument, cubeVariables);
+
+  if (cached) {
+    return Promise.resolve({
+      data: {
+        dataCubesObservationsPaginated: {
+          data: {
+            data: cached.data?.dataCubeObservationsPaginated.data.data || [],
+            sparqlEditorUrls: [
+              {
+                cubeIri: cubeFilter.iri,
+                url:
+                  cached.data?.dataCubeObservationsPaginated.data.sparqlEditorUrl ||
+                  "",
+              },
+            ],
+          },
+          pagination: cached.data?.dataCubeObservationsPaginated.pagination || {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            totalCount: 0,
+            limit: 0,
+            offset: 0,
+          },
+          sparqlEditorUrl:
+            cached.data?.dataCubeObservationsPaginated.sparqlEditorUrl || "",
+        },
+      },
+      error: cached.error,
+      fetching: false,
+    });
+  }
+
+  onFetching?.();
+
+  const result = await client
+    .query<
+      DataCubeObservationsPaginatedQuery,
+      DataCubeObservationsPaginatedQueryVariables
+    >(DataCubeObservationsPaginatedDocument, cubeVariables)
+    .toPromise();
+
+  if (result.error || !result.data) {
+    return {
+      data: undefined,
+      error: result.error,
+      fetching: false,
+    };
+  }
+
+  return {
+    data: {
+      dataCubesObservationsPaginated: {
+        data: {
+          data: result.data.dataCubeObservationsPaginated.data.data,
+          sparqlEditorUrls: [
+            {
+              cubeIri: cubeFilter.iri,
+              url: result.data.dataCubeObservationsPaginated.data.sparqlEditorUrl,
+            },
+          ],
+        },
+        pagination: result.data.dataCubeObservationsPaginated.pagination,
+        sparqlEditorUrl:
+          result.data.dataCubeObservationsPaginated.sparqlEditorUrl,
+      },
+    },
+    error: result.error,
+    fetching: false,
+  };
+};
+
+const transformDataCubesObservationsPaginated = (
+  data: {
+    data?: DataCubesObservationsPaginatedData | null;
+    error?: Error;
+    fetching: boolean;
+  },
+  options: {
+    locale: string;
+    conversionUnitsByComponentId: ChartConfig["conversionUnitsByComponentId"];
+  }
+) => {
+  const { conversionUnitsByComponentId } = options;
+
+  if (
+    !data.data ||
+    !conversionUnitsByComponentId ||
+    Object.keys(conversionUnitsByComponentId).length === 0
+  ) {
+    return data;
+  }
+
+  const transformedObservations = transformDataCubesObservations(
+    {
+      data: {
+        dataCubesObservations: data.data.dataCubesObservationsPaginated.data,
+      },
+      error: data.error,
+      fetching: data.fetching,
+    },
+    options
+  );
+
+  return {
+    ...data,
+    data: {
+      dataCubesObservationsPaginated: {
+        data:
+          transformedObservations.data?.dataCubesObservations ||
+          data.data.dataCubesObservationsPaginated.data,
+        pagination: data.data.dataCubesObservationsPaginated.pagination,
+        sparqlEditorUrl:
+          data.data.dataCubesObservationsPaginated.sparqlEditorUrl,
+      },
+    },
+  };
+};
+
+export const useDataCubesObservationsPaginatedQuery = makeUseQuery<
+  DataCubesObservationsPaginatedOptions & { chartConfig: ChartConfig },
+  DataCubesObservationsPaginatedData
+>({
+  fetch: executeDataCubesObservationsPaginatedQuery,
+  transform: transformDataCubesObservationsPaginated,
 });

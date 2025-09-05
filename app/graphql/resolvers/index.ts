@@ -43,6 +43,10 @@ export const Query: QueryResolvers = {
     const source = getSource(args.sourceType);
     return await source.dataCubeObservations(parent, args, context, info);
   },
+  dataCubeObservationsPaginated: async (parent, args, context, info) => {
+    const source = getSource(args.sourceType);
+    return await source.dataCubeObservationsPaginated(parent, args, context, info);
+  },
   dataCubePreview: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
     return await source.dataCubePreview(parent, args, context, info);

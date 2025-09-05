@@ -38,6 +38,7 @@ import {
   createCubeDimensionValuesLoader,
   getCubeDimensions,
   getCubeObservations,
+  getCubeObservationsCount,
 } from "@/rdf/queries";
 import { queryCubeUnversionedIri } from "@/rdf/query-cube-unversioned-iri";
 import { GeoShape } from "@/rdf/query-geo-shapes";
@@ -457,6 +458,79 @@ export const dataCubeObservations: NonNullable<
 
   return {
     data: observations,
+    sparqlEditorUrl: getSparqlEditorUrl({
+      query,
+      dataSource: {
+        type: info.variableValues.sourceType,
+        url: info.variableValues.sourceUrl,
+      },
+    }),
+  };
+};
+
+export const dataCubeObservationsPaginated: NonNullable<
+  QueryResolvers["dataCubeObservationsPaginated"]
+> = async (_, { locale, cubeFilter }, { setup }, info) => {
+  const { loaders, sparqlClient, cache } = await setup(info);
+  const { iri, filters: _filters, componentIds, limit, offset, orderBy } = cubeFilter;
+  const cube = await loaders.cube.load(iri);
+
+  if (!cube) {
+    throw Error("Cube not found!");
+  }
+
+  await cube.fetchShape();
+
+  const filters = _filters ? getFiltersByComponentIris(_filters) : undefined;
+  const componentIris = componentIds?.map(
+    (id) => parseComponentId(id as ComponentId).unversionedComponentIri ?? id
+  );
+
+  const [{ query, observations }, totalCount] = await Promise.all([
+    getCubeObservations({
+      cube,
+      locale,
+      sparqlClient,
+      filters,
+      limit,
+      offset,
+      orderBy,
+      componentIris,
+      cache,
+    }),
+    getCubeObservationsCount({
+      cube,
+      locale,
+      sparqlClient,
+      filters,
+      componentIris,
+      cache,
+    }),
+  ]);
+
+  const actualLimit = limit ?? totalCount;
+  const actualOffset = offset ?? 0;
+  const hasNextPage = actualOffset + actualLimit < totalCount;
+  const hasPreviousPage = actualOffset > 0;
+
+  return {
+    data: {
+      data: observations,
+      sparqlEditorUrl: getSparqlEditorUrl({
+        query,
+        dataSource: {
+          type: info.variableValues.sourceType,
+          url: info.variableValues.sourceUrl,
+        },
+      }),
+    },
+    pagination: {
+      hasNextPage,
+      hasPreviousPage,
+      totalCount,
+      limit: actualLimit,
+      offset: actualOffset,
+    },
     sparqlEditorUrl: getSparqlEditorUrl({
       query,
       dataSource: {
