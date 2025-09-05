@@ -1230,9 +1230,9 @@ export const TimeFilter = (props: TimeFilterProps) => {
     return (
       <div>
         {!disableInteractiveFilters && (
-          <Flex sx={{ justifyContent: "flex-end", mb: 3 }}>
+          <Box sx={{ mb: 3 }}>
             <InteractiveTimeRangeToggle />
-          </Flex>
+          </Box>
         )}
         <Flex sx={{ gap: 1 }}>
           {rangeActiveFilter ? (
