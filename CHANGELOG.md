@@ -11,6 +11,10 @@ You can also check the
 
 ## Unreleased
 
+Nothing yet.
+
+### 6.0.0 - 2025-09-05
+
 - Features
   - It's now possible to enable interactive filters for multi-filter panel
     fields
