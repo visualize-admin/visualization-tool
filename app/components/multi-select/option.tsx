@@ -65,9 +65,19 @@ export const MultiSelectOption = ({
         typography: selectSizeToTypography[size],
       }}
     >
-      {isNoneValue
-        ? t({ id: "controls.clear-selection", message: "Clear selection" })
-        : label}
+      <Typography
+        sx={{
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+          flex: 1,
+          typography: selectSizeToTypography[size],
+        }}
+      >
+        {isNoneValue
+          ? t({ id: "controls.clear-selection", message: "Clear selection" })
+          : label}
+      </Typography>
       <Flex
         sx={{
           justifyContent: "flex-end",
