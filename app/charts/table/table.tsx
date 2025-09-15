@@ -152,6 +152,7 @@ export const Table = () => {
       columns: tableColumns,
       data: filteredData,
       autoResetExpanded: false,
+      autoResetSortBy: false,
       useControlledState: (state) => {
         return useMemo(
           () => ({
