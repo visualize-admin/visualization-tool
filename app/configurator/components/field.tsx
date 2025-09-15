@@ -197,8 +197,8 @@ export const DataFilterSelect = ({
 }) => {
   const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
   const noneLabel = t({
-    id: "controls.dimensionvalue.none",
-    message: "No filter",
+    id: "controls.dimensionvalue.select",
+    message: "Select filter",
   });
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(dimension);

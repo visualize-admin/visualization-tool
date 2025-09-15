@@ -113,8 +113,8 @@ export const DatePickerField = ({
                 value: value
                   ? dateFormat(value)
                   : t({
-                      id: "controls.dimensionvalue.none",
-                      message: "No filter",
+                      id: "controls.dimensionvalue.select",
+                      message: "Select filter",
                     }),
               }}
               onChange={(e) => {

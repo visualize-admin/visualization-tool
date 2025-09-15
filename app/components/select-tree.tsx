@@ -710,7 +710,9 @@ export const SelectTree = ({
               );
             }
             if (isMulti && Array.isArray(value) && value.length === 0) {
-              return <Trans id="No filter">No filter</Trans>;
+              return (
+                <Trans id="controls.dimensionvalue.select">Select filter</Trans>
+              );
             }
 
             return (

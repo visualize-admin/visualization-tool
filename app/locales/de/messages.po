@@ -217,7 +217,7 @@ msgstr "Benutzer können den Diagramm-Modus ändern"
 msgid "controls.filters.interactive.tooltip"
 msgstr "Erlauben Sie Benutzern, Filter zu ändern"
 
-#: app/charts/shared/chart-data-filters.tsx
+#: app/charts/shared/chart-data-filters/index.tsx
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.possible-filters-error"
 msgstr "Beim Abrufen möglicher Filter ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut oder laden Sie die Seite neu."
@@ -474,7 +474,7 @@ msgstr "Wählen Sie kontrastierende Farben für Start- und Endpunkt. Diese Farbe
 msgid "controls.search.clear"
 msgstr "Suche zurücksetzen"
 
-#: app/charts/shared/chart-data-filters.tsx
+#: app/charts/shared/chart-data-filters/index.tsx
 #: app/components/multi-select/option.tsx
 msgid "controls.clear-selection"
 msgstr "Auswahl löschen"
@@ -971,7 +971,7 @@ msgstr "Spalte ausblenden"
 msgid "publication.embed.iframe.remove-filters"
 msgstr "Filter ausblenden"
 
-#: app/charts/shared/chart-data-filters.tsx
+#: app/charts/shared/chart-data-filters/index.tsx
 msgid "interactive.data.filters.hide"
 msgstr "Filter ausblenden"
 
@@ -1276,14 +1276,6 @@ msgstr "Keine kompatiblen Messungen zu kombinieren!"
 #: app/components/hint.tsx
 msgid "hint.nodata.title"
 msgstr "Keine Daten für die aktuelle Filterauswahl"
-
-#: app/charts/shared/chart-data-filters.tsx
-#: app/charts/shared/chart-data-filters.tsx
-#: app/configurator/components/field-date-picker.tsx
-#: app/configurator/components/field.tsx
-#: app/configurator/components/filters.tsx
-msgid "controls.dimensionvalue.none"
-msgstr "Kein Filter"
 
 #: app/configurator/components/chart-configurator.tsx
 msgid "controls.section.data.filters.none"
@@ -1645,6 +1637,15 @@ msgstr "Datensatz auswählen"
 msgid "chart.datasets.add-dataset-dialog.title"
 msgstr "Wählen Sie einen Datensatz mit gemeinsamen Dimensionen aus"
 
+#: app/charts/shared/chart-data-filters/index.tsx
+#: app/charts/shared/chart-data-filters/index.tsx
+#: app/components/select-tree.tsx
+#: app/configurator/components/field-date-picker.tsx
+#: app/configurator/components/field.tsx
+#: app/configurator/components/filters.tsx
+msgid "controls.dimensionvalue.select"
+msgstr "Filter auswählen"
+
 #: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values.line-type"
 msgstr "Linientyp auswählen"
@@ -1723,7 +1724,7 @@ msgstr "Hintergrundfarbe anzeigen"
 msgid "controls.section.data.filters.default-open"
 msgstr "Filterbereich anzeigen geöffnet"
 
-#: app/charts/shared/chart-data-filters.tsx
+#: app/charts/shared/chart-data-filters/index.tsx
 msgid "interactive.data.filters.show"
 msgstr "Filter anzeigen"
 
