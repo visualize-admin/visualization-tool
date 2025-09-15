@@ -366,6 +366,7 @@ export const DataFilterGenericDimension = ({
         options={allOptions}
         value={displayValues}
         onChange={onMultiChange}
+        size="sm"
         disabled={disabled}
         placeholder={noneLabel}
       />

@@ -621,7 +621,7 @@ export const SelectTree = ({
           ref={inputRef}
           id={id}
           name={id}
-          size="sm"
+          size={size}
           disabled={disabled}
           readOnly
           displayEmpty
