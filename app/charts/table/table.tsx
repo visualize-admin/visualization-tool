@@ -137,7 +137,6 @@ export const Table = () => {
     return result as Observation[];
   }, [chartData, searchTerm, searchIndex]);
 
-  // Table Instance
   const {
     getTableProps,
     getTableBodyProps,
