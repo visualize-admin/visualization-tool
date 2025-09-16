@@ -422,8 +422,8 @@ const MultiFilterContent = ({
                 message: "Default value",
               })}
               placeholder={t({
-                id: "controls.dimensionvalue.none",
-                message: "No filter",
+                id: "controls.dimensionvalue.select",
+                message: "Select filter",
               })}
               options={defaultValueOptions}
               {...defaultValueOverrideProps}

@@ -312,8 +312,8 @@ export const DataFilterGenericDimension = ({
 }: DataFilterGenericDimensionProps) => {
   const { label, isKeyDimension } = dimension;
   const noneLabel = t({
-    id: "controls.dimensionvalue.none",
-    message: "No filter",
+    id: "controls.dimensionvalue.select",
+    message: "Select filter",
   });
   const clearSelectionLabel = t({
     id: "controls.clear-selection",
@@ -366,6 +366,7 @@ export const DataFilterGenericDimension = ({
         options={allOptions}
         value={displayValues}
         onChange={onMultiChange}
+        size="sm"
         disabled={disabled}
         placeholder={noneLabel}
       />
@@ -408,8 +409,8 @@ export const DataFilterHierarchyDimension = ({
 }) => {
   const { label, isKeyDimension, values: dimensionValues } = dimension;
   const noneLabel = t({
-    id: "controls.dimensionvalue.none",
-    message: "No filter",
+    id: "controls.dimensionvalue.select",
+    message: "Select filter",
   });
   const options: Tree = useMemo(() => {
     const noneOption = {

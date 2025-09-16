@@ -106,6 +106,11 @@ export const TableContent = ({ children }: { children: ReactNode }) => {
                     <TableSortLabel
                       active={isCustomSorted}
                       direction={column.isSortedDesc ? "desc" : "asc"}
+                      sx={{
+                        "& svg": {
+                          opacity: isCustomSorted ? 1 : 0.5,
+                        },
+                      }}
                     >
                       <OpenMetadataPanelWrapper component={dim}>
                         <span style={{ fontWeight: "bold" }}>
