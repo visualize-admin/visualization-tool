@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import pLimit from "p-limit";
+import * as pLimit from "p-limit";
 import { chromium, Page } from "playwright";
 
 import { locales } from "../app/locales/constants";

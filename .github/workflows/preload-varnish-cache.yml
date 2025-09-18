@@ -20,4 +20,4 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run Playwright test to preload Varnish cache
-        run: ./node_modules/.bin/ts-node --esm ./e2e/varnish-cache-preload.ts
+        run: ./node_modules/.bin/ts-node ./e2e/varnish-cache-preload.ts
