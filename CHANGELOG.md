@@ -11,7 +11,8 @@ You can also check the
 
 ## Unreleased
 
-Nothing yet.
+- Fixes
+  - Fixed workflow for populating Varnish cache
 
 ### 6.0.0 - 2025-09-05
 
