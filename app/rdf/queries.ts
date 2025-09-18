@@ -352,6 +352,8 @@ export const getCubeObservations = async ({
   filters,
   preview,
   limit,
+  offset,
+  orderBy,
   raw,
   componentIris,
   cache,
@@ -367,6 +369,10 @@ export const getCubeObservations = async ({
   preview?: boolean | null;
   /** Limit on the number of observations returned */
   limit?: number | null;
+  /** Offset for pagination */
+  offset?: number | null;
+  /** Order by clauses for sorting */
+  orderBy?: Array<{ componentId: string; order: "ASC" | "DESC" }> | null;
   /** Returns IRIs instead of labels for NamedNodes  */
   raw?: boolean;
   componentIris?: Maybe<string[]>;
@@ -452,6 +458,8 @@ export const getCubeObservations = async ({
   const { query, observationsRaw } = await fetchViewObservations({
     preview,
     limit,
+    offset,
+    orderBy,
     observationsView,
     disableDistinct: !filters || Object.keys(filters).length === 0,
   });
@@ -483,6 +491,119 @@ export const getCubeObservations = async ({
       )
     ),
   };
+};
+
+export const getCubeObservationsCount = async ({
+  cube,
+  locale,
+  sparqlClient,
+  filters,
+  componentIris,
+  cache,
+}: {
+  cube: ExtendedCube;
+  locale: string;
+  sparqlClient: ParsingClient;
+  filters?: Filters | null;
+  componentIris?: Maybe<string[]>;
+  cache: LRUCache | undefined;
+}): Promise<number> => {
+  const cubeIri = cube.term?.value!;
+  const cubeView = View.fromCube(cube, false);
+  const unversionedCubeIri =
+    (await queryCubeUnversionedIri(sparqlClient, cubeIri)) ?? cubeIri;
+  const allResolvedDimensions = await getCubeDimensions({
+    cube,
+    locale,
+    sparqlClient,
+    unversionedCubeIri,
+    cache,
+  });
+  const resolvedDimensions = allResolvedDimensions.filter((d) => {
+    if (componentIris) {
+      return (
+        componentIris.includes(d.data.iri) ||
+        d.data.related.find((r) => componentIris?.includes(r.iri))
+      );
+    }
+
+    return true;
+  });
+
+  const serverFilters: Record<string, FilterValueMulti> = {};
+  let dbFilters: typeof filters = {};
+
+  for (const [k, v] of Object.entries(filters ?? {})) {
+    if (v.type !== "multi") {
+      dbFilters[k] = v;
+    } else {
+      const count = Object.keys(v.values).length;
+      if (count > 100) {
+        serverFilters[k] = v;
+      } else {
+        dbFilters[k] = v;
+      }
+    }
+  }
+
+  const observationFilters = filters
+    ? await buildFilters({
+        cube,
+        view: cubeView,
+        filters: dbFilters,
+        locale,
+        sparqlClient,
+        cache,
+      })
+    : [];
+
+  const observationDimensions = buildDimensions({
+    cubeView,
+    dimensionIris: componentIris
+      ? componentIris.map(
+          (id) =>
+            parseComponentId(id as ComponentId).unversionedComponentIri ?? id
+        )
+      : componentIris,
+    resolvedDimensions,
+    cube,
+    locale,
+    observationFilters,
+    raw: true,
+  });
+
+  const observationsView = new View({
+    dimensions: observationDimensions,
+    filters: observationFilters,
+  });
+
+  try {
+    const countQuery = observationsView.observationsQuery({
+      disableDistinct: !filters || Object.keys(filters).length === 0,
+    });
+
+    // Create a COUNT query by modifying the original query
+    const originalQueryString = countQuery.query.toString();
+    const whereMatch = originalQueryString.match(/WHERE\s*{[\s\S]*}/i);
+    if (!whereMatch) {
+      return 0;
+    }
+
+    const whereClause = whereMatch[0];
+    const countQueryString = `SELECT (COUNT(*) as ?count) ${whereClause}`;
+    const query = pragmas.concat(countQueryString).toString();
+
+    const result = await sparqlClient.query.select(query);
+
+    if (result.length > 0 && result[0].count) {
+      return parseInt(result[0].count.value, 10);
+    }
+
+    return 0;
+  } catch (e) {
+    console.warn("Count query failed, falling back to 0", e);
+    return 0;
+  }
 };
 
 const makeServerFilter = (
@@ -722,30 +843,82 @@ type ObservationRaw = Record<string, Literal | NamedNode>;
 async function fetchViewObservations({
   preview,
   limit,
+  offset,
+  orderBy,
   observationsView,
   disableDistinct,
 }: {
   preview?: boolean | null;
   limit?: number | null;
+  offset?: number | null;
+  orderBy?: Array<{ componentId: string; order: "ASC" | "DESC" }> | null;
   observationsView: View;
   disableDistinct: boolean;
 }) {
   /**
-   * Add LIMIT to query
+   * Add LIMIT and OFFSET to query
    */
-  if (!preview && limit !== undefined) {
+  if (!preview && (limit !== undefined || offset !== undefined)) {
     // From https://github.com/zazuko/cube-creator/blob/a32a90ff93b2c6c1c5ab8fd110a9032a8d179670/apis/core/lib/domain/observations/lib/index.ts#L41
-    observationsView.ptr.addOut(ns.cubeView.projection, (projection: $FixMe) =>
-      projection.addOut(ns.cubeView.limit, limit)
+    observationsView.ptr.addOut(
+      ns.cubeView.projection,
+      (projection: $FixMe) => {
+        if (limit !== undefined) {
+          projection.addOut(ns.cubeView.limit, limit);
+        }
+        if (offset !== undefined) {
+          projection.addOut(ns.cubeView.offset, offset);
+        }
+      }
     );
   }
 
   const fullQuery = observationsView.observationsQuery({ disableDistinct });
-  const query = pragmas
-    .concat(
-      preview && limit ? fullQuery.previewQuery({ limit }) : fullQuery.query
-    )
-    .toString();
+  let queryString = (
+    preview && limit ? fullQuery.previewQuery({ limit }) : fullQuery.query
+  ).toString();
+
+  // Add ORDER BY if specified
+  if (orderBy && orderBy.length > 0 && !preview) {
+    const orderClauses = orderBy
+      .map(({ componentId, order }) => {
+        // Find the corresponding dimension in the observationsView
+        const dimension = observationsView.dimensions.find((dim) =>
+          dim.cubeDimensions.some((cd) => {
+            return (
+              cd.path?.value ===
+              parseComponentId(componentId as ComponentId)
+                .unversionedComponentIri
+            );
+          })
+        );
+
+        if (!dimension) {
+          console.warn(
+            `Could not find dimension for component ID: ${componentId}`
+          );
+          return "";
+        }
+
+        // Get the SPARQL variable name for this dimension
+        // Find the variable by looking at the dimension's index in the dimensions array
+        const dimensionIndex = observationsView.dimensions.indexOf(dimension);
+        const variable = `?dimension${dimensionIndex}`;
+        return `${order}(${variable})`;
+      })
+      .filter(Boolean)
+      .join(" ");
+
+    if (orderClauses) {
+      // Insert ORDER BY before LIMIT/OFFSET
+      queryString = queryString.replace(
+        /(\s+LIMIT\s|\s+OFFSET\s|$)/i,
+        ` ORDER BY ${orderClauses}$1`
+      );
+    }
+  }
+
+  const query = pragmas.concat(queryString).toString();
 
   let observationsRaw: PromiseValue<ObservationRaw[]> | undefined;
 
