@@ -193,12 +193,6 @@ export const applyTableDimensionToFilters = (props: {
         }
         break;
       case "range":
-        if (shouldBecomeSingleFilter) {
-          filters[originalIri] = {
-            type: "single",
-            value: currentFilter.from,
-          };
-        }
         break;
       default:
         const _exhaustiveCheck: never = currentFilter;

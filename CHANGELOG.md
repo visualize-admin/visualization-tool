@@ -11,7 +11,11 @@ You can also check the
 
 ## Unreleased
 
+- Features
+  - Table sorting is not reset anymore on data / filter change
 - Fixes
+  - Hiding a temporal column and then enabling an interactive filter doesn't
+    result in broken state anymore
   - Fixed workflow for populating Varnish cache
 
 ### 6.0.0 - 2025-09-05

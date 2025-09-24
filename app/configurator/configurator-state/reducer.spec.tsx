@@ -423,7 +423,7 @@ describe("applyDimensionToFilters", () => {
       expect(initialFilters).toEqual(expectedFilters);
     });
 
-    it("should set single value filter for a keyDimension if hidden", () => {
+    it("should not set single value filter for a keyDimension if hidden and range", () => {
       const initialFilters = {
         "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
           from: "2007-05-21",
@@ -431,12 +431,7 @@ describe("applyDimensionToFilters", () => {
           type: "range",
         },
       } as any;
-      const expectedFilters = {
-        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
-          type: "single",
-          value: "2007-05-21",
-        },
-      };
+      const expectedFilters = { ...initialFilters };
 
       applyTableDimensionToFilters({
         filters: initialFilters,

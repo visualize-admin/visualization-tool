@@ -137,7 +137,6 @@ export const Table = () => {
     return result as Observation[];
   }, [chartData, searchTerm, searchIndex]);
 
-  // Table Instance
   const {
     getTableProps,
     getTableBodyProps,
@@ -152,6 +151,7 @@ export const Table = () => {
       columns: tableColumns,
       data: filteredData,
       autoResetExpanded: false,
+      autoResetSortBy: false,
       useControlledState: (state) => {
         return useMemo(
           () => ({
