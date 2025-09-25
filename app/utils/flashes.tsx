@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, Link } from "@mui/material";
+import { Link } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { ReactElement, useMemo, useState } from "react";
@@ -46,10 +46,7 @@ const CannotFindCubeContent = () => {
   );
 };
 
-const renderErrorContent: Record<
-  keyof typeof flashes,
-  (props: any) => ReactElement
-> = {
+const renderErrorContent: Record<keyof typeof flashes, () => ReactElement> = {
   CANNOT_FIND_CUBE: CannotFindCubeContent,
 };
 
@@ -61,29 +58,33 @@ export const Flashes = () => {
   const ErrorComponent = renderErrorContent[errorId];
 
   return (
-    <Box sx={{ position: "fixed", bottom: "1rem", right: "1rem", zIndex: 1 }}>
-      <AnimatePresence>
-        {errorId && !dismissed[errorId] ? (
-          <motion.div
-            initial={{ opacity: 0, y: "1rem" }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: "1rem" }}
+    <AnimatePresence>
+      {errorId && !dismissed[errorId] ? (
+        <motion.div
+          initial={{ opacity: 0, y: "1rem" }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: "1rem" }}
+          style={{
+            zIndex: 1,
+            position: "fixed",
+            bottom: "1rem",
+            right: "1rem",
+          }}
+        >
+          <HintError
+            smaller
+            onClose={() =>
+              setDismissed((dismissed) => ({
+                ...dismissed,
+                [errorId]: true,
+              }))
+            }
+            sx={{ px: 4, py: 1, backgroundColor: "red", boxShadow: 2 }}
           >
-            <HintError
-              smaller
-              onClose={() =>
-                setDismissed((dismissed) => ({
-                  ...dismissed,
-                  [errorId]: true,
-                }))
-              }
-              sx={{ px: 4, py: 1, backgroundColor: "red", boxShadow: 2 }}
-            >
-              <ErrorComponent />
-            </HintError>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
-    </Box>
+            <ErrorComponent />
+          </HintError>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
   );
 };
