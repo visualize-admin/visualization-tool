@@ -55,15 +55,8 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useConfiguratorState, useLocale } from "@/src";
+import { softJSONParse } from "@/utils/soft-json-parse";
 import { useResizeObserver } from "@/utils/use-resize-observer";
-
-const softJSONParse = (v: string) => {
-  try {
-    return JSON.parse(v);
-  } catch (e) {
-    return null;
-  }
-};
 
 const useStyles = makeStyles<
   Theme,
@@ -193,9 +186,7 @@ const SelectDatasetStepContent = ({
   } = browseState;
   const dataset = propsDataset ?? browseStateDataset;
 
-  const [debouncedQuery] = useDebounce(search, 500, {
-    leading: true,
-  });
+  const [debouncedQuery] = useDebounce(search, 500, { leading: true });
   const handleHeightChange = useCallback(
     ({ height }: { width: number; height: number }) => {
       window.parent.postMessage({ type: CHART_RESIZE_EVENT_TYPE, height }, "*");
