@@ -61,7 +61,7 @@ const useStyles = makeStyles<Theme>(() => ({
     height: 24,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 999,
+    borderRadius: 9999,
   },
 }));
 
