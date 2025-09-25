@@ -1,10 +1,7 @@
-import { ParsedUrlQuery } from "querystring";
-
 import { Trans } from "@lingui/macro";
 import { Box, Paper, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { ComponentProps, useEffect } from "react";
 import { UseQueryResponse } from "urql";
 
@@ -21,13 +18,9 @@ import {
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 
-export const isOdsIframe = (query: ParsedUrlQuery) => {
-  return query["odsiframe"] === "true";
-};
-
 const useStyles = makeStyles<
   Theme,
-  { isOdsIframe: boolean; descriptionPresent: boolean }
+  { odsIframe: boolean; descriptionPresent: boolean }
 >((theme) => ({
   root: {
     flexGrow: 1,
@@ -35,7 +28,7 @@ const useStyles = makeStyles<
     justifyContent: "space-between",
   },
   header: {
-    marginBottom: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(4)),
+    marginBottom: ({ odsIframe }) => (odsIframe ? 0 : theme.spacing(4)),
   },
   paper: {
     borderRadius: theme.spacing(4),
@@ -72,15 +65,15 @@ export const DataSetPreview = ({
   dataSetIri,
   dataSource,
   dataCubeMetadataQuery,
+  odsIframe,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   dataCubeMetadataQuery: UseQueryResponse<DataCubeMetadataQuery, object>;
+  odsIframe: boolean;
 }) => {
   const footnotesClasses = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
-  const router = useRouter();
-  const odsIframe = isOdsIframe(router.query);
   const variables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -94,7 +87,7 @@ export const DataSetPreview = ({
   ] = useDataCubePreviewQuery({ variables });
   const classes = useStyles({
     descriptionPresent: !!metadata?.dataCubeMetadata.description,
-    isOdsIframe: odsIframe,
+    odsIframe,
   });
 
   useEffect(() => {
@@ -127,9 +120,7 @@ export const DataSetPreview = ({
         )}
         <Flex
           className={classes.header}
-          sx={{
-            justifyContent: odsIframe ? "end" : "space-between",
-          }}
+          sx={{ justifyContent: odsIframe ? "end" : "space-between" }}
         >
           <Head>
             <title key="title">
@@ -161,7 +152,7 @@ export const DataSetPreview = ({
           </div>
           <Flex className={classes.footnotesWrapper}>
             <Flex className={footnotesClasses.actions}>
-              {!isOdsIframe(router.query) && (
+              {odsIframe ? null : (
                 <DataDownloadMenu
                   dataSource={dataSource}
                   title={dataCubeMetadata.title}

@@ -1,3 +1,5 @@
+import { ParsedUrlQuery } from "querystring";
+
 import mapValues from "lodash/mapValues";
 import pick from "lodash/pick";
 import pickBy from "lodash/pickBy";
@@ -91,4 +93,8 @@ export const buildURLFromBrowseParams = ({
 
 export const extractParamFromPath = (path: string, param: string) => {
   return path.match(new RegExp(`[&?]${param}=(.*?)(&|$)`));
+};
+
+export const isOdsIframe = (query: ParsedUrlQuery) => {
+  return query["odsiframe"] === "true";
 };

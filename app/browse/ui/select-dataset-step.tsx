@@ -12,7 +12,7 @@ import { ComponentProps, type MouseEvent, useCallback, useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
 import { BrowseFilter, DataCubeAbout } from "@/browse/lib/filters";
-import { buildURLFromBrowseParams } from "@/browse/lib/params";
+import { buildURLFromBrowseParams, isOdsIframe } from "@/browse/lib/params";
 import { BrowseStateProvider, useBrowseContext } from "@/browse/model/context";
 import {
   DatasetResults,
@@ -24,7 +24,6 @@ import {
 import {
   DataSetPreview,
   DataSetPreviewProps,
-  isOdsIframe,
 } from "@/browse/ui/dataset-preview";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { DatasetMetadata } from "@/components/dataset-metadata";
@@ -68,16 +67,13 @@ const softJSONParse = (v: string) => {
 
 const useStyles = makeStyles<
   Theme,
-  {
-    datasetPresent: boolean;
-    isOdsIframe: boolean;
-  }
+  { datasetPresent: boolean; odsIframe: boolean }
 >((theme) => ({
   panelLayout: {
     position: "static",
     height: "auto",
     margin: "auto",
-    marginTop: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(12)),
+    marginTop: ({ odsIframe }) => (odsIframe ? 0 : theme.spacing(12)),
     backgroundColor: theme.palette.background.paper,
     transition: "margin-top 0.5s ease",
   },
@@ -105,7 +101,7 @@ const useStyles = makeStyles<
     transition: "padding-top 0.5s ease",
 
     [theme.breakpoints.up("md")]: {
-      marginLeft: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(8)),
+      marginLeft: ({ odsIframe }) => (odsIframe ? 0 : theme.spacing(8)),
     },
   },
   panelBannerOuterWrapper: {
@@ -207,10 +203,7 @@ const SelectDatasetStepContent = ({
     []
   );
   const [ref] = useResizeObserver(handleHeightChange);
-  const classes = useStyles({
-    datasetPresent: !!dataset,
-    isOdsIframe: odsIframe,
-  });
+  const classes = useStyles({ datasetPresent: !!dataset, odsIframe });
   const backLink = useMemo(() => {
     return formatBackLink(router.query);
   }, [router.query]);
@@ -569,6 +562,7 @@ const SelectDatasetStepContent = ({
                     dataSetIri={dataset}
                     dataSource={configState.dataSource}
                     dataCubeMetadataQuery={dataCubeMetadataQuery}
+                    odsIframe={odsIframe}
                     {...datasetPreviewProps}
                   />
                 </MotionBox>
