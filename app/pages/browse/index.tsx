@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next";
 
-import { SelectDatasetStep } from "@/browser/select-dataset-step";
+import { SelectDatasetStep } from "@/browser/ui/select-dataset-step";
 import { AppLayout } from "@/components/layout";
 import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { SearchCubeResultOrder } from "@/graphql/query-hooks";

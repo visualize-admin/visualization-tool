@@ -31,6 +31,9 @@ import {
   useState,
 } from "react";
 
+import { BrowseFilter } from "@/browser/lib/filters";
+import { getBrowseParamsFromQuery } from "@/browser/lib/params";
+import { BrowseState, useBrowseContext } from "@/browser/model/context";
 import { Flex } from "@/components/flex";
 import {
   Checkbox,
@@ -66,13 +69,6 @@ import {
 import { Icon } from "@/icons";
 import SvgIcClose from "@/icons/components/IcClose";
 import { useEvent } from "@/utils/use-event";
-
-import {
-  BrowseState,
-  getBrowseParamsFromQuery,
-  useBrowseContext,
-} from "./context";
-import { BrowseFilter } from "./filters";
 
 const useStyles = makeStyles<Theme>(() => ({
   navChip: {

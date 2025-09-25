@@ -1,8 +1,6 @@
 import { Box, SxProps, Theme } from "@mui/material";
-import { useMemo } from "react";
 
-import { DataTablePreview } from "@/browse/data-table-preview";
-import { getSortedComponents } from "@/browse/utils";
+import { DataTablePreview } from "@/browser/ui/data-table-preview";
 import {
   extractChartConfigComponentIds,
   useQueryFilters,
@@ -56,18 +54,6 @@ export const ChartDataTablePreview = ({
         })),
       },
     });
-  const sortedComponents = useMemo(() => {
-    const components = componentsData?.dataCubesComponents;
-
-    if (!components) {
-      return [];
-    }
-
-    return getSortedComponents([
-      ...components.dimensions,
-      ...components.measures,
-    ]);
-  }, [componentsData?.dataCubesComponents]);
   const queryFilters = useQueryFilters({
     chartConfig,
     dashboardFilters,
@@ -88,7 +74,8 @@ export const ChartDataTablePreview = ({
     <Box sx={{ maxHeight: 600, overflow: "auto", ...sx }}>
       <DataTablePreview
         title={metadataData.dataCubesMetadata.map((d) => d.title).join(", ")}
-        sortedComponents={sortedComponents}
+        dimensions={componentsData.dataCubesComponents.dimensions}
+        measures={componentsData.dataCubesComponents.measures}
         observations={observationsData.dataCubesObservations.data}
         linkToMetadataPanel
       />

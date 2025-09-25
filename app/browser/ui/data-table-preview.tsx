@@ -9,28 +9,41 @@ import {
 import { ascending, descending } from "d3-array";
 import { useCallback, useMemo, useRef, useState } from "react";
 
-import { ComponentLabel } from "@/browse/component-label";
-import { Component, isNumericalMeasure, Observation } from "@/domain/data";
+import { ComponentLabel } from "@/components/chart-data-table-preview/ui/component-label";
+import { Loading } from "@/components/hint";
+import {
+  Component,
+  Dimension,
+  isNumericalMeasure,
+  Measure,
+  Observation,
+} from "@/domain/data";
+import { getSortedComponents } from "@/domain/get-sorted-components";
 import { useDimensionFormatters } from "@/formatters";
 import SvgIcChevronDown from "@/icons/components/IcChevronDown";
 import { uniqueMapBy } from "@/utils/unique-map-by";
 
 export const DataTablePreview = ({
   title,
-  sortedComponents,
+  dimensions,
+  measures,
   observations,
   linkToMetadataPanel,
 }: {
   title: string;
-  sortedComponents: Component[];
-  observations: Observation[];
+  dimensions: Dimension[];
+  measures: Measure[];
+  observations: Observation[] | undefined;
   linkToMetadataPanel: boolean;
 }) => {
   const [sortBy, setSortBy] = useState<Component>();
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">();
+  const sortedComponents = useMemo(() => {
+    return getSortedComponents([...dimensions, ...measures]);
+  }, [dimensions, measures]);
   const formatters = useDimensionFormatters(sortedComponents);
   const sortedObservations = useMemo(() => {
-    if (!sortBy) {
+    if (!sortBy || !observations) {
       return observations;
     }
 
@@ -108,27 +121,31 @@ export const DataTablePreview = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {sortedObservations.map((obs, i) => {
-            return (
-              <TableRow key={i}>
-                {sortedComponents.map((c) => {
-                  const numerical = isNumericalMeasure(c);
-                  const format = formatters[c.id];
-                  const v = obs[c.id];
+          {sortedObservations ? (
+            sortedObservations.map((obs, i) => {
+              return (
+                <TableRow key={i}>
+                  {sortedComponents.map((c) => {
+                    const numerical = isNumericalMeasure(c);
+                    const format = formatters[c.id];
+                    const v = obs[c.id];
 
-                  return (
-                    <TableCell
-                      key={c.id}
-                      component="td"
-                      sx={{ textAlign: numerical ? "right" : "left" }}
-                    >
-                      {format(numerical && v ? +v : v)}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            );
-          })}
+                    return (
+                      <TableCell
+                        key={c.id}
+                        component="td"
+                        sx={{ textAlign: numerical ? "right" : "left" }}
+                      >
+                        {format(numerical && v ? +v : v)}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })
+          ) : (
+            <Loading />
+          )}
         </TableBody>
       </Table>
     </div>

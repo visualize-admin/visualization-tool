@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useClient } from "urql";
 import createStore from "zustand";
 
-import { SelectDatasetStep } from "@/browser/select-dataset-step";
+import { SelectDatasetStep } from "@/browser/ui/select-dataset-step";
 import { DialogCloseButton } from "@/components/dialog-close-button";
 import { RightDrawer } from "@/configurator/components/drawers";
 import {

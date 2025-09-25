@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { ComponentProps, useEffect } from "react";
 import { UseQueryResponse } from "urql";
 
-import { CubeDataTablePreview } from "@/browse/cube-data-table-preview";
+import { DataTablePreview } from "@/browser/ui/data-table-preview";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import { DataDownloadMenu } from "@/components/data-download";
 import { Flex } from "@/components/flex";
@@ -150,11 +150,12 @@ export const DataSetPreview = ({
           )}
           <div className={classes.tableOuterWrapper}>
             <Flex className={classes.tableInnerWrapper}>
-              <CubeDataTablePreview
+              <DataTablePreview
                 title={dataCubeMetadata.title}
                 dimensions={dataCubePreview.dimensions}
                 measures={dataCubePreview.measures}
                 observations={dataCubePreview.observations}
+                linkToMetadataPanel={false}
               />
             </Flex>
           </div>

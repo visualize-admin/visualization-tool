@@ -12,7 +12,7 @@ import {
 } from "react";
 import { useStore } from "zustand";
 
-import { ChartDataTablePreview } from "@/browse/chart-data-table-preview";
+import { ChartDataTablePreview } from "@/components/chart-data-table-preview/ui";
 import { extractChartConfigsComponentIds } from "@/charts/shared/chart-helpers";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";

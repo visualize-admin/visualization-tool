@@ -1,17 +1,7 @@
-import { ParsedUrlQuery } from "querystring";
-
-import mapValues from "lodash/mapValues";
-import pick from "lodash/pick";
-import pickBy from "lodash/pickBy";
-import { Url } from "next/dist/shared/lib/router/router";
-import Link from "next/link";
-import { Router, useRouter } from "next/router";
 import {
-  ComponentProps,
   createContext,
   ReactNode,
   useContext,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -21,151 +11,11 @@ import {
   BrowseFilter,
   getFiltersFromParams,
   getParamsFromFilters,
-} from "@/browser/filters";
-import { truthy } from "@/domain/types";
+} from "@/browser/lib/filters";
+import { useUrlSyncState } from "@/browser/lib/use-url-sync-state";
 import { SearchCubeResultOrder } from "@/graphql/query-hooks";
 import { BrowseParams } from "@/pages/browse";
 import { useEvent } from "@/utils/use-event";
-
-export const getBrowseParamsFromQuery = (
-  query: Router["query"]
-): BrowseParams => {
-  const rawValues = mapValues(
-    pick(query, [
-      "type",
-      "iri",
-      "subtype",
-      "subiri",
-      "subsubtype",
-      "subsubiri",
-      "topic",
-      "includeDrafts",
-      "order",
-      "search",
-      "dataset",
-      "previous",
-    ]),
-    (v) => (Array.isArray(v) ? v[0] : v)
-  );
-
-  const {
-    type,
-    iri,
-    subtype,
-    subiri,
-    subsubtype,
-    subsubiri,
-    topic,
-    includeDrafts,
-    ...values
-  } = rawValues;
-  const previous = values.previous ? JSON.parse(values.previous) : undefined;
-
-  return pickBy(
-    {
-      ...values,
-      type: type ?? previous?.type,
-      iri: iri ?? previous?.iri,
-      subtype: subtype ?? previous?.subtype,
-      subiri: subiri ?? previous?.subiri,
-      subsubtype: subsubtype ?? previous?.subsubtype,
-      subsubiri: subsubiri ?? previous?.subsubiri,
-      topic: topic ?? previous?.topic,
-      includeDrafts: includeDrafts ? JSON.parse(includeDrafts) : undefined,
-    },
-    (x) => x !== undefined
-  );
-};
-
-export const buildURLFromBrowseState = ({
-  type,
-  iri,
-  subtype,
-  subiri,
-  subsubtype,
-  subsubiri,
-  ...queryParams
-}: BrowseParams) => {
-  const typePart =
-    type && iri
-      ? `${encodeURIComponent(type)}/${encodeURIComponent(iri)}`
-      : undefined;
-  const subtypePart =
-    subtype && subiri
-      ? `${encodeURIComponent(subtype)}/${encodeURIComponent(subiri)}`
-      : undefined;
-  const subsubtypePart =
-    subsubtype && subsubiri
-      ? `${encodeURIComponent(subsubtype)}/${encodeURIComponent(subsubiri)}`
-      : undefined;
-  const pathname = ["/browse", typePart, subtypePart, subsubtypePart]
-    .filter(truthy)
-    .join("/");
-
-  return {
-    pathname,
-    query: queryParams,
-  } satisfies ComponentProps<typeof Link>["href"];
-};
-
-const extractParamFromPath = (path: string, param: string) =>
-  path.match(new RegExp(`[&?]${param}=(.*?)(&|$)`));
-
-type BrowseParamsCodec = {
-  parse: (query: ParsedUrlQuery) => BrowseParams;
-  serialize: (browseState: BrowseParams) => Url;
-};
-
-const urlCodec: BrowseParamsCodec = {
-  parse: getBrowseParamsFromQuery,
-  serialize: buildURLFromBrowseState,
-};
-
-const useBrowseParamsStateWithUrlSync = (initialState: BrowseParams) => {
-  const router = useRouter();
-
-  const [state, rawSetState] = useState(() => {
-    // Rely directly on window instead of router since router takes a bit of time
-    // to be initialized
-    const sp =
-      typeof window !== "undefined"
-        ? new URL(window.location.href).searchParams
-        : undefined;
-    const dataset = extractParamFromPath(router.asPath, "dataset");
-    const query = sp ? Object.fromEntries(sp.entries()) : undefined;
-
-    if (dataset && query && !query.dataset) {
-      query.dataset = dataset[0];
-    }
-
-    return query ? urlCodec.parse(query) : initialState;
-  });
-
-  useEffect(() => {
-    if (router.isReady) {
-      rawSetState(urlCodec.parse(router.query));
-    }
-  }, [router.isReady, router.query]);
-
-  const setState = useEvent(
-    (stateUpdate: BrowseParams | ((prev: BrowseParams) => BrowseParams)) => {
-      rawSetState((prev) => {
-        const newState = {
-          ...(stateUpdate instanceof Function
-            ? stateUpdate(prev)
-            : stateUpdate),
-        } satisfies BrowseParams;
-        router.replace(urlCodec.serialize(newState), undefined, {
-          shallow: true,
-        });
-
-        return newState;
-      });
-    }
-  );
-
-  return [state, setState] as const;
-};
 
 /**
  * Creates a hook that provides the current browse state and actions to update it.
@@ -176,9 +26,7 @@ const useBrowseParamsStateWithUrlSync = (initialState: BrowseParams) => {
  * via syncWithUrl. It would be a bit more explicit and easier to understand.
  */
 const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
-  const useParamsHook = syncWithUrl
-    ? useBrowseParamsStateWithUrlSync
-    : useState<BrowseParams>;
+  const useParamsHook = syncWithUrl ? useUrlSyncState : useState<BrowseParams>;
   return () => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [browseParams, setParams] = useParamsHook({});
@@ -190,6 +38,7 @@ const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
       includeDrafts,
       dataset: paramDataset,
     } = browseParams;
+    const previousOrderRef = useRef(SearchCubeResultOrder.Score);
 
     // Support /browse?dataset=<iri> and legacy /browse/dataset/<iri>
     const dataset = type === "dataset" ? iri : paramDataset;
@@ -206,10 +55,6 @@ const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
     );
     const setDataset = useEvent((v: string) =>
       setParams((prev) => ({ ...prev, dataset: v }))
-    );
-
-    const previousOrderRef = useRef<SearchCubeResultOrder>(
-      SearchCubeResultOrder.Score
     );
 
     return useMemo(
@@ -280,6 +125,7 @@ const useBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
   const [useBrowseStateHook] = useState(() =>
     createUseBrowseState({ syncWithUrl })
   );
+
   return useBrowseStateHook();
 };
 
@@ -295,6 +141,7 @@ export const BrowseStateProvider = ({
   syncWithUrl: boolean;
 }) => {
   const browseState = useBrowseState({ syncWithUrl });
+
   return (
     <BrowseContext.Provider value={browseState}>
       {children}
@@ -304,10 +151,12 @@ export const BrowseStateProvider = ({
 
 export const useBrowseContext = () => {
   const ctx = useContext(BrowseContext);
+
   if (!ctx) {
     throw Error(
       "To be able useBrowseContext, you must wrap it into a BrowseStateProvider"
     );
   }
+
   return ctx;
 };

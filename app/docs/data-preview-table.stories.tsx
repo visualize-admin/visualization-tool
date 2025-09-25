@@ -1,8 +1,8 @@
 import { Paper } from "@mui/material";
 
-import { DataTablePreview } from "@/browse/data-table-preview";
+import { DataTablePreview } from "@/browser/ui/data-table-preview";
 
-import { dimensions, observations } from "./data-preview-table.mock";
+import { dimensions, measures, observations } from "./data-preview-table.mock";
 
 const meta = {
   title: "organisms / Data Preview Table",
@@ -15,7 +15,8 @@ const PreviewTableStory = () => (
     <DataTablePreview
       linkToMetadataPanel={false}
       title="My dataset preview"
-      sortedComponents={dimensions}
+      dimensions={dimensions}
+      measures={measures}
       observations={observations["data"].slice(0, 10)}
     />
   </Paper>

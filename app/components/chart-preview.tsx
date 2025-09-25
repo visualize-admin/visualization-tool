@@ -20,7 +20,7 @@ import {
   useState,
 } from "react";
 
-import { ChartDataTablePreview } from "@/browse/chart-data-table-preview";
+import { ChartDataTablePreview } from "@/components/chart-data-table-preview/ui";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { ActionElementsContainer } from "@/components/action-elements-container";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";

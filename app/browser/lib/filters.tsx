@@ -18,7 +18,6 @@ export type BrowseFilter =
   | DataCubeTermset;
 
 /** Builds the state search filters from query params */
-
 export const getFiltersFromParams = (params: BrowseParams) => {
   const filters: BrowseFilter[] = [];
   const { type, subtype, subsubtype, iri, subiri, subsubiri, topic } = params;
@@ -66,9 +65,11 @@ export const getParamsFromFilters = (filters: BrowseFilter[]) => {
     topic: undefined,
   };
   let i = 0;
+
   for (const filter of filters) {
     const typeAttr = i === 0 ? "type" : i === 1 ? "subtype" : "subsubtype";
     const iriAttr = i === 0 ? "iri" : i === 1 ? "subiri" : "subsubiri";
+
     switch (filter.__typename) {
       case "DataCubeTheme":
         params[typeAttr] = "theme";
@@ -89,7 +90,9 @@ export const getParamsFromFilters = (filters: BrowseFilter[]) => {
         const _exhaustiveCheck: never = filter;
         return _exhaustiveCheck;
     }
+
     i++;
   }
+
   return params;
 };

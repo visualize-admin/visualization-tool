@@ -23,7 +23,7 @@ import {
 } from "react";
 import { useClient } from "urql";
 
-import { getSortedComponents } from "@/browse/utils";
+import { getSortedComponents } from "@/domain/get-sorted-components";
 import { ArrowMenuBottomTop } from "@/components/arrow-menu";
 import { DataSource, SortingField } from "@/config-types";
 import {
