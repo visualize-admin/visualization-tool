@@ -34,12 +34,7 @@ import { BrowseFilter } from "@/browse/lib/filters";
 import { getBrowseParamsFromQuery } from "@/browse/lib/params";
 import { BrowseState, useBrowseContext } from "@/browse/model/context";
 import { Flex } from "@/components/flex";
-import {
-  Checkbox,
-  SearchField,
-  SearchFieldProps,
-  Select,
-} from "@/components/form";
+import { Checkbox, SearchField, SearchFieldProps } from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { MaybeLink } from "@/components/maybe-link";
@@ -59,7 +54,6 @@ import {
   DataCubeOrganization,
   DataCubeTermset,
   DataCubeTheme,
-  SearchCubeResultOrder,
 } from "@/graphql/query-hooks";
 import {
   DataCubePublicationStatus,
@@ -185,60 +179,6 @@ export const SearchDatasetDraftsControl = ({
       checked={checked}
       onChange={() => onChange(!checked)}
     />
-  );
-};
-
-export const SearchDatasetSortControl = ({
-  value,
-  onChange,
-  disableScore,
-}: {
-  value: SearchCubeResultOrder;
-  onChange: (order: SearchCubeResultOrder) => void;
-  disableScore?: boolean;
-}) => {
-  const options = useMemo(() => {
-    const options = [
-      {
-        value: SearchCubeResultOrder.Score,
-        label: t({ id: "dataset.order.relevance", message: "Relevance" }),
-      },
-      {
-        value: SearchCubeResultOrder.TitleAsc,
-        label: t({ id: "dataset.order.title", message: "Title" }),
-      },
-      {
-        value: SearchCubeResultOrder.CreatedDesc,
-        label: t({ id: "dataset.order.newest", message: "Newest" }),
-      },
-    ];
-
-    return disableScore
-      ? options.filter((o) => o.value !== SearchCubeResultOrder.Score)
-      : options;
-  }, [disableScore]);
-
-  return (
-    <Box sx={{ display: "flex", alignItems: "center" }}>
-      <label htmlFor="datasetSort">
-        <Typography variant="body3">
-          <Trans id="dataset.sortby">Sort by</Trans>
-        </Typography>
-      </label>
-      <Select
-        id="datasetSort"
-        data-testId="datasetSort"
-        variant="standard"
-        size="sm"
-        onChange={(e) => {
-          onChange(e.target.value as SearchCubeResultOrder);
-        }}
-        value={value}
-        options={options}
-        sort={false}
-        sx={{ width: "fit-content" }}
-      />
-    </Box>
   );
 };
 

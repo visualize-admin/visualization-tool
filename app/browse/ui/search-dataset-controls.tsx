@@ -1,11 +1,9 @@
 import { Divider } from "@mui/material";
 
 import { BrowseState } from "@/browse/model/context";
-import {
-  SearchDatasetDraftsControl,
-  SearchDatasetSortControl,
-} from "@/browse/ui/dataset-browse";
+import { SearchDatasetDraftsControl } from "@/browse/ui/dataset-browse";
 import { SearchDatasetResultsCount } from "@/browse/ui/search-dataset-results-count";
+import { SearchDatasetSortControl } from "@/browse/ui/search-dataset-sort-control";
 import { Flex } from "@/components/flex";
 import { SearchCubeResult, SearchCubeResultOrder } from "@/graphql/query-hooks";
 import { sleep } from "@/utils/sleep";
