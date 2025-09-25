@@ -1,7 +1,7 @@
 import { Divider } from "@mui/material";
 
 import { BrowseState } from "@/browse/model/context";
-import { SearchDatasetDraftsControl } from "@/browse/ui/dataset-browse";
+import { SearchDatasetDraftsControl } from "@/browse/ui/search-dataset-drafts-control";
 import { SearchDatasetResultsCount } from "@/browse/ui/search-dataset-results-count";
 import { SearchDatasetSortControl } from "@/browse/ui/search-dataset-sort-control";
 import { Flex } from "@/components/flex";

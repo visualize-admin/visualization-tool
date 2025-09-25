@@ -34,7 +34,7 @@ import { BrowseFilter } from "@/browse/lib/filters";
 import { getBrowseParamsFromQuery } from "@/browse/lib/params";
 import { BrowseState, useBrowseContext } from "@/browse/model/context";
 import { Flex } from "@/components/flex";
-import { Checkbox, SearchField, SearchFieldProps } from "@/components/form";
+import { SearchField, SearchFieldProps } from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { MaybeLink } from "@/components/maybe-link";
@@ -158,27 +158,6 @@ export const SearchDatasetInput = ({
         className={clsx(classes.searchInput, searchFieldProps?.className)}
       />
     </Flex>
-  );
-};
-
-export const SearchDatasetDraftsControl = ({
-  checked,
-  onChange,
-}: {
-  checked: boolean;
-  onChange: (value: boolean) => void;
-}) => {
-  return (
-    <Checkbox
-      label={t({
-        id: "dataset.includeDrafts",
-        message: "Include draft datasets",
-      })}
-      name="dataset-include-drafts"
-      value="dataset-include-drafts"
-      checked={checked}
-      onChange={() => onChange(!checked)}
-    />
   );
 };
 
