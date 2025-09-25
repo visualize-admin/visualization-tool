@@ -26,6 +26,7 @@ import { ComponentProps, type MouseEvent, ReactNode, useMemo } from "react";
 import { BrowseFilter } from "@/browse/lib/filters";
 import { getBrowseParamsFromQuery } from "@/browse/lib/params";
 import { useBrowseContext } from "@/browse/model/context";
+import { NavigationChip } from "@/browse/ui/navigation-chip";
 import { Flex } from "@/components/flex";
 import { Loading, LoadingDataError } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
@@ -54,16 +55,6 @@ import {
 import { Icon } from "@/icons";
 import SvgIcClose from "@/icons/components/IcClose";
 import { useEvent } from "@/utils/use-event";
-
-const useStyles = makeStyles<Theme>(() => ({
-  navChip: {
-    minWidth: 32,
-    height: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 9999,
-  },
-}));
 
 const useNavItemStyles = makeStyles<Theme, { level: number }>((theme) => ({
   navItem: {
@@ -97,26 +88,6 @@ const useNavItemStyles = makeStyles<Theme, { level: number }>((theme) => ({
     },
   }),
 }));
-
-const NavChip = ({
-  children,
-  backgroundColor,
-}: {
-  children: ReactNode;
-  backgroundColor: string;
-}) => {
-  const classes = useStyles();
-
-  return (
-    <Flex
-      data-testid="navChip"
-      className={classes.navChip}
-      sx={{ typography: "caption", backgroundColor }}
-    >
-      {children}
-    </Flex>
-  );
-};
 
 const encodeFilter = (filter: BrowseFilter) => {
   const { iri, __typename } = filter;
@@ -235,7 +206,7 @@ const NavItem = ({
 
   const countChip =
     count !== undefined ? (
-      <NavChip backgroundColor={countBg}>{count}</NavChip>
+      <NavigationChip backgroundColor={countBg}>{count}</NavigationChip>
     ) : null;
 
   return (
