@@ -68,6 +68,7 @@ import {
 } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 import SvgIcClose from "@/icons/components/IcClose";
+import { sleep } from "@/utils/sleep";
 import { useEvent } from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme>(() => ({
@@ -192,7 +193,7 @@ export const SearchDatasetControls = ({
     setIncludeDrafts(!includeDrafts);
     if (inputRef.current && inputRef.current.value.length > 0) {
       // We need to wait here otherwise the includeDrafts is reset :/
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await sleep(200);
       onSubmitSearch(inputRef.current.value);
     }
   });
