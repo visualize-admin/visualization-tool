@@ -5,7 +5,7 @@ import {
   buildURLFromBrowseParams,
   extractParamFromPath,
   getBrowseParamsFromQuery,
-} from "@/browser/lib/params";
+} from "@/browse/lib/params";
 import { BrowseParams } from "@/pages/browse";
 import { maybeWindow } from "@/utils/maybe-window";
 import { useEvent } from "@/utils/use-event";

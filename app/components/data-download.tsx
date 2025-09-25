@@ -23,7 +23,6 @@ import {
 } from "react";
 import { useClient } from "urql";
 
-import { getSortedComponents } from "@/domain/get-sorted-components";
 import { ArrowMenuBottomTop } from "@/components/arrow-menu";
 import { DataSource, SortingField } from "@/config-types";
 import {
@@ -32,6 +31,7 @@ import {
   DataCubesObservations,
   Observation,
 } from "@/domain/data";
+import { getSortedComponents } from "@/domain/get-sorted-components";
 import {
   dateFormatterFromDimension,
   formatIdentity,

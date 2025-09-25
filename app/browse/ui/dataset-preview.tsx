@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { ComponentProps, useEffect } from "react";
 import { UseQueryResponse } from "urql";
 
-import { DataTablePreview } from "@/browser/ui/data-table-preview";
+import { DataTablePreview } from "@/browse/ui/data-table-preview";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import { DataDownloadMenu } from "@/components/data-download";
 import { Flex } from "@/components/flex";

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getFiltersFromParams } from "@/browser/lib/filters";
+import { getFiltersFromParams } from "@/browse/lib/filters";
 import { BrowseParams } from "@/pages/browse";
 
 describe("getFiltersFromParams", () => {

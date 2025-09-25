@@ -55,7 +55,7 @@ import {
   useState,
 } from "react";
 
-import { useBrowseContext } from "@/browser/model/context";
+import { useBrowseContext } from "@/browse/model/context";
 import { Flex } from "@/components/flex";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BlockTypeMenu } from "@/components/mdx-editor/block-type-menu";

@@ -3,7 +3,7 @@ import { DatePicker, PickersDay } from "@mui/lab";
 import { Stack, TextField } from "@mui/material";
 import { useState } from "react";
 
-import { BrowseStateProvider } from "@/browser/model/context";
+import { BrowseStateProvider } from "@/browse/model/context";
 import {
   Checkbox,
   Input,

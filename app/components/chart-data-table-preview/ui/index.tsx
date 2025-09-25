@@ -1,6 +1,6 @@
 import { Box, SxProps, Theme } from "@mui/material";
 
-import { DataTablePreview } from "@/browser/ui/data-table-preview";
+import { DataTablePreview } from "@/browse/ui/data-table-preview";
 import {
   extractChartConfigComponentIds,
   useQueryFilters,

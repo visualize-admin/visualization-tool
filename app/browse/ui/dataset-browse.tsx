@@ -31,9 +31,9 @@ import {
   useState,
 } from "react";
 
-import { BrowseFilter } from "@/browser/lib/filters";
-import { getBrowseParamsFromQuery } from "@/browser/lib/params";
-import { BrowseState, useBrowseContext } from "@/browser/model/context";
+import { BrowseFilter } from "@/browse/lib/filters";
+import { getBrowseParamsFromQuery } from "@/browse/lib/params";
+import { BrowseState, useBrowseContext } from "@/browse/model/context";
 import { Flex } from "@/components/flex";
 import {
   Checkbox,

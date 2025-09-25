@@ -37,7 +37,7 @@ import {
   SearchDatasetDraftsControl,
   SearchDatasetResultsCount,
   SearchDatasetSortControl,
-} from "@/browser/ui/dataset-browse";
+} from "@/browse/ui/dataset-browse";
 import { Flex } from "@/components/flex";
 import { Tag } from "@/components/tag";
 import { VisuallyHidden } from "@/components/visually-hidden";

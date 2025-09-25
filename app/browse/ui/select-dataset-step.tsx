@@ -11,21 +11,21 @@ import { Router, useRouter } from "next/router";
 import { ComponentProps, type MouseEvent, useCallback, useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
-import { BrowseFilter, DataCubeAbout } from "@/browser/lib/filters";
-import { buildURLFromBrowseParams } from "@/browser/lib/params";
-import { BrowseStateProvider, useBrowseContext } from "@/browser/model/context";
+import { BrowseFilter, DataCubeAbout } from "@/browse/lib/filters";
+import { buildURLFromBrowseParams } from "@/browse/lib/params";
+import { BrowseStateProvider, useBrowseContext } from "@/browse/model/context";
 import {
   DatasetResults,
   DatasetResultsProps,
   SearchDatasetControls,
   SearchDatasetInput,
   SearchFilters,
-} from "@/browser/ui/dataset-browse";
+} from "@/browse/ui/dataset-browse";
 import {
   DataSetPreview,
   DataSetPreviewProps,
   isOdsIframe,
-} from "@/browser/ui/dataset-preview";
+} from "@/browse/ui/dataset-preview";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import { Flex } from "@/components/flex";

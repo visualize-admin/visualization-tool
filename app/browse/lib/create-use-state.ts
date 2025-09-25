@@ -1,18 +1,11 @@
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useMemo, useRef, useState } from "react";
 
 import {
   BrowseFilter,
   getFiltersFromParams,
   getParamsFromFilters,
-} from "@/browser/lib/filters";
-import { useUrlSyncState } from "@/browser/lib/use-url-sync-state";
+} from "@/browse/lib/filters";
+import { useUrlSyncState } from "@/browse/lib/use-url-sync-state";
 import { SearchCubeResultOrder } from "@/graphql/query-hooks";
 import { BrowseParams } from "@/pages/browse";
 import { useEvent } from "@/utils/use-event";
@@ -25,7 +18,11 @@ import { useEvent } from "@/utils/use-event";
  * TODO: Might be a good idea to use a zustand store, where the persistency is controlled
  * via syncWithUrl. It would be a bit more explicit and easier to understand.
  */
-const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
+export const createUseBrowseState = ({
+  syncWithUrl,
+}: {
+  syncWithUrl: boolean;
+}) => {
   const useParamsHook = syncWithUrl ? useUrlSyncState : useState<BrowseParams>;
   return () => {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -57,8 +54,11 @@ const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
       setParams((prev) => ({ ...prev, dataset: v }))
     );
 
-    return useMemo(
-      () => ({
+    return useMemo(() => {
+      const { CreatedDesc, Score } = SearchCubeResultOrder;
+      const previousOrder = previousOrderRef.current;
+
+      return {
         inputRef,
         includeDrafts: !!includeDrafts,
         setIncludeDrafts,
@@ -66,20 +66,14 @@ const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
           setParams((prev) => ({
             ...prev,
             search: "",
-            order:
-              previousOrderRef.current === SearchCubeResultOrder.Score
-                ? SearchCubeResultOrder.CreatedDesc
-                : previousOrderRef.current,
+            order: previousOrder === Score ? CreatedDesc : previousOrder,
           }));
         },
         onSubmitSearch: (newSearch: string) => {
           setParams((prev) => ({
             ...prev,
             search: newSearch,
-            order:
-              newSearch === ""
-                ? SearchCubeResultOrder.CreatedDesc
-                : previousOrderRef.current,
+            order: newSearch === "" ? CreatedDesc : previousOrder,
           }));
         },
         search,
@@ -99,64 +93,18 @@ const createUseBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
             ...getParamsFromFilters(filters),
           }));
         },
-      }),
-      [
-        includeDrafts,
-        setIncludeDrafts,
-        search,
-        order,
-        setSearch,
-        setOrder,
-        dataset,
-        setDataset,
-        filters,
-        setParams,
-      ]
-    );
+      };
+    }, [
+      includeDrafts,
+      setIncludeDrafts,
+      search,
+      order,
+      setSearch,
+      setOrder,
+      dataset,
+      setDataset,
+      filters,
+      setParams,
+    ]);
   };
-};
-
-export type BrowseState = ReturnType<ReturnType<typeof createUseBrowseState>>;
-const BrowseContext = createContext<BrowseState | undefined>(undefined);
-
-const useBrowseState = ({ syncWithUrl }: { syncWithUrl: boolean }) => {
-  // Use useState here to make sure that the hook is only created once.
-  // /!\ It will not react if syncWithUrl changes
-  const [useBrowseStateHook] = useState(() =>
-    createUseBrowseState({ syncWithUrl })
-  );
-
-  return useBrowseStateHook();
-};
-
-/**
- * Provides browse context to children below
- * Responsible for connecting the router to the browsing state
- */
-export const BrowseStateProvider = ({
-  children,
-  syncWithUrl,
-}: {
-  children: ReactNode;
-  syncWithUrl: boolean;
-}) => {
-  const browseState = useBrowseState({ syncWithUrl });
-
-  return (
-    <BrowseContext.Provider value={browseState}>
-      {children}
-    </BrowseContext.Provider>
-  );
-};
-
-export const useBrowseContext = () => {
-  const ctx = useContext(BrowseContext);
-
-  if (!ctx) {
-    throw Error(
-      "To be able useBrowseContext, you must wrap it into a BrowseStateProvider"
-    );
-  }
-
-  return ctx;
 };
