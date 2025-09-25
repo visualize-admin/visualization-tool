@@ -13,6 +13,7 @@ import { useDebounce } from "use-debounce";
 
 import { BrowseFilter, DataCubeAbout } from "@/browse/lib/filters";
 import { buildURLFromBrowseParams, isOdsIframe } from "@/browse/lib/params";
+import { useRedirectToLatestCube } from "@/browse/lib/use-redirect-to-latest-cube";
 import { BrowseStateProvider, useBrowseContext } from "@/browse/model/context";
 import {
   DatasetResults,
@@ -37,7 +38,6 @@ import {
   navPresenceProps,
   smoothPresenceProps,
 } from "@/components/presence";
-import { useRedirectToLatestCube } from "@/components/use-redirect-to-latest-cube";
 import { DataSource } from "@/configurator";
 import {
   PanelBodyWrapper,

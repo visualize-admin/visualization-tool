@@ -2,9 +2,10 @@ import { renderHook } from "@testing-library/react";
 import { NextRouter, useRouter } from "next/router";
 import { describe, expect, it, Mock, vi } from "vitest";
 
-import { useRedirectToLatestCube } from "@/components/use-redirect-to-latest-cube";
+import { useRedirectToLatestCube } from "@/browse/lib/use-redirect-to-latest-cube";
 import { useLocale } from "@/locales/use-locale";
 import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
+import { sleep } from "@/utils/sleep";
 
 vi.mock("@/rdf/query-latest-cube-iri", () => ({
   queryLatestCubeIri: vi.fn(),
@@ -17,9 +18,6 @@ vi.mock("next/router", () => ({
 vi.mock("@/locales/use-locale", () => ({
   useLocale: vi.fn(),
 }));
-
-const sleep = (duration: number) =>
-  new Promise((resolve) => setTimeout(resolve, duration));
 
 describe("use redirect to versioned cube", () => {
   const setup = async ({
