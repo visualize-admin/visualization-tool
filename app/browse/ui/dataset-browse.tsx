@@ -1,4 +1,4 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/macro";
 import {
   Box,
   Button,
@@ -21,20 +21,12 @@ import uniqBy from "lodash/uniqBy";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { stringify } from "qs";
-import {
-  ComponentProps,
-  type KeyboardEvent,
-  type MouseEvent,
-  ReactNode,
-  useMemo,
-  useState,
-} from "react";
+import { ComponentProps, type MouseEvent, ReactNode, useMemo } from "react";
 
 import { BrowseFilter } from "@/browse/lib/filters";
 import { getBrowseParamsFromQuery } from "@/browse/lib/params";
-import { BrowseState, useBrowseContext } from "@/browse/model/context";
+import { useBrowseContext } from "@/browse/model/context";
 import { Flex } from "@/components/flex";
-import { SearchField, SearchFieldProps } from "@/components/form";
 import { Loading, LoadingDataError } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { MaybeLink } from "@/components/maybe-link";
@@ -71,10 +63,6 @@ const useStyles = makeStyles<Theme>(() => ({
     alignItems: "center",
     borderRadius: 999,
   },
-  searchInput: {
-    width: "100%",
-    maxWidth: 820,
-  },
 }));
 
 const useNavItemStyles = makeStyles<Theme, { level: number }>((theme) => ({
@@ -109,57 +97,6 @@ const useNavItemStyles = makeStyles<Theme, { level: number }>((theme) => ({
     },
   }),
 }));
-
-export const SearchDatasetInput = ({
-  browseState,
-  searchFieldProps,
-}: {
-  browseState: BrowseState;
-  searchFieldProps?: Partial<SearchFieldProps>;
-}) => {
-  const classes = useStyles();
-  const [_, setShowDraftCheckbox] = useState<boolean>(false);
-  const { inputRef, search, onSubmitSearch, onReset } = browseState;
-
-  const searchLabel = t({
-    id: "dataset.search.label",
-    message: "Search",
-  });
-
-  const placeholderLabel = t({
-    id: "dataset.search.placeholder",
-    message: "Name, description, organization, theme, keyword",
-  });
-
-  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && inputRef.current) {
-      onSubmitSearch(inputRef.current.value);
-    }
-  };
-
-  return (
-    <Flex sx={{ alignItems: "center", gap: 2, pt: 4 }}>
-      <SearchField
-        key={search}
-        inputRef={inputRef}
-        id="datasetSearch"
-        label={searchLabel}
-        defaultValue={search ?? ""}
-        InputProps={{
-          inputProps: {
-            "data-testid": "datasetSearch",
-          },
-          onKeyPress: handleKeyPress,
-          onReset,
-          onFocus: () => setShowDraftCheckbox(true),
-        }}
-        placeholder={placeholderLabel}
-        {...searchFieldProps}
-        className={clsx(classes.searchInput, searchFieldProps?.className)}
-      />
-    </Flex>
-  );
-};
 
 const NavChip = ({
   children,

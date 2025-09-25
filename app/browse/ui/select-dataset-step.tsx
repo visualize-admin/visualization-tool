@@ -18,7 +18,6 @@ import { BrowseStateProvider, useBrowseContext } from "@/browse/model/context";
 import {
   DatasetResults,
   DatasetResultsProps,
-  SearchDatasetInput,
   SearchFilters,
 } from "@/browse/ui/dataset-browse";
 import {
@@ -26,6 +25,7 @@ import {
   DataSetPreviewProps,
 } from "@/browse/ui/dataset-preview";
 import { SearchDatasetControls } from "@/browse/ui/search-dataset-controls";
+import { SearchDatasetInput } from "@/browse/ui/search-dataset-input";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import { Flex } from "@/components/flex";
