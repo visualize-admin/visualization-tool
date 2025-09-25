@@ -4,7 +4,6 @@ import {
   Button,
   ButtonBase,
   CardProps,
-  Divider,
   Link as MUILink,
   LinkProps as MUILinkProps,
   Stack,
@@ -68,7 +67,6 @@ import {
 } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 import SvgIcClose from "@/icons/components/IcClose";
-import { sleep } from "@/utils/sleep";
 import { useEvent } from "@/utils/use-event";
 
 const useStyles = makeStyles<Theme>(() => ({
@@ -165,54 +163,6 @@ export const SearchDatasetInput = ({
         {...searchFieldProps}
         className={clsx(classes.searchInput, searchFieldProps?.className)}
       />
-    </Flex>
-  );
-};
-
-export const SearchDatasetControls = ({
-  browseState,
-  cubes,
-}: {
-  browseState: BrowseState;
-  cubes: SearchCubeResult[];
-}) => {
-  const {
-    inputRef,
-    search,
-    onSubmitSearch,
-    includeDrafts,
-    setIncludeDrafts,
-    order: stateOrder,
-    onSetOrder,
-  } = browseState;
-
-  const order = stateOrder ?? SearchCubeResultOrder.CreatedDesc;
-  const isSearching = search !== "" && search !== undefined;
-
-  const onToggleIncludeDrafts = useEvent(async () => {
-    setIncludeDrafts(!includeDrafts);
-    if (inputRef.current && inputRef.current.value.length > 0) {
-      // We need to wait here otherwise the includeDrafts is reset :/
-      await sleep(200);
-      onSubmitSearch(inputRef.current.value);
-    }
-  });
-
-  return (
-    <Flex sx={{ justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-      <SearchDatasetResultsCount cubes={cubes} />
-      <Flex sx={{ alignItems: "center", gap: 5 }}>
-        <SearchDatasetDraftsControl
-          checked={includeDrafts}
-          onChange={onToggleIncludeDrafts}
-        />
-        <Divider flexItem orientation="vertical" />
-        <SearchDatasetSortControl
-          value={order}
-          onChange={onSetOrder}
-          disableScore={!isSearching}
-        />
-      </Flex>
     </Flex>
   );
 };
