@@ -35,9 +35,9 @@ import {
 import {
   DatasetResults,
   SearchDatasetDraftsControl,
-  SearchDatasetResultsCount,
   SearchDatasetSortControl,
 } from "@/browse/ui/dataset-browse";
+import { SearchDatasetResultsCount } from "@/browse/ui/search-dataset-results-count";
 import { Flex } from "@/components/flex";
 import { Tag } from "@/components/tag";
 import { VisuallyHidden } from "@/components/visually-hidden";
@@ -570,8 +570,8 @@ export const AddDatasetDrawer = ({
 
             <Flex
               sx={{
-                alignItems: "center",
                 justifyContent: "space-between",
+                alignItems: "center",
                 mb: 2,
               }}
             >

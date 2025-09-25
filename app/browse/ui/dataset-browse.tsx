@@ -1,4 +1,4 @@
-import { Plural, t, Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import {
   Box,
   Button,
@@ -164,31 +164,6 @@ export const SearchDatasetInput = ({
         className={clsx(classes.searchInput, searchFieldProps?.className)}
       />
     </Flex>
-  );
-};
-
-export const SearchDatasetResultsCount = ({
-  cubes,
-}: {
-  cubes: SearchCubeResult[];
-}) => {
-  return (
-    <Typography
-      variant="h5"
-      component="p"
-      aria-live="polite"
-      data-testid="search-results-count"
-    >
-      {cubes.length > 0 && (
-        <Plural
-          id="dataset.results"
-          value={cubes.length}
-          zero="No datasets"
-          one="# dataset"
-          other="# datasets"
-        />
-      )}
-    </Typography>
   );
 };
 
