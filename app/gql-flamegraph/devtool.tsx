@@ -45,6 +45,7 @@ import { flag, useFlag, useFlags } from "@/flags";
 import { FlagName, FLAGS } from "@/flags/types";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import { Icon } from "@/icons";
+import { maybeWindow } from "@/utils/maybe-window";
 import { useEvent } from "@/utils/use-event";
 
 type Timings = Record<
@@ -427,8 +428,9 @@ function GqlDebug({ controller }: { controller: GraphqlOperationsController }) {
   const { opsStartMap, opsEndMap, reset, results } = controller;
   const [expandedId, setExpandedId] =
     useState<OperationResult["operation"]["key"]>();
+  const window = maybeWindow();
 
-  if (typeof window === "undefined") {
+  if (!window) {
     return null;
   }
 

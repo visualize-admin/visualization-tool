@@ -1,4 +1,4 @@
-import { isRunningInBrowser } from "@/utils/is-running-in-browser";
+import { maybeWindow } from "@/utils/maybe-window";
 
 declare global {
   interface Window {
@@ -13,7 +13,7 @@ declare global {
  * Note: we can't destructure process.env because it's mangled in the Next.js runtime
  */
 
-const clientEnv = isRunningInBrowser() ? window.__clientEnv__ : undefined;
+const clientEnv = maybeWindow()?.__clientEnv__;
 
 export const PUBLIC_URL = (
   clientEnv?.PUBLIC_URL ??
