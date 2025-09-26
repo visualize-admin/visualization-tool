@@ -56,9 +56,25 @@ import { useConfiguratorState, useLocale } from "@/src";
 import { softJSONParse } from "@/utils/soft-json-parse";
 import { useResizeObserver } from "@/utils/use-resize-observer";
 
-type SelectDatasetStepProps = ComponentProps<typeof SelectDatasetStepContent>;
+export const SelectDatasetStep = (
+  props: Omit<ComponentProps<typeof SelectDatasetStepInner>, "variant"> & {
+    /**
+     * Is passed to the content component. At this level, it controls which whether the
+     * browsing state is synced with the URL or not.
+     * At the SelectDatasetStepContent level, it tweaks UI elements.
+     * /!\ It should not change during the lifetime of the component.
+     */
+    variant: "page" | "drawer";
+  }
+) => {
+  return (
+    <BrowseStateProvider syncWithUrl={props.variant === "page"}>
+      <SelectDatasetStepInner {...props} />
+    </BrowseStateProvider>
+  );
+};
 
-const SelectDatasetStepContent = ({
+const SelectDatasetStepInner = ({
   datasetPreviewProps,
   datasetResultsProps,
   dataset: propsDataset,
@@ -564,28 +580,6 @@ const useStyles = makeStyles<
     color: theme.palette.grey[800],
   },
 }));
-
-/**
- * This is the select dataset step component for use directly in a page.
- * It uses the URL to sync the state.
- */
-export const SelectDatasetStep = (
-  props: Omit<SelectDatasetStepProps, "variant"> & {
-    /**
-     * Is passed to the content component. At this level, it controls which whether the
-     * browsing state is synced with the URL or not.
-     * At the SelectDatasetStepContent level, it tweaks UI elements.
-     * /!\ It should not change during the lifetime of the component.
-     */
-    variant: "page" | "drawer";
-  }
-) => {
-  return (
-    <BrowseStateProvider syncWithUrl={props.variant === "page"}>
-      <SelectDatasetStepContent {...props} variant={props.variant} />
-    </BrowseStateProvider>
-  );
-};
 
 const formatBackLink = (
   query: Router["query"]
