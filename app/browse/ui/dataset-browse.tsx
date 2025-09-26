@@ -293,21 +293,13 @@ const Subthemes = ({
 
 const NavSectionTitle = ({
   label,
-  theme,
+  backgroundColor,
 }: {
   label: ReactNode;
-  theme: { backgroundColor: string };
+  backgroundColor: string;
 }) => {
   return (
-    <Box
-      sx={{
-        mb: 2,
-        px: 2,
-        py: 3,
-        borderRadius: "6px",
-        backgroundColor: theme.backgroundColor,
-      }}
-    >
+    <Box sx={{ mb: 2, px: 2, py: 3, borderRadius: "6px", backgroundColor }}>
       <Typography variant="h4" component="div" sx={{ fontWeight: 700 }}>
         {label}
       </Typography>
@@ -318,7 +310,7 @@ const NavSectionTitle = ({
 const NavSection = ({
   label,
   items,
-  theme,
+  backgroundColor,
   currentFilter,
   filters,
   counts,
@@ -327,7 +319,7 @@ const NavSection = ({
 }: {
   label: ReactNode;
   items: (DataCubeTheme | DataCubeOrganization | DataCubeTermset)[];
-  theme: { backgroundColor: string };
+  backgroundColor: string;
   currentFilter?: DataCubeTheme | DataCubeOrganization | DataCubeTermset;
   filters: BrowseFilter[];
   counts: Record<string, number>;
@@ -344,7 +336,7 @@ const NavSection = ({
 
   return (
     <div>
-      <NavSectionTitle label={label} theme={theme} />
+      <NavSectionTitle label={label} backgroundColor={backgroundColor} />
       <Reorder.Group
         axis="y"
         as="div"
@@ -360,7 +352,7 @@ const NavSection = ({
                 next={item}
                 count={counts[item.iri]}
                 disableLink={disableLinks}
-                countBg={theme.backgroundColor}
+                countBg={backgroundColor}
               >
                 {item.label}
               </NavItem>
@@ -501,7 +493,7 @@ export const SearchFilters = ({
       <NavSection
         key="themes"
         items={displayedThemes}
-        theme={{ backgroundColor: "green.100" }}
+        backgroundColor="green.100"
         currentFilter={themeFilter}
         counts={counts}
         filters={filters}
@@ -527,7 +519,7 @@ export const SearchFilters = ({
       <NavSection
         key="orgs"
         items={displayedOrgs}
-        theme={{ backgroundColor: bg }}
+        backgroundColor={bg}
         currentFilter={orgFilter}
         counts={counts}
         filters={filters}
@@ -552,7 +544,7 @@ export const SearchFilters = ({
       <NavSection
         key="termsets"
         items={displayedTermsets}
-        theme={{ backgroundColor: "monochrome.200" }}
+        backgroundColor="monochrome.200"
         currentFilter={termsetFilter}
         counts={counts}
         filters={filters}
