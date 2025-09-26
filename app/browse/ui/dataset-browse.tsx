@@ -1,31 +1,17 @@
 import { Trans } from "@lingui/macro";
-import {
-  Box,
-  Button,
-  ButtonBase,
-  Link,
-  LinkProps,
-  Stack,
-  Theme,
-  Typography,
-} from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { AnimatePresence, Reorder } from "framer-motion";
 import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
-import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
-import { stringify } from "qs";
 import { ReactNode, useMemo } from "react";
 
-import { BrowseFilter, encodeFilter } from "@/browse/lib/filters";
+import { BrowseFilter } from "@/browse/lib/filters";
 import { useBrowseContext } from "@/browse/model/context";
-import { NavigationChip } from "@/browse/ui/navigation-chip";
+import { NavigationItem } from "@/browse/ui/navigation-item";
 import { Flex } from "@/components/flex";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
-import { MaybeLink } from "@/components/maybe-link";
-import { accordionPresenceProps, MotionBox } from "@/components/presence";
 import { useDisclosure } from "@/components/use-disclosure";
 import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
@@ -36,175 +22,6 @@ import {
 } from "@/graphql/query-hooks";
 import { SearchCubeResult } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
-import SvgIcClose from "@/icons/components/IcClose";
-
-const useNavItemStyles = makeStyles<Theme, { level: number }>((theme) => ({
-  navItem: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: theme.spacing(3),
-    width: "100%",
-    padding: theme.spacing(2),
-    borderRadius: 2,
-    transition: "background-color 0.1s ease",
-    "&:hover": {
-      backgroundColor: theme.palette.cobalt[50],
-    },
-  },
-  removeFilterButton: ({ level }) => ({
-    display: "flex",
-    alignItems: "center",
-    width: "auto",
-    height: "auto",
-    minWidth: 16,
-    minHeight: 16,
-    marginRight: 2,
-    padding: 0,
-    borderRadius: 2,
-    backgroundColor: level === 1 ? "cobalt.50" : "transparent",
-    color: level === 1 ? theme.palette.text.primary : "cobalt.50",
-    transition: "background-color 0.1s ease",
-    "&:hover": {
-      backgroundColor: theme.palette.cobalt[100],
-    },
-  }),
-}));
-
-const NavItem = ({
-  children,
-  filters,
-  next,
-  count,
-  active,
-  level = 1,
-  disableLink,
-  countBg,
-}: {
-  children: ReactNode;
-  filters: BrowseFilter[];
-  next: BrowseFilter;
-  count?: number;
-  active: boolean;
-  /** Level is there to differentiate between organizations and organization subtopics */
-  level?: number;
-  disableLink?: boolean;
-  countBg: string;
-} & LinkProps) => {
-  const { includeDrafts, search, setFilters } = useBrowseContext();
-  const classes = useNavItemStyles({ level });
-  const highlighted = active && level === 1;
-
-  const [newFiltersAdd, href] = useMemo(() => {
-    const extraURLParams = stringify(
-      pickBy(
-        {
-          includeDrafts,
-          search,
-          topic: level === 2 && !disableLink ? next.iri : undefined,
-        },
-        Boolean
-      )
-    );
-    const newFilters = [...filters].filter(
-      (f) =>
-        (disableLink ? true : f.__typename !== "DataCubeAbout") &&
-        (level === 1 ? f.__typename !== next.__typename : true)
-    );
-
-    if (level === 1 || disableLink) {
-      newFilters.push(next);
-    }
-
-    return [
-      newFilters,
-      `/browse/${newFilters.map(encodeFilter).join("/")}?${extraURLParams}`,
-    ] as const;
-  }, [includeDrafts, search, level, next, filters, disableLink]);
-
-  const [newFiltersRemove, removeFilterPath] = useMemo(() => {
-    const extraURLParams = stringify(
-      pickBy({ includeDrafts, search }, Boolean)
-    );
-    const newFilters = filters.filter(
-      (f) => f.__typename !== "DataCubeAbout" && f.iri !== next.iri
-    );
-
-    return [
-      newFilters,
-      `/browse/${newFilters.map(encodeFilter).join("/")}?${extraURLParams}`,
-    ] as const;
-  }, [includeDrafts, search, filters, next.iri]);
-
-  const removeFilterButton = (
-    <MaybeLink
-      href={removeFilterPath}
-      passHref
-      legacyBehavior
-      disabled={!!disableLink}
-      scroll={false}
-      shallow
-    >
-      <ButtonBase
-        className={classes.removeFilterButton}
-        onClick={
-          disableLink
-            ? (e) => {
-                e.preventDefault();
-                setFilters(newFiltersRemove);
-              }
-            : undefined
-        }
-      >
-        <SvgIcClose width={24} height={24} />
-      </ButtonBase>
-    </MaybeLink>
-  );
-
-  const countChip =
-    count !== undefined ? (
-      <NavigationChip backgroundColor={countBg}>{count}</NavigationChip>
-    ) : null;
-
-  return (
-    <MotionBox {...accordionPresenceProps} data-testid="navItem">
-      <MaybeLink
-        href={href}
-        passHref
-        legacyBehavior
-        disabled={!!disableLink}
-        scroll={false}
-        shallow
-      >
-        <Link
-          className={classes.navItem}
-          variant="body3"
-          onClick={
-            disableLink && !active
-              ? (e) => {
-                  e.preventDefault();
-                  setFilters(newFiltersAdd);
-                }
-              : undefined
-          }
-          sx={{
-            p: 2,
-            backgroundColor: highlighted ? "cobalt.50" : "transparent",
-            color: active
-              ? level === 1
-                ? "text.primary"
-                : "cobalt.50"
-              : "text.primary",
-            cursor: active ? "default" : "pointer",
-          }}
-        >
-          {children}
-          {highlighted ? removeFilterButton : countChip}
-        </Link>
-      </MaybeLink>
-    </MotionBox>
-  );
-};
 
 const Subthemes = ({
   subthemes,
@@ -229,7 +46,7 @@ const Subthemes = ({
         }
 
         return (
-          <NavItem
+          <NavigationItem
             key={d.iri}
             next={{ __typename: "DataCubeAbout", ...d }}
             filters={filters}
@@ -240,7 +57,7 @@ const Subthemes = ({
             countBg={countBg}
           >
             {d.label}
-          </NavItem>
+          </NavigationItem>
         );
       })}
     </>
@@ -302,7 +119,7 @@ const NavSection = ({
         {(isOpen ? items : topItems).map((item) => {
           return (
             <Reorder.Item key={item.iri} as="div" value={item}>
-              <NavItem
+              <NavigationItem
                 active={currentFilter?.iri === item.iri}
                 filters={filters}
                 next={item}
@@ -311,7 +128,7 @@ const NavSection = ({
                 countBg={backgroundColor}
               >
                 {item.label}
-              </NavItem>
+              </NavigationItem>
             </Reorder.Item>
           );
         })}
