@@ -173,18 +173,18 @@ const SelectDatasetStepContent = ({
 }) => {
   const locale = useLocale();
   const [configState] = useConfiguratorState();
-  const router = useRouter();
-  const odsIframe = isOdsIframe(router.query);
-
   const browseState = useBrowseContext();
   const {
     search,
     order,
     includeDrafts,
     filters,
-    dataset: browseStateDataset,
+    dataset: browseDataset,
   } = browseState;
-  const dataset = propsDataset ?? browseStateDataset;
+  const dataset = propsDataset ?? browseDataset;
+  const router = useRouter();
+  const odsIframe = isOdsIframe(router.query);
+  const classes = useStyles({ datasetPresent: !!dataset, odsIframe });
 
   const [debouncedQuery] = useDebounce(search, 500, { leading: true });
   const handleHeightChange = useCallback(
@@ -193,8 +193,7 @@ const SelectDatasetStepContent = ({
     },
     []
   );
-  const [ref] = useResizeObserver(handleHeightChange);
-  const classes = useStyles({ datasetPresent: !!dataset, odsIframe });
+  const [ref] = useResizeObserver<HTMLDivElement>(handleHeightChange);
   const backLink = useMemo(() => {
     return formatBackLink(router.query);
   }, [router.query]);
@@ -223,7 +222,7 @@ const SelectDatasetStepContent = ({
   });
 
   const { allCubes, cubes } = useMemo(() => {
-    if ((data && data.searchCubes.length === 0) || !data) {
+    if (!data || data.searchCubes.length === 0) {
       return {
         allCubes: [],
         cubes: [],
@@ -344,9 +343,9 @@ const SelectDatasetStepContent = ({
   }
 
   return (
-    <Box ref={odsIframe ? ref : null}>
+    <div ref={odsIframe ? ref : null}>
       <AnimatePresence>
-        {!dataset && variant === "page" && (
+        {!dataset && variant === "page" ? (
           <MotionBox key="banner" ref={bannerRef} {...bannerPresenceProps}>
             <section role="banner" className={classes.panelBannerOuterWrapper}>
               <ContentWrapper className={classes.panelBannerInnerWrapper}>
@@ -371,7 +370,7 @@ const SelectDatasetStepContent = ({
               </ContentWrapper>
             </section>
           </MotionBox>
-        )}
+        ) : null}
       </AnimatePresence>
       <Box
         sx={{
@@ -431,11 +430,10 @@ const SelectDatasetStepContent = ({
                       size="sm"
                       target={odsIframe ? "_blank" : undefined}
                       endIcon={
-                        odsIframe ? (
-                          <Icon name="legacyLinkExternal" size={20} />
-                        ) : (
-                          <Icon name="arrowRight" size={20} />
-                        )
+                        <Icon
+                          name={odsIframe ? "legacyLinkExternal" : "arrowRight"}
+                          size={20}
+                        />
                       }
                       onClick={(e) => onCreateChartFromDataset?.(e, dataset)}
                     >
@@ -461,17 +459,18 @@ const SelectDatasetStepContent = ({
                       <Button
                         size="sm"
                         endIcon={
-                          odsIframe ? (
-                            <Icon name="legacyLinkExternal" size={20} />
-                          ) : (
-                            <Icon name="arrowRight" size={20} />
-                          )
+                          <Icon
+                            name={
+                              odsIframe ? "legacyLinkExternal" : "arrowRight"
+                            }
+                            size={20}
+                          />
                         }
                         sx={
-                          // Could be extracted in case we have more
-                          // openData.swiss dependencies
                           odsIframe
                             ? {
+                                // Could be extracted in case we have more
+                                // openData.swiss dependencies
                                 backgroundColor: "#009688",
 
                                 "&:hover": {
@@ -561,7 +560,10 @@ const SelectDatasetStepContent = ({
                 <MotionBox key="filters" {...navPresenceProps}>
                   <AnimatePresence>
                     {variant === "drawer" ? (
-                      <Box mb="2rem" mt="0.125rem" key="select-dataset">
+                      <div
+                        key="select-dataset"
+                        style={{ marginTop: "0.125rem", marginBottom: "2rem" }}
+                      >
                         <Typography variant="h2">
                           <Trans id="chart.datasets.add-dataset-drawer.title">
                             Select dataset
@@ -577,48 +579,50 @@ const SelectDatasetStepContent = ({
                             },
                           }}
                         />
-                      </Box>
+                      </div>
                     ) : null}
                     {queryFilters.length > 0 && (
-                      <MotionBox
-                        key="query-filters"
-                        {...{
-                          initial: {
-                            transform: "translateY(-16px)",
-                            height: 0,
-                            marginBottom: 0,
-                            opacity: 0,
-                          },
-                          animate: {
-                            transform: "translateY(0px)",
-                            height: "auto",
-                            marginBottom: 16,
-                            opacity: 1,
-                          },
-                          exit: {
-                            transform: "translateY(-16px)",
-                            height: 0,
-                            marginBottom: 0,
-                            opacity: 0,
-                          },
-                          transition: {
-                            duration: DURATION,
-                          },
-                        }}
-                      >
+                      <>
                         <Head>
                           <title key="title">
                             {pageTitle}- visualize.admin.ch
                           </title>
                         </Head>
-                        <Typography
-                          key="filters"
-                          className={classes.filters}
-                          variant="h1"
+                        <MotionBox
+                          key="query-filters"
+                          {...{
+                            initial: {
+                              transform: "translateY(-16px)",
+                              height: 0,
+                              marginBottom: 0,
+                              opacity: 0,
+                            },
+                            animate: {
+                              transform: "translateY(0px)",
+                              height: "auto",
+                              marginBottom: 16,
+                              opacity: 1,
+                            },
+                            exit: {
+                              transform: "translateY(-16px)",
+                              height: 0,
+                              marginBottom: 0,
+                              opacity: 0,
+                            },
+                            transition: {
+                              duration: DURATION,
+                            },
+                          }}
                         >
-                          {pageTitle}
-                        </Typography>
-                      </MotionBox>
+                          <Typography
+                            key="filters"
+                            className={classes.filters}
+                            variant="h1"
+                          >
+                            {pageTitle}
+                          </Typography>
+                        </MotionBox>
+                      </>
                     )}
                   </AnimatePresence>
                   <SearchDatasetControls
@@ -639,23 +643,11 @@ const SelectDatasetStepContent = ({
         </PanelLayout>
       </ContentWrapper>
       {variant == "page" && !odsIframe ? (
-        <Box
-          sx={{
-            borderTop: "2px solid rgba(0,0,0,0.05)",
-            mt: 8,
-          }}
-        >
-          <Footer
-            sx={{
-              borderTopWidth: 0,
-              ml: "auto",
-              mr: "auto",
-              width: "100%",
-            }}
-          />
+        <Box sx={{ mt: 8, borderTop: "2px solid rgba(0,0,0,0.05)" }}>
+          <Footer sx={{ width: "100%", mx: "auto", borderTopWidth: 0 }} />
         </Box>
       ) : null}
-    </Box>
+    </div>
   );
 };
 
