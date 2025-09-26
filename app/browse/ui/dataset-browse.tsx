@@ -111,6 +111,7 @@ const NavItem = ({
 } & MUILinkProps) => {
   const { includeDrafts, search, setFilters } = useBrowseContext();
   const classes = useNavItemStyles({ level });
+  const highlighted = active && level === 1;
 
   const [newFiltersAdd, href] = useMemo(() => {
     const extraURLParams = stringify(
@@ -141,13 +142,7 @@ const NavItem = ({
 
   const [newFiltersRemove, removeFilterPath] = useMemo(() => {
     const extraURLParams = stringify(
-      pickBy(
-        {
-          includeDrafts,
-          search,
-        },
-        Boolean
-      )
+      pickBy({ includeDrafts, search }, Boolean)
     );
     const newFilters = filters.filter(
       (f) => f.__typename !== "DataCubeAbout" && f.iri !== next.iri
@@ -200,7 +195,7 @@ const NavItem = ({
         shallow
       >
         <MUILink
-          className={clsx(classes.navItem)}
+          className={classes.navItem}
           variant="body3"
           onClick={
             disableLink && !active
@@ -212,8 +207,7 @@ const NavItem = ({
           }
           sx={{
             p: 2,
-            backgroundColor:
-              active && level === 1 ? "cobalt.50" : "transparent",
+            backgroundColor: highlighted ? "cobalt.50" : "transparent",
             color: active
               ? level === 1
                 ? "text.primary"
@@ -223,7 +217,7 @@ const NavItem = ({
           }}
         >
           {children}
-          {active && level === 1 ? removeFilterButton : countChip}
+          {highlighted ? removeFilterButton : countChip}
         </MUILink>
       </MaybeLink>
     </MotionBox>
@@ -306,13 +300,13 @@ const NavSection = ({
   extra?: ReactNode;
   disableLinks?: boolean;
 }) => {
+  const { isOpen, open, close } = useDisclosure(!!currentFilter);
   const topItems = useMemo(() => {
     return sortBy(
       orderBy(items, (item) => counts[item.iri], "desc").slice(0, 7),
       (item) => item.label
     );
   }, [counts, items]);
-  const { isOpen, open, close } = useDisclosure(!!currentFilter);
 
   return (
     <div>
@@ -325,7 +319,7 @@ const NavSection = ({
       >
         {(isOpen ? items : topItems).map((item) => {
           return (
-            <Reorder.Item drag={false} value={item} key={item.iri} as="div">
+            <Reorder.Item key={item.iri} as="div" value={item}>
               <NavItem
                 active={currentFilter?.iri === item.iri}
                 filters={filters}
@@ -374,7 +368,7 @@ export const SearchFilters = ({
   themes,
   orgs,
   termsets,
-  disableNavLinks = false,
+  disableNavLinks,
 }: {
   cubes: SearchCubeResult[];
   themes: DataCubeTheme[];
@@ -412,7 +406,7 @@ export const SearchFilters = ({
     const result = keyBy(filters, (f) => f.__typename);
 
     return {
-      DataCubeTheme: result.DataCubeTheme as DataCubeTheme | undefined,
+      DataCubeTheme: result.DataCubeTheme as DataCubeTheme,
       DataCubeOrganization: result.DataCubeOrganization as
         | DataCubeOrganization
         | undefined,
@@ -469,7 +463,7 @@ export const SearchFilters = ({
   });
 
   const themeNav =
-    displayedThemes && displayedThemes.length > 0 ? (
+    displayedThemes.length > 0 ? (
       <NavSection
         key="themes"
         items={displayedThemes}
@@ -478,7 +472,6 @@ export const SearchFilters = ({
         counts={counts}
         filters={filters}
         label={<Trans id="browse-panel.themes">Themes</Trans>}
-        extra={null}
         disableLinks={disableNavLinks}
       />
     ) : null;
@@ -495,7 +488,7 @@ export const SearchFilters = ({
 
   const bg = "blue.100";
   const orgNav =
-    displayedOrgs && displayedOrgs.length > 0 ? (
+    displayedOrgs.length > 0 ? (
       <NavSection
         key="orgs"
         items={displayedOrgs}
@@ -520,7 +513,7 @@ export const SearchFilters = ({
     ) : null;
 
   const termsetNav =
-    termsets.length === 0 ? null : (
+    termsets.length > 0 ? (
       <NavSection
         key="termsets"
         items={displayedTermsets}
@@ -550,7 +543,7 @@ export const SearchFilters = ({
         extra={null}
         disableLinks={disableNavLinks}
       />
-    );
+    ) : null;
   const baseNavs: {
     element: ReactNode;
     __typename: BrowseFilter["__typename"];
@@ -598,11 +591,7 @@ export const DatasetResults = ({
   }) => Partial<DatasetResultProps>;
 }) => {
   if (fetching) {
-    return (
-      <Box sx={{ alignItems: "center" }}>
-        <Loading />
-      </Box>
-    );
+    return <Loading />;
   }
 
   if (error) {
@@ -617,7 +606,7 @@ export const DatasetResults = ({
     return (
       <Typography
         variant="h2"
-        sx={{ color: "grey.600", mt: 8, textAlign: "center" }}
+        sx={{ mt: 8, color: "grey.600", textAlign: "center" }}
       >
         <Trans id="No results">No results</Trans>
       </Typography>
@@ -656,10 +645,11 @@ const useResultStyles = makeStyles((theme: Theme) => ({
   titleClickable: {
     display: "inline-block",
     cursor: "pointer",
+    transition: "color 0.2s ease",
+
     "&:hover": {
       color: theme.palette.primary.main,
     },
-    transition: "color 0.2s ease",
   },
 }));
 
@@ -668,30 +658,12 @@ const DateFormat = ({ date }: { date: string }) => {
   const formatted = useMemo(() => {
     return formatter(date);
   }, [formatter, date]);
+
   return <>{formatted}</>;
 };
 
-type ResultProps = {
-  dataCube: PartialSearchCube;
-  highlightedTitle?: string | null;
-  highlightedDescription?: string | null;
-  showTags?: boolean;
-  disableTitleLink?: boolean;
-  showDimensions?: boolean;
-  onClickTitle?: (e: MouseEvent<HTMLDivElement>, iri: string) => void;
-};
-
 export const DatasetResult = ({
-  dataCube,
-  highlightedTitle,
-  highlightedDescription,
-  showTags,
-  disableTitleLink,
-  showDimensions,
-  onClickTitle,
-  ...cardProps
-}: ResultProps & CardProps) => {
-  const {
+  dataCube: {
     iri,
     publicationStatus,
     title,
@@ -700,9 +672,26 @@ export const DatasetResult = ({
     datePublished,
     creator,
     dimensions,
-  } = dataCube;
+  },
+  highlightedTitle,
+  highlightedDescription,
+  showTags,
+  disableTitleLink,
+  showDimensions,
+  onClickTitle,
+  ...cardProps
+}: {
+  dataCube: PartialSearchCube;
+  highlightedTitle?: string | null;
+  highlightedDescription?: string | null;
+  showTags?: boolean;
+  disableTitleLink?: boolean;
+  showDimensions?: boolean;
+  onClickTitle?: (e: MouseEvent<HTMLDivElement>, iri: string) => void;
+} & CardProps) => {
   const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
   const router = useRouter();
+  const classes = useResultStyles();
 
   const handleTitleClick = useEvent((e: MouseEvent<HTMLDivElement>) => {
     onClickTitle?.(e, iri);
@@ -714,7 +703,7 @@ export const DatasetResult = ({
     const browseParams = getBrowseParamsFromQuery(router.query);
     router.push(
       {
-        pathname: `/browse`,
+        pathname: "/browse",
         query: {
           previous: JSON.stringify(browseParams),
           dataset: iri,
@@ -724,16 +713,15 @@ export const DatasetResult = ({
       { shallow: true, scroll: false }
     );
   });
-  const classes = useResultStyles();
 
   return (
     <MotionCard
       elevation={1}
       {...smoothPresenceProps}
       {...cardProps}
-      className={`${classes.root} ${cardProps.className ?? ""}`}
+      className={clsx(classes.root, cardProps.className)}
     >
-      <Stack spacing={2} sx={{ alignItems: "flex-start" }}>
+      <Stack spacing={2}>
         <Flex
           sx={{
             justifyContent: "space-between",
@@ -752,7 +740,7 @@ export const DatasetResult = ({
           )}
         </Flex>
         <Typography
-          className={disableTitleLink ? "" : `${classes.titleClickable}`}
+          className={disableTitleLink ? undefined : classes.titleClickable}
           fontWeight={700}
           onClick={disableTitleLink ? undefined : handleTitleClick}
         >
@@ -773,13 +761,13 @@ export const DatasetResult = ({
         </Typography>
         <Typography
           variant="body2"
+          title={description ?? ""}
           sx={{
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
             display: "-webkit-box",
             overflow: "hidden",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
           }}
-          title={description ?? ""}
         >
           {highlightedDescription ? (
             <Box
@@ -841,7 +829,7 @@ export const DatasetResult = ({
                             <Trans id="dataset-result.dimension-joined-by">
                               Contains values of
                             </Trans>
-                            <Stack gap={1} flexDirection="row" mt={1}>
+                            <Stack flexDirection="row" gap={1} mt={1}>
                               {dimension.termsets.map((termset) => {
                                 return (
                                   <Tag
@@ -856,7 +844,7 @@ export const DatasetResult = ({
                             </Stack>
                           </Typography>
                         </>
-                      ) : undefined
+                      ) : null
                     }
                   >
                     <Tag sx={{ cursor: "default" }} type="dimension">
