@@ -102,37 +102,6 @@ const useStyles = makeStyles<
   },
 }));
 
-const formatBackLink = (
-  query: Router["query"]
-): ComponentProps<typeof NextLink>["href"] => {
-  const backParameters = softJSONParse(query.previous as string);
-
-  if (!backParameters) {
-    return "/browse";
-  }
-
-  return buildURLFromBrowseParams(backParameters);
-};
-
-const prepareSearchQueryFilters = (filters: BrowseFilter[]) => {
-  return (
-    filters
-      // Subthemes are filtered on client side.
-      .filter(
-        (d): d is Exclude<BrowseFilter, DataCubeAbout> =>
-          d.__typename !== SearchCubeFilterType.DataCubeAbout
-      )
-      .map((d) => {
-        const type = SearchCubeFilterType[d.__typename];
-        return {
-          type,
-          label: d.label,
-          value: d.iri,
-        };
-      })
-  );
-};
-
 const SelectDatasetStepContent = ({
   datasetPreviewProps,
   datasetResultsProps,
@@ -646,5 +615,36 @@ export const SelectDatasetStep = (
     <BrowseStateProvider syncWithUrl={props.variant === "page"}>
       <SelectDatasetStepContent {...props} variant={props.variant} />
     </BrowseStateProvider>
+  );
+};
+
+const formatBackLink = (
+  query: Router["query"]
+): ComponentProps<typeof NextLink>["href"] => {
+  const backParameters = softJSONParse(query.previous as string);
+
+  if (!backParameters) {
+    return "/browse";
+  }
+
+  return buildURLFromBrowseParams(backParameters);
+};
+
+const prepareSearchQueryFilters = (filters: BrowseFilter[]) => {
+  return (
+    filters
+      // Subthemes are filtered on client side.
+      .filter(
+        (d): d is Exclude<BrowseFilter, DataCubeAbout> =>
+          d.__typename !== SearchCubeFilterType.DataCubeAbout
+      )
+      .map((d) => {
+        const type = SearchCubeFilterType[d.__typename];
+        return {
+          type,
+          label: d.label,
+          value: d.iri,
+        };
+      })
   );
 };
