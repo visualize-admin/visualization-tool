@@ -3,58 +3,42 @@ import {
   Box,
   Button,
   ButtonBase,
-  CardProps,
-  Link as MUILink,
-  LinkProps as MUILinkProps,
+  Link,
+  LinkProps,
   Stack,
   Theme,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import clsx from "clsx";
 import { AnimatePresence, Reorder } from "framer-motion";
 import keyBy from "lodash/keyBy";
 import orderBy from "lodash/orderBy";
 import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import { stringify } from "qs";
-import { ComponentProps, type MouseEvent, ReactNode, useMemo } from "react";
+import { ComponentProps, ReactNode, useMemo } from "react";
 
 import { BrowseFilter, encodeFilter } from "@/browse/lib/filters";
-import { getBrowseParamsFromQuery } from "@/browse/lib/params";
 import { useBrowseContext } from "@/browse/model/context";
+import { DatasetResult, DatasetResultProps } from "@/browse/ui/dataset-result";
 import { NavigationChip } from "@/browse/ui/navigation-chip";
 import { Flex } from "@/components/flex";
 import { Loading, LoadingDataError } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { MaybeLink } from "@/components/maybe-link";
-import { MaybeTooltip } from "@/components/maybe-tooltip";
-import {
-  accordionPresenceProps,
-  MotionBox,
-  MotionCard,
-  smoothPresenceProps,
-} from "@/components/presence";
-import { Tag } from "@/components/tag";
+import { accordionPresenceProps, MotionBox } from "@/components/presence";
 import { useDisclosure } from "@/components/use-disclosure";
-import { PartialSearchCube, SearchCube } from "@/domain/data";
+import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { useFormatDate } from "@/formatters";
 import {
   DataCubeOrganization,
   DataCubeTermset,
   DataCubeTheme,
 } from "@/graphql/query-hooks";
-import {
-  DataCubePublicationStatus,
-  SearchCubeResult,
-} from "@/graphql/resolver-types";
+import { SearchCubeResult } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 import SvgIcClose from "@/icons/components/IcClose";
-import { useEvent } from "@/utils/use-event";
 
 const useNavItemStyles = makeStyles<Theme, { level: number }>((theme) => ({
   navItem: {
@@ -108,7 +92,7 @@ const NavItem = ({
   level?: number;
   disableLink?: boolean;
   countBg: string;
-} & MUILinkProps) => {
+} & LinkProps) => {
   const { includeDrafts, search, setFilters } = useBrowseContext();
   const classes = useNavItemStyles({ level });
   const highlighted = active && level === 1;
@@ -194,7 +178,7 @@ const NavItem = ({
         scroll={false}
         shallow
       >
-        <MUILink
+        <Link
           className={classes.navItem}
           variant="body3"
           onClick={
@@ -218,7 +202,7 @@ const NavItem = ({
         >
           {children}
           {highlighted ? removeFilterButton : countChip}
-        </MUILink>
+        </Link>
       </MaybeLink>
     </MotionBox>
   );
@@ -629,239 +613,3 @@ export const DatasetResults = ({
 };
 
 export type DatasetResultsProps = ComponentProps<typeof DatasetResults>;
-
-const useResultStyles = makeStyles((theme: Theme) => ({
-  root: {
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    gap: theme.spacing(4),
-    padding: `${theme.spacing(8)} 0`,
-    borderRadius: 0,
-    borderTop: `1px solid ${theme.palette.monochrome[400]}`,
-    textAlign: "left",
-    boxShadow: "none",
-  },
-  titleClickable: {
-    display: "inline-block",
-    cursor: "pointer",
-    transition: "color 0.2s ease",
-
-    "&:hover": {
-      color: theme.palette.primary.main,
-    },
-  },
-}));
-
-const DateFormat = ({ date }: { date: string }) => {
-  const formatter = useFormatDate();
-  const formatted = useMemo(() => {
-    return formatter(date);
-  }, [formatter, date]);
-
-  return <>{formatted}</>;
-};
-
-export const DatasetResult = ({
-  dataCube: {
-    iri,
-    publicationStatus,
-    title,
-    description,
-    themes,
-    datePublished,
-    creator,
-    dimensions,
-  },
-  highlightedTitle,
-  highlightedDescription,
-  showTags,
-  disableTitleLink,
-  showDimensions,
-  onClickTitle,
-  ...cardProps
-}: {
-  dataCube: PartialSearchCube;
-  highlightedTitle?: string | null;
-  highlightedDescription?: string | null;
-  showTags?: boolean;
-  disableTitleLink?: boolean;
-  showDimensions?: boolean;
-  onClickTitle?: (e: MouseEvent<HTMLDivElement>, iri: string) => void;
-} & CardProps) => {
-  const isDraft = publicationStatus === DataCubePublicationStatus.Draft;
-  const router = useRouter();
-  const classes = useResultStyles();
-
-  const handleTitleClick = useEvent((e: MouseEvent<HTMLDivElement>) => {
-    onClickTitle?.(e, iri);
-
-    if (e.defaultPrevented) {
-      return;
-    }
-
-    const browseParams = getBrowseParamsFromQuery(router.query);
-    router.push(
-      {
-        pathname: "/browse",
-        query: {
-          previous: JSON.stringify(browseParams),
-          dataset: iri,
-        },
-      },
-      undefined,
-      { shallow: true, scroll: false }
-    );
-  });
-
-  return (
-    <MotionCard
-      elevation={1}
-      {...smoothPresenceProps}
-      {...cardProps}
-      className={clsx(classes.root, cardProps.className)}
-    >
-      <Stack spacing={2}>
-        <Flex
-          sx={{
-            justifyContent: "space-between",
-            width: "100%",
-            // To account for the space taken by the draft tag
-            minHeight: 24,
-          }}
-        >
-          <Typography variant="body2" color="monochrome.500">
-            {datePublished && <DateFormat date={datePublished} />}
-          </Typography>
-          {isDraft && (
-            <Tag type="draft">
-              <Trans id="dataset.tag.draft">Draft</Trans>
-            </Tag>
-          )}
-        </Flex>
-        <Typography
-          className={disableTitleLink ? undefined : classes.titleClickable}
-          fontWeight={700}
-          onClick={disableTitleLink ? undefined : handleTitleClick}
-        >
-          {highlightedTitle ? (
-            <Box
-              component="span"
-              dangerouslySetInnerHTML={{ __html: highlightedTitle }}
-              sx={{
-                fontWeight: highlightedTitle === title ? 700 : 400,
-                "& > b": {
-                  fontWeight: 700,
-                },
-              }}
-            />
-          ) : (
-            title
-          )}
-        </Typography>
-        <Typography
-          variant="body2"
-          title={description ?? ""}
-          sx={{
-            display: "-webkit-box",
-            overflow: "hidden",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-          }}
-        >
-          {highlightedDescription ? (
-            <Box
-              component="span"
-              dangerouslySetInnerHTML={{ __html: highlightedDescription }}
-              sx={{
-                fontWeight: 400,
-                "& > b": {
-                  fontWeight: 700,
-                },
-              }}
-            />
-          ) : (
-            description
-          )}
-        </Typography>
-      </Stack>
-      <Flex sx={{ flexWrap: "wrap", gap: 2 }}>
-        {themes && showTags
-          ? sortBy(themes, (t) => t.label).map(
-              (t) =>
-                t.iri &&
-                t.label && (
-                  <Link
-                    key={t.iri}
-                    href={`/browse/theme/${encodeURIComponent(t.iri)}`}
-                    passHref
-                    legacyBehavior
-                    scroll={false}
-                  >
-                    <Tag type="theme">{t.label}</Tag>
-                  </Link>
-                )
-            )
-          : null}
-        {creator?.label ? (
-          <Link
-            key={creator.iri}
-            href={`/browse/organization/${encodeURIComponent(creator.iri)}`}
-            passHref
-            legacyBehavior
-            scroll={false}
-          >
-            <Tag type="organization">{creator.label}</Tag>
-          </Link>
-        ) : null}
-        {showDimensions &&
-          dimensions?.length !== undefined &&
-          dimensions.length > 0 && (
-            <>
-              {sortBy(dimensions, (t) => t.label).map((dimension) => {
-                return (
-                  <MaybeTooltip
-                    key={dimension.id}
-                    title={
-                      dimension.termsets.length > 0 ? (
-                        <>
-                          <Typography variant="caption">
-                            <Trans id="dataset-result.dimension-joined-by">
-                              Contains values of
-                            </Trans>
-                            <Stack flexDirection="row" gap={1} mt={1}>
-                              {dimension.termsets.map((termset) => {
-                                return (
-                                  <Tag
-                                    key={termset.iri}
-                                    type="termset"
-                                    sx={{ flexShrink: 0 }}
-                                  >
-                                    {termset.label}
-                                  </Tag>
-                                );
-                              })}
-                            </Stack>
-                          </Typography>
-                        </>
-                      ) : null
-                    }
-                  >
-                    <Tag sx={{ cursor: "default" }} type="dimension">
-                      {dimension.label}
-                    </Tag>
-                  </MaybeTooltip>
-                );
-              })}
-            </>
-          )}
-      </Flex>
-    </MotionCard>
-  );
-};
-
-type DatasetResultProps = ComponentProps<typeof DatasetResult>;
-
-DatasetResult.defaultProps = {
-  showTags: true,
-};
