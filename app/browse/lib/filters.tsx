@@ -96,3 +96,23 @@ export const getParamsFromFilters = (filters: BrowseFilter[]) => {
 
   return params;
 };
+
+export const encodeFilter = ({ __typename, iri }: BrowseFilter) => {
+  const folder = (() => {
+    switch (__typename) {
+      case "DataCubeTheme":
+        return "theme";
+      case "DataCubeOrganization":
+        return "organization";
+      case "DataCubeAbout":
+        return "topic";
+      case "DataCubeTermset":
+        return "termset";
+      default:
+        const _exhaustiveCheck: never = __typename;
+        return _exhaustiveCheck;
+    }
+  })();
+
+  return `${folder}/${encodeURIComponent(iri)}`;
+};

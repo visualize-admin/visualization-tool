@@ -23,7 +23,7 @@ import { useRouter } from "next/router";
 import { stringify } from "qs";
 import { ComponentProps, type MouseEvent, ReactNode, useMemo } from "react";
 
-import { BrowseFilter } from "@/browse/lib/filters";
+import { BrowseFilter, encodeFilter } from "@/browse/lib/filters";
 import { getBrowseParamsFromQuery } from "@/browse/lib/params";
 import { useBrowseContext } from "@/browse/model/context";
 import { NavigationChip } from "@/browse/ui/navigation-chip";
@@ -88,26 +88,6 @@ const useNavItemStyles = makeStyles<Theme, { level: number }>((theme) => ({
     },
   }),
 }));
-
-const encodeFilter = (filter: BrowseFilter) => {
-  const { iri, __typename } = filter;
-  const folder = (() => {
-    switch (__typename) {
-      case "DataCubeTheme":
-        return "theme";
-      case "DataCubeOrganization":
-        return "organization";
-      case "DataCubeAbout":
-        return "topic";
-      case "DataCubeTermset":
-        return "termset";
-      default:
-        const check: never = __typename;
-        throw Error('Unknown filter type "' + check + '"');
-    }
-  })();
-  return `${folder}/${encodeURIComponent(iri)}`;
-};
 
 const NavItem = ({
   children,
