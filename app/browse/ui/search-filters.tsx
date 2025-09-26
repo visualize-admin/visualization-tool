@@ -63,19 +63,15 @@ export const SearchFilters = ({
     return result;
   }, [cubes]);
 
-  const {
-    DataCubeTheme: themeFilter,
-    DataCubeOrganization: orgFilter,
-    DataCubeTermset: termsetFilter,
-  } = useMemo(() => {
+  const { themeFilter, organizationFilter, termsetFilter } = useMemo(() => {
     const result = keyBy(filters, (f) => f.__typename);
 
     return {
-      DataCubeTheme: result.DataCubeTheme as DataCubeTheme,
-      DataCubeOrganization: result.DataCubeOrganization as
+      themeFilter: result.DataCubeTheme as DataCubeTheme,
+      organizationFilter: result.DataCubeOrganization as
         | DataCubeOrganization
         | undefined,
-      DataCubeTermset: result.DataCubeTermset as DataCubeTermset | undefined,
+      termsetFilter: result.DataCubeTermset as DataCubeTermset | undefined,
     };
   }, [filters]);
 
@@ -100,11 +96,11 @@ export const SearchFilters = ({
       return false;
     }
 
-    if (!counts[org.iri] && orgFilter?.iri !== org.iri) {
+    if (!counts[org.iri] && organizationFilter?.iri !== org.iri) {
       return false;
     }
 
-    if (orgFilter && orgFilter.iri !== org.iri) {
+    if (organizationFilter && organizationFilter.iri !== org.iri) {
       return false;
     }
 
@@ -151,25 +147,26 @@ export const SearchFilters = ({
     );
   }, [cubes]);
 
-  const bg = "blue.100";
-  const orgNavigation =
+  const organizationBackgroundColor = "blue.100";
+  const organizationNavigation =
     displayedOrgs.length > 0 ? (
       <NavigationSection
         key="orgs"
         items={displayedOrgs}
-        backgroundColor={bg}
-        currentFilter={orgFilter}
+        backgroundColor={organizationBackgroundColor}
+        currentFilter={organizationFilter}
         counts={counts}
         filters={filters}
         label={<Trans id="browse-panel.organizations">Organizations</Trans>}
         extra={
-          orgFilter && filters.map((d) => d.iri).includes(orgFilter.iri) ? (
+          organizationFilter &&
+          filters.map((d) => d.iri).includes(organizationFilter.iri) ? (
             <SubthemeFilters
               subthemes={subthemes}
               filters={filters}
               counts={counts}
               disableLinks={disableNavLinks}
-              countBg={bg}
+              countBg={organizationBackgroundColor}
             />
           ) : null
         }
@@ -209,20 +206,22 @@ export const SearchFilters = ({
         disableLinks={disableNavLinks}
       />
     ) : null;
+
   const baseNavigations: {
     element: ReactNode;
     __typename: BrowseFilter["__typename"];
   }[] = [
     { element: themeNavigation, __typename: "DataCubeTheme" },
-    { element: orgNavigation, __typename: "DataCubeOrganization" },
+    { element: organizationNavigation, __typename: "DataCubeOrganization" },
     { element: termsetNavigation, __typename: "DataCubeTermset" },
   ];
-  const navigations = sortBy(baseNavigations, (x) => {
-    const i = filters.findIndex((f) => f.__typename === x.__typename);
+
+  const navigations = sortBy(baseNavigations, (nav) => {
+    const i = filters.findIndex((f) => f.__typename === nav.__typename);
 
     return i === -1
       ? // If the filter is not in the list, we want to put it at the end
-        navigationOrder[x.__typename] + Object.keys(navigationOrder).length
+        navigationOrder[nav.__typename] + Object.keys(navigationOrder).length
       : i;
   });
 
@@ -233,7 +232,7 @@ export const SearchFilters = ({
           https://github.com/framer/motion/issues/1619. */}
       <AnimatePresence>
         <Flex sx={{ flexDirection: "column", rowGap: 8, width: "100%" }}>
-          {navigations.map((x) => x.element)}
+          {navigations.map((nav) => nav.element)}
         </Flex>
       </AnimatePresence>
     </div>

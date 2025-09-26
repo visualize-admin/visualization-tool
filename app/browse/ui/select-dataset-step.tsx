@@ -15,7 +15,6 @@ import { BrowseFilter, DataCubeAbout } from "@/browse/lib/filters";
 import { buildURLFromBrowseParams, isOdsIframe } from "@/browse/lib/params";
 import { useRedirectToLatestCube } from "@/browse/lib/use-redirect-to-latest-cube";
 import { BrowseStateProvider, useBrowseContext } from "@/browse/model/context";
-import { SearchFilters } from "@/browse/ui/dataset-browse";
 import {
   DataSetPreview,
   DataSetPreviewProps,
@@ -26,6 +25,7 @@ import {
 } from "@/browse/ui/dataset-results";
 import { SearchDatasetControls } from "@/browse/ui/search-dataset-controls";
 import { SearchDatasetInput } from "@/browse/ui/search-dataset-input";
+import { SearchFilters } from "@/browse/ui/search-filters";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import { Flex } from "@/components/flex";
