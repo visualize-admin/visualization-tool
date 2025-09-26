@@ -81,23 +81,22 @@ export const buildURLFromBrowseParams = ({
   subsubiri,
   ...query
 }: BrowseParams): ComponentProps<typeof NextLink>["href"] => {
-  const typePart =
-    type && iri
-      ? `${encodeURIComponent(type)}/${encodeURIComponent(iri)}`
-      : undefined;
-  const subtypePart =
-    subtype && subiri
-      ? `${encodeURIComponent(subtype)}/${encodeURIComponent(subiri)}`
-      : undefined;
-  const subsubtypePart =
-    subsubtype && subsubiri
-      ? `${encodeURIComponent(subsubtype)}/${encodeURIComponent(subsubiri)}`
-      : undefined;
+  const typePart = buildQueryPart(type, iri);
+  const subtypePart = buildQueryPart(subtype, subiri);
+  const subsubtypePart = buildQueryPart(subsubtype, subsubiri);
   const pathname = ["/browse", typePart, subtypePart, subsubtypePart]
     .filter(truthy)
     .join("/");
 
   return { pathname, query };
+};
+
+const buildQueryPart = (type: string | undefined, iri: string | undefined) => {
+  if (!type || !iri) {
+    return undefined;
+  }
+
+  return `${encodeURIComponent(type)}/${encodeURIComponent(iri)}`;
 };
 
 export const extractParamFromPath = (path: string, param: string) => {
