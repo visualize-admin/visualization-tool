@@ -93,7 +93,7 @@ const SelectDatasetStepInner = ({
   variant?: "page" | "drawer";
 }) => {
   const locale = useLocale();
-  const [configState] = useConfiguratorState();
+  const [{ state, dataSource }] = useConfiguratorState();
   const browseState = useBrowseContext();
   const {
     search,
@@ -126,8 +126,8 @@ const SelectDatasetStepInner = ({
   // Use the debounced query value here only!
   const [{ data, fetching, error }] = useSearchCubesQuery({
     variables: {
-      sourceType: configState.dataSource.type,
-      sourceUrl: configState.dataSource.url,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
       query: debouncedQuery,
       order,
@@ -137,10 +137,7 @@ const SelectDatasetStepInner = ({
     pause: !!dataset,
   });
 
-  useRedirectToLatestCube({
-    dataSource: configState.dataSource,
-    datasetIri: dataset,
-  });
+  useRedirectToLatestCube({ dataSource, datasetIri: dataset });
 
   const { allCubes, cubes } = useMemo(() => {
     if (!data || data.searchCubes.length === 0) {
@@ -239,8 +236,8 @@ const SelectDatasetStepInner = ({
 
   const dataCubeMetadataQuery = useDataCubeMetadataQuery({
     variables: {
-      sourceType: configState.dataSource.type,
-      sourceUrl: configState.dataSource.url,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
       cubeFilter: {
         iri: dataset ?? "",
@@ -250,7 +247,7 @@ const SelectDatasetStepInner = ({
   });
   const [{ data: dataCubeMetadata }] = dataCubeMetadataQuery;
 
-  if (configState.state !== "SELECTING_DATASET") {
+  if (state !== "SELECTING_DATASET") {
     return null;
   }
 
@@ -336,7 +333,7 @@ const SelectDatasetStepInner = ({
                     <NextLink
                       href={`/create/new?cube=${
                         dataCubeMetadata?.dataCubeMetadata.iri
-                      }&dataSource=${sourceToLabel(configState.dataSource)}`}
+                      }&dataSource=${sourceToLabel(dataSource)}`}
                       passHref
                       legacyBehavior={!odsIframe}
                       target={odsIframe ? "_blank" : undefined}
@@ -402,7 +399,7 @@ const SelectDatasetStepInner = ({
                     <MotionBox {...smoothPresenceProps}>
                       <DatasetMetadataSingleCube
                         datasetIri={dataset}
-                        dataSource={configState.dataSource}
+                        dataSource={dataSource}
                       />
                     </MotionBox>
                   </MotionBox>
@@ -435,7 +432,7 @@ const SelectDatasetStepInner = ({
                 >
                   <DataSetPreview
                     dataSetIri={dataset}
-                    dataSource={configState.dataSource}
+                    dataSource={dataSource}
                     dataCubeMetadataQuery={dataCubeMetadataQuery}
                     odsIframe={odsIframe}
                     {...datasetPreviewProps}
