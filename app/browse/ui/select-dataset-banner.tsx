@@ -13,28 +13,6 @@ import {
 } from "@/components/presence";
 import { useResizeObserver } from "@/utils/use-resize-observer";
 
-const useStyles = makeStyles<Theme>((theme) => ({
-  outerWrapper: {
-    backgroundColor: theme.palette.monochrome[100],
-  },
-  innerWrapper: {
-    padding: `${theme.spacing(25)} 0`,
-  },
-  content: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    maxWidth: 940,
-  },
-  title: {
-    marginBottom: theme.spacing(4),
-    fontWeight: 700,
-  },
-  description: {
-    marginBottom: theme.spacing(10),
-  },
-}));
-
 export const SelectDatasetBanner = ({
   dataset,
   variant,
@@ -82,3 +60,25 @@ export const SelectDatasetBanner = ({
     </AnimatePresence>
   );
 };
+
+const useStyles = makeStyles<Theme>((theme) => ({
+  outerWrapper: {
+    backgroundColor: theme.palette.monochrome[100],
+  },
+  innerWrapper: {
+    padding: `${theme.spacing(25)} 0`,
+  },
+  content: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    maxWidth: 940,
+  },
+  title: {
+    marginBottom: theme.spacing(4),
+    fontWeight: 700,
+  },
+  description: {
+    marginBottom: theme.spacing(10),
+  },
+}));

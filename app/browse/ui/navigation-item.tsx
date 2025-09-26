@@ -11,41 +11,6 @@ import { MaybeLink } from "@/components/maybe-link";
 import { accordionPresenceProps, MotionBox } from "@/components/presence";
 import SvgIcClose from "@/icons/components/IcClose";
 
-const useStyles = makeStyles<Theme, { level: number }>((theme) => ({
-  root: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: theme.spacing(3),
-    width: "100%",
-    padding: theme.spacing(2),
-    borderRadius: 2,
-    transition: "background-color 0.1s ease",
-
-    "&:hover": {
-      backgroundColor: theme.palette.cobalt[50],
-    },
-  },
-  removeFilterButton: ({ level }) => ({
-    display: "flex",
-    alignItems: "center",
-    width: "auto",
-    height: "auto",
-    minWidth: 16,
-    minHeight: 16,
-    marginRight: 2,
-    padding: 0,
-    borderRadius: 2,
-    backgroundColor: level === 1 ? "cobalt.50" : "transparent",
-    color: level === 1 ? theme.palette.text.primary : "cobalt.50",
-    transition: "background-color 0.1s ease",
-
-    "&:hover": {
-      backgroundColor: theme.palette.cobalt[100],
-    },
-  }),
-}));
-
 export const NavigationItem = ({
   children,
   filters,
@@ -175,3 +140,38 @@ export const NavigationItem = ({
     </MotionBox>
   );
 };
+
+const useStyles = makeStyles<Theme, { level: number }>((theme) => ({
+  root: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: theme.spacing(3),
+    width: "100%",
+    padding: theme.spacing(2),
+    borderRadius: 2,
+    transition: "background-color 0.1s ease",
+
+    "&:hover": {
+      backgroundColor: theme.palette.cobalt[50],
+    },
+  },
+  removeFilterButton: ({ level }) => ({
+    display: "flex",
+    alignItems: "center",
+    width: "auto",
+    height: "auto",
+    minWidth: 16,
+    minHeight: 16,
+    marginRight: 2,
+    padding: 0,
+    borderRadius: 2,
+    backgroundColor: level === 1 ? "cobalt.50" : "transparent",
+    color: level === 1 ? theme.palette.text.primary : "cobalt.50",
+    transition: "background-color 0.1s ease",
+
+    "&:hover": {
+      backgroundColor: theme.palette.cobalt[100],
+    },
+  }),
+}));

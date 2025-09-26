@@ -17,40 +17,6 @@ import { PartialSearchCube } from "@/domain/data";
 import { DataCubePublicationStatus } from "@/graphql/query-hooks";
 import { useEvent } from "@/utils/use-event";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    gap: theme.spacing(4),
-    padding: `${theme.spacing(8)} 0`,
-    borderTop: `1px solid ${theme.palette.monochrome[400]}`,
-    borderRadius: 0,
-    textAlign: "left",
-    boxShadow: "none",
-  },
-  textWrapper: {
-    "& > b": {
-      fontWeight: 700,
-    },
-  },
-  titleClickable: {
-    display: "inline-block",
-    cursor: "pointer",
-    transition: "color 0.2s ease",
-
-    "&:hover": {
-      color: theme.palette.primary.main,
-    },
-  },
-  description: {
-    display: "-webkit-box",
-    overflow: "hidden",
-    WebkitLineClamp: 2,
-    WebkitBoxOrient: "vertical",
-  },
-}));
-
 export type DatasetResultProps = ComponentProps<typeof DatasetResult>;
 
 export const DatasetResult = ({
@@ -233,3 +199,37 @@ export const DatasetResult = ({
     </MotionCard>
   );
 };
+
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing(4),
+    padding: `${theme.spacing(8)} 0`,
+    borderTop: `1px solid ${theme.palette.monochrome[400]}`,
+    borderRadius: 0,
+    textAlign: "left",
+    boxShadow: "none",
+  },
+  textWrapper: {
+    "& > b": {
+      fontWeight: 700,
+    },
+  },
+  titleClickable: {
+    display: "inline-block",
+    cursor: "pointer",
+    transition: "color 0.2s ease",
+
+    "&:hover": {
+      color: theme.palette.primary.main,
+    },
+  },
+  description: {
+    display: "-webkit-box",
+    overflow: "hidden",
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: "vertical",
+  },
+}));

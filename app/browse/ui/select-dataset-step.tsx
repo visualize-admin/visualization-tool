@@ -57,50 +57,7 @@ import { useConfiguratorState, useLocale } from "@/src";
 import { softJSONParse } from "@/utils/soft-json-parse";
 import { useResizeObserver } from "@/utils/use-resize-observer";
 
-const useStyles = makeStyles<
-  Theme,
-  { datasetPresent: boolean; odsIframe: boolean }
->((theme) => ({
-  panelLayout: {
-    position: "static",
-    height: "auto",
-    margin: "auto",
-    marginTop: ({ odsIframe }) => (odsIframe ? 0 : theme.spacing(12)),
-    backgroundColor: theme.palette.background.paper,
-    transition: "margin-top 0.5s ease",
-  },
-  panelLeft: {
-    marginBottom: theme.spacing(12),
-    boxShadow: "none",
-    outline: "none",
-    transition: "padding-top 0.5s ease",
-
-    [theme.breakpoints.up("md")]: {
-      position: ({ datasetPresent }) => (datasetPresent ? "static" : "sticky"),
-      top: ({ datasetPresent }) => (datasetPresent ? 0 : theme.spacing(8)),
-      overflowY: "auto",
-      minHeight: "100vh",
-      maxHeight: ({ datasetPresent }) => (datasetPresent ? "none" : "100vh"),
-      marginBottom: "unset",
-      paddingBottom: ({ datasetPresent }) =>
-        datasetPresent ? 0 : theme.spacing(16),
-    },
-  },
-  panelMiddle: {
-    gridColumnStart: "middle",
-    gridColumnEnd: "right",
-    backgroundColor: theme.palette.background.paper,
-    transition: "padding-top 0.5s ease",
-
-    [theme.breakpoints.up("md")]: {
-      marginLeft: ({ odsIframe }) => (odsIframe ? 0 : theme.spacing(8)),
-    },
-  },
-  filters: {
-    display: "block",
-    color: theme.palette.grey[800],
-  },
-}));
+type SelectDatasetStepProps = ComponentProps<typeof SelectDatasetStepContent>;
 
 const SelectDatasetStepContent = ({
   datasetPreviewProps,
@@ -564,7 +521,50 @@ const SelectDatasetStepContent = ({
   );
 };
 
-type SelectDatasetStepProps = ComponentProps<typeof SelectDatasetStepContent>;
+const useStyles = makeStyles<
+  Theme,
+  { datasetPresent: boolean; odsIframe: boolean }
+>((theme) => ({
+  panelLayout: {
+    position: "static",
+    height: "auto",
+    margin: "auto",
+    marginTop: ({ odsIframe }) => (odsIframe ? 0 : theme.spacing(12)),
+    backgroundColor: theme.palette.background.paper,
+    transition: "margin-top 0.5s ease",
+  },
+  panelLeft: {
+    marginBottom: theme.spacing(12),
+    boxShadow: "none",
+    outline: "none",
+    transition: "padding-top 0.5s ease",
+
+    [theme.breakpoints.up("md")]: {
+      position: ({ datasetPresent }) => (datasetPresent ? "static" : "sticky"),
+      top: ({ datasetPresent }) => (datasetPresent ? 0 : theme.spacing(8)),
+      overflowY: "auto",
+      minHeight: "100vh",
+      maxHeight: ({ datasetPresent }) => (datasetPresent ? "none" : "100vh"),
+      marginBottom: "unset",
+      paddingBottom: ({ datasetPresent }) =>
+        datasetPresent ? 0 : theme.spacing(16),
+    },
+  },
+  panelMiddle: {
+    gridColumnStart: "middle",
+    gridColumnEnd: "right",
+    backgroundColor: theme.palette.background.paper,
+    transition: "padding-top 0.5s ease",
+
+    [theme.breakpoints.up("md")]: {
+      marginLeft: ({ odsIframe }) => (odsIframe ? 0 : theme.spacing(8)),
+    },
+  },
+  filters: {
+    display: "block",
+    color: theme.palette.grey[800],
+  },
+}));
 
 const DatasetMetadataSingleCubeAdapter = ({
   dataSource,
