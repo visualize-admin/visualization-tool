@@ -8,11 +8,10 @@ import { ReactNode, useMemo } from "react";
 
 import { BrowseFilter } from "@/browse/lib/filters";
 import { useBrowseContext } from "@/browse/model/context";
-import { NavigationItem } from "@/browse/ui/navigation-item";
 import { NavigationSection } from "@/browse/ui/navigation-section";
+import { SubthemeFilters } from "@/browse/ui/subtheme-filters";
 import { Flex } from "@/components/flex";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
-import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import {
   DataCubeOrganization,
@@ -20,47 +19,6 @@ import {
   DataCubeTheme,
 } from "@/graphql/query-hooks";
 import { SearchCubeResult } from "@/graphql/resolver-types";
-
-const Subthemes = ({
-  subthemes,
-  filters,
-  counts,
-  disableLinks,
-  countBg,
-}: {
-  subthemes: SearchCube["subthemes"];
-  filters: BrowseFilter[];
-  counts: Record<string, number>;
-  disableLinks?: boolean;
-  countBg: string;
-}) => {
-  return (
-    <>
-      {subthemes.map((d) => {
-        const count = counts[d.iri];
-
-        if (!count) {
-          return null;
-        }
-
-        return (
-          <NavigationItem
-            key={d.iri}
-            next={{ __typename: "DataCubeAbout", ...d }}
-            filters={filters}
-            active={filters[filters.length - 1]?.iri === d.iri}
-            level={2}
-            count={count}
-            disableLink={disableLinks}
-            countBg={countBg}
-          >
-            {d.label}
-          </NavigationItem>
-        );
-      })}
-    </>
-  );
-};
 
 const navigationOrder: Record<BrowseFilter["__typename"], number> = {
   DataCubeTheme: 1,
@@ -206,7 +164,7 @@ export const SearchFilters = ({
         label={<Trans id="browse-panel.organizations">Organizations</Trans>}
         extra={
           orgFilter && filters.map((d) => d.iri).includes(orgFilter.iri) ? (
-            <Subthemes
+            <SubthemeFilters
               subthemes={subthemes}
               filters={filters}
               counts={counts}
