@@ -308,7 +308,7 @@ const NavSectionTitle = ({
         backgroundColor: theme.backgroundColor,
       }}
     >
-      <Typography variant="h4" component="p" sx={{ fontWeight: 700 }}>
+      <Typography variant="h4" component="div" sx={{ fontWeight: 700 }}>
         {label}
       </Typography>
     </Box>
