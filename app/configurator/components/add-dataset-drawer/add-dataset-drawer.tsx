@@ -32,7 +32,7 @@ import {
   useState,
 } from "react";
 
-import { DatasetResults } from "@/browse/ui/dataset-browse";
+import { DatasetResults } from "@/browse/ui/dataset-results";
 import { SearchDatasetDraftsControl } from "@/browse/ui/search-dataset-drafts-control";
 import { SearchDatasetResultsCount } from "@/browse/ui/search-dataset-results-count";
 import { SearchDatasetSortControl } from "@/browse/ui/search-dataset-sort-control";

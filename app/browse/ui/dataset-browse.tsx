@@ -17,14 +17,12 @@ import pickBy from "lodash/pickBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import { stringify } from "qs";
-import { ComponentProps, ReactNode, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 
 import { BrowseFilter, encodeFilter } from "@/browse/lib/filters";
 import { useBrowseContext } from "@/browse/model/context";
-import { DatasetResult, DatasetResultProps } from "@/browse/ui/dataset-result";
 import { NavigationChip } from "@/browse/ui/navigation-chip";
 import { Flex } from "@/components/flex";
-import { Loading, LoadingDataError } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { MaybeLink } from "@/components/maybe-link";
 import { accordionPresenceProps, MotionBox } from "@/components/presence";
@@ -558,58 +556,3 @@ export const SearchFilters = ({
     </div>
   );
 };
-
-export const DatasetResults = ({
-  fetching,
-  error,
-  cubes,
-  datasetResultProps,
-}: {
-  fetching: boolean;
-  error: any;
-  cubes: SearchCubeResult[];
-  datasetResultProps?: ({
-    cube,
-  }: {
-    cube: SearchCube;
-  }) => Partial<DatasetResultProps>;
-}) => {
-  if (fetching) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return (
-      <LoadingDataError
-        message={error instanceof Error ? error.message : error}
-      />
-    );
-  }
-
-  if (cubes.length === 0) {
-    return (
-      <Typography
-        variant="h2"
-        sx={{ mt: 8, color: "grey.600", textAlign: "center" }}
-      >
-        <Trans id="No results">No results</Trans>
-      </Typography>
-    );
-  }
-
-  return (
-    <div>
-      {cubes.map(({ cube, highlightedTitle, highlightedDescription }) => (
-        <DatasetResult
-          key={cube.iri}
-          dataCube={cube}
-          highlightedTitle={highlightedTitle}
-          highlightedDescription={highlightedDescription}
-          {...datasetResultProps?.({ cube })}
-        />
-      ))}
-    </div>
-  );
-};
-
-export type DatasetResultsProps = ComponentProps<typeof DatasetResults>;
