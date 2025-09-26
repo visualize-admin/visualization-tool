@@ -15,6 +15,7 @@ import { BrowseFilter, DataCubeAbout } from "@/browse/lib/filters";
 import { buildURLFromBrowseParams, isOdsIframe } from "@/browse/lib/params";
 import { useRedirectToLatestCube } from "@/browse/lib/use-redirect-to-latest-cube";
 import { BrowseStateProvider, useBrowseContext } from "@/browse/model/context";
+import { DatasetMetadataSingleCube } from "@/browse/ui/dataset-metadata-single-cube";
 import {
   DataSetPreview,
   DataSetPreviewProps,
@@ -28,7 +29,6 @@ import { SearchDatasetInput } from "@/browse/ui/search-dataset-input";
 import { SearchFilters } from "@/browse/ui/search-filters";
 import { SelectDatasetBanner } from "@/browse/ui/select-dataset-banner";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
-import { DatasetMetadata } from "@/components/dataset-metadata";
 import { Flex } from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
@@ -37,7 +37,6 @@ import {
   navPresenceProps,
   smoothPresenceProps,
 } from "@/components/presence";
-import { DataSource } from "@/configurator";
 import {
   PanelBodyWrapper,
   PanelLayout,
@@ -385,7 +384,7 @@ const SelectDatasetStepContent = ({
                 {dataset ? (
                   <MotionBox key="metadata" {...navPresenceProps}>
                     <MotionBox {...smoothPresenceProps}>
-                      <DatasetMetadataSingleCubeAdapter
+                      <DatasetMetadataSingleCube
                         datasetIri={dataset}
                         dataSource={configState.dataSource}
                       />
@@ -565,36 +564,6 @@ const useStyles = makeStyles<
     color: theme.palette.grey[800],
   },
 }));
-
-const DatasetMetadataSingleCubeAdapter = ({
-  dataSource,
-  datasetIri,
-}: {
-  dataSource: DataSource;
-  datasetIri: string;
-}) => {
-  const locale = useLocale();
-  const [data] = useDataCubeMetadataQuery({
-    variables: {
-      cubeFilter: { iri: datasetIri },
-      locale: locale,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
-    },
-  });
-
-  if (!data.data) {
-    return null;
-  }
-
-  return (
-    <DatasetMetadata
-      cube={data.data.dataCubeMetadata}
-      showTitle={false}
-      dataSource={dataSource}
-    />
-  );
-};
 
 /**
  * This is the select dataset step component for use directly in a page.
