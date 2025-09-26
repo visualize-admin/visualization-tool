@@ -26,13 +26,12 @@ import {
 import { SearchDatasetControls } from "@/browse/ui/search-dataset-controls";
 import { SearchDatasetInput } from "@/browse/ui/search-dataset-input";
 import { SearchFilters } from "@/browse/ui/search-filters";
+import { SelectDatasetBanner } from "@/browse/ui/select-dataset-banner";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { DatasetMetadata } from "@/components/dataset-metadata";
 import { Flex } from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
-  __BANNER_MARGIN_CSS_VAR,
-  bannerPresenceProps,
   DURATION,
   MotionBox,
   navPresenceProps,
@@ -96,25 +95,6 @@ const useStyles = makeStyles<
     [theme.breakpoints.up("md")]: {
       marginLeft: ({ odsIframe }) => (odsIframe ? 0 : theme.spacing(8)),
     },
-  },
-  panelBannerOuterWrapper: {
-    backgroundColor: theme.palette.monochrome[100],
-  },
-  panelBannerInnerWrapper: {
-    paddingTop: theme.spacing(25),
-    paddingBottom: theme.spacing(25),
-  },
-  panelBannerContent: {
-    flexDirection: "column",
-    justifyContent: "center",
-    maxWidth: 940,
-  },
-  panelBannerTitle: {
-    marginBottom: theme.spacing(4),
-    fontWeight: 700,
-  },
-  panelBannerDescription: {
-    marginBottom: theme.spacing(10),
   },
   filters: {
     display: "block",
@@ -316,15 +296,6 @@ const SelectDatasetStepContent = ({
       .join(", ");
   }, [orgs, queryFilters, termsets, themes]);
 
-  const [bannerRef] = useResizeObserver<HTMLDivElement>(({ height }) => {
-    if (height) {
-      document.documentElement.style.setProperty(
-        __BANNER_MARGIN_CSS_VAR,
-        `-${height}px`
-      );
-    }
-  });
-
   const dataCubeMetadataQuery = useDataCubeMetadataQuery({
     variables: {
       sourceType: configState.dataSource.type,
@@ -344,34 +315,7 @@ const SelectDatasetStepContent = ({
 
   return (
     <div ref={odsIframe ? ref : null}>
-      <AnimatePresence>
-        {!dataset && variant === "page" ? (
-          <MotionBox key="banner" ref={bannerRef} {...bannerPresenceProps}>
-            <section role="banner" className={classes.panelBannerOuterWrapper}>
-              <ContentWrapper className={classes.panelBannerInnerWrapper}>
-                <Flex className={classes.panelBannerContent}>
-                  <Typography variant="h1" className={classes.panelBannerTitle}>
-                    Swiss Open Government Data
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className={classes.panelBannerDescription}
-                  >
-                    <Trans id="browse.datasets.description">
-                      Explore datasets provided by the LINDAS Linked Data
-                      Service by either filtering by categories or organizations
-                      or search directly for specific keywords. Click on a
-                      dataset to see more detailed information and start
-                      creating your own visualizations.
-                    </Trans>
-                  </Typography>
-                  <SearchDatasetInput browseState={browseState} />
-                </Flex>
-              </ContentWrapper>
-            </section>
-          </MotionBox>
-        ) : null}
-      </AnimatePresence>
+      <SelectDatasetBanner dataset={dataset} variant={variant} />
       <Box
         sx={{
           borderBottom:
