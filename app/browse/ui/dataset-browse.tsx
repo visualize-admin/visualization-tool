@@ -1,8 +1,7 @@
 import { Trans } from "@lingui/macro";
-import { Box, Button, Stack, Typography } from "@mui/material";
-import { AnimatePresence, Reorder } from "framer-motion";
+import { Stack } from "@mui/material";
+import { AnimatePresence } from "framer-motion";
 import keyBy from "lodash/keyBy";
-import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import { ReactNode, useMemo } from "react";
@@ -10,9 +9,9 @@ import { ReactNode, useMemo } from "react";
 import { BrowseFilter } from "@/browse/lib/filters";
 import { useBrowseContext } from "@/browse/model/context";
 import { NavigationItem } from "@/browse/ui/navigation-item";
+import { NavigationSection } from "@/browse/ui/navigation-section";
 import { Flex } from "@/components/flex";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
-import { useDisclosure } from "@/components/use-disclosure";
 import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import {
@@ -21,7 +20,6 @@ import {
   DataCubeTheme,
 } from "@/graphql/query-hooks";
 import { SearchCubeResult } from "@/graphql/resolver-types";
-import { Icon } from "@/icons";
 
 const Subthemes = ({
   subthemes,
@@ -64,101 +62,11 @@ const Subthemes = ({
   );
 };
 
-const NavSectionTitle = ({
-  label,
-  backgroundColor,
-}: {
-  label: ReactNode;
-  backgroundColor: string;
-}) => {
-  return (
-    <Box sx={{ mb: 2, px: 2, py: 3, borderRadius: "6px", backgroundColor }}>
-      <Typography variant="h4" component="div" sx={{ fontWeight: 700 }}>
-        {label}
-      </Typography>
-    </Box>
-  );
-};
-
-const NavSection = ({
-  label,
-  items,
-  backgroundColor,
-  currentFilter,
-  filters,
-  counts,
-  extra,
-  disableLinks,
-}: {
-  label: ReactNode;
-  items: (DataCubeTheme | DataCubeOrganization | DataCubeTermset)[];
-  backgroundColor: string;
-  currentFilter?: DataCubeTheme | DataCubeOrganization | DataCubeTermset;
-  filters: BrowseFilter[];
-  counts: Record<string, number>;
-  extra?: ReactNode;
-  disableLinks?: boolean;
-}) => {
-  const { isOpen, open, close } = useDisclosure(!!currentFilter);
-  const topItems = useMemo(() => {
-    return sortBy(
-      orderBy(items, (item) => counts[item.iri], "desc").slice(0, 7),
-      (item) => item.label
-    );
-  }, [counts, items]);
-
-  return (
-    <div>
-      <NavSectionTitle label={label} backgroundColor={backgroundColor} />
-      <Reorder.Group
-        axis="y"
-        as="div"
-        onReorder={() => {}}
-        values={isOpen ? items : topItems}
-      >
-        {(isOpen ? items : topItems).map((item) => {
-          return (
-            <Reorder.Item key={item.iri} as="div" value={item}>
-              <NavigationItem
-                active={currentFilter?.iri === item.iri}
-                filters={filters}
-                next={item}
-                count={counts[item.iri]}
-                disableLink={disableLinks}
-                countBg={backgroundColor}
-              >
-                {item.label}
-              </NavigationItem>
-            </Reorder.Item>
-          );
-        })}
-        {topItems.length !== items.length ? (
-          <Button
-            variant="text"
-            color="primary"
-            size="sm"
-            onClick={isOpen ? close : open}
-            endIcon={<Icon name={isOpen ? "arrowUp" : "arrowDown"} size={20} />}
-            sx={{ width: "100%", mt: 2 }}
-          >
-            {isOpen ? (
-              <Trans id="show.less">Show less</Trans>
-            ) : (
-              <Trans id="show.all">Show all</Trans>
-            )}
-          </Button>
-        ) : null}
-      </Reorder.Group>
-      {extra}
-    </div>
-  );
-};
-
-const navOrder: Record<BrowseFilter["__typename"], number> = {
+const navigationOrder: Record<BrowseFilter["__typename"], number> = {
   DataCubeTheme: 1,
   DataCubeOrganization: 2,
   DataCubeTermset: 3,
-  // Not used in the nav
+  // Not used in the navigation
   DataCubeAbout: 4,
 };
 
@@ -261,9 +169,9 @@ export const SearchFilters = ({
     return true;
   });
 
-  const themeNav =
+  const themeNavigation =
     displayedThemes.length > 0 ? (
-      <NavSection
+      <NavigationSection
         key="themes"
         items={displayedThemes}
         backgroundColor="green.100"
@@ -286,9 +194,9 @@ export const SearchFilters = ({
   }, [cubes]);
 
   const bg = "blue.100";
-  const orgNav =
+  const orgNavigation =
     displayedOrgs.length > 0 ? (
-      <NavSection
+      <NavigationSection
         key="orgs"
         items={displayedOrgs}
         backgroundColor={bg}
@@ -311,9 +219,9 @@ export const SearchFilters = ({
       />
     ) : null;
 
-  const termsetNav =
+  const termsetNavigation =
     termsets.length > 0 ? (
-      <NavSection
+      <NavigationSection
         key="termsets"
         items={displayedTermsets}
         backgroundColor="monochrome.200"
@@ -343,20 +251,20 @@ export const SearchFilters = ({
         disableLinks={disableNavLinks}
       />
     ) : null;
-  const baseNavs: {
+  const baseNavigations: {
     element: ReactNode;
     __typename: BrowseFilter["__typename"];
   }[] = [
-    { element: themeNav, __typename: "DataCubeTheme" },
-    { element: orgNav, __typename: "DataCubeOrganization" },
-    { element: termsetNav, __typename: "DataCubeTermset" },
+    { element: themeNavigation, __typename: "DataCubeTheme" },
+    { element: orgNavigation, __typename: "DataCubeOrganization" },
+    { element: termsetNavigation, __typename: "DataCubeTermset" },
   ];
-  const navs = sortBy(baseNavs, (x) => {
+  const navigations = sortBy(baseNavigations, (x) => {
     const i = filters.findIndex((f) => f.__typename === x.__typename);
 
     return i === -1
       ? // If the filter is not in the list, we want to put it at the end
-        navOrder[x.__typename] + Object.keys(navOrder).length
+        navigationOrder[x.__typename] + Object.keys(navigationOrder).length
       : i;
   });
 
@@ -367,7 +275,7 @@ export const SearchFilters = ({
           https://github.com/framer/motion/issues/1619. */}
       <AnimatePresence>
         <Flex sx={{ flexDirection: "column", rowGap: 8, width: "100%" }}>
-          {navs.map((x) => x.element)}
+          {navigations.map((x) => x.element)}
         </Flex>
       </AnimatePresence>
     </div>
