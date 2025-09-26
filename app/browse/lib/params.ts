@@ -54,7 +54,9 @@ export const getBrowseParamsFromQuery = (
     includeDrafts,
     ...values
   } = mapValues(pick(query, params), (v) => (Array.isArray(v) ? v[0] : v));
-  const previous = values.previous ? JSON.parse(values.previous) : undefined;
+  const previous: BrowseParams | undefined = values.previous
+    ? JSON.parse(values.previous)
+    : undefined;
 
   return pickBy(
     {
@@ -66,7 +68,7 @@ export const getBrowseParamsFromQuery = (
       subsubtype: subsubtype ?? previous?.subsubtype,
       subsubiri: subsubiri ?? previous?.subsubiri,
       topic: topic ?? previous?.topic,
-      includeDrafts: includeDrafts ? JSON.parse(includeDrafts) : undefined,
+      includeDrafts: includeDrafts ?? previous?.includeDrafts,
     },
     (d) => d !== undefined
   );
