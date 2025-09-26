@@ -2,7 +2,7 @@ import qs from "qs";
 
 import { FlagStore } from "@/flags/store";
 import { FlagName, FLAGS, FlagValue } from "@/flags/types";
-import { isRunningInBrowser } from "@/utils/is-running-in-browser";
+import { maybeWindow } from "@/utils/maybe-window";
 
 export const FLAG_PREFIX = "flag__";
 
@@ -133,7 +133,7 @@ const initFromHost = (host: string) => {
   }
 };
 
-if (isRunningInBrowser()) {
+if (maybeWindow()) {
   // @ts-ignore
   window.flag = flag;
   initFromSearchParams(window.location.search);

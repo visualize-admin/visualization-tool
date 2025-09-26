@@ -25,7 +25,7 @@ import {
 import { useClient } from "urql";
 import { useDebounce } from "use-debounce";
 
-import { SelectDatasetStep } from "@/browser/select-dataset-step";
+import { SelectDatasetStep } from "@/browse/ui/select-dataset-step";
 import { extractChartConfigComponentIds } from "@/charts/shared/chart-helpers";
 import { ChartPreview } from "@/components/chart-preview";
 import { HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";

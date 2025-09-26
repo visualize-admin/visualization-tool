@@ -17,6 +17,8 @@ You can also check the
   - Hiding a temporal column and then enabling an interactive filter doesn't
     result in broken state anymore
   - Fixed workflow for populating Varnish cache
+- Maintenance
+  - Improved code organization around Browse page
 
 ### 6.0.0 - 2025-09-05
 

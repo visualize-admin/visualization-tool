@@ -1,12 +1,15 @@
 import { NextRouter } from "next/router";
 
-import { isRunningInBrowser } from "../is-running-in-browser";
+import { maybeWindow } from "@/utils/maybe-window";
 
 export const getURLParam = (param: string) => {
-  const url = isRunningInBrowser() ? new URL(window.location.href) : null;
+  const window = maybeWindow();
+  const url = window ? new URL(window.location.href) : null;
+
   if (!url) {
     return undefined;
   }
+
   return url.searchParams.get(param);
 };
 

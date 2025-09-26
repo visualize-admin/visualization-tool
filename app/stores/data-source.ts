@@ -7,7 +7,7 @@ import {
   parseSourceByLabel,
   sourceToLabel,
 } from "@/domain/data-source";
-import { isRunningInBrowser } from "@/utils/is-running-in-browser";
+import { maybeWindow } from "@/utils/maybe-window";
 import { getURLParam, setURLParam } from "@/utils/router/helpers";
 
 type DataSourceStore = {
@@ -64,11 +64,12 @@ const dataSourceStoreMiddleware =
     get: StoreApi<DataSourceStore>["getState"],
     api: StoreApi<DataSourceStore>
   ) => {
+    const window = maybeWindow();
     const state = config(
       (payload: DataSourceStore) => {
         set(payload);
 
-        if (isRunningInBrowser()) {
+        if (window) {
           saveToLocalStorage(payload.dataSource);
           saveToURL(payload.dataSource);
         }
@@ -80,7 +81,7 @@ const dataSourceStoreMiddleware =
 
     let dataSource = DEFAULT_DATA_SOURCE;
 
-    if (isRunningInBrowser()) {
+    if (window) {
       const urlDataSourceLabel = getURLParam(PARAM_KEY);
       const urlDataSource = urlDataSourceLabel
         ? parseSourceByLabel(urlDataSourceLabel)

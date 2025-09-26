@@ -1,10 +1,9 @@
 import { Meta } from "@storybook/react";
 
-import { DatasetResult } from "../browser/dataset-browse";
-import { ConfiguratorStateProvider } from "../configurator";
-import { states } from "../docs/fixtures";
-
-import { waldDatacubeResult } from "./dataset-result.mock";
+import { DatasetResult } from "@/browse/ui/dataset-result";
+import { ConfiguratorStateProvider } from "@/configurator";
+import { waldDatacubeResult } from "@/docs/dataset-result.mock";
+import { states } from "@/docs/fixtures";
 
 const meta: Meta = {
   title: "components / Dataset Result",

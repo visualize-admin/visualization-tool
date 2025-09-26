@@ -4,6 +4,8 @@ import {
   LocatorFixtures as TestingLibraryFixtures,
 } from "@playwright-testing-library/test/fixture";
 
+import { sleep } from "../app/utils/sleep";
+
 import { Actions, createActions } from "./actions";
 import { createSelectors, Selectors } from "./selectors";
 import { slugify } from "./slugify";
@@ -75,7 +77,5 @@ const setup = (contextOptions?: PlaywrightTestOptions["contextOptions"]) => {
 
   return { test, expect, describe, it };
 };
-
-const sleep = (dur: number) => new Promise((r) => setTimeout(r, dur));
 
 export { setup, sleep };

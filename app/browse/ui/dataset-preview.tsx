@@ -1,14 +1,12 @@
-import { ParsedUrlQuery } from "querystring";
-
 import { Trans } from "@lingui/macro";
 import { Box, Paper, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { ComponentProps, useEffect } from "react";
 import { UseQueryResponse } from "urql";
 
-import { CubeDataTablePreview } from "@/browse/cube-data-table-preview";
+import { DataTablePreview } from "@/browse/ui/data-table-preview";
+import { FirstTenRowsCaption } from "@/browse/ui/first-ten-rows-caption";
 import { useFootnotesStyles } from "@/components/chart-footnotes";
 import { DataDownloadMenu } from "@/components/data-download";
 import { Flex } from "@/components/flex";
@@ -21,66 +19,21 @@ import {
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 
-export const isOdsIframe = (query: ParsedUrlQuery) => {
-  return query["odsiframe"] === "true";
-};
-
-const useStyles = makeStyles<
-  Theme,
-  { isOdsIframe: boolean; descriptionPresent: boolean }
->((theme) => ({
-  root: {
-    flexGrow: 1,
-    flexDirection: "column",
-    justifyContent: "space-between",
-  },
-  header: {
-    marginBottom: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(4)),
-  },
-  paper: {
-    borderRadius: theme.spacing(4),
-    boxShadow: "none",
-  },
-  description: {
-    marginBottom: theme.spacing(6),
-  },
-  tableOuterWrapper: {
-    width: "100%",
-    boxShadow: theme.shadows[4],
-  },
-  tableInnerWrapper: {
-    flexGrow: 1,
-    width: "100%",
-    position: "relative",
-    overflowX: "auto",
-    marginTop: ({ descriptionPresent }) =>
-      descriptionPresent ? theme.spacing(6) : 0,
-  },
-  footnotesWrapper: {
-    marginTop: theme.spacing(4),
-    justifyContent: "space-between",
-  },
-  loadingWrapper: {
-    flexDirection: "column",
-    justifyContent: "space-between",
-    flexGrow: 1,
-    padding: theme.spacing(5),
-  },
-}));
+export type DataSetPreviewProps = ComponentProps<typeof DataSetPreview>;
 
 export const DataSetPreview = ({
   dataSetIri,
   dataSource,
   dataCubeMetadataQuery,
+  odsIframe,
 }: {
   dataSetIri: string;
   dataSource: DataSource;
   dataCubeMetadataQuery: UseQueryResponse<DataCubeMetadataQuery, object>;
+  odsIframe: boolean;
 }) => {
   const footnotesClasses = useFootnotesStyles({ useMarginTop: false });
   const locale = useLocale();
-  const router = useRouter();
-  const odsIframe = isOdsIframe(router.query);
   const variables = {
     sourceType: dataSource.type,
     sourceUrl: dataSource.url,
@@ -94,7 +47,7 @@ export const DataSetPreview = ({
   ] = useDataCubePreviewQuery({ variables });
   const classes = useStyles({
     descriptionPresent: !!metadata?.dataCubeMetadata.description,
-    isOdsIframe: odsIframe,
+    odsIframe,
   });
 
   useEffect(() => {
@@ -127,9 +80,7 @@ export const DataSetPreview = ({
         )}
         <Flex
           className={classes.header}
-          sx={{
-            justifyContent: odsIframe ? "end" : "space-between",
-          }}
+          sx={{ justifyContent: odsIframe ? "end" : "space-between" }}
         >
           <Head>
             <title key="title">
@@ -150,17 +101,18 @@ export const DataSetPreview = ({
           )}
           <div className={classes.tableOuterWrapper}>
             <Flex className={classes.tableInnerWrapper}>
-              <CubeDataTablePreview
+              <DataTablePreview
                 title={dataCubeMetadata.title}
                 dimensions={dataCubePreview.dimensions}
                 measures={dataCubePreview.measures}
                 observations={dataCubePreview.observations}
+                linkToMetadataPanel={false}
               />
             </Flex>
           </div>
           <Flex className={classes.footnotesWrapper}>
             <Flex className={footnotesClasses.actions}>
-              {!isOdsIframe(router.query) && (
+              {odsIframe ? null : (
                 <DataDownloadMenu
                   dataSource={dataSource}
                   title={dataCubeMetadata.title}
@@ -184,12 +136,45 @@ export const DataSetPreview = ({
   }
 };
 
-export type DataSetPreviewProps = ComponentProps<typeof DataSetPreview>;
-
-export const FirstTenRowsCaption = () => {
-  return (
-    <Typography variant="h6" component="span" color="monochrome.500">
-      <Trans id="datatable.showing.first.rows">Showing first 10 rows</Trans>
-    </Typography>
-  );
-};
+const useStyles = makeStyles<
+  Theme,
+  { odsIframe: boolean; descriptionPresent: boolean }
+>((theme) => ({
+  root: {
+    flexGrow: 1,
+    flexDirection: "column",
+    justifyContent: "space-between",
+  },
+  header: {
+    marginBottom: ({ odsIframe }) => (odsIframe ? 0 : theme.spacing(4)),
+  },
+  paper: {
+    borderRadius: theme.spacing(4),
+    boxShadow: "none",
+  },
+  description: {
+    marginBottom: theme.spacing(6),
+  },
+  tableOuterWrapper: {
+    width: "100%",
+    boxShadow: theme.shadows[4],
+  },
+  tableInnerWrapper: {
+    flexGrow: 1,
+    width: "100%",
+    position: "relative",
+    overflowX: "auto",
+    marginTop: ({ descriptionPresent }) =>
+      descriptionPresent ? theme.spacing(6) : 0,
+  },
+  footnotesWrapper: {
+    marginTop: theme.spacing(4),
+    justifyContent: "space-between",
+  },
+  loadingWrapper: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    flexGrow: 1,
+    padding: theme.spacing(5),
+  },
+}));

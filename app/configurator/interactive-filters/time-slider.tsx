@@ -200,10 +200,10 @@ const PlayButton = () => {
     <Button
       onClick={onClick}
       variant="outlined"
-      sx={{
+      style={{
         minHeight: 32,
         minWidth: 32,
-        p: 0,
+        padding: 0,
         borderRadius: "50%",
       }}
     >

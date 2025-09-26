@@ -12,12 +12,12 @@ import {
 } from "react";
 import { useStore } from "zustand";
 
-import { ChartDataTablePreview } from "@/browse/chart-data-table-preview";
 import { extractChartConfigsComponentIds } from "@/charts/shared/chart-helpers";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { ActionElementsContainer } from "@/components/action-elements-container";
+import { ChartDataTablePreview } from "@/components/chart-data-table-preview/ui";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes, VisualizeLink } from "@/components/chart-footnotes";
 import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";

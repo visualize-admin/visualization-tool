@@ -11,6 +11,8 @@ import {
 } from "@mui/material";
 import { MouseEvent, useState } from "react";
 
+import { sleep } from "@/utils/sleep";
+
 export const ConfirmationDialog = ({
   title,
   text,
@@ -72,7 +74,7 @@ export const ConfirmationDialog = ({
             setLoading(true);
 
             await onClick(e);
-            await new Promise((r) => setTimeout(r, 100));
+            await sleep(100);
 
             props.onClose({}, "escapeKeyDown");
             onSuccess?.();

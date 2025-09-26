@@ -104,7 +104,7 @@
     "rollup-plugin-terser": "^7.0.2",
     "storybook": "8.6.12",
     "tsx": "^4.19.2",
-    "typescript": "4"
+    "typescript": "4.9.5"
   },
   "workspaces": [
     ".",

@@ -6,6 +6,7 @@ import { useCallback, useState } from "react";
 import { CHART_SVG_ID } from "@/charts/shared/containers";
 import { TABLE_PREVIEW_WRAPPER_CLASS_NAME } from "@/components/chart-table-preview";
 import { animationFrame } from "@/utils/animation-frame";
+import { maybeWindow } from "@/utils/maybe-window";
 
 type ScreenshotFileFormat = "png" | "svg";
 
@@ -93,10 +94,9 @@ const makeScreenshot = async ({
   ) => Promise<void>;
   pngMetadata?: { key: PNG_METADATA_KEY; value: string }[];
 }) => {
-  const isUsingSafari =
-    typeof window !== "undefined"
-      ? /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-      : false;
+  const isUsingSafari = maybeWindow()
+    ? /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+    : false;
   // Add wrapper node to prevent overflow issues in the screenshot
   const wrapperNode = document.createElement("div");
   wrapperNode.style.width = `${node.offsetWidth}px`;
