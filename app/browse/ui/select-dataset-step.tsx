@@ -7,7 +7,7 @@ import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import Head from "next/head";
 import NextLink from "next/link";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { ComponentProps, type MouseEvent, useCallback, useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
@@ -116,11 +116,36 @@ const SelectDatasetStepInner = ({
   );
   const [ref] = useResizeObserver<HTMLDivElement>(handleHeightChange);
   const backLink = useMemo(() => {
-    return formatBackLink(router.query);
+    const backParameters = softJSONParse(router.query.previous as string);
+
+    if (!backParameters) {
+      return "/browse";
+    }
+
+    return buildURLFromBrowseParams(backParameters);
   }, [router.query]);
 
   const queryFilters = useMemo(() => {
-    return filters ? prepareSearchQueryFilters(filters) : [];
+    if (!filters) {
+      return [];
+    }
+
+    return (
+      filters
+        // Subthemes are filtered on client side.
+        .filter(
+          (d): d is Exclude<BrowseFilter, DataCubeAbout> =>
+            d.__typename !== SearchCubeFilterType.DataCubeAbout
+        )
+        .map((d) => {
+          const type = SearchCubeFilterType[d.__typename];
+          return {
+            type,
+            label: d.label,
+            value: d.iri,
+          };
+        })
+    );
   }, [filters]);
 
   // Use the debounced query value here only!
@@ -577,34 +602,3 @@ const useStyles = makeStyles<
     color: theme.palette.grey[800],
   },
 }));
-
-const formatBackLink = (
-  query: Router["query"]
-): ComponentProps<typeof NextLink>["href"] => {
-  const backParameters = softJSONParse(query.previous as string);
-
-  if (!backParameters) {
-    return "/browse";
-  }
-
-  return buildURLFromBrowseParams(backParameters);
-};
-
-const prepareSearchQueryFilters = (filters: BrowseFilter[]) => {
-  return (
-    filters
-      // Subthemes are filtered on client side.
-      .filter(
-        (d): d is Exclude<BrowseFilter, DataCubeAbout> =>
-          d.__typename !== SearchCubeFilterType.DataCubeAbout
-      )
-      .map((d) => {
-        const type = SearchCubeFilterType[d.__typename];
-        return {
-          type,
-          label: d.label,
-          value: d.iri,
-        };
-      })
-  );
-};
