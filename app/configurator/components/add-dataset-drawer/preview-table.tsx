@@ -20,7 +20,7 @@ import groupBy from "lodash/groupBy";
 import maxBy from "lodash/maxBy";
 import { useEffect, useMemo, useState } from "react";
 
-import { FirstTenRowsCaption } from "@/browse/ui/dataset-preview";
+import { FirstTenRowsCaption } from "@/browse/ui/first-ten-rows-caption";
 import { Error as ErrorHint, Loading } from "@/components/hint";
 import { Tag } from "@/components/tag";
 import { ChartConfig, DataSource } from "@/config-types";
