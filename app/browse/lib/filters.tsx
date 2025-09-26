@@ -1,10 +1,10 @@
+import { BrowseParams } from "@/browse/lib/params";
 import {
   DataCubeOrganization,
   DataCubeTermset,
   DataCubeTheme,
   SearchCubeFilterType,
 } from "@/graphql/query-hooks";
-import { BrowseParams } from "@/pages/browse";
 
 export type DataCubeAbout = {
   __typename: "DataCubeAbout";
@@ -18,9 +18,17 @@ export type BrowseFilter =
   | DataCubeTermset;
 
 /** Builds the state search filters from query params */
-export const getFiltersFromParams = (params: BrowseParams) => {
+export const getFiltersFromParams = ({
+  type,
+  subtype,
+  subsubtype,
+  iri,
+  subiri,
+  subsubiri,
+  topic,
+}: BrowseParams) => {
   const filters: BrowseFilter[] = [];
-  const { type, subtype, subsubtype, iri, subiri, subsubiri, topic } = params;
+
   for (const [t, i] of [
     [type, iri],
     [subtype, subiri],

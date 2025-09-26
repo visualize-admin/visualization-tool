@@ -8,29 +8,41 @@ import { Router } from "next/router";
 import { ComponentProps } from "react";
 
 import { truthy } from "@/domain/types";
-import { BrowseParams } from "@/pages/browse";
+import { SearchCubeResultOrder } from "@/graphql/query-hooks";
+
+const params = [
+  "type",
+  "iri",
+  "subtype",
+  "subiri",
+  "subsubtype",
+  "subsubiri",
+  "topic",
+  "includeDrafts",
+  "order",
+  "search",
+  "dataset",
+  "previous",
+] as const;
+
+export type BrowseParams = {
+  type?: "theme" | "organization" | "dataset" | "termset";
+  iri?: string;
+  subtype?: "theme" | "organization" | "termset";
+  subiri?: string;
+  subsubtype?: "theme" | "organization" | "termset";
+  subsubiri?: string;
+  topic?: string;
+  includeDrafts?: boolean;
+  order?: SearchCubeResultOrder;
+  search?: string;
+  dataset?: string;
+  previous?: string;
+};
 
 export const getBrowseParamsFromQuery = (
   query: Router["query"]
 ): BrowseParams => {
-  const rawValues = mapValues(
-    pick(query, [
-      "type",
-      "iri",
-      "subtype",
-      "subiri",
-      "subsubtype",
-      "subsubiri",
-      "topic",
-      "includeDrafts",
-      "order",
-      "search",
-      "dataset",
-      "previous",
-    ]),
-    (v) => (Array.isArray(v) ? v[0] : v)
-  );
-
   const {
     type,
     iri,
@@ -41,7 +53,7 @@ export const getBrowseParamsFromQuery = (
     topic,
     includeDrafts,
     ...values
-  } = rawValues;
+  } = mapValues(pick(query, params), (v) => (Array.isArray(v) ? v[0] : v));
   const previous = values.previous ? JSON.parse(values.previous) : undefined;
 
   return pickBy(
@@ -56,7 +68,7 @@ export const getBrowseParamsFromQuery = (
       topic: topic ?? previous?.topic,
       includeDrafts: includeDrafts ? JSON.parse(includeDrafts) : undefined,
     },
-    (x) => x !== undefined
+    (d) => d !== undefined
   );
 };
 
@@ -67,7 +79,7 @@ export const buildURLFromBrowseParams = ({
   subiri,
   subsubtype,
   subsubiri,
-  ...queryParams
+  ...query
 }: BrowseParams): ComponentProps<typeof NextLink>["href"] => {
   const typePart =
     type && iri
@@ -85,10 +97,7 @@ export const buildURLFromBrowseParams = ({
     .filter(truthy)
     .join("/");
 
-  return {
-    pathname,
-    query: queryParams,
-  } satisfies ComponentProps<typeof NextLink>["href"];
+  return { pathname, query };
 };
 
 export const extractParamFromPath = (path: string, param: string) => {

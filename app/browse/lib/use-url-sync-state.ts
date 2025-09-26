@@ -2,11 +2,11 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 import {
+  BrowseParams,
   buildURLFromBrowseParams,
   extractParamFromPath,
   getBrowseParamsFromQuery,
 } from "@/browse/lib/params";
-import { BrowseParams } from "@/pages/browse";
 import { maybeWindow } from "@/utils/maybe-window";
 import { useEvent } from "@/utils/use-event";
 

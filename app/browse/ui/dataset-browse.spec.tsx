@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { getFiltersFromParams } from "@/browse/lib/filters";
-import { BrowseParams } from "@/pages/browse";
+import { BrowseParams } from "@/browse/lib/params";
 
 describe("getFiltersFromParams", () => {
   it("should work only for organization", () => {
