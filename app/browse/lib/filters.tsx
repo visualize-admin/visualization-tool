@@ -1,10 +1,10 @@
+import { BrowseParams } from "@/browse/lib/params";
 import {
   DataCubeOrganization,
   DataCubeTermset,
   DataCubeTheme,
   SearchCubeFilterType,
 } from "@/graphql/query-hooks";
-import { BrowseParams } from "@/pages/browse";
 
 export type DataCubeAbout = {
   __typename: "DataCubeAbout";
@@ -18,10 +18,17 @@ export type BrowseFilter =
   | DataCubeTermset;
 
 /** Builds the state search filters from query params */
-
-export const getFiltersFromParams = (params: BrowseParams) => {
+export const getFiltersFromParams = ({
+  type,
+  subtype,
+  subsubtype,
+  iri,
+  subiri,
+  subsubiri,
+  topic,
+}: BrowseParams) => {
   const filters: BrowseFilter[] = [];
-  const { type, subtype, subsubtype, iri, subiri, subsubiri, topic } = params;
+
   for (const [t, i] of [
     [type, iri],
     [subtype, subiri],
@@ -66,9 +73,11 @@ export const getParamsFromFilters = (filters: BrowseFilter[]) => {
     topic: undefined,
   };
   let i = 0;
+
   for (const filter of filters) {
     const typeAttr = i === 0 ? "type" : i === 1 ? "subtype" : "subsubtype";
     const iriAttr = i === 0 ? "iri" : i === 1 ? "subiri" : "subsubiri";
+
     switch (filter.__typename) {
       case "DataCubeTheme":
         params[typeAttr] = "theme";
@@ -89,7 +98,29 @@ export const getParamsFromFilters = (filters: BrowseFilter[]) => {
         const _exhaustiveCheck: never = filter;
         return _exhaustiveCheck;
     }
+
     i++;
   }
+
   return params;
+};
+
+export const encodeFilter = ({ __typename, iri }: BrowseFilter) => {
+  const folder = (() => {
+    switch (__typename) {
+      case "DataCubeTheme":
+        return "theme";
+      case "DataCubeOrganization":
+        return "organization";
+      case "DataCubeAbout":
+        return "topic";
+      case "DataCubeTermset":
+        return "termset";
+      default:
+        const _exhaustiveCheck: never = __typename;
+        return _exhaustiveCheck;
+    }
+  })();
+
+  return `${folder}/${encodeURIComponent(iri)}`;
 };

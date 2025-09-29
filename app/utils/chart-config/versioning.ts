@@ -26,6 +26,7 @@ import {
   getUnversionedCubeIriServerSide,
 } from "@/utils/chart-config/upgrade-cube";
 import { createId } from "@/utils/create-id";
+import { maybeWindow } from "@/utils/maybe-window";
 
 type Migration = {
   description: string;
@@ -943,7 +944,7 @@ export const chartConfigMigrations: Migration[] = [
       newConfig.cubes = await Promise.all(
         newConfig.cubes.map(async (cube: any) => {
           const { publishIri, ...rest } = cube;
-          const isServerSide = typeof window === "undefined";
+          const isServerSide = !maybeWindow();
           const fn = isServerSide
             ? async () => {
                 return await getUnversionedCubeIriServerSide(rest.iri, {

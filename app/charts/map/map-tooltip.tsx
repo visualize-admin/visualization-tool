@@ -314,17 +314,15 @@ const TooltipRow = ({
         {title}
       </Typography>
       <Box
-        sx={{
-          borderRadius: 9999,
-          px: 2,
-          display: "inline-block",
-          textAlign: "center",
-        }}
         style={{
+          display: "inline-block",
+          border,
+          borderRadius: 9999,
           background,
           color,
-          border,
+          textAlign: "center",
         }}
+        sx={{ px: 2 }}
       >
         <Typography component="div" variant="caption">
           {value}

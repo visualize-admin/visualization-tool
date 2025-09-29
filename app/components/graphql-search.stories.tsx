@@ -17,7 +17,7 @@ import keyBy from "lodash/keyBy";
 import { useEffect, useState } from "react";
 import { ObjectInspector } from "react-inspector";
 
-import { DatasetResult } from "@/browser/dataset-browse";
+import { DatasetResult } from "@/browse/ui/dataset-result";
 import { Error } from "@/components/hint";
 import { Tag } from "@/components/tag";
 import { ComponentTermsets } from "@/domain/data";

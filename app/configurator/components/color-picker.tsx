@@ -1,4 +1,4 @@
-import { Box, Input } from "@mui/material";
+import { Input } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import {
   hexToHsva,
@@ -101,14 +101,14 @@ export const CustomColorPicker = ({
             gap: "4px",
           }}
         >
-          <Box
-            sx={{
-              width: "8px",
-              height: "8px",
+          <div
+            data-testid="color-square"
+            style={{
+              width: 8,
+              height: 8,
               backgroundColor: hsvaToHex(hsva),
               borderRadius: "50%",
             }}
-            data-testid="color-square"
           />
           <Hue
             data-testid="color-picker-hue"

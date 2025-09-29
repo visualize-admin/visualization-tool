@@ -3,10 +3,9 @@ import * as pLimit from "p-limit";
 import { chromium, Page } from "playwright";
 
 import { locales } from "../app/locales/constants";
+import { sleep } from "../app/utils/sleep";
 
 type Config = { key: string };
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const preloadChart = async (page: Page, locale: string, key: string) => {
   const loadPage = async () => {

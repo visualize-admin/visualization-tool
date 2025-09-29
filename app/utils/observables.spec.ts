@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
+import { sleep } from "@/utils/sleep";
+
 import { Timeline } from "./observables";
 
 describe("Timeline", () => {
@@ -36,7 +38,7 @@ describe("Timeline", () => {
     timeline.start();
     expect(timeline.playing).toBe(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await sleep(500);
 
     timeline.stop();
     expect(timeline.playing).toBe(false);

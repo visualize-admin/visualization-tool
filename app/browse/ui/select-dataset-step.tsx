@@ -7,42 +7,36 @@ import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
 import Head from "next/head";
 import NextLink from "next/link";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { ComponentProps, type MouseEvent, useCallback, useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
-import {
-  BrowseStateProvider,
-  buildURLFromBrowseState,
-  useBrowseContext,
-} from "@/browser/context";
-import {
-  DatasetResults,
-  DatasetResultsProps,
-  SearchDatasetControls,
-  SearchDatasetInput,
-  SearchFilters,
-} from "@/browser/dataset-browse";
+import { BrowseFilter, DataCubeAbout } from "@/browse/lib/filters";
+import { buildURLFromBrowseParams, isOdsIframe } from "@/browse/lib/params";
+import { useRedirectToLatestCube } from "@/browse/lib/use-redirect-to-latest-cube";
+import { BrowseStateProvider, useBrowseContext } from "@/browse/model/context";
+import { DatasetMetadataSingleCube } from "@/browse/ui/dataset-metadata-single-cube";
 import {
   DataSetPreview,
   DataSetPreviewProps,
-  isOdsIframe,
-} from "@/browser/dataset-preview";
-import { BrowseFilter, DataCubeAbout } from "@/browser/filters";
+} from "@/browse/ui/dataset-preview";
+import {
+  DatasetResults,
+  DatasetResultsProps,
+} from "@/browse/ui/dataset-results";
+import { SearchDatasetControls } from "@/browse/ui/search-dataset-controls";
+import { SearchDatasetInput } from "@/browse/ui/search-dataset-input";
+import { SearchFilters } from "@/browse/ui/search-filters";
+import { SelectDatasetBanner } from "@/browse/ui/select-dataset-banner";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
-import { DatasetMetadata } from "@/components/dataset-metadata";
 import { Flex } from "@/components/flex";
 import { Footer } from "@/components/footer";
 import {
-  __BANNER_MARGIN_CSS_VAR,
-  bannerPresenceProps,
   DURATION,
   MotionBox,
   navPresenceProps,
   smoothPresenceProps,
 } from "@/components/presence";
-import { useRedirectToLatestCube } from "@/components/use-redirect-to-latest-cube";
-import { DataSource } from "@/configurator";
 import {
   PanelBodyWrapper,
   PanelLayout,
@@ -59,115 +53,28 @@ import {
 } from "@/graphql/query-hooks";
 import { Icon } from "@/icons";
 import { useConfiguratorState, useLocale } from "@/src";
+import { softJSONParse } from "@/utils/soft-json-parse";
 import { useResizeObserver } from "@/utils/use-resize-observer";
 
-const softJSONParse = (v: string) => {
-  try {
-    return JSON.parse(v);
-  } catch (e) {
-    return null;
+export const SelectDatasetStep = (
+  props: Omit<ComponentProps<typeof SelectDatasetStepInner>, "variant"> & {
+    /**
+     * Is passed to the content component. At this level, it controls which whether the
+     * browsing state is synced with the URL or not.
+     * At the SelectDatasetStepContent level, it tweaks UI elements.
+     * /!\ It should not change during the lifetime of the component.
+     */
+    variant: "page" | "drawer";
   }
-};
-
-const useStyles = makeStyles<
-  Theme,
-  {
-    datasetPresent: boolean;
-    isOdsIframe: boolean;
-  }
->((theme) => ({
-  panelLayout: {
-    position: "static",
-    height: "auto",
-    margin: "auto",
-    marginTop: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(12)),
-    backgroundColor: theme.palette.background.paper,
-    transition: "margin-top 0.5s ease",
-  },
-  panelLeft: {
-    marginBottom: theme.spacing(12),
-    boxShadow: "none",
-    outline: "none",
-    transition: "padding-top 0.5s ease",
-
-    [theme.breakpoints.up("md")]: {
-      position: ({ datasetPresent }) => (datasetPresent ? "static" : "sticky"),
-      top: ({ datasetPresent }) => (datasetPresent ? 0 : theme.spacing(8)),
-      overflowY: "auto",
-      minHeight: "100vh",
-      maxHeight: ({ datasetPresent }) => (datasetPresent ? "none" : "100vh"),
-      marginBottom: "unset",
-      paddingBottom: ({ datasetPresent }) =>
-        datasetPresent ? 0 : theme.spacing(16),
-    },
-  },
-  panelMiddle: {
-    gridColumnStart: "middle",
-    gridColumnEnd: "right",
-    backgroundColor: theme.palette.background.paper,
-    transition: "padding-top 0.5s ease",
-
-    [theme.breakpoints.up("md")]: {
-      marginLeft: ({ isOdsIframe }) => (isOdsIframe ? 0 : theme.spacing(8)),
-    },
-  },
-  panelBannerOuterWrapper: {
-    backgroundColor: theme.palette.monochrome[100],
-  },
-  panelBannerInnerWrapper: {
-    paddingTop: theme.spacing(25),
-    paddingBottom: theme.spacing(25),
-  },
-  panelBannerContent: {
-    flexDirection: "column",
-    justifyContent: "center",
-    maxWidth: 940,
-  },
-  panelBannerTitle: {
-    marginBottom: theme.spacing(4),
-    fontWeight: 700,
-  },
-  panelBannerDescription: {
-    marginBottom: theme.spacing(10),
-  },
-  filters: {
-    display: "block",
-    color: theme.palette.grey[800],
-  },
-}));
-
-const formatBackLink = (
-  query: Router["query"]
-): ComponentProps<typeof NextLink>["href"] => {
-  const backParameters = softJSONParse(query.previous as string);
-
-  if (!backParameters) {
-    return "/browse";
-  }
-
-  return buildURLFromBrowseState(backParameters);
-};
-
-const prepareSearchQueryFilters = (filters: BrowseFilter[]) => {
+) => {
   return (
-    filters
-      // Subthemes are filtered on client side.
-      .filter(
-        (d): d is Exclude<BrowseFilter, DataCubeAbout> =>
-          d.__typename !== SearchCubeFilterType.DataCubeAbout
-      )
-      .map((d) => {
-        const type = SearchCubeFilterType[d.__typename];
-        return {
-          type,
-          label: d.label,
-          value: d.iri,
-        };
-      })
+    <BrowseStateProvider syncWithUrl={props.variant === "page"}>
+      <SelectDatasetStepInner {...props} />
+    </BrowseStateProvider>
   );
 };
 
-const SelectDatasetStepContent = ({
+const SelectDatasetStepInner = ({
   datasetPreviewProps,
   datasetResultsProps,
   dataset: propsDataset,
@@ -186,47 +93,66 @@ const SelectDatasetStepContent = ({
   variant?: "page" | "drawer";
 }) => {
   const locale = useLocale();
-  const [configState] = useConfiguratorState();
-  const router = useRouter();
-  const odsIframe = isOdsIframe(router.query);
-
+  const [{ state, dataSource }] = useConfiguratorState();
   const browseState = useBrowseContext();
   const {
     search,
     order,
     includeDrafts,
     filters,
-    dataset: browseStateDataset,
+    dataset: browseDataset,
   } = browseState;
-  const dataset = propsDataset ?? browseStateDataset;
+  const dataset = propsDataset ?? browseDataset;
+  const router = useRouter();
+  const odsIframe = isOdsIframe(router.query);
+  const classes = useStyles({ datasetPresent: !!dataset, odsIframe });
 
-  const [debouncedQuery] = useDebounce(search, 500, {
-    leading: true,
-  });
+  const [debouncedQuery] = useDebounce(search, 500, { leading: true });
   const handleHeightChange = useCallback(
     ({ height }: { width: number; height: number }) => {
       window.parent.postMessage({ type: CHART_RESIZE_EVENT_TYPE, height }, "*");
     },
     []
   );
-  const [ref] = useResizeObserver(handleHeightChange);
-  const classes = useStyles({
-    datasetPresent: !!dataset,
-    isOdsIframe: odsIframe,
-  });
+  const [ref] = useResizeObserver<HTMLDivElement>(handleHeightChange);
   const backLink = useMemo(() => {
-    return formatBackLink(router.query);
+    const backParameters = softJSONParse(router.query.previous as string);
+
+    if (!backParameters) {
+      return "/browse";
+    }
+
+    return buildURLFromBrowseParams(backParameters);
   }, [router.query]);
 
   const queryFilters = useMemo(() => {
-    return filters ? prepareSearchQueryFilters(filters) : [];
+    if (!filters) {
+      return [];
+    }
+
+    return (
+      filters
+        // Subthemes are filtered on client side.
+        .filter(
+          (d): d is Exclude<BrowseFilter, DataCubeAbout> =>
+            d.__typename !== SearchCubeFilterType.DataCubeAbout
+        )
+        .map((d) => {
+          const type = SearchCubeFilterType[d.__typename];
+          return {
+            type,
+            label: d.label,
+            value: d.iri,
+          };
+        })
+    );
   }, [filters]);
 
   // Use the debounced query value here only!
   const [{ data, fetching, error }] = useSearchCubesQuery({
     variables: {
-      sourceType: configState.dataSource.type,
-      sourceUrl: configState.dataSource.url,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
       query: debouncedQuery,
       order,
@@ -236,13 +162,10 @@ const SelectDatasetStepContent = ({
     pause: !!dataset,
   });
 
-  useRedirectToLatestCube({
-    dataSource: configState.dataSource,
-    datasetIri: dataset,
-  });
+  useRedirectToLatestCube({ dataSource, datasetIri: dataset });
 
   const { allCubes, cubes } = useMemo(() => {
-    if ((data && data.searchCubes.length === 0) || !data) {
+    if (!data || data.searchCubes.length === 0) {
       return {
         allCubes: [],
         cubes: [],
@@ -336,19 +259,10 @@ const SelectDatasetStepContent = ({
       .join(", ");
   }, [orgs, queryFilters, termsets, themes]);
 
-  const [bannerRef] = useResizeObserver<HTMLDivElement>(({ height }) => {
-    if (height) {
-      document.documentElement.style.setProperty(
-        __BANNER_MARGIN_CSS_VAR,
-        `-${height}px`
-      );
-    }
-  });
-
   const dataCubeMetadataQuery = useDataCubeMetadataQuery({
     variables: {
-      sourceType: configState.dataSource.type,
-      sourceUrl: configState.dataSource.url,
+      sourceType: dataSource.type,
+      sourceUrl: dataSource.url,
       locale,
       cubeFilter: {
         iri: dataset ?? "",
@@ -358,40 +272,13 @@ const SelectDatasetStepContent = ({
   });
   const [{ data: dataCubeMetadata }] = dataCubeMetadataQuery;
 
-  if (configState.state !== "SELECTING_DATASET") {
+  if (state !== "SELECTING_DATASET") {
     return null;
   }
 
   return (
-    <Box ref={odsIframe ? ref : null}>
-      <AnimatePresence>
-        {!dataset && variant === "page" && (
-          <MotionBox key="banner" ref={bannerRef} {...bannerPresenceProps}>
-            <section role="banner" className={classes.panelBannerOuterWrapper}>
-              <ContentWrapper className={classes.panelBannerInnerWrapper}>
-                <Flex className={classes.panelBannerContent}>
-                  <Typography variant="h1" className={classes.panelBannerTitle}>
-                    Swiss Open Government Data
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className={classes.panelBannerDescription}
-                  >
-                    <Trans id="browse.datasets.description">
-                      Explore datasets provided by the LINDAS Linked Data
-                      Service by either filtering by categories or organizations
-                      or search directly for specific keywords. Click on a
-                      dataset to see more detailed information and start
-                      creating your own visualizations.
-                    </Trans>
-                  </Typography>
-                  <SearchDatasetInput browseState={browseState} />
-                </Flex>
-              </ContentWrapper>
-            </section>
-          </MotionBox>
-        )}
-      </AnimatePresence>
+    <div ref={odsIframe ? ref : null}>
+      <SelectDatasetBanner dataset={dataset} variant={variant} />
       <Box
         sx={{
           borderBottom:
@@ -450,11 +337,10 @@ const SelectDatasetStepContent = ({
                       size="sm"
                       target={odsIframe ? "_blank" : undefined}
                       endIcon={
-                        odsIframe ? (
-                          <Icon name="legacyLinkExternal" size={20} />
-                        ) : (
-                          <Icon name="arrowRight" size={20} />
-                        )
+                        <Icon
+                          name={odsIframe ? "legacyLinkExternal" : "arrowRight"}
+                          size={20}
+                        />
                       }
                       onClick={(e) => onCreateChartFromDataset?.(e, dataset)}
                     >
@@ -472,7 +358,7 @@ const SelectDatasetStepContent = ({
                     <NextLink
                       href={`/create/new?cube=${
                         dataCubeMetadata?.dataCubeMetadata.iri
-                      }&dataSource=${sourceToLabel(configState.dataSource)}`}
+                      }&dataSource=${sourceToLabel(dataSource)}`}
                       passHref
                       legacyBehavior={!odsIframe}
                       target={odsIframe ? "_blank" : undefined}
@@ -480,17 +366,18 @@ const SelectDatasetStepContent = ({
                       <Button
                         size="sm"
                         endIcon={
-                          odsIframe ? (
-                            <Icon name="legacyLinkExternal" size={20} />
-                          ) : (
-                            <Icon name="arrowRight" size={20} />
-                          )
+                          <Icon
+                            name={
+                              odsIframe ? "legacyLinkExternal" : "arrowRight"
+                            }
+                            size={20}
+                          />
                         }
                         sx={
-                          // Could be extracted in case we have more
-                          // openData.swiss dependencies
                           odsIframe
                             ? {
+                                // Could be extracted in case we have more
+                                // openData.swiss dependencies
                                 backgroundColor: "#009688",
 
                                 "&:hover": {
@@ -535,9 +422,9 @@ const SelectDatasetStepContent = ({
                 {dataset ? (
                   <MotionBox key="metadata" {...navPresenceProps}>
                     <MotionBox {...smoothPresenceProps}>
-                      <DatasetMetadataSingleCubeAdapter
+                      <DatasetMetadataSingleCube
                         datasetIri={dataset}
-                        dataSource={configState.dataSource}
+                        dataSource={dataSource}
                       />
                     </MotionBox>
                   </MotionBox>
@@ -570,8 +457,9 @@ const SelectDatasetStepContent = ({
                 >
                   <DataSetPreview
                     dataSetIri={dataset}
-                    dataSource={configState.dataSource}
+                    dataSource={dataSource}
                     dataCubeMetadataQuery={dataCubeMetadataQuery}
+                    odsIframe={odsIframe}
                     {...datasetPreviewProps}
                   />
                 </MotionBox>
@@ -579,7 +467,10 @@ const SelectDatasetStepContent = ({
                 <MotionBox key="filters" {...navPresenceProps}>
                   <AnimatePresence>
                     {variant === "drawer" ? (
-                      <Box mb="2rem" mt="0.125rem" key="select-dataset">
+                      <div
+                        key="select-dataset"
+                        style={{ marginTop: "0.125rem", marginBottom: "2rem" }}
+                      >
                         <Typography variant="h2">
                           <Trans id="chart.datasets.add-dataset-drawer.title">
                             Select dataset
@@ -595,48 +486,50 @@ const SelectDatasetStepContent = ({
                             },
                           }}
                         />
-                      </Box>
+                      </div>
                     ) : null}
                     {queryFilters.length > 0 && (
-                      <MotionBox
-                        key="query-filters"
-                        {...{
-                          initial: {
-                            transform: "translateY(-16px)",
-                            height: 0,
-                            marginBottom: 0,
-                            opacity: 0,
-                          },
-                          animate: {
-                            transform: "translateY(0px)",
-                            height: "auto",
-                            marginBottom: 16,
-                            opacity: 1,
-                          },
-                          exit: {
-                            transform: "translateY(-16px)",
-                            height: 0,
-                            marginBottom: 0,
-                            opacity: 0,
-                          },
-                          transition: {
-                            duration: DURATION,
-                          },
-                        }}
-                      >
+                      <>
                         <Head>
                           <title key="title">
-                            {pageTitle}- visualize.admin.ch
+                            {pageTitle} - visualize.admin.ch
                           </title>
                         </Head>
-                        <Typography
-                          key="filters"
-                          className={classes.filters}
-                          variant="h1"
+                        <MotionBox
+                          key="query-filters"
+                          {...{
+                            initial: {
+                              transform: "translateY(-16px)",
+                              height: 0,
+                              marginBottom: 0,
+                              opacity: 0,
+                            },
+                            animate: {
+                              transform: "translateY(0px)",
+                              height: "auto",
+                              marginBottom: 16,
+                              opacity: 1,
+                            },
+                            exit: {
+                              transform: "translateY(-16px)",
+                              height: 0,
+                              marginBottom: 0,
+                              opacity: 0,
+                            },
+                            transition: {
+                              duration: DURATION,
+                            },
+                          }}
                         >
-                          {pageTitle}
-                        </Typography>
-                      </MotionBox>
+                          <Typography
+                            key="filters"
+                            className={classes.filters}
+                            variant="h1"
+                          >
+                            {pageTitle}
+                          </Typography>
+                        </MotionBox>
+                      </>
                     )}
                   </AnimatePresence>
                   <SearchDatasetControls
@@ -647,9 +540,7 @@ const SelectDatasetStepContent = ({
                     fetching={fetching}
                     error={error}
                     cubes={cubes}
-                    datasetResultProps={() => ({
-                      showDimensions: true,
-                    })}
+                    datasetResultProps={() => ({ showDimensions: true })}
                     {...datasetResultsProps}
                   />
                 </MotionBox>
@@ -659,76 +550,55 @@ const SelectDatasetStepContent = ({
         </PanelLayout>
       </ContentWrapper>
       {variant == "page" && !odsIframe ? (
-        <Box
-          sx={{
-            borderTop: "2px solid rgba(0,0,0,0.05)",
-            mt: 8,
-          }}
-        >
-          <Footer
-            sx={{
-              borderTopWidth: 0,
-              ml: "auto",
-              mr: "auto",
-              width: "100%",
-            }}
-          />
+        <Box sx={{ mt: 8, borderTop: "2px solid rgba(0,0,0,0.05)" }}>
+          <Footer sx={{ width: "100%", mx: "auto", borderTopWidth: 0 }} />
         </Box>
       ) : null}
-    </Box>
+    </div>
   );
 };
 
-type SelectDatasetStepProps = ComponentProps<typeof SelectDatasetStepContent>;
+const useStyles = makeStyles<
+  Theme,
+  { datasetPresent: boolean; odsIframe: boolean }
+>((theme) => ({
+  panelLayout: {
+    position: "static",
+    height: "auto",
+    margin: "auto",
+    marginTop: ({ odsIframe }) => (odsIframe ? 0 : theme.spacing(12)),
+    backgroundColor: theme.palette.background.paper,
+    transition: "margin-top 0.5s ease",
+  },
+  panelLeft: {
+    marginBottom: theme.spacing(12),
+    boxShadow: "none",
+    outline: "none",
+    transition: "padding-top 0.5s ease",
 
-const DatasetMetadataSingleCubeAdapter = ({
-  dataSource,
-  datasetIri,
-}: {
-  dataSource: DataSource;
-  datasetIri: string;
-}) => {
-  const locale = useLocale();
-  const [data] = useDataCubeMetadataQuery({
-    variables: {
-      cubeFilter: { iri: datasetIri },
-      locale: locale,
-      sourceType: dataSource.type,
-      sourceUrl: dataSource.url,
+    [theme.breakpoints.up("md")]: {
+      position: ({ datasetPresent }) => (datasetPresent ? "static" : "sticky"),
+      top: ({ datasetPresent }) => (datasetPresent ? 0 : theme.spacing(8)),
+      overflowY: "auto",
+      minHeight: "100vh",
+      maxHeight: ({ datasetPresent }) => (datasetPresent ? "none" : "100vh"),
+      marginBottom: "unset",
+      paddingBottom: ({ datasetPresent }) =>
+        datasetPresent ? 0 : theme.spacing(16),
     },
-  });
+  },
+  panelMiddle: {
+    gridColumnStart: "middle",
+    gridColumnEnd: "right",
+    backgroundColor: theme.palette.background.paper,
+    transition: "padding-top 0.5s ease",
 
-  if (!data.data) {
-    return null;
-  }
-
-  return (
-    <DatasetMetadata
-      cube={data.data.dataCubeMetadata}
-      showTitle={false}
-      dataSource={dataSource}
-    />
-  );
-};
-
-/**
- * This is the select dataset step component for use directly in a page.
- * It uses the URL to sync the state.
- */
-export const SelectDatasetStep = (
-  props: Omit<SelectDatasetStepProps, "variant"> & {
-    /**
-     * Is passed to the content component. At this level, it controls which whether the
-     * browsing state is synced with the URL or not.
-     * At the SelectDatasetStepContent level, it tweaks UI elements.
-     * /!\ It should not change during the lifetime of the component.
-     */
-    variant: "page" | "drawer";
-  }
-) => {
-  return (
-    <BrowseStateProvider syncWithUrl={props.variant === "page"}>
-      <SelectDatasetStepContent {...props} variant={props.variant} />
-    </BrowseStateProvider>
-  );
-};
+    [theme.breakpoints.up("md")]: {
+      marginLeft: ({ odsIframe }) => (odsIframe ? 0 : theme.spacing(8)),
+    },
+  },
+  filters: {
+    display: "block",
+    color: theme.palette.grey[800],
+  },
+}));
