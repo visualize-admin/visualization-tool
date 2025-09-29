@@ -492,7 +492,7 @@ const SelectDatasetStepInner = ({
                       <>
                         <Head>
                           <title key="title">
-                            {pageTitle}- visualize.admin.ch
+                            {pageTitle} - visualize.admin.ch
                           </title>
                         </Head>
                         <MotionBox
