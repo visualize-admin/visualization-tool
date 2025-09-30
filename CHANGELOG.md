@@ -13,6 +13,7 @@ You can also check the
 
 - Features
   - Table sorting is not reset anymore on data / filter change
+  - Visualize now supports multiple cube contact points
 - Fixes
   - Hiding a temporal column and then enabling an interactive filter doesn't
     result in broken state anymore

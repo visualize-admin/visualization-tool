@@ -65,10 +65,10 @@ export type DataCubeMetadata = {
   publicationStatus: DataCubePublicationStatus;
   themes?: DataCubeTheme[];
   creator?: DataCubeOrganization;
-  contactPoint?: {
+  contactPoints?: {
     name?: string;
     email?: string;
-  };
+  }[];
   publisher?: string;
   landingPage?: string;
   expires?: string;

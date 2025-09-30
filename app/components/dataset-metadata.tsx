@@ -82,13 +82,16 @@ export const DatasetMetadata = ({
             <Trans id="dataset.metadata.email">Contact points</Trans>
           </DatasetMetadataTitle>
           <DatasetMetadataBody>
-            {cube.contactPoint?.email && cube.contactPoint.name ? (
-              <DatasetMetadataLink
-                href={`mailto:${cube.contactPoint.email}`}
-                label={cube.contactPoint.name ?? cube.contactPoint.email}
-              />
-            ) : (
-              "–"
+            {cube.contactPoints?.map((contactPoint) =>
+              contactPoint.email && contactPoint.name ? (
+                <DatasetMetadataLink
+                  key={contactPoint.email}
+                  href={`mailto:${contactPoint.email}`}
+                  label={contactPoint.name ?? contactPoint.email}
+                />
+              ) : (
+                "–"
+              )
             )}
           </DatasetMetadataBody>
         </div>
