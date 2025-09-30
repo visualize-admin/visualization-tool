@@ -643,6 +643,21 @@ export const canDimensionBeTimeFiltered = (
   return isTemporalDimension(dimension) || isTemporalEntityDimension(dimension);
 };
 
+export const canDimensionBeMultiFiltered = (
+  dimension?: Component | null
+): dimension is
+  | NominalDimension
+  | OrdinalDimension
+  | TemporalOrdinalDimension => {
+  return (
+    isNominalDimension(dimension) ||
+    isOrdinalDimension(dimension) ||
+    isTemporalOrdinalDimension(dimension) ||
+    isGeoShapesDimension(dimension) ||
+    isGeoCoordinatesDimension(dimension)
+  );
+};
+
 export const isTemporalOrdinalDimension = (
   dimension?: Component | null
 ): dimension is TemporalOrdinalDimension => {

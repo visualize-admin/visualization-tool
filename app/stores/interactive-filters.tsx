@@ -16,6 +16,7 @@ import {
   FilterValue,
   FilterValueSingle,
 } from "@/config-types";
+import { canDimensionBeMultiFiltered, Component } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { getOriginalIds, isJoinById } from "@/graphql/join";
 import {
@@ -317,7 +318,7 @@ const getPotentialTimeRangeFilterIds = (chartConfigs: ChartConfig[]) => {
   return temporalDimensions.map((dimension) => dimension.componentId);
 };
 
-const getPotentialDataFilterIds = (chartConfigs: ChartConfig[]) => {
+export const getPotentialDataFilterIds = (chartConfigs: ChartConfig[]) => {
   const dimensionIdCounts = new Map<string, number>();
 
   chartConfigs.forEach((config) => {
@@ -330,7 +331,20 @@ const getPotentialDataFilterIds = (chartConfigs: ChartConfig[]) => {
               ([_, filter]) =>
                 filter.type === "single" || filter.type === "multi"
             )
-            .map(([dimensionId]) => dimensionId);
+            .map(([dimensionId]) => dimensionId)
+            .concat(
+              config.chartType === "table"
+                ? Object.entries(config.fields)
+                    .map(([componentId, field]) =>
+                      canDimensionBeMultiFiltered({
+                        __typename: field.componentType,
+                      } as Component)
+                        ? componentId
+                        : undefined
+                    )
+                    .filter(truthy)
+                : []
+            );
         })
     );
 
