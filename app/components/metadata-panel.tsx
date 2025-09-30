@@ -312,6 +312,17 @@ export const MetadataPanel = ({
     };
   }, [setOpen, reset, router.events]);
 
+  const slideProps = useMemo(() => {
+    if (container) {
+      return {
+        onEnter: () => setEnableTransition(false),
+        onEntered: () => setEnableTransition(true),
+        onExit: () => setEnableTransition(false),
+        onExited: () => setEnableTransition(true),
+      };
+    }
+  }, [setEnableTransition, container]);
+
   return (
     <>
       {renderToggle && (
@@ -326,12 +337,7 @@ export const MetadataPanel = ({
         disableEnforceFocus
         ModalProps={{ container }}
         PaperProps={{ style: { position: "absolute" } }}
-        SlideProps={{
-          onEnter: () => setEnableTransition(false),
-          onEntered: () => setEnableTransition(true),
-          onExit: () => setEnableTransition(false),
-          onExited: () => setEnableTransition(true),
-        }}
+        SlideProps={slideProps}
       >
         <Header onClose={handleToggle} />
         <TabContext value={activeSection}>
