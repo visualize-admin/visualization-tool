@@ -107,7 +107,6 @@ export const useBarsStateVariables = (
   const getRenderingKey = useRenderingKeyVariable(
     dimensions,
     filters,
-    interactiveFiltersConfig,
     animation
   );
 

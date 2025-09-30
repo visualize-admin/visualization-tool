@@ -107,7 +107,6 @@ export const useColumnsStateVariables = (
   const getRenderingKey = useRenderingKeyVariable(
     dimensions,
     filters,
-    interactiveFiltersConfig,
     animation
   );
 

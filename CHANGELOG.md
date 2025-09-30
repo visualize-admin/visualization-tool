@@ -21,6 +21,8 @@ You can also check the
   - It's no longer possible to clear the filter selection in shared, single
     dashboard filter
   - It's now possible to share filters between tables in dashboards
+  - Charts are not animating in and out anymore when interacting with UI in some
+    rare cases
 - Styles
   - Added missing paddings in details panel autocomplete component and in banner
     component for smaller breakpoints

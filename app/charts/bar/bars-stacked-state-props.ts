@@ -98,7 +98,6 @@ export const useBarsStackedStateVariables = (
   const getRenderingKey = useRenderingKeyVariable(
     dimensions,
     filters,
-    interactiveFiltersConfig,
     animation
   );
 

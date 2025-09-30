@@ -34,7 +34,7 @@ export const useScatterplotStateVariables = (
     dimensionsById,
     measuresById,
   } = props;
-  const { fields, interactiveFiltersConfig } = chartConfig;
+  const { fields } = chartConfig;
   const { x, y, segment, animation } = fields;
   const filters = useChartConfigFilters(chartConfig);
 
@@ -53,7 +53,6 @@ export const useScatterplotStateVariables = (
   const getRenderingKey = useRenderingKeyVariable(
     dimensions,
     filters,
-    interactiveFiltersConfig,
     animation
   );
 

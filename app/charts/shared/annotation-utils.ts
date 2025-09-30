@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 
 import { useInteraction } from "@/charts/shared/use-interaction";
 import {
@@ -26,14 +26,10 @@ export const useIsEditingAnnotation = () => {
 
 export const useGetAnnotationRenderState = () => {
   const [interaction] = useInteraction();
-  const interactionRef = useRef(interaction);
-  interactionRef.current = interaction;
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const { activeField } = chartConfig;
   const isEditing = useIsEditingAnnotation();
-  const annotationsRef = useRef(chartConfig.annotations);
-  annotationsRef.current = chartConfig.annotations;
 
   const getAnnotationRenderState = useCallback(
     (
@@ -48,7 +44,7 @@ export const useGetAnnotationRenderState = () => {
     ) => {
       let annotation: Annotation | undefined;
 
-      for (const a of annotationsRef.current) {
+      for (const a of chartConfig.annotations) {
         const matches = matchesAnnotationTarget(observation, a.targets);
 
         if (matches) {
@@ -63,14 +59,14 @@ export const useGetAnnotationRenderState = () => {
         color = annotation.color;
       }
 
-      const currentInteraction = interactionRef.current;
+      const currentInteraction = interaction;
       const interactionMatches =
         currentInteraction.type === "annotation" &&
         currentInteraction.visible &&
         currentInteraction.observation?.[`${axisComponentId}/__iri__`] ===
           axisValue;
 
-      const targetsOtherAnnotations = annotationsRef.current.some(
+      const targetsOtherAnnotations = chartConfig.annotations.some(
         (a) =>
           a.key !== activeField &&
           matchesAnnotationTarget(observation, a.targets)
@@ -80,6 +76,7 @@ export const useGetAnnotationRenderState = () => {
       let focused =
         isEditing &&
         ((interactionMatches && !targetsOtherAnnotations) || isActive);
+      console.log("focused", focused);
 
       return {
         color,
@@ -87,7 +84,7 @@ export const useGetAnnotationRenderState = () => {
         isActive,
       };
     },
-    [activeField, isEditing]
+    [activeField, chartConfig.annotations, interaction, isEditing]
   );
 
   return getAnnotationRenderState;

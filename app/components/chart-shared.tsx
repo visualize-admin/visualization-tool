@@ -144,8 +144,8 @@ export const ChartControls = ({
         {showFilters && <ChartDataFiltersToggle {...chartFiltersState} />}
       </Box>
       {metadataPanelProps ? (
-        <Box
-          sx={{
+        <div
+          style={{
             display: "flex",
             justifyContent: "flex-end",
             gridArea: "metadataToggle",
@@ -157,7 +157,7 @@ export const ChartControls = ({
             dashboardFilters={dashboardFilters}
             {...metadataPanelProps}
           />
-        </Box>
+        </div>
       ) : null}
       <Box sx={{ gridArea: "filtersList" }}>
         {showFilters && <ChartDataFiltersList {...chartFiltersState} />}

@@ -31,7 +31,7 @@ export const usePieStateVariables = (
     dimensionsById,
     measuresById,
   } = props;
-  const { fields, interactiveFiltersConfig } = chartConfig;
+  const { fields } = chartConfig;
   const { y, segment, animation } = fields;
   const filters = useChartConfigFilters(chartConfig);
 
@@ -47,7 +47,6 @@ export const usePieStateVariables = (
   const getRenderingKey = useRenderingKeyVariable(
     dimensions,
     filters,
-    interactiveFiltersConfig,
     animation
   );
 
