@@ -167,7 +167,7 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
         padding: `0px ${theme.spacing(3)}`,
 
         "& > .MuiAutocomplete-input": {
-          padding: `${theme.spacing(2)} 0px`,
+          padding: theme.spacing(2),
         },
       },
     },

@@ -22,8 +22,8 @@ type RawDataCubeMetadata = {
   themeLabels: Literal;
   creatorIri: NamedNode;
   creatorLabel: Literal;
-  contactPointEmail: Literal;
-  contactPointName: Literal;
+  contactPointEmails: NamedNode;
+  contactPointNames: NamedNode;
   publisher: NamedNode;
   landingPage: NamedNode;
   expires: Literal;
@@ -33,6 +33,9 @@ type RawDataCubeMetadata = {
 const parseRawMetadata = (cube: RawDataCubeMetadata): DataCubeMetadata => {
   const themeIris = cube.themeIris.value.split(GROUP_SEPARATOR);
   const themeLabels = cube.themeLabels.value.split(GROUP_SEPARATOR);
+  const contactPointEmails =
+    cube.contactPointEmails.value.split(GROUP_SEPARATOR);
+  const contactPointNames = cube.contactPointNames.value.split(GROUP_SEPARATOR);
 
   return {
     iri: cube.iri.value,
@@ -59,10 +62,13 @@ const parseRawMetadata = (cube: RawDataCubeMetadata): DataCubeMetadata => {
       cube.creatorIri && cube.creatorLabel
         ? { iri: cube.creatorIri.value, label: cube.creatorLabel.value }
         : undefined,
-    contactPoint: {
-      email: cube.contactPointEmail?.value,
-      name: cube.contactPointName?.value,
-    },
+    contactPoints:
+      contactPointEmails.length === contactPointNames.length
+        ? contactPointEmails.map((email, i) => ({
+            email,
+            name: contactPointNames[i],
+          }))
+        : [],
     publisher: cube.publisher?.value,
     landingPage: cube.landingPage?.value,
     expires: cube.expires?.value,
@@ -75,10 +81,14 @@ export const getCubeMetadata = async (
   { locale, sparqlClient }: { locale: string; sparqlClient: ParsingClient }
 ): Promise<DataCubeMetadata> => {
   const query = SELECT`
-    ?iri ?identifier ?title ?description ?version ?datePublished ?dateModified ?status ?creatorIri ?creatorLabel ?unversionedIri ?contactPointName ?contactPointEmail ?publisher ?landingPage ?expires
-    (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeIris) (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeLabels)
-    (GROUP_CONCAT(DISTINCT ?subthemeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeIris) (GROUP_CONCAT(DISTINCT ?subthemeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeLabels)
+    ?iri ?identifier ?title ?description ?version ?datePublished ?dateModified ?status ?creatorIri ?creatorLabel ?unversionedIri ?publisher ?landingPage ?expires
+    (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeIris)
+    (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeLabels)
+    (GROUP_CONCAT(DISTINCT ?subthemeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeIris)
+    (GROUP_CONCAT(DISTINCT ?subthemeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeLabels)
     (GROUP_CONCAT(DISTINCT ?workExample; SEPARATOR="${GROUP_SEPARATOR}") AS ?workExamples)
+    (GROUP_CONCAT(DISTINCT ?contactPointName; SEPARATOR="${GROUP_SEPARATOR}") AS ?contactPointNames)
+    (GROUP_CONCAT(DISTINCT ?contactPointEmail; SEPARATOR="${GROUP_SEPARATOR}") AS ?contactPointEmails)
     `.WHERE`
     VALUES ?iri { <${iri}> }
     OPTIONAL { ?iri ${ns.dcterms.identifier} ?identifier . }
@@ -135,9 +145,8 @@ export const getCubeMetadata = async (
   `.GROUP().BY`?iri`.THEN.BY`?identifier`.THEN.BY`?title`.THEN.BY`?description`
     .THEN.BY`?version`.THEN.BY`?datePublished`.THEN.BY`?dateModified`.THEN
     .BY`?status`.THEN.BY`?creatorIri`.THEN.BY`?creatorLabel`.THEN
-    .BY`?unversionedIri`.THEN.BY`?contactPointName`.THEN.BY`?contactPointEmail`
-    .THEN.BY`?publisher`.THEN.BY`?landingPage`.THEN.BY`?expires`
-    .prologue`${pragmas}`;
+    .BY`?unversionedIri`.THEN.BY`?publisher`.THEN.BY`?landingPage`.THEN
+    .BY`?expires`.prologue`${pragmas}`;
 
   const results = (await query.execute(sparqlClient.query, {
     operation: "postUrlencoded",

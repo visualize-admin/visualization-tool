@@ -608,8 +608,12 @@ const usePNGMetadata = ({
   return useMemo(() => {
     const publisher = data?.dataCubesMetadata
       .map((cube) =>
-        cube.contactPoint
-          ? `${cube.contactPoint.name} (${cube.contactPoint.email})`
+        cube.contactPoints
+          ? cube.contactPoints
+              .map(
+                (contactPoint) => `${contactPoint.name} (${contactPoint.email})`
+              )
+              .join(", ")
           : (cube.creator?.label ?? cube.publisher)
       )
       .join(", ");
