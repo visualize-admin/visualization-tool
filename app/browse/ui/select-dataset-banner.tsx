@@ -66,7 +66,8 @@ const useStyles = makeStyles<Theme>((theme) => ({
     backgroundColor: theme.palette.monochrome[100],
   },
   innerWrapper: {
-    padding: `${theme.spacing(25)} 0`,
+    paddingTop: theme.spacing(25),
+    paddingBottom: theme.spacing(25),
   },
   content: {
     display: "flex",
