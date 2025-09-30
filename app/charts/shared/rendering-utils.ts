@@ -2,11 +2,7 @@ import { select, Selection } from "d3-selection";
 import { Transition } from "d3-transition";
 import { useCallback, useMemo } from "react";
 
-import {
-  AnimationField,
-  Filters,
-  InteractiveFiltersConfig,
-} from "@/configurator";
+import { AnimationField, Filters } from "@/configurator";
 import {
   Component,
   isStandardErrorDimension,
@@ -20,7 +16,6 @@ import { TransitionStore } from "@/stores/transition";
 export const useRenderingKeyVariable = (
   dimensions: Component[],
   filters: Filters,
-  interactiveFiltersConfig: InteractiveFiltersConfig,
   animationField: AnimationField | undefined
 ) => {
   const filterableDimensionKeys = useMemo(() => {
@@ -30,18 +25,6 @@ export const useRenderingKeyVariable = (
       .filter((d) => d[1].type === "single")
       .map((d) => d[0]);
 
-    if (interactiveFiltersConfig) {
-      const { dataFilters, legend } = interactiveFiltersConfig;
-
-      if (dataFilters.componentIds.length > 0) {
-        keysToRemove.push(...dataFilters.componentIds);
-      }
-
-      if (legend.componentId) {
-        keysToRemove.push(legend.componentId);
-      }
-    }
-
     if (animationField) {
       keysToRemove.push(animationField.componentId);
     }
@@ -50,7 +33,7 @@ export const useRenderingKeyVariable = (
       .filter((d) => !isStandardErrorDimension(d))
       .map((d) => d.id)
       .filter((d) => !keysToRemove.includes(d));
-  }, [dimensions, filters, interactiveFiltersConfig, animationField]);
+  }, [dimensions, filters, animationField]);
 
   /** Optionally provide an option to pass a segment to the key.
    * This is useful for stacked charts, where we can't easily

@@ -64,7 +64,7 @@ export const useComboLineColumnStateVariables = (
     observations,
   });
   const interactiveFiltersVariables = useInteractiveFiltersVariables(
-    chartConfig.interactiveFiltersConfig,
+    interactiveFiltersConfig,
     { dimensionsById }
   );
 
@@ -135,7 +135,6 @@ export const useComboLineColumnStateVariables = (
   const getRenderingKey = useRenderingKeyVariable(
     dimensions,
     filters,
-    interactiveFiltersConfig,
     undefined
   );
 
