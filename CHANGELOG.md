@@ -18,6 +18,9 @@ You can also check the
   - Hiding a temporal column and then enabling an interactive filter doesn't
     result in broken state anymore
   - Fixed workflow for populating Varnish cache
+  - It's no longer possible to clear the filter selection in shared, single
+    dashboard filter
+  - It's now possible to share filters between tables in dashboards
 - Styles
   - Added missing paddings in details panel autocomplete component and in banner
     component for smaller breakpoints
