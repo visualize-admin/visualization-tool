@@ -327,15 +327,17 @@ export const DataFilterGenericDimension = ({
       isNoneValue: true,
     };
 
-    if (!configFilter) {
-      return [clearSelectionOption, ...options];
-    }
+    if (isMulti && onMultiChange) {
+      if (!configFilter) {
+        return [clearSelectionOption, ...options];
+      }
 
-    if (configFilter.type === "multi") {
-      return [
-        clearSelectionOption,
-        ...options.filter((d) => configFilter.values[d.value]),
-      ];
+      if (configFilter.type === "multi") {
+        return [
+          clearSelectionOption,
+          ...options.filter((d) => configFilter.values[d.value]),
+        ];
+      }
     }
 
     return isKeyDimension
@@ -344,7 +346,15 @@ export const DataFilterGenericDimension = ({
           { value: FIELD_VALUE_NONE, label: noneLabel, isNoneValue: true },
           ...options,
         ];
-  }, [clearSelectionLabel, configFilter, isKeyDimension, options, noneLabel]);
+  }, [
+    clearSelectionLabel,
+    isMulti,
+    onMultiChange,
+    isKeyDimension,
+    options,
+    noneLabel,
+    configFilter,
+  ]);
 
   const fieldLabel = (
     <FieldLabel
