@@ -17,6 +17,9 @@ You can also check the
   - Hiding a temporal column and then enabling an interactive filter doesn't
     result in broken state anymore
   - Fixed workflow for populating Varnish cache
+- Styles
+  - Added missing paddings in details panel autocomplete component and in banner
+    component for smaller breakpoints
 - Maintenance
   - Improved code organization around Browse page
 
