@@ -76,7 +76,6 @@ export const useGetAnnotationRenderState = () => {
       let focused =
         isEditing &&
         ((interactionMatches && !targetsOtherAnnotations) || isActive);
-      console.log("focused", focused);
 
       return {
         color,
