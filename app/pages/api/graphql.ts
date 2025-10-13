@@ -50,7 +50,7 @@ const server = new ApolloServer({
   },
   context: createContext,
   cache: "bounded",
-  introspection: true,
+  introspection: process.env.NODE_ENV !== "production",
   validationRules: [depthLimit(1)],
   plugins: [
     ApolloServerPluginLandingPageGraphQLPlayground,

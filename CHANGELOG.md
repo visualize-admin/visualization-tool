@@ -30,6 +30,7 @@ You can also check the
   - Improved code organization around Browse page
 - Security
   - Introduced GraphQL query depth limit
+  - Disabled GraphQL introspection
 
 ### 6.0.0 - 2025-09-05
 
