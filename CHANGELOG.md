@@ -28,6 +28,8 @@ You can also check the
     component for smaller breakpoints
 - Maintenance
   - Improved code organization around Browse page
+- Security
+  - Introduced GraphQL query depth limit
 
 ### 6.0.0 - 2025-09-05
 

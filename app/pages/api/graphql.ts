@@ -7,6 +7,7 @@ import {
   constraintDirective,
   constraintDirectiveTypeDefs,
 } from "graphql-constraint-directive";
+import depthLimit from "graphql-depth-limit";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { SentryPlugin } from "@/graphql/apollo-sentry-plugin";
@@ -50,10 +51,11 @@ const server = new ApolloServer({
   context: createContext,
   cache: "bounded",
   introspection: true,
-  plugins:
-    process.env.NODE_ENV === "production"
-      ? [ApolloServerPluginLandingPageGraphQLPlayground, SentryPlugin]
-      : [ApolloServerPluginLandingPageGraphQLPlayground],
+  validationRules: [depthLimit(1)],
+  plugins: [
+    ApolloServerPluginLandingPageGraphQLPlayground,
+    ...(process.env.NODE_ENV === "production" ? [SentryPlugin] : []),
+  ],
 });
 
 export const config = {
