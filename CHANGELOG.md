@@ -28,6 +28,8 @@ You can also check the
     component for smaller breakpoints
 - Maintenance
   - Improved code organization around Browse page
+- Security
+  - Improved security of color palette API routes
 
 ### 6.0.0 - 2025-09-05
 
