@@ -21,7 +21,6 @@ import { ascending, groups, max, sum } from "d3-array";
 import get from "lodash/get";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
-import orderBy from "lodash/orderBy";
 import uniqBy from "lodash/uniqBy";
 import {
   ChangeEvent,
@@ -183,6 +182,18 @@ const groupByParent = (node: { parents: HierarchyValue[] }) => {
   return joinParents(node?.parents);
 };
 
+export const sortFilterValues = (values: HierarchyValue[]) => {
+  return values.sort((a, b) => {
+    return (
+      ascending(a.position ?? 0, b.position ?? 0) ||
+      `${a.identifier}`.localeCompare(`${b.identifier}`, undefined, {
+        numeric: true,
+      }) ||
+      a.label.localeCompare(b.label)
+    );
+  });
+};
+
 const getColorConfig = (chartConfig: ChartConfig) => {
   if (isColorInConfig(chartConfig)) {
     return get(chartConfig.fields, ["color"]) as ColorField | undefined;
@@ -292,10 +303,7 @@ const MultiFilterContent = ({
             ) || ascending(a[0], b[0])
       )
       .map(([parent, group]) => {
-        return [
-          parent,
-          orderBy(group, ["position", "identifier", "label"]),
-        ] as const;
+        return [parent, sortFilterValues(group)] as const;
       });
 
     return {

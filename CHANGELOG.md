@@ -23,6 +23,8 @@ You can also check the
   - It's now possible to share filters between tables in dashboards
   - Charts are not animating in and out anymore when interacting with UI in some
     rare cases
+  - Sorting of values in the multi filter panel is now consistent with the rest
+    of the application
 - Styles
   - Added missing paddings in details panel autocomplete component and in banner
     component for smaller breakpoints
