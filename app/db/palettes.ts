@@ -56,12 +56,19 @@ export const deletePaletteForUser = async ({
   paletteId: string;
   user_id: number;
 }) => {
+  const palette = await prisma.palette.findUnique({
+    where: {
+      paletteId,
+    },
+  });
+
+  if (!palette || palette.user_id !== user_id) {
+    throw new Error("Palette not found");
+  }
+
   await prisma.palette.delete({
     where: {
-      paletteId_user_id: {
-        paletteId,
-        user_id,
-      },
+      paletteId,
     },
   });
 };
@@ -73,19 +80,24 @@ export const updatePaletteForUser = async ({
   colors,
   user_id,
 }: UpdateCustomColorPalette & { user_id: number }) => {
-  const dbType = type && convertPaletteTypeToDBType(type);
+  const palette = await prisma.palette.findUnique({
+    where: {
+      paletteId,
+    },
+  });
+
+  if (!palette || palette.user_id !== user_id) {
+    throw new Error("Palette not found");
+  }
 
   await prisma.palette.update({
     where: {
-      paletteId_user_id: {
-        paletteId,
-        user_id,
-      },
+      paletteId,
     },
     data: {
       name,
       colors,
-      type: dbType,
+      type: type && convertPaletteTypeToDBType(type),
       updated_at: new Date(),
     },
   });
