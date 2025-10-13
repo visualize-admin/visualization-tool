@@ -73,7 +73,7 @@ export const getPalette = ({
   colorField?: ColorField;
   colors?: string[];
   fallbackPalette?: string[];
-}): ReadonlyArray<string> => {
+}): readonly string[] => {
   if (colorField?.type === "single") {
     return [colorField.color];
   } else {
@@ -100,7 +100,6 @@ export const getPalette = ({
         return schemeSet3;
       case "tableau10":
         return schemeTableau10;
-
       default:
         return fallbackPalette ?? schemeCategory10;
     }

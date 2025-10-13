@@ -279,7 +279,7 @@ const TabsEditable = (props: TabsEditableProps) => {
               onClick={() => {
                 switchChart(tabsState.activeChartKey);
                 dispatch({
-                  type: "CHART_ACTIVE_FIELD_CHANGED",
+                  type: "CHART_ACTIVE_FIELD_CHANGE",
                   value: "label",
                 });
                 handleClose();
@@ -456,13 +456,11 @@ const TabsInner = ({
                     style={{ cursor: disabled ? "auto" : "pointer" }}
                     variant="text"
                   >
-                    {disabled ? null : (
-                      <Icon
-                        name={
-                          direction === "left" ? "chevronLeft" : "chevronRight"
-                        }
-                      />
-                    )}
+                    <Icon
+                      name={
+                        direction === "left" ? "chevronLeft" : "chevronRight"
+                      }
+                    />
                   </Button>
                 )}
               >
@@ -646,7 +644,7 @@ const TabContent = (props: {
 
           if (editable) {
             dispatch({
-              type: "CHART_ACTIVE_FIELD_CHANGED",
+              type: "CHART_ACTIVE_FIELD_CHANGE",
               value: undefined,
             });
           }

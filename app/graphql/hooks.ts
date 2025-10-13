@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Client, useClient } from "urql";
 
 import {
@@ -35,6 +35,8 @@ import {
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
 } from "./query-hooks";
+
+const queryResultsCache = new Map<string, any>();
 
 const useQueryKey = (options: object) => {
   return useMemo(() => {
@@ -75,14 +77,18 @@ export const makeUseQuery =
   }) =>
   (options: T & { keepPreviousData?: boolean }) => {
     const client = useClient();
+    const { keepPreviousData } = options;
+    const queryKey = useQueryKey(options);
+    const cachedResult = queryResultsCache.get(queryKey);
     const [rawResult, setRawResult] = useState<{
       queryKey: string | null;
       data?: V | null;
       error?: Error;
       fetching: boolean;
-    }>({ fetching: !options.pause, queryKey: null, data: null });
-    const { keepPreviousData } = options;
-    const queryKey = useQueryKey(options);
+    }>(
+      cachedResult || { fetching: !options.pause, queryKey: null, data: null }
+    );
+    const currentQueryRef = useRef<string>();
 
     if (!options.pause && check) {
       check(options.variables);
@@ -90,6 +96,9 @@ export const makeUseQuery =
 
     const executeQuery = useCallback(
       async (options: { variables: T["variables"] }) => {
+        const currentQuery = queryKey;
+        currentQueryRef.current = currentQuery;
+
         setRawResult((prev) => ({
           ...prev,
           fetching: false,
@@ -97,16 +106,25 @@ export const makeUseQuery =
             prev.queryKey === queryKey || keepPreviousData ? prev.data : null,
           queryKey,
         }));
+
         if (check) {
           check(options.variables);
         }
+
         const result = await fetch(client, options.variables, () => {
-          setRawResult((prev) => ({
-            ...prev,
-            fetching: true,
-          }));
+          if (currentQueryRef.current === currentQuery) {
+            setRawResult((prev) => ({
+              ...prev,
+              fetching: true,
+            }));
+          }
         });
-        setRawResult({ ...result, queryKey });
+
+        if (currentQueryRef.current === currentQuery) {
+          const finalResult = { ...result, queryKey };
+          queryResultsCache.set(queryKey, finalResult);
+          setRawResult(finalResult);
+        }
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [queryKey]
@@ -259,6 +277,7 @@ export const executeDataCubesComponentsQuery = async (
   const fetching = !error && queries.some((q) => !q.data);
 
   if (error || fetching) {
+    console.log("Error or fetching", { error, fetching });
     return {
       data: undefined,
       error,

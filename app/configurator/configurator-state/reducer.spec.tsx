@@ -423,7 +423,7 @@ describe("applyDimensionToFilters", () => {
       expect(initialFilters).toEqual(expectedFilters);
     });
 
-    it("should set single value filter for a keyDimension if hidden", () => {
+    it("should not set single value filter for a keyDimension if hidden and range", () => {
       const initialFilters = {
         "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
           from: "2007-05-21",
@@ -431,12 +431,7 @@ describe("applyDimensionToFilters", () => {
           type: "range",
         },
       } as any;
-      const expectedFilters = {
-        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
-          type: "single",
-          value: "2007-05-21",
-        },
-      };
+      const expectedFilters = { ...initialFilters };
 
       applyTableDimensionToFilters({
         filters: initialFilters,
@@ -487,6 +482,7 @@ describe("deriveFiltersFromFields", () => {
     expect(derived).toMatchInlineSnapshot(`
       {
         "activeField": undefined,
+        "annotations": [],
         "chartType": "pie",
         "conversionUnitsByComponentId": {},
         "cubes": [
@@ -571,6 +567,8 @@ describe("deriveFiltersFromFields", () => {
           "dataFilters": {
             "active": false,
             "componentIds": [],
+            "defaultValueOverrides": {},
+            "filterTypes": {},
           },
           "legend": {
             "active": false,
@@ -608,7 +606,7 @@ describe("deriveFiltersFromFields", () => {
             "it": "",
           },
         },
-        "version": "4.5.0",
+        "version": "5.0.0",
       }
     `);
   });
@@ -686,6 +684,74 @@ describe("CHART_FIELD_DELETED", () => {
     });
 
     expect(newState.chartConfigs[0].fields.color).toStrictEqual({
+      type: "single",
+      paletteId: "category10",
+      color: "#1D4ED8",
+    });
+  });
+
+  it("should correctly clear calculation config when segment field is deleted", () => {
+    const state = {
+      state: "CONFIGURING_CHART",
+      dataSource: { type: "sparql", url: "test-url" },
+      chartConfigs: [
+        {
+          key: "test-chart",
+          chartType: "column",
+          cubes: [{ iri: "test-cube", filters: {} }],
+          fields: {
+            y: { componentId: "yComponentId" },
+            segment: {
+              componentId: "segmentComponentId",
+              type: "stacked",
+            },
+            color: {
+              type: "segment",
+              paletteId: "category10",
+              colorMapping: {},
+            },
+          },
+          interactiveFiltersConfig: {
+            legend: { active: false, componentId: "" },
+            timeRange: {
+              active: false,
+              componentId: "",
+              presets: { type: "range", from: "", to: "" },
+            },
+            dataFilters: { active: false, componentIds: [] },
+            calculation: { active: true, type: "percent" },
+          },
+          limits: {},
+          conversionUnitsByComponentId: {},
+        },
+      ],
+    };
+
+    getCachedComponents.mockReturnValue({
+      dimensions: [],
+      measures: [],
+    });
+
+    const newState = produce(state, (state: ConfiguratorState) => {
+      return handleChartFieldDeleted(state, {
+        type: "CHART_FIELD_DELETED",
+        value: {
+          locale: "en",
+          field: "segment",
+        },
+      });
+    });
+
+    const chartConfig = newState.chartConfigs[0];
+
+    expect(chartConfig.interactiveFiltersConfig?.calculation).toEqual({
+      active: false,
+      type: "identity",
+    });
+
+    expect(chartConfig.fields.segment).toBeUndefined();
+
+    expect(chartConfig.fields.color).toEqual({
       type: "single",
       paletteId: "category10",
       color: "#1D4ED8",
@@ -1110,10 +1176,36 @@ describe("colorMapping", () => {
               filters: {},
             },
           ],
+          interactiveFiltersConfig: {
+            legend: {
+              active: false,
+              componentId: "",
+            },
+            timeRange: {
+              active: false,
+              componentId: "",
+              presets: {
+                type: "range",
+                from: "",
+                to: "",
+              },
+            },
+            dataFilters: {
+              active: false,
+              componentIds: [],
+              defaultValueOverrides: {},
+              filterTypes: {},
+              defaultOpen: true,
+            },
+            calculation: {
+              active: false,
+              type: "identity",
+            },
+          },
         },
       ],
       activeChartKey: "abc",
-    } as ConfiguratorStateConfiguringChart;
+    } as unknown as ConfiguratorStateConfiguringChart;
 
     handleChartFieldChanged(state, {
       type: "CHART_FIELD_CHANGED",

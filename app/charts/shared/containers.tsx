@@ -93,7 +93,7 @@ export const ChartSvg = ({ children }: { children: ReactNode }) => {
       width={width}
       style={{ position: "absolute", left: 0, top: 0 }}
     >
-      {interactiveFiltersConfig?.calculation.active && (
+      {interactiveFiltersConfig.calculation.active && (
         <foreignObject
           {...DISABLE_SCREENSHOT_ATTR}
           width={width - margins.right}

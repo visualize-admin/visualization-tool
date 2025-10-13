@@ -2,21 +2,24 @@ import { bugReportTemplates } from "./bug-report";
 
 type EmailRecipients = {
   to: string;
-  bcc: string;
+  bcc?: string;
 };
 
 export const createMailtoLink = (
   lang: keyof typeof bugReportTemplates,
-  options: {
+  {
+    recipients,
+    template: _template,
+    subject,
+  }: {
     recipients: EmailRecipients;
     template: typeof bugReportTemplates;
     subject: string;
   }
 ) => {
-  const template = options.template[lang];
-  return `mailto:${options.recipients.to}?bcc=${
-    options.recipients.bcc
-  }&subject=${encodeURIComponent(options.subject)}&body=${encodeURIComponent(
+  const template = _template[lang];
+
+  return `mailto:${recipients.to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
     template
-  )}`;
+  )}${recipients.bcc ? `&bcc=${recipients.bcc}` : ""}`;
 };

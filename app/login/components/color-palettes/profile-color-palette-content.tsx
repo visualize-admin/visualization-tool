@@ -1,6 +1,6 @@
 import { useEvent } from "@dnd-kit/utilities";
 import { Trans } from "@lingui/macro";
-import { Box, Button, Grid, styled, Typography } from "@mui/material";
+import { Button, Grid, IconButton, styled, Typography } from "@mui/material";
 import { useState } from "react";
 
 import { Flex } from "@/components/flex";
@@ -71,16 +71,21 @@ export const ProfileColorPaletteContent = ({ title }: ProfileContentProps) => {
             </Flex>
           ) : (
             <Typography variant="body2">
-              <Trans id="login.profile.my-color-palettes.description" />
+              <Trans id="login.profile.my-color-palettes.description">
+                Save a custom color palette to easily choose your colors while
+                creating a visualization.
+              </Trans>
             </Typography>
           )}
           <Button
-            variant="contained"
+            size="sm"
             startIcon={<Icon name="plus" />}
             sx={{ width: "fit-content" }}
             onClick={showAddForm}
           >
-            <Trans id="login.profile.my-color-palettes.add" />
+            <Trans id="login.profile.my-color-palettes.add">
+              Add color palette
+            </Trans>
           </Button>
         </Flex>
       ) : (
@@ -95,40 +100,19 @@ export const ProfileColorPaletteContent = ({ title }: ProfileContentProps) => {
   );
 };
 
-const EditButton = styled(Button)({
-  padding: 0,
+const EditButton = styled(IconButton)(({ theme }) => ({
+  padding: theme.spacing(1),
   minWidth: "auto",
-  minHeight: "auto",
-  lineHeight: "24px",
   backgroundColor: "transparent",
-});
+  lineHeight: 0,
+}));
 
-const DeleteButton = styled(Button)({
-  padding: 0,
+const DeleteButton = styled(IconButton)(({ theme }) => ({
+  padding: theme.spacing(1),
   minWidth: "auto",
-  minHeight: "auto",
-  lineHeight: "24px",
   backgroundColor: "transparent",
-});
-
-const ColorRowFlex = styled(Flex)({
-  lineHeight: "16px",
-  "& > button": {
-    backgroundColor: "grey.100",
-    borderRadius: 4,
-    overflow: "hidden",
-    borderWidth: 1,
-    p: 0,
-  },
-  "& > button:hover": {
-    backgroundColor: "transparent",
-    cursor: "pointer",
-    opacity: 0.8,
-  },
-  "& > button[aria-expanded]": {
-    borderColor: "primary.active",
-  },
-});
+  lineHeight: 0,
+}));
 
 const ColorPaletteRow = ({
   colors,
@@ -149,23 +133,24 @@ const ColorPaletteRow = ({
   });
 
   return (
-    <ColorRowFlex
+    <Flex
       sx={{
-        paddingY: 3,
-        paddingRight: 4,
         justifyContent: "space-between",
         alignItems: "center",
+        py: 3,
+        pr: 4,
       }}
     >
-      <Box>
+      <div>
         <Typography variant="caption">{name}</Typography>
         <Grid
           container
           spacing={0.5}
           sx={{
             display: "flex",
-            width: "240px",
             alignItems: "center",
+            width: "240px",
+
             "& .MuiGrid-item": {
               display: "flex",
               alignItems: "center",
@@ -178,13 +163,14 @@ const ColorPaletteRow = ({
             type={type}
           />
         </Grid>
-      </Box>
-      <ColorRowFlex gap={3}>
+      </div>
+      <Flex gap={2.5}>
         <EditButton onClick={() => onEdit(paletteId)}>
           <Typography
+            component="span"
+            color="text.primary"
             aria-hidden
-            color="primary.main"
-            sx={{ backgroundColor: "transparent" }}
+            style={{ lineHeight: 0 }}
           >
             <VisuallyHidden>
               <Trans id="login.profile.my-color-palettes.edit">
@@ -204,15 +190,16 @@ const ColorPaletteRow = ({
             </Trans>
           </VisuallyHidden>
           <Typography
+            component="span"
+            color="text.primary"
             aria-hidden
-            color="primary.main"
-            sx={{ backgroundColor: "transparent" }}
+            style={{ lineHeight: 0 }}
           >
             <Icon name="trash" size={24} />
           </Typography>
         </DeleteButton>
-      </ColorRowFlex>
-    </ColorRowFlex>
+      </Flex>
+    </Flex>
   );
 };
 
@@ -227,7 +214,7 @@ const ColorPaletteDisplay = ({
         <>
           {colors.map((color, i) => (
             <Grid item key={`${paletteId}-${color}-${i}`}>
-              <ColorSquare color={color as string} />
+              <ColorSquare color={color} />
             </Grid>
           ))}
         </>

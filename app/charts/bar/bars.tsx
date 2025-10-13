@@ -1,9 +1,9 @@
-import { schemeCategory10 } from "d3-scale-chromatic";
 import { useEffect, useMemo, useRef } from "react";
 
 import { BarsState } from "@/charts/bar/bars-state";
 import { RenderBarDatum, renderBars } from "@/charts/bar/rendering-utils";
 import { useBarValueLabelsData } from "@/charts/bar/show-values-utils";
+import { useGetAnnotationRenderState } from "@/charts/shared/annotation-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { renderTotalValueLabels } from "@/charts/shared/render-value-labels";
 import {
@@ -14,7 +14,6 @@ import {
 } from "@/charts/shared/rendering-utils";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { useTransitionStore } from "@/stores/transition";
-import { useTheme } from "@/themes";
 
 export const ErrorWhiskers = () => {
   const {
@@ -31,7 +30,7 @@ export const ErrorWhiskers = () => {
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
-  const renderData: RenderHorizontalWhiskerDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     if (!getXErrorRange || !showXUncertainty) {
       return [];
     }
@@ -49,7 +48,7 @@ export const ErrorWhiskers = () => {
         x1: xScale(x1),
         x2: xScale(x2),
         height: barHeight,
-      } as RenderHorizontalWhiskerDatum;
+      } satisfies RenderHorizontalWhiskerDatum;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -87,32 +86,37 @@ export const ErrorWhiskers = () => {
 export const Bars = () => {
   const {
     chartData,
-    bounds,
+    bounds: { width, margins },
     getX,
     xScale,
+    yDimension,
     getY,
     yScale,
     getRenderingKey,
     colors,
     rotateValues,
   } = useChartState() as BarsState;
-  const theme = useTheme();
-  const { margins } = bounds;
   const { labelFontSize, fontFamily } = useChartTheme();
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const bandwidth = yScale.bandwidth();
   const x0 = xScale(0);
-  const renderData: RenderBarDatum[] = useMemo(() => {
+  const getAnnotationRenderState = useGetAnnotationRenderState();
+  const renderData = useMemo(() => {
     return chartData.map((d) => {
       const key = getRenderingKey(d);
-      const yScaled = yScale(getY(d)) as number;
+      const y = getY(d);
+      const yScaled = yScale(y) as number;
       const xRaw = getX(d);
       const x = xRaw === null || isNaN(xRaw) ? 0 : xRaw;
       const xScaled = xScale(x);
       const xRender = xScale(Math.min(x, 0));
       const width = Math.max(0, Math.abs(xScaled - x0));
+      const { color, focused } = getAnnotationRenderState(d, {
+        axisComponentId: yDimension.id,
+        axisValue: y,
+      });
 
       return {
         key,
@@ -120,12 +124,16 @@ export const Bars = () => {
         y: yScaled,
         width,
         height: bandwidth,
-        color: colors(d.key as string) ?? schemeCategory10[0],
-      };
+        // Calling colors(key) directly results in every key being added to the domain,
+        // which is not what we want.
+        color: color ?? colors.copy()(key),
+        focused,
+        observation: d,
+      } satisfies RenderBarDatum;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    bounds.width,
+    width,
     chartData,
     bandwidth,
     getX,
@@ -133,8 +141,10 @@ export const Bars = () => {
     xScale,
     yScale,
     x0,
-    theme.palette.secondary.main,
     getRenderingKey,
+    getAnnotationRenderState,
+    yDimension.id,
+    colors,
   ]);
 
   const valueLabelsData = useBarValueLabelsData();

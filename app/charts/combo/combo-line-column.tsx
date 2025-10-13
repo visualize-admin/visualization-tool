@@ -34,7 +34,7 @@ const Columns = () => {
       ? yOrientationScales.left
       : yOrientationScales.right;
   const y0 = yScale(0);
-  const renderData: RenderColumnDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     return chartData.map((d) => {
       const key = getRenderingKey(d);
       const xDate = getXAsDate(d);
@@ -47,13 +47,13 @@ const Columns = () => {
 
       return {
         key,
-        value: y,
         x: xScaled,
         y: yRender,
         width: bandwidth,
         height,
         color,
-      };
+        observation: d,
+      } satisfies RenderColumnDatum;
     });
   }, [
     chartData,

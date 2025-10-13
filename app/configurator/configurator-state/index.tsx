@@ -25,7 +25,7 @@ import {
 } from "@/config-utils";
 import { getInitialConfiguringConfigBasedOnCube } from "@/configurator/configurator-state/initial";
 import { deriveFiltersFromFields } from "@/configurator/configurator-state/reducer";
-import { Dimension, isJoinByComponent, ObservationValue } from "@/domain/data";
+import { Dimension, ObservationValue } from "@/domain/data";
 import { DEFAULT_DATA_SOURCE } from "@/domain/data-source";
 import { mkJoinById, VersionedJoinBy } from "@/graphql/join";
 import { Locale } from "@/locales/locales";
@@ -161,12 +161,9 @@ export const getFilterValue = (
   }
 
   const chartConfig = getChartConfig(state);
-  const filters = getChartConfigFilters(chartConfig.cubes);
+  const filters = getChartConfigFilters(chartConfig.cubes, { joined: true });
 
-  return isJoinByComponent(dimension)
-    ? // As filters are mirrored between the cubes, we can just pick the first one.
-      filters[dimension.originalIds[0].dimensionId]
-    : filters[dimension.id];
+  return filters[dimension.id];
 };
 
 export const moveFilterField = produce(

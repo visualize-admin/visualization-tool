@@ -23,7 +23,7 @@ import {
 
 import { DataFilterGenericDimensionProps } from "@/charts/shared/chart-data-filters";
 import { useCombinedTemporalDimension } from "@/charts/shared/use-combined-temporal-dimension";
-import { AddButton } from "@/components/add-button";
+import { ConfiguratorAddButton } from "@/components/add-button";
 import { Select } from "@/components/form";
 import { Markdown } from "@/components/markdown";
 import {
@@ -387,7 +387,8 @@ const DashboardTimeRangeFilterOptions = ({
           const interactiveFiltersState = getInteractiveFiltersState();
           const { from, to } = interactiveFiltersState.timeRange;
           const setTimeRangeFilter = interactiveFiltersState.setTimeRange;
-          if (from && to && interactiveFiltersConfig?.timeRange.componentId) {
+
+          if (from && to && interactiveFiltersConfig.timeRange.componentId) {
             setTimeRangeFilter(newDate, to);
           }
         }
@@ -404,7 +405,8 @@ const DashboardTimeRangeFilterOptions = ({
           const interactiveFiltersState = getInteractiveFiltersState();
           const { from, to } = interactiveFiltersState.timeRange;
           const setTimeRangeFilter = interactiveFiltersState.setTimeRange;
-          if (from && to && interactiveFiltersConfig?.timeRange.componentId) {
+
+          if (from && to && interactiveFiltersConfig.timeRange.componentId) {
             setTimeRangeFilter(from, newDate);
           }
         }
@@ -564,7 +566,10 @@ const LayoutBlocksConfigurator = () => {
   const { blocks } = layout;
   const classes = useLayoutBlocksStyles();
   const onClick = useEvent((blockKey: string) => {
-    dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value: blockKey });
+    dispatch({
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE",
+      value: blockKey,
+    });
   });
 
   return layout.type === "dashboard" ? (
@@ -573,7 +578,7 @@ const LayoutBlocksConfigurator = () => {
         <Trans id="controls.section.block-options">Objects</Trans>
       </SectionTitle>
       <ControlSectionContent gap="none">
-        <div className={classes.root}>
+        <div>
           {blocks
             .filter(
               (block): block is LayoutTextBlock & { initialized: boolean } =>
@@ -603,9 +608,6 @@ const LayoutBlocksConfigurator = () => {
 };
 
 const useLayoutBlocksStyles = makeStyles<Theme>((theme) => ({
-  root: {
-    marginBottom: theme.spacing(5),
-  },
   tabRightIcon: {
     color: theme.palette.primary.main,
   },
@@ -644,7 +646,7 @@ const AddLayoutBlocks = () => {
       },
     });
     dispatch({
-      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE",
       value: key,
     });
     handleClose();
@@ -653,9 +655,9 @@ const AddLayoutBlocks = () => {
 
   return (
     <>
-      <AddButton onClick={handleOpen}>
+      <ConfiguratorAddButton onClick={handleOpen}>
         <Trans id="controls.section.block-options.block-add">Add object</Trans>
-      </AddButton>
+      </ConfiguratorAddButton>
       <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={handleClose}>
         <MenuItem className={classes.menuItem} onClick={handleAddTextBlock}>
           <Icon name="text" className={classes.menuItemIcon} />

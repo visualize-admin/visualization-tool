@@ -28,7 +28,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -58,7 +58,7 @@ export type ComboLineDualState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (label: string) => string;
     chartWideData: ArrayLike<Observation>;
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     maxRightTickWidth: number;
     leftAxisLabelSize: AxisLabelSizeVariables;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -166,10 +166,6 @@ const useComboLineDualState = (
     chartWidth,
     height,
     margins,
-    yAxisLabels: {
-      leftLabel: variables.y.left.label,
-      rightLabel: variables.y.right.label,
-    },
   });
   const { chartHeight } = bounds;
   const xScales = [xScale, xScaleTimeRange];
@@ -178,32 +174,33 @@ const useComboLineDualState = (
 
   const isMobile = useIsMobile();
 
-  // Tooltip
-  const getAnnotationInfo = (d: Observation): TooltipInfo => {
-    const x = getX(d);
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
+    const x = getX(datum);
     const xScaled = xScale(x);
 
     const values = [variables.y.left, variables.y.right]
       .map(({ orientation, getY, id, label }) => {
-        const y = getY(d);
-        const yPos = yOrientationScales[orientation](y ?? 0);
-        if (!Number.isFinite(y) || y === null) {
+        const yRaw = getY(datum);
+
+        if (!Number.isFinite(yRaw) || yRaw === null) {
           return null;
         }
 
+        const axisOffset = yOrientationScales[orientation](yRaw ?? 0);
+
         return {
           label,
-          value: `${y}`,
+          value: `${yRaw}`,
           color: colors(id),
-          hide: y === null,
-          yPos: yPos,
+          axis: "y",
+          axisOffset,
           symbol: "line",
-        };
+        } satisfies TooltipValue;
       })
       .filter(truthy);
     const yAnchor = isMobile
       ? chartHeight + margins.bottom
-      : (mean(values.map((d) => d.yPos)) ?? chartHeight);
+      : (mean(values.map((d) => d.axisOffset)) ?? chartHeight);
     const placement = isMobile
       ? MOBILE_TOOLTIP_PLACEMENT
       : getCenteredTooltipPlacement({
@@ -219,7 +216,7 @@ const useComboLineDualState = (
       value: timeFormatUnit(x, xDimension.timeUnit),
       placement,
       values,
-    } as TooltipInfo;
+    };
   };
 
   return {
@@ -236,7 +233,7 @@ const useComboLineDualState = (
     colors,
     getColorLabel: (label) => label,
     chartWideData,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize: {
       width: Math.max(leftAxisLabelSize.width, rightAxisLabelSize.width),
       height: Math.max(leftAxisLabelSize.height, rightAxisLabelSize.height),

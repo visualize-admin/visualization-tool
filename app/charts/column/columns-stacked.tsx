@@ -1,10 +1,9 @@
-import { getContrastingColor } from "@uiw/react-color";
 import { useEffect, useMemo, useRef } from "react";
 
 import { StackedColumnsState } from "@/charts/column/columns-stacked-state";
 import {
-  RenderColumnDatum,
   renderColumns,
+  useGetRenderStackedColumnDatum,
 } from "@/charts/column/rendering-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { renderContainer } from "@/charts/shared/rendering-utils";
@@ -15,65 +14,21 @@ export const ColumnsStacked = () => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const {
-    bounds,
-    getX,
-    xScale,
+    bounds: { height, margins },
     yScale,
-    colors,
     series,
-    getRenderingKey,
-    showValuesBySegmentMapping,
-    segmentsByAbbreviationOrLabel,
-    valueLabelFormatter,
   } = useChartState() as StackedColumnsState;
-  const { margins, height } = bounds;
-  const bandwidth = xScale.bandwidth();
-  const y0 = yScale(0);
-  const renderData: RenderColumnDatum[] = useMemo(() => {
-    return series.flatMap((s) => {
-      const segmentLabel = s.key;
-      const segment =
-        segmentsByAbbreviationOrLabel.get(segmentLabel)?.value ?? segmentLabel;
-      const color = colors(segmentLabel);
-
-      return s.map((d) => {
-        const observation = d.data;
-        const value = observation[segmentLabel];
-        const valueLabel =
-          segment && showValuesBySegmentMapping[segment]
-            ? valueLabelFormatter(value)
-            : undefined;
-        const valueLabelColor = valueLabel
-          ? getContrastingColor(color)
-          : undefined;
-
-        return {
-          key: getRenderingKey(observation, segmentLabel),
-          x: xScale(getX(observation)) as number,
-          y: yScale(d[1]),
-          width: bandwidth,
-          height: Math.max(0, yScale(d[0]) - yScale(d[1])),
-          color,
-          valueLabel,
-          valueLabelColor,
-        };
-      });
-    });
+  const getRenderDatum = useGetRenderStackedColumnDatum();
+  const renderData = useMemo(() => {
+    return series.flatMap(getRenderDatum);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    bandwidth,
-    colors,
-    getX,
+    getRenderDatum,
     series,
-    xScale,
-    yScale,
-    getRenderingKey,
-    // Need to reset the yRange on height change
+    // We need to reset the yRange on height change.
     height,
-    segmentsByAbbreviationOrLabel,
-    showValuesBySegmentMapping,
-    valueLabelFormatter,
   ]);
+  const y0 = yScale(0);
 
   useEffect(() => {
     if (ref.current) {

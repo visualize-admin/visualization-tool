@@ -18,7 +18,7 @@ const TagTypography = styled(Typography)(({ theme }) => ({
   width: "fit-content",
   minHeight: 24,
   padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
-  borderRadius: 999,
+  borderRadius: "16px",
   transition: "box-shadow 0.2s ease",
 }));
 

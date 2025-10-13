@@ -19,6 +19,8 @@ const interactiveFiltersConfig: InteractiveFiltersConfig = {
   dataFilters: {
     active: false,
     componentIds: [],
+    defaultValueOverrides: {},
+    filterTypes: {},
   },
   calculation: {
     active: false,
@@ -92,6 +94,7 @@ export const chartConfig: LineConfig = {
     },
   },
   cubes: [{ iri: "", filters: {} }],
+  annotations: [],
   limits: {},
   conversionUnitsByComponentId: {},
   chartType: "line",

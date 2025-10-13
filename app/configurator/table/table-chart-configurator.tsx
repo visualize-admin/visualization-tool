@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { DragDropContext } from "react-beautiful-dnd";
@@ -11,9 +11,13 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { ShowFilterAreaOpen } from "@/configurator/components/chart-controls/show-filter-area-open";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { DatasetsControlSection } from "@/configurator/components/dataset-control-section";
-import { ChartAnnotatorTabField } from "@/configurator/components/field";
+import {
+  ChartAnnotatorTabField,
+  ChartOptionCheckboxField,
+} from "@/configurator/components/field";
 import { useOrderedTableColumns } from "@/configurator/components/ui-helpers";
 import { useTableChartController } from "@/configurator/table/table-chart-configurator.hook";
 
@@ -72,8 +76,12 @@ export const ChartConfiguratorTable = ({
   return (
     <>
       <DatasetsControlSection />
-      <ControlSection collapse>
-        <SectionTitle id="controls-design">
+      <ControlSection
+        role="tablist"
+        aria-labelledby="controls-chart-type"
+        collapse
+      >
+        <SectionTitle id="controls-chart-type">
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </SectionTitle>
         <ControlSectionContent gap="none">
@@ -95,16 +103,26 @@ export const ChartConfiguratorTable = ({
           aria-labelledby="controls-settings"
         >
           <ChartAnnotatorTabField
-            key="settings"
-            value="table-settings"
-            icon="settings"
-            mainLabel={<Trans id="controls.table.settings">Settings</Trans>}
-          />
-          <ChartAnnotatorTabField
             key="sorting"
             value="table-sorting"
             icon="sort"
             mainLabel={<Trans id="controls.table.sorting">Sorting</Trans>}
+          />
+        </ControlSectionContent>
+      </ControlSection>
+      <ControlSection collapse>
+        <SectionTitle id="controls-data">
+          <Trans id="controls.section.data.filters">Filters</Trans>
+        </SectionTitle>
+        <ControlSectionContent sx={{ my: 2 }}>
+          <ShowFilterAreaOpen chartConfig={chartConfig} />
+          <ChartOptionCheckboxField
+            label={t({
+              id: "controls.tableSettings.showSearch",
+              message: "Show Search",
+            })}
+            field={null}
+            path="settings.showSearch"
           />
         </ControlSectionContent>
       </ControlSection>
@@ -126,7 +144,6 @@ export const ChartConfiguratorTable = ({
           isDropDisabled={isGroupsDropDisabled}
           emptyComponent={<EmptyGroups />}
         />
-
         <TabDropZone
           id="columns"
           title={<Trans id="controls.section.columns">Columns</Trans>}

@@ -35,7 +35,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -69,7 +69,7 @@ export type GroupedColumnsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     grouped: [string, Observation[]][];
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -395,15 +395,16 @@ const useColumnsGroupedState = (
 
   const isMobile = useIsMobile();
 
-  const maybeFormatDate = useCallback(
+  const formatXAxisTick = useCallback(
     (tick: string) => {
-      return isTemporalDimension(xDimension) ? formatXDate(tick) : tick;
+      return isTemporalDimension(xDimension)
+        ? formatXDate(tick)
+        : getXLabel(tick);
     },
-    [xDimension, formatXDate]
+    [xDimension, formatXDate, getXLabel]
   );
 
-  // Tooltip
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const bw = xScale.bandwidth();
     const x = getX(datum);
 
@@ -440,21 +441,27 @@ const useColumnsGroupedState = (
       xAnchor: xAnchorRaw + (placement.x === "right" ? 0.5 : -0.5) * bw,
       yAnchor,
       placement,
-      value: maybeFormatDate(xLabel),
+      value: formatXAxisTick(xLabel),
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
         error: getFormattedYUncertainty(datum),
-        color: colors(getSegment(datum)) as string,
+        color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map((td) => ({
-        label: getSegmentAbbreviationOrLabel(td),
-        value: yMeasure.unit
-          ? `${formatNumber(getY(td))} ${yMeasure.unit}`
-          : formatNumber(getY(td)),
-        error: getFormattedYUncertainty(td),
-        color: colors(getSegment(td)) as string,
-      })),
+      values: sortedTooltipValues.map((d) => {
+        const segment = getSegment(d);
+
+        return {
+          label: getSegmentAbbreviationOrLabel(d),
+          value: yMeasure.unit
+            ? `${formatNumber(getY(d))} ${yMeasure.unit}`
+            : formatNumber(getY(d)),
+          axis: "y",
+          axisOffset: yScale(getY(d) ?? 0),
+          error: getFormattedYUncertainty(d),
+          color: colors(segment),
+        } satisfies TooltipValue;
+      }),
     };
   };
 
@@ -472,11 +479,11 @@ const useColumnsGroupedState = (
     colors,
     getColorLabel: getSegmentLabel,
     grouped,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
-    formatXAxisTick: maybeFormatDate,
+    formatXAxisTick,
     ...variables,
   };
 };

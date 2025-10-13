@@ -1,9 +1,9 @@
 import { ascending, sum } from "d3-array";
 import { ScaleOrdinal, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
-import { Pie, pie, PieArcDatum } from "d3-shape";
+import { Arc, arc, pie, PieArcDatum } from "d3-shape";
 import orderBy from "lodash/orderBy";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   PieStateVariables,
@@ -14,6 +14,7 @@ import {
   ShowPieValueLabelsVariables,
   useShowPieValueLabelsVariables,
 } from "@/charts/pie/show-values-utils";
+import { GetAnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -30,7 +31,7 @@ import { useChartFormatters } from "@/charts/shared/use-chart-formatters";
 import { InteractionProvider } from "@/charts/shared/use-interaction";
 import { useSize } from "@/charts/shared/use-size";
 import { PieConfig } from "@/configurator";
-import { Dimension, Observation } from "@/domain/data";
+import { Observation } from "@/domain/data";
 import { formatNumberWithUnit, useFormatNumber } from "@/formatters";
 import { getPalette } from "@/palettes";
 import {
@@ -44,10 +45,14 @@ export type PieState = CommonChartState &
   PieStateVariables &
   ShowPieValueLabelsVariables & {
     chartType: "pie";
-    getPieData: Pie<$IntentionalAny, Observation>;
+    arcs: PieArcDatum<Observation>[];
+    arcGenerator: Arc<any, any>;
+    outerRadius: number;
+    segments: string[];
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
-    getAnnotationInfo: (d: PieArcDatum<Observation>) => TooltipInfo;
+    getAnnotationInfo: GetAnnotationInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
   };
@@ -69,7 +74,7 @@ const usePieState = (
     yAxisLabel,
   } = variables;
   // Segment dimension is guaranteed to be present, because it is required.
-  const segmentDimension = _segmentDimension as Dimension;
+  const segmentDimension = _segmentDimension!;
   const { chartData, segmentData, allData } = data;
   const { fields } = chartConfig;
   const { y } = fields;
@@ -219,12 +224,47 @@ const usePieState = (
     return `${rounded}% (${formattedValue})`;
   };
 
-  // Tooltip
-  const getAnnotationInfo = (
-    arcDatum: PieArcDatum<Observation>
-  ): TooltipInfo => {
-    const datum = arcDatum.data;
+  const maxSide = Math.min(chartWidth, bounds.chartHeight) / 2;
+  const innerRadius = 0;
+  const outerRadius = maxSide;
 
+  const arcs = getPieData(chartData);
+  const arcGenerator = arc<$FixMe>()
+    .innerRadius(innerRadius)
+    .outerRadius(outerRadius);
+
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation, { segment }) => {
+      const arc = arcs.find((d) => d.data === observation);
+
+      if (!arc) {
+        return {
+          x: 0,
+          y: 0,
+          color: colors(segment),
+        };
+      }
+
+      const startAngle = arc.startAngle;
+      const endAngle = arc.endAngle;
+      const midAngle = (startAngle + endAngle) / 2;
+
+      const x = Math.cos(midAngle - Math.PI / 2) * outerRadius + chartWidth / 2;
+      const y =
+        Math.sin(midAngle - Math.PI / 2) * outerRadius +
+        bounds.chartHeight / 2 -
+        4;
+
+      return {
+        x,
+        y,
+        color: colors(segment),
+      };
+    },
+    [arcs, bounds.chartHeight, chartWidth, colors, outerRadius]
+  );
+
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const xAnchor = chartWidth / 2;
     const yAnchor = -4;
 
@@ -268,10 +308,14 @@ const usePieState = (
     bounds,
     chartData: chartDataWithMissingSegments,
     allData,
-    getPieData,
+    arcs,
+    arcGenerator,
+    outerRadius,
+    segments,
     colors,
     getColorLabel: getSegmentLabel,
     getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: 0,
     ...showValuesVariables,

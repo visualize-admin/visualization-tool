@@ -13,7 +13,6 @@ import clsx from "clsx";
 import {
   ComponentProps,
   createContext,
-  ElementType,
   forwardRef,
   HTMLProps,
   ReactNode,
@@ -53,11 +52,15 @@ export const useSectionTitleStyles = makeStyles<
     flexGrow: 1,
     display: "flex",
     alignItems: "center",
+    color: theme.palette.text.primary,
     fontWeight: 700,
 
     "& > svg:first-of-type": {
       marginRight: theme.spacing(1),
     },
+  },
+  textDisabled: {
+    color: theme.palette.monochrome[300],
   },
   root: {
     display: "flex",
@@ -90,13 +93,6 @@ export const useSectionTitleStyles = makeStyles<
         }
 
         return "transparent";
-      },
-
-      "& $text": {
-        color: ({ disabled }) =>
-          disabled
-            ? theme.palette.monochrome[300]
-            : theme.palette.monochrome[800],
       },
     },
   },
@@ -159,17 +155,10 @@ export const ControlSection = forwardRef<
 });
 
 type ControlSectionContentProps = {
-  component?: ElementType;
-  role?: string;
-  ariaLabelledBy?: string;
   children: ReactNode;
-  px?: "default" | "none";
-  // large for specific purposes, e.g. base layer map options
-  // default for right panel options
-  // none for left panel options
-  gap?: "large" | "default" | "none";
-  sx?: BoxProps["sx"];
-} & BoxProps;
+  px?: "md" | "none";
+  gap?: "xl" | "lg" | "md" | "none";
+} & Omit<BoxProps, "children">;
 
 const useControlSectionContentStyles = makeStyles<
   Theme,
@@ -178,23 +167,49 @@ const useControlSectionContentStyles = makeStyles<
   controlSectionContent: {
     display: "flex",
     flexDirection: "column",
-    gap: ({ gap }) =>
-      theme.spacing(gap === "large" ? 3 : gap === "default" ? 2 : 0),
+    gap: ({ gap }) => {
+      switch (gap) {
+        case "xl":
+          return theme.spacing(4);
+        case "lg":
+          return theme.spacing(3);
+        case "md":
+          return theme.spacing(2);
+        case "none":
+        case undefined:
+          return 0;
+        default:
+          const _exhaustiveCheck: never = gap;
+          return _exhaustiveCheck;
+      }
+    },
     minWidth: 0,
-    paddingLeft: ({ px }) => (px === "none" ? 0 : theme.spacing(4)),
-    paddingTop: theme.spacing(2),
-    paddingRight: ({ px }) => (px === "none" ? 0 : theme.spacing(4)),
-    paddingBottom: theme.spacing(4),
+    padding: ({ px: _px }) => {
+      const px: string = (() => {
+        switch (_px) {
+          case "none":
+            return "0px";
+          case "md":
+            return theme.spacing(4);
+          case undefined:
+            return "0px";
+          default:
+            const _exhaustiveCheck: never = _px;
+            return _exhaustiveCheck;
+        }
+      })();
+
+      return `${theme.spacing(2)} ${px} ${theme.spacing(4)}`;
+    },
   },
 }));
 
 export const ControlSectionContent = ({
   component = "div",
   role,
-  ariaLabelledBy,
   children,
-  px = "default",
-  gap = "default",
+  px = "md",
+  gap = "md",
   sx,
   ...props
 }: ControlSectionContentProps) => {
@@ -206,7 +221,6 @@ export const ControlSectionContent = ({
       <Box
         component={component}
         role={role}
-        aria-labelledby={ariaLabelledBy}
         {...props}
         className={classes.controlSectionContent}
         sx={sx}
@@ -221,7 +235,8 @@ export const useControlSectionContext = () => useContext(ControlSectionContext);
 
 export const SectionTitle = ({
   children,
-  closable,
+  closable: _closable,
+  onClose,
   id,
   disabled,
   iconName,
@@ -230,12 +245,14 @@ export const SectionTitle = ({
 }: {
   children: ReactNode;
   closable?: boolean;
+  onClose?: () => void;
   id?: string;
   disabled?: boolean;
   iconName?: IconName;
   warnMessage?: string | ReactNode;
   sx?: TypographyProps["sx"];
 }) => {
+  const closable = !!(_closable || onClose);
   const [state, dispatch] = useConfiguratorState();
   const handleClick = useEventCallback(() => {
     if (collapse) {
@@ -246,16 +263,21 @@ export const SectionTitle = ({
       return;
     }
 
+    if (onClose) {
+      onClose();
+      return;
+    }
+
     if (isConfiguring(state)) {
       return dispatch({
-        type: "CHART_ACTIVE_FIELD_CHANGED",
+        type: "CHART_ACTIVE_FIELD_CHANGE",
         value: undefined,
       });
     }
 
     if (isLayouting(state)) {
       return dispatch({
-        type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+        type: "LAYOUT_ACTIVE_FIELD_CHANGE",
         value: undefined,
       });
     }
@@ -276,7 +298,12 @@ export const SectionTitle = ({
       className={classes.root}
       onClick={handleClick}
     >
-      <Typography variant="h6" id={id} className={classes.text} sx={sx}>
+      <Typography
+        variant="h6"
+        id={id}
+        className={clsx(classes.text, disabled && classes.textDisabled)}
+        sx={sx}
+      >
         {closable ? (
           <Icon name="chevronLeft" />
         ) : iconName ? (

@@ -71,9 +71,9 @@ export const LayoutField = ({
   return encoding.options || hasColorPalette ? (
     <ControlSection collapse>
       <SectionTitle iconName="swatch">
-        <Trans id="controls.section.layout-options">Layout options</Trans>
+        <Trans id="controls.section.layout-options">Layout Options</Trans>
       </SectionTitle>
-      <ControlSectionContent gap="large">
+      <ControlSectionContent gap="lg">
         {hasSubType && (
           <ChartSubType
             encoding={encoding}

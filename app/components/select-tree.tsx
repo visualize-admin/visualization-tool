@@ -7,6 +7,7 @@ import MUITreeItem, {
 import TreeView, { TreeViewProps } from "@mui/lab/TreeView";
 import {
   Box,
+  Chip,
   Collapse,
   IconButton,
   Input,
@@ -36,7 +37,9 @@ import {
   useState,
 } from "react";
 
+import { Flex } from "@/components/flex";
 import { Label, selectSizeToTypography } from "@/components/form";
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { HierarchyValue } from "@/domain/data";
 import { Icon } from "@/icons";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
@@ -121,6 +124,9 @@ const TreeItemContent = forwardRef<
     onMouseDown?: MouseEventHandler;
     "data-selectable"?: boolean;
     "data-children"?: boolean;
+    "data-multi"?: boolean;
+    "data-item-click"?: (nodeId: string) => void;
+    "data-is-selected"?: boolean;
   }
 >(function TreeItemContent(props, ref) {
   const {
@@ -140,6 +146,9 @@ const TreeItemContent = forwardRef<
 
   const hasChildren = other["data-children"];
   const selectable = other["data-selectable"] !== false;
+  const isMulti = other["data-multi"] === true;
+  const handleItemClick = other["data-item-click"];
+  const isSelectedInMulti = other["data-is-selected"] === true;
 
   const {
     disabled,
@@ -179,10 +188,15 @@ const TreeItemContent = forwardRef<
     }
 
     preventSelection(e);
-    handleSelection(e);
 
-    if (onClick) {
-      onClick(e);
+    if (isMulti && handleItemClick) {
+      // For multi-select, use our custom handler
+      handleItemClick(nodeId);
+    } else {
+      handleSelection(e);
+      if (onClick) {
+        onClick(e);
+      }
     }
   });
 
@@ -201,7 +215,17 @@ const TreeItemContent = forwardRef<
     >
       <div className={clsx(classes.iconContainer)}>{icon}</div>
       <div className={classes.label}>
-        <Typography variant={selectSizeToTypography[size]} component="span">
+        <Typography
+          variant={selectSizeToTypography[size]}
+          component="span"
+          sx={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            display: "inline-block",
+            maxWidth: "100%",
+          }}
+        >
           {label}
         </Typography>
         {selectable && hasChildren ? (
@@ -212,7 +236,11 @@ const TreeItemContent = forwardRef<
           </div>
         ) : null}
       </div>
-      {selected ? (
+      {isMulti && selectable && isSelectedInMulti ? (
+        <div className={ownClasses.checkIcon}>
+          <Icon name="checkmark" size={20} />
+        </div>
+      ) : selected && !isMulti ? (
         <div className={ownClasses.checkIcon}>
           <Icon name="checkmark" size={20} />
         </div>
@@ -238,17 +266,18 @@ export type Tree = TreeHierarchyValue[];
 type NodeId = string;
 
 export type SelectTreeProps = {
+  id?: string;
   size?: SelectProps["size"];
-  options: Tree;
-  value: NodeId | undefined;
-  sideControls?: ReactNode;
-  onChange: (e: { target: { value: NodeId } }) => void;
-  disabled?: boolean;
-  label?: ReactNode;
+  isMulti?: boolean;
+  open?: boolean;
   onOpen?: () => void;
   onClose?: () => void;
-  open?: boolean;
-  id?: string;
+  options: Tree;
+  value?: NodeId | NodeId[];
+  label?: ReactNode;
+  onChange: (e: { target: { value: NodeId | NodeId[] } }) => void;
+  sideControls?: ReactNode;
+  disabled?: boolean;
 
   // Controlled input value
   inputValue?: string;
@@ -260,10 +289,7 @@ const getFilteredOptions = (options: Tree, value: string) => {
 
   return value === ""
     ? options
-    : (pruneTree(
-        options as HierarchyValue[],
-        (d) => !!d.label.match(rx)
-      ) as Tree);
+    : pruneTree(options as HierarchyValue[], (d) => !!d.label.match(rx));
 };
 
 /**
@@ -308,21 +334,28 @@ export const useSelectTree = ({
   const parentsRef = useRef({} as Record<NodeId, NodeId>);
 
   const defaultExpanded = useMemo(() => {
-    if (!value && options.length > 0) {
+    if (
+      (!value || (Array.isArray(value) && value.length === 0)) &&
+      options.length > 0
+    ) {
       return options[0].value ? [options[0].value] : [];
     }
 
-    const res = value ? [value] : [];
-    let cur = value;
+    const values = Array.isArray(value) ? value : value ? [value] : [];
+    const res = [...values];
     const parents = parentsRef.current;
 
-    while (cur && parents[cur]) {
-      res.push(parents[cur]);
-      cur = parents[cur];
+    for (const v of values) {
+      let cur = v;
+      while (cur && parents[cur]) {
+        res.push(parents[cur]);
+        cur = parents[cur];
+      }
     }
 
-    return res;
+    return Array.from(new Set(res));
   }, [value, options]);
+
   const [expanded, setExpanded] = useState(defaultExpanded);
 
   const handleInputChange: TextFieldProps["onChange"] = useEvent((ev) => {
@@ -383,6 +416,7 @@ export const SelectTree = ({
   onClose,
   open,
   id,
+  isMulti = false,
 }: SelectTreeProps) => {
   const [openState, setOpenState] = useState(false);
   const [minMenuWidth, setMinMenuWidth] = useState<number>();
@@ -399,10 +433,7 @@ export const SelectTree = ({
     handleNodeToggle,
     handleClickResetInput,
     defaultExpanded,
-  } = useSelectTree({
-    value,
-    options,
-  });
+  } = useSelectTree({ value, options });
 
   const menuRef = useRef<PopoverActions>(null);
   const inputRef = useRef<HTMLDivElement>();
@@ -419,9 +450,11 @@ export const SelectTree = ({
         }
       }
     };
+
     for (let root of options) {
       registerNode(root);
     }
+
     return res;
   }, [options, parentsRef]);
 
@@ -439,9 +472,30 @@ export const SelectTree = ({
     onClose?.();
   });
 
-  const handleNodeSelect = useEventCallback((_ev, value: NodeId) => {
-    onChange({ target: { value } });
-    handleClose();
+  const handleNodeSelect = useEventCallback((_, v: NodeId | NodeId[]) => {
+    onChange({ target: { value: v } });
+
+    if (!isMulti) {
+      handleClose();
+    }
+  });
+
+  const handleItemClick = useEventCallback((v: NodeId) => {
+    if (isMulti) {
+      if (v === FIELD_VALUE_NONE) {
+        onChange({ target: { value: [] } });
+        return;
+      }
+
+      const currentValues = value as NodeId[];
+      const newValues = currentValues.includes(v)
+        ? currentValues.filter((id) => id !== v)
+        : [...currentValues, v];
+      onChange({ target: { value: newValues } });
+    } else {
+      onChange({ target: { value: v } });
+      handleClose();
+    }
   });
 
   const treeItemClasses = useTreeItemStyles();
@@ -460,35 +514,52 @@ export const SelectTree = ({
     (nodesData: Tree) => {
       return (
         <>
-          {nodesData.map(({ value, label, children, selectable }) => {
-            return (
-              <TreeItem
-                key={value}
-                nodeId={value}
-                defaultExpanded={defaultExpanded}
-                label={label}
-                size={size}
-                expandIcon={
-                  children && children.length > 0 ? <SvgIcChevronRight /> : null
-                }
-                classes={treeItemClasses}
-                TransitionComponent={Collapse}
-                TransitionProps={treeItemTransitionProps}
-                ContentProps={{
-                  // @ts-expect-error - TS says we cannot put a data attribute
-                  // on the HTML element, but we know we can.
-                  "data-selectable": selectable,
-                  "data-children": children && children.length > 0,
-                }}
-              >
-                {children ? renderTreeContent(children) : null}
-              </TreeItem>
-            );
-          })}
+          {nodesData.map(
+            ({ value: nodeValue, label, children, selectable }) => {
+              return (
+                <TreeItem
+                  key={nodeValue}
+                  nodeId={nodeValue}
+                  defaultExpanded={defaultExpanded}
+                  label={label}
+                  size={size}
+                  expandIcon={
+                    children && children.length > 0 ? (
+                      <SvgIcChevronRight />
+                    ) : null
+                  }
+                  classes={treeItemClasses}
+                  TransitionComponent={Collapse}
+                  TransitionProps={treeItemTransitionProps}
+                  ContentProps={{
+                    // @ts-expect-error - TS says we cannot put a data attribute
+                    // on the HTML element, but we know we can.
+                    "data-selectable": selectable,
+                    "data-children": children && children.length > 0,
+                    "data-multi": isMulti,
+                    "data-item-click": isMulti ? handleItemClick : undefined,
+                    "data-is-selected": isMulti
+                      ? (value as NodeId[]).includes(nodeValue)
+                      : undefined,
+                  }}
+                >
+                  {children ? renderTreeContent(children) : null}
+                </TreeItem>
+              );
+            }
+          )}
         </>
       );
     },
-    [defaultExpanded, size, treeItemClasses, treeItemTransitionProps]
+    [
+      defaultExpanded,
+      size,
+      treeItemClasses,
+      treeItemTransitionProps,
+      isMulti,
+      handleItemClick,
+      value,
+    ]
   );
 
   const paperProps = useMemo(
@@ -550,14 +621,113 @@ export const SelectTree = ({
           ref={inputRef}
           id={id}
           name={id}
-          size="sm"
+          size={size}
           disabled={disabled}
           readOnly
-          value={value ? labelsByValue[value] : undefined}
+          displayEmpty
+          value={
+            isMulti
+              ? (value as NodeId[]).length > 0
+                ? (value as NodeId[]).join(",")
+                : ""
+              : value
+                ? labelsByValue[value as string]
+                : undefined
+          }
           onClick={disabled ? undefined : handleOpen}
           onKeyDown={handleKeyDown}
-          renderValue={(value) => {
-            return <>{value}</>;
+          renderValue={() => {
+            if (isMulti && Array.isArray(value) && value.length > 0) {
+              return (
+                <Flex
+                  sx={{
+                    flexWrap: "nowrap",
+                    gap: 0.5,
+                    overflowX: "auto",
+                    maxWidth: "calc(100% - 32px)",
+                    py: 2,
+                  }}
+                >
+                  {value.map((nodeId) => (
+                    <Chip
+                      key={nodeId}
+                      label={
+                        <Box
+                          sx={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                            py: 1,
+                            maxWidth: "100%",
+                            overflow: "hidden",
+                          }}
+                        >
+                          <Typography
+                            variant={selectSizeToTypography[size]}
+                            sx={{
+                              lineHeight: 1,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              minWidth: 0,
+                            }}
+                          >
+                            {labelsByValue[nodeId]}
+                          </Typography>
+                        </Box>
+                      }
+                      size="small"
+                      deleteIcon={<Icon name="close" size={16} />}
+                      onDelete={(e) => {
+                        e.stopPropagation();
+                        const newValues = value.filter((v) => v !== nodeId);
+                        onChange({ target: { value: newValues } });
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      sx={{
+                        maxWidth: "100% !important",
+                        height: "fit-content",
+                        mr: 0.5,
+                        px: 1,
+                        py: 0.25,
+                        backgroundColor: "#F0F4F7",
+
+                        "&:hover": {
+                          backgroundColor: "cobalt.100",
+                        },
+
+                        "& .MuiChip-deleteIcon": {
+                          color: "text.primary",
+                          transition: "color 0.2s ease",
+                        },
+                      }}
+                    />
+                  ))}
+                </Flex>
+              );
+            }
+            if (isMulti && Array.isArray(value) && value.length === 0) {
+              return (
+                <Trans id="controls.dimensionvalue.select">Select filter</Trans>
+              );
+            }
+
+            return (
+              <Typography
+                variant={selectSizeToTypography[size]}
+                sx={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  display: "block",
+                }}
+              >
+                {value ? labelsByValue[value as string] : undefined}
+              </Typography>
+            );
           }}
           sx={{
             "& svg": {
@@ -565,6 +735,21 @@ export const SelectTree = ({
               // but allow of rendering custom tree menu.
               transform: open ? "rotate(180deg)" : "rotate(0deg)",
             },
+            ...(isMulti && {
+              "& .MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input": {
+                display: "flex",
+                alignItems: "center",
+                height: 40,
+                minHeight: 0,
+                padding: "0px 16px !important",
+              },
+
+              "&:hover": {
+                "& .MuiSelect-select": {
+                  backgroundColor: "transparent",
+                },
+              },
+            }),
           }}
         />
         {sideControls}
@@ -607,15 +792,17 @@ export const SelectTree = ({
             component="p"
             sx={{ py: 2, textAlign: "center" }}
           >
-            <Trans id="No results" />
+            <Trans id="No results">No results</Trans>
           </Typography>
         ) : (
+          // @ts-ignore
           <TreeView
             ref={treeRef}
-            defaultSelected={value}
+            multiSelect={isMulti}
+            selected={value}
             expanded={expanded}
             onNodeToggle={handleNodeToggle}
-            onNodeSelect={handleNodeSelect}
+            onNodeSelect={isMulti ? () => {} : handleNodeSelect}
           >
             {renderTreeContent(filteredOptions)}
           </TreeView>

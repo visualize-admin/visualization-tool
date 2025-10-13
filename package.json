@@ -1,6 +1,6 @@
 {
   "name": "@visualize-admin/visualization-tool",
-  "version": "5.8.1",
+  "version": "6.0.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/visualize-admin/visualization-tool.git"
@@ -24,7 +24,7 @@
     "typecheck": "tsc --noEmit -p ./app && tsc --noEmit -p ./embed",
     "lint": "eslint app -c .eslintrc.json",
     "knip": "npx knip --tags=-internal",
-    "locales:extract": "NODE_ENV=development lingui extract --clean; ./scripts/strip-locale-line-numbers.sh",
+    "locales:extract": "lingui extract --clean; ./scripts/strip-locale-line-numbers.sh",
     "locales:compile": "lingui compile --verbose",
     "locales:sync": "dotenv -- accent sync --add-translations --merge-type=passive --order-by=key; yarn locales:extract # putting back file location comments",
     "locales:browse": "open 'https://accent.interactivethings.io/app/projects/584e1dfa-ff1f-4b26-8cac-07004c465134'",
@@ -104,7 +104,7 @@
     "rollup-plugin-terser": "^7.0.2",
     "storybook": "8.6.12",
     "tsx": "^4.19.2",
-    "typescript": "4"
+    "typescript": "4.9.5"
   },
   "workspaces": [
     ".",

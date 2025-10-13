@@ -3,12 +3,15 @@ import { memo } from "react";
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { Pie } from "@/charts/pie/pie";
 import { PieChart } from "@/charts/pie/pie-state";
+import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
+import { Annotations } from "@/charts/shared/annotations";
 import { AxisHeightTitle } from "@/charts/shared/axis-height-title";
 import {
   ChartContainer,
   ChartControlsContainer,
   ChartSvg,
 } from "@/charts/shared/containers";
+import { HoverAnnotationDot } from "@/charts/shared/interaction/hover-annotation-dot";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { OnlyNegativeDataHint } from "@/components/hint";
@@ -29,6 +32,7 @@ const ChartPie = memo((props: ChartProps<PieConfig>) => {
     (d) => (d[fields?.y?.componentId] as number) > 0
   );
   const filters = useChartConfigFilters(chartConfig);
+  const isEditingAnnotation = useIsEditingAnnotation();
 
   if (!somePositive) {
     return <OnlyNegativeDataHint />;
@@ -41,8 +45,13 @@ const ChartPie = memo((props: ChartProps<PieConfig>) => {
           <AxisHeightTitle />
           <Pie />
         </ChartSvg>
-        <Tooltip type="single" />
+        {isEditingAnnotation ? (
+          <HoverAnnotationDot />
+        ) : (
+          <Tooltip type="single" />
+        )}
       </ChartContainer>
+      <Annotations />
       <ChartControlsContainer>
         {fields.animation && (
           <TimeSlider
@@ -55,9 +64,7 @@ const ChartPie = memo((props: ChartProps<PieConfig>) => {
           dimensionsById={dimensionsById}
           chartConfig={chartConfig}
           symbol="square"
-          interactive={
-            fields.segment && interactiveFiltersConfig?.legend.active
-          }
+          interactive={fields.segment && interactiveFiltersConfig.legend.active}
           showTitle={fields.segment.showTitle}
         />
       </ChartControlsContainer>

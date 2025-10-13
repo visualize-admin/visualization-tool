@@ -8,13 +8,14 @@ import {
   ConfiguratorStatePublished,
   decodeConfiguratorState,
 } from "@/config-types";
+import { ConfiguratorStateProvider } from "@/configurator/configurator-state";
 import { GraphqlProvider } from "@/graphql/graphql-provider";
 import { i18n } from "@/locales/locales";
 import { LocaleProvider, useLocale } from "@/locales/use-locale";
-import { ConfiguratorStateProvider } from "@/src";
 import * as federalTheme from "@/themes/theme";
 import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 import { hashStringToObject } from "@/utils/hash-utils";
+import { maybeWindow } from "@/utils/maybe-window";
 
 const isValidMessage = (e: MessageEvent) => {
   return e.data && !e.data.type;
@@ -52,14 +53,17 @@ export default function Preview() {
   const locale = useLocale();
   i18n.activate(locale);
   const state = useStore(chartStateStore, (d) => d.state);
+  const window = maybeWindow();
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.parent?.postMessage({ type: "ready" }, "*");
+    window?.parent?.postMessage({ type: "ready" }, "*");
+  }, [window]);
+
+  useEffect(() => {
+    if (!window) {
+      return;
     }
-  }, []);
 
-  useEffect(() => {
     const handleMessage = async (e: MessageEvent) => {
       if (!isValidMessage(e)) {
         return;
@@ -87,7 +91,7 @@ export default function Preview() {
       window.removeEventListener("message", handleMessage);
       window.removeEventListener("hashchange", handleHashChange);
     };
-  }, []);
+  }, [window]);
 
   return (
     <LocaleProvider value={locale}>
@@ -101,7 +105,7 @@ export default function Preview() {
                 chartId="published"
                 initialState={state}
               >
-                <ChartPublished configKey="preview" {...state} />
+                <ChartPublished configKey="preview" isPreview {...state} />
               </ConfiguratorStateProvider>
             ) : null}
           </ThemeProvider>

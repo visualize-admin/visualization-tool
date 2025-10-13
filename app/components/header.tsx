@@ -1,9 +1,10 @@
 import { TopBar } from "@interactivethings/swiss-federal-ci/dist/components";
 import { Header as SwissFederalCiHeader } from "@interactivethings/swiss-federal-ci/dist/components/pages-router";
-import { Box, NativeSelect } from "@mui/material";
 import { useRouter } from "next/router";
 
 import { DataSourceMenu } from "@/components/data-source-menu";
+import { Flex } from "@/components/flex";
+import { Select } from "@/components/form";
 import { __HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import contentRoutes from "@/content-routes.json";
 import { SOURCE_OPTIONS } from "@/domain/data-source/constants";
@@ -54,12 +55,14 @@ export const Header = ({
         }}
       >
         {SOURCE_OPTIONS.length > 1 && <DataSourceMenu />}
-        <Box display="flex" alignItems="center" gap={3} marginLeft="auto">
+        <Flex alignItems="center" gap={3} marginLeft="auto">
           <LoginMenu />
-          <NativeSelect
+          <Select
+            id="localeSwitcherSelect"
+            variant="standard"
             value={currentLocale}
             onChange={(e) => {
-              const locale = e.currentTarget.value;
+              const locale = e.target.value as string;
               const alternate = alternates?.[locale];
 
               if (alternate) {
@@ -68,27 +71,27 @@ export const Header = ({
                 push({ pathname, query }, undefined, { locale });
               }
             }}
+            options={localeConfig.locales.map((locale) => ({
+              label: locale.toUpperCase(),
+              value: locale,
+            }))}
+            sort={false}
             sx={{
-              padding: 0,
-              border: "none !important",
-              backgroundColor: "transparent",
+              width: "fit-content",
               color: "white !important",
 
               "&:hover": {
-                backgroundColor: "transparent",
-                color: (t) => `${t.palette.cobalt[100]} !important`,
+                color: "cobalt.100",
+              },
+
+              "& .MuiSelect-select": {
+                "&:hover, &[aria-expanded='true']": {
+                  backgroundColor: "transparent !important",
+                },
               },
             }}
-          >
-            {localeConfig.locales.map((locale) => (
-              // Color override is needed to make sure the text is visible on
-              // Windows machines.
-              <option key={locale} value={locale} style={{ color: "initial" }}>
-                {locale.toUpperCase()}
-              </option>
-            ))}
-          </NativeSelect>
-        </Box>
+          />
+        </Flex>
       </TopBar>
       {hideLogo ? null : (
         <SwissFederalCiHeader

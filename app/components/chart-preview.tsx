@@ -20,9 +20,9 @@ import {
   useState,
 } from "react";
 
-import { ChartDataTablePreview } from "@/browse/chart-data-table-preview";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { ActionElementsContainer } from "@/components/action-elements-container";
+import { ChartDataTablePreview } from "@/components/chart-data-table-preview/ui";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes } from "@/components/chart-footnotes";
 import {
@@ -516,7 +516,7 @@ const ChartPreviewInner = ({
                         configuring
                           ? () =>
                               dispatch({
-                                type: "CHART_ACTIVE_FIELD_CHANGED",
+                                type: "CHART_ACTIVE_FIELD_CHANGE",
                                 value: "title",
                               })
                           : undefined
@@ -548,7 +548,7 @@ const ChartPreviewInner = ({
                       configuring
                         ? () => {
                             dispatch({
-                              type: "CHART_ACTIVE_FIELD_CHANGED",
+                              type: "CHART_ACTIVE_FIELD_CHANGE",
                               value: "description",
                             });
                           }

@@ -78,7 +78,7 @@ module.exports = withPreconstruct(
 
               // * to allow loading legend images from custom WMS / WMTS endpoints and data: to allow downloading images
               `img-src 'self' * data: blob:`,
-              `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://vercel.live https://vercel.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://api.mapbox.com https://cdn.jsdelivr.net`,
+              `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://visualize.admin.ch https://*.visualize.admin.ch https://vercel.live https://vercel.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://api.mapbox.com https://cdn.jsdelivr.net`,
               `worker-src 'self' blob: https://*.admin.ch`,
             ].join("; "),
           });

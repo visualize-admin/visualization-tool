@@ -1,4 +1,5 @@
-import { Trans } from "@lingui/macro";
+import { i18n } from "@lingui/core";
+import { defineMessage, Trans } from "@lingui/macro";
 import {
   headingsPlugin,
   linkPlugin,
@@ -39,6 +40,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useId } from "@reach/auto-id";
+import clsx from "clsx";
 import flatten from "lodash/flatten";
 import {
   ComponentProps,
@@ -53,7 +55,7 @@ import {
   useState,
 } from "react";
 
-import { useBrowseContext } from "@/browser/context";
+import { useBrowseContext } from "@/browse/model/context";
 import { Flex } from "@/components/flex";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { BlockTypeMenu } from "@/components/mdx-editor/block-type-menu";
@@ -61,6 +63,7 @@ import { BoldItalicUnderlineToggles } from "@/components/mdx-editor/bold-italic-
 import { linkDialogPlugin } from "@/components/mdx-editor/link-dialog";
 import { LinkDialogToggle } from "@/components/mdx-editor/link-dialog-toggle";
 import { ListToggles } from "@/components/mdx-editor/list-toggles";
+import { maxLengthPlugin } from "@/components/mdx-editor/max-length-plugin";
 import { VisuallyHidden } from "@/components/visually-hidden";
 import {
   FieldProps,
@@ -267,15 +270,20 @@ export const Checkbox = ({
   />
 );
 
-const getSelectOptions = (
+export const getSelectOptions = (
   options: Option[],
-  sortOptions: boolean,
-  locale: string
+  {
+    sort,
+    locale,
+  }: {
+    sort: boolean;
+    locale: string;
+  }
 ) => {
   const noneOptions = options.filter((o) => o.isNoneValue);
   const restOptions = options.filter((o) => !o.isNoneValue);
 
-  if (sortOptions) {
+  if (sort) {
     restOptions.sort(valueComparator(locale));
   }
 
@@ -298,7 +306,7 @@ export const Select = ({
   options,
   optionGroups,
   onChange,
-  sortOptions = true,
+  sort = true,
   sideControls,
   open,
   onClose,
@@ -312,7 +320,7 @@ export const Select = ({
   optionGroups?: SelectOptionGroup[];
   label?: ReactNode;
   disabled?: boolean;
-  sortOptions?: boolean;
+  sort?: boolean;
   sideControls?: ReactNode;
   loading?: boolean;
   hint?: string;
@@ -320,21 +328,18 @@ export const Select = ({
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const locale = useLocale();
-  const sortedOptions = useMemo(() => {
+  const sortedOptions: SelectOption[] = useMemo(() => {
     if (optionGroups) {
       return flatten(
-        optionGroups.map(
-          ([group, values]) =>
-            [
-              { type: group ? "group" : "", ...group },
-              ...getSelectOptions(values, sortOptions, locale),
-            ] as const
-        )
+        optionGroups.map(([group, values]) => [
+          { isGroupHeader: !!group, ...group },
+          ...getSelectOptions(values, { sort, locale }),
+        ])
       );
     } else {
-      return getSelectOptions(options, sortOptions, locale);
+      return getSelectOptions(options, { sort, locale });
     }
-  }, [optionGroups, sortOptions, locale, options]);
+  }, [optionGroups, sort, locale, options]);
   const handleOpen = useEvent((e: SyntheticEvent) => {
     setWidth(ref.current?.getBoundingClientRect().width ?? 0);
     onOpen?.(e);
@@ -388,13 +393,13 @@ export const Select = ({
           sx={{ maxWidth: sideControls ? "calc(100% - 28px)" : "100%" }}
         >
           {sortedOptions.map((opt) => {
-            if (!opt.value && opt.type !== "group") {
+            if (!opt.value && !opt.isGroupHeader) {
               return null;
             }
 
             const isSelected = value === opt.value;
 
-            return opt.type === "group" ? (
+            return opt.isGroupHeader ? (
               opt.label && (
                 <ListSubheader key={opt.label}>
                   <Typography
@@ -447,6 +452,7 @@ export const Select = ({
 export const selectMenuProps: SelectProps["MenuProps"] = {
   slotProps: {
     paper: {
+      elevation: 0,
       sx: {
         "& .MuiList-root": {
           width: "auto",
@@ -522,6 +528,8 @@ export const Input = ({
   name,
   value,
   defaultValue,
+  endAdornment,
+  placeholder,
   onBlur,
   onKeyDown,
   disabled,
@@ -533,6 +541,8 @@ export const Input = ({
   label?: string | ReactNode;
   disabled?: boolean;
   defaultValue?: FieldProps["value"];
+  endAdornment?: ReactNode;
+  placeholder?: string;
   onBlur?: FocusEventHandler<HTMLInputElement>;
   onKeyDown?: KeyboardEventHandler<HTMLInputElement>;
   error?: boolean;
@@ -553,6 +563,8 @@ export const Input = ({
       onBlur={onBlur}
       onChange={onChange}
       onKeyDown={onKeyDown}
+      placeholder={placeholder}
+      endAdornment={endAdornment}
       sx={error ? { ...sx, borderColor: "error.main" } : sx}
     />
     {error && errorMessage ? (
@@ -572,9 +584,15 @@ export const MarkdownInput = ({
   name,
   value,
   onChange,
+  disablePlugins,
   disableToolbar,
+  characterLimit,
 }: {
   label?: string | ReactNode;
+  characterLimit?: number;
+  disablePlugins?: {
+    headings?: boolean;
+  };
   disableToolbar?: {
     textStyles?: boolean;
     blockType?: boolean;
@@ -583,59 +601,87 @@ export const MarkdownInput = ({
   };
 } & FieldProps) => {
   const classes = useMarkdownInputStyles();
+  const [characterLimitReached, setCharacterLimitReached] = useState(false);
+  const { headings: disableHeadings } = disablePlugins ?? {};
+
+  const handleMaxLengthReached = useEvent(
+    ({ reachedMaxLength }: { reachedMaxLength: boolean }) => {
+      setCharacterLimitReached(reachedMaxLength);
+    }
+  );
 
   return (
-    <MDXEditor
-      className={classes.root}
-      markdown={value ? `${value}` : ""}
-      plugins={[
-        toolbarPlugin({
-          toolbarClassName: classes.toolbar,
-          toolbarContents: () => (
-            <div>
-              <Box sx={{ display: "flex", gap: 2 }}>
-                {disableToolbar?.textStyles ? null : (
-                  <BoldItalicUnderlineToggles />
-                )}
-                {disableToolbar?.blockType ? null : <BlockTypeMenu />}
-                {disableToolbar?.listToggles ? null : (
-                  <>
-                    <Divider flexItem orientation="vertical" />
-                    <ListToggles />
-                  </>
-                )}
-                {disableToolbar?.link ? null : (
-                  <>
-                    <Divider flexItem orientation="vertical" />
-                    <LinkDialogToggle />
-                  </>
-                )}
-              </Box>
-              {label && name ? <Label htmlFor={name}>{label}</Label> : null}
-            </div>
-          ),
-        }),
-        headingsPlugin(),
-        listsPlugin(),
-        linkPlugin(),
-        linkDialogPlugin(),
-        quotePlugin(),
-        markdownShortcutPlugin(),
-        thematicBreakPlugin(),
-      ]}
-      onChange={(newValue) => {
-        onChange?.({
-          currentTarget: {
-            value: newValue
-              // Remove backslashes from the string, as they are not supported in react-markdown
-              .replaceAll("\\", "")
-              // <u> is not supported in react-markdown we use for rendering.
-              .replaceAll("<u>", "<ins>")
-              .replace("</u>", "</ins>"),
-          },
-        } as any);
-      }}
-    />
+    <div>
+      <MDXEditor
+        className={clsx(
+          classes.root,
+          disableHeadings && classes.withoutHeadings
+        )}
+        markdown={value ? `${value}` : ""}
+        plugins={[
+          toolbarPlugin({
+            toolbarClassName: classes.toolbar,
+            toolbarContents: () => (
+              <div>
+                <Flex gap={2}>
+                  {disableToolbar?.textStyles ? null : (
+                    <BoldItalicUnderlineToggles />
+                  )}
+                  {disableToolbar?.blockType ? null : <BlockTypeMenu />}
+                  {disableToolbar?.listToggles ? null : (
+                    <>
+                      <Divider flexItem orientation="vertical" />
+                      <ListToggles />
+                    </>
+                  )}
+                  {disableToolbar?.link ? null : (
+                    <>
+                      <Divider flexItem orientation="vertical" />
+                      <LinkDialogToggle />
+                    </>
+                  )}
+                </Flex>
+                {label && name ? <Label htmlFor={name}>{label}</Label> : null}
+              </div>
+            ),
+          }),
+          ...(disableHeadings ? [] : [headingsPlugin()]),
+          listsPlugin(),
+          linkPlugin(),
+          linkDialogPlugin(),
+          quotePlugin(),
+          markdownShortcutPlugin(),
+          thematicBreakPlugin(),
+          maxLengthPlugin({
+            maxLength: characterLimit,
+            onChange: handleMaxLengthReached,
+          }),
+        ]}
+        onChange={(newValue) => {
+          onChange?.({
+            currentTarget: {
+              value: newValue
+                // Remove backslashes from the string, as they are not supported in react-markdown
+                .replaceAll("\\", "")
+                // <u> is not supported in react-markdown we use for rendering.
+                .replaceAll("<u>", "<ins>")
+                .replace("</u>", "</ins>"),
+            },
+          } as any);
+        }}
+      />
+      {characterLimitReached && (
+        <Typography variant="caption" color="error">
+          {i18n._(
+            defineMessage({
+              id: "controls.form.max-length-reached",
+              message: "Character limit ({limit}) reached",
+            }) as unknown as string,
+            { limit: characterLimit }
+          )}
+        </Typography>
+      )}
+    </div>
   );
 };
 
@@ -662,6 +708,11 @@ const useMarkdownInputStyles = makeStyles<Theme>((theme) => ({
       "& :last-child": {
         marginBottom: 0,
       },
+    },
+  },
+  withoutHeadings: {
+    "& [data-lexical-editor='true']": {
+      ...theme.typography.body3,
     },
   },
   toolbar: {

@@ -9,8 +9,14 @@ import { GroupedBarChart } from "@/charts/bar/bars-grouped-state";
 import { BarsStacked } from "@/charts/bar/bars-stacked";
 import { StackedBarsChart } from "@/charts/bar/bars-stacked-state";
 import { BarChart } from "@/charts/bar/bars-state";
-import { InteractionBars } from "@/charts/bar/overlay-bars";
+import {
+  InteractionBars,
+  InteractionBarsStacked,
+  StackedBarAnnotationHighlight,
+} from "@/charts/bar/overlay-bars";
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
+import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
+import { Annotations } from "@/charts/shared/annotations";
 import {
   AxisHeightBand,
   AxisHeightBandDomain,
@@ -23,14 +29,15 @@ import {
   ChartControlsContainer,
   ChartSvg,
 } from "@/charts/shared/containers";
+import { HoverAnnotationDot } from "@/charts/shared/interaction/hover-annotation-dot";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { HorizontalLimits } from "@/charts/shared/limits/horizontal";
 import { BarConfig } from "@/config-types";
 import { useChartConfigFilters, useLimits } from "@/config-utils";
 import { hasChartConfigs } from "@/configurator";
+import { useConfiguratorState } from "@/configurator/configurator-state";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
-import { useConfiguratorState } from "@/src";
 
 import { ChartProps, VisualizationProps } from "../shared/chart-props";
 
@@ -54,6 +61,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
     dimensions,
     measures,
   });
+  const isEditingAnnotation = useIsEditingAnnotation();
 
   return (
     <>
@@ -62,15 +70,28 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisWidthLinear />
-              <BarsStacked />
               <AxisHideYOverflowRect />
               <AxisHeightBand />
               <AxisHeightBandDomain />
-              <InteractionBars />
+              <BarsStacked />
+              {isEditingAnnotation ? (
+                <>
+                  <InteractionBars disableGaps={false} />
+                  <InteractionBarsStacked />
+                  <StackedBarAnnotationHighlight />
+                </>
+              ) : (
+                <InteractionBars />
+              )}
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
-            <Tooltip type="multiple" />
+            {isEditingAnnotation ? (
+              <HoverAnnotationDot />
+            ) : (
+              <Tooltip type="multiple" />
+            )}
           </ChartContainer>
+          <Annotations />
           <ChartControlsContainer>
             {fields.animation && (
               <TimeSlider
@@ -83,7 +104,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
               dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
-              interactive={interactiveFiltersConfig?.legend.active}
+              interactive={interactiveFiltersConfig.legend.active}
               showTitle={fields.segment.showTitle}
             />
           </ChartControlsContainer>
@@ -93,10 +114,10 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisWidthLinear />
-              <BarsGrouped />
               <AxisHideYOverflowRect />
               <AxisHeightBand />
               <AxisHeightBandDomain />
+              <BarsGrouped />
               <ErrorWhiskersGrouped />
               <InteractionBars />
               {showTimeBrush && <BrushTime />}
@@ -115,7 +136,7 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
               dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
-              interactive={interactiveFiltersConfig?.legend.active}
+              interactive={interactiveFiltersConfig.legend.active}
               showTitle={fields.segment.showTitle}
             />
           </ChartControlsContainer>
@@ -125,17 +146,22 @@ const ChartBars = memo((props: ChartProps<BarConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisWidthLinear />
-              <Bars />
               <AxisHideYOverflowRect />
               <AxisHeightBand />
               <AxisHeightBandDomain />
+              <Bars />
               <ErrorWhiskers />
               <HorizontalLimits {...limits} />
               <InteractionBars />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
-            <Tooltip type="single" />
+            {isEditingAnnotation ? (
+              <HoverAnnotationDot />
+            ) : (
+              <Tooltip type="single" />
+            )}
           </ChartContainer>
+          <Annotations />
           {fields.animation || limits.limits.length > 0 ? (
             <ChartControlsContainer>
               {limits.limits.length > 0 && (

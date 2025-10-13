@@ -27,7 +27,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -51,7 +51,7 @@ export type ComboLineSingleState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (label: string) => string;
     chartWideData: ArrayLike<Observation>;
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -140,30 +140,30 @@ const useComboLineSingleState = (
 
   const isMobile = useIsMobile();
 
-  // Tooltip
-  const getAnnotationInfo = (d: Observation): TooltipInfo => {
-    const x = getX(d);
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
+    const x = getX(datum);
     const xScaled = xScale(x);
     const values = variables.y.lines
       .map(({ getY, id, label }) => {
-        const y = getY(d);
-        if (!Number.isFinite(y) || y === null) {
+        const yRaw = getY(datum);
+
+        if (!Number.isFinite(yRaw) || yRaw === null) {
           return null;
         }
 
         return {
           label,
-          value: `${y}`,
+          value: `${yRaw}`,
           color: colors(id),
-          hide: y === null,
-          yPos: yScale(y ?? 0),
+          axis: "y",
+          axisOffset: yScale(yRaw ?? 0),
           symbol: "line",
-        };
+        } satisfies TooltipValue;
       })
       .filter(truthy);
     const yAnchor = isMobile
       ? chartHeight
-      : (mean(values.map((d) => d.yPos)) ?? chartHeight);
+      : (mean(values.map((d) => d.axisOffset)) ?? chartHeight);
     const placement = isMobile
       ? MOBILE_TOOLTIP_PLACEMENT
       : getCenteredTooltipPlacement({
@@ -179,7 +179,7 @@ const useComboLineSingleState = (
       value: timeFormatUnit(x, xDimension.timeUnit),
       placement,
       values,
-    } as TooltipInfo;
+    };
   };
 
   return {
@@ -195,7 +195,7 @@ const useComboLineSingleState = (
     colors,
     getColorLabel: (label) => label,
     chartWideData,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,

@@ -26,6 +26,7 @@ import {
   getUnversionedCubeIriServerSide,
 } from "@/utils/chart-config/upgrade-cube";
 import { createId } from "@/utils/create-id";
+import { maybeWindow } from "@/utils/maybe-window";
 
 type Migration = {
   description: string;
@@ -943,7 +944,7 @@ export const chartConfigMigrations: Migration[] = [
       newConfig.cubes = await Promise.all(
         newConfig.cubes.map(async (cube: any) => {
           const { publishIri, ...rest } = cube;
-          const isServerSide = typeof window === "undefined";
+          const isServerSide = !maybeWindow();
           const fn = isServerSide
             ? async () => {
                 return await getUnversionedCubeIriServerSide(rest.iri, {
@@ -1553,6 +1554,89 @@ export const chartConfigMigrations: Migration[] = [
       if (newConfig.conversionUnitsByComponentId) {
         delete newConfig.conversionUnitsByComponentId;
       }
+
+      return newConfig;
+    },
+  },
+  {
+    from: "4.5.0",
+    to: "4.6.0",
+    description: `ALL {
+      interactiveFiltersConfig can't be undefined anymore
+    }`,
+    up: (config) => {
+      const newConfig = { ...config, version: "4.6.0" };
+
+      if (!newConfig.interactiveFiltersConfig) {
+        newConfig.interactiveFiltersConfig = {
+          legend: {
+            active: false,
+            componentId: "",
+          },
+          timeRange: {
+            active: false,
+            componentId: "",
+            presets: {
+              type: "range",
+              from: "",
+              to: "",
+            },
+          },
+          dataFilters: {
+            active: false,
+            componentIds: [],
+            defaultValueOverrides: {},
+            filterTypes: {},
+            defaultOpen: true,
+          },
+          calculation: {
+            active: false,
+            type: "identity",
+          },
+        };
+      } else {
+        newConfig.interactiveFiltersConfig.dataFilters.defaultValueOverrides =
+          {};
+        newConfig.interactiveFiltersConfig.dataFilters.filterTypes =
+          Object.fromEntries(
+            newConfig.interactiveFiltersConfig.dataFilters.componentIds.map(
+              (id: string) => [id, "single"]
+            )
+          );
+      }
+
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "4.5.0" };
+
+      if (newConfig.chartType === "table") {
+        newConfig.interactiveFiltersConfig = undefined;
+      } else if (newConfig.interactiveFiltersConfig) {
+        delete newConfig.interactiveFiltersConfig.dataFilters
+          .defaultValueOverrides;
+        delete newConfig.interactiveFiltersConfig.dataFilters.filterTypes;
+      }
+
+      return newConfig;
+    },
+  },
+  {
+    from: "4.6.0",
+    to: "5.0.0",
+    description: `all {
+        + annotations
+      }
+    `,
+    up: (config) => {
+      const newConfig = { ...config, version: "5.0.0" };
+      newConfig.annotations = [];
+
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "4.5.0" };
+      delete newConfig.annotations;
 
       return newConfig;
     },
@@ -2175,6 +2259,18 @@ export const configuratorStateMigrations: Migration[] = [
     toVersion: "4.6.0",
     fromChartConfigVersion: "4.4.0",
     toChartConfigVersion: "4.5.0",
+  }),
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "4.6.0",
+    toVersion: "4.7.0",
+    fromChartConfigVersion: "4.5.0",
+    toChartConfigVersion: "4.6.0",
+  }),
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "4.7.0",
+    toVersion: "5.0.0",
+    fromChartConfigVersion: "4.6.0",
+    toChartConfigVersion: "5.0.0",
   }),
 ];
 

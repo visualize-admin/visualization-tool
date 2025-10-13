@@ -10,7 +10,13 @@ import { GroupedColumnChart } from "@/charts/column/columns-grouped-state";
 import { ColumnsStacked } from "@/charts/column/columns-stacked";
 import { StackedColumnsChart } from "@/charts/column/columns-stacked-state";
 import { ColumnChart } from "@/charts/column/columns-state";
-import { InteractionColumns } from "@/charts/column/overlay-columns";
+import {
+  InteractionColumns,
+  InteractionColumnsStacked,
+  StackedColumnAnnotationHighlight,
+} from "@/charts/column/overlay-columns";
+import { useIsEditingAnnotation } from "@/charts/shared/annotation-utils";
+import { Annotations } from "@/charts/shared/annotations";
 import { AxisHeightLinear } from "@/charts/shared/axis-height-linear";
 import { AxisHideXOverflowRect } from "@/charts/shared/axis-hide-overflow-rect";
 import {
@@ -23,14 +29,15 @@ import {
   ChartControlsContainer,
   ChartSvg,
 } from "@/charts/shared/containers";
+import { HoverAnnotationDot } from "@/charts/shared/interaction/hover-annotation-dot";
 import { Tooltip } from "@/charts/shared/interaction/tooltip";
 import { LegendColor } from "@/charts/shared/legend-color";
 import { VerticalLimits } from "@/charts/shared/limits/vertical";
 import { ColumnConfig } from "@/config-types";
 import { useChartConfigFilters, useLimits } from "@/config-utils";
 import { hasChartConfigs } from "@/configurator";
+import { useConfiguratorState } from "@/configurator/configurator-state";
 import { TimeSlider } from "@/configurator/interactive-filters/time-slider";
-import { useConfiguratorState } from "@/src";
 
 import { ChartProps, VisualizationProps } from "../shared/chart-props";
 
@@ -54,6 +61,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
     dimensions,
     measures,
   });
+  const isEditingAnnotation = useIsEditingAnnotation();
 
   return (
     <>
@@ -62,15 +70,28 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear />
-              <ColumnsStacked />
               <AxisHideXOverflowRect />
               <AxisWidthBand />
               <AxisWidthBandDomain />
-              <InteractionColumns />
+              <ColumnsStacked />
+              {isEditingAnnotation ? (
+                <>
+                  <InteractionColumns disableGaps={false} />
+                  <InteractionColumnsStacked />
+                  <StackedColumnAnnotationHighlight />
+                </>
+              ) : (
+                <InteractionColumns />
+              )}
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
-            <Tooltip type="multiple" />
+            {isEditingAnnotation ? (
+              <HoverAnnotationDot />
+            ) : (
+              <Tooltip type="multiple" />
+            )}
           </ChartContainer>
+          <Annotations />
           <ChartControlsContainer>
             {fields.animation && (
               <TimeSlider
@@ -83,7 +104,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
-              interactive={interactiveFiltersConfig?.legend.active}
+              interactive={interactiveFiltersConfig.legend.active}
               showTitle={fields.segment.showTitle}
             />
           </ChartControlsContainer>
@@ -93,10 +114,10 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear />
-              <ColumnsGrouped />
               <AxisHideXOverflowRect />
               <AxisWidthBand />
               <AxisWidthBandDomain />
+              <ColumnsGrouped />
               <ErrorWhiskersGrouped />
               <InteractionColumns />
               {showTimeBrush && <BrushTime />}
@@ -115,7 +136,7 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
               dimensionsById={dimensionsById}
               chartConfig={chartConfig}
               symbol="square"
-              interactive={interactiveFiltersConfig?.legend.active}
+              interactive={interactiveFiltersConfig.legend.active}
               showTitle={fields.segment.showTitle}
             />
           </ChartControlsContainer>
@@ -125,17 +146,22 @@ const ChartColumns = memo((props: ChartProps<ColumnConfig>) => {
           <ChartContainer>
             <ChartSvg>
               <AxisHeightLinear />
-              <Columns />
               <AxisHideXOverflowRect />
               <AxisWidthBand />
               <AxisWidthBandDomain />
+              <Columns />
               <ErrorWhiskers />
               <VerticalLimits {...limits} />
               <InteractionColumns />
               {showTimeBrush && <BrushTime />}
             </ChartSvg>
-            <Tooltip type="single" />
+            {isEditingAnnotation ? (
+              <HoverAnnotationDot />
+            ) : (
+              <Tooltip type="single" />
+            )}
           </ChartContainer>
+          <Annotations />
           {fields.animation || limits.limits.length > 0 ? (
             <ChartControlsContainer>
               {limits.limits.length > 0 && (

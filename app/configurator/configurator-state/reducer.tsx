@@ -68,7 +68,11 @@ import {
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { toggleInteractiveFilterDataDimension } from "@/configurator/interactive-filters/interactive-filters-config-state";
 import { Dimension, isGeoDimension, isJoinByComponent } from "@/domain/data";
-import { getOriginalDimension, isJoinByCube } from "@/graphql/join";
+import {
+  getOriginalDimension,
+  getOriginalIds,
+  isJoinByCube,
+} from "@/graphql/join";
 import { PossibleFilterValue } from "@/graphql/query-hooks";
 import { DEFAULT_CATEGORICAL_PALETTE_ID } from "@/palettes";
 import { findInHierarchy } from "@/rdf/tree-utils";
@@ -189,12 +193,6 @@ export const applyTableDimensionToFilters = (props: {
         }
         break;
       case "range":
-        if (shouldBecomeSingleFilter) {
-          filters[originalIri] = {
-            type: "single",
-            value: currentFilter.from,
-          };
-        }
         break;
       default:
         const _exhaustiveCheck: never = currentFilter;
@@ -412,17 +410,25 @@ export const handleChartFieldChanged = (
   });
 
   // Remove the component from interactive data filters.
-  if (chartConfig.interactiveFiltersConfig?.dataFilters) {
-    const componentIds =
-      chartConfig.interactiveFiltersConfig.dataFilters.componentIds.filter(
-        (d) => d !== componentId
-      );
-    const active = componentIds.length > 0;
-    chartConfig.interactiveFiltersConfig.dataFilters = {
-      active,
-      componentIds,
-    };
-  }
+  const componentIds =
+    chartConfig.interactiveFiltersConfig.dataFilters.componentIds.filter(
+      (d) => d !== componentId
+    );
+  const active = componentIds.length > 0;
+  chartConfig.interactiveFiltersConfig.dataFilters = {
+    active,
+    componentIds,
+    defaultValueOverrides: Object.fromEntries(
+      Object.entries(
+        chartConfig.interactiveFiltersConfig.dataFilters.defaultValueOverrides
+      ).filter(([k]) => k !== componentId)
+    ),
+    filterTypes: Object.fromEntries(
+      Object.entries(
+        chartConfig.interactiveFiltersConfig.dataFilters.filterTypes
+      ).filter(([k]) => k !== componentId)
+    ),
+  };
 
   const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
   const index = draft.chartConfigs.findIndex((d) => d.key === chartConfig.key);
@@ -450,11 +456,6 @@ export const handleChartFieldDeleted = (
       joinBy: cube.joinBy,
     })),
   });
-  const dimensions = dataCubesComponents?.dimensions ?? [];
-  const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
-  const index = draft.chartConfigs.findIndex((d) => d.key === chartConfig.key);
-  draft.chartConfigs[index] = newConfig;
-
   if (action.value.field === "segment") {
     if (chartConfig.interactiveFiltersConfig) {
       chartConfig.interactiveFiltersConfig.calculation.active = false;
@@ -470,6 +471,11 @@ export const handleChartFieldDeleted = (
       chartConfig.fields.color = newColorField;
     }
   }
+
+  const dimensions = dataCubesComponents?.dimensions ?? [];
+  const newConfig = deriveFiltersFromFields(chartConfig, { dimensions });
+  const index = draft.chartConfigs.findIndex((d) => d.key === chartConfig.key);
+  draft.chartConfigs[index] = newConfig;
 
   const sideEffect = getChartFieldDeleteSideEffect(chartConfig, field);
   sideEffect?.({ chartConfig });
@@ -705,7 +711,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "CHART_ACTIVE_FIELD_CHANGED":
+    case "CHART_ACTIVE_FIELD_CHANGE":
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         chartConfig.activeField = action.value;
@@ -812,7 +818,7 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       }
       return draft;
 
-    case "CHART_ANNOTATION_CHANGED":
+    case "CHART_META_CHANGE":
       if (isConfiguring(draft)) {
         const chartConfig = getChartConfig(draft);
         setWith(
@@ -976,10 +982,20 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
       if (isConfiguring(draft)) {
         const { cubeIri, dimensionId, values } = action.value;
         const chartConfig = getChartConfig(draft);
-        const cube = chartConfig.cubes.find((cube) => cube.iri === cubeIri);
+        const resolvedCubeIris = isJoinByCube(cubeIri)
+          ? getOriginalIds(cubeIri, chartConfig)
+          : [cubeIri];
 
-        if (cube) {
-          cube.filters[dimensionId] = makeMultiFilter(values);
+        for (const resolvedCubeIri of resolvedCubeIris) {
+          const cube = chartConfig.cubes.find(
+            (cube) =>
+              cube.iri === resolvedCubeIri ||
+              cube.joinBy?.includes(resolvedCubeIri)
+          );
+
+          if (cube) {
+            cube.filters[dimensionId] = makeMultiFilter(values);
+          }
         }
       }
 
@@ -1131,6 +1147,108 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
+    case "CHART_ANNOTATION_ADD":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+        chartConfig.annotations.push(action.value);
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_HIGHLIGHT_TYPE_CHANGE":
+      if (isConfiguring(draft)) {
+        const { key, highlightType } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.highlightType = highlightType;
+        }
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_COLOR_CHANGE":
+      if (isConfiguring(draft)) {
+        const { key, color } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.color = color;
+        }
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_DEFAULT_OPEN_CHANGE":
+      if (isConfiguring(draft)) {
+        const { key, defaultOpen } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.defaultOpen = defaultOpen;
+        }
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_TEXT_CHANGE":
+      if (isConfiguring(draft)) {
+        const { key, locale, value } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.text[locale] = value;
+        }
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_TEXT_CLEAR":
+      if (isConfiguring(draft)) {
+        const { key } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.text = {
+            en: "",
+            de: "",
+            fr: "",
+            it: "",
+          };
+        }
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_REMOVE":
+      if (isConfiguring(draft)) {
+        const chartConfig = getChartConfig(draft);
+        chartConfig.annotations = chartConfig.annotations.filter(
+          (a) => a.key !== action.value.key
+        );
+        chartConfig.activeField = undefined;
+      }
+
+      return draft;
+
+    case "CHART_ANNOTATION_TARGETS_CHANGE":
+      if (isConfiguring(draft)) {
+        const { key, targets } = action.value;
+        const chartConfig = getChartConfig(draft);
+        const annotation = chartConfig.annotations.find((a) => a.key === key);
+
+        if (annotation) {
+          annotation.targets = targets;
+        }
+      }
+
+      return draft;
+
     case "LIMIT_SET":
       if (isConfiguring(draft)) {
         const { measureId, ...limit } = action.value;
@@ -1230,14 +1348,14 @@ const reducer_: Reducer<ConfiguratorState, ConfiguratorStateAction> = (
 
       return draft;
 
-    case "LAYOUT_ACTIVE_FIELD_CHANGED":
+    case "LAYOUT_ACTIVE_FIELD_CHANGE":
       if (draft.state === "LAYOUTING") {
         draft.layout.activeField = action.value;
       }
 
       return draft;
 
-    case "LAYOUT_ANNOTATION_CHANGED":
+    case "LAYOUT_META_CHANGE":
       if (draft.state === "LAYOUTING") {
         setWith(
           draft,

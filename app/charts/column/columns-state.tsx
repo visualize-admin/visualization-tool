@@ -17,6 +17,11 @@ import {
   useColumnsStateVariables,
 } from "@/charts/column/columns-state-props";
 import { PADDING_INNER, PADDING_OUTER } from "@/charts/column/constants";
+import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/annotation-circle";
+import {
+  ANNOTATION_SINGLE_SEGMENT_OFFSET,
+  GetAnnotationInfo,
+} from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -64,9 +69,11 @@ export type ColumnsState = CommonChartState &
     xScale: ScaleBand<string>;
     xScaleInteraction: ScaleBand<string>;
     yScale: ScaleLinear<number, number>;
+    segments: string[];
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getAnnotationInfo: GetAnnotationInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -116,6 +123,7 @@ const useColumnsState = (
   }, [chartData, getX, getY]);
 
   const {
+    segments,
     xScale,
     colors,
     yScale,
@@ -124,6 +132,7 @@ const useColumnsState = (
     xScaleInteraction,
     xTimeRangeDomainLabels,
   } = useMemo(() => {
+    const segments: string[] = [];
     const colors = scaleOrdinal<string, string>();
 
     if (fields.color.type === "single") {
@@ -217,6 +226,7 @@ const useColumnsState = (
     }
 
     return {
+      segments,
       colors,
       xScale,
       yScale,
@@ -294,19 +304,47 @@ const useColumnsState = (
   yScale.range([chartHeight, 0]);
   const isMobile = useIsMobile();
 
-  const maybeFormatDate = useCallback(
+  const formatXAxisTick = useCallback(
     (tick: string) => {
-      return isTemporalDimension(xDimension) ? formatXDate(tick) : tick;
+      return isTemporalDimension(xDimension)
+        ? formatXDate(tick)
+        : getXLabel(tick);
     },
-    [xDimension, formatXDate]
+    [xDimension, formatXDate, getXLabel]
   );
 
-  // Tooltip
-  const getAnnotationInfo = (d: Observation): TooltipInfo => {
-    const xAnchor = (xScale(getX(d)) as number) + xScale.bandwidth() * 0.5;
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation) => {
+      const x =
+        (xScale(getX(observation)) as number) + xScale.bandwidth() * 0.5;
+      const hasValueLabels = showValuesVariables.showValues;
+      const yOffset = hasValueLabels ? yValueLabelsOffset + 8 : 0;
+      const y =
+        yScale(Math.max(getY(observation) ?? NaN, 0)) -
+        ANNOTATION_SINGLE_SEGMENT_OFFSET -
+        yOffset;
+
+      return {
+        x,
+        y,
+        color: DEFAULT_ANNOTATION_CIRCLE_COLOR,
+      };
+    },
+    [
+      xScale,
+      getX,
+      showValuesVariables.showValues,
+      yValueLabelsOffset,
+      yScale,
+      getY,
+    ]
+  );
+
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
+    const xAnchor = (xScale(getX(datum)) as number) + xScale.bandwidth() * 0.5;
     const yAnchor = isMobile
       ? chartHeight
-      : yScale(Math.max(getY(d) ?? NaN, 0));
+      : yScale(Math.max(getY(datum) ?? NaN, 0));
     const placement = isMobile
       ? MOBILE_TOOLTIP_PLACEMENT
       : getCenteredTooltipPlacement({
@@ -314,8 +352,8 @@ const useColumnsState = (
           xAnchor,
           topAnchor: !fields.segment,
         });
-    const xLabel = getXAbbreviationOrLabel(d);
-    const y = getY(d);
+    const xLabel = getXAbbreviationOrLabel(datum);
+    const y = getY(datum);
     const yValueUnitFormatter = (value: number | null) =>
       formatNumberWithUnit(
         value,
@@ -327,11 +365,12 @@ const useColumnsState = (
       xAnchor,
       yAnchor,
       placement,
-      value: maybeFormatDate(xLabel),
+      value: formatXAxisTick(xLabel),
       datum: {
         label: undefined,
-        value: y !== null && isNaN(y) ? "-" : `${yValueUnitFormatter(getY(d))}`,
-        error: getFormattedYUncertainty(d),
+        value:
+          y !== null && isNaN(y) ? "-" : `${yValueUnitFormatter(getY(datum))}`,
+        error: getFormattedYUncertainty(datum),
         color: "",
       },
       values: undefined,
@@ -349,11 +388,13 @@ const useColumnsState = (
     xScaleTimeRange,
     xScaleInteraction,
     yScale,
+    segments,
     getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
-    formatXAxisTick: maybeFormatDate,
+    formatXAxisTick,
     ...showValuesVariables,
     ...variables,
   };

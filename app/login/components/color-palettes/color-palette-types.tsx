@@ -122,7 +122,7 @@ const SequentialColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
       </Box>
       <Box sx={{ fontSize: "1rem", pb: 2, maxWidth: 304 }}>
         <Label htmlFor="custom-color-palette-base">
-          <Trans id="controls.custom-color-palettes.base" />
+          <Trans id="controls.custom-color-palettes.base">Base color</Trans>
         </Label>
         {baseColor && (
           <ColorSelectionRow
@@ -167,7 +167,9 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
         </Box>
         <Box sx={{ fontSize: "1rem", pb: 2, maxWidth: 304 }}>
           <Label htmlFor="custom-color-palette-start">
-            <Trans id="controls.custom-color-palettes.start" />
+            <Trans id="controls.custom-color-palettes.start">
+              Starting color
+            </Trans>
           </Label>
           {startColorHex && (
             <ColorSelectionRow
@@ -182,7 +184,9 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
         {midColorHex && (
           <Box sx={{ fontSize: "1rem", pb: 2, maxWidth: 304 }}>
             <Label htmlFor="custom-color-palette-mid">
-              <Trans id="controls.custom-color-palettes.mid" />
+              <Trans id="controls.custom-color-palettes.mid">
+                Middle color
+              </Trans>
             </Label>
             <ColorSelectionRow
               type={"diverging"}
@@ -196,7 +200,7 @@ const DivergentColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
         )}
         <Box sx={{ fontSize: "1rem", pb: 2, maxWidth: 304 }}>
           <Label htmlFor="custom-color-palette-end">
-            <Trans id="controls.custom-color-palettes.end" />
+            <Trans id="controls.custom-color-palettes.end">Ending color</Trans>
           </Label>
           {endColorHex && (
             <ColorSelectionRow
@@ -246,7 +250,6 @@ const CategoricalColorPaletteCreator = (props: ColorPaletteCreatorProps) => {
           ))}
         </Box>
       )}
-
       <Button
         variant="text"
         fullWidth

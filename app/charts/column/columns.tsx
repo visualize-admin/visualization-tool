@@ -6,6 +6,7 @@ import {
   renderColumns,
 } from "@/charts/column/rendering-utils";
 import { useColumnValueLabelsData } from "@/charts/column/show-values-utils";
+import { useGetAnnotationRenderState } from "@/charts/shared/annotation-utils";
 import { useChartState } from "@/charts/shared/chart-state";
 import { renderTotalValueLabels } from "@/charts/shared/render-value-labels";
 import {
@@ -20,6 +21,7 @@ import { useTransitionStore } from "@/stores/transition";
 export const ErrorWhiskers = () => {
   const {
     getX,
+    getY,
     getYErrorPresent,
     getYErrorRange,
     chartData,
@@ -33,7 +35,7 @@ export const ErrorWhiskers = () => {
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const bandwidth = xScale.bandwidth();
-  const renderData: RenderVerticalWhiskerDatum[] = useMemo(() => {
+  const renderData = useMemo(() => {
     if (!getYErrorRange || !showYUncertainty) {
       return [];
     }
@@ -41,15 +43,17 @@ export const ErrorWhiskers = () => {
     return chartData.filter(getYErrorPresent).map((d, i) => {
       const x0 = xScale(getX(d)) as number;
       const barWidth = Math.min(bandwidth, 15);
+      const y = getY(d) as number;
       const [y1, y2] = getYErrorRange(d);
 
       return {
         key: `${i}`,
         x: x0 + bandwidth / 2 - barWidth / 2,
+        y: yScale(y),
         y1: yScale(y1),
         y2: yScale(y2),
         width: barWidth,
-      } as RenderVerticalWhiskerDatum;
+      } satisfies RenderVerticalWhiskerDatum;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -88,7 +92,8 @@ export const ErrorWhiskers = () => {
 export const Columns = () => {
   const {
     chartData,
-    bounds,
+    bounds: { margins },
+    xDimension,
     getX,
     xScale,
     getY,
@@ -97,46 +102,53 @@ export const Columns = () => {
     colors,
     rotateValues,
   } = useChartState() as ColumnsState;
-  const { margins } = bounds;
   const { labelFontSize, fontFamily } = useChartTheme();
   const ref = useRef<SVGGElement>(null);
   const enableTransition = useTransitionStore((state) => state.enable);
   const transitionDuration = useTransitionStore((state) => state.duration);
   const bandwidth = xScale.bandwidth();
   const y0 = yScale(0);
-  const columnsData: RenderColumnDatum[] = useMemo(() => {
+  const getAnnotationRenderState = useGetAnnotationRenderState();
+  const columnsData = useMemo(() => {
     return chartData.map((d) => {
       const key = getRenderingKey(d);
       const valueRaw = getY(d);
-      const xScaled = xScale(getX(d)) as number;
+      const x = getX(d);
+      const xScaled = xScale(x) as number;
       const value = valueRaw === null || isNaN(valueRaw) ? 0 : valueRaw;
       const y = yScale(value);
       const yRender = yScale(Math.max(value, 0));
       const height = Math.max(0, Math.abs(y - y0));
-      // Calling colors(key) directly results in every key being added to the domain,
-      // which is not what we want.
-      const color = colors.copy()(key);
+      const { color, focused } = getAnnotationRenderState(d, {
+        axisComponentId: xDimension.id,
+        axisValue: x,
+      });
 
       return {
         key,
-        value,
         x: xScaled,
         y: yRender,
         width: bandwidth,
         height,
-        color,
-      };
+        // Calling colors(key) directly results in every key being added to the domain,
+        // which is not what we want.
+        color: color ?? colors.copy()(key),
+        focused,
+        observation: d,
+      } satisfies RenderColumnDatum;
     });
   }, [
     chartData,
-    bandwidth,
-    getX,
+    getRenderingKey,
     getY,
+    getX,
     xScale,
     yScale,
     y0,
+    getAnnotationRenderState,
+    xDimension.id,
+    bandwidth,
     colors,
-    getRenderingKey,
   ]);
 
   const valueLabelsData = useColumnValueLabelsData();

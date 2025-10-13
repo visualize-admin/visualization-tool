@@ -7,6 +7,8 @@ import {
   ScaleOrdinal,
   scaleOrdinal,
   ScaleSequential,
+  scaleTime,
+  ScaleTime,
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import mapKeys from "lodash/mapKeys";
@@ -41,7 +43,12 @@ import {
   mkNumber,
   useOrderedTableColumns,
 } from "@/configurator/components/ui-helpers";
-import { Component, Observation } from "@/domain/data";
+import {
+  Component,
+  Observation,
+  TemporalDimension,
+  TemporalEntityDimension,
+} from "@/domain/data";
 import { useDimensionFormatters, useFormatNumber } from "@/formatters";
 import { getColorInterpolator } from "@/palettes";
 import { getTextWidth } from "@/utils/get-text-width";
@@ -94,16 +101,23 @@ export type ColumnMeta =
   | TextColumnMeta
   | MKColumnMeta<{ type: "other" }>;
 
-export type TableChartState = CommonChartState & {
-  chartType: "table";
-  rowHeight: number;
-  showSearch: boolean;
-  tableColumns: Column<Observation>[];
-  tableColumnsMeta: Record<string, ColumnMeta>;
-  groupingIds: string[];
-  hiddenIds: string[];
-  sortingIds: { id: string; desc: boolean }[];
+type TableInteractiveTimeRangeState = {
+  xDimension?: TemporalDimension | TemporalEntityDimension;
+  getX: (d: Observation) => Date;
+  xScaleTimeRange: ScaleTime<number, number>;
 };
+
+export type TableChartState = CommonChartState &
+  TableInteractiveTimeRangeState & {
+    chartType: "table";
+    rowHeight: number;
+    showSearch: boolean;
+    tableColumns: Column<Observation>[];
+    tableColumnsMeta: Record<string, ColumnMeta>;
+    groupingIds: string[];
+    hiddenIds: string[];
+    sortingIds: { id: string; desc: boolean }[];
+  };
 
 const useTableState = (
   chartProps: ChartProps<TableConfig>,
@@ -111,7 +125,8 @@ const useTableState = (
   data: ChartStateData
 ): TableChartState => {
   const { chartConfig, dimensions, measures } = chartProps;
-  const { chartData, allData } = data;
+  const { getX } = variables;
+  const { chartData, allData, timeRangeData } = data;
   const { fields, settings, sorting } = chartConfig;
   const formatNumber = useFormatNumber();
 
@@ -138,7 +153,11 @@ const useTableState = (
     chartHeight +
     margins.top +
     margins.bottom +
-    getTableUIElementsOffset({ showSearch: settings.showSearch, width });
+    getTableUIElementsOffset({
+      showSearch: settings.showSearch,
+      width,
+      showTimeRange: chartConfig.interactiveFiltersConfig.timeRange.active,
+    });
   const bounds = {
     width,
     height,
@@ -389,6 +408,16 @@ const useTableState = (
     );
   }, [chartData, dimensions, fields, formatters, measures]);
 
+  const xScaleTimeRange = useMemo(() => {
+    const xScaleTimeRangeDomain = extent(timeRangeData, (d) => getX(d)) as [
+      Date,
+      Date,
+    ];
+    return scaleTime().domain(xScaleTimeRangeDomain);
+  }, [getX, timeRangeData]);
+
+  xScaleTimeRange.range([0, chartWidth]);
+
   return {
     chartType: "table",
     chartData: memoizedData,
@@ -401,6 +430,7 @@ const useTableState = (
     groupingIds,
     hiddenIds,
     sortingIds,
+    xScaleTimeRange,
     ...variables,
   };
 };
@@ -410,7 +440,7 @@ const TableChartProvider = (
 ) => {
   const { children, ...chartProps } = props;
   const variables = useTableStateVariables(chartProps);
-  const data = useTableStateData(chartProps);
+  const data = useTableStateData(chartProps, variables);
   const state = useTableState(chartProps, variables, data);
 
   return (

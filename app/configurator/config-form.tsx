@@ -47,6 +47,8 @@ import { isMultiHierarchyNode } from "@/utils/hierarchy";
 import { useEvent } from "@/utils/use-event";
 
 export type Option = {
+  isGroupHeader?: boolean;
+  group?: string;
   value: string | $FixMe;
   label: string | $FixMe;
   position?: DimensionValue["position"];
@@ -396,7 +398,10 @@ export const useActiveChartField = (
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const chartConfig = getChartConfig(state);
   const onClick = useCallback(() => {
-    dispatch({ type: "CHART_ACTIVE_FIELD_CHANGED", value });
+    dispatch({
+      type: "CHART_ACTIVE_FIELD_CHANGE",
+      value,
+    });
   }, [dispatch, value]);
   const checked = chartConfig.activeField === value;
 
@@ -415,7 +420,10 @@ export const useActiveLayoutField = (
   const { value } = props;
   const [state, dispatch] = useConfiguratorState(isLayouting);
   const onClick = useCallback(() => {
-    dispatch({ type: "LAYOUT_ACTIVE_FIELD_CHANGED", value });
+    dispatch({
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE",
+      value,
+    });
   }, [dispatch, value]);
   const checked = state.layout.activeField === value;
 
@@ -637,6 +645,7 @@ export const MultiFilterContextProvider = ({
 }) => {
   const [state] = useConfiguratorState();
   const activeFilter = getFilterValue(state, dimension);
+
   const allValues = useMemo(() => {
     return dimension.values.map((d) => `${d.value}`) ?? [];
   }, [dimension.values]);
@@ -648,6 +657,7 @@ export const MultiFilterContextProvider = ({
           ? Object.keys(activeFilter.values)
           : []
       : allValues;
+
     return new Set(activeKeys);
   }, [activeFilter, allValues]);
 
@@ -690,10 +700,22 @@ export const useMetaField = ({
   const [, dispatch] = useConfiguratorState();
   const onChange = useCallback<(e: ChangeEvent<HTMLInputElement>) => void>(
     (e) => {
+      let dispatchType: "CHART_META_CHANGE" | "LAYOUT_META_CHANGE";
+
+      switch (type) {
+        case "chart":
+          dispatchType = "CHART_META_CHANGE";
+          break;
+        case "layout":
+          dispatchType = "LAYOUT_META_CHANGE";
+          break;
+        default:
+          const _exhaustiveCheck: never = type;
+          return _exhaustiveCheck;
+      }
+
       dispatch({
-        type: `${
-          type.toUpperCase() as Uppercase<typeof type>
-        }_ANNOTATION_CHANGED`,
+        type: dispatchType,
         value: {
           path: `${metaKey}.${locale}`,
           value: e.currentTarget.value,

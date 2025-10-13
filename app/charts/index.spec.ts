@@ -258,6 +258,7 @@ describe("chart type switch", () => {
       cubes: [
         { iri: "https://environment.ld.admin.ch/foen/ubd0104", filters: {} },
       ],
+      annotations: [],
       limits: {},
       conversionUnitsByComponentId: {},
       meta: {
@@ -313,6 +314,8 @@ describe("chart type switch", () => {
           componentIds: [
             "https://environment.ld.admin.ch/foen/ubd0104/dateofprobing",
           ],
+          defaultValueOverrides: {},
+          filterTypes: {},
         },
         calculation: {
           active: false,
@@ -329,12 +332,12 @@ describe("chart type switch", () => {
       measures: bathingWaterData.data.dataCubeByIri.measures as Measure[],
     });
 
-    expect(newConfig.interactiveFiltersConfig?.dataFilters.active).toEqual(
+    expect(newConfig.interactiveFiltersConfig.dataFilters.active).toEqual(
       false
     );
-    expect(
-      newConfig.interactiveFiltersConfig?.dataFilters.componentIds
-    ).toEqual([]);
+    expect(newConfig.interactiveFiltersConfig.dataFilters.componentIds).toEqual(
+      []
+    );
   });
 
   it("should not carry over not-allowed segment", () => {

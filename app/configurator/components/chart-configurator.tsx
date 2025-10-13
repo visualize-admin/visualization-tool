@@ -59,16 +59,17 @@ import {
 import { getChartConfig, getChartConfigFilters } from "@/config-utils";
 import { ChartAnnotator } from "@/configurator/components/annotators";
 import { FiltersBadge } from "@/configurator/components/badges";
+import { ChartAnnotations } from "@/configurator/components/chart-annotations/chart-annotations";
 import {
   ControlSection,
   ControlSectionContent,
   ControlSectionSkeleton,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { ShowFilterAreaOpen } from "@/configurator/components/chart-controls/show-filter-area-open";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
 import { DatasetsControlSection } from "@/configurator/components/dataset-control-section";
 import {
-  ChartOptionCheckboxField,
   ControlTabField,
   DataFilterSelect,
   DataFilterTemporal,
@@ -592,7 +593,7 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
 }));
 
 const InteractiveDataFilterToggle = ({ id }: { id: string }) => {
-  const { checked, toggle } = useInteractiveDataFilterToggle(id);
+  const { checked, onChange } = useInteractiveDataFilterToggle(id);
 
   return (
     <Switch
@@ -602,7 +603,7 @@ const InteractiveDataFilterToggle = ({ id }: { id: string }) => {
         message: "Interactive",
       })}
       checked={checked}
-      onChange={toggle}
+      onChange={onChange}
     />
   );
 };
@@ -665,8 +666,12 @@ export const ChartConfigurator = ({
   return (
     <InteractiveFiltersChartProvider chartConfigKey={chartConfig.key}>
       <DatasetsControlSection />
-      <ControlSection collapse>
-        <SectionTitle id="controls-design">
+      <ControlSection
+        role="tablist"
+        aria-labelledby="controls-chart-type"
+        collapse
+      >
+        <SectionTitle id="controls-chart-type">
           <Trans id="controls.select.chart.type">Chart Type</Trans>
         </SectionTitle>
         <ControlSectionContent>
@@ -677,16 +682,15 @@ export const ChartConfigurator = ({
           />
         </ControlSectionContent>
       </ControlSection>
-      <ControlSection collapse>
-        <SectionTitle id="controls-design">
+      <ControlSection
+        role="tablist"
+        aria-labelledby="controls-chart-options"
+        collapse
+      >
+        <SectionTitle id="controls-chart-options">
           <Trans id="controls.section.chart.options">Chart Options</Trans>
         </SectionTitle>
-        <ControlSectionContent
-          gap="none"
-          px="none"
-          role="tablist"
-          aria-labelledby="controls-design"
-        >
+        <ControlSectionContent gap="none" px="none" role="tablist">
           <ChartFields
             dataSource={state.dataSource}
             chartConfig={chartConfig}
@@ -734,17 +738,7 @@ export const ChartConfigurator = ({
               </Typography>
             ) : (
               <Box sx={{ my: 2 }}>
-                <ChartOptionCheckboxField
-                  label={t({
-                    id: "controls.section.data.filters.default-open",
-                    message: "Show filter area open",
-                  })}
-                  field={null}
-                  path="interactiveFiltersConfig.dataFilters.defaultOpen"
-                  disabled={
-                    !chartConfig.interactiveFiltersConfig?.dataFilters.active
-                  }
-                />
+                <ShowFilterAreaOpen chartConfig={chartConfig} />
               </Box>
             )}
             {Object.entries(filterDimensionsByCubeIri)
@@ -828,6 +822,7 @@ export const ChartConfigurator = ({
         </ControlSection>
       )}
       <ChartAnnotator />
+      <ChartAnnotations />
       {chartConfig.chartType !== "table" && (
         <InteractiveFiltersConfigurator state={state} />
       )}
@@ -864,7 +859,7 @@ const AddFilterButton = ({ dims }: { dims: Dimension[] }) => {
         onClick={openMenu}
         startIcon={<Icon name="plus" size={20} />}
       >
-        <Trans>Add filter</Trans>
+        <Trans id="controls.add-filter">Add filter</Trans>
       </Button>
       <Menu anchorEl={ref.current} open={isMenuOpen} onClose={closeMenu}>
         {dims.map((dim) => (

@@ -1,18 +1,19 @@
 import { Box } from "@mui/material";
 import { markdown, ReactSpecimen } from "catalog";
 
-import { DatasetResult } from "@/browser/dataset-browse";
+import { DatasetResult } from "@/browse/ui/dataset-result";
 import { ConfiguratorStateProvider } from "@/configurator";
 import { states } from "@/docs/fixtures";
 import { DataCubePublicationStatus } from "@/graphql/query-hooks";
 
-import { Canvas, Meta } from '@storybook/blocks';
+import { Canvas, Meta } from "@storybook/blocks";
 import * as DatasetResultStories from "./dataset-result.stories";
 
 <Meta of={DatasetResultStories} />
 
 ## Dataset result
 
-> Dataset results are shown when selecting a dataset at the beginning of the chart creation process.
+> Dataset results are shown when selecting a dataset at the beginning of the
+> chart creation process.
 
 <Canvas of={DatasetResultStories.DatasetResult} />

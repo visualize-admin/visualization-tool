@@ -93,6 +93,128 @@ export const components: Components = {
       },
     },
   },
+  MuiAutocomplete: {
+    defaultProps: {
+      popupIcon: <Icon name="chevronDown" />,
+    },
+    styleOverrides: {
+      root: {
+        flex: 1,
+        minWidth: 0,
+        padding: 0,
+
+        "&:hover": {
+          "& .MuiAutocomplete-inputRoot": {
+            borderColor: palette.cobalt[500],
+          },
+
+          "& .MuiAutocomplete-endAdornment": {
+            boxShadow: `-1px 0 0 0 ${palette.monochrome[500]}`,
+            backgroundColor: palette.cobalt[50],
+          },
+        },
+      },
+      inputRoot: {
+        flexWrap: "nowrap",
+        overflowX: "hidden",
+        alignItems: "center",
+        minWidth: 0,
+        minHeight: 42,
+        padding: "0 !important",
+        cursor: "pointer",
+      },
+      endAdornment: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 46,
+        height: "100%",
+        right: "0 !important",
+        boxShadow: `-1px 0 0 0 ${palette.monochrome[300]}`,
+        backgroundColor: "#ffffff",
+        transition: "all 0.2s ease",
+      },
+      paper: {
+        borderRadius: 4,
+        boxShadow: shadows[4],
+      },
+      listbox: {
+        width: "auto",
+        padding: "4px 0",
+        cursor: "default",
+
+        "& > .MuiAutocomplete-option": {
+          padding: "10px 16px",
+          transition: "background-color 0.2s ease, color 0.2s ease",
+          backgroundColor: "transparent",
+          color: palette.monochrome[500],
+          ...typography.body3,
+          lineHeight: "1 !important",
+
+          "&:hover": {
+            backgroundColor: `${palette.cobalt[50]} !important`,
+            color: `${palette.monochrome[800]} !important`,
+          },
+        },
+
+        "& > .MuiAutocomplete-option[data-focus='true']": {
+          backgroundColor: palette.cobalt[50],
+          color: palette.monochrome[800],
+        },
+
+        "& > .MuiAutocomplete-option[aria-selected='true'], & > .MuiAutocomplete-option[aria-selected='true'].Mui-focused":
+          {
+            backgroundColor: "transparent",
+            color: palette.monochrome[800],
+          },
+      },
+      // @ts-ignore
+      option: {
+        padding: "10px 16px",
+        transition: "background-color 0.2s ease, color 0.2s ease",
+        backgroundColor: "transparent",
+        color: palette.monochrome[500],
+        ...typography.body3,
+        lineHeight: "1 !important",
+
+        "&:hover": {
+          backgroundColor: `${palette.cobalt[50]} !important`,
+          color: `${palette.monochrome[800]} !important`,
+        },
+
+        "&.Mui-focused, &.MuiAutocomplete-option[data-focus='true']": {
+          backgroundColor: palette.cobalt[50],
+          color: palette.monochrome[800],
+        },
+
+        "&.MuiAutocomplete-option[aria-selected='true']": {
+          backgroundColor: "transparent",
+          color: palette.monochrome[800],
+        },
+      },
+      groupLabel: {
+        ...typography.h6,
+        padding: 12,
+        color: palette.text.primary,
+        lineHeight: 1,
+        fontWeight: 700,
+      },
+      popupIndicator: {
+        width: 46,
+        height: "100%",
+        marginRight: 0,
+        padding: 0,
+        borderRadius: 0,
+        backgroundColor: "transparent !important",
+        color: `${palette.monochrome[800]} !important`,
+        transition: "color 0.2s ease, transform 0.2s ease !important",
+
+        "&.MuiAutocomplete-popupIndicatorOpen": {
+          transform: "rotate(180deg)",
+        },
+      },
+    },
+  },
   MuiBadge: {
     styleOverrides: {
       root: {
@@ -162,7 +284,7 @@ export const components: Components = {
 
         const variant = ownerState.variant ?? "contained";
         const getPaletteColor = (
-          color: "primary" | "secondary" | "red" | "inherit"
+          color: "primary" | "secondary" | "error" | "inherit"
         ) => {
           if (color === "primary") {
             return palette.blue;
@@ -170,6 +292,10 @@ export const components: Components = {
 
           if (color === "secondary") {
             return palette.cobalt;
+          }
+
+          if (color === "error") {
+            return palette.red;
           }
 
           if (color === "inherit") {
@@ -391,21 +517,6 @@ export const components: Components = {
       },
     },
   },
-  MuiMenuItem: {
-    styleOverrides: {
-      // @ts-ignore
-      root: {
-        padding: "10px 16px",
-        color: palette.monochrome[500],
-        ...typography.body3,
-        transition: "background-color 0.2s ease",
-
-        "&:hover": {
-          backgroundColor: palette.cobalt[50],
-        },
-      },
-    },
-  },
   MuiListSubheader: {
     defaultProps: {
       disableGutters: true,
@@ -427,6 +538,21 @@ export const components: Components = {
       paper: {
         borderRadius: 4,
         boxShadow: shadows[4],
+      },
+    },
+  },
+  MuiMenuItem: {
+    styleOverrides: {
+      // @ts-ignore
+      root: {
+        padding: "10px 16px",
+        color: palette.monochrome[500],
+        ...typography.body3,
+        transition: "background-color 0.2s ease",
+
+        "&:hover": {
+          backgroundColor: palette.cobalt[50],
+        },
       },
     },
   },
@@ -463,6 +589,11 @@ export const components: Components = {
       elevation: 0,
     },
   },
+  MuiPopover: {
+    defaultProps: {
+      elevation: 0,
+    },
+  },
   MuiRadio: {
     defaultProps: {
       icon: <RadioIcon />,
@@ -491,7 +622,9 @@ export const components: Components = {
   MuiSelect: {
     defaultProps: {
       size: "md",
-      notched: false,
+      // MUI types are not correct here - browser is not happy with
+      // a boolean passed to DOM.
+      notched: "false" as any,
       MenuProps: {
         slotProps: {
           paper: {

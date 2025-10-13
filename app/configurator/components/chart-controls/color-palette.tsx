@@ -242,20 +242,16 @@ export const ColorPalette = ({
             return (
               <Flex gap={0.5} flexWrap="wrap">
                 {currentPalette
-                  ? currentPalette.colors.map((color) => (
-                      <ColorSquare
-                        key={color}
-                        color={color}
-                        disabled={disabled}
-                      />
+                  ? currentPalette.colors.map((color, i) => (
+                      <ColorSquare key={i} color={color} disabled={disabled} />
                     ))
                   : customColorPalettes
                       ?.find(
                         (palette) => palette.paletteId === currentPaletteName
                       )
-                      ?.colors.map((color) => (
+                      ?.colors.map((color, i) => (
                         <ColorSquare
-                          key={color}
+                          key={i}
                           color={color}
                           disabled={disabled}
                         />

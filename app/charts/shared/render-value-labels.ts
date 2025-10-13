@@ -123,7 +123,6 @@ export const setSegmentWrapperValueLabelProps = <
   g: Selection<BaseType, T, SVGGElement, null>
 ) => {
   return g
-    .attr(DISABLE_SCREENSHOT_COLOR_WIPE_KEY, true)
     .style("display", "flex")
     .style("justify-content", "center")
     .style("align-items", "center")
@@ -138,6 +137,7 @@ export const setSegmentValueLabelProps = <
   g: Selection<BaseType, T, SVGGElement, null>
 ) => {
   return g
+    .attr(DISABLE_SCREENSHOT_COLOR_WIPE_KEY, true)
     .style("overflow", "hidden")
     .style("font-size", "12px")
     .style("white-space", "nowrap")

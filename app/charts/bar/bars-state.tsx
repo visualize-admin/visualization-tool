@@ -21,6 +21,11 @@ import {
   PADDING_INNER,
   PADDING_OUTER,
 } from "@/charts/bar/constants";
+import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/annotation-circle";
+import {
+  ANNOTATION_SINGLE_SEGMENT_OFFSET,
+  GetAnnotationInfo,
+} from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -69,7 +74,9 @@ export type BarsState = CommonChartState &
     yScaleInteraction: ScaleBand<string>;
     yScale: ScaleBand<string>;
     minY: string;
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getAnnotationInfo: GetAnnotationInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
+    segments: string[];
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     leftAxisLabelSize: AxisLabelSizeVariables;
@@ -295,19 +302,47 @@ const useBarsState = (
 
   const isMobile = useIsMobile();
 
-  const maybeFormatDate = useCallback(
+  const formatYAxisTick = useCallback(
     (tick: string) => {
-      return isTemporalDimension(yDimension) ? formatYDate(tick) : tick;
+      return isTemporalDimension(yDimension)
+        ? formatYDate(tick)
+        : getYLabel(tick);
     },
-    [yDimension, formatYDate]
+    [yDimension, formatYDate, getYLabel]
   );
 
-  // Tooltip
-  const getAnnotationInfo = (d: Observation): TooltipInfo => {
-    const yAnchor = (yScale(getY(d)) as number) + yScale.bandwidth() * 0.5;
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation) => {
+      const hasValueLabels = showValuesVariables.showValues;
+      const xOffset = hasValueLabels ? xValueLabelsOffset + 8 : 0;
+      const x =
+        xScale(Math.max(getX(observation) ?? NaN, 0)) +
+        ANNOTATION_SINGLE_SEGMENT_OFFSET +
+        xOffset;
+      const y =
+        (yScale(getY(observation)) as number) + yScale.bandwidth() * 0.5;
+
+      return {
+        x,
+        y,
+        color: DEFAULT_ANNOTATION_CIRCLE_COLOR,
+      };
+    },
+    [
+      showValuesVariables.showValues,
+      xValueLabelsOffset,
+      xScale,
+      getX,
+      yScale,
+      getY,
+    ]
+  );
+
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
+    const yAnchor = (yScale(getY(datum)) as number) + yScale.bandwidth() * 0.5;
     const xAnchor = isMobile
       ? chartHeight
-      : xScale(Math.max(getX(d) ?? NaN, 0));
+      : xScale(Math.max(getX(datum) ?? NaN, 0));
     const placement = isMobile
       ? MOBILE_TOOLTIP_PLACEMENT
       : getCenteredTooltipPlacement({
@@ -316,7 +351,7 @@ const useBarsState = (
           topAnchor: !fields.segment,
         });
 
-    const yLabel = getYAbbreviationOrLabel(d);
+    const yLabel = getYAbbreviationOrLabel(datum);
 
     const xValueFormatter = (value: number | null) =>
       formatNumberWithUnit(
@@ -325,24 +360,25 @@ const useBarsState = (
         xMeasure.unit
       );
 
-    const x = getX(d);
+    const x = getX(datum);
 
     return {
       xAnchor,
       yAnchor,
       placement,
-      value: maybeFormatDate(yLabel),
+      value: formatYAxisTick(yLabel),
       datum: {
         label: undefined,
-        value: x !== null && isNaN(x) ? "-" : `${xValueFormatter(getX(d))}`,
-        error: getFormattedXUncertainty(d),
+        value: x !== null && isNaN(x) ? "-" : `${xValueFormatter(getX(datum))}`,
+        error: getFormattedXUncertainty(datum),
         color: "",
       },
       values: undefined,
     };
   };
 
-  const { colors } = useMemo(() => {
+  const { segments, colors } = useMemo(() => {
+    const segments: string[] = [];
     const colors = scaleOrdinal<string, string>();
 
     colors.range(
@@ -352,7 +388,10 @@ const useBarsState = (
       })
     );
 
-    return { colors };
+    return {
+      segments,
+      colors,
+    };
   }, [fields.color]);
 
   return {
@@ -369,12 +408,14 @@ const useBarsState = (
     yScaleInteraction,
     yScale,
     getAnnotationInfo,
+    getTooltipInfo,
     getColorLabel: getSegmentLabel,
+    segments,
     colors,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
-    formatYAxisTick: maybeFormatDate,
+    formatYAxisTick,
     ...showValuesVariables,
     ...variables,
   };

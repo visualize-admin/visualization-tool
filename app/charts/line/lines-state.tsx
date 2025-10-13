@@ -9,13 +9,15 @@ import {
 } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import orderBy from "lodash/orderBy";
-import { PropsWithChildren, useMemo } from "react";
+import { PropsWithChildren, useCallback, useMemo } from "react";
 
 import {
   LinesStateVariables,
   useLinesStateData,
   useLinesStateVariables,
 } from "@/charts/line/lines-state-props";
+import { DEFAULT_ANNOTATION_CIRCLE_COLOR } from "@/charts/shared/annotation-circle";
+import { GetAnnotationInfo } from "@/charts/shared/annotations";
 import {
   AxisLabelSizeVariables,
   getChartWidth,
@@ -30,7 +32,7 @@ import {
   CommonChartState,
   InteractiveXTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -74,7 +76,8 @@ export type LinesState = CommonChartState &
     grouped: Map<string, Observation[]>;
     chartWideData: ArrayLike<Observation>;
     xKey: string;
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getAnnotationInfo: GetAnnotationInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -307,8 +310,21 @@ const useLinesState = (
 
   const isMobile = useIsMobile();
 
-  // Tooltip
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
+  const getAnnotationInfo: GetAnnotationInfo = useCallback(
+    (observation) => {
+      const x = xScale(getX(observation));
+      const y = yScale(getY(observation) ?? 0);
+
+      return {
+        x,
+        y,
+        color: DEFAULT_ANNOTATION_CIRCLE_COLOR,
+      };
+    },
+    [getX, getY, xScale, yScale]
+  );
+
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const x = getX(datum);
     const tooltipValues = chartData.filter(
       (d) => getX(d).getTime() === x.getTime()
@@ -348,16 +364,21 @@ const useLinesState = (
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: yValueFormatter(getY(datum)),
         error: getFormattedYUncertainty(datum),
-        color: colors(getSegment(datum)) as string,
+        color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map((td) => ({
-        hide: getY(td) === null,
-        label: getSegmentAbbreviationOrLabel(td),
-        value: yValueFormatter(getY(td)),
-        color: colors(getSegment(td)) as string,
-        yPos: yScale(getY(td) ?? 0),
-        symbol: "line",
-      })),
+      values: sortedTooltipValues.map((d) => {
+        const segment = getSegment(d);
+
+        return {
+          hide: getY(d) === null,
+          label: getSegmentAbbreviationOrLabel(d),
+          value: yValueFormatter(getY(d)),
+          axis: "y",
+          axisOffset: yScale(getY(d) ?? 0),
+          symbol: "line",
+          color: colors(segment),
+        } satisfies TooltipValue;
+      }),
     };
   };
 
@@ -376,6 +397,7 @@ const useLinesState = (
     chartWideData,
     xKey,
     getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,

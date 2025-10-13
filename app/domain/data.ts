@@ -65,10 +65,10 @@ export type DataCubeMetadata = {
   publicationStatus: DataCubePublicationStatus;
   themes?: DataCubeTheme[];
   creator?: DataCubeOrganization;
-  contactPoint?: {
+  contactPoints?: {
     name?: string;
     email?: string;
-  };
+  }[];
   publisher?: string;
   landingPage?: string;
   expires?: string;
@@ -641,6 +641,21 @@ export const canDimensionBeTimeFiltered = (
   dimension?: Component | null
 ): dimension is TemporalDimension | TemporalEntityDimension => {
   return isTemporalDimension(dimension) || isTemporalEntityDimension(dimension);
+};
+
+export const canDimensionBeMultiFiltered = (
+  dimension?: Component | null
+): dimension is
+  | NominalDimension
+  | OrdinalDimension
+  | TemporalOrdinalDimension => {
+  return (
+    isNominalDimension(dimension) ||
+    isOrdinalDimension(dimension) ||
+    isTemporalOrdinalDimension(dimension) ||
+    isGeoShapesDimension(dimension) ||
+    isGeoCoordinatesDimension(dimension)
+  );
 };
 
 export const isTemporalOrdinalDimension = (

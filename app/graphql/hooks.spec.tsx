@@ -17,6 +17,7 @@ import {
 import { useDataCubesComponentsQueryVariables } from "@/graphql/hooks.mock";
 import { ComponentId } from "@/graphql/make-component-id";
 import { Response } from "@/test/utils";
+import { sleep } from "@/utils/sleep";
 
 afterEach(() => {
   cleanup();
@@ -65,8 +66,6 @@ describe("makeUseQuery", () => {
       <TestComponent variables={{ cubeIri: "example1" }} />
     );
 
-    expect(getByTestId("result").innerHTML).toContain("loading");
-
     await waitFor(() =>
       expect(getByTestId("result").innerHTML).toEqual("mock data")
     );
@@ -83,8 +82,6 @@ describe("makeUseQuery", () => {
     const { getByTestId, rerender } = render(
       <TestComponent variables={{ cubeIri: "example1" }} />
     );
-
-    expect(getByTestId("result").innerHTML).toContain("loading");
 
     await waitFor(() =>
       expect(getByTestId("result").innerHTML).toEqual("mock data")
@@ -109,9 +106,6 @@ describe("makeUseQuery", () => {
     expect(getByTestId("result").innerHTML).toContain("mock data");
   });
 });
-
-const sleep = (duration: number) =>
-  new Promise((resolve) => setTimeout(resolve, duration));
 
 describe("useComponentsQuery - keepPreviousData", () => {
   let originalFetch = global.fetch;

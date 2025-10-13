@@ -35,7 +35,7 @@ import {
   CommonChartState,
   InteractiveYTimeRangeState,
 } from "@/charts/shared/chart-state";
-import { TooltipInfo } from "@/charts/shared/interaction/tooltip";
+import { TooltipInfo, TooltipValue } from "@/charts/shared/interaction/tooltip";
 import {
   getCenteredTooltipPlacement,
   MOBILE_TOOLTIP_PLACEMENT,
@@ -69,7 +69,7 @@ export type GroupedBarsState = CommonChartState &
     colors: ScaleOrdinal<string, string>;
     getColorLabel: (segment: string) => string;
     grouped: [string, Observation[]][];
-    getAnnotationInfo: (d: Observation) => TooltipInfo;
+    getTooltipInfo: (d: Observation) => TooltipInfo;
     leftAxisLabelSize: AxisLabelSizeVariables;
     leftAxisLabelOffsetTop: number;
     bottomAxisLabelSize: AxisLabelSizeVariables;
@@ -394,15 +394,16 @@ const useBarsGroupedState = (
 
   const isMobile = useIsMobile();
 
-  const maybeFormatDate = useCallback(
+  const formatYAxisTick = useCallback(
     (tick: string) => {
-      return isTemporalDimension(yDimension) ? formatYDate(tick) : tick;
+      return isTemporalDimension(yDimension)
+        ? formatYDate(tick)
+        : getYLabel(tick);
     },
-    [yDimension, formatYDate]
+    [yDimension, formatYDate, getYLabel]
   );
 
-  // Tooltip
-  const getAnnotationInfo = (datum: Observation): TooltipInfo => {
+  const getTooltipInfo = (datum: Observation): TooltipInfo => {
     const bw = yScale.bandwidth();
     const y = getY(datum);
 
@@ -439,21 +440,25 @@ const useBarsGroupedState = (
       yAnchor: yAnchorRaw + (placement.y === "bottom" ? 0.5 : -0.5) * bw,
       xAnchor,
       placement,
-      value: maybeFormatDate(yLabel),
+      value: formatYAxisTick(yLabel),
       datum: {
         label: fields.segment && getSegmentAbbreviationOrLabel(datum),
         value: xValueFormatter(getX(datum)),
         error: getFormattedXUncertainty(datum),
-        color: colors(getSegment(datum)) as string,
+        color: colors(getSegment(datum)),
       },
-      values: sortedTooltipValues.map((td) => ({
-        label: getSegmentAbbreviationOrLabel(td),
-        value: xMeasure.unit
-          ? `${formatNumber(getX(td))} ${xMeasure.unit}`
-          : formatNumber(getX(td)),
-        error: getFormattedXUncertainty(td),
-        color: colors(getSegment(td)) as string,
-      })),
+      values: sortedTooltipValues.map((d) => {
+        const segment = getSegment(d);
+
+        return {
+          label: getSegmentAbbreviationOrLabel(d),
+          value: xMeasure.unit
+            ? `${formatNumber(getX(d))} ${xMeasure.unit}`
+            : formatNumber(getX(d)),
+          error: getFormattedXUncertainty(d),
+          color: colors(segment),
+        } satisfies TooltipValue;
+      }),
     };
   };
 
@@ -471,11 +476,11 @@ const useBarsGroupedState = (
     colors,
     getColorLabel: getSegmentLabel,
     grouped,
-    getAnnotationInfo,
+    getTooltipInfo,
     leftAxisLabelSize,
     leftAxisLabelOffsetTop: top,
     bottomAxisLabelSize,
-    formatYAxisTick: maybeFormatDate,
+    formatYAxisTick,
     ...variables,
   };
 };

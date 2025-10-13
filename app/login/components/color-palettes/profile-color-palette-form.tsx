@@ -283,7 +283,9 @@ const ColorPaletteTypeSelector = ({
   return (
     <Box sx={{ fontSize: "1rem", pb: 2 }}>
       <Typography variant="caption" component="p" sx={{ mb: 2 }}>
-        <Trans id="controls.custom-color-palettes.type" />
+        <Trans id="controls.custom-color-palettes.type">
+          Select a color palette type
+        </Trans>
       </Typography>
       <RadioGroup>
         {types.map((type) => {

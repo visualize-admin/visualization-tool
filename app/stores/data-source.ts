@@ -7,7 +7,7 @@ import {
   parseSourceByLabel,
   sourceToLabel,
 } from "@/domain/data-source";
-import { isRunningInBrowser } from "@/utils/is-running-in-browser";
+import { maybeWindow } from "@/utils/maybe-window";
 import { getURLParam, setURLParam } from "@/utils/router/helpers";
 
 type DataSourceStore = {
@@ -18,14 +18,22 @@ type DataSourceStore = {
 const PARAM_KEY = "dataSource";
 
 const saveToLocalStorage = (value: DataSource) => {
-  localStorage.setItem(PARAM_KEY, sourceToLabel(value));
+  try {
+    localStorage.setItem(PARAM_KEY, sourceToLabel(value));
+  } catch (error) {
+    console.error("Error saving data source to localStorage", error);
+  }
 };
 
 export const getDataSourceFromLocalStorage = () => {
-  const dataSourceLabel = localStorage.getItem(PARAM_KEY);
+  try {
+    const dataSourceLabel = localStorage.getItem(PARAM_KEY);
 
-  if (dataSourceLabel) {
-    return parseSourceByLabel(dataSourceLabel);
+    if (dataSourceLabel) {
+      return parseSourceByLabel(dataSourceLabel);
+    }
+  } catch (error) {
+    console.error("Error getting data source from localStorage", error);
   }
 };
 
@@ -56,11 +64,12 @@ const dataSourceStoreMiddleware =
     get: StoreApi<DataSourceStore>["getState"],
     api: StoreApi<DataSourceStore>
   ) => {
+    const window = maybeWindow();
     const state = config(
       (payload: DataSourceStore) => {
         set(payload);
 
-        if (isRunningInBrowser()) {
+        if (window) {
           saveToLocalStorage(payload.dataSource);
           saveToURL(payload.dataSource);
         }
@@ -72,7 +81,7 @@ const dataSourceStoreMiddleware =
 
     let dataSource = DEFAULT_DATA_SOURCE;
 
-    if (isRunningInBrowser()) {
+    if (window) {
       const urlDataSourceLabel = getURLParam(PARAM_KEY);
       const urlDataSource = urlDataSourceLabel
         ? parseSourceByLabel(urlDataSourceLabel)

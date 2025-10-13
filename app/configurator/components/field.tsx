@@ -51,10 +51,6 @@ import {
 } from "@/configurator/components/field-date-picker";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
 import {
-  getTimeIntervalFormattedSelectOptions,
-  getTimeIntervalWithProps,
-} from "@/configurator/components/ui-helpers";
-import {
   isMultiFilterFieldChecked,
   Option,
   useActiveChartField,
@@ -88,10 +84,9 @@ import {
   VISUALIZE_MOST_RECENT_VALUE,
 } from "@/domain/most-recent-value";
 import { useTimeFormatLocale } from "@/formatters";
-import { TimeUnit } from "@/graphql/query-hooks";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
-import { getPalette } from "@/palettes";
+import { ColorItem, getPalette } from "@/palettes";
 import { assert } from "@/utils/assert";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
@@ -202,8 +197,8 @@ export const DataFilterSelect = ({
 }) => {
   const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
   const noneLabel = t({
-    id: "controls.dimensionvalue.none",
-    message: "No Filter",
+    id: "controls.dimensionvalue.select",
+    message: "Select filter",
   });
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(dimension);
@@ -258,7 +253,10 @@ export const DataFilterSelect = ({
         open={isOpen}
         disabled={disabled}
         sideControls={sideControls}
-        {...fieldProps}
+        value={fieldProps.value}
+        onChange={(e) => {
+          fieldProps.onChange({ target: { value: e.target.value as string } });
+        }}
       />
     );
   }
@@ -275,26 +273,42 @@ export const DataFilterSelect = ({
       size="sm"
       label={
         canUseMostRecentValue ? (
-          <Switch
-            label={label}
-            checked={usesMostRecentValue}
-            onChange={() =>
-              fieldProps.onChange({
-                target: {
-                  value: usesMostRecentValue
-                    ? `${maxValue}`
-                    : VISUALIZE_MOST_RECENT_VALUE,
-                },
-              })
-            }
-          />
+          <div style={{ width: "100%" }}>
+            <Flex justifyContent="flex-end" sx={{ mb: 0.5, mr: 7 }}>
+              <Switch
+                label={t({
+                  id: "controls.filter.use-most-recent",
+                  message: "Use most recent",
+                })}
+                size="sm"
+                checked={usesMostRecentValue}
+                onChange={() =>
+                  fieldProps.onChange({
+                    target: {
+                      value: usesMostRecentValue
+                        ? `${maxValue}`
+                        : VISUALIZE_MOST_RECENT_VALUE,
+                    },
+                  })
+                }
+              />
+            </Flex>
+            <Flex
+              justifyContent="space-between"
+              alignItems="center"
+              gap={1}
+              width="100%"
+            >
+              {label}
+            </Flex>
+          </div>
         ) : (
           <FieldLabel label={label} />
         )
       }
       disabled={disabled || usesMostRecentValue}
       options={allValues}
-      sortOptions={false}
+      sort={false}
       sideControls={sideControls}
       open={isOpen}
       onClose={handleClose}
@@ -411,71 +425,6 @@ export const DataFilterTemporal = ({
         />
       </Box>
     </>
-  );
-};
-
-export const DataFilterSelectTime = ({
-  dimension,
-  label,
-  from,
-  to,
-  timeUnit,
-  timeFormat,
-  id,
-  disabled,
-}: {
-  dimension: Dimension;
-  label: ReactNode;
-  from: string;
-  to: string;
-  timeUnit: TimeUnit;
-  timeFormat: string;
-  id: string;
-  disabled?: boolean;
-}) => {
-  const fieldProps = useSingleFilterSelect(dimensionToFieldProps(dimension));
-  const formatLocale = useTimeFormatLocale();
-
-  const timeIntervalWithProps = useMemo(() => {
-    return getTimeIntervalWithProps(
-      from,
-      to,
-      timeUnit,
-      timeFormat,
-      formatLocale
-    );
-  }, [from, to, timeUnit, timeFormat, formatLocale]);
-
-  const options = useMemo(() => {
-    return timeIntervalWithProps.range > 100
-      ? []
-      : getTimeIntervalFormattedSelectOptions(timeIntervalWithProps);
-  }, [timeIntervalWithProps]);
-
-  if (options.length) {
-    return (
-      <Select
-        id={id}
-        size="sm"
-        label={label}
-        disabled={disabled}
-        options={options}
-        sortOptions={false}
-        {...fieldProps}
-      />
-    );
-  }
-
-  return (
-    <TimeInput
-      id={id}
-      label={label}
-      value={fieldProps.value}
-      timeFormat={timeFormat}
-      formatLocale={formatLocale}
-      isOptional={false}
-      onChange={fieldProps.onChange}
-    />
   );
 };
 
@@ -808,6 +757,39 @@ export const SingleFilterField = ({
   return <Radio label={label} disabled={disabled} {...field} />;
 };
 
+export const ColorPicker = ({
+  label,
+  color,
+  symbol,
+  colors,
+  onChange,
+  disabled,
+}: {
+  label: string;
+  color: string;
+  symbol: LegendSymbol;
+  colors?: ColorItem[] | readonly string[];
+  onChange: (color: string) => void;
+  disabled?: boolean;
+}) => {
+  return (
+    <Flex
+      justifyContent="space-between"
+      alignItems="center"
+      gap={2}
+      width="100%"
+    >
+      <LegendItem label={label} color={color} symbol={symbol} />
+      <ColorPickerMenu
+        colors={colors}
+        selectedHexColor={color}
+        onChange={onChange}
+        disabled={disabled}
+      />
+    </Flex>
+  );
+};
+
 export const ColorPickerField = ({
   symbol = "square",
   field,
@@ -851,22 +833,14 @@ export const ColorPickerField = ({
   });
 
   return (
-    <Flex
-      sx={{
-        justifyContent: "space-between",
-        alignItems: "center",
-        width: "100%",
-        gap: 2,
-      }}
-    >
-      <LegendItem label={label} color={color} symbol={symbol} />
-      <ColorPickerMenu
-        colors={palette}
-        selectedHexColor={color}
-        onChange={updateColor}
-        disabled={disabled}
-      />
-    </Flex>
+    <ColorPicker
+      label={label}
+      color={color}
+      symbol={symbol}
+      colors={palette}
+      onChange={updateColor}
+      disabled={disabled}
+    />
   );
 };
 

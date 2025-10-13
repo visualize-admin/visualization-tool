@@ -332,13 +332,14 @@ const LegendColorContent = ({
     >
       {groups
         ? groups.map(([g, colorValues], i) => {
+            const key = g.map((n) => n.label).join(" > ");
             const isLastGroup = i === groups.length - 1;
             const headerLabelsArray = g.map((d) => d.label);
 
             return (
               <div
+                key={key}
                 className={classes.legendGroup}
-                key={g.map((n) => n.label).join(" > ")}
                 data-testid="colorLegend"
               >
                 {headerLabelsArray.length > 0 ? (
@@ -357,12 +358,13 @@ const LegendColorContent = ({
                   </Typography>
                 ) : null}
                 {colorValues.map((value, i) => {
+                  const key = `${value}-${i}`;
                   const label = getLabel(value);
                   const active = !activeInteractiveFilters.has(label);
 
                   return (
                     <LegendItem
-                      key={value + i}
+                      key={key}
                       label={label}
                       color={getColor(value)}
                       dimension={getItemDimension?.(label)}

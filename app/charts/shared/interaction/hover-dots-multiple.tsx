@@ -1,6 +1,5 @@
-import { Box, Theme } from "@mui/material";
+import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { Fragment } from "react";
 
 import { ComboLineSingleState } from "@/charts/combo/combo-line-single-state";
 import { LinesState } from "@/charts/line/lines-state";
@@ -9,11 +8,15 @@ import { useInteraction } from "@/charts/shared/use-interaction";
 import { Observation } from "@/domain/data";
 
 export const HoverDotMultiple = () => {
-  const [state] = useInteraction();
+  const [{ type, visible, observation }] = useInteraction();
 
-  const { visible, d } = state.interaction;
-
-  return <>{visible && d && <HoverDots d={d} />}</>;
+  return (
+    <>
+      {type === "tooltip" && visible && observation && (
+        <HoverDots d={observation} />
+      )}
+    </>
+  );
 };
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -31,32 +34,32 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const HoverDots = ({ d }: { d: Observation }) => {
-  const { getAnnotationInfo, bounds } = useChartState() as
-    | LinesState
-    | ComboLineSingleState;
-  const { xAnchor, values } = getAnnotationInfo(d);
+  const {
+    getTooltipInfo,
+    bounds: { margins },
+  } = useChartState() as LinesState | ComboLineSingleState;
   const classes = useStyles();
+  const { xAnchor, values } = getTooltipInfo(d);
 
   return (
     <>
       {values &&
-        values.map((value, i) => (
-          <Fragment key={i}>
-            {!value.hide && (
-              <Box
+        values.map(
+          (value, i) =>
+            !value.hide &&
+            value.axis === "y" &&
+            value.axisOffset !== undefined && (
+              <div
+                key={i}
+                className={classes.dot}
                 style={{
                   backgroundColor: value.color,
-                  left: xAnchor + bounds.margins.left,
-                  top:
-                    value.yPos! +
-                    bounds.margins.top +
-                    (bounds.yAxisTitleHeight || 0),
+                  left: xAnchor + margins.left,
+                  top: value.axisOffset + margins.top,
                 }}
-                className={classes.dot}
               />
-            )}
-          </Fragment>
-        ))}
+            )
+        )}
     </>
   );
 };

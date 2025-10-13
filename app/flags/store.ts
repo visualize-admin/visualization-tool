@@ -24,8 +24,12 @@ export class FlagStore {
     this.longTermStore = null;
     this.ee = mitt();
 
-    if (typeof localStorage !== "undefined") {
-      this.longTermStore = localStorageAdapter;
+    try {
+      if (typeof localStorage !== "undefined") {
+        this.longTermStore = localStorageAdapter;
+      }
+    } catch (error) {
+      console.error("Error initializing flag store", error);
     }
 
     this.restore();

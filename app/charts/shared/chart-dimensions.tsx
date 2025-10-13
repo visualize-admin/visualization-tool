@@ -2,10 +2,6 @@ import { max } from "d3-array";
 import { ScaleBand, ScaleLinear } from "d3-scale";
 import { useMemo } from "react";
 
-import {
-  getAxisTitleSize,
-  SINGLE_LINE_AXIS_LABEL_HEIGHT,
-} from "@/charts/combo/shared";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import { BRUSH_BOTTOM_SPACE } from "@/charts/shared/brush/constants";
 import { getTickNumber } from "@/charts/shared/ticks";
@@ -54,7 +50,7 @@ const computeChartPadding = ({
   // with decimals have greater text length than the extremes.
   const fakeTicks = yScale.ticks(getTickNumber(height));
   const minLeftTickWidth =
-    !!interactiveFiltersConfig?.calculation.active || normalize
+    interactiveFiltersConfig.calculation.active || normalize
       ? getTextWidth("100%", { fontSize: TICK_FONT_SIZE }) + TICK_PADDING
       : 0;
   const left = Math.max(
@@ -68,7 +64,7 @@ const computeChartPadding = ({
 
   const interactiveBottomElement =
     !dashboardFilters?.timeRange.active &&
-    !!interactiveFiltersConfig?.timeRange.active;
+    interactiveFiltersConfig.timeRange.active;
 
   let bottom = isFlipped
     ? 15 // Eyeballed value
@@ -80,7 +76,7 @@ const computeChartPadding = ({
       70;
   }
 
-  const top = interactiveFiltersConfig?.calculation.active ? 24 : 0;
+  const top = interactiveFiltersConfig.calculation.active ? 24 : 0;
 
   return isFlipped
     ? {
@@ -143,11 +139,6 @@ export const useChartPadding = (props: ComputeChartPaddingProps) => {
 
 const ASPECT_RATIO = 2 / 5;
 
-type YAxisLabels = {
-  leftLabel?: string;
-  rightLabel?: string;
-};
-
 type ChartWidth = number & { __chartWidth: true };
 
 export const getChartWidth = ({
@@ -167,45 +158,14 @@ export const useChartBounds = ({
   chartWidth,
   height,
   margins,
-  yAxisLabels,
 }: {
   width: number;
   chartWidth: ChartWidth;
   height: number;
   margins: Margins;
-  yAxisLabels?: YAxisLabels;
-}): Bounds & { yAxisTitleHeight: number } => {
+}): Bounds => {
   const [state] = useConfiguratorState(hasChartConfigs);
   const { top, bottom } = margins;
-  const { axisLabelFontSize } = useChartTheme();
-  const yAxisTitleHeight = useMemo(() => {
-    const leftAxisTitle = yAxisLabels?.leftLabel;
-    const rightAxisTitle = yAxisLabels?.rightLabel;
-
-    if (!leftAxisTitle && !rightAxisTitle) {
-      return 0;
-    }
-
-    const leftAxisTitleSize = getAxisTitleSize(leftAxisTitle ?? "", {
-      width: chartWidth,
-      fontSize: axisLabelFontSize,
-    });
-    const rightAxisTitleSize = getAxisTitleSize(rightAxisTitle ?? "", {
-      width: chartWidth,
-      fontSize: axisLabelFontSize,
-    });
-
-    return (
-      Math.max(leftAxisTitleSize.height, rightAxisTitleSize.height) -
-      SINGLE_LINE_AXIS_LABEL_HEIGHT
-    );
-  }, [
-    axisLabelFontSize,
-    chartWidth,
-    yAxisLabels?.leftLabel,
-    yAxisLabels?.rightLabel,
-  ]);
-
   const chartHeight = isLayoutingFreeCanvas(state)
     ? Math.max(
         Math.max(40, CHART_GRID_MIN_HEIGHT - top - bottom),
@@ -220,7 +180,6 @@ export const useChartBounds = ({
     margins,
     chartWidth,
     chartHeight,
-    yAxisTitleHeight,
   };
 };
 

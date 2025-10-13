@@ -12,12 +12,12 @@ import {
 } from "react";
 import { useStore } from "zustand";
 
-import { ChartDataTablePreview } from "@/browse/chart-data-table-preview";
 import { extractChartConfigsComponentIds } from "@/charts/shared/chart-helpers";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { isUsingImputation } from "@/charts/shared/imputation";
 import { CHART_RESIZE_EVENT_TYPE } from "@/charts/shared/use-size";
 import { ActionElementsContainer } from "@/components/action-elements-container";
+import { ChartDataTablePreview } from "@/components/chart-data-table-preview/ui";
 import { ChartErrorBoundary } from "@/components/chart-error-boundary";
 import { ChartFootnotes, VisualizeLink } from "@/components/chart-footnotes";
 import { ChartPanelLayout, ChartWrapper } from "@/components/chart-panel";
@@ -124,10 +124,12 @@ export const ChartPublished = ({
   configKey,
   embedParams,
   shouldShrink,
+  isPreview,
 }: {
   configKey?: string;
   embedParams?: EmbedQueryParams;
   shouldShrink?: boolean;
+  isPreview?: boolean;
 }) => {
   const [state] = useConfiguratorState(isPublished);
   const { dataSource } = state;
@@ -234,6 +236,7 @@ export const ChartPublished = ({
                     metadataPanelStore={metadataPanelStore}
                     embedParams={embedParams}
                     shouldShrink={shouldShrink}
+                    isPreview={isPreview}
                   />
                 </ChartWrapper>
               </ChartTablePreviewProvider>
@@ -285,6 +288,7 @@ type ChartPublishInnerProps = {
   metadataPanelStore: ReturnType<typeof createMetadataPanelStore>;
   embedParams?: EmbedQueryParams;
   shouldShrink?: boolean;
+  isPreview?: boolean;
 };
 
 const ChartPublishedInnerImpl = ({
@@ -297,6 +301,7 @@ const ChartPublishedInnerImpl = ({
   metadataPanelStore,
   embedParams,
   shouldShrink: _shouldShrink,
+  isPreview,
 }: ChartPublishInnerProps) => {
   const { meta } = chartConfig;
   const rootRef = useRef<HTMLDivElement>(null);
@@ -448,6 +453,7 @@ const ChartPublishedInnerImpl = ({
                     chartKey={chartConfig.key}
                     chartWrapperNode={rootRef.current}
                     components={allComponents}
+                    disableDatabaseRelatedActions={isPreview}
                   />
                 </ActionElementsContainer>
               )}

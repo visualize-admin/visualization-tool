@@ -22,7 +22,7 @@ declare module "@mui/material/Button" {
     inherit: true;
 
     success: false;
-    error: false;
+    error: true;
     info: false;
     warning: false;
   }

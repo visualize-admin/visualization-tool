@@ -13,22 +13,77 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: app/configurator/components/chart-configurator.tsx
-msgid "Add filter"
-msgstr "Filter hinzufügen"
+#: app/components/chart-footnotes.tsx
+#: app/components/chart-published.tsx
+#: app/components/chart-shared.tsx
+msgid "metadata.link.created.with"
+msgstr "Erstellt mit"
 
 #: app/components/move-drag-button.tsx
 msgid "Drag filters to reorganize"
 msgstr "Ziehen Sie die Filter per Drag & Drop, um sie neu zu organisieren"
 
-#: app/browser/dataset-browse.tsx
-#: app/components/select-tree.tsx
-msgid "No results"
-msgstr "Kein Ergebnis"
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
+msgid "dataset.search.search-options.no-options-selected"
+msgstr "Keine Optionen ausgewählt"
+
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.title"
+msgstr "Palettentitel (erforderlich)"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-total-values"
+msgstr "Immer Gesamtwerte anzeigen"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-standard-error"
+msgstr "Standardfehler anzeigen"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-confidence-interval"
+msgstr "Konfidenzintervall anzeigen"
+
+#: app/configurator/components/chart-options-selector/show-dots-field.tsx
+msgid "controls.section.show-dots"
+msgstr "Datenpunkte anzeigen"
+
+#: app/configurator/components/filters.tsx
+msgid "select.controls.filters.search"
+msgstr "Suche"
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.categorical-contrast-warning"
+msgstr "Die gewählte Farbe ist auf weissem Hintergrund schwer lesbar. Wählen Sie eine Farbe mit stärkerem Kontrast, um die Barrierefreiheit zu verbessern."
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.sequential-contrast-warning"
+msgstr "Die gewählte Farbe weist zu wenig Kontrast auf. Wählen Sie eine dunklere Farbe für die sequenzielle Palette."
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.diverging-contrast-warning"
+msgstr "Die gewählte Farbe weist zu wenig Kontrast auf. Verwenden Sie stattdessen eine dunklere Farbe für die divergierende Farbpalette."
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.sequential"
+msgstr "Sequentiell"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.diverging"
+msgstr "Divergierend"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.categorical"
+msgstr "Kategorisch"
+
+#: app/configurator/components/chart-options-selector/imputation-field.tsx
+#: app/configurator/components/field-i18n.ts
+msgid "controls.imputation.type.none"
+msgstr "-"
 
 #: app/configurator/components/annotators.tsx
-msgid "annotation.add.description"
-msgstr "[ Ohne Beschreibung ]"
+msgid "annotator.add.description"
+msgstr "[ Beschreibung hinzufügen ]"
 
 #: app/components/text-block.tsx
 msgid "annotation.add.text"
@@ -36,198 +91,58 @@ msgstr "[ Text hinzufügen ]"
 
 #: app/configurator/components/annotators.tsx
 #: app/login/components/profile-tables.tsx
-msgid "annotation.add.title"
-msgstr "[ Ohne Titel ]"
-
-#: app/components/dashboard-shared.tsx
-msgid "block-controls.delete"
-msgstr "Löschen"
-
-#: app/components/dashboard-shared.tsx
-msgid "block-controls.delete.confirmation"
-msgstr "Möchten Sie diesen Block wirklich löschen?"
-
-#: app/components/dashboard-shared.tsx
-msgid "block-controls.delete.title"
-msgstr "Block löschen?"
-
-#: app/components/dashboard-shared.tsx
-msgid "block-controls.duplicate"
-msgstr "Duplizieren"
+msgid "annotator.add.title"
+msgstr "[ Titel hinzufügen ]"
 
 #: app/browser/dataset-browse.tsx
-msgid "browse-panel.organizations"
-msgstr "Organisationen"
+msgid "dataset.results"
+msgstr "{0, plural, zero {Keine Datensätze} one {# Datensatz} other {# Datensätze}}"
 
-#: app/browser/dataset-browse.tsx
-msgid "browse-panel.termsets"
-msgstr "Konzepte"
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
+msgid "dataset.search.search-options.more-2-options-selected"
+msgstr "{0} weitere"
 
-#: app/browser/dataset-browse.tsx
-msgid "browse-panel.termsets.explanation"
-msgstr "Konzepte stellen Werte dar, die über verschiedene Dimensionen und Datensätze hinweg geteilt werden können."
+#: app/configurator/components/filters.tsx
+msgid "controls.filter.nb-elements"
+msgstr "{0} von {1}"
 
-#: app/browser/dataset-browse.tsx
-msgid "browse-panel.themes"
-msgstr "Kategorien"
+#: app/configurator/components/field-i18n.ts
+msgid "controls.sorting.byMeasure.ascending"
+msgstr "1 → 9"
 
-#: app/login/components/profile-header.tsx
-msgid "browse.dataset.all"
-msgstr "Datensatz suchen"
+#: app/configurator/components/field-i18n.ts
+msgid "controls.calculation.percent"
+msgstr "100%"
 
-#: app/browser/select-dataset-step.tsx
-#: app/browser/select-dataset-step.tsx
-msgid "browse.dataset.create-visualization"
-msgstr "Visualisierung von diesem Datensatz erstellen"
+#: app/charts/chart-config-ui-options.ts
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.calculation.disabled-by-grouped"
+msgstr "Der 100%-Modus kann nicht mit einem gruppierten Layout verwendet werden."
 
-#: app/browser/select-dataset-step.tsx
-#: app/browser/select-dataset-step.tsx
-msgid "browse.dataset.create-visualization-visualize"
-msgstr "Visualierung erstellen"
+#: app/configurator/components/field-i18n.ts
+msgid "controls.sorting.byMeasure.descending"
+msgstr "9 → 1"
 
-#: app/browser/select-dataset-step.tsx
-msgid "browse.datasets.description"
-msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datensätze, indem Sie entweder nach Kategorien oder Organisationen filtern oder direkt nach bestimmten Stichworten suchen. Klicken Sie auf einen Datensatz, um detailliertere Informationen zu erhalten und Ihre eigenen Visualisierungen zu erstellen."
+#: app/configurator/components/field-i18n.ts
+#: app/configurator/components/field-i18n.ts
+msgid "controls.sorting.byDimensionLabel.ascending"
+msgstr "A → Z"
 
-#: app/components/metadata-panel.tsx
-#: app/configurator/components/add-dataset-drawer/preview-table.tsx
-msgid "button.back"
-msgstr "Zurück"
+#: app/components/footer.tsx
+msgid "footer.about_us.label"
+msgstr "Über dieses Portal"
 
-#: app/configurator/components/add-dataset-drawer/preview-table.tsx
-msgid "button.confirm"
-msgstr "Bestätigen"
+#: app/configurator/components/chart-annotations/add-annotation-button.tsx
+msgid "controls.annotations.add"
+msgstr "Hinzufügen"
 
-#: app/configurator/components/configurator.tsx
-msgid "button.copy-preview-link"
-msgstr "Vorschau-Link kopieren"
-
-#: app/configurator/components/configurator.tsx
-msgid "button.copy-preview-link.explanation"
-msgstr "Erhalten Sie einen Diagrammlink mit in der URL gespeicherter Konfiguration, ohne ihn veröffentlichen zu müssen."
-
-#: app/configurator/components/configurator.tsx
-msgid "button.copy-preview-link.success"
-msgstr "Vorschau-Link kopiert!"
-
-#: app/pages/v/[chartId].tsx
-msgid "button.copy.visualization"
-msgstr "Diese Visualisierung kopieren und editieren"
-
-#: app/components/data-download.tsx
-msgid "button.download.data"
-msgstr "Daten herunterladen"
-
-#: app/components/data-download.tsx
-msgid "button.download.data.all"
-msgstr "Vollständiger Datensatz"
-
-#: app/components/data-download.tsx
-msgid "button.download.data.visible"
-msgstr "Daten aus der Grafik"
-
-#: app/components/publish-actions.tsx
-msgid "button.embed"
-msgstr "Einbetten"
-
-#: app/components/copy-to-clipboard-text-input.tsx
-#: app/components/copy-to-clipboard-text-input.tsx
-msgid "button.hint.click.to.copy"
-msgstr "Kopieren"
-
-#: app/components/copy-to-clipboard-text-input.tsx
-msgid "button.hint.copied"
-msgstr "Kopiert!"
-
-#: app/configurator/components/configurator.tsx
-msgid "button.layout"
-msgstr "Weiter zu den Layout-Optionen"
-
-#: app/pages/v/[chartId].tsx
-msgid "button.new.visualization"
-msgstr "Neue Visualisierung erstellen"
-
-#: app/configurator/components/configurator.tsx
-msgid "button.publish"
-msgstr "Veröffentlichen"
-
-#: app/configurator/components/configurator.tsx
-msgid "button.save-draft"
-msgstr "Entwurf speichern"
-
-#: app/configurator/components/configurator.tsx
-msgid "button.save-draft.error"
-msgstr "Entwurf konnte nicht gespeichert werden"
-
-#: app/configurator/components/configurator.tsx
-msgid "button.save-draft.saved"
-msgstr "Entwurf gespeichert in [Meine Visualisierungen](/profile)"
-
-#: app/components/chart-shared.tsx
-#: app/components/publish-actions.tsx
-msgid "button.share"
-msgstr "Teilen"
-
-#: app/configurator/components/configurator.tsx
-msgid "button.update"
-msgstr "Diese Visualisierung aktualisieren"
-
-#: app/configurator/components/configurator.tsx
-msgid "button.update.warning"
-msgstr "Denken Sie daran, dass sich die Aktualisierung dieser Visualisierung auf alle Stellen auswirkt, an denen sie bereits eingebettet ist!"
-
-#: app/components/chart-shared.tsx
-msgid "chart-controls.chart-view"
-msgstr "Diagrammansicht"
-
-#: app/components/chart-shared.tsx
-msgid "chart-controls.copy-and-edit"
-msgstr "Kopieren und editieren"
-
-#: app/components/chart-selection-tabs.tsx
-#: app/components/chart-shared.tsx
-msgid "chart-controls.delete"
-msgstr "Löschen"
-
-#: app/components/chart-shared.tsx
-msgid "chart-controls.delete.confirmation"
-msgstr "Sind Sie sicher, dass Sie dieses Diagramm löschen möchten?"
-
-#: app/components/chart-shared.tsx
-msgid "chart-controls.delete.title"
-msgstr "Diagramm löschen?"
-
-#: app/components/chart-shared.tsx
-msgid "chart-controls.duplicate"
-msgstr "Duplizieren"
-
-#: app/components/chart-shared.tsx
-msgid "chart-controls.edit"
-msgstr "Bearbeiten"
-
-#: app/components/chart-selection-tabs.tsx
-msgid "chart-controls.edit-tab-label"
-msgstr "Tab-Titel editieren"
-
-#: app/components/chart-shared.tsx
-msgid "chart-controls.export-png"
-msgstr "PNG exportieren"
-
-#: app/components/dataset-metadata.tsx
-msgid "chart-controls.sparql-query"
-msgstr "SPARQL-Abfrage"
-
-#: app/components/chart-shared.tsx
-msgid "chart-controls.table-view"
-msgstr "Tabellenansicht"
+#: app/configurator/components/chart-type-selector.tsx
+msgid "controls.add.chart"
+msgstr "Fügen Sie ein weiteres Diagramm hinzu."
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart"
 msgstr "Diagramm hinzufügen"
-
-#: app/components/chart-selection-tabs.tsx
-msgid "chart-selection-tabs.add-chart-different-dataset.button"
-msgstr "Datensatz auswählen"
 
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart-different-dataset.caption"
@@ -237,33 +152,235 @@ msgstr "Fügen Sie ein Diagramm basierend auf einem anderen Datensatz hinzu"
 msgid "chart-selection-tabs.add-chart-same-dataset.caption"
 msgstr "Fügen Sie ein Diagramm basierend auf demselben Datensatz hinzu"
 
-#: app/components/chart-selection-tabs.tsx
-msgid "chart-selection-tabs.no-label"
-msgstr "Kein Tab-Titel"
+#: app/login/components/color-palettes/color-palette-types.tsx
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.add-color"
+msgstr "Farbe hinzufügen"
+
+#: app/configurator/components/chart-controls/color-palette.tsx
+#: app/configurator/components/chart-controls/color-ramp.tsx
+#: app/login/components/color-palettes/profile-color-palette-content.tsx
+msgid "login.profile.my-color-palettes.add"
+msgstr "Farbpalette hinzufügen"
+
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "wmts.custom-layer.section-title"
+msgstr "Benutzerdefinierte Layer"
 
 #: app/configurator/components/dataset-control-section.tsx
 msgid "chart.datasets.add"
 msgstr "Hinzufügen"
 
-#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
-msgid "chart.datasets.add-dataset-dialog.description"
-msgstr "Sie können nur Datensätze kombinieren, die Dimensionen mit derselben Einheit und Auflösung teilen. Standardmässig werden Dimensionen ausgewählt, die zum aktuellen Diagramm passen."
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+#: app/configurator/table/table-chart-sorting-options.tsx
+msgid "controls.sorting.addDimension"
+msgstr "Dimension hinzufügen"
 
-#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
-msgid "chart.datasets.add-dataset-dialog.title"
-msgstr "Wählen Sie einen Datensatz mit gemeinsamen Dimensionen aus"
-
-#: app/browser/select-dataset-step.tsx
-msgid "chart.datasets.add-dataset-drawer.title"
-msgstr "Datensatz auswählen"
+#: app/configurator/components/chart-configurator.tsx
+msgid "controls.add-filter"
+msgstr "Filter hinzufügen"
 
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.add-layer"
 msgstr "Karten importieren"
 
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.block-add"
+msgstr "Objekt hinzufügen"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options.block-add.text"
+msgstr "Text"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+#: app/configurator/components/chart-annotations/chart-annotations.tsx
+msgid "controls.annotations.annotation.add.text"
+msgstr "Text hinzufügen..."
+
+#: app/configurator/components/chart-controls/control-tab.tsx
+msgid "controls.color.add"
+msgstr "Hinzufügen…"
+
+#: app/configurator/components/chart-options-selector/scale-domain.tsx
+msgid "controls.adjust-scale-domain"
+msgstr "Skalierungsbereich anpassen"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.advanced-settings"
+msgstr "Erweiterte Einstellungen"
+
+#: app/configurator/components/chart-options-selector/calculation-field.tsx
+msgid "controls.filters.interactive.calculation"
+msgstr "Benutzer können den Diagramm-Modus ändern"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.interactive.tooltip"
+msgstr "Erlauben Sie Benutzern, Filter zu ändern"
+
+#: app/charts/shared/chart-data-filters/index.tsx
+#: app/configurator/components/chart-configurator.tsx
+msgid "controls.section.data.filters.possible-filters-error"
+msgstr "Beim Abrufen möglicher Filter ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut oder laden Sie die Seite neu."
+
+#: app/components/hint.tsx
+msgid "hint.chartunexpected.message"
+msgstr "Beim Anzeigen dieses Diagramms ist ein unerwarteter Fehler aufgetreten."
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.animation"
+msgstr "Animation"
+
+#: app/configurator/components/chart-options-selector/animation-field.tsx
+msgid "controls.section.animation.duration"
+msgstr "Animation Dauer"
+
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.section.animation.disabled-by-sorting"
+msgstr "Die Animation ist bei der Sortierung nach Gesamtgrösse deaktiviert."
+
+#: app/configurator/components/chart-options-selector/animation-field.tsx
+msgid "controls.section.animation.settings"
+msgstr "Animation Einstellungen"
+
+#: app/configurator/components/chart-options-selector/animation-field.tsx
+msgid "controls.section.animation.type"
+msgstr "Animation Typ"
+
+#: app/configurator/interactive-filters/interactive-filters-configurator.tsx
+#: app/configurator/interactive-filters/interactive-filters-configurator.tsx
+msgid "controls.section.interactive.filters"
+msgstr "Animation"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.element.title"
+msgstr "Element anmerken"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.annotation.title"
+msgstr "Anmerkung"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.annotation"
+msgstr "Anmerkung"
+
+#: app/configurator/components/chart-annotations/chart-annotations.tsx
+msgid "controls.section.annotations"
+msgstr "Anmerkungen"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.set-values-apply"
+msgstr "Filter anwenden"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.confirmation"
+msgstr "Möchten Sie diesen Block wirklich löschen?"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chat-preview.delete.confirmation"
+msgstr "Sind Sie sicher, dass Sie dieses Diagramm löschen möchten?"
+
+#: app/components/chart-shared.tsx
+msgid "chart-controls.delete.confirmation"
+msgstr "Sind Sie sicher, dass Sie dieses Diagramm löschen möchten?"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.delete.confirmation"
+msgstr "Sind Sie sicher, dass Sie diese Grafik löschen wollen?"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.delete-draft.confirmation"
+msgstr "Möchten Sie diesen Entwurf wirklich löschen?"
+
+#: app/components/confirmation-dialog.tsx
+msgid "login.profile.chart.confirmation.default"
+msgstr "Sind Sie sicher, dass Sie diese Aktion durchführen wollen?"
+
 #: app/configurator/components/field-i18n.ts
 msgid "chart.map.layers.area"
 msgstr "Flächen"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.area"
+msgstr "Flächen"
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.categorical"
+msgstr "Es ist mindestens eine kategorische Dimension erforderlich."
+
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
+msgid "dataset.search.at-least-one-compatible-dimension-selected"
+msgstr "Es muss mindestens eine kompatible Dimension ausgewählt werden."
+
+#: app/charts/shared/legend-color.tsx
+msgid "controls.filters.interactive.color.min-1-filter"
+msgstr "Es muss mindestens ein Filter ausgewählt werden."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.geographical"
+msgstr "Es ist mindestens eine geografische Dimension erforderlich."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.numerical"
+msgstr "Es ist mindestens eine numerische Mass erforderlich."
+
+#: app/charts/index.ts
+#: app/charts/index.ts
+msgid "controls.chart.disabled.temporal"
+msgstr "Es ist mindestens eine zeitliche Dimension erforderlich."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.multiple-measures"
+msgstr "Es sind mindestens zwei numerische Messungen erforderlich."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.different-unit"
+msgstr "Es werden mindestens zwei Masszahlen mit unterschiedlichen Einheiten benötigt."
+
+#: app/charts/index.ts
+msgid "controls.chart.disabled.same-unit"
+msgstr "Es sind mindestens zwei numerische Masse mit der gleichen Einheit erforderlich."
+
+#: app/configurator/components/chart-options-selector/sorting-field.tsx
+msgid "controls.sorting.byAuto"
+msgstr "Auto"
+
+#: app/components/metadata-panel.tsx
+msgid "controls.metadata-panel.available-values"
+msgstr "Verfügbare Werte"
+
+#: app/components/metadata-panel.tsx
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
+msgid "button.back"
+msgstr "Zurück"
+
+#: app/configurator/components/configurator.tsx
+msgid "controls.nav.back-to-configurator"
+msgstr "Zurück zum Editieren"
+
+#: app/configurator/components/configurator.tsx
+msgid "controls.nav.back-to-preview"
+msgstr "Zurück zur Vorschau"
+
+#: app/browser/select-dataset-step.tsx
+msgid "dataset-preview.back-to-results"
+msgstr "Zurück zu den Datensätzen"
+
+#: app/configurator/table/table-chart-options.tsx
+msgid "controls.select.columnStyle.barColorBackground"
+msgstr "Hintergrundfarbe"
+
+#: app/configurator/table/table-chart-options.tsx
+msgid "columnStyle.bar"
+msgstr "Säulendiagramm"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.bar"
+msgstr "Balken"
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.base"
+msgstr "Basis Farbe"
 
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/chart-options-selector/base-layer-field.tsx
@@ -275,100 +392,986 @@ msgstr "Basiskarte"
 msgid "chart.map.layers.base.behind-area-layer"
 msgstr "Hinter der Flächenebene"
 
-#: app/configurator/components/custom-layers-selector.tsx
-msgid "chart.map.layers.base.enable-temporal-filtering"
-msgstr "Mit zeitlichen Filtern synchronisieren"
+#: app/configurator/table/table-chart-options.tsx
+msgid "columnStyle.textStyle.bold"
+msgstr "Fett"
 
-#: app/configurator/components/chart-options-selector/base-layer-field.tsx
-msgid "chart.map.layers.base.show"
-msgstr "Weltkarte anzeigen"
+#: app/login/components/profile-header.tsx
+msgid "browse.dataset.all"
+msgstr "Datensatz suchen"
 
-#: app/configurator/components/chart-options-selector/base-layer-field.tsx
-msgid "chart.map.layers.base.view.locked"
-msgstr "Gesperrte Ansicht"
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.can-display-layers"
+msgstr "Kann die Layer anzeigen"
+
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.can-display-on-map-geo-admin"
+msgstr "Kann auf der Geo Admin Karte angezeigt werden"
+
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.can-list-layers"
+msgstr "Kann die Layer auflisten"
+
+#: app/components/chart-published.tsx
+msgid "dataset.publicationStatus.expires.warning"
+msgstr "Achtung, dieser Datensatz ist abgelaufen.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
+
+#: app/browser/dataset-preview.tsx
+#: app/components/chart-preview.tsx
+#: app/components/chart-published.tsx
+msgid "dataset.publicationStatus.draft.warning"
+msgstr "Achtung, dieser Datensatz ist im Entwurfs-Stadium.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
+
+#: app/configurator/table/table-chart-options.tsx
+msgid "columnStyle.categories"
+msgstr "Kategorien"
+
+#: app/components/form.tsx
+msgid "controls.form.max-length-reached"
+msgstr "Zeichenlimit ({limit}) erreicht"
+
+#: app/login/components/profile-tables.tsx
+msgid "controls.layout.chart"
+msgstr "Diagramm"
+
+#: app/components/data-download.tsx
+msgid "button.download.data.visible"
+msgstr "Daten aus der Grafik"
+
+#: app/configurator/components/chart-options-selector/calculation-field.tsx
+msgid "controls.select.calculation.mode"
+msgstr "Visualisierungsmodus"
+
+#: app/configurator/components/chart-configurator.tsx
+msgid "controls.section.chart.options"
+msgstr "Diagramm-Einstellungen"
+
+#: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/chart-type-selector.tsx
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.select.chart.type"
+msgstr "Diagrammtyp"
+
+#: app/components/publish-actions.tsx
+msgid "publication.share.chart.url"
+msgstr "Diagramm-URL"
+
+#: app/components/chart-shared.tsx
+msgid "chart-controls.chart-view"
+msgstr "Diagrammansicht"
+
+#: app/components/hint.tsx
+msgid "hint.dataloadingerror.status"
+msgstr "Weitere Informationen finden Sie auf der Statusseite"
+
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.caption-diverging"
+msgstr "Wählen Sie kontrastierende Farben für Start- und Endpunkt. Diese Farben unterstützen die visuelle Trennung von Extremwerten. Divergierende Paletten eignen sich besonders für Daten mit einem bedeutsamen Mittelpunkt wie Null oder einem Durchschnittswert."
+
+#: app/components/form.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
+msgid "controls.search.clear"
+msgstr "Suche zurücksetzen"
+
+#: app/charts/shared/chart-data-filters/index.tsx
+#: app/components/multi-select/option.tsx
+msgid "controls.clear-selection"
+msgstr "Auswahl löschen"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.annotation.clear-text"
+msgstr "Text löschen"
+
+#: app/components/copy-to-clipboard-text-input.tsx
+#: app/components/copy-to-clipboard-text-input.tsx
+msgid "button.hint.click.to.copy"
+msgstr "Kopieren"
+
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+#: app/configurator/components/field-i18n.ts
+msgid "controls.color"
+msgstr "Farbe"
+
+#: app/configurator/components/chart-controls/color-palette.tsx
+#: app/configurator/components/chart-controls/color-ramp.tsx
+msgid "controls.color.palette"
+msgstr "Farbpalette"
+
+#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
+msgid "table.column.no"
+msgstr "Spalte {0}"
+
+#: app/configurator/table/table-chart-options.tsx
+msgid "controls.select.columnStyle.columnColor"
+msgstr "Spaltenfarbe"
+
+#: app/configurator/components/chart-options-selector/layout-field.tsx
+msgid "controls.select.column.layout"
+msgstr "Spaltenstil"
+
+#: app/configurator/table/table-chart-options.tsx
+msgid "controls.section.columnstyle"
+msgstr "Spaltenstil"
+
+#: app/configurator/table/table-chart-options.tsx
+msgid "controls.select.columnStyle"
+msgstr "Spaltenstil"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.comboLineColumn"
+msgstr "Column-line"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.column"
+msgstr "Säulen"
+
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.section.columns"
+msgstr "Spalten"
+
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+msgid "controls.chart.combo.y.common-unit"
+msgstr "Gemeinsame Einheit"
+
+#: app/charts/table/table.tsx
+msgid "chart.published.toggle.mobile.view"
+msgstr "Kompakte Ansicht"
+
+#: app/configurator/components/chart-type-selector.tsx
+msgid "controls.chart.category.combo"
+msgstr "Vergleich"
+
+#: app/configurator/components/chart-type-selector.tsx
+msgid "controls.chart.category.combo.hint"
+msgstr "Vergleichsdiagrammtypen kombinieren mehrere Messwerte in einem Diagramm und helfen, ihre Beziehungen oder Korrelationen zu visualisieren, selbst wenn sie unterschiedliche Einheiten oder Skalen haben."
+
+#: app/browser/dataset-browse.tsx
+msgid "browse-panel.termsets"
+msgstr "Konzepte"
+
+#: app/browser/dataset-browse.tsx
+msgid "browse-panel.termsets.explanation"
+msgstr "Konzepte stellen Werte dar, die über verschiedene Dimensionen und Datensätze hinweg geteilt werden können."
+
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
+msgid "button.confirm"
+msgstr "Bestätigen"
+
+#: app/components/dataset-metadata.tsx
+msgid "dataset.metadata.email"
+msgstr "Kontaktstellen"
+
+#: app/browser/dataset-browse.tsx
+msgid "dataset-result.dimension-joined-by"
+msgstr "Enthält Wert von"
+
+#: app/configurator/components/chart-options-selector/animation-field.tsx
+msgid "controls.section.animation.type.continuous"
+msgstr "Kontinuierlich"
+
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
+msgid "controls.color.scale.type.continuous"
+msgstr "Kontinuierlich"
+
+#: app/components/hint.tsx
+msgid "hint.coordinatesloadingerror.title"
+msgstr "Koordinaten-Ladefehler"
+
+#: app/components/copy-to-clipboard-text-input.tsx
+msgid "button.hint.copied"
+msgstr "Kopiert!"
+
+#: app/components/chart-shared.tsx
+msgid "chart-controls.copy-and-edit"
+msgstr "Kopieren und editieren"
+
+#: app/pages/v/[chartId].tsx
+msgid "button.copy.visualization"
+msgstr "Diese Visualisierung kopieren und editieren"
+
+#: app/configurator/components/configurator.tsx
+msgid "button.copy-preview-link"
+msgstr "Vorschau-Link kopieren"
+
+#: app/utils/flashes.tsx
+msgid "flashes.couldnt-load-cube.title"
+msgstr "Der Cube konnte nicht geladen werden"
+
+#: app/configurator/components/configurator.tsx
+msgid "button.save-draft.error"
+msgstr "Entwurf konnte nicht gespeichert werden"
+
+#: app/pages/v/[chartId].tsx
+msgid "button.new.visualization"
+msgstr "Neue Visualisierung erstellen"
+
+#: app/browser/select-dataset-step.tsx
+#: app/browser/select-dataset-step.tsx
+msgid "browse.dataset.create-visualization"
+msgstr "Visualisierung von diesem Datensatz erstellen"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.create-palette"
+msgstr "Farbpalette erstellen"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.create-chart"
+msgstr "erstellen Sie einen"
+
+#: app/browser/select-dataset-step.tsx
+#: app/browser/select-dataset-step.tsx
+msgid "browse.dataset.create-visualization-visualize"
+msgstr "Visualierung erstellen"
+
+#: app/pages/v/[chartId].tsx
+msgid "hint.create.your.own.chart"
+msgstr "Kopieren Sie diese Visualisierung oder erstellen Sie eine neue Visualisierung mit Swiss Open Government Data."
+
+#: app/configurator/components/chart-options-selector/limits-field.tsx
+msgid "controls.symbol.cross"
+msgstr "Kreuz"
+
+#: app/configurator/components/chart-controls/color-palette.tsx
+#: app/configurator/components/chart-controls/color-ramp.tsx
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+msgid "controls.custom-color-palettes"
+msgstr "Benutzerdefinierte Farbpaletten"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.custom-labels"
+msgstr "Benutzerdefinierte Einheitenbeschriftungen"
+
+#: app/configurator/components/field-i18n.ts
+#: app/login/components/profile-tables.tsx
+msgid "controls.layout.dashboard"
+msgstr "Dashboard"
+
+#: app/configurator/components/chart-options-selector/limits-field.tsx
+msgid "controls.line.dashed"
+msgstr "Gestrichelt"
+
+#: app/components/metadata-panel.tsx
+msgid "controls.metadata-panel.section.data"
+msgstr "Daten"
+
+#: app/components/hint.tsx
+msgid "hint.dataloadingerror.title"
+msgstr "Daten-Ladefehler"
+
+#: app/configurator/components/chart-options-selector/show-dots-field.tsx
+msgid "controls.section.data-points"
+msgstr "Datenpunkte"
+
+#: app/components/data-source-menu.tsx
+msgid "data.source"
+msgstr "Datenquelle"
+
+#: app/components/chart-footnotes.tsx
+#: app/configurator/components/dataset-control-section.tsx
+msgid "dataset.footnotes.dataset"
+msgstr "Datensatz"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.dataset-name"
+msgstr "Datensatz"
+
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
+msgid "dataset.search.preview.datasets"
+msgstr "Datensätze"
+
+#: app/configurator/components/dataset-control-section.tsx
+msgid "controls.section.datasets.title"
+msgstr "Datensätze"
+
+#: app/charts/shared/use-combined-temporal-dimension.ts
+msgid "controls.section.shared-filters.date"
+msgstr "Datum"
+
+#: app/components/dataset-metadata.tsx
+msgid "dataset.metadata.date.created"
+msgstr "Erstellungsdatum"
+
+#: app/configurator/components/ui-helpers.ts
+msgid "time-units.Day"
+msgstr "Tag"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.default-value.label"
+msgstr "Standardwert"
+
+#: app/components/chart-selection-tabs.tsx
+#: app/components/chart-shared.tsx
+msgid "chart-controls.delete"
+msgstr "Löschen"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete"
+msgstr "Löschen"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.delete"
+msgstr "Löschen"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.delete"
+msgstr "Löschen"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.delete.title"
+msgstr "Block löschen?"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chat-preview.delete.title"
+msgstr "Diagramm löschen?"
+
+#: app/components/chart-shared.tsx
+msgid "chart-controls.delete.title"
+msgstr "Diagramm löschen?"
+
+#: app/login/components/color-palettes/profile-color-palette-content.tsx
+msgid "login.profile.my-color-palettes.delete"
+msgstr "Farbpalette löschen"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.description"
+msgstr "Beschreibung hinzufügen"
+
+#: app/components/metadata-panel.tsx
+#: app/components/metadata-panel.tsx
+msgid "controls.metadata-panel.metadata"
+msgstr "Details"
+
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
+msgid "controls.color.scale.type.discrete"
+msgstr "Diskret"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.display.title"
+msgstr "Anzeige"
+
+#: app/configurator/components/chart-controls/color-ramp.tsx
+msgid "controls.color.palette.diverging"
+msgstr "Divergierend"
+
+#: app/configurator/components/chart-options-selector/limits-field.tsx
+msgid "controls.symbol.dot"
+msgstr "Punkt"
+
+#: app/components/data-download.tsx
+msgid "button.download.data"
+msgstr "Daten herunterladen"
+
+#: app/browser/dataset-browse.tsx
+msgid "dataset.tag.draft"
+msgstr "Entwurf"
+
+#: app/configurator/components/configurator.tsx
+msgid "button.save-draft.saved"
+msgstr "Entwurf gespeichert in [Meine Visualisierungen](/profile)"
+
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.groups.empty-help"
+msgstr "Ziehen Sie Spalten hierher, um Gruppen zu erstellen."
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.comboLineDual"
+msgstr "Dual-axis line"
+
+#: app/components/chart-shared.tsx
+msgid "chart-controls.duplicate"
+msgstr "Duplizieren"
+
+#: app/components/dashboard-shared.tsx
+msgid "block-controls.duplicate"
+msgstr "Duplizieren"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.duplicate"
+msgstr "Duplizieren"
+
+#: app/configurator/components/chart-options-selector/animation-field.tsx
+msgid "controls.section.animation.dynamic-scaling"
+msgstr "Dynamische Skalierung"
+
+#: app/components/chart-shared.tsx
+msgid "chart-controls.edit"
+msgstr "Bearbeiten"
+
+#: app/login/components/profile-tables.tsx
+#: app/pages/v/[chartId].tsx
+msgid "login.chart.edit"
+msgstr "Bearbeiten"
+
+#: app/login/components/color-palettes/profile-color-palette-content.tsx
+msgid "login.profile.my-color-palettes.edit"
+msgstr "Farbplatte editieren"
+
+#: app/configurator/components/filters.tsx
+#: app/configurator/components/filters.tsx
+msgid "controls.set-filters"
+msgstr "Filter bearbeiten"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-controls.edit-tab-label"
+msgstr "Tab-Titel editieren"
+
+#: app/components/publish-actions.tsx
+msgid "button.embed"
+msgstr "Einbetten"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.embed"
+msgstr "Einbetten"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.external-application"
+msgstr "Embed-Code für «Externe Applikation»"
+
+#: app/configurator/components/chart-options-selector/animation-field.tsx
+msgid "controls.section.animation.dynamic-scaling.explanation"
+msgstr "Aktivieren Sie die dynamische Skalierung, um die Skalierung des Diagramms auf der Grundlage des Datenbereichs anzupassen und eine optimale Visualisierung zu gewährleisten."
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.enable"
+msgstr "Einheitenumrechnung aktivieren"
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.end"
+msgstr "Endfarbe"
+
+#: app/components/rename-dialog.tsx
+#: app/configurator/components/field-i18n.ts
+msgid "controls.language.english"
+msgstr "Englisch"
+
+#: app/login/components/color-palettes/color-palette-examples.tsx
+msgid "controls.custom-color-palettes.example"
+msgstr "Beispiel"
+
+#: app/browser/select-dataset-step.tsx
+msgid "browse.datasets.description"
+msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datensätze, indem Sie entweder nach Kategorien oder Organisationen filtern oder direkt nach bestimmten Stichworten suchen. Klicken Sie auf einen Datensatz, um detailliertere Informationen zu erhalten und Ihre eigenen Visualisierungen zu erstellen."
+
+#: app/components/chart-shared.tsx
+msgid "chart-controls.export-png"
+msgstr "PNG exportieren"
+
+#: app/login/components/login-menu.tsx
+msgid "login.profile.feedback"
+msgstr "Feedback"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.fill-and-text"
+msgstr "Füllung und Textbox"
+
+#: app/configurator/components/chart-options-selector/multi-filter-field.tsx
+#: app/configurator/components/chart-options-selector/multi-filter-field.tsx
+#: app/configurator/table/table-chart-options.tsx
+#: app/configurator/table/table-chart-options.tsx
+#: app/configurator/table/table-chart-options.tsx
+#: app/configurator/table/table-chart-options.tsx
+msgid "controls.section.filter"
+msgstr "Filter"
+
+#: app/components/chart-filters-list.tsx
+#: app/components/chart-filters-list.tsx
+#: app/configurator/components/chart-configurator.tsx
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.section.data.filters"
+msgstr "Filter"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.set-filters-caption"
+msgstr "Für beste Ergebnisse wählen Sie nicht mehr als 7 Werte für die Visualisierung aus"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-border.warn"
+msgstr "Zur Einbettung von Visualisierungen in Systeme ohne Rand."
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.static.warn"
+msgstr "Zum Einbetten von Visualisierungen in Systeme ohne Webkomponenten oder JavaScript-Unterstützung. (z. B. WordPress)"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.responsive.warn"
+msgstr "Zum Einbetten von Visualisierungen in Webseiten ohne CMS-Unterstützung. Der Iframe wird sich anpassen. Der JavaScript-Teil des Einbettungscodes sorgt dafür, dass der Iframe immer die richtige Grösse beibehält."
+
+#: app/charts/chart-config-ui-options.ts
+#: app/configurator/components/chart-options-selector/imputation-field.tsx
+msgid "controls.section.imputation.explanation"
+msgstr "Für diesen Diagrammtyp sollten fehlenden Werten Ersatzwerte zugewiesen werden. Entscheiden Sie sich für die Imputationslogik oder wechseln Sie zu einem anderen Diagrammtyp."
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.canvas"
+msgstr "Freies Layout"
+
+#: app/components/rename-dialog.tsx
+#: app/configurator/components/field-i18n.ts
+msgid "controls.language.french"
+msgstr "Französisch"
+
+#: app/configurator/components/filters.tsx
+#: app/configurator/components/layout-configurator.tsx
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.filters.select.from"
+msgstr "Von"
+
+#: app/components/data-download.tsx
+msgid "button.download.data.all"
+msgstr "Vollständiger Datensatz"
+
+#: app/components/dataset-metadata.tsx
+msgid "dataset.metadata.furtherinformation"
+msgstr "Weitere Informationen"
+
+#: app/components/footer.tsx
+msgid "footer.information.title"
+msgstr "Weitere Informationen"
+
+#: app/components/metadata-panel.tsx
+msgid "controls.metadata-panel.section.general"
+msgstr "Allgemeines"
+
+#: app/components/rename-dialog.tsx
+#: app/configurator/components/field-i18n.ts
+msgid "controls.language.german"
+msgstr "Deutsch"
+
+#: app/configurator/components/configurator.tsx
+msgid "button.copy-preview-link.explanation"
+msgstr "Erhalten Sie einen Diagrammlink mit in der URL gespeicherter Konfiguration, ohne ihn veröffentlichen zu müssen."
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.column.grouped"
+msgstr "Gruppiert"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.grouped"
+msgstr "Gruppiert"
+
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.section.groups"
+msgstr "Gruppierungen"
+
+#: app/configurator/table/table-chart-options.tsx
+msgid "columnStyle.heatmap"
+msgstr "Heatmap"
+
+#: app/components/publish-actions.tsx
+msgid "publication.share.mail.body"
+msgstr "Hier ist eine Visualisierung, die ich mit visualize.admin.ch erstellt habe"
+
+#: app/configurator/table/table-chart-options.tsx
+msgid "controls.table.column.hide"
+msgstr "Spalte ausblenden"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-filters"
+msgstr "Filter ausblenden"
+
+#: app/charts/shared/chart-data-filters/index.tsx
+msgid "interactive.data.filters.hide"
+msgstr "Filter ausblenden"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-legend"
+msgstr "Fussnoten ausblenden"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-axis-labels-interactivity"
+msgstr "Interaktive Beschriftungen ausblenden"
+
+#: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.home"
+msgstr "Übersicht"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.axis.horizontal"
+msgstr "Horizontale Achse"
+
+#: app/configurator/components/ui-helpers.ts
+msgid "time-units.Hour"
+msgstr "Stunde"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe"
+msgstr "Embed-Code"
 
 #: app/configurator/components/chart-configurator.tsx
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.custom-layers"
 msgstr "Karten importieren"
 
-#: app/configurator/components/custom-layers-selector.tsx
-msgid "chart.map.layers.no-layers"
-msgstr "Keine importierte Karten"
+#: app/configurator/components/field-i18n.ts
+msgid "controls.imputation"
+msgstr "Imputationstyp"
+
+#: app/browser/dataset-browse.tsx
+msgid "dataset.includeDrafts"
+msgstr "Entwürfe einschliessen"
+
+#: app/configurator/components/chart-configurator.tsx
+#: app/configurator/components/chart-options-selector/calculation-field.tsx
+#: app/configurator/components/filters.tsx
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.interactive.toggle"
+msgstr "Interaktiv"
+
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
+msgid "controls.color.scale.interpolation"
+msgstr "Interpolation"
+
+#: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.error-invalid-url"
+msgstr "Ungültige URL"
+
+#: app/components/rename-dialog.tsx
+#: app/configurator/components/field-i18n.ts
+msgid "controls.language.italian"
+msgstr "Italienisch"
+
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
+msgid "controls.color.scale.discretization.jenks"
+msgstr "Jenks (Natural Breaks)"
+
+#: app/components/metadata-panel.tsx
+#: app/components/metadata-panel.tsx
+#: app/configurator/components/chart-options-selector/utils.ts
+msgid "dimension.joined"
+msgstr "Verbunden"
+
+#: app/components/metadata-panel.tsx
+msgid "dimension.joined-info-icon"
+msgstr "Verbundene Dimensionen integrieren Daten aus mehreren Datensätzen"
+
+#: app/components/metadata-panel.tsx
+msgid "select.controls.metadata.search"
+msgstr "Springen zu..."
+
+#: app/configurator/components/configurator.tsx
+msgid "button.update.warning"
+msgstr "Denken Sie daran, dass sich die Aktualisierung dieser Visualisierung auf alle Stellen auswirkt, an denen sie bereits eingebettet ist!"
+
+#: app/components/dataset-metadata.tsx
+msgid "dataset-preview.keywords"
+msgstr "Schlüsselwörter"
+
+#: app/configurator/components/chart-annotations/chart-annotations.tsx
+msgid "controls.annotations.label"
+msgstr "Label"
+
+#: app/components/mdx-editor/link-dialog.tsx
+msgid "mdx-editor.link-dialog.label-placeholder"
+msgstr "Label..."
+
+#: app/configurator/components/chart-options-selector/show-dots-field.tsx
+msgid "controls.section.dots-size.large"
+msgstr "Gross"
 
 #: app/configurator/components/field-i18n.ts
-msgid "chart.map.layers.symbol"
-msgstr "Symbole"
-
-#: app/charts/table/table.tsx
-msgid "chart.published.toggle.mobile.view"
-msgstr "Kompakte Ansicht"
-
-#: app/charts/table/table.tsx
-msgid "chart.table.number.of.lines"
-msgstr "Anzahl Zeilen"
-
-#: app/components/chart-selection-tabs.tsx
-msgid "chat-preview.delete.confirmation"
-msgstr "Sind Sie sicher, dass Sie dieses Diagramm löschen möchten?"
-
-#: app/components/chart-selection-tabs.tsx
-msgid "chat-preview.delete.title"
-msgstr "Diagramm löschen?"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "columnStyle.bar"
-msgstr "Säulendiagramm"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "columnStyle.categories"
-msgstr "Kategorien"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "columnStyle.heatmap"
-msgstr "Heatmap"
-
-#: app/configurator/table/table-chart-options.tsx
-#: app/configurator/table/table-chart-options.tsx
-#: app/configurator/table/table-chart-options.tsx
-msgid "columnStyle.text"
-msgstr "Schrift"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "columnStyle.textStyle.bold"
-msgstr "Fett"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "columnStyle.textStyle.regular"
-msgstr "Normal"
+msgid "controls.sorting.byTotalSize.largestBottom"
+msgstr "Grösste unten"
 
 #: app/configurator/components/field-i18n.ts
-msgid "controls.abbreviations"
-msgstr "Abkürzungen verwenden"
+msgid "controls.sorting.byTotalSize.largestFirst"
+msgstr "Grösste zuerst"
 
-#: app/configurator/components/chart-type-selector.tsx
-msgid "controls.add.chart"
-msgstr "Fügen Sie ein weiteres Diagramm hinzu."
+#: app/configurator/components/field-i18n.ts
+msgid "controls.sorting.byTotalSize.ascending"
+msgstr "Kleinste zuerst"
 
-#: app/configurator/components/chart-options-selector/scale-domain.tsx
-msgid "controls.adjust-scale-domain"
-msgstr "Skalierungsbereich anpassen"
+#: app/configurator/components/field-i18n.ts
+msgid "controls.sorting.byTotalSize.largestTop"
+msgstr "Kleinste unten"
 
-#: app/configurator/components/chart-options-selector/scale-domain.tsx
-msgid "controls.adjust-scale-domain.invalid-number-error"
-msgstr "Bitte geben Sie eine gültige Nummer ein"
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-updated-date"
+msgstr "Geändert"
+
+#: app/components/chart-footnotes.tsx
+msgid "dataset.footnotes.updated"
+msgstr "Neuestes Update"
+
+#: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.layer-not-supported-crs"
+msgstr "Dieser Layer wird nicht unterstützt, da er nicht im EPSG:3857-Koordinatensystem vorliegt."
+
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+#: app/configurator/components/chart-options-selector/layout-field.tsx
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.layout-options"
+msgstr "Layout-Optionen"
+
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+msgid "controls.chart.combo.y.column-measure"
+msgstr "Linke Achse (Säule)"
+
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+msgid "controls.chart.combo.y.left-axis-measure"
+msgstr "Messung der linken Achse"
+
+#: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.legend-title"
+msgstr "Legende"
+
+#: app/components/footer.tsx
+msgid "footer.button.lindas"
+msgstr "LINDAS Linked Data Dienste"
+
+#: app/configurator/components/chart-options-selector/imputation-field.tsx
+#: app/configurator/components/field-i18n.ts
+msgid "controls.imputation.type.linear"
+msgstr "Lineare Interpolation"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.line"
+msgstr "Linien"
+
+#: app/components/chart-filters-list.tsx
+#: app/components/hint.tsx
+#: app/components/hint.tsx
+msgid "hint.loading.data"
+msgstr "Lade Daten …"
+
+#: app/configurator/components/chart-options-selector/base-layer-field.tsx
+msgid "chart.map.layers.base.view.locked"
+msgstr "Gesperrte Ansicht"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.map"
+msgstr "Karte"
 
 #: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.max-error"
 msgstr "Max muss grösser sein als Min"
 
+#: app/configurator/components/chart-options-selector/sorting-field.tsx
+msgid "controls.sorting.byMeasure"
+msgstr "Messwert"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.measure"
+msgstr "Messwert"
+
+#: app/configurator/components/chart-options-selector/show-dots-field.tsx
+msgid "controls.section.dots-size.medium"
+msgstr "Mittel"
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.mid"
+msgstr "Mittlere Farbe"
+
 #: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.min-error"
 msgstr "Min muss kleiner als Max sein"
 
+#: app/configurator/components/ui-helpers.ts
+msgid "time-units.Minute"
+msgstr "Minute"
+
+#: app/configurator/components/chart-options-selector/imputation-field.tsx
+msgid "controls.section.imputation"
+msgstr "Fehlende Werte"
+
+#: app/configurator/components/ui-helpers.ts
+msgid "time-units.Month"
+msgstr "Monat"
+
+#: app/components/dataset-metadata.tsx
+msgid "dataset.metadata.learnmore"
+msgstr "Mehr zum Datensatz"
+
 #: app/configurator/components/field-i18n.ts
-msgid "controls.animation"
-msgstr "Animation"
+msgid "controls.chart.type.comboLineSingle"
+msgstr "Multi-line"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.multiple-datasets"
+msgstr "Mehrere Datensätze"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.multiplier"
+msgstr "Multiplikator"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.positive-number-error"
+msgstr "Der Multiplikator muss grösser als 0 sein"
+
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.my-color-palettes"
+msgstr "Meine Farbpaletten"
+
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.my-drafts"
+msgstr "Meine Entwürfe"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "login.profile.my-color-palettes.create.back-button"
+msgstr "Meine Farbpalette"
+
+#: app/login/components/login-menu.tsx
+msgid "login.profile.my-visualizations"
+msgstr "Meine Visualisierungen"
+
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+#: app/login/components/profile-content-tabs.tsx
+msgid "login.profile.my-published-visualizations"
+msgstr "Meine Visualisierungen"
+
+#: app/configurator/components/chart-options-selector/sorting-field.tsx
+msgid "controls.sorting.byDimensionLabel"
+msgstr "Name"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-name"
+msgstr "Name"
+
+#: app/browser/dataset-browse.tsx
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
+msgid "dataset.search.placeholder"
+msgstr "Name, Organisation, Stichwort..."
+
+#: app/configurator/table/table-chart-options.tsx
+msgid "controls.select.columnStyle.barColorNegative"
+msgstr "Negative Balkenfarbe"
+
+#: app/components/hint.tsx
+msgid "hint.only.negative.data.message"
+msgstr "Negative Datenwerte können mit diesem Diagrammtyp nicht dargestellt werden."
+
+#: app/components/hint.tsx
+msgid "hint.only.negative.data.title"
+msgstr "Negative Werte"
+
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
+msgid "dataset.search.preview.new-dimension"
+msgstr "Neu"
+
+#: app/configurator/components/dataset-control-section.tsx
+msgid "dataset.search.preview.added-dataset"
+msgstr "Neuer Datensatz hinzugefügt. Sie können die Daten nun in den Diagrammen verwenden."
+
+#: app/browser/dataset-browse.tsx
+msgid "dataset.order.newest"
+msgstr "Neueste"
+
+#: app/components/confirmation-dialog.tsx
+msgid "no"
+msgstr "Nein"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.no-charts"
+msgstr "Noch keine Diagramme"
+
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+msgid "controls.chart.combo.y.no-compatible-measures"
+msgstr "Keine kompatiblen Messungen zu kombinieren!"
+
+#: app/components/hint.tsx
+msgid "hint.nodata.title"
+msgstr "Keine Daten für die aktuelle Filterauswahl"
+
+#: app/configurator/components/chart-configurator.tsx
+msgid "controls.section.data.filters.none"
+msgstr "Keine Filter"
+
+#: app/components/hint.tsx
+msgid "hint.nogeometries.title"
+msgstr "Keine Geometrien verfügbar"
+
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.no-layers"
+msgstr "Keine importierte Karten"
+
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.no-label"
+msgstr "Kein Tab-Titel"
+
+#: app/browser/dataset-browse.tsx
+#: app/components/select-tree.tsx
+msgid "No results"
+msgstr "Kein Ergebnis"
+
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+msgid "controls.chart.combo.y.no-unit"
+msgstr "Keine Einheit"
+
+#: app/configurator/components/chart-type-selector.tsx
+msgid "hint.no.visualization.with.dataset"
+msgstr "Mit dem ausgewählten Datensatz kann keine Visualisierung erstellt werden."
+
+#: app/components/multi-select/input.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+#: app/configurator/components/field.tsx
+#: app/configurator/components/field.tsx
+#: app/configurator/components/filters.tsx
+msgid "controls.none"
+msgstr "Keine"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.calculation.identity"
+msgstr "Normal"
+
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+msgid "controls.chart.combo.y.combine-different-unit"
+msgstr "Beachten Sie, dass Sie nur Messungen mit unterschiedlichen Einheiten kombinieren können."
+
+#: app/configurator/components/chart-options-selector/combo-y-field.tsx
+msgid "controls.chart.combo.y.combine-same-unit"
+msgstr "Beachten Sie, dass Sie nur Messungen mit der gleichen Einheit kombinieren können."
+
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
+msgid "controls.color.scale.number.of.classes"
+msgstr "Anzahl Klassen"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.block-options"
+msgstr "Objekte"
+
+#: app/configurator/components/chart-controls/control-tab.tsx
+msgid "controls.option.isNotActive"
+msgstr "Aus"
+
+#: app/configurator/components/chart-controls/control-tab.tsx
+msgid "controls.option.isActive"
+msgstr "Ein"
+
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
+msgid "controls.color.opacity"
+msgstr "Transparenz"
+
+#: app/configurator/components/chart-controls/color-picker.tsx
+msgid "controls.colorpicker.open"
+msgstr "Farbauswahl öffnen"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.optimize-space"
+msgstr "Optimieren Sie den Leerraum um und innerhalb des Diagramms"
+
+#: app/configurator/components/field.tsx
+msgid "controls.select.optional"
+msgstr "optional"
+
+#: app/browser/dataset-browse.tsx
+msgid "browse-panel.organizations"
+msgstr "Organisationen"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit.original"
+msgstr "Ursprüngliche Einheit: {0}"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.pie"
+msgstr "Kreis"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -384,511 +1387,42 @@ msgstr "Bitte fügen Sie einen Tab-Titel hinzu"
 msgid "controls.annotator.add-title-warning"
 msgstr "Füge einen Titel hinzu"
 
-#: app/configurator/components/field-i18n.ts
-msgid "controls.axis.horizontal"
-msgstr "Horizontale Achse"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.axis.vertical"
-msgstr "Vertikale Achse"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.bar.grouped"
-msgstr "Gruppiert"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.bar.stacked"
-msgstr "Gestapelt"
-
-#: app/charts/chart-config-ui-options.ts
-#: app/charts/chart-config-ui-options.ts
-msgid "controls.calculation.disabled-by-grouped"
-msgstr "Der 100%-Modus kann nicht mit einem gruppierten Layout verwendet werden."
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.calculation.identity"
-msgstr "Normal"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.calculation.percent"
-msgstr "100%"
-
-#: app/charts/shared/interactive-filter-calculation-toggle.tsx
-msgid "controls.calculation.show-in-percentage"
-msgstr "In % anzeigen"
-
-#: app/configurator/components/chart-type-selector.tsx
-msgid "controls.chart.category.combo"
-msgstr "Vergleich"
-
-#: app/configurator/components/chart-type-selector.tsx
-msgid "controls.chart.category.combo.hint"
-msgstr "Vergleichsdiagrammtypen kombinieren mehrere Messwerte in einem Diagramm und helfen, ihre Beziehungen oder Korrelationen zu visualisieren, selbst wenn sie unterschiedliche Einheiten oder Skalen haben."
-
-#: app/configurator/components/chart-type-selector.tsx
-msgid "controls.chart.category.regular"
-msgstr "Normal"
-
-#: app/configurator/components/chart-options-selector/combo-y-field.tsx
-msgid "controls.chart.combo.y.column-measure"
-msgstr "Linke Achse (Säule)"
-
-#: app/configurator/components/chart-options-selector/combo-y-field.tsx
-#: app/configurator/components/chart-options-selector/combo-y-field.tsx
-msgid "controls.chart.combo.y.combine-different-unit"
-msgstr "Beachten Sie, dass Sie nur Messungen mit unterschiedlichen Einheiten kombinieren können."
-
-#: app/configurator/components/chart-options-selector/combo-y-field.tsx
-msgid "controls.chart.combo.y.combine-same-unit"
-msgstr "Beachten Sie, dass Sie nur Messungen mit der gleichen Einheit kombinieren können."
-
-#: app/configurator/components/chart-options-selector/combo-y-field.tsx
-msgid "controls.chart.combo.y.common-unit"
-msgstr "Gemeinsame Einheit"
-
-#: app/configurator/components/chart-options-selector/combo-y-field.tsx
-msgid "controls.chart.combo.y.left-axis-measure"
-msgstr "Messung der linken Achse"
-
-#: app/configurator/components/chart-options-selector/combo-y-field.tsx
-msgid "controls.chart.combo.y.line-measure"
-msgstr "Rechte Achse (Linie)"
-
-#: app/configurator/components/chart-options-selector/combo-y-field.tsx
-msgid "controls.chart.combo.y.no-compatible-measures"
-msgstr "Keine kompatiblen Messungen zu kombinieren!"
-
-#: app/configurator/components/chart-options-selector/combo-y-field.tsx
-msgid "controls.chart.combo.y.no-unit"
-msgstr "Keine Einheit"
-
-#: app/configurator/components/chart-options-selector/combo-y-field.tsx
-msgid "controls.chart.combo.y.right-axis-measure"
-msgstr "Messung der rechten Achse"
-
-#: app/charts/index.ts
-msgid "controls.chart.disabled.categorical"
-msgstr "Es ist mindestens eine kategorische Dimension erforderlich."
-
-#: app/charts/index.ts
-msgid "controls.chart.disabled.different-unit"
-msgstr "Es werden mindestens zwei Masszahlen mit unterschiedlichen Einheiten benötigt."
-
-#: app/charts/index.ts
-msgid "controls.chart.disabled.geographical"
-msgstr "Es ist mindestens eine geografische Dimension erforderlich."
-
-#: app/charts/index.ts
-msgid "controls.chart.disabled.multiple-measures"
-msgstr "Es sind mindestens zwei numerische Messungen erforderlich."
-
-#: app/charts/index.ts
-msgid "controls.chart.disabled.numerical"
-msgstr "Es ist mindestens eine numerische Mass erforderlich."
-
-#: app/charts/index.ts
-msgid "controls.chart.disabled.same-unit"
-msgstr "Es sind mindestens zwei numerische Masse mit der gleichen Einheit erforderlich."
-
-#: app/charts/index.ts
-#: app/charts/index.ts
-msgid "controls.chart.disabled.temporal"
-msgstr "Es ist mindestens eine zeitliche Dimension erforderlich."
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.chart.type.area"
-msgstr "Flächen"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.chart.type.bar"
-msgstr "Balken"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.chart.type.column"
-msgstr "Säulen"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.chart.type.comboLineColumn"
-msgstr "Column-line"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.chart.type.comboLineDual"
-msgstr "Dual-axis line"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.chart.type.comboLineSingle"
-msgstr "Multi-line"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.chart.type.line"
-msgstr "Linien"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.chart.type.map"
-msgstr "Karte"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.chart.type.pie"
-msgstr "Kreis"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.chart.type.scatterplot"
-msgstr "Scatterplot"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.chart.type.table"
-msgstr "Tabelle"
-
-#: app/configurator/components/chart-options-selector/color-component-field.tsx
-#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
-#: app/configurator/components/field-i18n.ts
-msgid "controls.color"
-msgstr "Farbe"
-
-#: app/configurator/components/chart-controls/control-tab.tsx
-msgid "controls.color.add"
-msgstr "Hinzufügen…"
-
-#: app/configurator/components/chart-options-selector/color-component-field.tsx
-msgid "controls.color.opacity"
-msgstr "Transparenz"
-
-#: app/configurator/components/chart-controls/color-palette.tsx
-#: app/configurator/components/chart-controls/color-ramp.tsx
-msgid "controls.color.palette"
-msgstr "Farbpalette"
-
-#: app/configurator/components/chart-controls/color-ramp.tsx
-msgid "controls.color.palette.diverging"
-msgstr "Divergierend"
-
-#: app/configurator/components/chart-controls/color-palette.tsx
-msgid "controls.color.palette.reset"
-msgstr "Farbpalette zurücksetzen"
-
-#: app/configurator/components/chart-controls/color-palette.tsx
-#: app/configurator/components/chart-controls/color-ramp.tsx
-msgid "controls.color.palette.select"
-msgstr "Wähle eine Farbpalette"
-
-#: app/configurator/components/chart-controls/color-ramp.tsx
-msgid "controls.color.palette.sequential"
-msgstr "Sequentiell"
-
-#: app/configurator/components/chart-options-selector/color-component-field.tsx
-msgid "controls.color.scale.discretization.jenks"
-msgstr "Jenks (Natural Breaks)"
-
-#: app/configurator/components/chart-options-selector/color-component-field.tsx
-msgid "controls.color.scale.discretization.quantiles"
-msgstr "Quantile (gleiche Anzahl Werte)"
-
-#: app/configurator/components/chart-options-selector/color-component-field.tsx
-msgid "controls.color.scale.discretization.quantize"
-msgstr "Quantisierung (gleiche Wertebereiche)"
-
-#: app/configurator/components/chart-options-selector/color-component-field.tsx
-msgid "controls.color.scale.interpolation"
-msgstr "Interpolation"
-
-#: app/configurator/components/chart-options-selector/color-component-field.tsx
-msgid "controls.color.scale.number.of.classes"
-msgstr "Anzahl Klassen"
-
-#: app/configurator/components/chart-options-selector/color-component-field.tsx
-msgid "controls.color.scale.type.continuous"
-msgstr "Kontinuierlich"
-
-#: app/configurator/components/chart-options-selector/color-component-field.tsx
-msgid "controls.color.scale.type.discrete"
-msgstr "Diskret"
-
-#: app/configurator/components/chart-options-selector/color-component-field.tsx
-msgid "controls.color.select"
-msgstr "Farbe auswählen"
-
-#: app/configurator/components/chart-controls/color-picker.tsx
-msgid "controls.colorpicker.open"
-msgstr "Farbauswahl öffnen"
-
-#: app/configurator/components/chart-controls/color-picker.tsx
-msgid "controls.colorpicker.remove"
-msgstr "Farbe entfernen"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.column.grouped"
-msgstr "Gruppiert"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.column.stacked"
-msgstr "Gestapelt"
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
+msgid "controls.section.title.warning"
+msgstr "Fügen Sie einen Titel oder eine Beschreibung hinzu"
 
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
-msgid "controls.convert-unit"
-msgstr "Einheitenumrechnung"
+msgid "controls.convert-unit.invalid-number-error"
+msgstr "Bitte geben Sie eine gültige Nummer ein"
 
-#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
-msgid "controls.convert-unit.custom-labels"
-msgstr "Benutzerdefinierte Einheitenbeschriftungen"
+#: app/configurator/components/chart-options-selector/scale-domain.tsx
+msgid "controls.adjust-scale-domain.invalid-number-error"
+msgstr "Bitte geben Sie eine gültige Nummer ein"
 
-#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
-msgid "controls.convert-unit.enable"
-msgstr "Einheitenumrechnung aktivieren"
+#: app/components/hint.tsx
+msgid "hint.nodata.message"
+msgstr "Bitte versuchen Sie es mit einer anderen Filterkombination."
 
-#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
-msgid "controls.convert-unit.multiplier"
-msgstr "Multiplikator"
+#: app/components/hint.tsx
+msgid "hint.nogeometries.message"
+msgstr "Bitte versuchen Sie es mit einer anderen geografischen Dimension."
 
-#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
-msgid "controls.convert-unit.original"
-msgstr "Ursprüngliche Einheit: {0}"
-
-#: app/configurator/components/chart-controls/color-palette.tsx
-#: app/configurator/components/chart-controls/color-ramp.tsx
-#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
-msgid "controls.custom-color-palettes"
-msgstr "Benutzerdefinierte Farbpaletten"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.add-color"
-msgstr "Farbe hinzufügen"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.base"
-msgstr "Basis Farbe"
-
-#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.caption-categorical"
-msgstr "Verwenden Sie klare, kontrastreiche Farben. Beschränken Sie sich auf 5–7 Farben. Nutzen Sie sequenzielle Paletten für geordnete Daten und divergierende Paletten für Extremwerte."
-
-#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.caption-diverging"
-msgstr "Wählen Sie kontrastierende Farben für Start- und Endpunkt. Diese Farben unterstützen die visuelle Trennung von Extremwerten. Divergierende Paletten eignen sich besonders für Daten mit einem bedeutsamen Mittelpunkt wie Null oder einem Durchschnittswert."
-
-#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.caption-sequential"
-msgstr "Verwenden Sie klare, kontrastreiche Farben. Vermeiden Sie die Verwendung von zu vielen Farben, maximal 5-7. Verwenden Sie sequenzielle Paletten für geordnete Daten und divergierende Paletten für Extreme."
-
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.categorical"
-msgstr "Kategorisch"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.categorical-contrast-warning"
-msgstr "Die gewählte Farbe ist auf weissem Hintergrund schwer lesbar. Wählen Sie eine Farbe mit stärkerem Kontrast, um die Barrierefreiheit zu verbessern."
-
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.create-palette"
-msgstr "Farbpalette erstellen"
-
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.diverging"
-msgstr "Divergierend"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.diverging-contrast-warning"
-msgstr "Die gewählte Farbe weist zu wenig Kontrast auf. Verwenden Sie stattdessen eine dunklere Farbe für die divergierende Farbpalette."
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.end"
-msgstr "Endfarbe"
-
-#: app/login/components/color-palettes/color-palette-examples.tsx
-msgid "controls.custom-color-palettes.example"
-msgstr "Beispiel"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.mid"
-msgstr "Mittlere Farbe"
-
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.sequential"
-msgstr "Sequentiell"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.sequential-contrast-warning"
-msgstr "Die gewählte Farbe weist zu wenig Kontrast auf. Wählen Sie eine dunklere Farbe für die sequenzielle Palette."
-
-#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
-msgid "controls.custom-color-palettes.set-values-apply"
-msgstr "Farbpalette speichern"
-
-#: app/login/components/color-palettes/color-palette-types.tsx
-msgid "controls.custom-color-palettes.start"
-msgstr "Anfangsfarbe"
-
-#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.title"
-msgstr "Palettentitel (erforderlich)"
-
-#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.title-unavailable"
-msgstr "Dieser Name ist bereits in Gebrauch. Bitte wählen Sie einen eindeutigen Namen für Ihre Farbpalette."
-
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.type"
-msgstr "Wählen Sie einen Farbpalettentyp."
-
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "controls.custom-color-palettes.update-palette"
-msgstr "Farbpalette aktualisieren"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.description"
-msgstr "Beschreibung hinzufügen"
-
-#: app/charts/shared/chart-data-filters.tsx
-#: app/charts/shared/chart-data-filters.tsx
-#: app/configurator/components/field.tsx
-#: app/configurator/components/field.tsx
-msgid "controls.dimensionvalue.none"
-msgstr "Kein Filter"
-
-#: app/configurator/components/filters.tsx
-msgid "controls.filter.nb-elements"
-msgstr "{0} von {1}"
-
-#: app/configurator/components/filters.tsx
-msgid "controls.filter.select.all"
-msgstr "Alle auswählen"
-
-#: app/configurator/components/filters.tsx
-msgid "controls.filter.select.none"
-msgstr "Alle abwählen"
-
-#: app/configurator/components/field.tsx
-msgid "controls.filter.show-values"
-msgstr "Wert anzeigen"
-
-#: app/configurator/components/filters.tsx
-msgid "controls.filter.show-values.all"
-msgstr "Alle Werte anzeigen"
-
-#: app/configurator/components/filters.tsx
-msgid "controls.filter.show-values.none"
-msgstr "Keine Werte anzeigen"
-
-#: app/configurator/components/field.tsx
-#: app/configurator/components/filters.tsx
-msgid "controls.filter.use-most-recent"
-msgstr "Letztes Datum verwenden"
-
-#: app/configurator/components/filters.tsx
-msgid "controls.filter.use-most-recent-explanation"
-msgstr "Wenn der Herausgeber diesen Datensatz aktualisiert, wird automatisch das neueste Datum ausgewählt."
-
-#: app/configurator/components/chart-options-selector/calculation-field.tsx
-msgid "controls.filters.interactive.calculation"
-msgstr "Benutzer können den Diagramm-Modus ändern"
-
-#: app/charts/shared/legend-color.tsx
-msgid "controls.filters.interactive.color.min-1-filter"
-msgstr "Es muss mindestens ein Filter ausgewählt werden."
-
-#: app/configurator/components/chart-configurator.tsx
-#: app/configurator/components/chart-options-selector/calculation-field.tsx
-#: app/configurator/components/filters.tsx
-#: app/configurator/components/filters.tsx
-msgid "controls.filters.interactive.toggle"
-msgstr "Interaktiv"
-
-#: app/configurator/components/filters.tsx
-msgid "controls.filters.interactive.tooltip"
-msgstr "Erlauben Sie Benutzern, Filter zu ändern"
-
-#: app/configurator/components/filters.tsx
-#: app/configurator/components/layout-configurator.tsx
-#: app/configurator/components/layout-configurator.tsx
-msgid "controls.filters.select.from"
-msgstr "Von"
-
-#: app/configurator/components/chart-controls/color-palette.tsx
-msgid "controls.filters.select.refresh-colors"
-msgstr "Farben mischen"
-
-#: app/configurator/components/filters.tsx
-msgid "controls.filters.select.reset-colors"
-msgstr "Farben zurücksetzen"
-
-#: app/configurator/components/filters.tsx
-msgid "controls.filters.select.selected-filters"
-msgstr "Ausgewählte Filter"
-
-#: app/configurator/components/filters.tsx
-#: app/configurator/components/layout-configurator.tsx
-#: app/configurator/components/layout-configurator.tsx
-msgid "controls.filters.select.to"
-msgstr "Zu"
-
-#: app/configurator/components/filters.tsx
-msgid "controls.filters.show-legend.toggle"
-msgstr "Legendentitel anzeigen"
-
-#: app/configurator/table/table-chart-configurator.tsx
-msgid "controls.groups.empty-help"
-msgstr "Ziehen Sie Spalten hierher, um Gruppen zu erstellen."
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.imputation"
-msgstr "Imputationstyp"
-
-#: app/configurator/components/chart-options-selector/imputation-field.tsx
-#: app/configurator/components/field-i18n.ts
-msgid "controls.imputation.type.linear"
-msgstr "Lineare Interpolation"
-
-#: app/configurator/components/chart-options-selector/imputation-field.tsx
-#: app/configurator/components/field-i18n.ts
-msgid "controls.imputation.type.none"
-msgstr "-"
-
-#: app/configurator/components/chart-options-selector/imputation-field.tsx
-#: app/configurator/components/field-i18n.ts
-msgid "controls.imputation.type.zeros"
-msgstr "Nullen"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.label"
-msgstr "Tab-Titel"
-
-#: app/components/rename-dialog.tsx
-#: app/configurator/components/field-i18n.ts
-msgid "controls.language.english"
-msgstr "Englisch"
-
-#: app/components/rename-dialog.tsx
-#: app/configurator/components/field-i18n.ts
-msgid "controls.language.french"
-msgstr "Französisch"
-
-#: app/components/rename-dialog.tsx
-#: app/configurator/components/field-i18n.ts
-msgid "controls.language.german"
-msgstr "Deutsch"
-
-#: app/components/rename-dialog.tsx
-#: app/configurator/components/field-i18n.ts
-msgid "controls.language.italian"
-msgstr "Italienisch"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.layout.canvas"
-msgstr "Freies Layout"
+#: app/configurator/table/table-chart-options.tsx
+msgid "controls.select.columnStyle.barColorPositive"
+msgstr "Positive Balkenfarbe"
 
 #: app/login/components/profile-tables.tsx
-msgid "controls.layout.chart"
-msgstr "Diagramm"
+msgid "login.chart.preview"
+msgstr "Vorschau"
 
-#: app/configurator/components/field-i18n.ts
-#: app/login/components/profile-tables.tsx
-msgid "controls.layout.dashboard"
-msgstr "Dashboard"
+#: app/configurator/components/configurator.tsx
+msgid "button.copy-preview-link.success"
+msgstr "Vorschau-Link kopiert!"
+
+#: app/configurator/components/preview-breakpoint.tsx
+msgid "controls.layout.preview-xl"
+msgstr "Vorschau in extra grosser Breite"
 
 #: app/configurator/components/preview-breakpoint.tsx
 msgid "controls.layout.preview-lg"
@@ -902,381 +1436,162 @@ msgstr "Vorschau in mittlerer Breite"
 msgid "controls.layout.preview-sm"
 msgstr "Vorschau in kleiner Breite"
 
-#: app/configurator/components/preview-breakpoint.tsx
-msgid "controls.layout.preview-xl"
-msgstr "Vorschau in extra grosser Breite"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.layout.singleURLs"
-msgstr "Separate URLs"
+#: app/configurator/components/configurator.tsx
+msgid "button.layout"
+msgstr "Weiter zu den Layout-Optionen"
 
 #: app/configurator/components/configurator.tsx
-msgid "controls.layout.singleURLs.publish"
-msgstr "Wählen Sie die Diagramme aus, die separat veröffentlicht werden sollen. Nach der Veröffentlichung werden die ausgewählten Diagramme in einzelnen Registerkarten geöffnet."
+msgid "button.publish"
+msgstr "Veröffentlichen"
 
-#: app/configurator/components/field-i18n.ts
-msgid "controls.layout.tab"
-msgstr "Tab Layout"
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
+msgid "controls.color.scale.discretization.quantiles"
+msgstr "Quantile (gleiche Anzahl Werte)"
 
-#: app/configurator/components/field-i18n.ts
-msgid "controls.layout.tall"
-msgstr "Hoch"
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
+msgid "controls.color.scale.discretization.quantize"
+msgstr "Quantisierung (gleiche Wertebereiche)"
 
-#: app/configurator/components/field-i18n.ts
-msgid "controls.layout.vertical"
-msgstr "Vertikal"
+#: app/configurator/components/chart-type-selector.tsx
+msgid "controls.chart.category.regular"
+msgstr "Normal"
 
-#: app/configurator/components/chart-options-selector/limits-field.tsx
-msgid "controls.line.dashed"
-msgstr "Gestrichelt"
+#: app/configurator/table/table-chart-options.tsx
+msgid "columnStyle.textStyle.regular"
+msgstr "Normal"
 
-#: app/configurator/components/chart-options-selector/limits-field.tsx
-msgid "controls.line.solid"
-msgstr "Durchgezogen"
+#: app/browser/dataset-browse.tsx
+msgid "dataset.order.relevance"
+msgstr "Relevanz"
 
-#: app/configurator/components/field-i18n.ts
-msgid "controls.measure"
-msgstr "Messwert"
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-border"
+msgstr "Rand entfernen"
 
-#: app/components/metadata-panel.tsx
-msgid "controls.metadata-panel.available-values"
-msgstr "Verfügbare Werte"
+#: app/configurator/components/chart-controls/color-picker.tsx
+msgid "controls.colorpicker.remove"
+msgstr "Farbe entfernen"
 
-#: app/components/metadata-panel.tsx
-#: app/components/metadata-panel.tsx
-msgid "controls.metadata-panel.metadata"
-msgstr "Details"
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.remove-more-options-button"
+msgstr "Optionen für Tabellenansicht, Kopieren und Bearbeiten, Teilen und Herunterladen entfernen"
 
-#: app/components/metadata-panel.tsx
-msgid "controls.metadata-panel.section.data"
-msgstr "Daten"
+#: app/configurator/table/table-chart-sorting-options.tsx
+msgid "controls.sorting.removeOption"
+msgstr "Sortierung entfernen"
 
-#: app/components/metadata-panel.tsx
-msgid "controls.metadata-panel.section.general"
-msgstr "Allgemeines"
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.rename"
+msgstr "Umbenennen"
 
-#: app/components/metadata-panel.tsx
-msgid "controls.metadata-panel.show-more"
-msgstr "Zeig mehr"
+#: app/components/rename-dialog.tsx
+msgid "profile.chart.rename-dialog.title"
+msgstr "Benennen Sie die Visualisierung um"
 
-#: app/configurator/components/configurator.tsx
-msgid "controls.nav.back-to-configurator"
-msgstr "Zurück zum Editieren"
+#: app/login/components/login-menu.tsx
+msgid "login.profile.bug-report"
+msgstr "Fehler melden"
 
-#: app/configurator/components/configurator.tsx
-msgid "controls.nav.back-to-preview"
-msgstr "Zurück zur Vorschau"
+#: app/login/components/login-menu.tsx
+msgid "login.profile.feature-request"
+msgstr "Funktion wünschen"
+
+#: app/configurator/components/chart-controls/color-palette.tsx
+msgid "controls.color.palette.reset"
+msgstr "Farbpalette zurücksetzen"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.select.reset-colors"
+msgstr "Farben zurücksetzen"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.responsive"
+msgstr "Flexibles Iframe"
+
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
+msgid "dataset.search.preview.description"
+msgstr "Überprüfen Sie die verfügbaren Dimensionen."
+
+#: app/configurator/components/add-dataset-drawer/preview-table.tsx
+msgid "dataset.search.preview.title"
+msgstr "Verfügbare Dimensionen"
 
 #: app/configurator/components/chart-options-selector/combo-y-field.tsx
+msgid "controls.chart.combo.y.line-measure"
+msgstr "Rechte Achse (Linie)"
+
 #: app/configurator/components/chart-options-selector/combo-y-field.tsx
-#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
-#: app/configurator/components/field.tsx
-#: app/configurator/components/field.tsx
-msgid "controls.none"
-msgstr "Keine"
+msgid "controls.chart.combo.y.right-axis-measure"
+msgstr "Messung der rechten Achse"
 
-#: app/configurator/components/chart-controls/control-tab.tsx
-msgid "controls.option.isActive"
-msgstr "Ein"
+#: app/login/components/color-palettes/profile-color-palette-content.tsx
+msgid "login.profile.my-color-palettes.description"
+msgstr "Speichern Sie eine benutzerdefinierte Farbpalette, damit Sie Farben für Ihre Visualisierungen einfach auswählen können."
 
-#: app/configurator/components/chart-controls/control-tab.tsx
-msgid "controls.option.isNotActive"
-msgstr "Aus"
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+msgid "controls.custom-color-palettes.set-values-apply"
+msgstr "Farbpalette speichern"
+
+#: app/configurator/components/configurator.tsx
+msgid "button.save-draft"
+msgstr "Entwurf speichern"
 
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.scale.type"
 msgstr "Skalierungstyp"
 
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.scatterplot"
+msgstr "Scatterplot"
+
+#: app/browser/dataset-browse.tsx
 #: app/components/form.tsx
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
-msgid "controls.search.clear"
-msgstr "Suche zurücksetzen"
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
+msgid "dataset.search.label"
+msgstr "Suchen"
 
-#: app/charts/chart-config-ui-options.ts
-msgid "controls.section.animation.disabled-by-sorting"
-msgstr "Die Animation ist bei der Sortierung nach Gesamtgrösse deaktiviert."
+#: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.search-placeholder"
+msgstr "Suche in importierten Karten..."
 
-#: app/configurator/components/chart-options-selector/animation-field.tsx
-msgid "controls.section.animation.duration"
-msgstr "Animation Dauer"
+#: app/charts/table/table.tsx
+msgid "table.search.placeholder"
+msgstr "Suchen..."
 
-#: app/configurator/components/chart-options-selector/animation-field.tsx
-msgid "controls.section.animation.dynamic-scaling"
-msgstr "Dynamische Skalierung"
-
-#: app/configurator/components/chart-options-selector/animation-field.tsx
-msgid "controls.section.animation.dynamic-scaling.explanation"
-msgstr "Aktivieren Sie die dynamische Skalierung, um die Skalierung des Diagramms auf der Grundlage des Datenbereichs anzupassen und eine optimale Visualisierung zu gewährleisten."
-
-#: app/charts/chart-config-ui-options.ts
-msgid "controls.section.animation.no-available-temporal-dimensions"
-msgstr "Es stehen keine zeitlichen Dimensionen zur Verfügung. Ändern Sie einige der folgenden Kodierungen: {fields}, um die Animation zu aktivieren."
-
-#: app/charts/chart-config-ui-options.ts
-msgid "controls.section.animation.no-temporal-dimensions"
-msgstr "Es gibt keine Dimension, die animiert werden kann."
-
-#: app/configurator/components/chart-options-selector/animation-field.tsx
-msgid "controls.section.animation.settings"
-msgstr "Animation Einstellungen"
-
-#: app/configurator/components/chart-options-selector/animation-field.tsx
-msgid "controls.section.animation.show-play-button"
-msgstr "Schaltfläche Abspielen anzeigen"
-
-#: app/configurator/components/chart-options-selector/animation-field.tsx
-msgid "controls.section.animation.type"
-msgstr "Animation Typ"
-
-#: app/configurator/components/chart-options-selector/animation-field.tsx
-msgid "controls.section.animation.type.continuous"
-msgstr "Kontinuierlich"
-
-#: app/configurator/components/chart-options-selector/animation-field.tsx
-msgid "controls.section.animation.type.explanation"
-msgstr "Verwenden Sie den Typ Abgestuft, um die Animation in festen Abständen zwischen Datenpunkten springen zu lassen. Dieser Modus ist nützlich, wenn Sie Daten mit einer Zeitdimension mit einer ungleichmässigen Verteilung der Daten animieren möchten."
-
-#: app/configurator/components/chart-options-selector/animation-field.tsx
-msgid "controls.section.animation.type.stepped"
-msgstr "Abgestuft"
-
-#: app/configurator/components/layout-configurator.tsx
-msgid "controls.section.block-options"
-msgstr "Objekte"
-
-#: app/configurator/components/layout-configurator.tsx
-msgid "controls.section.block-options.block-add"
-msgstr "Objekt hinzufügen"
-
-#: app/configurator/components/layout-configurator.tsx
-msgid "controls.section.block-options.block-add.text"
-msgstr "Text"
-
-#: app/configurator/components/block-options-selector.tsx
-msgid "controls.section.block-options.block.text"
-msgstr "Text Objekt"
-
-#: app/configurator/components/chart-configurator.tsx
-msgid "controls.section.chart.options"
-msgstr "Diagramm-Einstellungen"
-
-#: app/configurator/table/table-chart-configurator.tsx
-msgid "controls.section.columns"
-msgstr "Spalten"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "controls.section.columnstyle"
-msgstr "Spaltenstil"
-
-#: app/configurator/components/chart-options-selector/show-dots-field.tsx
-msgid "controls.section.data-points"
-msgstr "Datenpunkte"
-
-#: app/components/chart-filters-list.tsx
-#: app/components/chart-filters-list.tsx
-#: app/configurator/components/chart-configurator.tsx
-msgid "controls.section.data.filters"
-msgstr "Filter"
-
-#: app/configurator/components/chart-configurator.tsx
-msgid "controls.section.data.filters.default-open"
-msgstr "Filterbereich anzeigen geöffnet"
-
-#: app/configurator/components/chart-configurator.tsx
-msgid "controls.section.data.filters.none"
-msgstr "Keine Filter"
-
-#: app/charts/shared/chart-data-filters.tsx
-#: app/configurator/components/chart-configurator.tsx
-msgid "controls.section.data.filters.possible-filters-error"
-msgstr "Beim Abrufen möglicher Filter ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut oder laden Sie die Seite neu."
-
-#: app/configurator/components/dataset-control-section.tsx
-msgid "controls.section.datasets.title"
-msgstr "Datensätze"
-
-#: app/configurator/components/annotators.tsx
-#: app/configurator/components/annotators.tsx
-msgid "controls.section.description"
-msgstr "Titel & Beschreibung"
-
-#: app/configurator/components/chart-options-selector/show-dots-field.tsx
-msgid "controls.section.dots-size"
-msgstr "Wählen Sie eine Grösse"
-
-#: app/configurator/components/chart-options-selector/show-dots-field.tsx
-msgid "controls.section.dots-size.large"
-msgstr "Gross"
-
-#: app/configurator/components/chart-options-selector/show-dots-field.tsx
-msgid "controls.section.dots-size.medium"
-msgstr "Mittel"
-
-#: app/configurator/components/chart-options-selector/show-dots-field.tsx
-msgid "controls.section.dots-size.small"
-msgstr "Klein"
-
-#: app/configurator/components/chart-options-selector/multi-filter-field.tsx
-#: app/configurator/components/chart-options-selector/multi-filter-field.tsx
-#: app/configurator/table/table-chart-options.tsx
-#: app/configurator/table/table-chart-options.tsx
-#: app/configurator/table/table-chart-options.tsx
-#: app/configurator/table/table-chart-options.tsx
-msgid "controls.section.filter"
-msgstr "Filter"
-
-#: app/configurator/table/table-chart-configurator.tsx
-msgid "controls.section.groups"
-msgstr "Gruppierungen"
-
-#: app/configurator/components/chart-options-selector/imputation-field.tsx
-msgid "controls.section.imputation"
-msgstr "Fehlende Werte"
-
-#: app/charts/chart-config-ui-options.ts
-#: app/configurator/components/chart-options-selector/imputation-field.tsx
-msgid "controls.section.imputation.explanation"
-msgstr "Für diesen Diagrammtyp sollten fehlenden Werten Ersatzwerte zugewiesen werden. Entscheiden Sie sich für die Imputationslogik oder wechseln Sie zu einem anderen Diagrammtyp."
-
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx
-#: app/configurator/interactive-filters/interactive-filters-configurator.tsx
-msgid "controls.section.interactive.filters"
-msgstr "Animation"
-
-#: app/configurator/components/chart-options-selector/combo-y-field.tsx
-#: app/configurator/components/chart-options-selector/layout-field.tsx
-#: app/configurator/components/layout-configurator.tsx
-msgid "controls.section.layout-options"
-msgstr "Layout-Optionen"
-
-#: app/configurator/components/layout-configurator.tsx
-msgid "controls.section.shared-filters"
-msgstr "Geteilte Filter"
-
-#: app/charts/shared/use-combined-temporal-dimension.ts
-msgid "controls.section.shared-filters.date"
-msgstr "Datum"
-
-#: app/configurator/components/chart-options-selector.tsx
-msgid "controls.section.show-confidence-interval"
-msgstr "Konfidenzintervall anzeigen"
-
-#: app/configurator/components/chart-options-selector.tsx
-msgid "controls.section.show-confidence-interval.explanation"
-msgstr "Unsicherheiten, die sich aus Datenpunkten ergeben anzeigen, um Konfidenzintervalle darzustellen"
-
-#: app/configurator/components/chart-options-selector/show-dots-field.tsx
-msgid "controls.section.show-dots"
-msgstr "Datenpunkte anzeigen"
-
-#: app/configurator/components/chart-options-selector.tsx
-msgid "controls.section.show-standard-error"
-msgstr "Standardfehler anzeigen"
-
-#: app/configurator/components/chart-options-selector.tsx
-msgid "controls.section.show-standard-error.explanation"
-msgstr "Zeigen Sie Unsicherheiten, die sich von Datenpunkten ausbreiten, um Standardfehler darzustellen."
-
-#: app/configurator/components/chart-options-selector.tsx
-msgid "controls.section.show-total-values"
-msgstr "Immer Gesamtwerte anzeigen"
-
-#: app/configurator/components/chart-options-selector/sorting-field.tsx
-msgid "controls.section.sorting"
-msgstr "Sortieren"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "controls.section.tableSettings"
-msgstr "Tabelleneinstellungen"
-
-#: app/configurator/table/table-chart-sorting-options.tsx
-msgid "controls.section.tableSorting"
-msgstr "Tabellensortierung"
-
-#: app/configurator/table/table-chart-configurator.tsx
-msgid "controls.section.tableoptions"
-msgstr "Tabellenoptionen"
-
-#: app/configurator/components/chart-options-selector/limits-field.tsx
-msgid "controls.section.targets-and-limit-values"
-msgstr "Zielvorgaben und Grenzwerte"
-
-#: app/configurator/components/chart-options-selector/limits-field.tsx
-msgid "controls.section.targets-and-limit-values.line-type"
-msgstr "Linientyp auswählen"
-
-#: app/configurator/components/chart-options-selector/limits-field.tsx
-msgid "controls.section.targets-and-limit-values.show-target"
-msgstr "Zielvorgabe anzeigen"
-
-#: app/configurator/components/chart-options-selector/limits-field.tsx
-msgid "controls.section.targets-and-limit-values.symbol-type"
-msgstr "Symboltyp auswählen"
-
-#: app/configurator/components/annotators.tsx
-#: app/configurator/components/annotators.tsx
-msgid "controls.section.title.warning"
-msgstr "Fügen Sie einen Titel oder eine Beschreibung hinzu"
+#: app/configurator/components/ui-helpers.ts
+msgid "time-units.Second"
+msgstr "Sekunde"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.segment"
 msgstr "Segmentierung"
 
-#: app/charts/chart-config-ui-options.ts
-#: app/charts/chart-config-ui-options.ts
-#: app/charts/chart-config-ui-options.ts
-msgid "controls.segment.stacked.disabled-by-scale-type"
-msgstr "Das gestapelte Layout kann nur aktiviert werden, wenn die der vertikalen Achse zugeordnete Dimension eine Verhältnis-Skala hat."
-
-#: app/configurator/components/chart-options-selector/calculation-field.tsx
-msgid "controls.select.calculation.mode"
-msgstr "Visualisierungsmodus"
-
-#: app/configurator/components/chart-configurator.tsx
-#: app/configurator/components/chart-type-selector.tsx
-#: app/configurator/table/table-chart-configurator.tsx
-msgid "controls.select.chart.type"
-msgstr "Diagrammtyp"
+#: app/components/select-tree.tsx
+msgid "controls.tree.select-value"
+msgstr "Auswählen"
 
 #: app/configurator/components/chart-options-selector.tsx
 msgid "controls.select.color"
 msgstr "Farbe auswählen"
 
-#: app/configurator/components/chart-options-selector/layout-field.tsx
-msgid "controls.select.column.layout"
-msgstr "Spaltenstil"
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
+msgid "controls.color.select"
+msgstr "Farbe auswählen"
 
-#: app/configurator/table/table-chart-options.tsx
-msgid "controls.select.columnStyle"
-msgstr "Spaltenstil"
+#: app/configurator/components/chart-controls/color-palette.tsx
+#: app/configurator/components/chart-controls/color-ramp.tsx
+msgid "controls.color.palette.select"
+msgstr "Wähle eine Farbpalette"
 
-#: app/configurator/table/table-chart-options.tsx
-msgid "controls.select.columnStyle.barColorBackground"
-msgstr "Hintergrundfarbe"
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.type"
+msgstr "Wählen Sie einen Farbpalettentyp."
 
-#: app/configurator/table/table-chart-options.tsx
-msgid "controls.select.columnStyle.barColorNegative"
-msgstr "Negative Balkenfarbe"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "controls.select.columnStyle.barColorPositive"
-msgstr "Positive Balkenfarbe"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "controls.select.columnStyle.barShowBackground"
-msgstr "Hintergrundfarbe anzeigen"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "controls.select.columnStyle.columnColor"
-msgstr "Spaltenfarbe"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "controls.select.columnStyle.textColor"
-msgstr "Schriftfarbe"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "controls.select.columnStyle.textStyle"
-msgstr "Schriftstil"
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.caption-sequential"
+msgstr "Verwenden Sie klare, kontrastreiche Farben. Vermeiden Sie die Verwendung von zu vielen Farben, maximal 5-7. Verwenden Sie sequenzielle Paletten für geordnete Daten und divergierende Paletten für Extreme."
 
 #: app/configurator/components/chart-options-selector.tsx
 #: app/configurator/components/chart-options-selector.tsx
@@ -1288,596 +1603,186 @@ msgstr "Schriftstil"
 msgid "controls.select.dimension"
 msgstr "Dimension auswählen"
 
-#: app/configurator/components/chart-options-selector/color-component-field.tsx
-#: app/configurator/components/chart-options-selector/size-field.tsx
-#: app/configurator/components/chart-options-selector.tsx
-msgid "controls.select.measure"
-msgstr "Messwert auswählen"
-
-#: app/configurator/components/field.tsx
-#: app/configurator/components/field.tsx
-msgid "controls.select.optional"
-msgstr "optional"
-
-#: app/configurator/components/filters.tsx
-#: app/configurator/components/filters.tsx
-msgid "controls.set-filters"
-msgstr "Filter bearbeiten"
-
-#: app/configurator/components/filters.tsx
-msgid "controls.set-filters-caption"
-msgstr "Für beste Ergebnisse wählen Sie nicht mehr als 7 Werte für die Visualisierung aus"
-
-#: app/configurator/components/filters.tsx
-msgid "controls.set-values-apply"
-msgstr "Filter anwenden"
-
-#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
-#: app/configurator/components/chart-options-selector/size-field.tsx
-msgid "controls.size"
-msgstr "Grösse"
-
-#: app/configurator/components/chart-options-selector/combo-y-field.tsx
-#: app/configurator/table/table-chart-sorting-options.tsx
-msgid "controls.sorting.addDimension"
-msgstr "Dimension hinzufügen"
-
-#: app/configurator/components/chart-options-selector/sorting-field.tsx
-msgid "controls.sorting.byAuto"
-msgstr "Auto"
-
-#: app/configurator/components/chart-options-selector/sorting-field.tsx
-msgid "controls.sorting.byDimensionLabel"
-msgstr "Name"
-
-#: app/configurator/components/field-i18n.ts
-#: app/configurator/components/field-i18n.ts
-msgid "controls.sorting.byDimensionLabel.ascending"
-msgstr "A → Z"
-
-#: app/configurator/components/field-i18n.ts
-#: app/configurator/components/field-i18n.ts
-msgid "controls.sorting.byDimensionLabel.descending"
-msgstr "Z → A"
-
-#: app/configurator/components/chart-options-selector/sorting-field.tsx
-msgid "controls.sorting.byMeasure"
-msgstr "Messwert"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.sorting.byMeasure.ascending"
-msgstr "1 → 9"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.sorting.byMeasure.descending"
-msgstr "9 → 1"
-
-#: app/configurator/components/chart-options-selector/sorting-field.tsx
-msgid "controls.sorting.byTotalSize"
-msgstr "Gesamtgrösse"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.sorting.byTotalSize.ascending"
-msgstr "Kleinste zuerst"
-
-#: app/charts/chart-config-ui-options.ts
-msgid "controls.sorting.byTotalSize.disabled-by-animation"
-msgstr "Die Sortierung nach Gesamtgrösse ist während der Animation deaktiviert."
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.sorting.byTotalSize.largestBottom"
-msgstr "Grösste unten"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.sorting.byTotalSize.largestFirst"
-msgstr "Grösste zuerst"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.sorting.byTotalSize.largestTop"
-msgstr "Kleinste unten"
-
-#: app/configurator/table/table-chart-sorting-options.tsx
-msgid "controls.sorting.removeOption"
-msgstr "Sortierung entfernen"
-
 #: app/configurator/table/table-chart-sorting-options.tsx
 msgid "controls.sorting.selectDimension"
 msgstr "Wählen Sie eine Dimension aus..."
 
-#: app/configurator/components/field-i18n.ts
-#: app/configurator/table/table-chart-sorting-options.tsx
-msgid "controls.sorting.sortBy"
-msgstr "Sortieren nach"
+#: app/configurator/components/chart-options-selector.tsx
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
+#: app/configurator/components/chart-options-selector/size-field.tsx
+msgid "controls.select.measure"
+msgstr "Messwert auswählen"
 
-#: app/configurator/components/chart-type-selector.tsx
-msgid "controls.switch.chart.type"
-msgstr "Wechseln Sie zu einem anderen Diagrammtyp unter Beibehaltung der meisten Filtereinstellungen"
+#: app/configurator/components/chart-options-selector/show-dots-field.tsx
+msgid "controls.section.dots-size"
+msgstr "Wählen Sie eine Grösse"
 
-#: app/configurator/components/chart-options-selector/limits-field.tsx
-msgid "controls.symbol.cross"
-msgstr "Kreuz"
+#: app/configurator/components/filters.tsx
+msgid "controls.filter.select.all"
+msgstr "Alle auswählen"
 
-#: app/configurator/components/chart-options-selector/limits-field.tsx
-msgid "controls.symbol.dot"
-msgstr "Punkt"
-
-#: app/configurator/components/chart-options-selector/limits-field.tsx
-msgid "controls.symbol.triangle"
-msgstr "Dreieck"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "controls.table.column.group"
-msgstr "Gruppieren"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "controls.table.column.hide"
-msgstr "Spalte ausblenden"
-
-#: app/configurator/table/table-chart-configurator.tsx
-msgid "controls.table.settings"
-msgstr "Einstellungen"
-
-#: app/configurator/table/table-chart-configurator.tsx
-msgid "controls.table.sorting"
-msgstr "Sortierung"
-
-#: app/configurator/table/table-chart-options.tsx
-msgid "controls.tableSettings.showSearch"
-msgstr "Suche anzeigen"
-
-#: app/configurator/components/field-i18n.ts
-msgid "controls.title"
-msgstr "Titel hinzufügen"
-
-#: app/components/select-tree.tsx
-msgid "controls.tree.select-value"
-msgstr "Auswählen"
-
-#: app/configurator/components/chart-controls/color-palette.tsx
-#: app/configurator/components/chart-controls/color-ramp.tsx
-msgid "controls.visualize-color-palette"
-msgstr "Visualize Farbpaletten"
-
-#: app/components/data-source-menu.tsx
-msgid "data.source"
-msgstr "Datenquelle"
-
-#: app/components/chart-published.tsx
-msgid "data.source.notTrusted"
-msgstr "Dieses Diagramm verwendet keine vertrauenswürdige Datenquelle."
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.element.cta"
+msgstr "Wählen Sie ein Element im Diagramm aus..."
 
 #: app/browser/select-dataset-step.tsx
-msgid "dataset-preview.back-to-results"
-msgstr "Zurück zu den Datensätzen"
+msgid "chart.datasets.add-dataset-drawer.title"
+msgstr "Datensatz auswählen"
 
-#: app/components/dataset-metadata.tsx
-msgid "dataset-preview.keywords"
-msgstr "Schlüsselwörter"
-
-#: app/browser/dataset-browse.tsx
-msgid "dataset-result.dimension-joined-by"
-msgstr "Enthält Wert von"
-
-#: app/components/chart-footnotes.tsx
-#: app/configurator/components/dataset-control-section.tsx
-msgid "dataset.footnotes.dataset"
-msgstr "Datensatz"
-
-#: app/components/chart-footnotes.tsx
-msgid "dataset.footnotes.updated"
-msgstr "Neuestes Update"
-
-#: app/components/chart-published.tsx
-msgid "dataset.hasImputedValues"
-msgstr "Einige Daten in diesem Datensatz fehlen und wurden interpoliert, um die Lücken zu füllen."
-
-#: app/browser/dataset-browse.tsx
-msgid "dataset.includeDrafts"
-msgstr "Entwürfe einschliessen"
-
-#: app/components/dataset-metadata.tsx
-msgid "dataset.metadata.date.created"
-msgstr "Erstellungsdatum"
-
-#: app/components/dataset-metadata.tsx
-msgid "dataset.metadata.email"
-msgstr "Kontaktstellen"
-
-#: app/components/dataset-metadata.tsx
-msgid "dataset.metadata.furtherinformation"
-msgstr "Weitere Informationen"
-
-#: app/components/dataset-metadata.tsx
-msgid "dataset.metadata.learnmore"
-msgstr "Mehr zum Datensatz"
-
-#: app/components/dataset-metadata.tsx
-msgid "dataset.metadata.source"
-msgstr "Quelle"
-
-#: app/components/dataset-metadata.tsx
-msgid "dataset.metadata.version"
-msgstr "Version"
-
-#: app/browser/dataset-browse.tsx
-msgid "dataset.order.newest"
-msgstr "Neueste"
-
-#: app/browser/dataset-browse.tsx
-msgid "dataset.order.relevance"
-msgstr "Relevanz"
-
-#: app/browser/dataset-browse.tsx
-msgid "dataset.order.title"
-msgstr "Titel"
-
-#: app/browser/dataset-preview.tsx
-#: app/components/chart-preview.tsx
-#: app/components/chart-published.tsx
-msgid "dataset.publicationStatus.draft.warning"
-msgstr "Achtung, dieser Datensatz ist im Entwurfs-Stadium.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
-
-#: app/components/chart-published.tsx
-msgid "dataset.publicationStatus.expires.warning"
-msgstr "Achtung, dieser Datensatz ist abgelaufen.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
-
-#: app/browser/dataset-browse.tsx
-msgid "dataset.results"
-msgstr "{0, plural, zero {Keine Datensätze} one {# Datensatz} other {# Datensätze}}"
+#: app/components/chart-selection-tabs.tsx
+msgid "chart-selection-tabs.add-chart-different-dataset.button"
+msgstr "Datensatz auswählen"
 
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
-msgid "dataset.search.at-least-one-compatible-dimension-selected"
-msgstr "Es muss mindestens eine kompatible Dimension ausgewählt werden."
+msgid "chart.datasets.add-dataset-dialog.title"
+msgstr "Wählen Sie einen Datensatz mit gemeinsamen Dimensionen aus"
 
-#: app/configurator/components/add-dataset-drawer/caution-alert.tsx
-msgid "dataset.search.caution.acknowledge"
-msgstr "Verstanden, ich werde vorsichtig vorgehen."
+#: app/charts/shared/chart-data-filters/index.tsx
+#: app/charts/shared/chart-data-filters/index.tsx
+#: app/components/select-tree.tsx
+#: app/configurator/components/field-date-picker.tsx
+#: app/configurator/components/field.tsx
+#: app/configurator/components/filters.tsx
+msgid "controls.dimensionvalue.select"
+msgstr "Filter auswählen"
 
-#: app/configurator/components/add-dataset-drawer/caution-alert.tsx
-msgid "dataset.search.caution.body"
-msgstr "Die Verknüpfung verschiedener Datensätze birgt Risiken wie Dateninkonsistenzen, Skalierbarkeitsprobleme und unerwartete Korrelationen. Stellen Sie sicher, dass Sie Datensätze nur dann zusammenführen, wenn Sie sicher sind, dass die Daten zusammengeführt werden sollen."
+#: app/configurator/components/chart-options-selector/limits-field.tsx
+msgid "controls.section.targets-and-limit-values.line-type"
+msgstr "Linientyp auswählen"
 
-#: app/browser/dataset-browse.tsx
-#: app/components/form.tsx
-#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
-#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
-msgid "dataset.search.label"
-msgstr "Suchen"
+#: app/configurator/components/filters.tsx
+msgid "controls.filter.select.none"
+msgstr "Alle abwählen"
 
-#: app/browser/dataset-browse.tsx
-#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
-msgid "dataset.search.placeholder"
-msgstr "Name, Organisation, Stichwort..."
+#: app/configurator/components/chart-options-selector/limits-field.tsx
+msgid "controls.section.targets-and-limit-values.symbol-type"
+msgstr "Symboltyp auswählen"
 
-#: app/configurator/components/dataset-control-section.tsx
-msgid "dataset.search.preview.added-dataset"
-msgstr "Neuer Datensatz hinzugefügt. Sie können die Daten nun in den Diagrammen verwenden."
+#: app/configurator/components/configurator.tsx
+msgid "controls.layout.singleURLs.publish"
+msgstr "Wählen Sie die Diagramme aus, die separat veröffentlicht werden sollen. Nach der Veröffentlichung werden die ausgewählten Diagramme in einzelnen Registerkarten geöffnet."
 
-#: app/configurator/components/add-dataset-drawer/preview-table.tsx
-msgid "dataset.search.preview.datasets"
-msgstr "Datensätze"
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.select.selected-filters"
+msgstr "Ausgewählte Filter"
 
-#: app/configurator/components/add-dataset-drawer/preview-table.tsx
-msgid "dataset.search.preview.description"
-msgstr "Überprüfen Sie die verfügbaren Dimensionen."
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.singleURLs"
+msgstr "Separate URLs"
 
-#: app/configurator/components/add-dataset-drawer/preview-table.tsx
-msgid "dataset.search.preview.new-dimension"
-msgstr "Neu"
+#: app/configurator/components/chart-controls/color-ramp.tsx
+msgid "controls.color.palette.sequential"
+msgstr "Sequentiell"
 
-#: app/configurator/components/add-dataset-drawer/preview-table.tsx
-msgid "dataset.search.preview.title"
-msgstr "Verfügbare Dimensionen"
+#: app/components/chart-shared.tsx
+#: app/components/publish-actions.tsx
+msgid "button.share"
+msgstr "Teilen"
 
-#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
-msgid "dataset.search.search-options.more-2-options-selected"
-msgstr "{0} weitere"
-
-#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
-msgid "dataset.search.search-options.no-options-selected"
-msgstr "Keine Optionen ausgewählt"
-
-#: app/browser/dataset-browse.tsx
-msgid "dataset.sortby"
-msgstr "Sortieren nach"
-
-#: app/browser/dataset-browse.tsx
-msgid "dataset.tag.draft"
-msgstr "Entwurf"
-
-#: app/browser/dataset-preview.tsx
-msgid "datatable.showing.first.rows"
-msgstr "Die ersten 10 Zeilen werden angezeigt"
-
-#: app/components/metadata-panel.tsx
-#: app/components/metadata-panel.tsx
-#: app/configurator/components/chart-options-selector/utils.ts
-msgid "dimension.joined"
-msgstr "Verbunden"
-
-#: app/components/metadata-panel.tsx
-msgid "dimension.joined-info-icon"
-msgstr "Verbundene Dimensionen integrieren Daten aus mehreren Datensätzen"
-
-#: app/utils/flashes.tsx
-msgid "flashes.couldnt-load-cube.title"
-msgstr "Der Cube konnte nicht geladen werden"
-
-#: app/utils/flashes.tsx
-msgid "flashes.couldnt-load-cube.view-cube-checker"
-msgstr "Ansicht im Cube Validator"
-
-#: app/components/footer.tsx
-msgid "footer.about_us.label"
-msgstr "Über dieses Portal"
-
-#: app/components/footer.tsx
-msgid "footer.about_us.text"
-msgstr "Das Portal visualize.admin.ch ermöglicht die Visualisierung von Schweizer Open Government Data, die durch den LINDAS Linked Data Service bereitgestellt werden. Open Government Data (OGD) sind Daten, die der Öffentlichkeit kostenlos in computerlesbarem Format zur Verfügung gestellt werden."
-
-#: app/components/footer.tsx
-msgid "footer.button.lindas"
-msgstr "LINDAS Linked Data Dienste"
-
-#: app/components/footer.tsx
-msgid "footer.contact.title"
-msgstr "Informiert bleiben"
-
-#: app/components/footer.tsx
-msgid "footer.information.title"
-msgstr "Weitere Informationen"
-
-#: app/components/footer.tsx
-msgid "footer.statistics"
-msgstr "Statistiken"
-
-#: app/components/footer.tsx
-msgid "footer.status"
-msgstr "Status"
-
-#: app/components/footer.tsx
-msgid "footer.tutorials"
-msgstr "Tutorials"
-
-#: app/components/hint.tsx
-msgid "hint.chartunexpected.message"
-msgstr "Beim Anzeigen dieses Diagramms ist ein unerwarteter Fehler aufgetreten."
-
-#: app/components/hint.tsx
-msgid "hint.chartunexpected.title"
-msgstr "Unerwarteter Fehler"
-
-#: app/components/hint.tsx
-msgid "hint.coordinatesloadingerror.message"
-msgstr "Es gab ein Problem beim Laden der Koordinaten aus den geografischen Dimensionen. Bitte später erneut versuchen."
-
-#: app/components/hint.tsx
-msgid "hint.coordinatesloadingerror.title"
-msgstr "Koordinaten-Ladefehler"
-
-#: app/pages/v/[chartId].tsx
-msgid "hint.create.your.own.chart"
-msgstr "Kopieren Sie diese Visualisierung oder erstellen Sie eine neue Visualisierung mit Swiss Open Government Data."
-
-#: app/components/data-download.tsx
-#: app/components/data-download.tsx
-#: app/components/hint.tsx
-msgid "hint.dataloadingerror.message"
-msgstr "Die Daten konnten nicht geladen werden."
-
-#: app/components/hint.tsx
-msgid "hint.dataloadingerror.status"
-msgstr "Weitere Informationen finden Sie auf der Statusseite"
-
-#: app/components/hint.tsx
-msgid "hint.dataloadingerror.title"
-msgstr "Daten-Ladefehler"
-
-#: app/pages/v/[chartId].tsx
-msgid "hint.how.to.share"
-msgstr "Sie können diese Visualisierung teilen oder sie einbetten. Zudem können Sie eine neue Visualisierung erstellen oder die gezeigte Visualisierung kopieren."
-
-#: app/components/chart-filters-list.tsx
-#: app/components/hint.tsx
-#: app/components/hint.tsx
-msgid "hint.loading.data"
-msgstr "Lade Daten …"
-
-#: app/components/hint.tsx
-msgid "hint.loading.data.large.datasets"
-msgstr "Bei grossen Datensätzen kann dies zur Zeit länger dauern, die Performance wird noch optimiert."
-
-#: app/configurator/components/chart-type-selector.tsx
-msgid "hint.no.visualization.with.dataset"
-msgstr "Mit dem ausgewählten Datensatz kann keine Visualisierung erstellt werden."
-
-#: app/components/hint.tsx
-msgid "hint.nodata.message"
-msgstr "Bitte versuchen Sie es mit einer anderen Filterkombination."
-
-#: app/components/hint.tsx
-msgid "hint.nodata.title"
-msgstr "Keine Daten für die aktuelle Filterauswahl"
-
-#: app/components/hint.tsx
-msgid "hint.nogeometries.message"
-msgstr "Bitte versuchen Sie es mit einer anderen geografischen Dimension."
-
-#: app/components/hint.tsx
-msgid "hint.nogeometries.title"
-msgstr "Keine Geometrien verfügbar"
-
-#: app/components/hint.tsx
-msgid "hint.only.negative.data.message"
-msgstr "Negative Datenwerte können mit diesem Diagrammtyp nicht dargestellt werden."
-
-#: app/components/hint.tsx
-msgid "hint.only.negative.data.title"
-msgstr "Negative Werte"
-
-#: app/pages/v/[chartId].tsx
-msgid "hint.publication.draft"
-msgstr "Dieses Visualisierung befindet sich noch im Entwurf."
-
-#: app/components/hint.tsx
-msgid "hint.publication.success"
-msgstr "Die Visualisierung ist jetzt veröffentlicht. Sie können sie teilen oder einbetten, indem Sie die URL kopieren oder das Menü oben verwenden."
-
-#: app/charts/shared/chart-data-filters.tsx
-msgid "interactive.data.filters.hide"
-msgstr "Filter ausblenden"
-
-#: app/charts/shared/chart-data-filters.tsx
-msgid "interactive.data.filters.show"
-msgstr "Filter anzeigen"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.actions.unpublish"
-msgstr "Veröffentlichung aufheben"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.delete"
-msgstr "Löschen"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.delete-draft.confirmation"
-msgstr "Möchten Sie diesen Entwurf wirklich löschen?"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.delete.confirmation"
-msgstr "Sind Sie sicher, dass Sie diese Grafik löschen wollen?"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.duplicate"
-msgstr "Duplizieren"
-
-#: app/login/components/profile-tables.tsx
-#: app/pages/v/[chartId].tsx
-msgid "login.chart.edit"
-msgstr "Bearbeiten"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.embed"
-msgstr "Einbetten"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.preview"
-msgstr "Vorschau"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.chart.rename"
-msgstr "Umbenennen"
+#: app/components/publish-actions.tsx
+msgid "publication.popup.share"
+msgstr "Teilen"
 
 #: app/login/components/profile-tables.tsx
 msgid "login.chart.share"
 msgstr "Teilen"
 
+#: app/components/publish-actions.tsx
+msgid "publication.share.linktitle.facebook"
+msgstr "Teilen via Facebook"
+
+#: app/components/publish-actions.tsx
+msgid "publication.share.linktitle.twitter"
+msgstr "Teilen via Twitter"
+
+#: app/components/publish-actions.tsx
+msgid "publication.share.linktitle.mail"
+msgstr "Versenden via E-Mail"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.section.shared-filters"
+msgstr "Geteilte Filter"
+
+#: app/configurator/components/chart-options-selector/base-layer-field.tsx
+msgid "chart.map.layers.base.show"
+msgstr "Weltkarte anzeigen"
+
+#: app/browser/dataset-browse.tsx
 #: app/login/components/profile-tables.tsx
-msgid "login.chart.view"
-msgstr "Anzeigen"
+msgid "show.all"
+msgstr "Alle anzeigen"
 
-#: app/login/components/profile-tables.tsx
-msgid "login.create-chart"
-msgstr "erstellen Sie einen"
+#: app/configurator/components/filters.tsx
+msgid "controls.filter.show-values.all"
+msgstr "Alle Werte anzeigen"
 
-#: app/login/components/profile-tables.tsx
-msgid "login.no-charts"
-msgstr "Noch keine Diagramme"
+#: app/configurator/table/table-chart-options.tsx
+msgid "controls.select.columnStyle.barShowBackground"
+msgstr "Hintergrundfarbe anzeigen"
 
-#: app/login/components/login-menu.tsx
-msgid "login.profile.bug-report"
-msgstr "Fehler melden"
+#: app/configurator/components/chart-controls/show-filter-area-open.tsx
+msgid "controls.section.data.filters.default-open"
+msgstr "Filterbereich anzeigen geöffnet"
 
-#: app/components/confirmation-dialog.tsx
-msgid "login.profile.chart.confirmation.default"
-msgstr "Sind Sie sicher, dass Sie diese Aktion durchführen wollen?"
+#: app/charts/shared/chart-data-filters/index.tsx
+msgid "interactive.data.filters.show"
+msgstr "Filter anzeigen"
 
-#: app/login/components/profile-tables.tsx
-msgid "login.profile.chart.delete-draft.warning"
-msgstr "Diese Aktion kann nicht rückgängig gemacht werden."
+#: app/charts/shared/interactive-filter-calculation-toggle.tsx
+msgid "controls.calculation.show-in-percentage"
+msgstr "In % anzeigen"
 
-#: app/login/components/profile-tables.tsx
-msgid "login.profile.chart.delete.warning"
-msgstr "Denken Sie daran, dass das Entfernen dieser Visualisierung sich auf alle Stellen auswirkt, an denen sie möglicherweise bereits eingebettet ist!"
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.show-legend.toggle"
+msgstr "Legendentitel anzeigen"
 
-#: app/login/components/login-menu.tsx
-msgid "login.profile.feature-request"
-msgstr "Funktion wünschen"
+#: app/browser/dataset-browse.tsx
+msgid "show.less"
+msgstr "Weniger anzeigen"
 
-#: app/login/components/login-menu.tsx
-msgid "login.profile.feedback"
-msgstr "Feedback"
+#: app/components/metadata-panel.tsx
+msgid "controls.metadata-panel.show-more"
+msgstr "Zeig mehr"
 
-#: app/login/components/profile-content-tabs.tsx
-msgid "login.profile.home"
-msgstr "Übersicht"
+#: app/configurator/components/filters.tsx
+msgid "controls.filter.show-values.none"
+msgstr "Keine Werte anzeigen"
 
-#: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-msgid "login.profile.my-color-palettes"
-msgstr "Meine Farbpaletten"
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.display.default-open"
+msgstr "Standardmässig geöffnet anzeigen"
+
+#: app/configurator/components/chart-options-selector/animation-field.tsx
+msgid "controls.section.animation.show-play-button"
+msgstr "Schaltfläche Abspielen anzeigen"
+
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.tableSettings.showSearch"
+msgstr "Suche anzeigen"
+
+#: app/configurator/components/chart-options-selector/limits-field.tsx
+msgid "controls.section.targets-and-limit-values.show-target"
+msgstr "Zielvorgabe anzeigen"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-confidence-interval.explanation"
+msgstr "Unsicherheiten, die sich aus Datenpunkten ergeben anzeigen, um Konfidenzintervalle darzustellen"
+
+#: app/configurator/components/chart-options-selector.tsx
+msgid "controls.section.show-standard-error.explanation"
+msgstr "Zeigen Sie Unsicherheiten, die sich von Datenpunkten ausbreiten, um Standardfehler darzustellen."
+
+#: app/configurator/components/field.tsx
+msgid "controls.filter.show-values"
+msgstr "Wert anzeigen"
+
+#: app/browser/dataset-preview.tsx
+msgid "datatable.showing.first.rows"
+msgstr "Die ersten 10 Zeilen werden angezeigt"
 
 #: app/configurator/components/chart-controls/color-palette.tsx
-#: app/configurator/components/chart-controls/color-ramp.tsx
-#: app/login/components/color-palettes/profile-color-palette-content.tsx
-msgid "login.profile.my-color-palettes.add"
-msgstr "Farbpalette hinzufügen"
-
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
-msgid "login.profile.my-color-palettes.create.back-button"
-msgstr "Meine Farbpalette"
-
-#: app/login/components/color-palettes/profile-color-palette-content.tsx
-msgid "login.profile.my-color-palettes.delete"
-msgstr "Farbpalette löschen"
-
-#: app/login/components/color-palettes/profile-color-palette-content.tsx
-msgid "login.profile.my-color-palettes.description"
-msgstr "Speichern Sie eine benutzerdefinierte Farbpalette, damit Sie Farben für Ihre Visualisierungen einfach auswählen können."
-
-#: app/login/components/color-palettes/profile-color-palette-content.tsx
-msgid "login.profile.my-color-palettes.edit"
-msgstr "Farbplatte editieren"
-
-#: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-msgid "login.profile.my-drafts"
-msgstr "Meine Entwürfe"
-
-#: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-#: app/login/components/profile-content-tabs.tsx
-msgid "login.profile.my-published-visualizations"
-msgstr "Meine Visualisierungen"
-
-#: app/login/components/login-menu.tsx
-msgid "login.profile.my-visualizations"
-msgstr "Meine Visualisierungen"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.profile.my-visualizations.chart-actions"
-msgstr "Aktionen"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.profile.my-visualizations.chart-name"
-msgstr "Name"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.profile.my-visualizations.chart-type"
-msgstr "Typ"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.profile.my-visualizations.chart-updated-date"
-msgstr "Geändert"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.profile.my-visualizations.dataset-name"
-msgstr "Datensatz"
-
-#: app/login/components/profile-tables.tsx
-msgid "login.profile.my-visualizations.multiple-datasets"
-msgstr "Mehrere Datensätze"
+msgid "controls.filters.select.refresh-colors"
+msgstr "Farben mischen"
 
 #: app/login/components/login-menu.tsx
 msgid "login.sign-in"
@@ -1888,213 +1793,392 @@ msgstr "Einloggen"
 msgid "login.sign-out"
 msgstr "Abmelden"
 
-#: app/components/mdx-editor/link-dialog.tsx
-msgid "mdx-editor.link-dialog.label-placeholder"
-msgstr "Label..."
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+#: app/configurator/components/chart-options-selector/size-field.tsx
+msgid "controls.size"
+msgstr "Grösse"
 
-#: app/components/mdx-editor/link-dialog.tsx
-msgid "mdx-editor.link-dialog.url-placeholder"
-msgstr "URL..."
+#: app/configurator/components/chart-options-selector/show-dots-field.tsx
+msgid "controls.section.dots-size.small"
+msgstr "Klein"
 
-#: app/components/chart-footnotes.tsx
+#: app/configurator/components/chart-options-selector/limits-field.tsx
+msgid "controls.line.solid"
+msgstr "Durchgezogen"
+
 #: app/components/chart-published.tsx
+msgid "dataset.hasImputedValues"
+msgstr "Einige Daten in diesem Datensatz fehlen und wurden interpoliert, um die Lücken zu füllen."
+
+#: app/configurator/components/chart-options-selector/sorting-field.tsx
+msgid "controls.section.sorting"
+msgstr "Sortieren"
+
+#: app/browser/dataset-browse.tsx
+msgid "dataset.sortby"
+msgstr "Sortieren nach"
+
+#: app/configurator/components/field-i18n.ts
+#: app/configurator/table/table-chart-sorting-options.tsx
+msgid "controls.sorting.sortBy"
+msgstr "Sortieren nach"
+
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.table.sorting"
+msgstr "Sortierung"
+
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.sorting.byTotalSize.disabled-by-animation"
+msgstr "Die Sortierung nach Gesamtgrösse ist während der Animation deaktiviert."
+
+#: app/components/dataset-metadata.tsx
+msgid "dataset.metadata.source"
+msgstr "Quelle"
+
+#: app/components/dataset-metadata.tsx
+msgid "chart-controls.sparql-query"
+msgstr "SPARQL-Abfrage"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.column.stacked"
+msgstr "Gestapelt"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.bar.stacked"
+msgstr "Gestapelt"
+
+#: app/charts/chart-config-ui-options.ts
+#: app/charts/chart-config-ui-options.ts
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.segment.stacked.disabled-by-scale-type"
+msgstr "Das gestapelte Layout kann nur aktiviert werden, wenn die der vertikalen Achse zugeordnete Dimension eine Verhältnis-Skala hat."
+
+#: app/login/components/color-palettes/color-palette-types.tsx
+msgid "controls.custom-color-palettes.start"
+msgstr "Anfangsfarbe"
+
+#: app/components/publish-actions.tsx
+msgid "publication.embed.iframe.static"
+msgstr "Statisches Iframe"
+
+#: app/components/footer.tsx
+msgid "footer.statistics"
+msgstr "Statistiken"
+
+#: app/components/footer.tsx
+msgid "footer.status"
+msgstr "Status"
+
+#: app/components/footer.tsx
+msgid "footer.contact.title"
+msgstr "Informiert bleiben"
+
+#: app/configurator/components/chart-options-selector/animation-field.tsx
+msgid "controls.section.animation.type.stepped"
+msgstr "Abgestuft"
+
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.annotations.highlight.section.style.title"
+msgstr "Stil"
+
+#: app/configurator/components/chart-type-selector.tsx
+msgid "controls.switch.chart.type"
+msgstr "Wechseln Sie zu einem anderen Diagrammtyp unter Beibehaltung der meisten Filtereinstellungen"
+
+#: app/configurator/components/field-i18n.ts
+msgid "chart.map.layers.symbol"
+msgstr "Symbole"
+
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.base.enable-temporal-filtering"
+msgstr "Mit zeitlichen Filtern synchronisieren"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.label"
+msgstr "Tab-Titel"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.tab"
+msgstr "Tab Layout"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.chart.type.table"
+msgstr "Tabelle"
+
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.section.tableoptions"
+msgstr "Tabellenoptionen"
+
+#: app/configurator/table/table-chart-sorting-options.tsx
+msgid "controls.section.tableSorting"
+msgstr "Tabellensortierung"
+
 #: app/components/chart-shared.tsx
-msgid "metadata.link.created.with"
-msgstr "Erstellt mit"
+msgid "chart-controls.table-view"
+msgstr "Tabellenansicht"
 
-#: app/components/confirmation-dialog.tsx
-msgid "no"
-msgstr "Nein"
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.tall"
+msgstr "Hoch"
 
-#: app/components/rename-dialog.tsx
-msgid "profile.chart.rename-dialog.title"
-msgstr "Benennen Sie die Visualisierung um"
+#: app/configurator/components/chart-options-selector/limits-field.tsx
+msgid "controls.section.targets-and-limit-values"
+msgstr "Zielvorgaben und Grenzwerte"
 
-#: app/charts/map/wms-wmts-provider-info.tsx
-msgid "provider-info.can-display-layers"
-msgstr "Kann die Layer anzeigen"
+#: app/configurator/table/table-chart-options.tsx
+#: app/configurator/table/table-chart-options.tsx
+#: app/configurator/table/table-chart-options.tsx
+msgid "columnStyle.text"
+msgstr "Schrift"
 
-#: app/charts/map/wms-wmts-provider-info.tsx
-msgid "provider-info.can-display-on-map-geo-admin"
-msgstr "Kann auf der Geo Admin Karte angezeigt werden"
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+msgid "controls.text-only"
+msgstr "Nur Textbox"
 
-#: app/charts/map/wms-wmts-provider-info.tsx
-msgid "provider-info.can-list-layers"
-msgstr "Kann die Layer auflisten"
+#: app/configurator/table/table-chart-options.tsx
+msgid "controls.select.columnStyle.textColor"
+msgstr "Schriftfarbe"
+
+#: app/configurator/components/block-options-selector.tsx
+msgid "controls.section.block-options.block.text"
+msgstr "Text Objekt"
+
+#: app/configurator/table/table-chart-options.tsx
+msgid "controls.select.columnStyle.textStyle"
+msgstr "Schriftstil"
+
+#: app/components/data-download.tsx
+#: app/components/data-download.tsx
+#: app/components/hint.tsx
+msgid "hint.dataloadingerror.message"
+msgstr "Die Daten konnten nicht geladen werden."
+
+#: app/configurator/components/add-dataset-drawer/caution-alert.tsx
+msgid "dataset.search.caution.body"
+msgstr "Die Verknüpfung verschiedener Datensätze birgt Risiken wie Dateninkonsistenzen, Skalierbarkeitsprobleme und unerwartete Korrelationen. Stellen Sie sicher, dass Sie Datensätze nur dann zusammenführen, wenn Sie sicher sind, dass die Daten zusammengeführt werden sollen."
+
+#: app/components/footer.tsx
+msgid "footer.about_us.text"
+msgstr "Das Portal visualize.admin.ch ermöglicht die Visualisierung von Schweizer Open Government Data, die durch den LINDAS Linked Data Service bereitgestellt werden. Open Government Data (OGD) sind Daten, die der Öffentlichkeit kostenlos in computerlesbarem Format zur Verfügung gestellt werden."
 
 #: app/charts/map/wms-wmts-provider-info.tsx
 msgid "provider-info.title"
 msgstr "Anbieter-Informationen"
 
-#: app/charts/map/wms-wmts-provider-info.tsx
-msgid "provider-info.working-layers"
-msgstr "Funktionierende Layer"
+#: app/browser/dataset-browse.tsx
+msgid "browse-panel.themes"
+msgstr "Kategorien"
 
-#: app/components/publish-actions.tsx
-msgid "publication.embed.advanced-settings"
-msgstr "Erweiterte Einstellungen"
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.section.animation.no-available-temporal-dimensions"
+msgstr "Es stehen keine zeitlichen Dimensionen zur Verfügung. Ändern Sie einige der folgenden Kodierungen: {fields}, um die Animation zu aktivieren."
 
-#: app/components/publish-actions.tsx
-msgid "publication.embed.external-application"
-msgstr "Embed-Code für «Externe Applikation»"
+#: app/charts/chart-config-ui-options.ts
+msgid "controls.section.animation.no-temporal-dimensions"
+msgstr "Es gibt keine Dimension, die animiert werden kann."
 
-#: app/components/publish-actions.tsx
-msgid "publication.embed.external-application.caption"
-msgstr "Verwenden Sie diesen Link, um das Diagramm ohne Iframe-Tags einzubetten."
+#: app/components/hint.tsx
+msgid "hint.coordinatesloadingerror.message"
+msgstr "Es gab ein Problem beim Laden der Koordinaten aus den geografischen Dimensionen. Bitte später erneut versuchen."
 
-#: app/components/publish-actions.tsx
-msgid "publication.embed.iframe"
-msgstr "Embed-Code"
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.chart.delete-draft.warning"
+msgstr "Diese Aktion kann nicht rückgängig gemacht werden."
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.chart.delete.warning"
+msgstr "Denken Sie daran, dass das Entfernen dieser Visualisierung sich auf alle Stellen auswirkt, an denen sie möglicherweise bereits eingebettet ist!"
+
+#: app/components/chart-published.tsx
+msgid "data.source.notTrusted"
+msgstr "Dieses Diagramm verwendet keine vertrauenswürdige Datenquelle."
+
+#: app/pages/v/[chartId].tsx
+msgid "hint.publication.draft"
+msgstr "Dieses Visualisierung befindet sich noch im Entwurf."
+
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.title-unavailable"
+msgstr "Dieser Name ist bereits in Gebrauch. Bitte wählen Sie einen eindeutigen Namen für Ihre Farbpalette."
+
+#: app/browser/dataset-browse.tsx
+msgid "dataset.order.title"
+msgstr "Titel"
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.title"
+msgstr "Titel hinzufügen"
+
+#: app/configurator/components/annotators.tsx
+#: app/configurator/components/annotators.tsx
+msgid "controls.section.description"
+msgstr "Titel & Beschreibung"
+
+#: app/configurator/components/filters.tsx
+#: app/configurator/components/layout-configurator.tsx
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.filters.select.to"
+msgstr "Zu"
+
+#: app/charts/table/table.tsx
+msgid "chart.table.number.of.lines"
+msgstr "Anzahl Zeilen"
+
+#: app/configurator/components/chart-options-selector/sorting-field.tsx
+msgid "controls.sorting.byTotalSize"
+msgstr "Gesamtgrösse"
+
+#: app/configurator/components/chart-options-selector/limits-field.tsx
+msgid "controls.symbol.triangle"
+msgstr "Dreieck"
+
+#: app/components/footer.tsx
+msgid "footer.tutorials"
+msgstr "Tutorials"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-type"
+msgstr "Typ"
+
+#: app/configurator/components/add-dataset-drawer/caution-alert.tsx
+msgid "dataset.search.caution.acknowledge"
+msgstr "Verstanden, ich werde vorsichtig vorgehen."
+
+#: app/components/hint.tsx
+msgid "hint.chartunexpected.title"
+msgstr "Unerwarteter Fehler"
+
+#: app/configurator/components/chart-options-selector/conversion-units-field.tsx
+msgid "controls.convert-unit"
+msgstr "Einheitenumrechnung"
+
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.actions.unpublish"
+msgstr "Veröffentlichung aufheben"
+
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.update-palette"
+msgstr "Farbpalette aktualisieren"
+
+#: app/configurator/components/configurator.tsx
+msgid "button.update"
+msgstr "Diese Visualisierung aktualisieren"
+
+#: app/components/mdx-editor/link-dialog.tsx
+msgid "mdx-editor.link-dialog.url-placeholder"
+msgstr "URL..."
+
+#: app/configurator/components/field-i18n.ts
+msgid "controls.abbreviations"
+msgstr "Abkürzungen verwenden"
+
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
+msgid "controls.custom-color-palettes.caption-categorical"
+msgstr "Verwenden Sie klare, kontrastreiche Farben. Beschränken Sie sich auf 5–7 Farben. Nutzen Sie sequenzielle Paletten für geordnete Daten und divergierende Paletten für Extremwerte."
+
+#: app/configurator/components/field.tsx
+#: app/configurator/components/field.tsx
+#: app/configurator/components/filters.tsx
+msgid "controls.filter.use-most-recent"
+msgstr "Letztes Datum verwenden"
+
+#: app/configurator/components/chart-options-selector/animation-field.tsx
+msgid "controls.section.animation.type.explanation"
+msgstr "Verwenden Sie den Typ Abgestuft, um die Animation in festen Abständen zwischen Datenpunkten springen zu lassen. Dieser Modus ist nützlich, wenn Sie Daten mit einer Zeitdimension mit einer ungleichmässigen Verteilung der Daten animieren möchten."
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.caption"
 msgstr "Verwenden Sie diesen Code, um das Diagramm auf einer Webseite einzubetten"
 
 #: app/components/publish-actions.tsx
-msgid "publication.embed.iframe.optimize-space"
-msgstr "Optimieren Sie den Leerraum um und innerhalb des Diagramms"
+msgid "publication.embed.external-application.caption"
+msgstr "Verwenden Sie diesen Link, um das Diagramm ohne Iframe-Tags einzubetten."
 
-#: app/components/publish-actions.tsx
-msgid "publication.embed.iframe.remove-axis-labels-interactivity"
-msgstr "Interaktive Beschriftungen ausblenden"
+#: app/configurator/table/table-chart-options.tsx
+msgid "controls.table.column.group"
+msgstr "Gruppieren"
 
-#: app/components/publish-actions.tsx
-msgid "publication.embed.iframe.remove-border"
-msgstr "Rand entfernen"
+#: app/components/dataset-metadata.tsx
+msgid "dataset.metadata.version"
+msgstr "Version"
 
-#: app/components/publish-actions.tsx
-msgid "publication.embed.iframe.remove-border.warn"
-msgstr "Zur Einbettung von Visualisierungen in Systeme ohne Rand."
+#: app/configurator/components/field-i18n.ts
+msgid "controls.layout.vertical"
+msgstr "Vertikal"
 
-#: app/components/publish-actions.tsx
-msgid "publication.embed.iframe.remove-filters"
-msgstr "Filter ausblenden"
+#: app/configurator/components/field-i18n.ts
+msgid "controls.axis.vertical"
+msgstr "Vertikale Achse"
 
-#: app/components/publish-actions.tsx
-msgid "publication.embed.iframe.remove-legend"
-msgstr "Fussnoten ausblenden"
+#: app/login/components/profile-tables.tsx
+msgid "login.chart.view"
+msgstr "Anzeigen"
 
-#: app/components/publish-actions.tsx
-msgid "publication.embed.iframe.remove-more-options-button"
-msgstr "Optionen für Tabellenansicht, Kopieren und Bearbeiten, Teilen und Herunterladen entfernen"
+#: app/utils/flashes.tsx
+msgid "flashes.couldnt-load-cube.view-cube-checker"
+msgstr "Ansicht im Cube Validator"
 
-#: app/components/publish-actions.tsx
-msgid "publication.embed.iframe.responsive"
-msgstr "Flexibles Iframe"
+#: app/login/components/profile-tables.tsx
+msgid "login.profile.my-visualizations.chart-views"
+msgstr "Ansichten"
 
-#: app/components/publish-actions.tsx
-msgid "publication.embed.iframe.responsive.warn"
-msgstr "Zum Einbetten von Visualisierungen in Webseiten ohne CMS-Unterstützung. Der Iframe wird sich anpassen. Der JavaScript-Teil des Einbettungscodes sorgt dafür, dass der Iframe immer die richtige Grösse beibehält."
-
-#: app/components/publish-actions.tsx
-msgid "publication.embed.iframe.static"
-msgstr "Statisches Iframe"
-
-#: app/components/publish-actions.tsx
-msgid "publication.embed.iframe.static.warn"
-msgstr "Zum Einbetten von Visualisierungen in Systeme ohne Webkomponenten oder JavaScript-Unterstützung. (z. B. WordPress)"
-
-#: app/components/publish-actions.tsx
-msgid "publication.popup.share"
-msgstr "Teilen"
-
-#: app/components/publish-actions.tsx
-msgid "publication.share.chart.url"
-msgstr "Diagramm-URL"
-
-#: app/components/publish-actions.tsx
-msgid "publication.share.linktitle.facebook"
-msgstr "Teilen via Facebook"
-
-#: app/components/publish-actions.tsx
-msgid "publication.share.linktitle.mail"
-msgstr "Versenden via E-Mail"
-
-#: app/components/publish-actions.tsx
-msgid "publication.share.linktitle.twitter"
-msgstr "Teilen via Twitter"
-
-#: app/components/publish-actions.tsx
-msgid "publication.share.mail.body"
-msgstr "Hier ist eine Visualisierung, die ich mit visualize.admin.ch erstellt habe"
+#: app/configurator/components/chart-controls/color-palette.tsx
+#: app/configurator/components/chart-controls/color-ramp.tsx
+msgid "controls.visualize-color-palette"
+msgstr "Visualize Farbpaletten"
 
 #: app/components/publish-actions.tsx
 msgid "publication.share.mail.subject"
 msgstr "visualize.admin.ch"
 
-#: app/configurator/components/filters.tsx
-msgid "select.controls.filters.search"
-msgstr "Suche"
-
-#: app/components/metadata-panel.tsx
-msgid "select.controls.metadata.search"
-msgstr "Springen zu..."
-
-#: app/browser/dataset-browse.tsx
-#: app/login/components/profile-tables.tsx
-msgid "show.all"
-msgstr "Alle anzeigen"
-
-#: app/browser/dataset-browse.tsx
-msgid "show.less"
-msgstr "Weniger anzeigen"
-
-#: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
-msgid "table.column.no"
-msgstr "Spalte {0}"
-
-#: app/configurator/components/ui-helpers.ts
-msgid "time-units.Day"
-msgstr "Tag"
-
-#: app/configurator/components/ui-helpers.ts
-msgid "time-units.Hour"
-msgstr "Stunde"
-
-#: app/configurator/components/ui-helpers.ts
-msgid "time-units.Minute"
-msgstr "Minute"
-
-#: app/configurator/components/ui-helpers.ts
-msgid "time-units.Month"
-msgstr "Monat"
-
-#: app/configurator/components/ui-helpers.ts
-msgid "time-units.Second"
-msgstr "Sekunde"
-
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Week"
 msgstr "Woche"
 
-#: app/configurator/components/ui-helpers.ts
-msgid "time-units.Year"
-msgstr "Jahr"
+#: app/configurator/components/filters.tsx
+msgid "controls.filter.use-most-recent-explanation"
+msgstr "Wenn der Herausgeber diesen Datensatz aktualisiert, wird automatisch das neueste Datum ausgewählt."
+
+#: app/components/hint.tsx
+msgid "hint.loading.data.large.datasets"
+msgstr "Bei grossen Datensätzen kann dies zur Zeit länger dauern, die Performance wird noch optimiert."
 
 #: app/charts/map/wms-wmts-providers-autocomplete.tsx
 msgid "wmts-providers-autocomplete.placeholder"
 msgstr "WMTS WMS URL"
 
-#: app/configurator/components/custom-layers-selector.tsx
-msgid "wmts.custom-layer.section-title"
-msgstr "Benutzerdefinierte Layer"
+#: app/charts/map/wms-wmts-provider-info.tsx
+msgid "provider-info.working-layers"
+msgstr "Funktionierende Layer"
 
-#: app/charts/map/wms-wmts-selector.tsx
-msgid "wmts.error-invalid-url"
-msgstr "Ungültige URL"
-
-#: app/charts/map/wms-wmts-selector.tsx
-msgid "wmts.layer-not-supported-crs"
-msgstr "Dieser Layer wird nicht unterstützt, da er nicht im EPSG:3857-Koordinatensystem vorliegt."
-
-#: app/charts/map/wms-wmts-selector.tsx
-msgid "wmts.legend-title"
-msgstr "Legende"
-
-#: app/charts/map/wms-wmts-selector.tsx
-msgid "wmts.search-placeholder"
-msgstr "Suche in importierten Karten..."
+#: app/configurator/components/ui-helpers.ts
+msgid "time-units.Year"
+msgstr "Jahr"
 
 #: app/components/confirmation-dialog.tsx
 msgid "yes"
 msgstr "Ja"
+
+#: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
+msgid "chart.datasets.add-dataset-dialog.description"
+msgstr "Sie können nur Datensätze kombinieren, die Dimensionen mit derselben Einheit und Auflösung teilen. Standardmässig werden Dimensionen ausgewählt, die zum aktuellen Diagramm passen."
+
+#: app/pages/v/[chartId].tsx
+msgid "hint.how.to.share"
+msgstr "Sie können diese Visualisierung teilen oder sie einbetten. Zudem können Sie eine neue Visualisierung erstellen oder die gezeigte Visualisierung kopieren."
+
+#: app/components/hint.tsx
+msgid "hint.publication.success"
+msgstr "Die Visualisierung ist jetzt veröffentlicht. Sie können sie teilen oder einbetten, indem Sie die URL kopieren oder das Menü oben verwenden."
+
+#: app/configurator/components/field-i18n.ts
+#: app/configurator/components/field-i18n.ts
+msgid "controls.sorting.byDimensionLabel.descending"
+msgstr "Z → A"
+
+#: app/configurator/components/chart-options-selector/imputation-field.tsx
+#: app/configurator/components/field-i18n.ts
+msgid "controls.imputation.type.zeros"
+msgstr "Nullen"

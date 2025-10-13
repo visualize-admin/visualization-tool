@@ -1,5 +1,4 @@
 import { Trans } from "@lingui/macro";
-import { Button, Typography } from "@mui/material";
 import { useMemo } from "react";
 
 import {
@@ -7,6 +6,7 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { ConfirmButton } from "@/configurator/components/confirm-button";
 import { TextBlockInputField } from "@/configurator/components/field";
 import { isLayouting } from "@/configurator/configurator-state";
 import { useOrderedLocales } from "@/locales/use-locale";
@@ -34,7 +34,7 @@ export const LayoutBlocksSelector = () => {
 
   const handleClosePanel = useEvent(() => {
     dispatch({
-      type: "LAYOUT_ACTIVE_FIELD_CHANGED",
+      type: "LAYOUT_ACTIVE_FIELD_CHANGE",
       value: undefined,
     });
   });
@@ -57,13 +57,7 @@ export const LayoutBlocksSelector = () => {
           {orderedLocales.map((locale) => (
             <TextBlockInputField key={locale} locale={locale} />
           ))}
-          <Button
-            size="sm"
-            onClick={handleClosePanel}
-            sx={{ alignSelf: "flex-end", mt: 2, px: 5 }}
-          >
-            <Typography component="span">Ok</Typography>
-          </Button>
+          <ConfirmButton onClick={handleClosePanel} />
         </ControlSectionContent>
       </ControlSection>
     </div>
