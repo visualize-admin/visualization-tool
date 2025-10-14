@@ -94,7 +94,7 @@ msgstr "[ Text hinzufügen ]"
 msgid "annotator.add.title"
 msgstr "[ Titel hinzufügen ]"
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/search-dataset-results-count.tsx
 msgid "dataset.results"
 msgstr "{0, plural, zero {Keine Datensätze} one {# Datensatz} other {# Datensätze}}"
 
@@ -362,7 +362,7 @@ msgstr "Zurück zum Editieren"
 msgid "controls.nav.back-to-preview"
 msgstr "Zurück zur Vorschau"
 
-#: app/browser/select-dataset-step.tsx
+#: app/browse/ui/select-dataset-step.tsx
 msgid "dataset-preview.back-to-results"
 msgstr "Zurück zu den Datensätzen"
 
@@ -416,7 +416,7 @@ msgstr "Kann die Layer auflisten"
 msgid "dataset.publicationStatus.expires.warning"
 msgstr "Achtung, dieser Datensatz ist abgelaufen.<0/><1>Diese Grafik nicht für Berichte verwenden.</1>"
 
-#: app/browser/dataset-preview.tsx
+#: app/browse/ui/dataset-preview.tsx
 #: app/components/chart-preview.tsx
 #: app/components/chart-published.tsx
 msgid "dataset.publicationStatus.draft.warning"
@@ -547,11 +547,11 @@ msgstr "Vergleich"
 msgid "controls.chart.category.combo.hint"
 msgstr "Vergleichsdiagrammtypen kombinieren mehrere Messwerte in einem Diagramm und helfen, ihre Beziehungen oder Korrelationen zu visualisieren, selbst wenn sie unterschiedliche Einheiten oder Skalen haben."
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/search-filters.tsx
 msgid "browse-panel.termsets"
 msgstr "Konzepte"
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/search-filters.tsx
 msgid "browse-panel.termsets.explanation"
 msgstr "Konzepte stellen Werte dar, die über verschiedene Dimensionen und Datensätze hinweg geteilt werden können."
 
@@ -563,7 +563,7 @@ msgstr "Bestätigen"
 msgid "dataset.metadata.email"
 msgstr "Kontaktstellen"
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/dataset-result.tsx
 msgid "dataset-result.dimension-joined-by"
 msgstr "Enthält Wert von"
 
@@ -607,8 +607,8 @@ msgstr "Entwurf konnte nicht gespeichert werden"
 msgid "button.new.visualization"
 msgstr "Neue Visualisierung erstellen"
 
-#: app/browser/select-dataset-step.tsx
-#: app/browser/select-dataset-step.tsx
+#: app/browse/ui/select-dataset-step.tsx
+#: app/browse/ui/select-dataset-step.tsx
 msgid "browse.dataset.create-visualization"
 msgstr "Visualisierung von diesem Datensatz erstellen"
 
@@ -620,8 +620,8 @@ msgstr "Farbpalette erstellen"
 msgid "login.create-chart"
 msgstr "erstellen Sie einen"
 
-#: app/browser/select-dataset-step.tsx
-#: app/browser/select-dataset-step.tsx
+#: app/browse/ui/select-dataset-step.tsx
+#: app/browse/ui/select-dataset-step.tsx
 msgid "browse.dataset.create-visualization-visualize"
 msgstr "Visualierung erstellen"
 
@@ -763,7 +763,7 @@ msgstr "Punkt"
 msgid "button.download.data"
 msgstr "Daten herunterladen"
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/dataset-result.tsx
 msgid "dataset.tag.draft"
 msgstr "Entwurf"
 
@@ -850,7 +850,7 @@ msgstr "Englisch"
 msgid "controls.custom-color-palettes.example"
 msgstr "Beispiel"
 
-#: app/browser/select-dataset-step.tsx
+#: app/browse/ui/select-dataset-banner.tsx
 msgid "browse.datasets.description"
 msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datensätze, indem Sie entweder nach Kategorien oder Organisationen filtern oder direkt nach bestimmten Stichworten suchen. Klicken Sie auf einen Datensatz, um detailliertere Informationen zu erhalten und Ihre eigenen Visualisierungen zu erstellen."
 
@@ -1008,7 +1008,7 @@ msgstr "Karten importieren"
 msgid "controls.imputation"
 msgstr "Imputationstyp"
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/search-dataset-drafts-control.tsx
 msgid "dataset.includeDrafts"
 msgstr "Entwürfe einschliessen"
 
@@ -1232,7 +1232,7 @@ msgstr "Name"
 msgid "login.profile.my-visualizations.chart-name"
 msgstr "Name"
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/search-dataset-input.tsx
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.placeholder"
 msgstr "Name, Organisation, Stichwort..."
@@ -1257,7 +1257,7 @@ msgstr "Neu"
 msgid "dataset.search.preview.added-dataset"
 msgstr "Neuer Datensatz hinzugefügt. Sie können die Daten nun in den Diagrammen verwenden."
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/search-dataset-sort-control.tsx
 msgid "dataset.order.newest"
 msgstr "Neueste"
 
@@ -1293,7 +1293,7 @@ msgstr "Keine importierte Karten"
 msgid "chart-selection-tabs.no-label"
 msgstr "Kein Tab-Titel"
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/dataset-results.tsx
 #: app/components/select-tree.tsx
 msgid "No results"
 msgstr "Kein Ergebnis"
@@ -1361,7 +1361,7 @@ msgstr "Optimieren Sie den Leerraum um und innerhalb des Diagramms"
 msgid "controls.select.optional"
 msgstr "optional"
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/search-filters.tsx
 msgid "browse-panel.organizations"
 msgstr "Organisationen"
 
@@ -1460,7 +1460,7 @@ msgstr "Normal"
 msgid "columnStyle.textStyle.regular"
 msgstr "Normal"
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/search-dataset-sort-control.tsx
 msgid "dataset.order.relevance"
 msgstr "Relevanz"
 
@@ -1544,7 +1544,7 @@ msgstr "Skalierungstyp"
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/search-dataset-input.tsx
 #: app/components/form.tsx
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
@@ -1625,7 +1625,7 @@ msgstr "Alle auswählen"
 msgid "controls.annotations.highlight.section.element.cta"
 msgstr "Wählen Sie ein Element im Diagramm aus..."
 
-#: app/browser/select-dataset-step.tsx
+#: app/browse/ui/select-dataset-step.tsx
 msgid "chart.datasets.add-dataset-drawer.title"
 msgstr "Datensatz auswählen"
 
@@ -1707,7 +1707,7 @@ msgstr "Geteilte Filter"
 msgid "chart.map.layers.base.show"
 msgstr "Weltkarte anzeigen"
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/navigation-section.tsx
 #: app/login/components/profile-tables.tsx
 msgid "show.all"
 msgstr "Alle anzeigen"
@@ -1722,11 +1722,11 @@ msgstr "Hintergrundfarbe anzeigen"
 
 #: app/configurator/components/chart-controls/show-filter-area-open.tsx
 msgid "controls.section.data.filters.default-open"
-msgstr "Filterbereich anzeigen geöffnet"
+msgstr "Filter geöffnet anzeigen"
 
 #: app/charts/shared/chart-data-filters/index.tsx
 msgid "interactive.data.filters.show"
-msgstr "Filter anzeigen"
+msgstr "Filter einblenden"
 
 #: app/charts/shared/interactive-filter-calculation-toggle.tsx
 msgid "controls.calculation.show-in-percentage"
@@ -1736,7 +1736,7 @@ msgstr "In % anzeigen"
 msgid "controls.filters.show-legend.toggle"
 msgstr "Legendentitel anzeigen"
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/navigation-section.tsx
 msgid "show.less"
 msgstr "Weniger anzeigen"
 
@@ -1776,7 +1776,7 @@ msgstr "Zeigen Sie Unsicherheiten, die sich von Datenpunkten ausbreiten, um Stan
 msgid "controls.filter.show-values"
 msgstr "Wert anzeigen"
 
-#: app/browser/dataset-preview.tsx
+#: app/browse/ui/first-ten-rows-caption.tsx
 msgid "datatable.showing.first.rows"
 msgstr "Die ersten 10 Zeilen werden angezeigt"
 
@@ -1814,7 +1814,7 @@ msgstr "Einige Daten in diesem Datensatz fehlen und wurden interpoliert, um die 
 msgid "controls.section.sorting"
 msgstr "Sortieren"
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/search-dataset-sort-control.tsx
 msgid "dataset.sortby"
 msgstr "Sortieren nach"
 
@@ -1965,7 +1965,7 @@ msgstr "Das Portal visualize.admin.ch ermöglicht die Visualisierung von Schweiz
 msgid "provider-info.title"
 msgstr "Anbieter-Informationen"
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/search-filters.tsx
 msgid "browse-panel.themes"
 msgstr "Kategorien"
 
@@ -2002,7 +2002,7 @@ msgstr "Dieses Visualisierung befindet sich noch im Entwurf."
 msgid "controls.custom-color-palettes.title-unavailable"
 msgstr "Dieser Name ist bereits in Gebrauch. Bitte wählen Sie einen eindeutigen Namen für Ihre Farbpalette."
 
-#: app/browser/dataset-browse.tsx
+#: app/browse/ui/search-dataset-sort-control.tsx
 msgid "dataset.order.title"
 msgstr "Titel"
 
