@@ -249,4 +249,32 @@ describe("makeDimensionValueSorters", () => {
       "2020-01-01",
     ]);
   });
+
+  it("should correctly sort byTotalSize (reversed order)", () => {
+    const totalSizeDimension = {
+      values: [
+        { value: "A", label: "A" },
+        { value: "B", label: "B" },
+        { value: "C", label: "C" },
+        { value: "D", label: "D" },
+      ],
+    } as unknown as Dimension;
+    const values = totalSizeDimension.values.map((d) => d.value);
+    const sorting: NonNullable<SortingField["sorting"]> = {
+      sortingType: "byTotalSize",
+      sortingOrder: "asc",
+    };
+    const sorters = makeDimensionValueSorters(totalSizeDimension, {
+      sorting,
+      sumsBySegment: { A: 1, B: 2, C: 3, D: 4 },
+    });
+    const sortingOrders = getSortingOrders(sorters, sorting);
+    // Should be reversed
+    expect(orderBy(values, sorters, sortingOrders)).toEqual([
+      "D",
+      "C",
+      "B",
+      "A",
+    ]);
+  });
 });
