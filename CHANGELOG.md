@@ -14,6 +14,7 @@ You can also check the
 - Features
   - Table sorting is not reset anymore on data / filter change
   - Visualize now supports multiple cube contact points
+  - Order of groups when sorting by total segment size is now more intuitive
 - Fixes
   - Hiding a temporal column and then enabling an interactive filter doesn't
     result in broken state anymore
@@ -23,6 +24,10 @@ You can also check the
   - It's now possible to share filters between tables in dashboards
   - Charts are not animating in and out anymore when interacting with UI in some
     rare cases
+  - Sorting of values in the multi filter panel is now consistent with the rest
+    of the application
+  - Cascading filters in the editing mode now work correctly again and not
+    exclude the last filter anymore
 - Styles
   - Added missing paddings in details panel autocomplete component and in banner
     component for smaller breakpoints
@@ -31,6 +36,7 @@ You can also check the
 - Security
   - Introduced GraphQL query depth limit
   - Disabled GraphQL introspection
+  - Improved security of color palette API routes
 
 ### 6.0.0 - 2025-09-05
 

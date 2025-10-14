@@ -18,6 +18,13 @@ export const UserController = controller({
   createPalette: async ({ req, res }) => {
     const session = await getServerSession(req, res, nextAuthOptions);
     const userId = session?.user?.id;
+
+    if (!userId) {
+      throw new Error(
+        "You must be logged in to create a custom color palette!"
+      );
+    }
+
     const data: CreateCustomColorPalette = req.body;
 
     return await createPaletteForUser({
@@ -29,18 +36,41 @@ export const UserController = controller({
     const session = await getServerSession(req, res, nextAuthOptions);
     const userId = session?.user?.id;
 
-    return await getPalettesForUser(userId);
+    if (!userId) {
+      throw new Error(
+        "You must be logged in to view your custom color palettes!"
+      );
+    }
+
+    return await getPalettesForUser({ user_id: userId });
   },
-  deletePalette: async ({ req }) => {
+  deletePalette: async ({ req, res }) => {
+    const session = await getServerSession(req, res, nextAuthOptions);
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      throw new Error(
+        "You must be logged in to delete a custom color palette!"
+      );
+    }
+
     const data: DeleteCustomColorPalette = req.body;
-    const paletteId = data.paletteId;
 
-    await deletePaletteForUser(paletteId);
+    await deletePaletteForUser({ ...data, user_id: userId });
   },
 
-  updatePalette: async ({ req }) => {
+  updatePalette: async ({ req, res }) => {
+    const session = await getServerSession(req, res, nextAuthOptions);
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      throw new Error(
+        "You must be logged in to update a custom color palette!"
+      );
+    }
+
     const data: UpdateCustomColorPalette = req.body;
 
-    await updatePaletteForUser(data);
+    await updatePaletteForUser({ ...data, user_id: userId });
   },
 });

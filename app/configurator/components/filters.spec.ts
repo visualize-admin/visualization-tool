@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { getHasColorMapping } from "@/configurator/components/filters";
-import { TemporalDimension } from "@/domain/data";
+import { getHasColorMapping, sortFilterValues } from "@/configurator/components/filters";
+import { HierarchyValue, TemporalDimension } from "@/domain/data";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { getD3TimeFormatLocale } from "@/locales/locales";
 import { getTimeFilterOptions } from "@/utils/time-filter-options";
@@ -40,5 +40,40 @@ describe("colorMapping", () => {
         filterDimensionId: "123",
       })
     ).toBe(false);
+  });
+});
+
+describe("sortFilterValues", () => {
+  it("should sort values numerically by identifier when identifiers are numeric strings", () => {
+    const values: HierarchyValue[] = [
+      {
+        depth: 0,
+        dimensionId: "test",
+        value: "1",
+        hasValue: true,
+        label: "One",
+        identifier: "1",
+      },
+      {
+        depth: 0,
+        dimensionId: "test",
+        value: "10",
+        hasValue: true,
+        label: "Ten",
+        identifier: "10",
+      },
+      {
+        depth: 0,
+        dimensionId: "test",
+        value: "2",
+        hasValue: true,
+        label: "Two",
+        identifier: "2",
+      },
+    ];
+
+    const sortedValues = sortFilterValues(values);
+
+    expect(sortedValues.map(v => v.identifier)).toEqual(["1", "2", "10"]);
   });
 });
