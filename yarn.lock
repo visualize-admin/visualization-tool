@@ -9214,6 +9214,13 @@
   resolved "https://registry.yarnpkg.com/@types/github-slugger/-/github-slugger-1.3.0.tgz#16ab393b30d8ae2a111ac748a015ac05a1fc5524"
   integrity sha512-J/rMZa7RqiH/rT29TEVZO4nBoDP9XJOjnbbIofg7GQKs4JIduEO3WLpte+6WeUz/TcrXKlY+bM7FYrp8yFB+3g==
 
+"@types/graphql-depth-limit@^1.1.6":
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/@types/graphql-depth-limit/-/graphql-depth-limit-1.1.6.tgz#b9597ecc44a751634ed1607726d65234b6e8c8f7"
+  integrity sha512-WU4bjoKOzJ8CQE32Pbyq+YshTMcLJf2aJuvVtSLv1BQPwDUGa38m2Vr8GGxf0GZ0luCQcfxlhZeHKu6nmTBvrw==
+  dependencies:
+    graphql "^14.5.3"
+
 "@types/hast@^2.0.0":
   version "2.3.1"
   resolved "https://registry.npmjs.org/@types/hast/-/hast-2.3.1.tgz"
@@ -16336,6 +16343,13 @@ graphql-constraint-directive@v2:
     "@graphql-tools/utils" "^6.0.9"
     validator "^13.6.0"
 
+graphql-depth-limit@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/graphql-depth-limit/-/graphql-depth-limit-1.1.0.tgz#59fe6b2acea0ab30ee7344f4c75df39cc18244e8"
+  integrity sha512-+3B2BaG8qQ8E18kzk9yiSdAa75i/hnnOwgSeAxVJctGQPvmeiLtqKOYF6HETCyRjiF7Xfsyal0HbLlxCQkgkrw==
+  dependencies:
+    arrify "^1.0.1"
+
 graphql-request@^3.3.0:
   version "3.4.0"
   resolved "https://registry.npmjs.org/graphql-request/-/graphql-request-3.4.0.tgz"
@@ -16396,6 +16410,13 @@ graphql-ws@^4.4.1:
   version "4.9.0"
   resolved "https://registry.npmjs.org/graphql-ws/-/graphql-ws-4.9.0.tgz"
   integrity sha512-sHkK9+lUm20/BGawNEWNtVAeJzhZeBg21VmvmLoT5NdGVeZWv5PdIhkcayQIAgjSyyQ17WMKmbDijIPG2On+Ag==
+
+graphql@^14.5.3:
+  version "14.7.0"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-14.7.0.tgz#7fa79a80a69be4a31c27dda824dc04dac2035a72"
+  integrity sha512-l0xWZpoPKpppFzMfvVyFmp9vLN7w/ZZJPefUicMCepfJeQ8sMcztloGYY9DfjVPo6tIUDzU5Hw3MUbIjj9AVVA==
+  dependencies:
+    iterall "^1.2.2"
 
 graphql@^15.5.1:
   version "15.5.1"
@@ -17912,7 +17933,7 @@ isomorphic-ws@4.0.1:
   resolved "https://registry.npmjs.org/isomorphic-ws/-/isomorphic-ws-4.0.1.tgz"
   integrity sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==
 
-iterall@^1.2.1:
+iterall@^1.2.1, iterall@^1.2.2:
   version "1.3.0"
   resolved "https://registry.npmjs.org/iterall/-/iterall-1.3.0.tgz"
   integrity sha512-QZ9qOMdF+QLHxy1QIpUHUU1D5pS2CG2P69LF6L6CPjPYA/XMOmKV3PZpawHoAjHNyB0swdVTRxdYT4tbBbxqwg==

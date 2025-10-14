@@ -34,6 +34,8 @@ You can also check the
 - Maintenance
   - Improved code organization around Browse page
 - Security
+  - Introduced GraphQL query depth limit
+  - Disabled GraphQL introspection
   - Improved security of color palette API routes
 
 ### 6.0.0 - 2025-09-05
