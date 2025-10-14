@@ -26,6 +26,8 @@ You can also check the
     rare cases
   - Sorting of values in the multi filter panel is now consistent with the rest
     of the application
+  - Cascading filters in the editing mode now work correctly again and not
+    exclude the last filter anymore
 - Styles
   - Added missing paddings in details panel autocomplete component and in banner
     component for smaller breakpoints

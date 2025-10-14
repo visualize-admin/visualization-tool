@@ -418,7 +418,7 @@ const parseDimensionValue = (
 };
 
 const parseMaybeUndefined = (value: string, fallbackValue: string) => {
-  return value === ns.cube.Undefined.value ? "-" : fallbackValue ?? value;
+  return value === ns.cube.Undefined.value ? "-" : (fallbackValue ?? value);
 };
 
 type LoadMaxDimensionValuesProps = Omit<LoadDimensionValuesProps, "locale">;
@@ -463,21 +463,25 @@ ${getQueryFilters(filterList, cubeDimensions, dimensionIri)}`
   }
 }
 
-const getFiltersList = (filters: Filters | undefined, dimensionIri: string) => {
+export const getFiltersList = (
+  filters: Filters | undefined,
+  dimensionIri: string
+) => {
   if (!filters) {
     return [];
   }
 
   const entries = Object.entries(filters);
+  const currentIndex = entries.findIndex(([iri]) => iri == dimensionIri);
+  const filteredEntries = entries.slice(
+    0,
+    // Make sure to not exclude the last filter in case of pre-sliced filters
+    currentIndex >= 0 ? currentIndex : undefined
+  );
+
   // Consider filters before the current filter to fetch the values for
   // the current filter
-  return sortBy(
-    entries.slice(
-      0,
-      entries.findIndex(([iri]) => iri == dimensionIri)
-    ),
-    ([, v]) => getFilterOrder(v)
-  );
+  return sortBy(filteredEntries, ([, v]) => getFilterOrder(v));
 };
 
 export const getQueryFilters = (
