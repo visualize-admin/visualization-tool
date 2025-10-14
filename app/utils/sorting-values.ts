@@ -175,7 +175,18 @@ export const getSortingOrders = (
   sorters: ((...args: any[]) => any)[],
   sorting: SortingField["sorting"]
 ) => {
-  return Array(sorters.length).fill(
-    sorting?.sortingOrder === "desc" ? "desc" : "asc"
-  );
+  const order = sorting?.sortingOrder;
+  const type = sorting?.sortingType;
+  const result = Array(sorters.length);
+
+  switch (order) {
+    case "desc":
+      return result.fill(type === "byTotalSize" ? "asc" : "desc");
+    case "asc":
+    case undefined:
+      return result.fill(type === "byTotalSize" ? "desc" : "asc");
+    default:
+      const _exhaustiveCheck: never = order;
+      return _exhaustiveCheck;
+  }
 };
