@@ -217,7 +217,8 @@ const AXIS_TITLE_PADDING = 20;
 export const useXAxisTitleOffset = (
   xScale?: ScaleBand<string>,
   getXLabel?: (d: string) => string,
-  xTimeUnit?: TimeUnit
+  xTimeUnit?: TimeUnit,
+  fontSize?: number
 ) => {
   const { axisLabelFontSize } = useChartTheme();
 
@@ -228,11 +229,11 @@ export const useXAxisTitleOffset = (
             xScale,
             getXLabel,
             xTimeUnit,
-            fontSize: axisLabelFontSize,
+            fontSize: fontSize ?? axisLabelFontSize,
           })
         : axisLabelFontSize * LINE_HEIGHT) + AXIS_TITLE_PADDING
     );
-  }, [axisLabelFontSize, xScale, getXLabel, xTimeUnit]);
+  }, [xScale, getXLabel, xTimeUnit, fontSize, axisLabelFontSize]);
 };
 
 const getLongestXLabel = ({
