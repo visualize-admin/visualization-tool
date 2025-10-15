@@ -11,6 +11,10 @@ You can also check the
 
 ## Unreleased
 
+Nothing yet.
+
+### 6.1.0 - 2025-10-15
+
 - Features
   - Table sorting is not reset anymore on data / filter change
   - Visualize now supports multiple cube contact points
