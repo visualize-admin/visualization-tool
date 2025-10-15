@@ -33,9 +33,6 @@ export const AxisWidthBand = () => {
     | StackedColumnsState
     | GroupedColumnsState
     | ComboLineColumnState;
-  const enableTransition = useTransitionStore((state) => state.enable);
-  const transitionDuration = useTransitionStore((state) => state.duration);
-  const xAxisTitleOffset = useXAxisTitleOffset(xScale, getXLabel, xTimeUnit);
   const {
     labelColor,
     gridColor,
@@ -44,13 +41,21 @@ export const AxisWidthBand = () => {
     axisLabelFontSize,
     domainColor,
   } = useChartTheme();
+  const enableTransition = useTransitionStore((state) => state.enable);
+  const transitionDuration = useTransitionStore((state) => state.duration);
+  const resolvedFontSize =
+    xScale.bandwidth() > labelFontSize ? labelFontSize : xScale.bandwidth();
+  const xAxisTitleOffset = useXAxisTitleOffset(
+    xScale,
+    getXLabel,
+    xTimeUnit,
+    resolvedFontSize
+  );
 
   useEffect(() => {
     if (ref.current) {
       const rotation = true;
       const hasNegativeValues = yScale.domain()[0] < 0;
-      const fontSize =
-        xScale.bandwidth() > labelFontSize ? labelFontSize : xScale.bandwidth();
       const axis = axisBottom(xScale)
         .tickSizeOuter(0)
         .tickSizeInner(hasNegativeValues ? -chartHeight : 6)
@@ -76,14 +81,19 @@ export const AxisWidthBand = () => {
       );
       g.selectAll(".tick text")
         .attr("transform", rotation ? "rotate(90)" : "rotate(0)")
-        .attr("x", rotation ? fontSize + (labelFontSize - fontSize) * 0.6 : 0)
+        .attr(
+          "x",
+          rotation
+            ? resolvedFontSize + (labelFontSize - resolvedFontSize) * 0.6
+            : 0
+        )
         .attr(
           "dy",
           hasNegativeValues
-            ? fontSize + (labelFontSize - fontSize)
-            : 0.6 * fontSize + (labelFontSize - fontSize) * 0.4
+            ? resolvedFontSize + (labelFontSize - resolvedFontSize)
+            : 0.6 * resolvedFontSize + (labelFontSize - resolvedFontSize) * 0.4
         )
-        .attr("font-size", fontSize)
+        .attr("font-size", resolvedFontSize)
         .attr("font-family", fontFamily)
         .attr("fill", labelColor)
         .attr("text-anchor", rotation ? "start" : "unset");
@@ -105,6 +115,7 @@ export const AxisWidthBand = () => {
     yScale,
     formatXDate,
     formatXAxisTick,
+    resolvedFontSize,
   ]);
 
   return (
