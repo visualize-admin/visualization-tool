@@ -182,16 +182,18 @@ const groupByParent = (node: { parents: HierarchyValue[] }) => {
   return joinParents(node?.parents);
 };
 
+export const sortFilterValue = (a: HierarchyValue, b: HierarchyValue) => {
+  return (
+    ascending(a.position ?? 0, b.position ?? 0) ||
+    `${a.identifier}`.localeCompare(`${b.identifier}`, undefined, {
+      numeric: true,
+    }) ||
+    a.label.localeCompare(b.label)
+  );
+};
+
 export const sortFilterValues = (values: HierarchyValue[]) => {
-  return values.sort((a, b) => {
-    return (
-      ascending(a.position ?? 0, b.position ?? 0) ||
-      `${a.identifier}`.localeCompare(`${b.identifier}`, undefined, {
-        numeric: true,
-      }) ||
-      a.label.localeCompare(b.label)
-    );
-  });
+  return values.sort(sortFilterValue);
 };
 
 const getColorConfig = (chartConfig: ChartConfig) => {
@@ -278,7 +280,8 @@ const MultiFilterContent = ({
   const { sortedTree, flatOptions, optionsByValue } = useMemo(() => {
     const sortedTree = sortHierarchy(tree);
     const flatOptions = getOptionsFromTree(sortedTree);
-    const optionsByValue = keyBy(flatOptions, (x) => x.value);
+    const optionsByValue = keyBy(flatOptions, (option) => option.value);
+
     return {
       sortedTree,
       flatOptions,

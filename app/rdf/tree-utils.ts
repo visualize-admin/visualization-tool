@@ -1,6 +1,6 @@
-import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 
+import { sortFilterValue } from "@/configurator/components/filters";
 import { HierarchyValue } from "@/domain/data";
 import { bfs } from "@/utils/bfs";
 
@@ -52,15 +52,15 @@ export const pruneTree = <T extends { children?: T[] | null }>(
   return filterTreeHelper(tree, isUsed);
 };
 
+const sortTree = (tree: HierarchyValue[]): HierarchyValue[] => {
+  return tree.sort((a, b) => {
+    return b.depth - a.depth || sortFilterValue(a, b);
+  });
+};
+
 /** Sorts the tree by default chain of sorters (position -> identifier -> label). */
 export const sortHierarchy = (tree: HierarchyValue[]): HierarchyValue[] => {
-  const sortedTree = orderBy(
-    tree,
-    ["depth", "position", "identifier", "label"],
-    ["desc", "asc", "asc", "asc"]
-  ) as HierarchyValue[];
-
-  return sortedTree.map((d) => ({
+  return sortTree(tree).map((d) => ({
     ...d,
     children: d.children ? sortHierarchy(d.children) : undefined,
   }));

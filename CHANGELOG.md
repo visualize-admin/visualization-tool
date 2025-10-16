@@ -11,7 +11,8 @@ You can also check the
 
 ## Unreleased
 
-Nothing yet.
+- Fixes
+  - Filter values inside multi filter drawer are now sorted correctly
 
 ### 6.1.0 - 2025-10-15
 
