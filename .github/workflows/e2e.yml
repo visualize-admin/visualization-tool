@@ -16,7 +16,7 @@ jobs:
         with:
           # fetch all commits so we can find the branch
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22.x
           cache: "yarn"
