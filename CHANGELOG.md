@@ -11,6 +11,10 @@ You can also check the
 
 ## Unreleased
 
+Nothing yet.
+
+### 6.1.2 - 2025-10-22
+
 - Fix
   - Correctly typed DataSourceUrl variable when querying version history of a
     cube
