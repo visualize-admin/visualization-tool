@@ -38,7 +38,7 @@ query DataCubeLatestIri(
 
 query DataCubeUnversionedIri(
   $sourceType: String!
-  $sourceUrl: String!
+  $sourceUrl: DataSourceUrl!
   $cubeFilter: DataCubeUnversionedIriFilter!
 ) {
   dataCubeUnversionedIri(

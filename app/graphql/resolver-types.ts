@@ -156,7 +156,7 @@ export type QueryDataCubeLatestIriArgs = {
 
 export type QueryDataCubeUnversionedIriArgs = {
   sourceType: Scalars["String"];
-  sourceUrl: Scalars["String"];
+  sourceUrl: Scalars["DataSourceUrl"];
   cubeFilter: DataCubeUnversionedIriFilter;
 };
 
