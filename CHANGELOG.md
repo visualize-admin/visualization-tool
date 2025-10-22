@@ -11,6 +11,12 @@ You can also check the
 
 ## Unreleased
 
+- Fix
+  - Correctly typed DataSourceUrl variable when querying version history of a
+    cube
+
+### 6.1.1 - 2025-10-17
+
 - Fixes
   - Filter values inside multi filter drawer are now sorted correctly
 

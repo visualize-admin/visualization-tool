@@ -150,7 +150,7 @@ export type QueryDataCubeLatestIriArgs = {
 
 export type QueryDataCubeUnversionedIriArgs = {
   sourceType: Scalars["String"];
-  sourceUrl: Scalars["String"];
+  sourceUrl: Scalars["DataSourceUrl"];
   cubeFilter: DataCubeUnversionedIriFilter;
 };
 
@@ -304,7 +304,7 @@ export type DataCubeLatestIriQuery = {
 
 export type DataCubeUnversionedIriQueryVariables = Exact<{
   sourceType: Scalars["String"];
-  sourceUrl: Scalars["String"];
+  sourceUrl: Scalars["DataSourceUrl"];
   cubeFilter: DataCubeUnversionedIriFilter;
 }>;
 
@@ -465,7 +465,7 @@ export function useDataCubeLatestIriQuery(
 export const DataCubeUnversionedIriDocument = gql`
   query DataCubeUnversionedIri(
     $sourceType: String!
-    $sourceUrl: String!
+    $sourceUrl: DataSourceUrl!
     $cubeFilter: DataCubeUnversionedIriFilter!
   ) {
     dataCubeUnversionedIri(

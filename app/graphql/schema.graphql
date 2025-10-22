@@ -157,7 +157,7 @@ type Query {
   ): String!
   dataCubeUnversionedIri(
     sourceType: String!
-    sourceUrl: String!
+    sourceUrl: DataSourceUrl!
     cubeFilter: DataCubeUnversionedIriFilter!
   ): String
   dataCubeComponents(
