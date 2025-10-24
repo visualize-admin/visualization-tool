@@ -11,7 +11,8 @@ You can also check the
 
 ## Unreleased
 
-Nothing yet.
+- Features
+  - Added dynamic iframe resize support for LivingDocs
 
 ### 6.1.2 - 2025-10-22
 
