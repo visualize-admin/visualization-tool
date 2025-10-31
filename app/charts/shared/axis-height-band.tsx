@@ -102,7 +102,7 @@ export const AxisHeightBand = () => {
         height={leftAxisLabelSize.height}
         style={{ display: "flex" }}
       >
-        <OpenMetadataPanelWrapper>
+        <OpenMetadataPanelWrapper component={yDimension}>
           <span style={{ fontSize: axisLabelFontSize, lineHeight: 1.5 }}>
             {yDimension.label}
           </span>
