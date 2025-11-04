@@ -388,6 +388,10 @@ msgstr "Colore base"
 msgid "chart.map.layers.base"
 msgstr "Carta di base"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.baseUrl"
+msgstr "URL di base"
+
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.base.behind-area-layer"
 msgstr "Dietro lo strato dell'area"
@@ -742,6 +746,10 @@ msgstr "Descrizione"
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.metadata"
 msgstr "Dettagli"
+
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.linkComponentId"
+msgstr "Dimensione"
 
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.type.discrete"
@@ -1129,6 +1137,10 @@ msgstr "Interpolazione lineare"
 msgid "controls.chart.type.line"
 msgstr "Linee"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.section.links"
+msgstr "Collegamenti"
+
 #: app/components/chart-filters-list.tsx
 #: app/components/hint.tsx
 #: app/components/hint.tsx
@@ -1399,6 +1411,10 @@ msgstr "Inserisci un numero valido"
 #: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.invalid-number-error"
 msgstr "Inserisci un numero valido"
+
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.baseUrlInvalid"
+msgstr "Inserisci un URL valido"
 
 #: app/components/hint.tsx
 msgid "hint.nodata.message"
@@ -1739,6 +1755,10 @@ msgstr "Mostra i titoli delle leggende"
 #: app/browse/ui/navigation-section.tsx
 msgid "show.less"
 msgstr "Mostra meno"
+
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.showLinks"
+msgstr "Mostra colonna link"
 
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.show-more"
