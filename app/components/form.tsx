@@ -302,6 +302,7 @@ export const Select = ({
   variant,
   size = "md",
   value,
+  defaultValue,
   disabled,
   options,
   optionGroups,
@@ -369,6 +370,7 @@ export const Select = ({
           name={id}
           onChange={onChange}
           value={value}
+          defaultValue={defaultValue}
           disabled={disabled}
           open={open}
           onOpen={handleOpen}
