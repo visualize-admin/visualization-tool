@@ -1299,6 +1299,7 @@ export const configJoinedCubes: Partial<
     conversionUnitsByComponentId: {},
     chartType: "table",
     settings: { showSearch: true, showAllRows: false },
+    links: { enabled: false, baseUrl: "", componentId: "" },
     sorting: [],
     fields: {
       joinBy__0: {
