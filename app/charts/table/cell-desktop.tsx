@@ -5,6 +5,7 @@ import { ScaleLinear } from "d3-scale";
 import { Cell } from "react-table";
 
 import { BAR_CELL_PADDING } from "@/charts/table/constants";
+import { getLinkHref, TableLinkCell } from "@/charts/table/table-helpers";
 import { ColumnMeta } from "@/charts/table/table-state";
 import { Tag } from "@/charts/table/tag";
 import { Flex } from "@/components/flex";
@@ -160,6 +161,9 @@ export const CellDesktop = ({
           )}
         </Flex>
       );
+    case "link":
+      const linkHref = getLinkHref(cell, columnMeta);
+      return <TableLinkCell href={linkHref} />;
     default:
       return (
         <Flex

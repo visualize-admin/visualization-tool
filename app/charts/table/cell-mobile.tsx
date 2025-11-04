@@ -4,6 +4,7 @@ import { Cell } from "react-table";
 
 import { useChartState } from "@/charts/shared/chart-state";
 import { getBarLeftOffset, getBarWidth } from "@/charts/table/cell-desktop";
+import { getLinkHref, TableLinkCell } from "@/charts/table/table-helpers";
 import { ColumnMeta } from "@/charts/table/table-state";
 import { Tag } from "@/charts/table/tag";
 import { Flex } from "@/components/flex";
@@ -132,6 +133,10 @@ export const DDContent = ({
           )}
         </Flex>
       );
+    }
+    case "link": {
+      const linkHref = getLinkHref(cell, columnMeta);
+      return <TableLinkCell href={linkHref} />;
     }
     default: {
       return (
