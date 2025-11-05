@@ -91,17 +91,6 @@ export const TableContent = ({ children }: { children: ReactNode }) => {
                   tableColumnsMeta[column.id];
                 // We assume that the customSortCount items are at the beginning of the sorted array, so any item with a lower index must be a custom sorted one
                 const isCustomSorted = column.sortedIndex < customSortCount;
-                const isLinkColumn =
-                  tableColumnsMeta[column.id].type === "link";
-                const isSortable = !isLinkColumn;
-
-                const BaseHeader = (
-                  <OpenMetadataPanelWrapper component={dim}>
-                    <span style={{ fontWeight: "bold" }}>
-                      {column.render("Header")}
-                    </span>
-                  </OpenMetadataPanelWrapper>
-                );
 
                 return (
                   // eslint-disable-next-line react/jsx-key
@@ -112,25 +101,23 @@ export const TableContent = ({ children }: { children: ReactNode }) => {
                         ? classes.headerGroupMeasure
                         : undefined
                     )}
-                    {...column.getHeaderProps(
-                      isSortable ? column.getSortByToggleProps() : undefined
-                    )}
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
                   >
-                    {isSortable ? (
-                      <TableSortLabel
-                        active={isCustomSorted}
-                        direction={column.isSortedDesc ? "desc" : "asc"}
-                        sx={{
-                          "& svg": {
-                            opacity: isCustomSorted ? 1 : 0.5,
-                          },
-                        }}
-                      >
-                        {BaseHeader}
-                      </TableSortLabel>
-                    ) : (
-                      BaseHeader
-                    )}
+                    <TableSortLabel
+                      active={isCustomSorted}
+                      direction={column.isSortedDesc ? "desc" : "asc"}
+                      sx={{
+                        "& svg": {
+                          opacity: isCustomSorted ? 1 : 0.5,
+                        },
+                      }}
+                    >
+                      <OpenMetadataPanelWrapper component={dim}>
+                        <span style={{ fontWeight: "bold" }}>
+                          {column.render("Header")}
+                        </span>
+                      </OpenMetadataPanelWrapper>
+                    </TableSortLabel>
                   </Flex>
                 );
               })}

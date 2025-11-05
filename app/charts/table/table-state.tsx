@@ -38,6 +38,7 @@ import {
   ColumnStyleHeatmap,
   ComponentType,
   TableConfig,
+  TableLinks,
 } from "@/configurator";
 import {
   mkNumber,
@@ -94,18 +95,11 @@ type TextColumnMeta = MKColumnMeta<{
   type: "text";
 }>;
 
-type LinkColumnMeta = MKColumnMeta<{
-  type: "link";
-  baseUrl: string;
-  linkComponentId: string;
-}>;
-
 export type ColumnMeta =
   | BarColumnMeta
   | HeatmapColumnMeta
   | CategoryColumnMeta
   | TextColumnMeta
-  | LinkColumnMeta
   | MKColumnMeta<{ type: "other" }>;
 
 type TableInteractiveTimeRangeState = {
@@ -124,6 +118,7 @@ export type TableChartState = CommonChartState &
     groupingIds: string[];
     hiddenIds: string[];
     sortingIds: { id: string; desc: boolean }[];
+    links: TableLinks;
   };
 
 const useTableState = (
@@ -136,12 +131,6 @@ const useTableState = (
   const { chartData, allData, timeRangeData } = data;
   const { fields, settings, links, sorting } = chartConfig;
   const formatNumber = useFormatNumber();
-
-  const linkColumnId = "__link__";
-  const hasLinkColumn =
-    links.enabled &&
-    links.baseUrl.trim() !== "" &&
-    links.componentId.trim() !== "";
 
   const hasBar = Object.values(fields).some(
     (fValue) => fValue.columnStyle.type === "bar"
@@ -284,24 +273,8 @@ const useTableState = (
       };
     });
 
-    if (hasLinkColumn) {
-      columns.push({
-        Header: "",
-        accessor: linkColumnId,
-        width: 60,
-        sortType: () => 0,
-      });
-    }
-
     return columns;
-  }, [
-    dimensions,
-    measures,
-    orderedTableColumns,
-    hasLinkColumn,
-    chartData,
-    formatNumber,
-  ]);
+  }, [dimensions, measures, orderedTableColumns, chartData, formatNumber]);
 
   // Groupings used by react-table
   const groupingIds = useMemo(
@@ -438,32 +411,8 @@ const useTableState = (
       (v) => v.slugifiedId
     );
 
-    if (hasLinkColumn) {
-      const linkComponent = allColumnsById[links.componentId];
-      const linkColumnMeta: LinkColumnMeta = {
-        type: "link",
-        dim: linkComponent,
-        id: linkColumnId,
-        slugifiedId: linkColumnId,
-        columnComponentType: linkComponent.__typename,
-        formatter: () => "",
-        baseUrl: links.baseUrl,
-        linkComponentId: getSlugifiedId(links.componentId),
-      };
-      meta[linkColumnId] = linkColumnMeta;
-    }
-
     return meta;
-  }, [
-    dimensions,
-    measures,
-    fields,
-    hasLinkColumn,
-    formatters,
-    chartData,
-    links.componentId,
-    links.baseUrl,
-  ]);
+  }, [dimensions, measures, fields, formatters, chartData]);
 
   const xScaleTimeRange = useMemo(() => {
     const xScaleTimeRangeDomain = extent(timeRangeData, (d) => getX(d)) as [
@@ -488,6 +437,7 @@ const useTableState = (
     hiddenIds,
     sortingIds,
     xScaleTimeRange,
+    links,
     ...variables,
   };
 };
