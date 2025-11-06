@@ -104,7 +104,7 @@ export const TableLinksSection = ({
             message: "Source Dimension",
           })}
           options={dimensionOptions}
-          defaultValue={chartConfig.links.componentId}
+          value={chartConfig.links.componentId}
           name="links.componentId"
           disabled={!chartConfig.links.enabled}
           onChange={handleLinkComponentIdChange}
@@ -117,7 +117,7 @@ export const TableLinksSection = ({
             message: "Target Dimension",
           })}
           options={dimensionOptions}
-          defaultValue={chartConfig.links.targetComponentId}
+          value={chartConfig.links.targetComponentId}
           name="links.targetComponentId"
           disabled={!chartConfig.links.enabled}
           onChange={handleTargetComponentIdChange}
