@@ -14,6 +14,7 @@ You can also check the
 - Fix
   - Clicking on Y axis title in bar charts now open Data tab in the details
     panels, as in other chart types
+  - Fixed parsing problems with API routes
 
 ### 6.1.2 - 2025-10-22
 
