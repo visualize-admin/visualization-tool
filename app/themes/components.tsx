@@ -506,6 +506,7 @@ export const components: Components = {
 
         "&::placeholder": {
           opacity: 1,
+          color: palette.text.secondary,
         },
       },
     },
