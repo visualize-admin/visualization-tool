@@ -621,6 +621,7 @@ export const getInitialConfig = (
           enabled: false,
           baseUrl: "",
           componentId: "",
+          targetComponentId: "",
         },
         sorting: [],
         fields: Object.fromEntries<TableColumn>(

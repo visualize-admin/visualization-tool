@@ -828,6 +828,7 @@ const TableLinks = t.type({
   enabled: t.boolean,
   baseUrl: t.string,
   componentId: t.string,
+  targetComponentId: t.string,
 });
 export type TableLinks = t.TypeOf<typeof TableLinks>;
 

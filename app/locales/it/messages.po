@@ -747,10 +747,6 @@ msgstr "Descrizione"
 msgid "controls.metadata-panel.metadata"
 msgstr "Dettagli"
 
-#: app/configurator/table/configurator/links-section.tsx
-msgid "controls.tableSettings.linkComponentId"
-msgstr "Dimensione"
-
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.type.discrete"
 msgstr "Discreto"
@@ -1758,7 +1754,7 @@ msgstr "Mostra meno"
 
 #: app/configurator/table/configurator/links-section.tsx
 msgid "controls.tableSettings.showLinks"
-msgstr "Mostra colonna link"
+msgstr "Abilita i collegamenti"
 
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.show-more"
@@ -1855,6 +1851,10 @@ msgstr "L'ordinamento per dimensione totale è disabilitato durante l'animazione
 msgid "dataset.metadata.source"
 msgstr "Fonte"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.linkComponentId"
+msgstr "Dimensione sorgente"
+
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
 msgstr "SPARQL query"
@@ -1940,6 +1940,10 @@ msgstr "Visualizzazione tabella"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tall"
 msgstr "Alto"
+
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.targetComponentId"
+msgstr "Dimensione target"
 
 #: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values"

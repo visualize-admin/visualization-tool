@@ -1659,6 +1659,7 @@ export const chartConfigMigrations: Migration[] = [
           enabled: false,
           baseUrl: "",
           componentId: "",
+          targetComponentId: "",
         };
       }
 

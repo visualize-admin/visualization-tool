@@ -25,13 +25,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 const getLinkHref = (
   cell: Cell<Observation>,
   baseUrl: string,
-  linkComponentId: string
+  componentId: string
 ): string => {
-  const slugifiedId = getSlugifiedId(linkComponentId);
+  const slugifiedId = getSlugifiedId(componentId);
   const { original } = cell.row;
   const value =
-    original[getSlugifiedId(`${linkComponentId}/__iri__`)] ??
-    original[slugifiedId];
+    original[getSlugifiedId(`${componentId}/__iri__`)] ?? original[slugifiedId];
 
   return value ? `${baseUrl}${encodeURIComponent(value)}` : "";
 };
@@ -52,7 +51,8 @@ export const LinkedCellWrapper = ({
     links.enabled &&
     links.baseUrl.trim() !== "" &&
     links.componentId.trim() !== "" &&
-    getSlugifiedId(links.componentId) === columnMeta.slugifiedId;
+    links.targetComponentId.trim() !== "" &&
+    getSlugifiedId(links.targetComponentId) === columnMeta.slugifiedId;
   const href = getLinkHref(cell, links.baseUrl, links.componentId);
 
   if (!isLinkedColumn || !href) {

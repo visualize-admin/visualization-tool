@@ -48,6 +48,33 @@ export const TableLinksSection = ({
           value: linkComponentId,
         },
       });
+
+      if (chartConfig.links.targetComponentId === "") {
+        dispatch({
+          type: "CHART_FIELD_UPDATED",
+          value: {
+            locale,
+            field: null,
+            path: "links.targetComponentId",
+            value: linkComponentId,
+          },
+        });
+      }
+    }
+  );
+
+  const handleTargetComponentIdChange = useEvent(
+    (e: SelectChangeEvent<unknown>) => {
+      const targetComponentId = e.target.value as string;
+      dispatch({
+        type: "CHART_FIELD_UPDATED",
+        value: {
+          locale,
+          field: null,
+          path: "links.targetComponentId",
+          value: targetComponentId,
+        },
+      });
     }
   );
 
@@ -74,13 +101,26 @@ export const TableLinksSection = ({
           size="sm"
           label={t({
             id: "controls.tableSettings.linkComponentId",
-            message: "Dimension",
+            message: "Source Dimension",
           })}
           options={dimensionOptions}
           defaultValue={chartConfig.links.componentId}
           name="links.componentId"
           disabled={!chartConfig.links.enabled}
           onChange={handleLinkComponentIdChange}
+        />
+        <Select
+          id="links.targetComponentId"
+          size="sm"
+          label={t({
+            id: "controls.tableSettings.targetComponentId",
+            message: "Target Dimension",
+          })}
+          options={dimensionOptions}
+          defaultValue={chartConfig.links.targetComponentId}
+          name="links.targetComponentId"
+          disabled={!chartConfig.links.enabled}
+          onChange={handleTargetComponentIdChange}
         />
       </ControlSectionContent>
     </ControlSection>

@@ -747,10 +747,6 @@ msgstr "Description"
 msgid "controls.metadata-panel.metadata"
 msgstr "Details"
 
-#: app/configurator/table/configurator/links-section.tsx
-msgid "controls.tableSettings.linkComponentId"
-msgstr "Dimension"
-
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.type.discrete"
 msgstr "Discrete"
@@ -1758,7 +1754,7 @@ msgstr "Show less"
 
 #: app/configurator/table/configurator/links-section.tsx
 msgid "controls.tableSettings.showLinks"
-msgstr "Show link column"
+msgstr "Enable links"
 
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.show-more"
@@ -1855,6 +1851,10 @@ msgstr "Sorting by total size is disabled during animation."
 msgid "dataset.metadata.source"
 msgstr "Source"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.linkComponentId"
+msgstr "Source Dimension"
+
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
 msgstr "SPARQL query"
@@ -1940,6 +1940,10 @@ msgstr "Table view"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tall"
 msgstr "Tall"
+
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.targetComponentId"
+msgstr "Target Dimension"
 
 #: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values"
