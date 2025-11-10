@@ -29,10 +29,13 @@ const getLinkHref = (
 ): string => {
   const slugifiedId = getSlugifiedId(componentId);
   const { original } = cell.row;
-  const value =
-    original[getSlugifiedId(`${componentId}/__iri__`)] ?? original[slugifiedId];
+  const iriValue = original[getSlugifiedId(`${componentId}/__iri__`)];
+  const rawValue = original[slugifiedId];
+  const value = iriValue
+    ? `${iriValue}`.split("/").pop() || iriValue
+    : rawValue;
 
-  return value ? `${baseUrl}${encodeURIComponent(value)}` : "";
+  return `${baseUrl}${value}`;
 };
 
 export const LinkedCellWrapper = ({
