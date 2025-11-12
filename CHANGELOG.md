@@ -11,6 +11,8 @@ You can also check the
 
 ## Unreleased
 
+- Features
+  - Added dynamic iframe resize support for LivingDocs
 - Fix
   - Clicking on Y axis title in bar charts now open Data tab in the details
     panels, as in other chart types
