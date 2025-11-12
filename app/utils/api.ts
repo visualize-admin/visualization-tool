@@ -23,7 +23,10 @@ export const apiFetch = async <T>(
   );
   const json = await res.json();
   if (json.success) {
-    return json.data && "json" in json.data && "meta" in json.data
+    return "data" in json &&
+      typeof json.data === "object" &&
+      json.data !== null &&
+      "meta" in json.data
       ? (SuperJSON.deserialize(json.data) as T)
       : (json.data as T);
   } else {
