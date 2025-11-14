@@ -1040,6 +1040,7 @@ export const components: Components = {
           font-family: "NotoSans";
           -webkit-overflow-scrolling: touch;
           -ms-overflow-style: -ms-autohiding-scrollbar;
+          scrollbar-gutter: stable;
         }
 
         * {
