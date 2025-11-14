@@ -15,7 +15,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: "center",
     gap: theme.spacing(1),
     color: "inherit",
+    fontWeight: "inherit",
     textDecoration: "none",
+
     "&:hover": {
       textDecoration: "underline",
     },
