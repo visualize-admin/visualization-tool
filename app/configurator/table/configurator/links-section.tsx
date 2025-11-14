@@ -87,7 +87,7 @@ export const TableLinksSection = ({
         <ChartOptionCheckboxField
           label={t({
             id: "controls.tableSettings.showLinks",
-            message: "Show link column",
+            message: "Enable links",
           })}
           field={null}
           path="links.enabled"
@@ -101,7 +101,7 @@ export const TableLinksSection = ({
           size="sm"
           label={t({
             id: "controls.tableSettings.linkComponentId",
-            message: "Source Dimension",
+            message: "Source Column",
           })}
           options={dimensionOptions}
           value={chartConfig.links.componentId}
@@ -114,7 +114,7 @@ export const TableLinksSection = ({
           size="sm"
           label={t({
             id: "controls.tableSettings.targetComponentId",
-            message: "Target Dimension",
+            message: "Target Column",
           })}
           options={dimensionOptions}
           value={chartConfig.links.targetComponentId}

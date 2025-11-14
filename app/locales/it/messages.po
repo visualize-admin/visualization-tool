@@ -1853,7 +1853,7 @@ msgstr "Fonte"
 
 #: app/configurator/table/configurator/links-section.tsx
 msgid "controls.tableSettings.linkComponentId"
-msgstr "Dimensione sorgente"
+msgstr "Colonna di origine"
 
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
@@ -1943,7 +1943,7 @@ msgstr "Alto"
 
 #: app/configurator/table/configurator/links-section.tsx
 msgid "controls.tableSettings.targetComponentId"
-msgstr "Dimensione target"
+msgstr "Colonna di destinazione"
 
 #: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values"
