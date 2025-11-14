@@ -26,7 +26,6 @@ import {
 } from "@/configurator/components/field";
 import {
   DimensionValuesMultiFilter,
-  DimensionValuesSingleFilter,
   TimeFilter,
 } from "@/configurator/components/filters";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
@@ -340,16 +339,12 @@ export const TableColumnOptions = ({
             <legend style={{ display: "none" }}>
               <Trans id="controls.section.filter">Filter</Trans>
             </legend>
-            {component.isKeyDimension && isHidden && !isGroup ? (
-              <DimensionValuesSingleFilter dimension={component} />
-            ) : (
-              <DimensionValuesMultiFilter
-                field={component.id}
-                dimension={component}
-                colorComponent={component}
-                colorConfigPath="columnStyle"
-              />
-            )}
+            <DimensionValuesMultiFilter
+              field={component.id}
+              dimension={component}
+              colorComponent={component}
+              colorConfigPath="columnStyle"
+            />
           </ControlSectionContent>
         </ControlSection>
       ) : null}

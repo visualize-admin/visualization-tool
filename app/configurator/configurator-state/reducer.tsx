@@ -16,8 +16,6 @@ import { Reducer } from "use-immer";
 import {
   getChartConfigAdjustedToChartType,
   getFieldComponentIds,
-  getGroupedFieldIds,
-  getHiddenFieldIds,
 } from "@/charts";
 import {
   getChartFieldChangeSideEffect,
@@ -116,10 +114,6 @@ export const deriveFiltersFromFields = produce(
     if (draft.chartType === "table") {
       // As dimensions in tables behave differently than in other chart types,
       // they need to be handled in a different way.
-      const hiddenFieldIds = getHiddenFieldIds(draft.fields);
-      const groupedDimensionIds = getGroupedFieldIds(draft.fields);
-      const isHidden = (dim: Dimension) => hiddenFieldIds.has(dim.id);
-      const isGrouped = (dim: Dimension) => groupedDimensionIds.has(dim.id);
       draft.cubes.forEach((cube) => {
         const cubeDimensions = getCubeDimensions(dimensions, cube.iri);
         cubeDimensions.forEach((dim) => {
@@ -127,9 +121,6 @@ export const deriveFiltersFromFields = produce(
             cubeIri: cube.iri,
             filters: cube.filters,
             dimension: dim,
-            isHidden: isHidden(dim),
-            isGrouped: isGrouped(dim),
-            possibleFilter: possibleFilters?.find((f) => f.id === dim.id),
           });
         });
       });
@@ -159,52 +150,33 @@ export const deriveFiltersFromFields = produce(
   }
 );
 
-export const applyTableDimensionToFilters = (props: {
+export const applyTableDimensionToFilters = ({
+  cubeIri,
+  filters,
+  dimension,
+}: {
   cubeIri: string;
   filters: Filters;
   dimension: Dimension;
-  isHidden: boolean;
-  isGrouped: boolean;
-  possibleFilter?: PossibleFilterValue;
 }) => {
-  const { filters, dimension, isHidden, isGrouped, possibleFilter, cubeIri } =
-    props;
   const originalIri = isJoinByComponent(dimension)
     ? dimension.originalIds.find((c) => c.cubeIri === cubeIri)?.dimensionId
     : dimension.id;
   assert(originalIri !== undefined, "Dimension should have an IRI");
   const currentFilter = filters[originalIri];
-  const shouldBecomeSingleFilter = isHidden && !isGrouped;
 
   if (currentFilter) {
     switch (currentFilter.type) {
       case "single":
-        if (!shouldBecomeSingleFilter) {
-          delete filters[originalIri];
-        }
+        delete filters[originalIri];
         break;
       case "multi":
-        if (shouldBecomeSingleFilter && dimension.isKeyDimension) {
-          filters[originalIri] = {
-            type: "single",
-            value:
-              Object.keys(currentFilter.values)[0] ?? dimension.values[0].value,
-          };
-        }
-        break;
       case "range":
         break;
       default:
         const _exhaustiveCheck: never = currentFilter;
         return _exhaustiveCheck;
     }
-  } else if (shouldBecomeSingleFilter && dimension.isKeyDimension) {
-    filters[originalIri] = {
-      type: "single",
-      // TODO, possibly in case of join by dimensions, we could get a value that is not part
-      // of the full range of values
-      value: possibleFilter?.value ?? dimension.values[0].value,
-    };
   }
 };
 
