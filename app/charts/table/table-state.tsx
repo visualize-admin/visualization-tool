@@ -38,6 +38,7 @@ import {
   ColumnStyleHeatmap,
   ComponentType,
   TableConfig,
+  TableLinks,
 } from "@/configurator";
 import {
   mkNumber,
@@ -117,6 +118,7 @@ export type TableChartState = CommonChartState &
     groupingIds: string[];
     hiddenIds: string[];
     sortingIds: { id: string; desc: boolean }[];
+    links: TableLinks;
   };
 
 const useTableState = (
@@ -127,7 +129,7 @@ const useTableState = (
   const { chartConfig, dimensions, measures } = chartProps;
   const { getX } = variables;
   const { chartData, allData, timeRangeData } = data;
-  const { fields, settings, sorting } = chartConfig;
+  const { fields, settings, links, sorting } = chartConfig;
   const formatNumber = useFormatNumber();
 
   const hasBar = Object.values(fields).some(
@@ -212,7 +214,7 @@ const useTableState = (
   const tableColumns = useMemo(() => {
     const allComponents = [...dimensions, ...measures];
 
-    return orderedTableColumns.map((c) => {
+    const columns = orderedTableColumns.map((c) => {
       const headerComponent = allComponents.find((d) => d.id === c.componentId);
 
       if (!headerComponent) {
@@ -270,7 +272,9 @@ const useTableState = (
         },
       };
     });
-  }, [orderedTableColumns, chartData, dimensions, measures, formatNumber]);
+
+    return columns;
+  }, [dimensions, measures, orderedTableColumns, chartData, formatNumber]);
 
   // Groupings used by react-table
   const groupingIds = useMemo(
@@ -317,7 +321,7 @@ const useTableState = (
     const allColumnsById = Object.fromEntries(
       [...dimensions, ...measures].map((x) => [x.id, x])
     );
-    return mapKeys(
+    const meta: Record<string, ColumnMeta> = mapKeys(
       mapValues(fields, (columnMeta, id) => {
         const slugifiedId = getSlugifiedId(id);
         const columnStyle = columnMeta.columnStyle;
@@ -406,7 +410,9 @@ const useTableState = (
       }),
       (v) => v.slugifiedId
     );
-  }, [chartData, dimensions, fields, formatters, measures]);
+
+    return meta;
+  }, [dimensions, measures, fields, formatters, chartData]);
 
   const xScaleTimeRange = useMemo(() => {
     const xScaleTimeRangeDomain = extent(timeRangeData, (d) => getX(d)) as [
@@ -431,6 +437,7 @@ const useTableState = (
     hiddenIds,
     sortingIds,
     xScaleTimeRange,
+    links,
     ...variables,
   };
 };

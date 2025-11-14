@@ -617,6 +617,12 @@ export const getInitialConfig = (
           showSearch: true,
           showAllRows: false,
         },
+        links: {
+          enabled: false,
+          baseUrl: "",
+          componentId: "",
+          targetComponentId: "",
+        },
         sorting: [],
         fields: Object.fromEntries<TableColumn>(
           allDimensionsSorted.map((d, i) => [

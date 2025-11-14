@@ -1143,6 +1143,12 @@ export const tableConfig: TableConfig = {
     },
   },
   settings: { showSearch: true, showAllRows: true },
+  links: {
+    enabled: false,
+    baseUrl: "",
+    componentId: "",
+    targetComponentId: "",
+  },
   sorting: [
     {
       componentId:

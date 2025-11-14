@@ -11,20 +11,21 @@ You can also check the
 
 ## Unreleased
 
-Nothing yet.
+- Features
+  - Added a way to create a link column in table charts
 
 ### 6.1.3 - 2025-11-12
 
 - Features
   - Added dynamic iframe resize support for LivingDocs
-- Fix
+- Fixes
   - Clicking on Y axis title in bar charts now open Data tab in the details
     panels, as in other chart types
   - Fixed parsing problems with API routes
 
 ### 6.1.2 - 2025-10-22
 
-- Fix
+- Fixes
   - Correctly typed DataSourceUrl variable when querying version history of a
     cube
 

@@ -4,8 +4,10 @@ import { hcl } from "d3-color";
 import { ScaleLinear } from "d3-scale";
 import { Cell } from "react-table";
 
+import { useChartState } from "@/charts/shared/chart-state";
 import { BAR_CELL_PADDING } from "@/charts/table/constants";
-import { ColumnMeta } from "@/charts/table/table-state";
+import { LinkedCellWrapper } from "@/charts/table/linked-cell-wrapper";
+import { ColumnMeta, TableChartState } from "@/charts/table/table-state";
 import { Tag } from "@/charts/table/tag";
 import { Flex } from "@/components/flex";
 import { Observation } from "@/domain/data";
@@ -59,6 +61,7 @@ export const CellDesktop = ({
     barShowBackground,
   } = columnMeta;
   const classes = useStyles();
+  const { links } = useChartState() as TableChartState;
 
   switch (columnMeta.type) {
     case "text":
@@ -77,7 +80,9 @@ export const CellDesktop = ({
           }}
           {...cell.getCellProps()}
         >
-          {columnMeta.formatter(cell)}
+          <LinkedCellWrapper cell={cell} columnMeta={columnMeta} links={links}>
+            {columnMeta.formatter(cell)}
+          </LinkedCellWrapper>
         </Flex>
       );
     case "category":
@@ -87,9 +92,11 @@ export const CellDesktop = ({
           sx={{ alignItems: "center", fontWeight: textStyle, pl: 1, pr: 3 }}
           {...cell.getCellProps()}
         >
-          <Tag tagColor={cColorScale(cell.value)}>
-            {columnMeta.formatter(cell)}
-          </Tag>
+          <LinkedCellWrapper cell={cell} columnMeta={columnMeta} links={links}>
+            <Tag tagColor={cColorScale(cell.value)}>
+              {columnMeta.formatter(cell)}
+            </Tag>
+          </LinkedCellWrapper>
         </Flex>
       );
     case "heatmap":
@@ -109,7 +116,9 @@ export const CellDesktop = ({
           }}
           {...cell.getCellProps()}
         >
-          {columnMeta.formatter(cell)}
+          <LinkedCellWrapper cell={cell} columnMeta={columnMeta} links={links}>
+            {columnMeta.formatter(cell)}
+          </LinkedCellWrapper>
         </Flex>
       );
     case "bar":
@@ -125,39 +134,41 @@ export const CellDesktop = ({
           }}
           {...cell.getCellProps()}
         >
-          <Box>{columnMeta.formatter(cell)}</Box>
-          {cell.value !== null && widthScale && (
-            <Box
-              sx={{
-                width: widthScale.range()[1],
-                height: 18,
-                position: "relative",
-                backgroundColor: barShowBackground
-                  ? barColorBackground
-                  : "grey.100",
-              }}
-            >
+          <LinkedCellWrapper cell={cell} columnMeta={columnMeta} links={links}>
+            <Box>{columnMeta.formatter(cell)}</Box>
+            {cell.value !== null && widthScale && (
               <Box
-                className={classes.barForeground}
                 sx={{
-                  left: `${getBarLeftOffset(cell.value, widthScale)}px`,
-                  width: `${getBarWidth(cell.value, widthScale)}px`,
-                  backgroundColor:
-                    cell.value > 0 ? barColorPositive : barColorNegative,
+                  width: widthScale.range()[1],
+                  height: 18,
+                  position: "relative",
+                  backgroundColor: barShowBackground
+                    ? barColorBackground
+                    : "grey.100",
                 }}
-              />
-              <Box
-                className={classes.barBackground}
-                sx={{
-                  left: `${
-                    cell.value < 0
-                      ? widthScale(0)
-                      : getBarLeftOffset(cell.value, widthScale)
-                  }px`,
-                }}
-              />
-            </Box>
-          )}
+              >
+                <Box
+                  className={classes.barForeground}
+                  sx={{
+                    left: `${getBarLeftOffset(cell.value, widthScale)}px`,
+                    width: `${getBarWidth(cell.value, widthScale)}px`,
+                    backgroundColor:
+                      cell.value > 0 ? barColorPositive : barColorNegative,
+                  }}
+                />
+                <Box
+                  className={classes.barBackground}
+                  sx={{
+                    left: `${
+                      cell.value < 0
+                        ? widthScale(0)
+                        : getBarLeftOffset(cell.value, widthScale)
+                    }px`,
+                  }}
+                />
+              </Box>
+            )}
+          </LinkedCellWrapper>
         </Flex>
       );
     default:
@@ -177,7 +188,9 @@ export const CellDesktop = ({
           }}
           {...cell.getCellProps()}
         >
-          {columnMeta.formatter(cell)}
+          <LinkedCellWrapper cell={cell} columnMeta={columnMeta} links={links}>
+            {columnMeta.formatter(cell)}
+          </LinkedCellWrapper>
         </Flex>
       );
   }

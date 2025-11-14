@@ -817,11 +817,20 @@ const TableColumn = t.type({
   columnStyle: ColumnStyle,
 });
 export type TableColumn = t.TypeOf<typeof TableColumn>;
+
 const TableSettings = t.type({
   showSearch: t.boolean,
   showAllRows: t.boolean,
 });
 export type TableSettings = t.TypeOf<typeof TableSettings>;
+
+const TableLinks = t.type({
+  enabled: t.boolean,
+  baseUrl: t.string,
+  componentId: t.string,
+  targetComponentId: t.string,
+});
+export type TableLinks = t.TypeOf<typeof TableLinks>;
 
 const TableFields = t.record(t.string, TableColumn);
 export type TableFields = t.TypeOf<typeof TableFields>;
@@ -840,6 +849,7 @@ const TableConfig = t.intersection([
       chartType: t.literal("table"),
       fields: TableFields,
       settings: TableSettings,
+      links: TableLinks,
       sorting: t.array(TableSortingOption),
     },
     "TableConfig"

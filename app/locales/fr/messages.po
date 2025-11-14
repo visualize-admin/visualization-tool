@@ -388,6 +388,10 @@ msgstr "Couleur de base"
 msgid "chart.map.layers.base"
 msgstr "Carte de base"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.baseUrl"
+msgstr "URL de base"
+
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.base.behind-area-layer"
 msgstr "Derrière la couche de surface"
@@ -1129,6 +1133,10 @@ msgstr "Interpolation linéaire"
 msgid "controls.chart.type.line"
 msgstr "Lignes"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.section.links"
+msgstr "Links"
+
 #: app/components/chart-filters-list.tsx
 #: app/components/hint.tsx
 #: app/components/hint.tsx
@@ -1399,6 +1407,10 @@ msgstr "Veuillez entrer un numéro valide"
 #: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.invalid-number-error"
 msgstr "Veuillez entrer un numéro valide"
+
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.baseUrlInvalid"
+msgstr "Veuillez saisir une URL valide"
 
 #: app/components/hint.tsx
 msgid "hint.nodata.message"
@@ -1740,6 +1752,10 @@ msgstr "Afficher les titres des légendes"
 msgid "show.less"
 msgstr "Afficher moins"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.showLinks"
+msgstr "Activer les liens"
+
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.show-more"
 msgstr "Détails"
@@ -1835,6 +1851,10 @@ msgstr "Le tri par taille totale est désactivé pendant l'animation."
 msgid "dataset.metadata.source"
 msgstr "Source"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.linkComponentId"
+msgstr "Colonne source"
+
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
 msgstr "Requête SPARQL"
@@ -1920,6 +1940,10 @@ msgstr "Vue en tableau"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tall"
 msgstr "Haut"
+
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.targetComponentId"
+msgstr "Colonne cible"
 
 #: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values"

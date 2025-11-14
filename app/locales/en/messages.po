@@ -388,6 +388,10 @@ msgstr "Base color"
 msgid "chart.map.layers.base"
 msgstr "Base map"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.baseUrl"
+msgstr "Base URL"
+
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.base.behind-area-layer"
 msgstr "Behind area layer"
@@ -1129,6 +1133,10 @@ msgstr "Linear interpolation"
 msgid "controls.chart.type.line"
 msgstr "Lines"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.section.links"
+msgstr "Links"
+
 #: app/components/chart-filters-list.tsx
 #: app/components/hint.tsx
 #: app/components/hint.tsx
@@ -1399,6 +1407,10 @@ msgstr "Please enter a valid number"
 #: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.invalid-number-error"
 msgstr "Please enter a valid number"
+
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.baseUrlInvalid"
+msgstr "Please enter a valid URL"
 
 #: app/components/hint.tsx
 msgid "hint.nodata.message"
@@ -1740,6 +1752,10 @@ msgstr "Show legend titles"
 msgid "show.less"
 msgstr "Show less"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.showLinks"
+msgstr "Enable links"
+
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.show-more"
 msgstr "Show more"
@@ -1835,6 +1851,10 @@ msgstr "Sorting by total size is disabled during animation."
 msgid "dataset.metadata.source"
 msgstr "Source"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.linkComponentId"
+msgstr "Source Column"
+
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
 msgstr "SPARQL query"
@@ -1920,6 +1940,10 @@ msgstr "Table view"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tall"
 msgstr "Tall"
+
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.targetComponentId"
+msgstr "Target Column"
 
 #: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values"

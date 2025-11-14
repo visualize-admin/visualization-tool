@@ -19,6 +19,7 @@ import {
   ChartOptionCheckboxField,
 } from "@/configurator/components/field";
 import { useOrderedTableColumns } from "@/configurator/components/ui-helpers";
+import { TableLinksSection } from "@/configurator/table/configurator/links-section";
 import { useTableChartController } from "@/configurator/table/table-chart-configurator.hook";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -152,6 +153,7 @@ export const ChartConfiguratorTable = ({
           items={columnFields}
         />
       </DragDropContext>
+      <TableLinksSection chartConfig={chartConfig} dimensions={dimensions} />
     </>
   );
 };

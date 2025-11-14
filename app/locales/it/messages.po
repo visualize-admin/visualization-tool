@@ -388,6 +388,10 @@ msgstr "Colore base"
 msgid "chart.map.layers.base"
 msgstr "Carta di base"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.baseUrl"
+msgstr "URL di base"
+
 #: app/configurator/components/custom-layers-selector.tsx
 msgid "chart.map.layers.base.behind-area-layer"
 msgstr "Dietro lo strato dell'area"
@@ -1129,6 +1133,10 @@ msgstr "Interpolazione lineare"
 msgid "controls.chart.type.line"
 msgstr "Linee"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.section.links"
+msgstr "Collegamenti"
+
 #: app/components/chart-filters-list.tsx
 #: app/components/hint.tsx
 #: app/components/hint.tsx
@@ -1399,6 +1407,10 @@ msgstr "Inserisci un numero valido"
 #: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.invalid-number-error"
 msgstr "Inserisci un numero valido"
+
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.baseUrlInvalid"
+msgstr "Inserisci un URL valido"
 
 #: app/components/hint.tsx
 msgid "hint.nodata.message"
@@ -1740,6 +1752,10 @@ msgstr "Mostra i titoli delle leggende"
 msgid "show.less"
 msgstr "Mostra meno"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.showLinks"
+msgstr "Abilita i collegamenti"
+
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.show-more"
 msgstr "Mostra di più"
@@ -1835,6 +1851,10 @@ msgstr "L'ordinamento per dimensione totale è disabilitato durante l'animazione
 msgid "dataset.metadata.source"
 msgstr "Fonte"
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.linkComponentId"
+msgstr "Colonna di origine"
+
 #: app/components/dataset-metadata.tsx
 msgid "chart-controls.sparql-query"
 msgstr "SPARQL query"
@@ -1920,6 +1940,10 @@ msgstr "Visualizzazione tabella"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tall"
 msgstr "Alto"
+
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.targetComponentId"
+msgstr "Colonna di destinazione"
 
 #: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values"
