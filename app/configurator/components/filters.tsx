@@ -60,10 +60,8 @@ import {
   DRAWER_WIDTH,
 } from "@/configurator/components/drawers";
 import {
-  dimensionToFieldProps,
   MultiFilterField,
   ShowValuesMappingField,
-  SingleFilterField,
 } from "@/configurator/components/field";
 import {
   canRenderDatePickerField,
@@ -104,7 +102,6 @@ import {
   sortHierarchy,
 } from "@/rdf/tree-utils";
 import { interlace } from "@/utils/interlace";
-import { valueComparator } from "@/utils/sorting-values";
 import { getTimeFilterOptions } from "@/utils/time-filter-options";
 import { useEvent } from "@/utils/use-event";
 
@@ -1417,34 +1414,5 @@ const InteractiveTimeRangeToggle = () => {
       checked={checked}
       onChange={toggle}
     />
-  );
-};
-
-export const DimensionValuesSingleFilter = ({
-  dimension,
-}: {
-  dimension: Component;
-}) => {
-  const locale = useLocale();
-  const sortedDimensionValues = useMemo(() => {
-    const values = dimension.values;
-    return [...values].sort(valueComparator(locale));
-  }, [dimension?.values, locale]);
-
-  return dimension ? (
-    <>
-      {sortedDimensionValues.map((d) => {
-        return (
-          <SingleFilterField
-            key={d.value}
-            filters={dimensionToFieldProps(dimension)}
-            label={d.label}
-            value={`${d.value}`}
-          />
-        );
-      })}
-    </>
-  ) : (
-    <Loading />
   );
 };

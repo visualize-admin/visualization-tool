@@ -37,7 +37,6 @@ import {
   Filters,
   GenericChartConfig,
   GenericField,
-  GenericFields,
   InteractiveFiltersConfig,
   isColorInConfig,
   isSegmentInConfig,
@@ -2955,22 +2954,6 @@ export const getFieldComponentIds = (fields: ChartConfig["fields"]) => {
   return new Set(
     Object.values(fields).flatMap((f) =>
       f?.componentId ? [f.componentId] : []
-    )
-  );
-};
-
-export const getGroupedFieldIds = (fields: GenericFields) => {
-  return new Set(
-    Object.values(fields).flatMap((f) =>
-      f && (f as $IntentionalAny).isGroup ? [f.componentId] : []
-    )
-  );
-};
-
-export const getHiddenFieldIds = (fields: GenericFields) => {
-  return new Set(
-    Object.values(fields).flatMap((f) =>
-      f && (f as $IntentionalAny).isHidden ? [f.componentId] : []
     )
   );
 };
