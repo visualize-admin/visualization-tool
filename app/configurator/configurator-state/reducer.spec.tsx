@@ -378,72 +378,6 @@ describe("applyDimensionToFilters", () => {
   });
 
   describe("applyTableDimensionToFilters", () => {
-    it("should set single value filter for a keyDimension if hidden and not grouped", () => {
-      const initialFilters = {};
-      const expectedFilters = {
-        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
-          type: "single",
-          value: "E.coli",
-        },
-      };
-
-      applyTableDimensionToFilters({
-        filters: initialFilters,
-        dimension: keyDimension,
-        isHidden: true,
-        isGrouped: false,
-        cubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
-      });
-
-      expect(initialFilters).toEqual(expectedFilters);
-    });
-
-    it("should not modify filter for an optionalDimension if hidden and not grouped", () => {
-      const initialFilters = {
-        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
-          type: "multi",
-          values: { "E.coli": true, Enterokokken: true },
-        },
-      } as any;
-      const expectedFilters = {
-        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
-          type: "multi",
-          values: { "E.coli": true, Enterokokken: true },
-        },
-      };
-
-      applyTableDimensionToFilters({
-        filters: initialFilters,
-        dimension: optionalDimension,
-        isHidden: true,
-        isGrouped: false,
-        cubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
-      });
-
-      expect(initialFilters).toEqual(expectedFilters);
-    });
-
-    it("should not set single value filter for a keyDimension if hidden and range", () => {
-      const initialFilters = {
-        "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
-          from: "2007-05-21",
-          to: "2020-09-28",
-          type: "range",
-        },
-      } as any;
-      const expectedFilters = { ...initialFilters };
-
-      applyTableDimensionToFilters({
-        filters: initialFilters,
-        dimension: keyDimension,
-        isHidden: true,
-        isGrouped: false,
-        cubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
-      });
-
-      expect(initialFilters).toEqual(expectedFilters);
-    });
-
     it("should not modify filters for a keyDimension if not hidden and grouped", () => {
       const initialFilters = {
         "https://environment.ld.admin.ch/foen/ubd0104/parametertype": {
@@ -461,8 +395,6 @@ describe("applyDimensionToFilters", () => {
       applyTableDimensionToFilters({
         filters: initialFilters,
         dimension: keyDimension,
-        isHidden: false,
-        isGrouped: true,
         cubeIri: "https://environment.ld.admin.ch/foen/ubd0104",
       });
 

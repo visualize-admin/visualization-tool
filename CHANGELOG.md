@@ -13,6 +13,7 @@ You can also check the
 
 - Features
   - Added a way to create a link column in table charts
+  - Hidden table columns are not forced anymore to have a single filter
 
 ### 6.1.3 - 2025-11-12
 
