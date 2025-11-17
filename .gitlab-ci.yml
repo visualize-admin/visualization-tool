@@ -7,6 +7,8 @@ variables:
   IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   MAIN_IMAGE_TAG: $CI_REGISTRY_IMAGE:main
   RELEASE_IMAGE_TAG: $CI_REGISTRY_IMAGE:release
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://docker:2375
 
 lint:
   image: node:22
@@ -17,20 +19,28 @@ lint:
     - yarn lint
 
 build:
-  image: docker.io/docker:stable
+  image: docker:24.0.5-cli
+  services:
+    - name: docker:24.0.5-dind
   stage: build
   tags:
     - k8s-privileged
+  before_script:
+    - until docker info >/dev/null 2>&1; do sleep 1; done
   script:
     - DOCKER_IMAGE_TAGS="$MAIN_IMAGE_TAG" ./scripts/docker-build-push.sh
   only:
     - main
 
 release:
-  image: docker.io/docker:stable
+  image: docker:24.0.5-cli
+  services:
+    - name: docker:24.0.5-dind
   stage: release
   tags:
     - k8s-privileged
+  before_script:
+    - until docker info >/dev/null 2>&1; do sleep 1; done
   script:
     - pwd
     - env DOCKER_IMAGE_TAGS="$RELEASE_IMAGE_TAG
