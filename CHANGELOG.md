@@ -11,8 +11,12 @@ You can also check the
 
 ## Unreleased
 
+Nothing yet.
+
+### 6.2.0 - 2025-11-17
+
 - Features
-  - Added a way to create a link column in table charts
+  - Added a way to add links in table charts
 
 ### 6.1.3 - 2025-11-12
 
