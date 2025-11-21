@@ -100,7 +100,6 @@ const makeScreenshot = async ({
   // Add wrapper node to prevent overflow issues in the screenshot
   const wrapperNode = document.createElement("div");
   wrapperNode.style.width = `${node.offsetWidth}px`;
-  wrapperNode.style.marginTop = `${node.offsetHeight}px`;
   document.body.appendChild(wrapperNode);
 
   const clonedNode = node.cloneNode(true) as HTMLElement;
