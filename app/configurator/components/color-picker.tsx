@@ -1,12 +1,6 @@
 import { Input } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import {
-  hexToHsva,
-  HsvaColor,
-  hsvaToHex,
-  Hue,
-  Saturation,
-} from "@uiw/react-color";
+import { hexToHsva, HsvaColor, hsvaToHex } from "@uiw/react-color";
 import dynamic from "next/dynamic";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
@@ -17,6 +11,16 @@ import { createColorId } from "@/utils/color-palette-utils";
 
 const ChromePicker = dynamic(
   () => import("@uiw/react-color").then((mod) => ({ default: mod.Chrome })),
+  { ssr: false }
+);
+
+const Hue = dynamic(
+  () => import("@uiw/react-color").then((mod) => ({ default: mod.Hue })),
+  { ssr: false }
+);
+
+const Saturation = dynamic(
+  () => import("@uiw/react-color").then((mod) => ({ default: mod.Saturation })),
   { ssr: false }
 );
 

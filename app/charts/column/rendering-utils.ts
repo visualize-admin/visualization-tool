@@ -1,4 +1,3 @@
-import { getContrastingColor } from "@uiw/react-color";
 import { select, Selection } from "d3-selection";
 import { Series } from "d3-shape";
 import { useCallback } from "react";
@@ -18,6 +17,7 @@ import {
 import { getChartConfig, useDefinitiveFilters } from "@/config-utils";
 import { useConfiguratorState } from "@/configurator/configurator-state";
 import { Observation } from "@/domain/data";
+import { getContrastingColor } from "@/utils/color-utils";
 
 export type RenderColumnDatum = {
   key: string;

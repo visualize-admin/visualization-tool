@@ -12,10 +12,9 @@ import { Icon } from "@/icons";
 import { ColorItem } from "@/palettes";
 import { createColorId } from "@/utils/color-palette-utils";
 
-//have to import dynamically to avoid @uiw/react-color dependency issues with the server
 const CustomColorPicker = dynamic(
   () =>
-    import("../../components/color-picker").then(
+    import("@/configurator/components/color-picker").then(
       (mod) => mod.CustomColorPicker
     ),
   { ssr: false }
