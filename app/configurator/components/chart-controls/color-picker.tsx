@@ -1,7 +1,6 @@
 import { Trans } from "@lingui/macro";
 import { Box, Button, Popover, styled } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { hexToHsva, hsvaToHex } from "@uiw/react-color";
 import { color as d3Color } from "d3-color";
 import dynamic from "next/dynamic";
 import { MouseEventHandler, useCallback, useMemo, useRef } from "react";
@@ -11,11 +10,11 @@ import { VisuallyHidden } from "@/components/visually-hidden";
 import { Icon } from "@/icons";
 import { ColorItem } from "@/palettes";
 import { createColorId } from "@/utils/color-palette-utils";
+import { hexToHsva, hsvaToHex } from "@/utils/color-utils";
 
-//have to import dynamically to avoid @uiw/react-color dependency issues with the server
 const CustomColorPicker = dynamic(
   () =>
-    import("../../components/color-picker").then(
+    import("@/configurator/components/color-picker").then(
       (mod) => mod.CustomColorPicker
     ),
   { ssr: false }

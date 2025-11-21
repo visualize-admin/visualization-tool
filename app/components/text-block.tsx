@@ -3,7 +3,6 @@ import { t } from "@lingui/macro";
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
-import { selectAll } from "d3-selection";
 import isEqual from "lodash/isEqual";
 import {
   ComponentProps,
@@ -186,39 +185,39 @@ export const useSyncTextBlockHeight = () => {
       return;
     }
 
-    selectAll<HTMLDivElement, unknown>(`.${TEXT_BLOCK_WRAPPER_CLASS}`).each(
-      function () {
-        const wrapperEl = this;
-        const contentEl = wrapperEl.querySelector<HTMLDivElement>(
-          `.${TEXT_BLOCK_CONTENT_CLASS}`
-        );
-
-        if (!contentEl) {
-          return;
-        }
-
-        const key = wrapperEl.id;
-        const h = Math.ceil(contentEl.clientHeight / ROW_HEIGHT) || 1;
-
-        const newLayouts = Object.fromEntries(
-          Object.entries(layout.layouts).map(([bp, layouts]) => [
-            bp,
-            layouts.map((b) => {
-              return b.i === key ? { ...b, h, minH: h } : b;
-            }),
-          ])
-        );
-
-        if (!isEqual(newLayouts, layout.layouts)) {
-          dispatch({
-            type: "LAYOUT_CHANGED",
-            value: {
-              ...layout,
-              layouts: newLayouts,
-            },
-          });
-        }
-      }
+    const elements = document.querySelectorAll<HTMLDivElement>(
+      `.${TEXT_BLOCK_WRAPPER_CLASS}`
     );
+    elements.forEach((wrapperEl) => {
+      const contentEl = wrapperEl.querySelector<HTMLDivElement>(
+        `.${TEXT_BLOCK_CONTENT_CLASS}`
+      );
+
+      if (!contentEl) {
+        return;
+      }
+
+      const key = wrapperEl.id;
+      const h = Math.ceil(contentEl.clientHeight / ROW_HEIGHT) || 1;
+
+      const newLayouts = Object.fromEntries(
+        Object.entries(layout.layouts).map(([bp, layouts]) => [
+          bp,
+          layouts.map((b) => {
+            return b.i === key ? { ...b, h, minH: h } : b;
+          }),
+        ])
+      );
+
+      if (!isEqual(newLayouts, layout.layouts)) {
+        dispatch({
+          type: "LAYOUT_CHANGED",
+          value: {
+            ...layout,
+            layouts: newLayouts,
+          },
+        });
+      }
+    });
   }, [dispatch, layout, isFreeCanvas]);
 };

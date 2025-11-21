@@ -13,70 +13,37 @@ import {
 } from "@/config-types";
 
 const ChartAreasVisualization = dynamic(
-  import("@/charts/area/chart-area").then(
-    (mod) => mod.ChartAreasVisualization,
-    () => null as never
-  )
+  () => import("@/charts/area/chart-area").then((mod) => ({ default: mod.ChartAreasVisualization }))
 );
 const ChartColumnsVisualization = dynamic(
-  import("@/charts/column/chart-column").then(
-    (mod) => mod.ChartColumnsVisualization,
-    () => null as never
-  )
+  () => import("@/charts/column/chart-column").then((mod) => ({ default: mod.ChartColumnsVisualization }))
 );
 const ChartBarsVisualization = dynamic(
-  import("@/charts/bar/chart-bar").then(
-    (mod) => mod.ChartBarsVisualization,
-    () => null as never
-  )
+  () => import("@/charts/bar/chart-bar").then((mod) => ({ default: mod.ChartBarsVisualization }))
 );
 const ChartComboLineSingleVisualization = dynamic(
-  import("@/charts/combo/chart-combo-line-single").then(
-    (mod) => mod.ChartComboLineSingleVisualization,
-    () => null as never
-  )
+  () => import("@/charts/combo/chart-combo-line-single").then((mod) => ({ default: mod.ChartComboLineSingleVisualization }))
 );
 const ChartComboLineDualVisualization = dynamic(
-  import("@/charts/combo/chart-combo-line-dual").then(
-    (mod) => mod.ChartComboLineDualVisualization,
-    () => null as never
-  )
+  () => import("@/charts/combo/chart-combo-line-dual").then((mod) => ({ default: mod.ChartComboLineDualVisualization }))
 );
 const ChartComboLineColumnVisualization = dynamic(
-  import("@/charts/combo/chart-combo-line-column").then(
-    (mod) => mod.ChartComboLineColumnVisualization,
-    () => null as never
-  )
+  () => import("@/charts/combo/chart-combo-line-column").then((mod) => ({ default: mod.ChartComboLineColumnVisualization }))
 );
 const ChartLinesVisualization = dynamic(
-  import("@/charts/line/chart-lines").then(
-    (mod) => mod.ChartLinesVisualization,
-    () => null as never
-  )
+  () => import("@/charts/line/chart-lines").then((mod) => ({ default: mod.ChartLinesVisualization }))
 );
 const ChartMapVisualization = dynamic(
-  import("@/charts/map/chart-map").then(
-    (mod) => mod.ChartMapVisualization,
-    () => null as never
-  )
+  () => import("@/charts/map/chart-map").then((mod) => ({ default: mod.ChartMapVisualization }))
 );
 const ChartPieVisualization = dynamic(
-  import("@/charts/pie/chart-pie").then(
-    (mod) => mod.ChartPieVisualization,
-    () => null as never
-  )
+  () => import("@/charts/pie/chart-pie").then((mod) => ({ default: mod.ChartPieVisualization }))
 );
 const ChartScatterplotVisualization = dynamic(
-  import("@/charts/scatterplot/chart-scatterplot").then(
-    (mod) => mod.ChartScatterplotVisualization,
-    () => null as never
-  )
+  () => import("@/charts/scatterplot/chart-scatterplot").then((mod) => ({ default: mod.ChartScatterplotVisualization }))
 );
 const ChartTableVisualization = dynamic(
-  import("@/charts/table/chart-table").then(
-    (mod) => mod.ChartTableVisualization,
-    () => null as never
-  )
+  () => import("@/charts/table/chart-table").then((mod) => ({ default: mod.ChartTableVisualization }))
 );
 
 type GenericChartProps = {

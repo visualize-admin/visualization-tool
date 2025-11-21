@@ -46,6 +46,7 @@
     "@mui/utils": "^5.17.1",
     "@next/bundle-analyzer": "^11.0.1",
     "@next/mdx": "^11.0.1",
+    "@open-iframe-resizer/core": "1.6.0",
     "@preconstruct/next": "^3.0.1",
     "@prisma/client": "^4.10.1",
     "@rdfjs/data-model": "^2.0.2",

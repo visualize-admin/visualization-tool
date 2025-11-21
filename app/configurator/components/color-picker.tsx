@@ -1,12 +1,5 @@
 import { Input } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import {
-  hexToHsva,
-  HsvaColor,
-  hsvaToHex,
-  Hue,
-  Saturation,
-} from "@uiw/react-color";
 import dynamic from "next/dynamic";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
@@ -14,9 +7,20 @@ import { Flex } from "@/components/flex";
 import { Swatch } from "@/configurator/components/chart-controls/color-picker";
 import { ColorItem } from "@/palettes";
 import { createColorId } from "@/utils/color-palette-utils";
+import { hexToHsva, HsvaColor, hsvaToHex } from "@/utils/color-utils";
 
 const ChromePicker = dynamic(
   () => import("@uiw/react-color").then((mod) => ({ default: mod.Chrome })),
+  { ssr: false }
+);
+
+const Hue = dynamic(
+  () => import("@uiw/react-color").then((mod) => ({ default: mod.Hue })),
+  { ssr: false }
+);
+
+const Saturation = dynamic(
+  () => import("@uiw/react-color").then((mod) => ({ default: mod.Saturation })),
   { ssr: false }
 );
 
