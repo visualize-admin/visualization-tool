@@ -6,7 +6,6 @@ import {
 import { supported } from "@mapbox/mapbox-gl-supported";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { hexToRgba } from "@uiw/react-color";
 import { geoArea } from "d3-geo";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
@@ -59,6 +58,7 @@ import {
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { hexToRgba } from "@/utils/color-utils";
 import { useEvent } from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
