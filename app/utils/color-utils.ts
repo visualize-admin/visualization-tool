@@ -8,7 +8,7 @@ export interface HsvaColor {
   a: number;
 }
 
-export interface RgbaColor {
+interface RgbaColor {
   r: number;
   g: number;
   b: number;
