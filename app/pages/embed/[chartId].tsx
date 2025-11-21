@@ -66,7 +66,7 @@ const EmbedPage = (props: PageProps) => {
       <Head>
         <meta
           httpEquiv="Content-Security-Policy"
-          content="default-src 'self' 'unsafe-inline'; script-src 'unsafe-inline' 'unsafe-eval' 'self'; style-src 'self' 'unsafe-inline';"
+          content="default-src 'self' 'unsafe-inline' data:; script-src 'unsafe-inline' 'unsafe-eval' 'self'; style-src 'self' 'unsafe-inline';"
         />
       </Head>
       <ConfiguratorStateProvider
