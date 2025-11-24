@@ -70,6 +70,7 @@ export const CHART_GRID_ROW_COUNT = 7;
 export const useChartStyles = makeStyles<Theme, { removeBorder?: boolean }>(
   (theme) => ({
     root: {
+      position: "relative",
       flexGrow: 1,
       minWidth: 0,
       padding: theme.spacing(8),

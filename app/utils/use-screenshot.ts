@@ -99,8 +99,12 @@ const makeScreenshot = async ({
     : false;
   // Add wrapper node to prevent overflow issues in the screenshot
   const wrapperNode = document.createElement("div");
+  wrapperNode.style.position = "absolute";
+  wrapperNode.style.left = "0";
+  wrapperNode.style.top = "0";
+  wrapperNode.style.zIndex = "999999";
   wrapperNode.style.width = `${node.offsetWidth}px`;
-  document.body.appendChild(wrapperNode);
+  node.appendChild(wrapperNode);
 
   const clonedNode = node.cloneNode(true) as HTMLElement;
 
