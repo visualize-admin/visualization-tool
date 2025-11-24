@@ -13,6 +13,11 @@ You can also check the
 
 Nothing yet.
 
+### 6.2.1 - 2025-11-24
+
+- Fixes
+  - Improved embed mode stability
+
 ### 6.2.0 - 2025-11-17
 
 - Features
