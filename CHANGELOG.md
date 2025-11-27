@@ -11,6 +11,10 @@ You can also check the
 
 ## Unreleased
 
+Nothing yet.
+
+### 6.2.2 - 2025-11-27
+
 - Features
   - Links in table charts now open in the same tab
   - Added a link to "Digitale Publikationen" in the footer
