@@ -3,10 +3,7 @@ import { Meta } from "@storybook/react";
 
 import { Actions, Examples, Intro, Tutorial } from "@/homepage";
 import { bugReportTemplates } from "@/templates/email/bug-report";
-import {
-  OWNER_ORGANIZATION_EMAIL,
-  SUPPORT_EMAIL,
-} from "@/templates/email/config";
+import { OWNER_ORGANIZATION_EMAIL } from "@/templates/email/config";
 import { featureRequestTemplates } from "@/templates/email/feature-request";
 import { newsletterTemplates } from "@/templates/email/newsletter";
 
@@ -70,7 +67,6 @@ const HomepageStory = {
             buttonUrl: createMailtoLink("en", {
               recipients: {
                 to: OWNER_ORGANIZATION_EMAIL,
-                bcc: SUPPORT_EMAIL,
               },
               template: bugReportTemplates,
               subject: "Visualize Bug Report",
@@ -84,7 +80,6 @@ const HomepageStory = {
             buttonUrl: createMailtoLink("en", {
               recipients: {
                 to: OWNER_ORGANIZATION_EMAIL,
-                bcc: SUPPORT_EMAIL,
               },
               template: featureRequestTemplates,
               subject: "Visualize Feature Request",
