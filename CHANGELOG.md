@@ -13,6 +13,7 @@ You can also check the
 
 - Features
   - Links in table charts now open in the same tab
+  - Added a link to "Digitale Publikationen" in the footer
 
 ### 6.2.1 - 2025-11-24
 

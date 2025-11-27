@@ -137,6 +137,19 @@ export const Footer = ({ sx }: { sx?: SxProps }) => {
             />
           </Link>
         </NextLink>
+        <Link
+          href={`https://bafu-yearbook-forest-wood-concept-docs.interactivethings.io/#/technisches-konzept?a=proof-of-concept-mit-datocms`}
+          target="_blank"
+          underline="none"
+        >
+          <FooterSectionButton
+            iconName="external"
+            label={t({
+              id: "footer.forest-wood-concept",
+              message: "Project “Digitale Publikationen” (PoC 2023)",
+            })}
+          />
+        </Link>
       </FooterSection>
     </SwissFederalCiFooter>
   );

@@ -837,6 +837,10 @@ msgstr "Code pour intégration dans une \"Application Externe\""
 msgid "controls.section.animation.dynamic-scaling.explanation"
 msgstr "Activez la mise à l'échelle dynamique pour ajuster l'échelle du graphique en fonction de la plage de données, afin de garantir une visualisation optimale."
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.showLinks"
+msgstr "Activer les liens"
+
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.enable"
 msgstr "Activer la conversion d'unité"
@@ -1452,6 +1456,10 @@ msgstr "Aperçu en petite largeur"
 msgid "button.layout"
 msgstr "Passer aux options de présentation"
 
+#: app/components/footer.tsx
+msgid "footer.forest-wood-concept"
+msgstr "Projet « Digitale Publikationen » (PoC 2023)"
+
 #: app/configurator/components/configurator.tsx
 msgid "button.publish"
 msgstr "Publier"
@@ -1751,10 +1759,6 @@ msgstr "Afficher les titres des légendes"
 #: app/browse/ui/navigation-section.tsx
 msgid "show.less"
 msgstr "Afficher moins"
-
-#: app/configurator/table/configurator/links-section.tsx
-msgid "controls.tableSettings.showLinks"
-msgstr "Activer les liens"
 
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.show-more"

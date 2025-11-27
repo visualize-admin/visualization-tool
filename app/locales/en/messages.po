@@ -837,6 +837,10 @@ msgstr "Embed Code for \"External Application\""
 msgid "controls.section.animation.dynamic-scaling.explanation"
 msgstr "Enable dynamic scaling to adjust the chart's scale based on the data range, ensuring optimal visualization."
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.showLinks"
+msgstr "Enable links"
+
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.enable"
 msgstr "Enable unit conversion"
@@ -1452,6 +1456,10 @@ msgstr "Preview with small width"
 msgid "button.layout"
 msgstr "Proceed to layout options"
 
+#: app/components/footer.tsx
+msgid "footer.forest-wood-concept"
+msgstr "Project “Digitale Publikationen” (PoC 2023)"
+
 #: app/configurator/components/configurator.tsx
 msgid "button.publish"
 msgstr "Publish"
@@ -1751,10 +1759,6 @@ msgstr "Show legend titles"
 #: app/browse/ui/navigation-section.tsx
 msgid "show.less"
 msgstr "Show less"
-
-#: app/configurator/table/configurator/links-section.tsx
-msgid "controls.tableSettings.showLinks"
-msgstr "Enable links"
 
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.show-more"
