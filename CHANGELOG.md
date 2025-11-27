@@ -11,7 +11,8 @@ You can also check the
 
 ## Unreleased
 
-Nothing yet.
+- Features
+  - Links in table charts now open in the same tab
 
 ### 6.2.1 - 2025-11-24
 
