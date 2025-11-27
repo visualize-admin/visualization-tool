@@ -837,6 +837,10 @@ msgstr "Codice da incorporare per \"External Application\""
 msgid "controls.section.animation.dynamic-scaling.explanation"
 msgstr "Abilitare la scalatura dinamica per regolare la scala del grafico in base all'intervallo di dati, garantendo una visualizzazione ottimale."
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.showLinks"
+msgstr "Abilita i collegamenti"
+
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.enable"
 msgstr "Abilita conversione unità"
@@ -1452,6 +1456,10 @@ msgstr "Anteprima sul telefono"
 msgid "button.layout"
 msgstr "Procedi alle opzioni di layout"
 
+#: app/components/footer.tsx
+msgid "footer.forest-wood-concept"
+msgstr "Progetto “Digitale Publikationen” (PoC 2023)"
+
 #: app/configurator/components/configurator.tsx
 msgid "button.publish"
 msgstr "Pubblicare"
@@ -1751,10 +1759,6 @@ msgstr "Mostra i titoli delle leggende"
 #: app/browse/ui/navigation-section.tsx
 msgid "show.less"
 msgstr "Mostra meno"
-
-#: app/configurator/table/configurator/links-section.tsx
-msgid "controls.tableSettings.showLinks"
-msgstr "Abilita i collegamenti"
 
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.show-more"

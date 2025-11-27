@@ -837,6 +837,10 @@ msgstr "Embed-Code für «Externe Applikation»"
 msgid "controls.section.animation.dynamic-scaling.explanation"
 msgstr "Aktivieren Sie die dynamische Skalierung, um die Skalierung des Diagramms auf der Grundlage des Datenbereichs anzupassen und eine optimale Visualisierung zu gewährleisten."
 
+#: app/configurator/table/configurator/links-section.tsx
+msgid "controls.tableSettings.showLinks"
+msgstr "Links aktivieren"
+
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 msgid "controls.convert-unit.enable"
 msgstr "Einheitenumrechnung aktivieren"
@@ -1452,6 +1456,10 @@ msgstr "Vorschau in kleiner Breite"
 msgid "button.layout"
 msgstr "Weiter zu den Layout-Optionen"
 
+#: app/components/footer.tsx
+msgid "footer.forest-wood-concept"
+msgstr "Projekt „Digitale Publikationen“ (PoC 2023)"
+
 #: app/configurator/components/configurator.tsx
 msgid "button.publish"
 msgstr "Veröffentlichen"
@@ -1751,10 +1759,6 @@ msgstr "Legendentitel anzeigen"
 #: app/browse/ui/navigation-section.tsx
 msgid "show.less"
 msgstr "Weniger anzeigen"
-
-#: app/configurator/table/configurator/links-section.tsx
-msgid "controls.tableSettings.showLinks"
-msgstr "Links aktivieren"
 
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.show-more"

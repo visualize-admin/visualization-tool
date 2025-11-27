@@ -11,10 +11,7 @@ import { useLocale } from "@/locales/use-locale";
 import { useUser } from "@/login/utils";
 import { createMailtoLink } from "@/templates/email";
 import { bugReportTemplates } from "@/templates/email/bug-report";
-import {
-  OWNER_ORGANIZATION_EMAIL,
-  SUPPORT_EMAIL,
-} from "@/templates/email/config";
+import { OWNER_ORGANIZATION_EMAIL } from "@/templates/email/config";
 import { featureRequestTemplates } from "@/templates/email/feature-request";
 
 export const LoginMenu = () => {
@@ -180,7 +177,6 @@ const Feedback = ({
         href={createMailtoLink(locale, {
           recipients: {
             to: OWNER_ORGANIZATION_EMAIL,
-            bcc: SUPPORT_EMAIL,
           },
           template: bugReportTemplates,
           subject: "Visualize Bug Report",
@@ -196,7 +192,6 @@ const Feedback = ({
         href={createMailtoLink(locale, {
           recipients: {
             to: OWNER_ORGANIZATION_EMAIL,
-            bcc: SUPPORT_EMAIL,
           },
           template: featureRequestTemplates,
           subject: "Visualize Feature Request",
