@@ -68,7 +68,7 @@ export const LinkedCellWrapper = ({
     <Link
       className={classes.link}
       href={href}
-      target="_blank"
+      target="_parent"
       title={href}
       style={{ flex: 1, justifyContent: "space-between" }}
     >
