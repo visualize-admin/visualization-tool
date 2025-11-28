@@ -68,7 +68,9 @@ export const getBrowseParamsFromQuery = (
       subsubtype: subsubtype ?? previous?.subsubtype,
       subsubiri: subsubiri ?? previous?.subsubiri,
       topic: topic ?? previous?.topic,
-      includeDrafts: includeDrafts ?? previous?.includeDrafts,
+      includeDrafts: includeDrafts
+        ? JSON.parse(includeDrafts)
+        : previous?.includeDrafts,
     },
     (d) => d !== undefined
   );
