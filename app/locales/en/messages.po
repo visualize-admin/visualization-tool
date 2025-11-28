@@ -1456,10 +1456,6 @@ msgstr "Preview with small width"
 msgid "button.layout"
 msgstr "Proceed to layout options"
 
-#: app/components/footer.tsx
-msgid "footer.forest-wood-concept"
-msgstr "Project “Digitale Publikationen” (PoC 2023)"
-
 #: app/configurator/components/configurator.tsx
 msgid "button.publish"
 msgstr "Publish"
@@ -1888,10 +1884,6 @@ msgstr "Static iframe"
 #: app/components/footer.tsx
 msgid "footer.statistics"
 msgstr "Statistics"
-
-#: app/components/footer.tsx
-msgid "footer.status"
-msgstr "Status"
 
 #: app/components/footer.tsx
 msgid "footer.contact.title"

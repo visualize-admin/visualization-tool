@@ -1456,10 +1456,6 @@ msgstr "Anteprima sul telefono"
 msgid "button.layout"
 msgstr "Procedi alle opzioni di layout"
 
-#: app/components/footer.tsx
-msgid "footer.forest-wood-concept"
-msgstr "Progetto “Digitale Publikationen” (PoC 2023)"
-
 #: app/configurator/components/configurator.tsx
 msgid "button.publish"
 msgstr "Pubblicare"
@@ -1888,10 +1884,6 @@ msgstr "Iframe statico"
 #: app/components/footer.tsx
 msgid "footer.statistics"
 msgstr "Statistiche"
-
-#: app/components/footer.tsx
-msgid "footer.status"
-msgstr "Stato"
 
 #: app/components/footer.tsx
 msgid "footer.contact.title"
