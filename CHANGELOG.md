@@ -11,6 +11,10 @@ You can also check the
 
 ## Unreleased
 
+Nothing yet.
+
+### 6.2.3 - 2025-11-28
+
 - Fixes
   - Include drafts checkbox can be toggled off again now
 
