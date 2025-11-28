@@ -11,6 +11,8 @@ You can also check the
 
 ## Unreleased
 
+Nothing yet.
+
 ### 6.2.4 - 2025-11-28
 
 - Maintenance
