@@ -11,7 +11,10 @@ You can also check the
 
 ## Unreleased
 
-Nothing yet.
+### 6.2.4 - 2025-11-28
+
+- Maintenance
+  - Removed links to Status page and "Digitale Publikationen" from the footer
 
 ### 6.2.3 - 2025-11-28
 
