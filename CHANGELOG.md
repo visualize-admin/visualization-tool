@@ -11,7 +11,8 @@ You can also check the
 
 ## Unreleased
 
-Nothing yet.
+- Fixes
+  - Fixed CSP for the embed page
 
 ### 6.2.4 - 2025-11-28
 

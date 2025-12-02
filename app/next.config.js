@@ -68,7 +68,7 @@ module.exports = withPreconstruct(
               } https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
               `script-src 'self' 'unsafe-inline'${
                 process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
-              } https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com https://api.mapbox.com`,
+              } https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com https://api.mapbox.com https://api.maptiler.com`,
               `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net`,
               `font-src 'self'`,
               `form-action 'self'`,
@@ -78,8 +78,8 @@ module.exports = withPreconstruct(
 
               // * to allow loading legend images from custom WMS / WMTS endpoints and data: to allow downloading images
               `img-src 'self' * data: blob:`,
-              `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://visualize.admin.ch https://*.visualize.admin.ch https://vercel.live https://vercel.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://api.mapbox.com https://cdn.jsdelivr.net`,
-              `worker-src 'self' blob: https://*.admin.ch`,
+              `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://visualize.admin.ch https://*.visualize.admin.ch https://vercel.live https://vercel.com https://*.vercel.app https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://api.mapbox.com https://cdn.jsdelivr.net`,
+              `worker-src 'self' blob: https://*.admin.ch https://*.vercel.app`,
             ].join("; "),
           });
         }
