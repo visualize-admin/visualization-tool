@@ -11,6 +11,10 @@ You can also check the
 
 ## Unreleased
 
+Nothing yet.
+
+### 6.2.5 - 2025-12-02
+
 - Fixes
   - Fixed CSP for the embed page
 
