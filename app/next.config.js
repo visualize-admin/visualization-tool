@@ -68,7 +68,7 @@ module.exports = withPreconstruct(
               } https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
               `script-src 'self' 'unsafe-inline'${
                 process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
-              } https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com https://api.mapbox.com`,
+              } https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com https://api.mapbox.com https://api.maptiler.com`,
               `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net`,
               `font-src 'self'`,
               `form-action 'self'`,
