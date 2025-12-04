@@ -1,7 +1,7 @@
 .git
 .next
 *Dockerfile*
-# Ignore node_modules to prevent issues with wrong binaries (e.g. sentry cli)
+# Ignore node_modules to prevent issues with wrong binaries
 node_modules
 .DS_Store
 *.log

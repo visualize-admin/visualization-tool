@@ -1,13 +1,10 @@
-// This file sets a custom webpack configuration to use your Next.js app
-// with Sentry.
+// This file sets a custom webpack configuration to use your Next.js app.
 // https://nextjs.org/docs/api-reference/next.config.js/introduction
-// https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
 const withMDX = require("@next/mdx")();
 const withPreconstruct = require("@preconstruct/next");
-const { withSentryConfig } = require("@sentry/nextjs");
 const { IgnorePlugin } = require("webpack");
 
 const pkg = require("../package.json");
@@ -65,10 +62,10 @@ module.exports = withPreconstruct(
             value: [
               `default-src 'self' 'unsafe-inline'${
                 process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
-              } https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
+              } https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
               `script-src 'self' 'unsafe-inline'${
                 process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
-              } https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com https://api.mapbox.com`,
+              } https://vercel.live/ https://vercel.com https://*.googletagmanager.com https://api.mapbox.com`,
               `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net`,
               `font-src 'self'`,
               `form-action 'self'`,
@@ -154,10 +151,4 @@ module.exports = withPreconstruct(
       },
     })
   )
-);
-
-module.exports = withSentryConfig(
-  module.exports,
-  { silent: true },
-  { hideSourcemaps: true }
 );
