@@ -1,5 +1,3 @@
-import { argosScreenshot } from "@argos-ci/playwright";
-
 import { setup } from "./common";
 
 const { expect, test } = setup();
@@ -26,8 +24,6 @@ test("y labels should not overlap with other chart elements", async ({
   const secondLabelBox = await secondLabel.boundingBox();
   const firstLabelEndY = firstLabelBox.y + firstLabelBox.height;
   const secondLabelEndY = secondLabelBox.y + secondLabelBox.height;
-
-  await argosScreenshot(page, "combo-chart-label-wrapping");
 
   for (const element of chartElements) {
     const { y } = await element.boundingBox();

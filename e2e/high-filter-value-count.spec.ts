@@ -1,5 +1,3 @@
-import { argosScreenshot } from "@argos-ci/playwright";
-
 import { setup, sleep } from "./common";
 
 const { test } = setup();
@@ -22,6 +20,5 @@ testFn(
     await selectors.chart.loaded();
 
     await sleep(2_000);
-    argosScreenshot(page, `chart-map-high-filter-value-count`);
   }
 );

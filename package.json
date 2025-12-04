@@ -62,7 +62,6 @@
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
-    "@argos-ci/playwright": "^3.9.4",
     "@babel/core": "^7.12.9",
     "@preconstruct/cli": "^2.7.0",
     "@rollup/plugin-json": "^4.1.0",

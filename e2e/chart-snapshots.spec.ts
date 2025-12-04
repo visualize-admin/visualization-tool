@@ -1,5 +1,3 @@
-import { argosScreenshot } from "@argos-ci/playwright";
-
 import { configs as intConfigs } from "../app/test/__fixtures/config/int/configs";
 
 import { setup, sleep } from "./common";
@@ -36,7 +34,6 @@ for (let [viewportName, viewportSize] of Object.entries(viewports)) {
       await selectors.chart.loaded();
 
       await sleep(2_000);
-      await argosScreenshot(page, `chart-snapshot-${viewportName}-${slug}`);
     });
   }
 }

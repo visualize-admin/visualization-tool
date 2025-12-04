@@ -28,10 +28,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 1 : 4,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [
-    process.env.CI ? ["blob"] : ["html"],
-    ["@argos-ci/playwright/reporter", { uploadToArgos: !!process.env.CI }],
-  ],
+  reporter: [process.env.CI ? ["blob"] : ["html"]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     contextOptions: {

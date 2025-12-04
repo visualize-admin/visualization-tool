@@ -1,5 +1,3 @@
-import { argosScreenshot } from "@argos-ci/playwright";
-
 import { loadChartInLocalStorage } from "./charts-utils";
 import { setup, sleep } from "./common";
 import offentlicheAusgabenChartConfigFixture from "./fixtures/offentliche-ausgaben-chart-config.json";
@@ -39,7 +37,6 @@ test("should be possible to edit filters of a hierarchy", async ({
   });
 
   await sleep(2_000);
-  await argosScreenshot(page, `chart-edition-${key}`);
 });
 
 test("changing of locale shouldn't make the chart disappear", async ({
