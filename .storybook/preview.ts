@@ -20,11 +20,6 @@ const preview: Preview = {
         ? 0
         : a.id.localeCompare(b.id, undefined, { numeric: true }),
   },
-  parameters: {
-    // Disables Chromatic's snapshotting on a global level
-    // We use Argos for snapshots, and only use Chromatic to link to Figma
-    chromatic: { disableSnapshot: true },
-  }
 };
 
 export default preview;

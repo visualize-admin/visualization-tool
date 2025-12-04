@@ -208,8 +208,7 @@ There is a
 [dedicated GitHub Action](https://github.com/visualize-admin/visualization-tool/actions/workflows/manual-load-test.yml)
 that runs the API load tests against selected environment. You can investigate
 the results by going to Actions section in GitHub and checking the summary
-results. They are also visible in the cloud (k6.io), if you enable the cloud
-option.
+results.
 
 ### 8.2. <a name='Localsetup'></a>Local setup
 
@@ -219,9 +218,7 @@ your machine.
 
 ### 8.3. <a name='Runningthetestslocally'></a>Running the tests locally
 
-You might want to run the script locally, for example to be able to bypass the
-cloud limitations of k6 (e.g. max number of VUs bigger than 50). To run a given
-load test, simply run
+To run a given load test, simply run
 
 ```sh
 k6 run k6/script-name.js

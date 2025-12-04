@@ -44,7 +44,6 @@
     "github:codegen": "node k6/performance-tests/generate-github-actions.mjs",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build -o app/public/storybook",
-    "chromatic": "npx chromatic --build-script-name storybook:build -o app/public/storybook",
     "compare-screenshots": "npx tsx scripts/compare-screenshots.ts",
     "generate-json-schema": "tsx -r dotenv/config app/scripts/generate-json-schema.ts",
     "wms-wmts-providers:scrape": "curl https://raw.githubusercontent.com/geoadmin/web-mapviewer/refs/heads/develop/packages/mapviewer/src/modules/menu/components/advancedTools/ImportCatalogue/external-providers.json | prettier --parser json > ./app/charts/map/wms-wmts-providers.json"
@@ -81,7 +80,6 @@
     "argparse": "^2.0.1",
     "babel-core": "^7.0.0-bridge.0",
     "babel-plugin-macros": "^3.0.0",
-    "chromatic": "^11.4.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.23",
     "eslint-plugin-deprecate": "^0.8.5",
