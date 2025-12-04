@@ -3,10 +3,7 @@ import { featureRequestTemplates } from "@/templates/email/feature-request";
 import { newsletterTemplates } from "@/templates/email/newsletter";
 import { Divider } from "@mui/material";
 import { createMailtoLink } from "../../../app/templates/email";
-import {
-  OWNER_ORGANIZATION_EMAIL,
-  SUPPORT_EMAIL,
-} from "../../../app/templates/email/config";
+import { OWNER_ORGANIZATION_EMAIL } from "../../../app/templates/email/config";
 
 export const contentId = "home";
 
@@ -57,7 +54,6 @@ export const contentId = "home";
     buttonUrl: createMailtoLink("de", {
       recipients: {
         to: OWNER_ORGANIZATION_EMAIL,
-        bcc: SUPPORT_EMAIL,
       },
       template: bugReportTemplates,
       subject: "Visualize Bug Report",
@@ -71,7 +67,6 @@ export const contentId = "home";
     buttonUrl: createMailtoLink("de", {
       recipients: {
         to: OWNER_ORGANIZATION_EMAIL,
-        bcc: SUPPORT_EMAIL,
       },
       template: featureRequestTemplates,
       subject: "Visualize Feature Request",
