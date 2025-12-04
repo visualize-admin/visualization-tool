@@ -43,7 +43,6 @@ code in this repository.
 - `yarn locales:extract` - Extract translatable strings from code to generate
   message files
 - `yarn locales:compile` - Compile translation files
-- `yarn locales:sync` - Sync translations with Accent (translation service)
 
 ### GraphQL & Code Generation
 
