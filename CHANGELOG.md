@@ -13,6 +13,11 @@ You can also check the
 
 Nothing yet.
 
+### 6.2.5 - 2025-12-02
+
+- Fixes
+  - Fixed CSP for the embed page
+
 ### 6.2.4 - 2025-11-28
 
 - Maintenance
