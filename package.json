@@ -26,8 +26,6 @@
     "knip": "npx knip --tags=-internal",
     "locales:extract": "lingui extract --clean; ./scripts/strip-locale-line-numbers.sh",
     "locales:compile": "lingui compile --verbose",
-    "locales:sync": "dotenv -- accent sync --add-translations --merge-type=passive --order-by=key; yarn locales:extract # putting back file location comments",
-    "locales:browse": "open 'https://accent.interactivethings.io/app/projects/584e1dfa-ff1f-4b26-8cac-07004c465134'",
     "graphql:codegen": "graphql-codegen --config codegen.yml",
     "graphql:codegen:dev": "graphql-codegen --config codegen.yml --watch",
     "icons": "rm -f app/icons/components/*.tsx && svgr -d app/icons/components app/icons/svg",
@@ -46,7 +44,6 @@
     "github:codegen": "node k6/performance-tests/generate-github-actions.mjs",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build -o app/public/storybook",
-    "chromatic": "npx chromatic --build-script-name storybook:build -o app/public/storybook",
     "compare-screenshots": "npx tsx scripts/compare-screenshots.ts",
     "generate-json-schema": "tsx -r dotenv/config app/scripts/generate-json-schema.ts",
     "wms-wmts-providers:scrape": "curl https://raw.githubusercontent.com/geoadmin/web-mapviewer/refs/heads/develop/packages/mapviewer/src/modules/menu/components/advancedTools/ImportCatalogue/external-providers.json | prettier --parser json > ./app/charts/map/wms-wmts-providers.json"
@@ -62,7 +59,6 @@
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
-    "@argos-ci/playwright": "^3.9.4",
     "@babel/core": "^7.12.9",
     "@preconstruct/cli": "^2.7.0",
     "@rollup/plugin-json": "^4.1.0",
@@ -81,11 +77,9 @@
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.2",
     "@typescript-eslint/utils": "^5.35.1",
-    "accent-cli": "^0.16.2",
     "argparse": "^2.0.1",
     "babel-core": "^7.0.0-bridge.0",
     "babel-plugin-macros": "^3.0.0",
-    "chromatic": "^11.4.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.23",
     "eslint-plugin-deprecate": "^0.8.5",

@@ -17,11 +17,6 @@ on:
         required: true
         default: true
         type: boolean
-      cloud:
-        description: "Enable K6 Cloud"
-        required: true
-        default: false
-        type: boolean
 
 env:
   ENV: ${{ inputs.environment }}
@@ -39,24 +34,24 @@ jobs:
         uses: grafana/k6-action@v0.3.1
         with:
           filename: k6/load-tests/graphql/components.js
-          cloud: ${{ inputs.cloud }}
-          token: ${{ secrets.K6_CLOUD_API_TOKEN }}
-          flags: --env ENV=${{ env.ENV }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{ env.ENABLE_GQL_SERVER_SIDE_CACHE }}
+          flags:
+            --env ENV=${{ env.ENV }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{
+            env.ENABLE_GQL_SERVER_SIDE_CACHE }}
 
       - name: Testing GraphQL - Observations
         if: always()
         uses: grafana/k6-action@v0.3.1
         with:
           filename: k6/load-tests/graphql/observations.js
-          cloud: ${{ inputs.cloud }}
-          token: ${{ secrets.K6_CLOUD_API_TOKEN }}
-          flags: --env ENV=${{ env.ENV }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{ env.ENABLE_GQL_SERVER_SIDE_CACHE }}
+          flags:
+            --env ENV=${{ env.ENV }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{
+            env.ENABLE_GQL_SERVER_SIDE_CACHE }}
 
       - name: Testing HAR - Edition
         if: always()
         uses: grafana/k6-action@v0.3.1
         with:
           filename: k6/load-tests/har/${{ env.ENV }}/edition.js
-          cloud: ${{ inputs.cloud }}
-          token: ${{ secrets.K6_CLOUD_API_TOKEN }}
-          flags: --env ENABLE_GQL_SERVER_SIDE_CACHE=${{ env.ENABLE_GQL_SERVER_SIDE_CACHE }}
+          flags:
+            --env ENABLE_GQL_SERVER_SIDE_CACHE=${{
+            env.ENABLE_GQL_SERVER_SIDE_CACHE }}

@@ -1,5 +1,3 @@
-import { argosScreenshot } from "@argos-ci/playwright";
-
 import { loadChartInLocalStorage } from "./charts-utils";
 import { setup } from "./common";
 
@@ -26,8 +24,6 @@ test("future, time-range limits should be displayed in the chart", async ({
 
   const limitMiddleLineLength = +limitMiddleLineX2 - +limitMiddleLineX1;
   expect(limitMiddleLineLength).toBeGreaterThan(0);
-
-  await argosScreenshot(page, "limits-chart");
 });
 
 const CONFIGURATOR_STATE = {

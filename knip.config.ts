@@ -39,7 +39,6 @@ const config: KnipConfig = {
     "eslint-plugin-unused-imports",
     "@types/eslint",
     // Used in e2e tests.
-    "@argos-ci/playwright",
     "pixelmatch",
     "@types/pixelmatch",
     "pngjs",

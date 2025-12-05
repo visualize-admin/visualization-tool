@@ -1,5 +1,3 @@
-import { argosScreenshot } from "@argos-ci/playwright";
-
 import CONFIGURATOR_STATE_DASHBOARD_FREE_CANVAS from "../app/test/__fixtures/config/prod/dashboard-free-canvas.json";
 
 import { loadChartInLocalStorage } from "./charts-utils";
@@ -28,8 +26,6 @@ test("charts should be rendered correctly in free canvas mode when published", a
   const firstChartBox = await firstChart.boundingBox();
   const secondChartBox = await secondChart.boundingBox();
   const thirdChartBox = await thirdChart.boundingBox();
-
-  await argosScreenshot(page, "dashboard-free-canvas");
 
   expect(firstChartBox.y).toEqual(secondChartBox.y);
   expect(secondChartBox.y).toEqual(thirdChartBox.y);
@@ -71,6 +67,4 @@ test("charts should be rendered correctly in free canvas mode when editing", asy
   // Chart should occupy full available space. In the past we had a bug where
   // the chart was much smaller than the available space (middle panel width).
   expect(chartBox.width).toBeGreaterThan(middlePanelBox.width * 0.8);
-
-  await argosScreenshot(page, "dashboard-free-canvas-editing");
 });

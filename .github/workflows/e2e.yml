@@ -30,9 +30,6 @@ jobs:
           yarn e2e -- --grep-invert @noci --shard=${{ matrix.shardIndex }}/${{
           matrix.shardTotal }}
         env:
-          ARGOS_BRANCH:
-            ${{ github.event.deployment_status.environment == 'Production' &&
-            'main' || '' }}
           E2E_BASE_URL: ${{ github.event.deployment_status.target_url }}
           E2E_HAR: ${{ secrets.E2E_HAR }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
