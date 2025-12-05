@@ -12,7 +12,7 @@ jobs:
         shardIndex: [1, 2, 3, 4]
         shardTotal: [4]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           # fetch all commits so we can find the branch
           fetch-depth: 0

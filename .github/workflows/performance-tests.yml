@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Download, unzip and install k6 binary
         run: |
             wget https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-amd64.tar.gz
