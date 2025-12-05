@@ -63,7 +63,6 @@
     "@visx/text": "^2.12.2",
     "@zazuko/cube-hierarchy-query": "^3.0.0",
     "apollo-server-micro": "^3.0.0",
-    "apollo-server-plugin-base": "3.7.2",
     "autosuggest-highlight": "^3.3.4",
     "catalog": "^4.0.1-canary.2",
     "clipboard-polyfill": "^3.0.1",
