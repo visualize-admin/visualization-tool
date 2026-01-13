@@ -15,7 +15,7 @@ services:
   #     DATABASE_URL: "postgres://postgres:password@db:5432/template1"
   #   restart: "always"
   db:
-    image: "postgres:11"
+    image: "postgres:18"
     ports:
       - "5432:5432"
     environment:
