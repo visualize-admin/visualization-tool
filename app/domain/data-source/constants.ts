@@ -50,6 +50,48 @@ export const SOURCE_OPTIONS = [
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
+  {
+    value: "sparql+https://lindas-cached.cz-aws.net/query",
+    label: "Prod-GraphDB",
+    url: "https://lindas-cached.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas.cz-aws.net/query",
+    label: "Prod-GraphDB-uncached",
+    url: "https://lindas.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas-cached.int.cz-aws.net/query",
+    label: "Int-GraphDB",
+    url: "https://lindas-cached.int.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas.int.cz-aws.net/query",
+    label: "Int-GraphDB-uncached",
+    url: "https://lindas.int.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas-cached.test.cz-aws.net/query",
+    label: "Test-GraphDB",
+    url: "https://lindas-cached.test.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas.test.cz-aws.net/query",
+    label: "Test-GraphDB-uncached",
+    url: "https://lindas.test.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
 ].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.label));
 
 export const SOURCES_BY_LABEL = keyBy(SOURCE_OPTIONS, (d) => d.label);
