@@ -27,15 +27,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Testing GraphQL - Components
         if: always()
         uses: grafana/k6-action@v0.3.1
         with:
           filename: k6/load-tests/graphql/components.js
-          flags:
-            --env ENV=${{ env.ENV }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{
+          flags: --env ENV=${{ env.ENV }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{
             env.ENABLE_GQL_SERVER_SIDE_CACHE }}
 
       - name: Testing GraphQL - Observations
@@ -43,8 +42,7 @@ jobs:
         uses: grafana/k6-action@v0.3.1
         with:
           filename: k6/load-tests/graphql/observations.js
-          flags:
-            --env ENV=${{ env.ENV }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{
+          flags: --env ENV=${{ env.ENV }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{
             env.ENABLE_GQL_SERVER_SIDE_CACHE }}
 
       - name: Testing HAR - Edition
@@ -52,6 +50,5 @@ jobs:
         uses: grafana/k6-action@v0.3.1
         with:
           filename: k6/load-tests/har/${{ env.ENV }}/edition.js
-          flags:
-            --env ENABLE_GQL_SERVER_SIDE_CACHE=${{
+          flags: --env ENABLE_GQL_SERVER_SIDE_CACHE=${{
             env.ENABLE_GQL_SERVER_SIDE_CACHE }}

@@ -44,13 +44,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Download, unzip and install k6 binary
         run: |
-            wget https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-amd64.tar.gz
-            tar -xzf k6-v0.49.0-linux-amd64.tar.gz
-            sudo cp k6-v0.49.0-linux-amd64/k6 /usr/local/bin/k6
-            export PATH=$PATH:/usr/local/bin
+          wget https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-amd64.tar.gz
+          tar -xzf k6-v0.49.0-linux-amd64.tar.gz
+          sudo cp k6-v0.49.0-linux-amd64/k6 /usr/local/bin/k6
+          export PATH=$PATH:/usr/local/bin
 ${commands
       .map(
         (command, i) => `      - name: Run k6 test (iteration ${i + 1})
@@ -84,7 +84,7 @@ on:
   - deployment_status
 
 env:
-  SUMMARY: ''
+  SUMMARY: ""
 
 jobs:
   run_tests:
@@ -93,16 +93,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Send an HTTP request to start up the server
         run: |
           curl -s '\${{ github.event.deployment_status.target_url }}/api/graphql' -X 'POST' -H 'Content-Type: application/json' -d '{"operationName":"DataCubeObservations","variables":{"locale":"en","sourceType":"sparql","sourceUrl":"https://lindas.admin.ch/query","cubeFilter":{"iri":"https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9","filters":{"https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton":{"type":"single","value":"https://ld.admin.ch/canton/1"}}}},"query":"query DataCubeObservations($sourceType: String!, $sourceUrl: DataSourceUrl!, $locale: String!, $cubeFilter: DataCubeObservationFilter!) { dataCubeObservations(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale, cubeFilter: $cubeFilter) }"}' > /dev/null
       - name: Download, unzip and install k6 binary
         run: |
-            wget https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-amd64.tar.gz
-            tar -xzf k6-v0.49.0-linux-amd64.tar.gz
-            sudo cp k6-v0.49.0-linux-amd64/k6 /usr/local/bin/k6
-            export PATH=$PATH:/usr/local/bin
+          wget https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-amd64.tar.gz
+          tar -xzf k6-v0.49.0-linux-amd64.tar.gz
+          sudo cp k6-v0.49.0-linux-amd64/k6 /usr/local/bin/k6
+          export PATH=$PATH:/usr/local/bin
 ${commands
       .map(
         (command, i) => `      - name: Run k6 test (iteration ${i + 1})
