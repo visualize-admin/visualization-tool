@@ -13,13 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Download, unzip and install k6 binary
         run: |
-            wget https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-amd64.tar.gz
-            tar -xzf k6-v0.49.0-linux-amd64.tar.gz
-            sudo cp k6-v0.49.0-linux-amd64/k6 /usr/local/bin/k6
-            export PATH=$PATH:/usr/local/bin
+          wget https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-amd64.tar.gz
+          tar -xzf k6-v0.49.0-linux-amd64.tar.gz
+          sudo cp k6-v0.49.0-linux-amd64/k6 /usr/local/bin/k6
+          export PATH=$PATH:/usr/local/bin
       - name: Run k6 test (iteration 1)
         run: K6_PROMETHEUS_RW_USERNAME=${{ secrets.K6_PROMETHEUS_RW_USERNAME }} K6_PROMETHEUS_RW_PASSWORD=${{ secrets.K6_PROMETHEUS_RW_PASSWORD }} K6_PROMETHEUS_RW_SERVER_URL=${{ secrets.K6_PROMETHEUS_RW_SERVER_URL }} K6_PROMETHEUS_RW_TREND_STATS=avg k6 run -o experimental-prometheus-rw --tag testid=DataCubeComponents --env ENV=test --env ENDPOINT=https://test.visualize.admin.ch/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9 --env CUBE_LABEL=Photovoltaikanlagen/9 --env CHECK_TIMING=false --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/DataCubeComponents.js
       - name: Run k6 test (iteration 2)
