@@ -1,6 +1,8 @@
 name: GitLab Mirror
 
-on: [push, delete]
+on:
+  - push
+  - delete
 
 jobs:
   to_gitlab:
