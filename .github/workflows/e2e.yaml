@@ -1,6 +1,7 @@
 name: E2E
 
-on: [deployment_status]
+on:
+  - deployment_status
 
 jobs:
   e2e:
