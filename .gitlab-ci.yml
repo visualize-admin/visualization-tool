@@ -11,7 +11,7 @@ variables:
   DOCKER_HOST: tcp://docker:2375
 
 lint:
-  image: node:22
+  image: node:24-alpine
   stage: lint
   script:
     - yarn --frozen-lockfile
