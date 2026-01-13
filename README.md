@@ -40,7 +40,7 @@ Public documentation is available at https://visualize.admin.ch/docs/.
 ## 2. <a name='DevelopmentEnvironment'></a>Development Environment
 
 To start the development environment locally, you need a Postgres database.
-There's a [docker-compose.yml](./docker-compose.yml) for this if you have e.g.
+There's a [docker-compose.yaml](./docker-compose.yaml) for this if you have e.g.
 [Docker Desktop](https://www.docker.com/products/docker-desktop) installed.
 
 In addition, you need to run a [Node.js](https://nodejs.org/) server on your
