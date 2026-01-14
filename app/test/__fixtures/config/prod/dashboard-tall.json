@@ -4,7 +4,7 @@
     "version": "4.2.0",
     "dataSource": {
       "type": "sparql",
-      "url": "https://lindas-cached.cluster.ldbar.ch/query"
+      "url": "https://lindas-cached.int.cz-aws.net/query"
     },
     "layout": {
       "type": "dashboard",

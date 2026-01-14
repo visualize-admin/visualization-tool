@@ -39,7 +39,7 @@ const photovoltaikanlagenState = {
     "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/7",
   dataSource: {
     type: "sparql",
-    url: "https://lindas-cached.cluster.ldbar.ch/query",
+    url: "https://lindas-cached.int.cz-aws.net/query",
   },
   meta: {
     title: {
@@ -111,7 +111,7 @@ const nfiState = {
   dataSet: "https://environment.ld.admin.ch/foen/nfi/nfi_C-1266/cube/2023-1",
   dataSource: {
     type: "sparql",
-    url: "https://lindas-cached.cluster.ldbar.ch/query",
+    url: "https://lindas-cached.int.cz-aws.net/query",
   },
   meta: {
     title: {

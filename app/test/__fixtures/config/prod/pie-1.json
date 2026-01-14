@@ -2,13 +2,23 @@
   "key": "o3MTv3YHMdUA",
   "data": {
     "meta": {
-      "title": { "de": "", "en": "", "fr": "", "it": "" },
-      "description": { "de": "", "en": "", "fr": "", "it": "" }
+      "title": {
+        "de": "",
+        "en": "",
+        "fr": "",
+        "it": ""
+      },
+      "description": {
+        "de": "",
+        "en": "",
+        "fr": "",
+        "it": ""
+      }
     },
     "dataSet": "http://environment.ld.admin.ch/foen/px/0703010000_106/dataset",
     "dataSource": {
       "type": "sparql",
-      "url": "https://lindas-cached.cluster.ldbar.ch/query"
+      "url": "https://lindas-cached.int.cz-aws.net/query"
     },
     "chartConfig": {
       "version": "1.2.1",
@@ -18,7 +28,10 @@
         },
         "segment": {
           "palette": "category10",
-          "sorting": { "sortingType": "byMeasure", "sortingOrder": "asc" },
+          "sorting": {
+            "sortingType": "byMeasure",
+            "sortingOrder": "asc"
+          },
           "colorMapping": {
             "http://environment.ld.admin.ch/foen/px/0703010000_106/dimension/1/0": "#1f77b4",
             "http://environment.ld.admin.ch/foen/px/0703010000_106/dimension/1/1": "#ff7f0e",

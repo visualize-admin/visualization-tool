@@ -24,7 +24,7 @@ export const PUBLIC_URL = (
 export const ENDPOINT =
   clientEnv?.ENDPOINT ??
   process.env.ENDPOINT ??
-  "sparql+https://lindas-cached.cluster.ldbar.ch/query";
+  "sparql+https://lindas-cached.int.cz-aws.net/query";
 
 export const WHITELISTED_DATA_SOURCES = clientEnv?.WHITELISTED_DATA_SOURCES ??
   (process.env.WHITELISTED_DATA_SOURCES !== undefined

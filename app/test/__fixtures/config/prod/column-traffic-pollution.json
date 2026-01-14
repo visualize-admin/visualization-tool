@@ -18,7 +18,7 @@
     "dataSet": "https://environment.ld.admin.ch/foen/ubd003701/1",
     "dataSource": {
       "type": "sparql",
-      "url": "https://lindas-cached.cluster.ldbar.ch/query"
+      "url": "https://lindas-cached.int.cz-aws.net/query"
     },
     "chartConfig": {
       "version": "1.2.1",

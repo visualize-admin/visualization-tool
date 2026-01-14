@@ -25,7 +25,7 @@ test("@noci it should be possible to query dimension values from versioned dimen
       DataCubeComponentsDocument,
       {
         sourceType: "sparql",
-        sourceUrl: "https://lindas-cached.cluster.ldbar.ch/query",
+        sourceUrl: "https://lindas-cached.int.cz-aws.net/query",
         locale: "en",
         cubeFilter: { iri: cubeIri, loadValues: true },
       }

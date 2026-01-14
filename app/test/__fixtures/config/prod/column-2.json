@@ -2,13 +2,23 @@
   "key": "jV7rbOyAYouu",
   "data": {
     "meta": {
-      "title": { "de": "", "en": "", "fr": "", "it": "" },
-      "description": { "de": "", "en": "", "fr": "", "it": "" }
+      "title": {
+        "de": "",
+        "en": "",
+        "fr": "",
+        "it": ""
+      },
+      "description": {
+        "de": "",
+        "en": "",
+        "fr": "",
+        "it": ""
+      }
     },
     "dataSet": "http://ld.zazuko.com/foag/dataset",
     "dataSource": {
       "type": "sparql",
-      "url": "https://lindas-cached.cluster.ldbar.ch/query"
+      "url": "https://lindas-cached.int.cz-aws.net/query"
     },
     "chartConfig": {
       "version": "1.2.1",
@@ -20,7 +30,9 @@
           },
           "componentIri": "http://ld.zazuko.com/foag/week-date"
         },
-        "y": { "componentIri": "http://ld.zazuko.com/foag/price" }
+        "y": {
+          "componentIri": "http://ld.zazuko.com/foag/price"
+        }
       },
       "filters": {
         "http://ld.zazuko.com/foag/unit": {

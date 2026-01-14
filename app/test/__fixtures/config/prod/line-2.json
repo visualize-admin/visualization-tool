@@ -8,12 +8,17 @@
         "fr": "jklsdjfsdkl",
         "it": "kdsjfasdkl"
       },
-      "description": { "de": "", "en": "", "fr": "", "it": "" }
+      "description": {
+        "de": "",
+        "en": "",
+        "fr": "",
+        "it": ""
+      }
     },
     "dataSet": "http://environment.ld.admin.ch/foen/px/0703030000_112/dataset",
     "dataSource": {
       "type": "sparql",
-      "url": "https://lindas-cached.cluster.ldbar.ch/query"
+      "url": "https://lindas-cached.int.cz-aws.net/query"
     },
     "chartConfig": {
       "version": "1.2.1",

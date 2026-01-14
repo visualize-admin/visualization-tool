@@ -2,16 +2,17 @@ import keyBy from "lodash/keyBy";
 
 import { WHITELISTED_DATA_SOURCES } from "../env";
 
-export const LEGACY_PROD_DATA_SOURCE_URL = "https://lindas.admin.ch/query";
+export const LEGACY_PROD_DATA_SOURCE_URL =
+  "https://lindas.int.cz-aws.net/query";
 
 export const PROD_DATA_SOURCE_URL =
-  "https://lindas-cached.cluster.ldbar.ch/query";
+  "https://lindas-cached.int.cz-aws.net/query";
 
 export const SOURCE_OPTIONS = [
   {
-    value: `sparql+${PROD_DATA_SOURCE_URL}`,
+    value: `sparql+https://lindas-cached.cluster.ldbar.ch/query`,
     label: "Prod",
-    url: PROD_DATA_SOURCE_URL,
+    url: "https://lindas-cached.cluster.ldbar.ch/query",
     isTrusted: true,
     supportsCachingPerCubeIri: true,
   },
