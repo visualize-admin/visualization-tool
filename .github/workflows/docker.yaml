@@ -43,7 +43,7 @@ jobs:
             type=semver,prefix=v,pattern={{major}}.{{minor}}
             type=semver,prefix=v,pattern={{major}}
             type=sha
-            pipeline-${{ github.run_id }}
+            ${{ github.ref_type == 'branch' && format('pipeline-{0}-{1}', github.ref_name, github.run_id) || '' }}
 
       - name: Build and push Docker image
         id: docker_build
