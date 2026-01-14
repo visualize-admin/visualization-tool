@@ -26,6 +26,8 @@ ARG ADFS_PROFILE_URL
 ARG NEXTAUTH_SECRET
 ARG NEXTAUTH_URL
 
+RUN apk add --no-cache openssl
+
 # Build app
 COPY package.json yarn.lock ./
 COPY app/package.json ./app/
@@ -49,8 +51,7 @@ ENV NEXTAUTH_URL=$NEXTAUTH_URL
 
 COPY ./ ./
 
-RUN yarn prisma generate
-RUN yarn build
+RUN yarn prisma generate && yarn build
 
 # Install only prod dependencies and start app
 RUN yarn install --frozen-lockfile --production && yarn cache clean
