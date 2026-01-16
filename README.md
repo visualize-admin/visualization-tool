@@ -32,6 +32,7 @@
 	/vscode-markdown-toc-config -->
 <!-- /vscode-markdown-toc -->
 
+
 ## 1. <a name='Documentation'></a>Documentation
 
 Public documentation is available at https://visualize.admin.ch/docs/.
