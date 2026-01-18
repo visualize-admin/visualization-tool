@@ -42,6 +42,10 @@ module.exports = withPreconstruct(
         defaultLocale,
       },
 
+      experimental: {
+        instrumentationHook: true,
+      },
+
       headers: async () => {
         const headers = [];
 
@@ -60,11 +64,9 @@ module.exports = withPreconstruct(
           headers[0].headers.push({
             key: "Content-Security-Policy",
             value: [
-              `default-src 'self' 'unsafe-inline'${
-                process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
+              `default-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
               } https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
-              `script-src 'self' 'unsafe-inline'${
-                process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
+              `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
               } https://vercel.live/ https://vercel.com https://*.googletagmanager.com https://api.mapbox.com https://api.maptiler.com`,
               `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net`,
               `font-src 'self'`,
@@ -99,7 +101,7 @@ module.exports = withPreconstruct(
         ignoreDuringBuilds: true,
       },
 
-      webpack(config, { dev }) {
+      webpack (config, { dev }) {
         config.module.rules.push({
           test: /\.(graphql|gql)$/,
           exclude: /node_modules/,
@@ -140,7 +142,7 @@ module.exports = withPreconstruct(
         return config;
       },
 
-      async redirects() {
+      async redirects () {
         return [
           {
             source: "/storybook",
