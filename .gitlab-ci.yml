@@ -17,35 +17,36 @@ lint:
     - yarn --frozen-lockfile
     - yarn locales:compile
     - yarn lint
-# build:
-#   image: docker:24.0.5-cli
-#   services:
-#     - name: docker:24.0.5-dind
-#   stage: build
-#   tags:
-#     - k8s-privileged
-#   before_script:
-#     - until docker info >/dev/null 2>&1; do sleep 1; done
-#   script:
-#     - DOCKER_IMAGE_TAGS="$MAIN_IMAGE_TAG" ./scripts/docker-build-push.sh
-#   only:
-#     - main
 
-# release:
-#   image: docker:24.0.5-cli
-#   services:
-#     - name: docker:24.0.5-dind
-#   stage: release
-#   tags:
-#     - k8s-privileged
-#   before_script:
-#     - until docker info >/dev/null 2>&1; do sleep 1; done
-#   script:
-#     - pwd
-#     - env DOCKER_IMAGE_TAGS="$RELEASE_IMAGE_TAG
-#       $CI_REGISTRY_IMAGE:$(./scripts/get-package-version.sh)"
-#       ./scripts/docker-build-push.sh
-#   only:
-#     - /^v\d+\.\d+\.\d+$/ # use `yarn version` to create these tags
-#   except:
-#     - branches
+build:
+  image: docker:24.0.5-cli
+  services:
+    - name: docker:24.0.5-dind
+  stage: build
+  tags:
+    - k8s-privileged
+  before_script:
+    - until docker info >/dev/null 2>&1; do sleep 1; done
+  script:
+    - DOCKER_IMAGE_TAGS="$MAIN_IMAGE_TAG" ./scripts/docker-build-push.sh
+  only:
+    - main
+
+release:
+  image: docker:24.0.5-cli
+  services:
+    - name: docker:24.0.5-dind
+  stage: release
+  tags:
+    - k8s-privileged
+  before_script:
+    - until docker info >/dev/null 2>&1; do sleep 1; done
+  script:
+    - pwd
+    - env DOCKER_IMAGE_TAGS="$RELEASE_IMAGE_TAG
+      $CI_REGISTRY_IMAGE:$(./scripts/get-package-version.sh)"
+      ./scripts/docker-build-push.sh
+  only:
+    - /^v\d+\.\d+\.\d+$/ # use `yarn version` to create these tags
+  except:
+    - branches
