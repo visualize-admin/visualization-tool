@@ -122,8 +122,8 @@ export const searchCubes = async ({
     scoresQueries.map((scoresQuery) => {
       return tracer.startActiveSpan("scoresQuery", async (span) => {
         try {
-          span.addEvent("search.input", {
-            "app.sparql.query": scoresQuery,
+          span.addEvent("sparql.query", {
+            "db.query.text": scoresQuery,
           });
 
           const results = await sparqlClient.query.construct(scoresQuery, {
