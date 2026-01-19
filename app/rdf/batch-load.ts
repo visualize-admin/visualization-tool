@@ -7,6 +7,8 @@ import { NamedNode, Term } from "rdf-js";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { LRUCache } from "typescript-lru-cache";
 
+import { tracer } from "@/tracer";
+
 import { executeWithCache } from "./query-cache";
 
 const BATCH_SIZE = 500;
@@ -34,24 +36,31 @@ export const batchLoad = async <
 
   const results = await Promise.all(
     batched.map(async ([key, values]) => {
-      const query = buildQuery(values, key).build();
+      return tracer.startActiveSpan("batchLoad", async (span) => {
+        try {
+          const query = buildQuery(values, key).build();
+          span.addEvent("sparql.query", {
+            "db.query.text": query,
+          });
 
-      try {
-        return (await executeWithCache(
-          sparqlClient,
-          query,
-          () =>
-            sparqlClient.query.select(query, { operation: "postUrlencoded" }),
-          (t) => t,
-          cache
-        )) as unknown as TReturn[];
-      } catch (e) {
-        console.log(
-          `Error while querying. First ID of ${ids.length}: <${ids[0].value}>`
-        );
-        console.error(e);
-        return [];
-      }
+          return (await executeWithCache(
+            sparqlClient,
+            query,
+            () =>
+              sparqlClient.query.select(query, { operation: "postUrlencoded" }),
+            (t) => t,
+            cache
+          )) as unknown as TReturn[];
+        } catch (e) {
+          console.log(
+            `Error while querying. First ID of ${ids.length}: <${ids[0].value}>`
+          );
+          console.error(e);
+          return [];
+        } finally {
+          span.end();
+        }
+      });
     })
   );
 
