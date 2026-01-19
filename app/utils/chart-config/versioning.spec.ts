@@ -195,7 +195,7 @@ describe("config migrations", () => {
     },
     version: "4.0.0",
     dataSource: {
-      url: "https://lindas-cached.cluster.ldbar.ch/query",
+      url: "https://lindas-cached.int.cz-aws.net/query",
       type: "sparql",
     },
     chartConfigs: [

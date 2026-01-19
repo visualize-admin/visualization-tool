@@ -46,6 +46,7 @@ import { queryLatestCubeIri } from "@/rdf/query-latest-cube-iri";
 import { getPossibleFilters } from "@/rdf/query-possible-filters";
 import { searchCubes as _searchCubes, SearchResult } from "@/rdf/query-search";
 import { getSparqlEditorUrl } from "@/rdf/sparql-utils";
+import { tracer } from "@/tracer";
 
 export const dataCubeLatestIri: NonNullable<
   QueryResolvers["dataCubeLatestIri"]
@@ -100,18 +101,29 @@ export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> = async (
   { setup },
   info
 ) => {
-  const { sparqlClient } = await setup(info);
-  const cubes = await _searchCubes({
-    locale,
-    includeDrafts,
-    fetchDimensionTermsets,
-    filters,
-    query,
-    sparqlClient,
-  });
-  sortResults(cubes, order, locale);
+  return await tracer.startActiveSpan("searchCubes", async (span) => {
+    try {
+      span.addEvent("search.input", {
+        "app.search.query": JSON.stringify(query),
+        "app.search.filters": JSON.stringify(filters),
+      });
 
-  return cubes;
+      const { sparqlClient } = await setup(info);
+      const cubes = await _searchCubes({
+        locale,
+        includeDrafts,
+        fetchDimensionTermsets,
+        filters,
+        query,
+        sparqlClient,
+      });
+      sortResults(cubes, order, locale);
+
+      return cubes;
+    } finally {
+      span.end();
+    }
+  });
 };
 
 export const dataCubeDimensionGeoShapes: NonNullable<

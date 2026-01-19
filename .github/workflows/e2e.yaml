@@ -1,6 +1,7 @@
 name: E2E
 
-on: [deployment_status]
+on:
+  - deployment_status
 
 jobs:
   e2e:
@@ -12,13 +13,13 @@ jobs:
         shardIndex: [1, 2, 3, 4]
         shardTotal: [4]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           # fetch all commits so we can find the branch
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 22.x
+          node-version: "lts/*"
           cache: "yarn"
           cache-dependency-path: "**/yarn.lock"
       - name: Install dependencies
@@ -35,7 +36,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload blob report to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: blob-report-${{ matrix.shardIndex }}
           path: blob-report

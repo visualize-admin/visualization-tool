@@ -2,7 +2,12 @@
   "key": "v71kJ5n-qKGw",
   "data": {
     "meta": {
-      "title": { "de": "Holz", "en": "", "fr": "", "it": "" },
+      "title": {
+        "de": "Holz",
+        "en": "",
+        "fr": "",
+        "it": ""
+      },
       "description": {
         "de": "aslkslkjfsadlfkj asékfàsaék",
         "en": "",
@@ -13,7 +18,7 @@
     "dataSet": "http://environment.ld.admin.ch/foen/px/0703010000_106/dataset",
     "dataSource": {
       "type": "sparql",
-      "url": "https://lindas-cached.cluster.ldbar.ch/query"
+      "url": "https://lindas-cached.int.cz-aws.net/query"
     },
     "chartConfig": {
       "version": "1.2.1",

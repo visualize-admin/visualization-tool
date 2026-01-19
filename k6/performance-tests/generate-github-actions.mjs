@@ -1,6 +1,6 @@
 import fs from "fs";
 
-import cubes from "./data.json" assert { type: "json" };
+import cubes from "./data.json" with { type: "json" };
 
 const envs = ["test", "int", "prod"];
 const queries = [
@@ -21,8 +21,7 @@ const generateAutoTests = () => {
             env,
             query,
             cube,
-            `https://${
-              env === "prod" ? "" : `${env}.`
+            `https://${env === "prod" ? "" : `${env}.`
             }visualize.admin.ch/api/graphql`,
             true,
             false
@@ -45,21 +44,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Download, unzip and install k6 binary
         run: |
-            wget https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-amd64.tar.gz
-            tar -xzf k6-v0.49.0-linux-amd64.tar.gz
-            sudo cp k6-v0.49.0-linux-amd64/k6 /usr/local/bin/k6
-            export PATH=$PATH:/usr/local/bin
+          wget https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-amd64.tar.gz
+          tar -xzf k6-v0.49.0-linux-amd64.tar.gz
+          sudo cp k6-v0.49.0-linux-amd64/k6 /usr/local/bin/k6
+          export PATH=$PATH:/usr/local/bin
 ${commands
-  .map(
-    (command, i) => `      - name: Run k6 test (iteration ${i + 1})
+      .map(
+        (command, i) => `      - name: Run k6 test (iteration ${i + 1})
         run: ${command}`
-  )
-  .join("\n")}`;
+      )
+      .join("\n")}`;
 
-  fs.writeFileSync("./.github/workflows/performance-tests.yml", file);
+  fs.writeFileSync("./.github/workflows/performance-tests.yaml", file);
 };
 
 generateAutoTests();
@@ -81,10 +80,11 @@ const generatePRTests = () => {
 
 name: GraphQL performance tests (PR)
 
-on: [deployment_status]
+on:
+  - deployment_status
 
 env:
-  SUMMARY: ''
+  SUMMARY: ""
 
 jobs:
   run_tests:
@@ -93,22 +93,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Send an HTTP request to start up the server
         run: |
           curl -s '\${{ github.event.deployment_status.target_url }}/api/graphql' -X 'POST' -H 'Content-Type: application/json' -d '{"operationName":"DataCubeObservations","variables":{"locale":"en","sourceType":"sparql","sourceUrl":"https://lindas.admin.ch/query","cubeFilter":{"iri":"https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9","filters":{"https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton":{"type":"single","value":"https://ld.admin.ch/canton/1"}}}},"query":"query DataCubeObservations($sourceType: String!, $sourceUrl: DataSourceUrl!, $locale: String!, $cubeFilter: DataCubeObservationFilter!) { dataCubeObservations(sourceType: $sourceType, sourceUrl: $sourceUrl, locale: $locale, cubeFilter: $cubeFilter) }"}' > /dev/null
       - name: Download, unzip and install k6 binary
         run: |
-            wget https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-amd64.tar.gz
-            tar -xzf k6-v0.49.0-linux-amd64.tar.gz
-            sudo cp k6-v0.49.0-linux-amd64/k6 /usr/local/bin/k6
-            export PATH=$PATH:/usr/local/bin
+          wget https://github.com/grafana/k6/releases/download/v0.49.0/k6-v0.49.0-linux-amd64.tar.gz
+          tar -xzf k6-v0.49.0-linux-amd64.tar.gz
+          sudo cp k6-v0.49.0-linux-amd64/k6 /usr/local/bin/k6
+          export PATH=$PATH:/usr/local/bin
 ${commands
-  .map(
-    (command, i) => `      - name: Run k6 test (iteration ${i + 1})
+      .map(
+        (command, i) => `      - name: Run k6 test (iteration ${i + 1})
         run: echo "SUMMARY=\${{ env.SUMMARY }}$(${command})" >> $GITHUB_ENV`
-  )
-  .join("\n")}
+      )
+      .join("\n")}
       - name: GQL performance tests ❌
         if: \${{ env.SUMMARY != '' }}
         run: |
@@ -123,12 +123,12 @@ ${commands
           }'
 `;
 
-  fs.writeFileSync("./.github/workflows/performance-tests-pr.yml", file);
+  fs.writeFileSync("./.github/workflows/performance-tests-pr.yaml", file);
 };
 
 generatePRTests();
 
-function getRunCommand(
+function getRunCommand (
   env,
   query,
   cube,
@@ -136,11 +136,8 @@ function getRunCommand(
   sendToPrometheus = true,
   checkTiming = true
 ) {
-  return `k6 run${
-    sendToPrometheus ? " -o experimental-prometheus-rw" : ""
-  } --tag testid=${query} --env ENV=${env} --env ENDPOINT=${endpoint} --env CUBE_IRI=${
-    cube.iri
-  } --env CUBE_LABEL=${cube.label} --env CHECK_TIMING=${
-    checkTiming ? "true" : "false"
-  } --env WORKSPACE=\${{ github.workspace }} --quiet - <k6/performance-tests/graphql/${query}.js`;
+  return `k6 run${sendToPrometheus ? " -o experimental-prometheus-rw" : ""
+    } --tag testid=${query} --env ENV=${env} --env ENDPOINT=${endpoint} --env CUBE_IRI=${cube.iri
+    } --env CUBE_LABEL=${cube.label} --env CHECK_TIMING=${checkTiming ? "true" : "false"
+    } --env WORKSPACE=\${{ github.workspace }} --quiet - <k6/performance-tests/graphql/${query}.js`;
 }

@@ -1,4 +1,8 @@
 .git
+.github
+.vscode
+app/.github
+app/node_modules
 .next
 *Dockerfile*
 # Ignore node_modules to prevent issues with wrong binaries

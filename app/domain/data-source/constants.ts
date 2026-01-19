@@ -2,16 +2,17 @@ import keyBy from "lodash/keyBy";
 
 import { WHITELISTED_DATA_SOURCES } from "../env";
 
-export const LEGACY_PROD_DATA_SOURCE_URL = "https://lindas.admin.ch/query";
+export const LEGACY_PROD_DATA_SOURCE_URL =
+  "https://lindas.int.cz-aws.net/query";
 
 export const PROD_DATA_SOURCE_URL =
-  "https://lindas-cached.cluster.ldbar.ch/query";
+  "https://lindas-cached.int.cz-aws.net/query";
 
 export const SOURCE_OPTIONS = [
   {
-    value: `sparql+${PROD_DATA_SOURCE_URL}`,
+    value: `sparql+https://lindas-cached.cluster.ldbar.ch/query`,
     label: "Prod",
-    url: PROD_DATA_SOURCE_URL,
+    url: "https://lindas-cached.cluster.ldbar.ch/query",
     isTrusted: true,
     supportsCachingPerCubeIri: true,
   },
@@ -47,6 +48,48 @@ export const SOURCE_OPTIONS = [
     value: "sparql+https://test.lindas.admin.ch/query",
     label: "Test-uncached",
     url: "https://test.lindas.admin.ch/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas-cached.cz-aws.net/query",
+    label: "Prod-GraphDB",
+    url: "https://lindas-cached.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas.cz-aws.net/query",
+    label: "Prod-GraphDB-uncached",
+    url: "https://lindas.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas-cached.int.cz-aws.net/query",
+    label: "Int-GraphDB",
+    url: "https://lindas-cached.int.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas.int.cz-aws.net/query",
+    label: "Int-GraphDB-uncached",
+    url: "https://lindas.int.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas-cached.test.cz-aws.net/query",
+    label: "Test-GraphDB",
+    url: "https://lindas-cached.test.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas.test.cz-aws.net/query",
+    label: "Test-GraphDB-uncached",
+    url: "https://lindas.test.cz-aws.net/query",
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },

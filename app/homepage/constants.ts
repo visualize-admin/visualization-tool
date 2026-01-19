@@ -6,7 +6,7 @@ export const getExampleState1 = async () => {
     dataSet: "https://environment.ld.admin.ch/foen/ubd003701/2",
     dataSource: {
       type: "sparql",
-      url: "https://lindas-cached.cluster.ldbar.ch/query",
+      url: "https://lindas-cached.int.cz-aws.net/query",
     },
     meta: {
       title: {
@@ -105,7 +105,7 @@ export const getExampleState2 = async () => {
     dataSet: "https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/",
     dataSource: {
       type: "sparql",
-      url: "https://lindas-cached.cluster.ldbar.ch/query",
+      url: "https://lindas-cached.int.cz-aws.net/query",
     },
     meta: {
       title: {
