@@ -11,7 +11,8 @@ You can also check the
 
 ## Unreleased
 
-Nothing yet.
+- Features
+  - Added a way to limit table column widths
 
 ### 6.2.5 - 2025-12-02
 
