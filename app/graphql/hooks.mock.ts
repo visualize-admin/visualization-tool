@@ -6,7 +6,7 @@ export const useDataCubesComponentsQueryVariables: Record<
 > = {
   oneCube: {
     sourceType: "sparql",
-    sourceUrl: "https://lindas.admin.ch/query",
+    sourceUrl: "https://lindas.cz-aws.net/query",
     locale: "de",
     cubeFilters: [
       {
@@ -33,7 +33,7 @@ export const useDataCubesComponentsQueryVariables: Record<
   },
   twoCubes: {
     sourceType: "sparql",
-    sourceUrl: "https://lindas.admin.ch/query",
+    sourceUrl: "https://lindas.cz-aws.net/query",
     locale: "de",
     cubeFilters: [
       {

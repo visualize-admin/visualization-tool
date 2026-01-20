@@ -5,7 +5,7 @@ export const photovoltaikChartStateMock: ConfiguratorStateConfiguringChart = {
   state: "CONFIGURING_CHART",
   dataSource: {
     type: "sparql",
-    url: "https://lindas-cached.int.cluster.ldbar.ch/query",
+    url: "https://lindas-cached.int.cz-aws.net/query",
   },
   layout: {
     activeField: "y",

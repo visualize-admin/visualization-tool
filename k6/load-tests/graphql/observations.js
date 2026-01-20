@@ -37,7 +37,7 @@ const query = `query DataCubeObservations(
 const variables = {
   iri: "https://culture.ld.admin.ch/sfa/StateAccounts_Office/4/",
   sourceType: "sparql",
-  sourceUrl: "https://lindas.admin.ch/query",
+  sourceUrl: "https://lindas.cz-aws.net/query",
   locale: "en",
   componentIds: [
     "http://www.w3.org/2006/time#Year",
@@ -67,15 +67,14 @@ export const options = {
   ext: {
     loadimpact: {
       projectId: PROJECT_ID,
-      name: `GraphQL - Observations (${env.toUpperCase()}, GQL ${
-        enableCache ? "cache" : "no-cache"
-      })`,
+      name: `GraphQL - Observations (${env.toUpperCase()}, GQL ${enableCache ? "cache" : "no-cache"
+        })`,
       distribution: DISTRIBUTION,
     },
   },
 };
 
-export default function Observations() {
+export default function Observations () {
   http.post(getUrl(env), JSON.stringify({ query, variables }), {
     headers: getHeaders(enableCache),
   });

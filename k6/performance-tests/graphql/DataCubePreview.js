@@ -29,7 +29,7 @@ const checkTiming = __ENV.CHECK_TIMING === "true";
 const variables = {
   locale: "en",
   sourceType: "sparql",
-  sourceUrl: "https://lindas.admin.ch/query",
+  sourceUrl: "https://lindas.cz-aws.net/query",
   cubeFilter: {
     iri: cubeIri,
   },
@@ -45,7 +45,7 @@ const headers = {
   "x-visualize-cache-control": "no-cache",
 };
 
-export default function Components() {
+export default function Components () {
   exec.vu.metrics.tags.env = env;
   exec.vu.metrics.tags.cube = cubeLabel;
 
@@ -78,12 +78,12 @@ export default function Components() {
   }
 }
 
-export function handleSummary(data) {
+export function handleSummary (data) {
   if (durationExceedsThreshold(data.metrics.http_req_duration.values.avg)) {
     return {
       stdout: `${Math.round(
         (100 * data.metrics.http_req_duration.values.avg) /
-          metadata.queries.DataCubePreview.expectedDuration
+        metadata.queries.DataCubePreview.expectedDuration
       )}% – DataCubePreview – ${cubeLabel}. `,
     };
   }
@@ -93,6 +93,6 @@ export function handleSummary(data) {
   };
 }
 
-function durationExceedsThreshold(duration) {
+function durationExceedsThreshold (duration) {
   return duration > 2 * metadata.queries.DataCubePreview.expectedDuration;
 }

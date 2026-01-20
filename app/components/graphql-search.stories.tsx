@@ -34,7 +34,7 @@ const options = [
     id: "0",
     cubeIri: "https://environment.ld.admin.ch/foen/nfi/nfi_C-1029/cube/2023-1",
     sourceType: "sparql",
-    sourceUrl: "https://lindas.admin.ch/query",
+    sourceUrl: "https://lindas.cz-aws.net/query",
     label: "NFI Topics by stage of stand development",
   },
   {
@@ -42,7 +42,7 @@ const options = [
     cubeIri:
       "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
     sourceType: "sparql",
-    sourceUrl: "https://lindas.admin.ch/query",
+    sourceUrl: "https://lindas.cz-aws.net/query",
     label: "Einmalvergütung für Photovoltaikanlagen",
   },
   {
@@ -50,7 +50,7 @@ const options = [
     cubeIri:
       '"https://energy.ld.admin.ch/sfoe/bfe_ogd18_gebaeudeprogramm_auszahlungen/8',
     sourceType: "sparql",
-    sourceUrl: "https://lindas.admin.ch/query",
+    sourceUrl: "https://lindas.cz-aws.net/query",
     label:
       "Gebäudeprogramm - Auszahlungen nach Massnahmenbereich und Berichtsjahr",
   },
@@ -88,7 +88,7 @@ export const Search = () => {
     variables: {
       locale: "en",
       sourceType: "sparql",
-      sourceUrl: "https://int.lindas.admin.ch/query",
+      sourceUrl: "https://lindas.int.cz-aws.net/query",
       filters: [
         sharedComponents
           ? {

@@ -150,7 +150,7 @@ const main = async () => {
 
   const sourceUrlArg = {
     argument: ["-l", "--sourceUrl"],
-    defaultValue: "https://lindas.admin.ch/query",
+    defaultValue: "https://lindas.cz-aws.net/query",
     help: "DataUrlType",
   };
 

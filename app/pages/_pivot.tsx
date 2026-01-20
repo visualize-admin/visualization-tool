@@ -36,7 +36,7 @@ const Card = styled(MUICard)({
 });
 
 const intDatasource = {
-  sourceUrl: "https://lindas-cached.int.cluster.ldbar.ch/query",
+  sourceUrl: "https://lindas-cached.int.cz-aws.net/query",
   sourceType: "sparql",
 };
 

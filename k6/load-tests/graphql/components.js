@@ -58,13 +58,13 @@ fragment dimensionMetadata on Dimension {
     type
     __typename
   }
-  
+
   ... on TemporalDimension {
     timeUnit
     timeFormat
     __typename
   }
-  
+
   ... on NumericalMeasure {
     isCurrency
     currencyExponent
@@ -77,7 +77,7 @@ fragment dimensionMetadata on Dimension {
 const variables = {
   iri: "https://environment.ld.admin.ch/foen/ubd003701/2",
   sourceType: "sparql",
-  sourceUrl: "https://lindas.admin.ch/query",
+  sourceUrl: "https://lindas.cz-aws.net/query",
   locale: "en",
   componentIds: [
     "https://environment.ld.admin.ch/foen/ubd003701/beurteilung",
@@ -100,15 +100,14 @@ export const options = {
   ext: {
     loadimpact: {
       projectId: PROJECT_ID,
-      name: `GraphQL - Components (${env.toUpperCase()}, GQL ${
-        enableCache ? "cache" : "no-cache"
-      })`,
+      name: `GraphQL - Components (${env.toUpperCase()}, GQL ${enableCache ? "cache" : "no-cache"
+        })`,
       distribution: DISTRIBUTION,
     },
   },
 };
 
-export default function Components() {
+export default function Components () {
   http.post(getUrl(env), JSON.stringify({ query, variables }), {
     headers: getHeaders(enableCache),
   });
