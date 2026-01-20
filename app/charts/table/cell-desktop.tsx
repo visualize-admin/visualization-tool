@@ -61,12 +61,13 @@ export const CellDesktop = ({
     barShowBackground,
   } = columnMeta;
   const classes = useStyles();
-  const { links } = useChartState() as TableChartState;
+  const { links, shouldApplyWidthLimits } = useChartState() as TableChartState;
 
   switch (columnMeta.type) {
     case "text":
       return (
         <Flex
+          {...cell.getCellProps()}
           sx={{
             alignItems: "center",
             justifyContent:
@@ -78,10 +79,20 @@ export const CellDesktop = ({
             fontWeight: textStyle,
             px: 3,
           }}
-          {...cell.getCellProps()}
         >
           <LinkedCellWrapper cell={cell} columnMeta={columnMeta} links={links}>
-            {columnMeta.formatter(cell)}
+            <Box
+              component="span"
+              sx={{
+                ...(shouldApplyWidthLimits && {
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }),
+              }}
+            >
+              {columnMeta.formatter(cell)}
+            </Box>
           </LinkedCellWrapper>
         </Flex>
       );
@@ -89,8 +100,8 @@ export const CellDesktop = ({
       const { colorScale: cColorScale } = columnMeta;
       return (
         <Flex
-          sx={{ alignItems: "center", fontWeight: textStyle, pl: 1, pr: 3 }}
           {...cell.getCellProps()}
+          sx={{ alignItems: "center", fontWeight: textStyle, pl: 1, pr: 3 }}
         >
           <LinkedCellWrapper cell={cell} columnMeta={columnMeta} links={links}>
             <Tag tagColor={cColorScale(cell.value)}>

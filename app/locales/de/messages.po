@@ -1124,6 +1124,10 @@ msgstr "Messung der linken Achse"
 msgid "wmts.legend-title"
 msgstr "Legende"
 
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.tableSettings.limitColumnWidths"
+msgstr "Begrenzen die Spaltenbreite"
+
 #: app/components/footer.tsx
 msgid "footer.button.lindas"
 msgstr "LINDAS Linked Data Dienste"

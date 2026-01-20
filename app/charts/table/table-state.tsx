@@ -26,13 +26,18 @@ import {
   CommonChartState,
 } from "@/charts/shared/chart-state";
 import { useSize } from "@/charts/shared/use-size";
-import { BAR_CELL_PADDING, TABLE_HEIGHT } from "@/charts/table/constants";
+import {
+  BAR_CELL_PADDING,
+  LIMITED_COLUMN_WIDTH,
+  TABLE_HEIGHT,
+} from "@/charts/table/constants";
 import { getTableUIElementsOffset } from "@/charts/table/table";
 import {
   TableStateVariables,
   useTableStateData,
   useTableStateVariables,
 } from "@/charts/table/table-state-props";
+import { columnCanBeWidthLimited } from "@/charts/table/width-limit";
 import {
   ColumnStyleCategory,
   ColumnStyleHeatmap,
@@ -118,6 +123,7 @@ export type TableChartState = CommonChartState &
     groupingIds: string[];
     hiddenIds: string[];
     sortingIds: { id: string; desc: boolean }[];
+    shouldApplyWidthLimits: boolean;
     links: TableLinks;
   };
 
@@ -210,11 +216,10 @@ const useTableState = (
     [chartData, types]
   );
 
-  // Columns used by react-table
-  const tableColumns = useMemo(() => {
+  const tableColumnsData = useMemo(() => {
     const allComponents = [...dimensions, ...measures];
 
-    const columns = orderedTableColumns.map((c) => {
+    const columnData = orderedTableColumns.map((c) => {
       const headerComponent = allComponents.find((d) => d.id === c.componentId);
 
       if (!headerComponent) {
@@ -228,7 +233,7 @@ const useTableState = (
       const headerLabel = getLabelWithUnit(headerComponent);
 
       // The column width depends on the estimated width of the
-      // longest value in the column, with a minimum of 150px.
+      // longest value in the column, with a minimum of 50px.
       const columnItems = [...new Set(chartData.map((d) => d[c.componentId]))];
       const columnItemSizes = [
         ...columnItems.map((item) => {
@@ -241,40 +246,81 @@ const useTableState = (
         }),
       ];
 
-      const width = Math.max(
+      const naturalWidth = Math.max(
         50,
         getTextWidth(headerLabel, { fontSize: 16 }) + 44,
         ...columnItemSizes
       );
 
       return {
-        Header: headerLabel,
-        // Slugify accessor to avoid id's "." to be parsed as JS object notation.
-        accessor: getSlugifiedId(c.componentId),
-        width,
-        sortType: (
-          rowA: Row<Observation>,
-          rowB: Row<Observation>,
-          colId: string
-        ) => {
-          for (const d of sorters) {
-            const result = ascending(
-              d(rowA.values[colId]),
-              d(rowB.values[colId])
-            );
-
-            if (result) {
-              return result;
-            }
-          }
-
-          return 0;
-        },
+        c,
+        headerComponent,
+        headerLabel,
+        sorters,
+        naturalWidth,
+        canBeWidthLimited: columnCanBeWidthLimited(
+          fields[c.componentId].columnStyle.type
+        ),
       };
     });
 
-    return columns;
-  }, [dimensions, measures, orderedTableColumns, chartData, formatNumber]);
+    const totalNaturalWidth = columnData.reduce(
+      (sum, col) => sum + col.naturalWidth,
+      0
+    );
+
+    const shouldApplyLimits =
+      settings.limitColumnWidths && totalNaturalWidth > chartWidth;
+
+    const columns = columnData.map(
+      ({ c, headerLabel, sorters, naturalWidth, canBeWidthLimited }) => {
+        const width =
+          shouldApplyLimits && canBeWidthLimited
+            ? Math.min(naturalWidth, LIMITED_COLUMN_WIDTH)
+            : naturalWidth;
+
+        return {
+          Header: headerLabel,
+          // Slugify accessor to avoid id's "." to be parsed as JS object notation.
+          accessor: getSlugifiedId(c.componentId),
+          width,
+          sortType: (
+            rowA: Row<Observation>,
+            rowB: Row<Observation>,
+            colId: string
+          ) => {
+            for (const d of sorters) {
+              const result = ascending(
+                d(rowA.values[colId]),
+                d(rowB.values[colId])
+              );
+
+              if (result) {
+                return result;
+              }
+            }
+
+            return 0;
+          },
+        };
+      }
+    );
+
+    return { columns, shouldApplyLimits };
+  }, [
+    dimensions,
+    measures,
+    orderedTableColumns,
+    chartData,
+    formatNumber,
+    fields,
+    chartWidth,
+    settings.limitColumnWidths,
+  ]);
+
+  // Columns used by react-table
+  const tableColumns = tableColumnsData.columns;
+  const shouldApplyWidthLimits = tableColumnsData.shouldApplyLimits;
 
   // Groupings used by react-table
   const groupingIds = useMemo(
@@ -436,6 +482,7 @@ const useTableState = (
     groupingIds,
     hiddenIds,
     sortingIds,
+    shouldApplyWidthLimits,
     xScaleTimeRange,
     links,
     ...variables,

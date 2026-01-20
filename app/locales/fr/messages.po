@@ -1124,6 +1124,10 @@ msgstr "Mesure de l'axe gauche"
 msgid "wmts.legend-title"
 msgstr "Légende"
 
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.tableSettings.limitColumnWidths"
+msgstr "Limiter la largeur des colonnes"
+
 #: app/components/footer.tsx
 msgid "footer.button.lindas"
 msgstr "Services de données liées LINDAS"

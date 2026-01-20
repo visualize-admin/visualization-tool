@@ -1124,6 +1124,10 @@ msgstr "Left axis measure"
 msgid "wmts.legend-title"
 msgstr "Legend"
 
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.tableSettings.limitColumnWidths"
+msgstr "Limit column widths"
+
 #: app/components/footer.tsx
 msgid "footer.button.lindas"
 msgstr "LINDAS Linked Data Services"
