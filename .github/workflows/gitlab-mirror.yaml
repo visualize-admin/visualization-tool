@@ -6,9 +6,6 @@ on:
 
 jobs:
   to_gitlab:
-    # TODO: enable this job if we need the repo on GitLab to be mirrored again
-    if: false
-
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
