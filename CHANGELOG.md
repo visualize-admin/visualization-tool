@@ -11,7 +11,8 @@ You can also check the
 
 ## Unreleased
 
-Nothing yet.
+- Features
+  - Start adding OpenTelemetry support
 
 ### 6.2.5 - 2025-12-02
 
