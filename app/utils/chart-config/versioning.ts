@@ -1675,6 +1675,33 @@ export const chartConfigMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    from: "5.1.0",
+    to: "5.2.0",
+    description: `table chart {
+      settings {
+        + limitColumnWidths
+      }
+    }`,
+    up: (config) => {
+      const newConfig = { ...config, version: "5.2.0" };
+
+      if (newConfig.chartType === "table") {
+        newConfig.settings.limitColumnWidths = false;
+      }
+
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "5.1.0" };
+
+      if (newConfig.chartType === "table") {
+        delete newConfig.settings.limitColumnWidths;
+      }
+
+      return newConfig;
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -2311,6 +2338,12 @@ export const configuratorStateMigrations: Migration[] = [
     toVersion: "5.1.0",
     fromChartConfigVersion: "5.0.0",
     toChartConfigVersion: "5.1.0",
+  }),
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "5.1.0",
+    toVersion: "5.2.0",
+    fromChartConfigVersion: "5.1.0",
+    toChartConfigVersion: "5.2.0",
   }),
 ];
 

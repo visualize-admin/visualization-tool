@@ -1298,7 +1298,11 @@ export const configJoinedCubes: Partial<
     limits: {},
     conversionUnitsByComponentId: {},
     chartType: "table",
-    settings: { showSearch: true, showAllRows: false },
+    settings: {
+      showSearch: true,
+      showAllRows: false,
+      limitColumnWidths: false,
+    },
     links: {
       enabled: false,
       baseUrl: "",
