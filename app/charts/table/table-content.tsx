@@ -138,6 +138,7 @@ export const TableContent = ({ children }: { children: ReactNode }) => {
                           component="span"
                           sx={{
                             fontWeight: "bold",
+                            lineHeight: 1.5,
                             ...(hasWidthLimit && {
                               overflow: "hidden",
                               textOverflow: "ellipsis",

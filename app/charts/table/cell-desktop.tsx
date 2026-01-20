@@ -84,6 +84,7 @@ export const CellDesktop = ({
             <Box
               component="span"
               sx={{
+                lineHeight: 1.5,
                 ...(shouldApplyWidthLimits && {
                   overflow: "hidden",
                   textOverflow: "ellipsis",
