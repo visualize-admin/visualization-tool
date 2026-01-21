@@ -453,7 +453,6 @@ export const getCubeObservations = async ({
     preview,
     limit,
     observationsView,
-    disableDistinct: !filters || Object.keys(filters).length === 0,
   });
 
   const serverFilter =
@@ -723,13 +722,13 @@ async function fetchViewObservations({
   preview,
   limit,
   observationsView,
-  disableDistinct,
 }: {
   preview?: boolean | null;
   limit?: number | null;
   observationsView: View;
-  disableDistinct: boolean;
 }) {
+  const disableDistinct = true
+
   /**
    * Add LIMIT to query
    */
