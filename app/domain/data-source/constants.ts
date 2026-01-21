@@ -37,9 +37,9 @@ export const SOURCE_OPTIONS = [
     supportsCachingPerCubeIri: true,
   },
   {
-    value: "sparql+https://lindas-cached.test.cluster.ldbar.ch/query",
+    value: "sparql+https://lindas-cached.test.cz-aws.net/query",
     label: "Test",
-    url: "https://lindas-cached.test.cluster.ldbar.ch/query",
+    url: "https://lindas-cached.test.cz-aws.net/query",
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
