@@ -1,5 +1,4 @@
 # Only used for dev atm!
-version: "3"
 services:
   ## Running in Docker slows down development a lot, so this is only kept for reference here.
   # nextjs:
