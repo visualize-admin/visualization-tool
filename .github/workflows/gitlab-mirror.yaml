@@ -22,4 +22,4 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.GITLAB_SSH_PRIVATE_KEY }}
         with:
           source-repo: "git@github.com:${{ github.repository }}.git"
-          destination-repo: "git@gitlab.ldbar.ch:interactivethings/visualization-tool.git"
+          destination-repo: ${{ vars.GITLAB_DESTINATION_REPO }}
