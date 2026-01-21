@@ -146,6 +146,7 @@ export const CellDesktop = ({
           sx={{
             flexDirection: "column",
             justifyContent: "center",
+            alignItems: "flex-end",
             // Padding is a constant accounted for in the
             // widthScale domain (see table state).
             px: `${BAR_CELL_PADDING}px`,
