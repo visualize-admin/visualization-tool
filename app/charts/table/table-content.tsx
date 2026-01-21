@@ -1,4 +1,4 @@
-import { Box, TableSortLabel, Theme } from "@mui/material";
+import { Box, TableSortLabel, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import { createContext, ReactNode, useContext, useMemo } from "react";
@@ -9,6 +9,7 @@ import { ColumnMeta } from "@/charts/table/table-state";
 import { columnCanBeWidthLimited } from "@/charts/table/width-limit";
 import { Flex } from "@/components/flex";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import { OverflowTooltip } from "@/components/overflow-tooltip";
 import { Observation } from "@/domain/data";
 
 /** Workaround because react-window can't pass props to inner element */
@@ -108,6 +109,7 @@ export const TableContent = ({ children }: { children: ReactNode }) => {
                 const isCustomSorted = column.sortedIndex < customSortCount;
                 const hasWidthLimit =
                   shouldApplyWidthLimits && columnCanBeWidthLimited(type);
+                const headerText = `${column.Header}`;
 
                 return (
                   // eslint-disable-next-line react/jsx-key
@@ -119,7 +121,7 @@ export const TableContent = ({ children }: { children: ReactNode }) => {
                         : undefined
                     )}
                     {...column.getHeaderProps(column.getSortByToggleProps())}
-                    title={`${column.Header}`}
+                    title={headerText}
                   >
                     <TableSortLabel
                       active={isCustomSorted}
@@ -134,20 +136,25 @@ export const TableContent = ({ children }: { children: ReactNode }) => {
                       }}
                     >
                       <OpenMetadataPanelWrapper component={dim}>
-                        <Box
-                          component="span"
-                          sx={{
-                            fontWeight: "bold",
-                            lineHeight: 1.5,
-                            ...(hasWidthLimit && {
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }),
-                          }}
-                        >
-                          {column.render("Header")}
-                        </Box>
+                        {hasWidthLimit ? (
+                          <OverflowTooltip arrow title={headerText}>
+                            <Typography
+                              component="span"
+                              variant="inherit"
+                              noWrap
+                              sx={{ fontWeight: "bold", lineHeight: 1.5 }}
+                            >
+                              {column.render("Header")}
+                            </Typography>
+                          </OverflowTooltip>
+                        ) : (
+                          <Box
+                            component="span"
+                            sx={{ fontWeight: "bold", lineHeight: 1.5 }}
+                          >
+                            {column.render("Header")}
+                          </Box>
+                        )}
                       </OpenMetadataPanelWrapper>
                     </TableSortLabel>
                   </Flex>

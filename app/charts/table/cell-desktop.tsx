@@ -1,4 +1,4 @@
-import { Box, Theme } from "@mui/material";
+import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { hcl } from "d3-color";
 import { ScaleLinear } from "d3-scale";
@@ -10,6 +10,7 @@ import { LinkedCellWrapper } from "@/charts/table/linked-cell-wrapper";
 import { ColumnMeta, TableChartState } from "@/charts/table/table-state";
 import { Tag } from "@/charts/table/tag";
 import { Flex } from "@/components/flex";
+import { OverflowTooltip } from "@/components/overflow-tooltip";
 import { Observation } from "@/domain/data";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -65,6 +66,8 @@ export const CellDesktop = ({
 
   switch (columnMeta.type) {
     case "text":
+      const textContent = columnMeta.formatter(cell);
+
       return (
         <Flex
           {...cell.getCellProps()}
@@ -80,25 +83,23 @@ export const CellDesktop = ({
             px: 3,
           }}
         >
-          <LinkedCellWrapper
-            cell={cell}
-            columnMeta={columnMeta}
-            links={links}
-            includeValueInTitle={shouldApplyWidthLimits}
-          >
-            <Box
-              component="span"
-              sx={{
-                lineHeight: 1.5,
-                ...(shouldApplyWidthLimits && {
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                }),
-              }}
-            >
-              {columnMeta.formatter(cell)}
-            </Box>
+          <LinkedCellWrapper cell={cell} columnMeta={columnMeta} links={links}>
+            {shouldApplyWidthLimits ? (
+              <OverflowTooltip arrow title={textContent}>
+                <Typography
+                  component="span"
+                  variant="inherit"
+                  noWrap
+                  sx={{ lineHeight: 1.5 }}
+                >
+                  {textContent}
+                </Typography>
+              </OverflowTooltip>
+            ) : (
+              <Box component="span" sx={{ lineHeight: 1.5 }}>
+                {textContent}
+              </Box>
+            )}
           </LinkedCellWrapper>
         </Flex>
       );
