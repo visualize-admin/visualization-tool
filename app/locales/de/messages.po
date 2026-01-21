@@ -1126,7 +1126,7 @@ msgstr "Legende"
 
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.tableSettings.limitColumnWidths"
-msgstr "Begrenzen die Spaltenbreite"
+msgstr "Responsive Spaltenbreiten"
 
 #: app/components/footer.tsx
 msgid "footer.button.lindas"

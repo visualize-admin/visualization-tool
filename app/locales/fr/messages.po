@@ -1126,7 +1126,7 @@ msgstr "Légende"
 
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.tableSettings.limitColumnWidths"
-msgstr "Limiter la largeur des colonnes"
+msgstr "Largeurs de colonnes adaptatives"
 
 #: app/components/footer.tsx
 msgid "footer.button.lindas"

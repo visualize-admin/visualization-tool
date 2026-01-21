@@ -114,7 +114,7 @@ export const ChartConfiguratorTable = ({
           <ChartOptionCheckboxField
             label={t({
               id: "controls.tableSettings.limitColumnWidths",
-              message: "Limit column widths",
+              message: "Responsive column widths",
             })}
             field={null}
             path="settings.limitColumnWidths"
