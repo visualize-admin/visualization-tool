@@ -34,21 +34,18 @@ jobs:
         uses: grafana/k6-action@v0.3.1
         with:
           filename: k6/load-tests/graphql/components.js
-          flags: --env ENV=${{ env.ENV }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{
-            env.ENABLE_GQL_SERVER_SIDE_CACHE }}
+          flags: --env ENV=${{ env.ENV }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{ env.ENABLE_GQL_SERVER_SIDE_CACHE }}
 
       - name: Testing GraphQL - Observations
         if: always()
         uses: grafana/k6-action@v0.3.1
         with:
           filename: k6/load-tests/graphql/observations.js
-          flags: --env ENV=${{ env.ENV }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{
-            env.ENABLE_GQL_SERVER_SIDE_CACHE }}
+          flags: --env ENV=${{ env.ENV }} --env ENABLE_GQL_SERVER_SIDE_CACHE=${{ env.ENABLE_GQL_SERVER_SIDE_CACHE }}
 
       - name: Testing HAR - Edition
         if: always()
         uses: grafana/k6-action@v0.3.1
         with:
           filename: k6/load-tests/har/${{ env.ENV }}/edition.js
-          flags: --env ENABLE_GQL_SERVER_SIDE_CACHE=${{
-            env.ENABLE_GQL_SERVER_SIDE_CACHE }}
+          flags: --env ENABLE_GQL_SERVER_SIDE_CACHE=${{ env.ENABLE_GQL_SERVER_SIDE_CACHE }}
