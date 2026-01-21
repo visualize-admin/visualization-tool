@@ -12,7 +12,7 @@ You can also check the
 ## Unreleased
 
 - Features
-  - Added a way to limit table column widths
+  - Added a way to make table columns responsive
 
 ### 6.2.5 - 2025-12-02
 
