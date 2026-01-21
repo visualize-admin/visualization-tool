@@ -47,11 +47,13 @@ export const LinkedCellWrapper = ({
   cell,
   columnMeta,
   links,
+  includeValueInTitle,
 }: {
   children: ReactNode;
   cell: Cell<Observation>;
   columnMeta: ColumnMeta;
   links: TableLinks;
+  includeValueInTitle?: boolean;
 }) => {
   const classes = useStyles();
   const isLinkedColumn =
@@ -71,7 +73,7 @@ export const LinkedCellWrapper = ({
       className={classes.link}
       href={href}
       target="_parent"
-      title={href}
+      title={includeValueInTitle ? `${cell.value}: ${href}` : href}
       style={{ flex: 1, justifyContent: "space-between" }}
     >
       {children}

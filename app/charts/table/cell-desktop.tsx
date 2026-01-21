@@ -80,7 +80,12 @@ export const CellDesktop = ({
             px: 3,
           }}
         >
-          <LinkedCellWrapper cell={cell} columnMeta={columnMeta} links={links}>
+          <LinkedCellWrapper
+            cell={cell}
+            columnMeta={columnMeta}
+            links={links}
+            includeValueInTitle={shouldApplyWidthLimits}
+          >
             <Box
               component="span"
               sx={{
