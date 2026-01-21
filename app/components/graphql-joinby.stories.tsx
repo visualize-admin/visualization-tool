@@ -35,7 +35,7 @@ const combinations: {
   {
     id: 1,
     name: "Photovoltaik + Hydropowerplants",
-    sourceUrl: "https://int.lindas.admin.ch/query",
+    sourceUrl: "https://lindas.int.cz-aws.net/query",
     cubes: [
       {
         iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
@@ -70,7 +70,7 @@ const combinations: {
   {
     id: 2,
     name: "Photovoltaik + Photovoltaik GEB",
-    sourceUrl: "https://int.lindas.admin.ch/query",
+    sourceUrl: "https://lindas.int.cz-aws.net/query",
     cubes: [
       {
         iri: "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/14",
@@ -100,7 +100,7 @@ const combinations: {
   {
     id: 3,
     name: "NFI Cube + Electrical consumption",
-    sourceUrl: "https://int.lindas.admin.ch/query",
+    sourceUrl: "https://lindas.int.cz-aws.net/query",
     cubes: [
       {
         iri: "https://environment.ld.admin.ch/foen/nfi/nfi_T-changes/cube/2024-1",
