@@ -5,7 +5,7 @@
     "dataSet": "https://environment.ld.admin.ch/foen/palmer-penguins/18",
     "dataSource": {
       "type": "sparql",
-      "url": "https://lindas-cached.int.cluster.ldbar.ch/query"
+      "url": "https://lindas-cached.int.cz-aws.net/query"
     },
     "meta": {
       "title": {
@@ -14,7 +14,12 @@
         "it": "",
         "en": "Mean bill depth vs mean bill depth for Adelie Penguins"
       },
-      "description": { "de": "", "fr": "", "it": "", "en": "" }
+      "description": {
+        "de": "",
+        "fr": "",
+        "it": "",
+        "en": ""
+      }
     },
     "chartConfig": {
       "version": "1.2.1",
@@ -35,13 +40,23 @@
       },
       "cubes": [],
       "interactiveFiltersConfig": {
-        "legend": { "active": false, "componentIri": "" },
+        "legend": {
+          "active": false,
+          "componentIri": ""
+        },
         "timeRange": {
           "active": false,
           "componentIri": "",
-          "presets": { "type": "range", "from": "", "to": "" }
+          "presets": {
+            "type": "range",
+            "from": "",
+            "to": ""
+          }
         },
-        "dataFilters": { "active": false, "componentIris": [] }
+        "dataFilters": {
+          "active": false,
+          "componentIris": []
+        }
       },
       "fields": {
         "x": {
