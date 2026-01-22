@@ -11,7 +11,8 @@ You can also check the
 
 ## Unreleased
 
-Nothing yet.
+- Features
+  - Added a way to make table columns responsive
 
 ### 6.2.5 - 2025-12-02
 

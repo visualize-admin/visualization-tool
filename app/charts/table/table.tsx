@@ -100,6 +100,7 @@ export const Table = () => {
     groupingIds,
     hiddenIds,
     sortingIds,
+    shouldApplyWidthLimits,
   } = useChartState() as TableChartState;
   const classes = useStyles();
 
@@ -370,6 +371,7 @@ export const Table = () => {
               tableColumnsMeta={tableColumnsMeta}
               customSortCount={customSortCount}
               totalColumnsWidth={totalColumnsWidth}
+              shouldApplyWidthLimits={shouldApplyWidthLimits}
             >
               <AutoSizer disableWidth>
                 {({ height }: { height: number }) => (

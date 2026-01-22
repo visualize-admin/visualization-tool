@@ -1124,6 +1124,10 @@ msgstr "Misura dell'asse sinistro"
 msgid "wmts.legend-title"
 msgstr "Legenda"
 
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.tableSettings.limitColumnWidths"
+msgstr "Larghezze delle colonne reattive"
+
 #: app/components/footer.tsx
 msgid "footer.button.lindas"
 msgstr "Servizi di dati collegati LINDAS"

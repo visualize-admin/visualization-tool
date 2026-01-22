@@ -110,6 +110,16 @@ export const ChartConfiguratorTable = ({
             mainLabel={<Trans id="controls.table.sorting">Sorting</Trans>}
           />
         </ControlSectionContent>
+        <ControlSectionContent>
+          <ChartOptionCheckboxField
+            label={t({
+              id: "controls.tableSettings.limitColumnWidths",
+              message: "Responsive column widths",
+            })}
+            field={null}
+            path="settings.limitColumnWidths"
+          />
+        </ControlSectionContent>
       </ControlSection>
       <ControlSection collapse>
         <SectionTitle id="controls-data">

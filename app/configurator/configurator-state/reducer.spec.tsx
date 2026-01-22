@@ -606,7 +606,7 @@ describe("deriveFiltersFromFields", () => {
             "it": "",
           },
         },
-        "version": "5.1.0",
+        "version": "5.2.0",
       }
     `);
   });

@@ -821,6 +821,7 @@ export type TableColumn = t.TypeOf<typeof TableColumn>;
 const TableSettings = t.type({
   showSearch: t.boolean,
   showAllRows: t.boolean,
+  limitColumnWidths: t.boolean,
 });
 export type TableSettings = t.TypeOf<typeof TableSettings>;
 

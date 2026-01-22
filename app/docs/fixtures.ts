@@ -1142,7 +1142,7 @@ export const tableConfig: TableConfig = {
       type: "identity",
     },
   },
-  settings: { showSearch: true, showAllRows: true },
+  settings: { showSearch: true, showAllRows: true, limitColumnWidths: false },
   links: {
     enabled: false,
     baseUrl: "",

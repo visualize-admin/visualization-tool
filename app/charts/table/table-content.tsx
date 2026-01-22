@@ -1,4 +1,4 @@
-import { Box, TableSortLabel, Theme } from "@mui/material";
+import { Box, TableSortLabel, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import { createContext, ReactNode, useContext, useMemo } from "react";
@@ -6,8 +6,10 @@ import { HeaderGroup } from "react-table";
 
 import { SORTING_ARROW_WIDTH } from "@/charts/table/constants";
 import { ColumnMeta } from "@/charts/table/table-state";
+import { columnCanBeWidthLimited } from "@/charts/table/width-limit";
 import { Flex } from "@/components/flex";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import { OverflowTooltip } from "@/components/overflow-tooltip";
 import { Observation } from "@/domain/data";
 
 /** Workaround because react-window can't pass props to inner element */
@@ -16,6 +18,7 @@ type TableContentProps = {
   tableColumnsMeta: Record<string, ColumnMeta>;
   customSortCount: number;
   totalColumnsWidth: number;
+  shouldApplyWidthLimits: boolean;
 };
 
 const TableContentContext = createContext<TableContentProps | undefined>(
@@ -27,6 +30,7 @@ export const TableContentProvider = ({
   tableColumnsMeta,
   customSortCount,
   totalColumnsWidth,
+  shouldApplyWidthLimits,
   children,
 }: TableContentProps & { children: ReactNode }) => {
   const value = useMemo(() => {
@@ -35,8 +39,15 @@ export const TableContentProvider = ({
       tableColumnsMeta,
       customSortCount,
       totalColumnsWidth,
+      shouldApplyWidthLimits,
     };
-  }, [headerGroups, tableColumnsMeta, customSortCount, totalColumnsWidth]);
+  }, [
+    headerGroups,
+    tableColumnsMeta,
+    customSortCount,
+    totalColumnsWidth,
+    shouldApplyWidthLimits,
+  ]);
 
   return (
     <TableContentContext.Provider value={value}>
@@ -75,8 +86,13 @@ export const TableContent = ({ children }: { children: ReactNode }) => {
     throw Error("Please wrap TableContent in TableContentProvider");
   }
 
-  const { headerGroups, tableColumnsMeta, customSortCount, totalColumnsWidth } =
-    ctx;
+  const {
+    headerGroups,
+    tableColumnsMeta,
+    customSortCount,
+    totalColumnsWidth,
+    shouldApplyWidthLimits,
+  } = ctx;
 
   return (
     <>
@@ -87,10 +103,13 @@ export const TableContent = ({ children }: { children: ReactNode }) => {
             // eslint-disable-next-line react/jsx-key
             <Box {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => {
-                const { dim, columnComponentType } =
+                const { type, dim, columnComponentType } =
                   tableColumnsMeta[column.id];
                 // We assume that the customSortCount items are at the beginning of the sorted array, so any item with a lower index must be a custom sorted one
                 const isCustomSorted = column.sortedIndex < customSortCount;
+                const hasWidthLimit =
+                  shouldApplyWidthLimits && columnCanBeWidthLimited(type);
+                const headerText = `${column.Header}`;
 
                 return (
                   // eslint-disable-next-line react/jsx-key
@@ -102,6 +121,7 @@ export const TableContent = ({ children }: { children: ReactNode }) => {
                         : undefined
                     )}
                     {...column.getHeaderProps(column.getSortByToggleProps())}
+                    title={headerText}
                   >
                     <TableSortLabel
                       active={isCustomSorted}
@@ -110,12 +130,31 @@ export const TableContent = ({ children }: { children: ReactNode }) => {
                         "& svg": {
                           opacity: isCustomSorted ? 1 : 0.5,
                         },
+                        ...(hasWidthLimit && {
+                          minWidth: 0,
+                        }),
                       }}
                     >
                       <OpenMetadataPanelWrapper component={dim}>
-                        <span style={{ fontWeight: "bold" }}>
-                          {column.render("Header")}
-                        </span>
+                        {hasWidthLimit ? (
+                          <OverflowTooltip arrow title={headerText}>
+                            <Typography
+                              component="span"
+                              variant="inherit"
+                              noWrap
+                              sx={{ fontWeight: "bold", lineHeight: 1.5 }}
+                            >
+                              {column.render("Header")}
+                            </Typography>
+                          </OverflowTooltip>
+                        ) : (
+                          <Box
+                            component="span"
+                            sx={{ fontWeight: "bold", lineHeight: 1.5 }}
+                          >
+                            {column.render("Header")}
+                          </Box>
+                        )}
                       </OpenMetadataPanelWrapper>
                     </TableSortLabel>
                   </Flex>

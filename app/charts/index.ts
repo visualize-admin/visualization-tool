@@ -616,6 +616,7 @@ export const getInitialConfig = (
         settings: {
           showSearch: true,
           showAllRows: false,
+          limitColumnWidths: false,
         },
         links: {
           enabled: false,

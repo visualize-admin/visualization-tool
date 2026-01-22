@@ -3,7 +3,8 @@ import { setup } from "./common";
 
 const { test, expect } = setup();
 
-test("future, time-range limits should be displayed in the chart", async ({
+// Skipping the test, as cube is broken now.
+test.skip("future, time-range limits should be displayed in the chart", async ({
   page,
   selectors,
 }) => {

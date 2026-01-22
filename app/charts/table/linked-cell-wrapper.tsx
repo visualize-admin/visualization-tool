@@ -11,9 +11,11 @@ import { Icon } from "@/icons";
 
 const useStyles = makeStyles((theme: Theme) => ({
   link: {
+    overflow: "hidden",
     display: "inline-flex",
     alignItems: "center",
     gap: theme.spacing(1),
+    minWidth: 0,
     color: "inherit",
     fontWeight: "inherit",
     textDecoration: "none",
