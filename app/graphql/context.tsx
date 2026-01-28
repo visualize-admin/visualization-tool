@@ -117,6 +117,7 @@ const setupSparqlClients = (
   ) {
     return tracer.startActiveSpan("sparqlClient.query.select", async (span) => {
       try {
+        span.setAttribute("db.sparql.has_query_event", true);
         span.addEvent("sparql.query", {
           "db.query.text": query,
           "db.system.name": "sparql",
@@ -138,6 +139,7 @@ const setupSparqlClients = (
       "sparqlClient.query.construct",
       async (span) => {
         try {
+          span.setAttribute("db.sparql.has_query_event", true);
           span.addEvent("sparql.query", {
             "db.query.text": query,
             "db.system.name": "sparql",
@@ -164,6 +166,7 @@ const setupSparqlClients = (
       "sparqlClientStream.query.select",
       async (span) => {
         try {
+          span.setAttribute("db.sparql.has_query_event", true);
           span.addEvent("sparql.query", {
             "db.query.text": query,
             "db.system.name": "sparql",
@@ -191,6 +194,7 @@ const setupSparqlClients = (
       "sparqlClientStream.query.construct",
       async (span) => {
         try {
+          span.setAttribute("db.sparql.has_query_event", true);
           span.addEvent("sparql.query", {
             "db.query.text": query,
             "db.system.name": "sparql",
@@ -217,6 +221,7 @@ const setupSparqlClients = (
       "geoSparqlClient.query.select",
       async (span) => {
         try {
+          span.setAttribute("db.sparql.has_query_event", true);
           span.addEvent("sparql.query", {
             "db.query.text": query,
             "db.system.name": "sparql",
@@ -243,6 +248,7 @@ const setupSparqlClients = (
       "geoSparqlClient.query.construct",
       async (span) => {
         try {
+          span.setAttribute("db.sparql.has_query_event", true);
           span.addEvent("sparql.query", {
             "db.query.text": query,
             "db.system.name": "sparql",
