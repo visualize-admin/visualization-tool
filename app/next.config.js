@@ -42,6 +42,10 @@ module.exports = withPreconstruct(
         defaultLocale,
       },
 
+      experimental: {
+        instrumentationHook: true,
+      },
+
       headers: async () => {
         const headers = [];
 

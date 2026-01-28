@@ -23,6 +23,7 @@ import { createSource, pragmas } from "@/rdf/create-source";
 import { ExtendedCube } from "@/rdf/extended-cube";
 import { createCubeDimensionValuesLoader } from "@/rdf/queries";
 import { createGeoShapesLoader } from "@/rdf/query-geo-shapes";
+import { tracer } from "@/tracer";
 import { timed, TimingCallback } from "@/utils/timed";
 
 export const MAX_BATCH_SIZE = 500;
@@ -108,35 +109,161 @@ const setupSparqlClients = (
     });
   };
 
-  sparqlClient.query.select = timed(
-    sparqlClient.query.select,
-    saveTimingToContext
-  );
+  const originalSparqlClientQuerySelect = sparqlClient.query.select;
+  sparqlClient.query.select = timed(function (
+    this: typeof sparqlClient.query,
+    query,
+    ...args
+  ) {
+    return tracer.startActiveSpan("sparqlClient.query.select", async (span) => {
+      try {
+        span.setAttribute("db.sparql.has_query_event", true);
+        span.addEvent("sparql.query", {
+          "db.query.text": query,
+          "db.system.name": "sparql",
+        });
+        return await originalSparqlClientQuerySelect.call(this, query, ...args);
+      } finally {
+        span.end();
+      }
+    });
+  }, saveTimingToContext);
 
-  sparqlClient.query.construct = timed(
-    sparqlClient.query.construct,
-    saveTimingToContext
-  );
+  const originalSparqlClientQueryConstruct = sparqlClient.query.construct;
+  sparqlClient.query.construct = timed(function (
+    this: typeof sparqlClient.query,
+    query,
+    ...args
+  ) {
+    return tracer.startActiveSpan(
+      "sparqlClient.query.construct",
+      async (span) => {
+        try {
+          span.setAttribute("db.sparql.has_query_event", true);
+          span.addEvent("sparql.query", {
+            "db.query.text": query,
+            "db.system.name": "sparql",
+          });
+          return await originalSparqlClientQueryConstruct.call(
+            this,
+            query,
+            ...args
+          );
+        } finally {
+          span.end();
+        }
+      }
+    );
+  }, saveTimingToContext);
 
-  sparqlClientStream.query.select = timed(
-    sparqlClientStream.query.select,
-    saveTimingToContext
-  );
+  const originalSparqlClientStreamQuerySelect = sparqlClientStream.query.select;
+  sparqlClientStream.query.select = timed(function (
+    this: typeof sparqlClientStream.query,
+    query,
+    ...args
+  ) {
+    return tracer.startActiveSpan(
+      "sparqlClientStream.query.select",
+      async (span) => {
+        try {
+          span.setAttribute("db.sparql.has_query_event", true);
+          span.addEvent("sparql.query", {
+            "db.query.text": query,
+            "db.system.name": "sparql",
+          });
+          return await originalSparqlClientStreamQuerySelect.call(
+            this,
+            query,
+            ...args
+          );
+        } finally {
+          span.end();
+        }
+      }
+    );
+  }, saveTimingToContext);
 
-  sparqlClientStream.query.construct = timed(
-    sparqlClientStream.query.construct,
-    saveTimingToContext
-  );
+  const originalSparqlClientStreamQueryConstruct =
+    sparqlClientStream.query.construct;
+  sparqlClientStream.query.construct = timed(function (
+    this: typeof sparqlClientStream.query,
+    query,
+    ...args
+  ) {
+    return tracer.startActiveSpan(
+      "sparqlClientStream.query.construct",
+      async (span) => {
+        try {
+          span.setAttribute("db.sparql.has_query_event", true);
+          span.addEvent("sparql.query", {
+            "db.query.text": query,
+            "db.system.name": "sparql",
+          });
+          return await originalSparqlClientStreamQueryConstruct.call(
+            this,
+            query,
+            ...args
+          );
+        } finally {
+          span.end();
+        }
+      }
+    );
+  }, saveTimingToContext);
 
-  geoSparqlClient.query.select = timed(
-    geoSparqlClient.query.select,
-    saveTimingToContext
-  );
+  const originalGeoSparqlClientQuerySelect = geoSparqlClient.query.select;
+  geoSparqlClient.query.select = timed(function (
+    this: typeof geoSparqlClient.query,
+    query,
+    ...args
+  ) {
+    return tracer.startActiveSpan(
+      "geoSparqlClient.query.select",
+      async (span) => {
+        try {
+          span.setAttribute("db.sparql.has_query_event", true);
+          span.addEvent("sparql.query", {
+            "db.query.text": query,
+            "db.system.name": "sparql",
+          });
+          return await originalGeoSparqlClientQuerySelect.call(
+            this,
+            query,
+            ...args
+          );
+        } finally {
+          span.end();
+        }
+      }
+    );
+  }, saveTimingToContext);
 
-  geoSparqlClient.query.construct = timed(
-    geoSparqlClient.query.construct,
-    saveTimingToContext
-  );
+  const originalGeoSparqlClientQueryConstruct = geoSparqlClient.query.construct;
+  geoSparqlClient.query.construct = timed(function (
+    this: typeof geoSparqlClient.query,
+    query,
+    ...args
+  ) {
+    return tracer.startActiveSpan(
+      "geoSparqlClient.query.construct",
+      async (span) => {
+        try {
+          span.setAttribute("db.sparql.has_query_event", true);
+          span.addEvent("sparql.query", {
+            "db.query.text": query,
+            "db.system.name": "sparql",
+          });
+          return await originalGeoSparqlClientQueryConstruct.call(
+            this,
+            query,
+            ...args
+          );
+        } finally {
+          span.end();
+        }
+      }
+    );
+  }, saveTimingToContext);
 
   return { sparqlClient, sparqlClientStream, geoSparqlClient };
 };
