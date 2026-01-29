@@ -3,21 +3,11 @@
   "dataSet": "https://environment.ld.admin.ch/foen/fab_hierarchy_test12_switzerland_canton_municipality/5",
   "dataSource": {
     "type": "sparql",
-    "url": "https://lindas-cached.int.cz-aws.net/query"
+    "url": "https://lindas-cached.int.cluster.ldbar.ch/query"
   },
   "meta": {
-    "title": {
-      "de": "",
-      "fr": "",
-      "it": "",
-      "en": ""
-    },
-    "description": {
-      "de": "",
-      "fr": "",
-      "it": "",
-      "en": ""
-    }
+    "title": { "de": "", "fr": "", "it": "", "en": "" },
+    "description": { "de": "", "fr": "", "it": "", "en": "" }
   },
   "chartConfig": {
     "version": "1.3.0",
@@ -36,26 +26,14 @@
       }
     },
     "interactiveFiltersConfig": {
-      "legend": {
-        "active": false,
-        "componentIri": ""
-      },
+      "legend": { "active": false, "componentIri": "" },
       "timeRange": {
         "active": false,
         "componentIri": "",
-        "presets": {
-          "type": "range",
-          "from": "",
-          "to": ""
-        }
+        "presets": { "type": "range", "from": "", "to": "" }
       },
-      "timeSlider": {
-        "componentIri": ""
-      },
-      "dataFilters": {
-        "active": false,
-        "componentIris": []
-      }
+      "timeSlider": { "componentIri": "" },
+      "dataFilters": { "active": false, "componentIris": [] }
     },
     "fields": {
       "x": {

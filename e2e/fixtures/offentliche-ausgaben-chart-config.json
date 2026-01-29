@@ -3,21 +3,11 @@
   "dataSet": "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/7",
   "dataSource": {
     "type": "sparql",
-    "url": "https://lindas-cached.int.cz-aws.net/query"
+    "url": "https://lindas-cached.int.cluster.ldbar.ch/query"
   },
   "meta": {
-    "title": {
-      "de": "",
-      "fr": "",
-      "it": "",
-      "en": ""
-    },
-    "description": {
-      "de": "",
-      "fr": "",
-      "it": "",
-      "en": ""
-    }
+    "title": { "de": "", "fr": "", "it": "", "en": "" },
+    "description": { "de": "", "fr": "", "it": "", "en": "" }
   },
   "chartConfig": {
     "version": "1.2.1",
@@ -37,31 +27,18 @@
       }
     },
     "interactiveFiltersConfig": {
-      "legend": {
-        "active": false,
-        "componentIri": ""
-      },
+      "legend": { "active": false, "componentIri": "" },
       "timeRange": {
         "active": false,
         "componentIri": "",
-        "presets": {
-          "type": "range",
-          "from": "",
-          "to": ""
-        }
+        "presets": { "type": "range", "from": "", "to": "" }
       },
-      "dataFilters": {
-        "active": false,
-        "componentIris": []
-      }
+      "dataFilters": { "active": false, "componentIris": [] }
     },
     "fields": {
       "x": {
         "componentIri": "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/jahr",
-        "sorting": {
-          "sortingType": "byDimensionLabel",
-          "sortingOrder": "asc"
-        }
+        "sorting": { "sortingType": "byDimensionLabel", "sortingOrder": "asc" }
       },
       "y": {
         "componentIri": "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/in-pct"
@@ -70,10 +47,7 @@
         "componentIri": "https://environment.ld.admin.ch/foen/fab_Offentliche_Ausgaben_test3/code",
         "palette": "category10",
         "type": "stacked",
-        "sorting": {
-          "sortingType": "byDimensionLabel",
-          "sortingOrder": "asc"
-        },
+        "sorting": { "sortingType": "byDimensionLabel", "sortingOrder": "asc" },
         "colorMapping": {
           "https://ld.admin.ch/cube/dimension/cofog/gf01": "#1f77b4",
           "https://ld.admin.ch/cube/dimension/cofog/gf0101": "#ff7f0e",

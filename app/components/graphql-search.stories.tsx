@@ -88,7 +88,7 @@ export const Search = () => {
     variables: {
       locale: "en",
       sourceType: "sparql",
-      sourceUrl: "https://lindas.int.cz-aws.net/query",
+      sourceUrl: "https://int.lindas.admin.ch/query",
       filters: [
         sharedComponents
           ? {

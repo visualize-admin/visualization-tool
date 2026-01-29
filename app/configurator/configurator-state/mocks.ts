@@ -104,7 +104,7 @@ export const configStateMock = {
     state: "CONFIGURING_CHART",
     dataSource: {
       type: "sparql",
-      url: "https://lindas.test.cz-aws.net/query",
+      url: "https://test.lindas.admin.ch/query",
     },
     layout: {
       type: "tab",

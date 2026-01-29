@@ -190,7 +190,7 @@ const Search = ({
 export const DebugSearch = () => {
   const [includeDrafts, setIncludeDrafts] = useState(false);
   const [sourceUrl, setSourceUrl] = useState(
-    "https://lindas.int.cz-aws.net/query"
+    "https://int.lindas.admin.ch/query"
   );
 
   const [customSearch, setCustomSearch] = useState("");
@@ -225,7 +225,7 @@ export const DebugSearch = () => {
         onChange={(ev) => setSourceUrl(ev.target.value)}
         value={sourceUrl}
       >
-        <MenuItem value="https://lindas.int.cz-aws.net/query">int</MenuItem>
+        <MenuItem value="https://int.lindas.admin.ch/query">int</MenuItem>
         <MenuItem value="https://lindas.admin.ch/query">prod</MenuItem>
       </Select>
       <TextField

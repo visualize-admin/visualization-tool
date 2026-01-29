@@ -4,7 +4,7 @@
     "dataSet": "https://environment.ld.admin.ch/foen/UBD003002/5",
     "dataSource": {
       "type": "sparql",
-      "url": "https://lindas-cached.int.cz-aws.net/query"
+      "url": "https://lindas-cached.int.cluster.ldbar.ch/query"
     },
     "meta": {
       "title": {
@@ -13,12 +13,7 @@
         "it": "",
         "en": "Amphibians red list status"
       },
-      "description": {
-        "de": "",
-        "fr": "",
-        "it": "",
-        "en": ""
-      }
+      "description": { "de": "", "fr": "", "it": "", "en": "" }
     },
     "chartConfig": {
       "version": "1.2.1",
@@ -30,23 +25,13 @@
         }
       },
       "interactiveFiltersConfig": {
-        "legend": {
-          "active": false,
-          "componentIri": ""
-        },
+        "legend": { "active": false, "componentIri": "" },
         "timeRange": {
           "active": false,
           "componentIri": "",
-          "presets": {
-            "type": "range",
-            "from": "",
-            "to": ""
-          }
+          "presets": { "type": "range", "from": "", "to": "" }
         },
-        "dataFilters": {
-          "active": false,
-          "componentIris": []
-        }
+        "dataFilters": { "active": false, "componentIris": [] }
       },
       "fields": {
         "y": {
@@ -55,10 +40,7 @@
         "segment": {
           "componentIri": "https://environment.ld.admin.ch/foen/UBD003002/status",
           "palette": "category10",
-          "sorting": {
-            "sortingType": "byMeasure",
-            "sortingOrder": "asc"
-          },
+          "sorting": { "sortingType": "byMeasure", "sortingOrder": "asc" },
           "colorMapping": {
             "https://environment.ld.admin.ch/foen/UBD003002/Status/DD": "#1f77b4",
             "https://environment.ld.admin.ch/foen/UBD003002/Status/LC": "#ff7f0e",
