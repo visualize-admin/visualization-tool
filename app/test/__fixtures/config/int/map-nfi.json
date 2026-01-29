@@ -5,7 +5,7 @@
     "dataSet": "https://environment.ld.admin.ch/foen/nfi/nfi_C-98/cube/2023-1",
     "dataSource": {
       "type": "sparql",
-      "url": "https://lindas-cached.int.cz-aws.net/query"
+      "url": "https://lindas-cached.int.cluster.ldbar.ch/query"
     },
     "meta": {
       "title": {
