@@ -50,6 +50,50 @@ export const SOURCE_OPTIONS = [
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
+
+  // For LINDASnext
+  {
+    value: "sparql+https://lindas-cached.cz-aws.net/query",
+    label: "LINDASnext-Prod",
+    url: "https://lindas-cached.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas.cz-aws.net/query",
+    label: "LINDASnext-Prod-uncached",
+    url: "https://lindas.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas-cached.int.cz-aws.net/query",
+    label: "LINDASnext-Int",
+    url: "https://lindas-cached.int.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas.int.cz-aws.net/query",
+    label: "LINDASnext-Int-uncached",
+    url: "https://lindas.int.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas-cached.test.cz-aws.net/query",
+    label: "LINDASnext-Test",
+    url: "https://lindas-cached.test.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://lindas.test.cz-aws.net/query",
+    label: "LINDASnext-Test-uncached",
+    url: "https://lindas.test.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
 ].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.label));
 
 export const SOURCES_BY_LABEL = keyBy(SOURCE_OPTIONS, (d) => d.label);
