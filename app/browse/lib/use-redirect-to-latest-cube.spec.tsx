@@ -48,7 +48,7 @@ describe("use redirect to versioned cube", () => {
         datasetIri,
         dataSource: {
           type: "sparql",
-          url: "https://lindas.int.cz-aws.net/query",
+          url: "https://int.lindas.admin.ch/query",
         },
       })
     );
