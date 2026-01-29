@@ -13,6 +13,7 @@ You can also check the
 
 - Features
   - Added a way to make table columns responsive
+  - Started OpenTelemetry instrumentation
 
 ### 6.2.5 - 2025-12-02
 
