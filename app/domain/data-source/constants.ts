@@ -67,9 +67,9 @@ export const SOURCE_OPTIONS = [
     supportsCachingPerCubeIri: true,
   },
   {
-    value: "sparql+https://lindas-cached.int.cz-aws.net/query",
+    value: "sparql+https://int.cached.lindas.admin.ch/query",
     label: "LINDASnext-Int",
-    url: "https://lindas-cached.int.cz-aws.net/query",
+    url: "https://int.cached.lindas.admin.ch/query",
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
