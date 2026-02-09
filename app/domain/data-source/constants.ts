@@ -53,9 +53,9 @@ export const SOURCE_OPTIONS = [
 
   // For LINDASnext
   {
-    value: "sparql+https://lindas-cached.cz-aws.net/query",
+    value: "sparql+https://cached.lindas.admin.ch/query",
     label: "LINDASnext-Prod",
-    url: "https://lindas-cached.cz-aws.net/query",
+    url: "https://cached.lindas.admin.ch/query",
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
