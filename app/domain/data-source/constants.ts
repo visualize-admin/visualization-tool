@@ -53,9 +53,9 @@ export const SOURCE_OPTIONS = [
 
   // For LINDASnext
   {
-    value: "sparql+https://lindas-cached.cz-aws.net/query",
+    value: "sparql+https://cached.lindas.admin.ch/query",
     label: "LINDASnext-Prod",
-    url: "https://lindas-cached.cz-aws.net/query",
+    url: "https://cached.lindas.admin.ch/query",
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
@@ -67,9 +67,9 @@ export const SOURCE_OPTIONS = [
     supportsCachingPerCubeIri: true,
   },
   {
-    value: "sparql+https://lindas-cached.int.cz-aws.net/query",
+    value: "sparql+https://int.cached.lindas.admin.ch/query",
     label: "LINDASnext-Int",
-    url: "https://lindas-cached.int.cz-aws.net/query",
+    url: "https://int.cached.lindas.admin.ch/query",
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
@@ -81,9 +81,9 @@ export const SOURCE_OPTIONS = [
     supportsCachingPerCubeIri: true,
   },
   {
-    value: "sparql+https://lindas-cached.test.cz-aws.net/query",
+    value: "sparql+https://test.cached.lindas.admin.ch/query",
     label: "LINDASnext-Test",
-    url: "https://lindas-cached.test.cz-aws.net/query",
+    url: "https://test.cached.lindas.admin.ch/query",
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
