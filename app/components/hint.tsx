@@ -221,10 +221,7 @@ export const LoadingDataError = ({ message }: { message?: string }) => {
       <Trans id="hint.dataloadingerror.message">
         The data could not be loaded.
       </Trans>
-      <Link
-        target="_blank"
-        href="https://visualization-tool.status.interactivethings.io/"
-      >
+      <Link target="_blank" href="https://status.lindas.admin.ch/">
         {" "}
         <Trans id="hint.dataloadingerror.status">
           Check our status page for more information.
