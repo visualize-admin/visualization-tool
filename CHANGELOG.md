@@ -11,9 +11,22 @@ You can also check the
 
 ## Unreleased
 
+Nothing yet.
+
+### 6.3.0 - 2026-02-12
+
 - Features
   - Added a way to make table columns responsive
   - Started OpenTelemetry instrumentation
+  - Added new LINDASnext endpoints
+- Maintenance
+  - Removed some services managed by Interactive Things (k6 cloud, Sentry,
+    Accent, Argos)
+  - Updated GitHub Actions -Use Node LTS in GitHub Action workflows
+  - Replaced status page link in loading error message
+- Security
+  - Precautionary fixed React Server Components vulnerabilities, although not
+    affected due to use of Pages Router
 
 ### 6.2.5 - 2025-12-02
 
