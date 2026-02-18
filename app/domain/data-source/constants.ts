@@ -36,20 +36,6 @@ export const SOURCE_OPTIONS = [
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
-  {
-    value: "sparql+https://test.cached.lindas.admin.ch/query",
-    label: "Test",
-    url: "https://test.cached.lindas.admin.ch/query",
-    isTrusted: false,
-    supportsCachingPerCubeIri: true,
-  },
-  {
-    value: "sparql+https://test.lindas.admin.ch/query",
-    label: "Test-uncached",
-    url: "https://test.lindas.admin.ch/query",
-    isTrusted: false,
-    supportsCachingPerCubeIri: true,
-  },
 
   // For LINDASnext
   {
@@ -77,6 +63,21 @@ export const SOURCE_OPTIONS = [
     value: "sparql+https://lindas.int.cz-aws.net/query",
     label: "LINDASnext-Int-uncached",
     url: "https://lindas.int.cz-aws.net/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  // Migration done for the following data sources
+  {
+    value: "sparql+https://test.cached.lindas.admin.ch/query",
+    label: "Test",
+    url: "https://test.cached.lindas.admin.ch/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://test.lindas.admin.ch/query",
+    label: "Test-uncached",
+    url: "https://test.lindas.admin.ch/query",
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
