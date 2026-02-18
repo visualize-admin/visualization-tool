@@ -94,6 +94,22 @@ export const SOURCE_OPTIONS = [
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
+
+  // For LINDASold
+  {
+    value: "sparql+https://lindas-cached.test.cluster.ldbar.ch/query",
+    label: "LINDASold-TEST",
+    url: "https://lindas-cached.test.cluster.ldbar.ch/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://old.test.ld.ldbar.ch/query",
+    label: "LINDASold-TEST-uncached",
+    url: "https://old.test.ld.ldbar.ch/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
 ].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.label));
 
 export const SOURCES_BY_LABEL = keyBy(SOURCE_OPTIONS, (d) => d.label);
