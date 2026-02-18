@@ -84,14 +84,14 @@ export const SOURCE_OPTIONS = [
   // For LINDASold
   {
     value: "sparql+https://lindas-cached.test.cluster.ldbar.ch/query",
-    label: "LINDASold-TEST",
+    label: "LINDASold-Test",
     url: "https://lindas-cached.test.cluster.ldbar.ch/query",
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
   {
     value: "sparql+https://old.test.ld.ldbar.ch/query",
-    label: "LINDASold-TEST-uncached",
+    label: "LINDASold-Test-uncached",
     url: "https://old.test.ld.ldbar.ch/query",
     isTrusted: false,
     supportsCachingPerCubeIri: true,
