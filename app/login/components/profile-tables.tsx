@@ -34,7 +34,7 @@ import { RowActions } from "@/components/row-actions";
 import { useDisclosure } from "@/components/use-disclosure";
 import { CONFIGURATOR_STATE_LAYOUTING } from "@/config-types";
 import { ParsedConfigWithViewCount } from "@/db/config";
-import { sourceToLabel } from "@/domain/data-source";
+import { sourceToKey } from "@/domain/data-source";
 import { truthy } from "@/domain/types";
 import { useUserConfigs } from "@/domain/user-configs";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
@@ -386,7 +386,7 @@ const ProfileVisualizationsRow = ({
           <Skeleton width="50%" height={32} />
         ) : dataSet ? (
           <NextLink
-            href={`/browse?dataset=${dataSet}&dataSource=${sourceToLabel(
+            href={`/browse?dataset=${dataSet}&dataSource=${sourceToKey(
               dataSource
             )}`}
             passHref

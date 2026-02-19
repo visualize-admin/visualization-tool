@@ -1,11 +1,11 @@
 import { SOURCE_OPTIONS } from "@/domain/data-source/constants";
 
-const allowedSourceLabels = JSON.parse(
+const whitelistedSources = JSON.parse(
   process.env.WHITELISTED_DATA_SOURCES ?? "[]"
 );
 
 const allowedSources = SOURCE_OPTIONS.filter((o) =>
-  allowedSourceLabels.includes(o.label)
+  whitelistedSources.includes(o.key)
 );
 
 const allowedDataSourceUrls = allowedSources.map((o) => o.value.split("+")[1]);
