@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { DataSource } from "@/config-types";
 import {
-  SOURCES_BY_LABEL,
+  SOURCES_BY_KEY,
   SOURCES_BY_VALUE,
 } from "@/domain/data-source/constants";
 import { ENDPOINT } from "@/domain/env";
@@ -33,13 +33,13 @@ export const useIsTrustedDataSource = (dataSource: DataSource) => {
   }, [dataSource]);
 };
 
-export const parseSourceByLabel = (label: string): DataSource | undefined => {
-  const newSource = SOURCES_BY_LABEL[label];
+export const parseSourceByKey = (key: string): DataSource | undefined => {
+  const newSource = SOURCES_BY_KEY[key];
   return newSource ? parseDataSource(newSource.value) : undefined;
 };
 
-export const sourceToLabel = (source: DataSource) => {
-  return SOURCES_BY_VALUE[stringifyDataSource(source)]?.label;
+export const sourceToKey = (source: DataSource) => {
+  return SOURCES_BY_VALUE[stringifyDataSource(source)]?.key;
 };
 
 export const isDataSourceChangeable = (pathname: string) => {

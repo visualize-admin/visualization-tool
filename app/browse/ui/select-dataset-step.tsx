@@ -41,7 +41,7 @@ import {
   PanelBodyWrapper,
   PanelLayout,
 } from "@/configurator/components/layout";
-import { sourceToLabel } from "@/domain/data-source";
+import { sourceToKey } from "@/domain/data-source";
 import { truthy } from "@/domain/types";
 import {
   DataCubeOrganization,
@@ -358,7 +358,7 @@ const SelectDatasetStepInner = ({
                     <NextLink
                       href={`/create/new?cube=${
                         dataCubeMetadata?.dataCubeMetadata.iri
-                      }&dataSource=${sourceToLabel(dataSource)}`}
+                      }&dataSource=${sourceToKey(dataSource)}`}
                       passHref
                       legacyBehavior={!odsIframe}
                       target={odsIframe ? "_blank" : undefined}

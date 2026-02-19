@@ -4,8 +4,8 @@ import create, { StateCreator, StoreApi } from "zustand";
 import { DataSource } from "@/configurator";
 import {
   DEFAULT_DATA_SOURCE,
-  parseSourceByLabel,
-  sourceToLabel,
+  parseSourceByKey,
+  sourceToKey,
 } from "@/domain/data-source";
 import { maybeWindow } from "@/utils/maybe-window";
 import { getURLParam, setURLParam } from "@/utils/router/helpers";
@@ -19,7 +19,7 @@ const PARAM_KEY = "dataSource";
 
 const saveToLocalStorage = (value: DataSource) => {
   try {
-    localStorage.setItem(PARAM_KEY, sourceToLabel(value));
+    localStorage.setItem(PARAM_KEY, sourceToKey(value));
   } catch (error) {
     console.error("Error saving data source to localStorage", error);
   }
@@ -27,10 +27,10 @@ const saveToLocalStorage = (value: DataSource) => {
 
 export const getDataSourceFromLocalStorage = () => {
   try {
-    const dataSourceLabel = localStorage.getItem(PARAM_KEY);
+    const dataSourceKey = localStorage.getItem(PARAM_KEY);
 
-    if (dataSourceLabel) {
-      return parseSourceByLabel(dataSourceLabel);
+    if (dataSourceKey) {
+      return parseSourceByKey(dataSourceKey);
     }
   } catch (error) {
     console.error("Error getting data source from localStorage", error);
@@ -42,11 +42,11 @@ const shouldKeepSourceInURL = (pathname: string) => {
 };
 
 const saveToURL = (dataSource: DataSource) => {
-  const urlDataSourceLabel = getURLParam(PARAM_KEY);
-  const dataSourceLabel = sourceToLabel(dataSource);
+  const urlDataSourceKey = getURLParam(PARAM_KEY);
+  const dataSourceKey = sourceToKey(dataSource);
 
-  if (urlDataSourceLabel !== dataSourceLabel) {
-    setURLParam(PARAM_KEY, dataSourceLabel);
+  if (urlDataSourceKey !== dataSourceKey) {
+    setURLParam(PARAM_KEY, dataSourceKey);
   }
 };
 
@@ -82,12 +82,12 @@ const dataSourceStoreMiddleware =
     let dataSource = DEFAULT_DATA_SOURCE;
 
     if (window) {
-      const urlDataSourceLabel = getURLParam(PARAM_KEY);
-      const urlDataSource = urlDataSourceLabel
-        ? parseSourceByLabel(urlDataSourceLabel)
+      const urlDataSourceKey = getURLParam(PARAM_KEY);
+      const urlDataSource = urlDataSourceKey
+        ? parseSourceByKey(urlDataSourceKey)
         : undefined;
 
-      if (urlDataSourceLabel && urlDataSource) {
+      if (urlDataSourceKey && urlDataSource) {
         dataSource = urlDataSource;
         saveToLocalStorage(urlDataSource);
       } else {
