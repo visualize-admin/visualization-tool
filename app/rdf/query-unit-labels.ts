@@ -15,7 +15,8 @@ type ResourceLabel = {
 
 const buildUnitsQuery = (values: Term[], locale: string) => {
   const uniqueValues = uniqBy(values, (v) => v.value);
-  return SELECT.DISTINCT`?iri ?label ?isCurrency ?currencyExponent ?isCurrency`
+
+  const kk = SELECT.DISTINCT`?iri ?label ?isCurrency ?currencyExponent`
     .WHERE`
         values ?iri {
           ${uniqueValues}
@@ -29,9 +30,30 @@ const buildUnitsQuery = (values: Term[], locale: string) => {
         OPTIONAL { ?iri ?isCurrency ${ns.qudt.CurrencyUnit} }
         OPTIONAL { ?iri ${ns.qudt.currencyExponent} ?currencyExponent }
 
-        BIND(str(coalesce(str(?symbol), str(?ucumCode), str(?expression), str(?rdfsLabel), "?")) AS ?label)
+        BIND(str(coalesce(str(?symbol), str(?ucumCode), str(?expression), str(?rdfsLabel), "?")) AS ?l)
 
         FILTER ( lang(?rdfsLabel) = "${locale}" || lang(?rdfsLabel) = "en" || datatype(?rdfsLabel) = ${ns.xsd.string} )
+        BIND(xsd:string(?l) AS ?label)
+      `.prologue`${pragmas}`;
+  console.log(kk.toString());
+  return SELECT.DISTINCT`?iri ?label ?isCurrency ?currencyExponent`
+    .WHERE`
+        values ?iri {
+          ${uniqueValues}
+        }
+
+        OPTIONAL { ?iri ${ns.rdfs.label} ?rdfsLabel }
+        OPTIONAL { ?iri  ${ns.qudt.symbol}  ?symbol }
+        OPTIONAL { ?iri  ${ns.qudt.ucumCode}  ?ucumCode }
+        OPTIONAL { ?iri  ${ns.qudt.expression}  ?expression }
+
+        OPTIONAL { ?iri ?isCurrency ${ns.qudt.CurrencyUnit} }
+        OPTIONAL { ?iri ${ns.qudt.currencyExponent} ?currencyExponent }
+
+        BIND(str(coalesce(str(?symbol), str(?ucumCode), str(?expression), str(?rdfsLabel), "?")) AS ?l)
+
+        FILTER ( lang(?rdfsLabel) = "${locale}" || lang(?rdfsLabel) = "en" || datatype(?rdfsLabel) = ${ns.xsd.string} )
+        BIND(xsd:string(?l) AS ?label)
       `.prologue`${pragmas}`;
 };
 
