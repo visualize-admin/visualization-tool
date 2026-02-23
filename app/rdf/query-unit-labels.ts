@@ -33,6 +33,7 @@ const buildUnitsQuery = (values: Term[], locale: string) => {
         BIND(str(coalesce(str(?symbol), str(?ucumCode), str(?expression), str(?rdfsLabel), "?")) AS ?l)
 
         FILTER ( lang(?rdfsLabel) = "${locale}" || lang(?rdfsLabel) = "en" || datatype(?rdfsLabel) = ${ns.xsd.string} )
+        # this cast is a workaround for git issue 2525
         BIND(xsd:string(?l) AS ?label)
       `.prologue`${pragmas}`;
 };
