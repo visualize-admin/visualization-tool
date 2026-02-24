@@ -15,7 +15,8 @@ type ResourceLabel = {
 
 const buildUnitsQuery = (values: Term[], locale: string) => {
   const uniqueValues = uniqBy(values, (v) => v.value);
-  return SELECT.DISTINCT`?iri ?label ?isCurrency ?currencyExponent ?isCurrency`
+
+  return SELECT.DISTINCT`?iri ?label ?isCurrency ?currencyExponent`
     .WHERE`
         values ?iri {
           ${uniqueValues}
@@ -29,9 +30,11 @@ const buildUnitsQuery = (values: Term[], locale: string) => {
         OPTIONAL { ?iri ?isCurrency ${ns.qudt.CurrencyUnit} }
         OPTIONAL { ?iri ${ns.qudt.currencyExponent} ?currencyExponent }
 
-        BIND(str(coalesce(str(?symbol), str(?ucumCode), str(?expression), str(?rdfsLabel), "?")) AS ?label)
+        BIND(str(coalesce(str(?symbol), str(?ucumCode), str(?expression), str(?rdfsLabel), "?")) AS ?l)
 
         FILTER ( lang(?rdfsLabel) = "${locale}" || lang(?rdfsLabel) = "en" || datatype(?rdfsLabel) = ${ns.xsd.string} )
+        # this cast is a workaround for git issue 2525
+        BIND(xsd:string(?l) AS ?label)
       `.prologue`${pragmas}`;
 };
 
