@@ -13,7 +13,11 @@ You can also check the
 
 ### Changed
 
-- Improve cube query performance by removing expensive `DISTINCT` and `GROUP BY` clauses from SPARQL queries
+- Maintenance
+  - Update available data sources after LINDAS INT cut over
+- Performance
+  - Improve cube query performance by removing expensive `DISTINCT` and
+    `GROUP BY` clauses from SPARQL queries
 
 ### 6.3.0 - 2026-02-12
 
