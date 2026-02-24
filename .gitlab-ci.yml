@@ -32,6 +32,21 @@ build:
   only:
     - main
 
+build-prod:
+  image: docker:24.0.5-cli
+  services:
+    - name: docker:24.0.5-dind
+  stage: build
+  tags:
+    - k8s-privileged
+  before_script:
+    - until docker info >/dev/null 2>&1; do sleep 1; done
+  script:
+    - DOCKER_IMAGE_TAGS="$CI_REGISTRY_IMAGE:prod-$CI_COMMIT_REF_SLUG"
+      ./scripts/docker-build-push.sh
+  only:
+    - prod
+
 release:
   image: docker:24.0.5-cli
   services:
