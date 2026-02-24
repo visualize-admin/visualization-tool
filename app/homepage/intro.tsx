@@ -1,5 +1,5 @@
 import { ContentWrapper } from "@interactivethings/swiss-federal-ci/dist/components";
-import { Box, Button, Typography } from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { ReactNode } from "react";
 
@@ -9,15 +9,35 @@ export const Intro = ({
   title,
   teaser,
   buttonLabel,
+  alertTitle,
+  alertText,
 }: {
   title: string;
   teaser: string;
   buttonLabel: string;
+  alertTitle?: string;
+  alertText?: string;
 }) => {
   return (
     <Box sx={{ backgroundColor: "background.paper" }}>
       <ContentWrapper sx={{ py: 20 }}>
-        <div>
+        <Box sx={{ width: "100%" }}>
+          {alertText && (
+            <Alert
+              severity="warning"
+              color="warning"
+              icon={<Icon name="warningCircle" />}
+              sx={{
+                mb: 10,
+                py: 3,
+                px: 2,
+                width: "100%",
+              }}
+            >
+              {alertTitle && <AlertTitle>{alertTitle}</AlertTitle>}
+              {alertText}
+            </Alert>
+          )}
           <Title>{title}</Title>
           <Teaser>{teaser}</Teaser>
           <NextLink href="/browse" passHref legacyBehavior>
@@ -25,7 +45,7 @@ export const Intro = ({
               {buttonLabel}
             </Button>
           </NextLink>
-        </div>
+        </Box>
       </ContentWrapper>
     </Box>
   );
