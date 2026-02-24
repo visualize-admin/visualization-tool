@@ -42,7 +42,7 @@ build-prod:
   before_script:
     - until docker info >/dev/null 2>&1; do sleep 1; done
   script:
-    - DOCKER_IMAGE_TAGS="$CI_REGISTRY_IMAGE:prod-$CI_COMMIT_REF_SLUG"
+    - DOCKER_IMAGE_TAGS="$CI_REGISTRY_IMAGE:prod-$CI_COMMIT_SHORT_SHA"
       ./scripts/docker-build-push.sh
   only:
     - prod
