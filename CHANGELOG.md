@@ -11,7 +11,7 @@ You can also check the
 
 ## Unreleased
 
-### Changed
+### 6.3.1 – 2026-02-26
 
 - Maintenance
   - Update available data sources after LINDAS INT cut over
