@@ -58,7 +58,8 @@ export const makeVisualizeDatasetFilter = (options?: {
     ${cubeIriVar} schema:workExample <https://ld.admin.ch/application/visualize> .
     ${
       includeDrafts
-        ? ""
+        ? `{ ${cubeIriVar} schema:creativeWorkStatus <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> . } 
+          UNION { ${cubeIriVar} schema:creativeWorkStatus <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Draft> . }`
         : `${cubeIriVar} schema:creativeWorkStatus <https://ld.admin.ch/vocabulary/CreativeWorkStatus/Published> .`
     }
     ${cubeIriVar} cube:observationConstraint ?shape .
