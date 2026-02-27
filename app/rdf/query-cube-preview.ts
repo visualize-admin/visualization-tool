@@ -113,20 +113,32 @@ CONSTRUCT {
     ?cube cube:observationConstraint/sh:property/sh:path ?observationPredicate .
     { SELECT ?observation ?observationPredicate ?observationValue ?observationLabel ?observationPosition WHERE {
     { 
-#pragma evaluate on  ## improve preview speed (wrt Stardog issue 2094 on Stardog >= 10 // see also SBAR-1122)
+      #pragma evaluate on  ## improve preview speed (wrt Stardog issue 2094 on Stardog >= 10 // see also SBAR-1122)
       SELECT ?observation WHERE {
       VALUES ?cube { <${iri}> }
       ?cube cube:observationSet ?observationSet .
       ?observationSet cube:observation ?observation .
-      FILTER(EXISTS { ?cube cube:observationConstraint/sh:property/sh:datatype cube:Undefined . } || NOT EXISTS { ?observation ?p ""^^cube:Undefined . })
+      FILTER(
+        EXISTS { 
+          ?cube cube:observationConstraint/sh:property/sh:datatype cube:Undefined . 
+        }
+        || 
+        EXISTS { 
+          ?cube cube:observationConstraint/sh:property/sh:or/rdf:rest*/rdf:first/sh:datatype cube:Undefined . 
+        }
+        || 
+        NOT EXISTS {
+          ?observation ?p ""^^cube:Undefined .
+        }
+      )
     } LIMIT 10 }
       ?observation ?observationPredicate ?observationValue .
       ${buildLocalizedSubQuery(
-        "observationValue",
-        "schema:name",
-        "observationLabel",
-        { locale }
-      )}
+      "observationValue",
+      "schema:name",
+      "observationLabel",
+      { locale }
+    )}
       OPTIONAL { ?observationValue schema:position ?observationPosition . }
       FILTER(?observationPredicate != cube:observedBy && ?observationPredicate != rdf:type)
     }}
