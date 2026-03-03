@@ -40,7 +40,7 @@ export const SOURCE_OPTIONS: SourceOption[] = [
     key: "LINDASnext-Prod",
     label: "LINDASnext PROD",
     url: "https://cached.lindas.admin.ch/query",
-    isTrusted: false,
+    isTrusted: true,
     supportsCachingPerCubeIri: true,
   },
   {
