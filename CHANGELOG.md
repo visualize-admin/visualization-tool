@@ -11,6 +11,10 @@ You can also check the
 
 ## Unreleased
 
+- Fixes
+  - Allow GraphQL endpoint to return larger responses by increasing the response
+    limit to 20 MB
+
 ### 6.3.1 – 2026-02-26
 
 - Maintenance

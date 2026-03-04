@@ -56,6 +56,7 @@ const server = new ApolloServer({
 export const config = {
   api: {
     bodyParser: false,
+    responseLimit: "20mb",
   },
   // see https://vercel.com/docs/functions/configuring-functions/duration
   maxDuration: 60,
