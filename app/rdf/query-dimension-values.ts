@@ -105,8 +105,7 @@ export async function loadDimensionsValuesWithMetadata(
       throw Error(`Dimension not found: ${dimensionIri}`);
     }
 
-    return `${
-      queryFilters
+    return `${queryFilters
         ? ""
         : `{ #pragma evaluate on
       SELECT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
@@ -127,34 +126,30 @@ export async function loadDimensionsValuesWithMetadata(
         BIND(?versionedValue as ?unversionedValue)
       }
     } UNION`
-    } {
+      } {
       {
         SELECT DISTINCT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
-          { #pragma evaluate on
-            SELECT ?observation WHERE {
-              ${
-                queryFilters
-                  ? `VALUES ?dimensionIri { <${dimensionIri}> }
+        
+              ${queryFilters
+        ? `VALUES ?dimensionIri { <${dimensionIri}> }
                   <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
                   ?dimension sh:path ?dimensionIri .
                   ?dimension schema:version ?version .`
-                  : `VALUES ?dimensionIri { <${dimensionIri}> }
+        : `VALUES ?dimensionIri { <${dimensionIri}> }
                   <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
                   ?dimension sh:path ?dimensionIri .
                   ?dimension schema:version ?version .
                   FILTER NOT EXISTS { ?dimension sh:in ?in . }`
-              }
+      }
               <${cubeIri}> cube:observationSet/cube:observation ?observation .
               ${queryFilters}
-            }
-          }
-          ${
-            queryFilters
-              ? `VALUES ?dimensionIri { <${dimensionIri}> }
+          
+          ${queryFilters
+        ? `VALUES ?dimensionIri { <${dimensionIri}> }
               <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
               ?dimension sh:path ?dimensionIri .`
-              : `VALUES ?dimensionIri { <${dimensionIri}> }`
-          }
+        : `VALUES ?dimensionIri { <${dimensionIri}> }`
+      }
           ?observation ?dimensionIri ?versionedValue .
           ?versionedValue schema:sameAs ?unversionedValue .
         }
@@ -162,31 +157,27 @@ export async function loadDimensionsValuesWithMetadata(
     } UNION {
       {
         SELECT DISTINCT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
-          { #pragma evaluate on
-            SELECT ?observation WHERE {
-              ${
-                queryFilters
-                  ? `VALUES ?dimensionIri { <${dimensionIri}> }
+           #pragma evaluate on
+              ${queryFilters
+        ? `VALUES ?dimensionIri { <${dimensionIri}> }
                   <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
                   ?dimension sh:path ?dimensionIri .
                   FILTER NOT EXISTS { ?dimension schema:version ?version . }`
-                  : `VALUES ?dimensionIri { <${dimensionIri}> }
+        : `VALUES ?dimensionIri { <${dimensionIri}> }
                   <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
                   ?dimension sh:path ?dimensionIri .
                   FILTER NOT EXISTS { ?dimension schema:version ?version . }
                   FILTER NOT EXISTS { ?dimension sh:in ?in . }`
-              }
+      }
               <${cubeIri}> cube:observationSet/cube:observation ?observation .
               ${queryFilters}
-            }
-          }
-          ${
-            queryFilters
-              ? `VALUES ?dimensionIri { <${dimensionIri}> }
+           
+          ${queryFilters
+        ? `VALUES ?dimensionIri { <${dimensionIri}> }
               <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
               ?dimension sh:path ?dimensionIri .`
-              : `VALUES ?dimensionIri { <${dimensionIri}> }`
-          }
+        : `VALUES ?dimensionIri { <${dimensionIri}> }`
+      }
           ?observation ?dimensionIri ?versionedValue .
           BIND(?versionedValue as ?unversionedValue)
         }
@@ -319,8 +310,7 @@ CONSTRUCT {
     schema:latitude ?latitude ;
     schema:longitude ?longitude .
 } WHERE { 
-  ${
-    queryFilters
+  ${queryFilters
       ? ""
       : `{ #pragma evaluate on
     SELECT ?dimensionIri ?value WHERE {
@@ -330,18 +320,17 @@ CONSTRUCT {
       ?dimension sh:in/rdf:rest*/rdf:first ?value .
     }
   } UNION`
-  } {
+    } {
     { #pragma evaluate on
       SELECT DISTINCT ?dimensionIri ?value WHERE {
-        ${
-          queryFilters
-            ? ""
-            : `
+        ${queryFilters
+      ? ""
+      : `
         VALUES ?dimensionIri { <${dimensionIri}> }
         <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
         ?dimension sh:path ?dimensionIri .
         FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`
-        }
+    }
         ${queryFilters ? `VALUES ?dimensionIri { <${dimensionIri}> }` : ""}
         <${cubeIri}> cube:observationSet/cube:observation ?observation .
         ?observation ?dimensionIri ?value .
@@ -351,25 +340,24 @@ CONSTRUCT {
   }
   # Metadata is only attached to versioned values
   ${buildLocalizedSubQuery("value", "schema:name", "name", {
-    locale,
-  })}
+      locale,
+    })}
   ${buildLocalizedSubQuery("value", "schema:description", "description", {
-    locale,
-  })}
+      locale,
+    })}
   ${buildLocalizedSubQuery("value", "schema:alternateName", "alternateName", {
-    locale,
-  })}
+      locale,
+    })}
   OPTIONAL { ?value schema:identifier ?identifier . }
   OPTIONAL { ?value schema:position ?position . }
   OPTIONAL { ?value schema:color ?color . }
   OPTIONAL { ?value geo:hasGeometry ?geometry . }
   OPTIONAL { ?value schema:latitude ?latitude . }
   OPTIONAL { ?value schema:longitude ?longitude . }
-  ${
-    isDimensionVersioned
+  ${isDimensionVersioned
       ? `OPTIONAL { ?value schema:sameAs ?unversioned_value . }`
       : ""
-  }
+    }
   BIND(COALESCE(?unversioned_value, ?value) AS ?maybe_unversioned_value)
 }`;
 
@@ -517,11 +505,10 @@ export const getQueryFilters = (
 
       const versioned = dimension ? dimensionIsVersioned(dimension) : false;
 
-      return `${
-        versioned
+      return `${versioned
           ? `?dimension${i} <${ns.schema.sameAs.value}> ?dimension_unversioned${i} .`
           : ""
-      }
+        }
 ?observation <${iri}> ?dimension${i} .
 ${formatFilterIntoSparqlFilter(value, dimension, versioned, i)}`;
     })
