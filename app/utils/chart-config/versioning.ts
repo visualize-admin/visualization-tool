@@ -6,8 +6,8 @@ import { ChartConfig, ConfiguratorState } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
-  LEGACY_PROD_DATA_SOURCE_URL,
   PROD_DATA_SOURCE_URL,
+  UNCACHED_PROD_DATA_SOURCE_URL,
 } from "@/domain/data-source/constants";
 import { client } from "@/graphql/client";
 import { isJoinById } from "@/graphql/join";
@@ -1922,7 +1922,7 @@ export const configuratorStateMigrations: Migration[] = [
           type: "sparql",
           url: PROD_DATA_SOURCE_URL,
         };
-      } else if (newConfig.dataSource.url === LEGACY_PROD_DATA_SOURCE_URL) {
+      } else if (newConfig.dataSource.url === UNCACHED_PROD_DATA_SOURCE_URL) {
         newConfig.dataSource.url = PROD_DATA_SOURCE_URL;
       }
 

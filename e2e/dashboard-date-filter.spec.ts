@@ -33,7 +33,7 @@ const CONFIGURATOR_STATE = {
   state: "LAYOUTING",
   dataSource: {
     type: "sparql",
-    url: "https://lindas-cached.cluster.ldbar.ch/query",
+    url: "https://cached.lindas.admin.ch/query",
   },
   layout: {
     type: "tab",

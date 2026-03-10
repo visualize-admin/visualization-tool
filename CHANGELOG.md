@@ -11,6 +11,8 @@ You can also check the
 
 ## Unreleased
 
+- Maintenance
+  - Update available data sources after LINDAS PROD cut over
 - Fixes
   - Fix XSS vulnerability caused by unescaped map layer attributions
   - Allow GraphQL endpoint to return larger responses by increasing the response

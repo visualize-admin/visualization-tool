@@ -33,7 +33,7 @@ const createRouter = ({ query }: { query: Record<string, string> }) => {
 
 vi.mock("../env", () => ({
   WHITELISTED_DATA_SOURCES: ["Test", "Prod", "Int"],
-  ENDPOINT: "sparql+https://lindas-cached.cluster.ldbar.ch/query", // Default is Prod in tests
+  ENDPOINT: "sparql+https://cached.lindas.admin.ch/query", // Default is Prod in tests
 }));
 
 describe("datasource state hook", () => {
@@ -88,7 +88,7 @@ describe("datasource state hook", () => {
 
     expect(getState()).toEqual({
       type: "sparql",
-      url: "https://lindas-cached.cluster.ldbar.ch/query",
+      url: "https://cached.lindas.admin.ch/query",
     });
   });
 
@@ -125,7 +125,7 @@ describe("datasource state hook", () => {
     act(() => {
       setState({
         type: "sparql",
-        url: "https://lindas-cached.cluster.ldbar.ch/query",
+        url: "https://cached.lindas.admin.ch/query",
       });
     });
 

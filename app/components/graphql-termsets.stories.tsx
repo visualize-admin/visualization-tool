@@ -19,7 +19,7 @@ export const Termsets = () => {
     variables: {
       locale: "en",
       sourceType: "sparql",
-      sourceUrl: "https://lindas-cached.cluster.ldbar.ch/query",
+      sourceUrl: "https://cached.lindas.admin.ch/query",
       cubeFilter: {
         iri: cube,
       },
