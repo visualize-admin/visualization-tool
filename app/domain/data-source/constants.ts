@@ -2,10 +2,9 @@ import keyBy from "lodash/keyBy";
 
 import { WHITELISTED_DATA_SOURCES } from "../env";
 
-export const LEGACY_PROD_DATA_SOURCE_URL = "https://lindas.admin.ch/query";
+export const UNCACHED_PROD_DATA_SOURCE_URL = "https://lindas.admin.ch/query";
 
-export const PROD_DATA_SOURCE_URL =
-  "https://lindas-cached.cluster.ldbar.ch/query";
+export const PROD_DATA_SOURCE_URL = "https://cached.lindas.admin.ch/query";
 
 interface SourceOption {
   value: string;
@@ -26,32 +25,13 @@ export const SOURCE_OPTIONS: SourceOption[] = [
     supportsCachingPerCubeIri: true,
   },
   {
-    value: "sparql+https://lindas.admin.ch/query",
+    value: `sparql+${UNCACHED_PROD_DATA_SOURCE_URL}`,
     key: "Prod-uncached",
     label: "LINDAS PROD (uncached)",
-    url: "https://lindas.admin.ch/query",
+    url: UNCACHED_PROD_DATA_SOURCE_URL,
     isTrusted: true,
     supportsCachingPerCubeIri: true,
   },
-
-  // For LINDASnext
-  {
-    value: "sparql+https://cached.lindas.admin.ch/query",
-    key: "LINDASnext-Prod",
-    label: "LINDASnext PROD",
-    url: "https://cached.lindas.admin.ch/query",
-    isTrusted: true,
-    supportsCachingPerCubeIri: true,
-  },
-  {
-    value: "sparql+https://lindas.cz-aws.net/query",
-    key: "LINDASnext-Prod-uncached",
-    label: "LINDASnext PROD (uncached)",
-    url: "https://lindas.cz-aws.net/query",
-    isTrusted: false,
-    supportsCachingPerCubeIri: true,
-  },
-  // Migration done for the following data sources
   {
     value: "sparql+https://int.cached.lindas.admin.ch/query",
     key: "Int",
@@ -86,6 +66,22 @@ export const SOURCE_OPTIONS: SourceOption[] = [
   },
 
   // For LINDASold
+  {
+    value: "sparql+https://lindas-cached.cluster.ldbar.ch/query",
+    key: "LINDASold-Prod",
+    label: "LINDASold PROD",
+    url: "https://lindas-cached.cluster.ldbar.ch/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
+  {
+    value: "sparql+https://old.ld.ldbar.ch/query",
+    key: "LINDASold-Prod-uncached",
+    label: "LINDASold PROD (uncached)",
+    url: "https://old.ld.ldbar.ch/query",
+    isTrusted: false,
+    supportsCachingPerCubeIri: true,
+  },
   {
     value: "sparql+https://lindas-cached.int.cluster.ldbar.ch/query",
     key: "LINDASold-Int",

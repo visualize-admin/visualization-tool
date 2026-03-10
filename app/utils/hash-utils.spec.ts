@@ -8,7 +8,7 @@ it("should persist chart configs as is", () => {
     state: "CONFIGURING_CHART",
     dataSource: {
       type: "sparql",
-      url: "https://lindas-cached.cluster.ldbar.ch/query",
+      url: "https://cached.lindas.admin.ch/query",
     },
     activeField: undefined,
     fakePropertyToTestNumbersParsing: 12345.6789,
