@@ -20,7 +20,7 @@ export const CustomAttribution = ({ attribution }: { attribution: string }) => {
     const control = new maplibregl.AttributionControl({
       // className was not working (?), so style is used. To revisit later if needed.
       customAttribution: attribution
-        ? `<span style="color: ${theme.palette.error.main}">${attribution}</span>`
+        ? `<span style="color: ${escapeHtml(theme.palette.error.main)}">${escapeHtml(attribution)}</span>`
         : undefined,
     });
 
@@ -39,3 +39,9 @@ export const CustomAttribution = ({ attribution }: { attribution: string }) => {
 
   return null;
 };
+
+function escapeHtml(text: string): string {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}

@@ -12,6 +12,7 @@ You can also check the
 ## Unreleased
 
 - Fixes
+  - Fix XSS vulnerability caused by unescaped map layer attributions
   - Allow GraphQL endpoint to return larger responses by increasing the response
     limit to 20 MB
 
