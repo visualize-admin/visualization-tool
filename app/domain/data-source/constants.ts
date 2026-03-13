@@ -19,7 +19,7 @@ export const SOURCE_OPTIONS: SourceOption[] = [
   {
     value: `sparql+${PROD_DATA_SOURCE_URL}`,
     key: "Prod",
-    label: "LINDAS PROD",
+    label: "LINDASnext PROD",
     url: PROD_DATA_SOURCE_URL,
     isTrusted: true,
     supportsCachingPerCubeIri: true,
@@ -27,7 +27,7 @@ export const SOURCE_OPTIONS: SourceOption[] = [
   {
     value: `sparql+${UNCACHED_PROD_DATA_SOURCE_URL}`,
     key: "Prod-uncached",
-    label: "LINDAS PROD (uncached)",
+    label: "LINDASnext PROD (uncached)",
     url: UNCACHED_PROD_DATA_SOURCE_URL,
     isTrusted: true,
     supportsCachingPerCubeIri: true,
