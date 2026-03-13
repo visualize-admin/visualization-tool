@@ -11,8 +11,11 @@ You can also check the
 
 ## Unreleased
 
+### 6.4.0 – 2026-03-13
+
 - Maintenance
   - Update available data sources after LINDAS PROD cut over
+  - Update data source of graphs on homepage to new LINDAS PROD endpoint
 - Fixes
   - Fix XSS vulnerability caused by unescaped map layer attributions
   - Allow GraphQL endpoint to return larger responses by increasing the response
