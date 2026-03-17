@@ -94,7 +94,7 @@ const runTest = async ({
   const res = await client
     .query(DimensionHierarchyDocument, {
       cubeIri: cubeIri,
-      sourceUrl: "https://lindas-cached.int.cluster.ldbar.ch/query",
+      sourceUrl: "https://int.cached.lindas.admin.ch/query",
       sourceType: "sparql",
       dimensionIri: "https://environment.ld.admin.ch/foen/nfi/unitOfReference",
       locale,

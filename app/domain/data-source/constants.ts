@@ -64,56 +64,6 @@ export const SOURCE_OPTIONS: SourceOption[] = [
     isTrusted: false,
     supportsCachingPerCubeIri: true,
   },
-
-  // For LINDASold
-  {
-    value: "sparql+https://lindas-cached.cluster.ldbar.ch/query",
-    key: "LINDASold-Prod",
-    label: "LINDASold PROD",
-    url: "https://lindas-cached.cluster.ldbar.ch/query",
-    isTrusted: false,
-    supportsCachingPerCubeIri: true,
-  },
-  {
-    value: "sparql+https://old.ld.ldbar.ch/query",
-    key: "LINDASold-Prod-uncached",
-    label: "LINDASold PROD (uncached)",
-    url: "https://old.ld.ldbar.ch/query",
-    isTrusted: false,
-    supportsCachingPerCubeIri: true,
-  },
-  {
-    value: "sparql+https://lindas-cached.int.cluster.ldbar.ch/query",
-    key: "LINDASold-Int",
-    label: "LINDASold INT",
-    url: "https://lindas-cached.int.cluster.ldbar.ch/query",
-    isTrusted: false,
-    supportsCachingPerCubeIri: true,
-  },
-  {
-    value: "sparql+https://old.int.ld.ldbar.ch/query",
-    key: "LINDASold-Int-uncached",
-    label: "LINDASold INT (uncached)",
-    url: "https://old.int.ld.ldbar.ch/query",
-    isTrusted: false,
-    supportsCachingPerCubeIri: true,
-  },
-  {
-    value: "sparql+https://lindas-cached.test.cluster.ldbar.ch/query",
-    key: "LINDASold-Test",
-    label: "LINDASold TEST",
-    url: "https://lindas-cached.test.cluster.ldbar.ch/query",
-    isTrusted: false,
-    supportsCachingPerCubeIri: true,
-  },
-  {
-    value: "sparql+https://old.test.ld.ldbar.ch/query",
-    key: "LINDASold-Test-uncached",
-    label: "LINDASold TEST (uncached)",
-    url: "https://old.test.ld.ldbar.ch/query",
-    isTrusted: false,
-    supportsCachingPerCubeIri: true,
-  },
 ].filter((d) => WHITELISTED_DATA_SOURCES.includes(d.key));
 
 export const SOURCES_BY_KEY = keyBy(SOURCE_OPTIONS, (d) => d.key);
