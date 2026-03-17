@@ -11,6 +11,9 @@ You can also check the
 
 ## Unreleased
 
+- Maintenance
+  - Remove LINDASold endpoints
+
 ### 6.4.0 – 2026-03-13
 
 - Maintenance
