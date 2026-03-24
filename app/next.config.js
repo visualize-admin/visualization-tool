@@ -1,10 +1,12 @@
-// This file sets a custom webpack configuration to use your Next.js app.
+// This file sets a custom webpack configuration to use your Next.js app with Sentry.
 // https://nextjs.org/docs/api-reference/next.config.js/introduction
+// https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
 const withMDX = require("@next/mdx")();
 const withPreconstruct = require("@preconstruct/next");
+const { withSentryConfig } = require("@sentry/nextjs");
 const { IgnorePlugin } = require("webpack");
 
 const pkg = require("../package.json");
@@ -64,11 +66,9 @@ module.exports = withPreconstruct(
           headers[0].headers.push({
             key: "Content-Security-Policy",
             value: [
-              `default-src 'self' 'unsafe-inline'${
-                process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
+              `default-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
               } https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
-              `script-src 'self' 'unsafe-inline'${
-                process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
+              `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
               } https://vercel.live/ https://vercel.com https://*.googletagmanager.com https://api.mapbox.com https://api.maptiler.com`,
               `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net`,
               `font-src 'self'`,
@@ -103,7 +103,7 @@ module.exports = withPreconstruct(
         ignoreDuringBuilds: true,
       },
 
-      webpack(config, { dev }) {
+      webpack (config, { dev }) {
         config.module.rules.push({
           test: /\.(graphql|gql)$/,
           exclude: /node_modules/,
@@ -144,7 +144,7 @@ module.exports = withPreconstruct(
         return config;
       },
 
-      async redirects() {
+      async redirects () {
         return [
           {
             source: "/storybook",
@@ -155,4 +155,10 @@ module.exports = withPreconstruct(
       },
     })
   )
+);
+
+module.exports = withSentryConfig(
+  module.exports,
+  { silent: true },
+  { hideSourcemaps: true }
 );
