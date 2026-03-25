@@ -10,6 +10,8 @@ import {
 import depthLimit from "graphql-depth-limit";
 import { NextApiRequest, NextApiResponse } from "next";
 
+import { SentryPlugin } from "@/graphql/apollo-sentry-plugin";
+
 import { createContext, VisualizeGraphQLContext } from "../../graphql/context";
 import { resolvers } from "../../graphql/resolvers";
 import typeDefs from "../../graphql/schema.graphql";
@@ -50,7 +52,7 @@ const server = new ApolloServer({
   cache: "bounded",
   introspection: process.env.NODE_ENV !== "production",
   validationRules: [depthLimit(1)],
-  plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
+  plugins: [ApolloServerPluginLandingPageGraphQLPlayground, SentryPlugin],
 });
 
 export const config = {

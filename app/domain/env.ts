@@ -48,6 +48,11 @@ export const GA_TRACKING_ID =
 export const ADFS_PROFILE_URL =
   clientEnv?.ADFS_PROFILE_URL ?? process.env.ADFS_PROFILE_URL;
 
+export const SENTRY_DSN = clientEnv?.SENTRY_DSN ?? process.env.SENTRY_DSN ?? "";
+
+export const SENTRY_ENV =
+  clientEnv?.SENTRY_ENV ?? process.env.SENTRY_ENV ?? "development";
+
 /**
  * Server-side-only **RUNTIME** variables (not exposed through window)
  */
