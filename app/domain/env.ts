@@ -48,6 +48,9 @@ export const GA_TRACKING_ID =
 export const ADFS_PROFILE_URL =
   clientEnv?.ADFS_PROFILE_URL ?? process.env.ADFS_PROFILE_URL;
 
+export const MAPTILER_API_KEY =
+  clientEnv?.MAPTILER_API_KEY ?? process.env.MAPTILER_API_KEY ?? "";
+
 /**
  * Server-side-only **RUNTIME** variables (not exposed through window)
  */
@@ -66,5 +69,3 @@ export const BUILD_GITHUB_REPO = (
 ).replace(/^git\+https/, "https"); // Don't use git+https for the link, need to check with Abraxas
 export const BASE_VECTOR_TILE_URL =
   process.env.NEXT_PUBLIC_BASE_VECTOR_TILE_URL ?? "";
-export const MAPTILER_STYLE_KEY =
-  clientEnv?.MAPTILER_STYLE_KEY ?? process.env.MAPTILER_STYLE_KEY ?? "";

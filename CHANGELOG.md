@@ -16,8 +16,8 @@ You can also check the
 - Refactoring
   - Incorporate the Swiss-Federal-CI library into this repository.
 - Maintenance
-  - Set Maptiler API key from environment variable at runtime, to avoid having
-    to rebuild the application when the key is rotated
+  - Set Maptiler API key from `MAPTILER_API_KEY` environment variable at
+    runtime, to avoid having to rebuild the application when the key is rotated
   - Use AGENTS.md instead of CLAUDE.md and adjust context according to recent
     findings of studies about the impact of context files for coding AIs
 
