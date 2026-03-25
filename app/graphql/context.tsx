@@ -101,6 +101,9 @@ const setupSparqlClients = (
     endpointUrl: SPARQL_GEO_ENDPOINT,
   });
 
+  const sourceUrlHostname = new URL(sourceUrl).hostname;
+  const geoEndpointHostname = new URL(SPARQL_GEO_ENDPOINT).hostname;
+
   const saveTimingToContext: TimingCallback = (t, ...args: [string]) => {
     ctx.queries.push({
       startTime: t.start,
@@ -118,9 +121,11 @@ const setupSparqlClients = (
     return tracer.startActiveSpan("sparqlClient.query.select", async (span) => {
       try {
         span.setAttribute("db.sparql.has_query_event", true);
+        span.setAttribute("server.address", sourceUrlHostname);
         span.addEvent("sparql.query", {
           "db.query.text": query,
           "db.system.name": "sparql",
+          "url.full": sourceUrl,
         });
         return await originalSparqlClientQuerySelect.call(this, query, ...args);
       } finally {
@@ -140,9 +145,11 @@ const setupSparqlClients = (
       async (span) => {
         try {
           span.setAttribute("db.sparql.has_query_event", true);
+          span.setAttribute("server.address", sourceUrlHostname);
           span.addEvent("sparql.query", {
             "db.query.text": query,
             "db.system.name": "sparql",
+            "url.full": sourceUrl,
           });
           return await originalSparqlClientQueryConstruct.call(
             this,
@@ -167,9 +174,11 @@ const setupSparqlClients = (
       async (span) => {
         try {
           span.setAttribute("db.sparql.has_query_event", true);
+          span.setAttribute("server.address", sourceUrlHostname);
           span.addEvent("sparql.query", {
             "db.query.text": query,
             "db.system.name": "sparql",
+            "url.full": sourceUrl,
           });
           return await originalSparqlClientStreamQuerySelect.call(
             this,
@@ -195,9 +204,11 @@ const setupSparqlClients = (
       async (span) => {
         try {
           span.setAttribute("db.sparql.has_query_event", true);
+          span.setAttribute("server.address", sourceUrlHostname);
           span.addEvent("sparql.query", {
             "db.query.text": query,
             "db.system.name": "sparql",
+            "url.full": sourceUrl,
           });
           return await originalSparqlClientStreamQueryConstruct.call(
             this,
@@ -222,9 +233,11 @@ const setupSparqlClients = (
       async (span) => {
         try {
           span.setAttribute("db.sparql.has_query_event", true);
+          span.setAttribute("server.address", geoEndpointHostname);
           span.addEvent("sparql.query", {
             "db.query.text": query,
             "db.system.name": "sparql",
+            "url.full": SPARQL_GEO_ENDPOINT,
           });
           return await originalGeoSparqlClientQuerySelect.call(
             this,
@@ -249,9 +262,11 @@ const setupSparqlClients = (
       async (span) => {
         try {
           span.setAttribute("db.sparql.has_query_event", true);
+          span.setAttribute("server.address", geoEndpointHostname);
           span.addEvent("sparql.query", {
             "db.query.text": query,
             "db.system.name": "sparql",
+            "url.full": SPARQL_GEO_ENDPOINT,
           });
           return await originalGeoSparqlClientQueryConstruct.call(
             this,
