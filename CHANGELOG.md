@@ -13,6 +13,9 @@ You can also check the
 
 - Features
   - Add SPARQL endpoints in the OpenTelemetry traces
+- Maintenance
+  - Set Maptiler API key from `MAPTILER_API_KEY` environment variable at
+    runtime, to avoid having to rebuild the application when the key is rotated
 
 ### 6.4.0 – 2026-03-13
 
