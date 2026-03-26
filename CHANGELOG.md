@@ -19,6 +19,13 @@ You can also check the
 - Fixes
   - Sanitize urls for links in tables
   - Improve CSP header configuration
+  - Normalize the polygon winding order of geometries to CCW ("right hand rule")
+    after parsing and replace the CW-only d3-geo helpers `geoBounds`, `geoArea`
+    and `geoCentroid` with the CCW-aware Turf helpers `bbox`, `area` and the
+    Mapbox helper `polylabel` (to calculate the "pole of inaccessibility"). This
+    makes Visualize winding order agnostic and fixes a specific bug with newer
+    CCW geometries from Swisstopo where map diagrams were zoomed to the world
+    instead of Switzerland (older geometries all had CW winding order).
 - Maintenance
   - Remove Google Analytics integration (it is no longer in use)
   - Set Maptiler API key from `MAPTILER_API_KEY` environment variable at

@@ -1,5 +1,6 @@
-import { geoCentroid } from "d3-geo";
+import turfArea from "@turf/area";
 import keyBy from "lodash/keyBy";
+import polylabel from "polylabel";
 import { useMemo } from "react";
 
 import { ChartMapProps } from "@/charts/map/chart-map";
@@ -156,10 +157,32 @@ export const useMapStateData = (
         observations: data.chartData,
       });
 
-      const points = features.map((d) => ({
-        ...d,
-        coordinates: geoCentroid(d),
-      }));
+      const points: GeoPoint[] = features.map((d) => {
+        // We use the "pole of inaccessibility" algorithm to find a point within
+        // the polygon (Turf's centroid or centerOfMass are not necessary inside
+        // the polygon and pointOnFeature is often too close to the border). The
+        // polylabel utility (from Mapbox) only accepts a single polygon
+        // (Position[][]), so for MultiPolygon, pick the sub-polygon with the
+        // largest outer-ring area so the label sits inside the visually
+        // dominant part.
+        const polygon =
+          d.geometry.type === "MultiPolygon"
+            ? d.geometry.coordinates.reduce((largest, current) => {
+                return turfArea({ type: "Polygon", coordinates: current }) >
+                  turfArea({ type: "Polygon", coordinates: largest })
+                  ? current
+                  : largest;
+              })
+            : d.geometry.coordinates;
+        const [x, y] = polylabel(
+          polygon,
+          1e-2 // ≈ ~1 km (lower precision value = more accurate but slower)
+        );
+        return {
+          ...d,
+          coordinates: [x, y],
+        };
+      });
 
       return {
         points,
