@@ -1,4 +1,4 @@
-import { geoCentroid } from "d3-geo";
+import centroid from "@turf/centroid";
 import keyBy from "lodash/keyBy";
 import { useMemo } from "react";
 
@@ -158,7 +158,7 @@ export const useMapStateData = (
 
       const points = features.map((d) => ({
         ...d,
-        coordinates: geoCentroid(d),
+        coordinates: centroid(d).geometry.coordinates,
       }));
 
       return {
