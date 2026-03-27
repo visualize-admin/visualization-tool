@@ -1,10 +1,11 @@
+import { rewindGeometry } from "@placemarkio/geojson-rewind";
 import { ascending, descending } from "d3-array";
 import DataLoader from "dataloader";
 import groupBy from "lodash/groupBy";
 import ParsingClient from "sparql-http-client/ParsingClient";
 import { topology } from "topojson-server";
 import { LRUCache } from "typescript-lru-cache";
-import { parse as parseWKT } from "wellknown";
+import { GeoJSONGeometry, parse as parseWKT } from "wellknown";
 
 import { Filters } from "@/config-types";
 import {
@@ -127,6 +128,16 @@ export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> = async (
   });
 };
 
+/**
+ * Normalize the geometry's winding order to follow GeoJSON standards. It is
+ * converted to CCW (a.k.a. "right hand rule") if it has a non-standard CW
+ * winding order.
+ */
+const rewind = (geometry: GeoJSONGeometry): GeoJSONGeometry => {
+  if (!geometry) return null;
+  return rewindGeometry(geometry) as GeoJSONGeometry;
+};
+
 export const dataCubeDimensionGeoShapes: NonNullable<
   QueryResolvers["dataCubeDimensionGeoShapes"]
 > = async (_, { locale, cubeFilter }, { setup }, info) => {
@@ -178,7 +189,7 @@ export const dataCubeDimensionGeoShapes: NonNullable<
           iri: value,
           label: dimensionValuesByValue.get(value),
         },
-        geometry: parseWKT(shape.wktString),
+        geometry: rewind(parseWKT(shape.wktString)),
       };
     });
 

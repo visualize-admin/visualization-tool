@@ -6,7 +6,7 @@ import {
 import { supported } from "@mapbox/mapbox-gl-supported";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { geoArea } from "d3-geo";
+import area from "@turf/area";
 import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
 import uniq from "lodash/uniq";
@@ -302,7 +302,7 @@ export const MapComponent = ({
     // Sort for smaller shapes to be over larger ones, to be able to use tooltip
     const sortedFeatures = orderBy(
       features.areaLayer?.shapes?.features,
-      geoArea,
+      area,
       "desc"
     ) satisfies GeoFeature[];
 

@@ -1,7 +1,7 @@
 import { WebMercatorViewport } from "@deck.gl/core";
 import { MapboxOverlay, MapboxOverlayProps } from "@deck.gl/mapbox";
+import bbox from "@turf/bbox";
 import { extent } from "d3-array";
-import { geoBounds } from "d3-geo";
 import { useEffect, useMemo, useState } from "react";
 import { useControl, ViewState } from "react-map-gl";
 import { feature } from "topojson-client";
@@ -137,9 +137,12 @@ export const getBBox = (
   let symbolsBbox: BBox | undefined;
 
   if (shapes) {
-    const _shapesBbox = geoBounds(shapes);
-    if (!_shapesBbox.flat().some(isNaN)) {
-      shapesBbox = _shapesBbox;
+    const [minLng, minLat, maxLng, maxLat] = bbox(shapes);
+    if (![minLng, minLat, maxLng, maxLat].some(isNaN)) {
+      shapesBbox = [
+        [minLng, minLat],
+        [maxLng, maxLat],
+      ] as BBox;
     }
   }
 
