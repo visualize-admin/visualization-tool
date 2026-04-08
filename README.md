@@ -5,10 +5,11 @@
 - 1. [Documentation](#Documentation)
 - 2. [Development Environment](#DevelopmentEnvironment)
   - 2.1. [Setting up the dev environment](#Settingupthedevenvironment)
-  - 2.2. [Dev server](#Devserver)
-  - 2.3.
+  - 2.2. [Running tests](#Runningtests)
+  - 2.3. [Dev server](#Devserver)
+  - 2.4.
     [Building the Embed script `/dist/embed.js`](#BuildingtheEmbedscriptdistembed.js)
-  - 2.4. [Database migrations](#Databasemigrations)
+  - 2.5. [Database migrations](#Databasemigrations)
 - 3. [Versioning](#Versioning)
 - 4. [Developing GitHub Actions](#DevelopingGitHubActions)
 - 5. [E2E tests](#E2Etests)
@@ -31,7 +32,6 @@
 	autoSave=true
 	/vscode-markdown-toc-config -->
 <!-- /vscode-markdown-toc -->
-
 
 ## 1. <a name='Documentation'></a>Documentation
 
@@ -57,7 +57,27 @@ this directory.
 yarn setup:dev
 ```
 
-### 2.2. <a name='Devserver'></a>Dev server
+### 2.2. <a name='Runningtests'></a>Running tests
+
+Run all unit test in watch mode:
+
+```sh
+yarn test
+```
+
+Generate a coverage report:
+
+```sh
+yarn test:coverage
+```
+
+Run tests using the vitest ui:
+
+```sh
+yarn test:ui
+```
+
+### 2.3. <a name='Devserver'></a>Dev server
 
 Once the application's set up, you can start the development server with
 
@@ -87,7 +107,7 @@ server is running and then click the "Run and Debug" button in the sidebar
 new Chrome window with the dev tools open. You can now set breakpoints in the
 code and they will be hit.
 
-### 2.3. <a name='BuildingtheEmbedscriptdistembed.js'></a>Building the Embed script `/dist/embed.js`
+### 2.4. <a name='BuildingtheEmbedscriptdistembed.js'></a>Building the Embed script `/dist/embed.js`
 
 Currently, the embed script is not automatically built when the dev server
 starts.
@@ -105,7 +125,7 @@ yarn dev:rollup
 > [custom elements](https://developers.google.com/web/fundamentals/web-components/customelements)
 > or render to a generic DOM element) in the future.
 
-### 2.4. <a name='Databasemigrations'></a>Database migrations
+### 2.5. <a name='Databasemigrations'></a>Database migrations
 
 Database migrations are run automatically when a production build of the app
 starts. In _development_, you'll have to run them manually:
