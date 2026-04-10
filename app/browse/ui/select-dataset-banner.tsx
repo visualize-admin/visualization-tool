@@ -1,4 +1,3 @@
-import { ContentWrapper } from "@interactivethings/swiss-federal-ci/dist/components";
 import { Trans } from "@lingui/macro";
 import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -11,6 +10,7 @@ import {
   bannerPresenceProps,
   MotionBox,
 } from "@/components/presence";
+import { ContentWrapper } from "@/federal-ci/components/content-wrapper";
 import { useResizeObserver } from "@/utils/use-resize-observer";
 
 export const SelectDatasetBanner = ({

@@ -1,8 +1,8 @@
-import { ContentWrapper } from "@interactivethings/swiss-federal-ci/dist/components";
 import { Card, Typography } from "@mui/material";
 import { ReactNode } from "react";
 
 import { Flex } from "@/components/flex";
+import { ContentWrapper } from "@/federal-ci/components/content-wrapper";
 import { HomepageSectionTitle } from "@/homepage/generic";
 import { Step1 } from "@/homepage/step1";
 import { Step2 } from "@/homepage/step2";

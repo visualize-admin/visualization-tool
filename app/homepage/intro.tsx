@@ -1,8 +1,8 @@
-import { ContentWrapper } from "@interactivethings/swiss-federal-ci/dist/components";
 import { Box, Button, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { ReactNode } from "react";
 
+import { ContentWrapper } from "@/federal-ci/components/content-wrapper";
 import { Icon } from "@/icons";
 
 export const Intro = ({
