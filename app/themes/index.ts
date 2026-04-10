@@ -1,12 +1,14 @@
+import { useTheme } from "@mui/material";
+
 import {
   FederalBreakpointOverrides,
   FederalColor,
   FederalTypographyPropsVariantOverrides,
   FederalTypographyVariants,
   FederalTypographyVariantsOptions,
-} from "@interactivethings/swiss-federal-ci";
+} from "@/federal-ci/theme";
+
 import type {} from "@mui/lab/themeAugmentation";
-import { useTheme } from "@mui/material";
 
 declare module "@mui/material" {
   interface TypographyVariants extends FederalTypographyVariants {}

@@ -1,5 +1,4 @@
 /* eslint-disable import/no-anonymous-default-export */
-import { c } from "@interactivethings/swiss-federal-ci";
 import { MDXProvider } from "@mdx-js/react";
 import { CssBaseline } from "@mui/material";
 import {
@@ -21,6 +20,7 @@ import {
 import Slugger from "github-slugger";
 import { useEffect, useMemo, useState } from "react";
 
+import { c } from "@/federal-ci/theme";
 import { i18n, I18nProvider, parseLocaleString } from "@/src";
 
 const pages: ConfigPageOrGroup[] = [

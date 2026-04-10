@@ -1,6 +1,6 @@
-import { c } from "@interactivethings/swiss-federal-ci";
 import { Components } from "@mui/material";
 
+import { c } from "@/federal-ci/theme";
 import { Icon } from "@/icons";
 import {
   CheckboxCheckedIcon,

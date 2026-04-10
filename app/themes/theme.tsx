@@ -1,9 +1,6 @@
-import {
-  b as breakpoints,
-  s as spacing,
-} from "@interactivethings/swiss-federal-ci";
 import { createTheme } from "@mui/material/styles";
 
+import { b as breakpoints, s as spacing } from "@/federal-ci/theme";
 import { components } from "@/themes/components";
 import { palette } from "@/themes/palette";
 import { shadows } from "@/themes/shadows";

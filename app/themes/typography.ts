@@ -1,5 +1,6 @@
-import { t as federalTypography } from "@interactivethings/swiss-federal-ci";
 import { type Typography } from "@mui/material/styles/createTypography";
+
+import { t as federalTypography } from "@/federal-ci/theme";
 
 const fontFamily = [
   '"NotoSans"',
