@@ -1,7 +1,7 @@
 [
   {
-    "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9",
-    "label": "Photovoltaikanlagen/9",
+    "iri": "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/10",
+    "label": "Photovoltaikanlagen/10",
     "filters": {
       "https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/Kanton": {
         "type": "single",
