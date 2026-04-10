@@ -1,13 +1,4 @@
 import {
-  PropsWithChildren,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { SwitchTransition } from "react-transition-group";
-
-import {
   Box,
   Collapse,
   Fade,
@@ -18,6 +9,15 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import NextLink from "next/link";
+import {
+  PropsWithChildren,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { SwitchTransition } from "react-transition-group";
+
 
 import { TRANSITION_DURATION } from "@/federal-ci/components/common";
 import { Button, Link } from "@/federal-ci/foundations";
@@ -25,9 +25,9 @@ import { ArrowLeftIcon, ArrowRightIcon, CloseIcon } from "@/federal-ci/icons";
 import { b, c, s, t } from "@/federal-ci/theme";
 import { makeStyles } from "@/federal-ci/utils/make-styles";
 import {
+  isSectionWithSubsections,
   Section,
   SectionWithSubsections,
-  isSectionWithSubsections,
 } from "@/federal-ci/utils/menu-sections";
 import { stripQueryParams } from "@/federal-ci/utils/routing";
 

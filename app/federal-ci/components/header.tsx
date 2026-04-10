@@ -1,4 +1,3 @@
-import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 
 import {
   Box,
@@ -11,6 +10,7 @@ import {
   useEventCallback,
 } from "@mui/material";
 import NextLink from "next/link";
+import { MouseEvent, ReactNode, useEffect, useRef, useState } from "react";
 
 import { ContentWrapper } from "@/federal-ci/components/content-wrapper";
 import { ResponsiveLogo } from "@/federal-ci/components/logo";
@@ -20,9 +20,9 @@ import { MenuIcon } from "@/federal-ci/icons";
 import { b, c, s, t } from "@/federal-ci/theme";
 import { makeStyles } from "@/federal-ci/utils/make-styles";
 import {
+  isNotMobileSection,
   Section,
   UniversalSection,
-  isNotMobileSection,
 } from "@/federal-ci/utils/menu-sections";
 import { maybeWindow } from "@/utils/maybe-window";
 

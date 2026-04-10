@@ -1,6 +1,6 @@
+import { Box, Breakpoint, SxProps } from "@mui/material";
 import { PropsWithChildren } from "react";
 
-import { Box, Breakpoint, SxProps } from "@mui/material";
 
 import { makeStyles } from "@/federal-ci/utils/make-styles";
 
