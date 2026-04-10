@@ -1,6 +1,7 @@
-import { c as colors } from "@interactivethings/swiss-federal-ci";
 import { type ThemeOptions } from "@mui/material";
 import { PaletteOptions } from "@mui/material/styles";
+
+import { c as colors } from "@/federal-ci/theme";
 
 const blue: PaletteOptions["blue"] = {
   main: "#1D4ED8",
