@@ -158,7 +158,7 @@ test("Segment sorting with hierarchy", async ({
     "Appenzell Ausserrhoden",
     "Appenzell Innerrhoden",
     "St Gallen",
-    "Grisons",
+    "Graubünden",
     "Aargau",
     "Thurgau",
     "Ticino",
