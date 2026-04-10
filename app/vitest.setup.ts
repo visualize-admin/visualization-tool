@@ -105,10 +105,6 @@ vi.mock("rdf-cube-view-query", () => ({
   },
 }));
 
-vi.mock(
-  "@interactivethings/swiss-federal-ci/dist/components/pages-router",
-  () => ({})
-);
 
 vi.mock("next/router", () => {
   const router = {
