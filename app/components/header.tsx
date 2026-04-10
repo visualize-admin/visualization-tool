@@ -1,5 +1,3 @@
-import { TopBar } from "@interactivethings/swiss-federal-ci/dist/components";
-import { Header as SwissFederalCiHeader } from "@interactivethings/swiss-federal-ci/dist/components/pages-router";
 import { useRouter } from "next/router";
 
 import { DataSourceMenu } from "@/components/data-source-menu";
@@ -8,6 +6,8 @@ import { Select } from "@/components/form";
 import { __HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
 import contentRoutes from "@/content-routes.json";
 import { SOURCE_OPTIONS } from "@/domain/data-source/constants";
+import { TopBar } from "@/federal-ci/components";
+import { Header as SwissFederalCiHeader } from "@/federal-ci/pages-router/header";
 import localeConfig from "@/locales/locales.json";
 import { useLocale } from "@/locales/use-locale";
 import { LoginMenu } from "@/login/components/login-menu";
