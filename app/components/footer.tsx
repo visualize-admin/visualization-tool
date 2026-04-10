@@ -1,3 +1,9 @@
+import { t } from "@lingui/macro";
+import { Link, SxProps } from "@mui/material";
+import NextLink from "next/link";
+
+import contentRoutes from "@/content-routes.json";
+import { BUILD_COMMIT, BUILD_GITHUB_REPO, BUILD_VERSION } from "@/domain/env";
 import {
   Footer as SwissFederalCiFooter,
   FooterSection,
@@ -6,13 +12,7 @@ import {
   FooterSectionSocialMediaButtonGroup,
   FooterSectionText,
   FooterSectionTitle,
-} from "@interactivethings/swiss-federal-ci/dist/components";
-import { t } from "@lingui/macro";
-import { Link, SxProps } from "@mui/material";
-import NextLink from "next/link";
-
-import contentRoutes from "@/content-routes.json";
-import { BUILD_COMMIT, BUILD_GITHUB_REPO, BUILD_VERSION } from "@/domain/env";
+} from "@/federal-ci/components";
 import { useLocale } from "@/locales/use-locale";
 
 const mkVersionLink = () => {
