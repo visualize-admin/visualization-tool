@@ -38,7 +38,7 @@ const variables = {
 
 /** @type {import("k6/options").Options} */
 export const options = {
-  iterations: 2,
+  iterations: 3,
 };
 
 const headers = {
@@ -52,6 +52,7 @@ export default function Observations() {
 
   const res = http.post(endpoint, JSON.stringify({ query, variables }), {
     headers,
+    tags: { warmup: exec.scenario.iterationInTest === 0 ? "true" : "false" },
   });
 
   check(res, {
@@ -77,10 +78,16 @@ export default function Observations() {
 }
 
 export function handleSummary(data) {
-  if (durationExceedsThreshold(data.metrics.http_req_duration.values.avg)) {
+  const warmupMetrics = data.metrics["http_req_duration{warmup:true}"];
+  const actualMetrics = data.metrics["http_req_duration{warmup:false}"];
+  const avgDuration = actualMetrics
+    ? actualMetrics.values.avg
+    : data.metrics.http_req_duration.values.avg;
+
+  if (durationExceedsThreshold(avgDuration)) {
     return {
       stdout: `${Math.round(
-        (100 * data.metrics.http_req_duration.values.avg) /
+        (100 * avgDuration) /
           metadata.queries.DataCubeObservations.expectedDuration
       )}% – DataCubeObservations – ${cubeLabel}. `,
     };
