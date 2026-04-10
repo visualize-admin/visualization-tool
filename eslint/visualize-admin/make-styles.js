@@ -57,9 +57,12 @@ module.exports = {
   create(context) {
     return {
       'CallExpression[callee.name="makeStyles"]': function (node) {
+        if (!node.arguments[0]) {
+          return;
+        }
         // Handle makeStyles({}) and makeStyles(theme => ({}))
         const classNames =
-          node.arguments[0] && node.arguments[0].type === "ObjectExpression"
+          node.arguments[0].type === "ObjectExpression"
             ? node.arguments[0]
             : node.arguments[0].body;
         if (

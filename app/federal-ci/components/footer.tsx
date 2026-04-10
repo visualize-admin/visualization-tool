@@ -1,6 +1,6 @@
+import { Box, Breakpoint, SxProps, Typography } from "@mui/material";
 import { Children, PropsWithChildren } from "react";
 
-import { Box, Breakpoint, SxProps, Typography } from "@mui/material";
 
 import { ContentWrapper } from "@/federal-ci/components/content-wrapper";
 import { FooterSectionLink } from "@/federal-ci/components/footer-section-link";
