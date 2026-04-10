@@ -110,6 +110,8 @@ export const theme = createTheme({
     values: breakpoints,
   },
   spacing: 4,
+  // @ts-expect-error - c doesn't satisfy augmented PaletteOptions (app adds extra required keys)
+  palette: c,
 });
 
 /** Shorthand for `theme.breakpoints`. */
