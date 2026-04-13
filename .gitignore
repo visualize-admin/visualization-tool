@@ -1,7 +1,7 @@
 node_modules
 .next
 .DS_Store
-*.log
+pnpm-debug.log
 
 /app/locales/_build
 /app/locales/**/*.js

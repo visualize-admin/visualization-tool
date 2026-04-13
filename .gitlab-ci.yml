@@ -14,9 +14,10 @@ lint:
   image: node:24
   stage: lint
   script:
-    - yarn --frozen-lockfile
-    - yarn locales:compile
-    - yarn lint
+    - corepack enable
+    - pnpm install --frozen-lockfile
+    - pnpm locales:compile
+    - pnpm lint
 
 build:
   image: docker:24.0.5-cli

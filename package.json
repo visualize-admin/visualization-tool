@@ -105,10 +105,6 @@
     "tsx": "^4.19.2",
     "typescript": "4.9.5"
   },
-  "workspaces": [
-    ".",
-    "app"
-  ],
   "preconstruct": {
     "packages": [
       "app"
@@ -118,9 +114,11 @@
     "node_modules",
     "app/.next/cache"
   ],
-  "resolutions": {
-    "@babel/core": "^7.14.6",
-    "@babel/parser": "^7.14.6"
+  "pnpm": {
+    "overrides": {
+      "@babel/core": "^7.14.6",
+      "@babel/parser": "^7.14.6"
+    }
   },
   "bugs": {
     "url": "https://github.com/visualize-admin/visualization-tool/issues"

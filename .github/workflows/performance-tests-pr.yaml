@@ -1,4 +1,4 @@
-# GENERATED FILE, DO NOT EDIT MANUALLY - use yarn run github:codegen instead
+# GENERATED FILE, DO NOT EDIT MANUALLY - use pnpm run github:codegen instead
 
 name: GraphQL performance tests (PR)
 
@@ -26,35 +26,140 @@ jobs:
           sudo cp k6-v0.49.0-linux-amd64/k6 /usr/local/bin/k6
           export PATH=$PATH:/usr/local/bin
       - name: Run k6 test (iteration 1)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubeComponents --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9 --env CUBE_LABEL=Photovoltaikanlagen/9 --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/DataCubeComponents.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag
+          testid=DataCubeComponents --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9
+          --env CUBE_LABEL=Photovoltaikanlagen/9 --env CHECK_TIMING=true --env
+          WORKSPACE=${{ github.workspace }} --quiet -
+          <k6/performance-tests/graphql/DataCubeComponents.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 2)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubeComponents --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3 --env CUBE_LABEL=NFI/2023-3 --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/DataCubeComponents.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag
+          testid=DataCubeComponents --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3
+          --env CUBE_LABEL=NFI/2023-3 --env CHECK_TIMING=true --env
+          WORKSPACE=${{ github.workspace }} --quiet -
+          <k6/performance-tests/graphql/DataCubeComponents.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 3)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubeComponents --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env CUBE_LABEL=Elcom --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/DataCubeComponents.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag
+          testid=DataCubeComponents --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env
+          CUBE_LABEL=Elcom --env CHECK_TIMING=true --env WORKSPACE=${{
+          github.workspace }} --quiet -
+          <k6/performance-tests/graphql/DataCubeComponents.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 4)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubeMetadata --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9 --env CUBE_LABEL=Photovoltaikanlagen/9 --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/DataCubeMetadata.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubeMetadata
+          --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9
+          --env CUBE_LABEL=Photovoltaikanlagen/9 --env CHECK_TIMING=true --env
+          WORKSPACE=${{ github.workspace }} --quiet -
+          <k6/performance-tests/graphql/DataCubeMetadata.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 5)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubeMetadata --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3 --env CUBE_LABEL=NFI/2023-3 --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/DataCubeMetadata.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubeMetadata
+          --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3
+          --env CUBE_LABEL=NFI/2023-3 --env CHECK_TIMING=true --env
+          WORKSPACE=${{ github.workspace }} --quiet -
+          <k6/performance-tests/graphql/DataCubeMetadata.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 6)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubeMetadata --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env CUBE_LABEL=Elcom --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/DataCubeMetadata.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubeMetadata
+          --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env
+          CUBE_LABEL=Elcom --env CHECK_TIMING=true --env WORKSPACE=${{
+          github.workspace }} --quiet -
+          <k6/performance-tests/graphql/DataCubeMetadata.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 7)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubeObservations --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9 --env CUBE_LABEL=Photovoltaikanlagen/9 --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/DataCubeObservations.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag
+          testid=DataCubeObservations --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9
+          --env CUBE_LABEL=Photovoltaikanlagen/9 --env CHECK_TIMING=true --env
+          WORKSPACE=${{ github.workspace }} --quiet -
+          <k6/performance-tests/graphql/DataCubeObservations.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 8)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubeObservations --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3 --env CUBE_LABEL=NFI/2023-3 --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/DataCubeObservations.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag
+          testid=DataCubeObservations --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3
+          --env CUBE_LABEL=NFI/2023-3 --env CHECK_TIMING=true --env
+          WORKSPACE=${{ github.workspace }} --quiet -
+          <k6/performance-tests/graphql/DataCubeObservations.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 9)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubeObservations --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env CUBE_LABEL=Elcom --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/DataCubeObservations.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag
+          testid=DataCubeObservations --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env
+          CUBE_LABEL=Elcom --env CHECK_TIMING=true --env WORKSPACE=${{
+          github.workspace }} --quiet -
+          <k6/performance-tests/graphql/DataCubeObservations.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 10)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubePreview --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9 --env CUBE_LABEL=Photovoltaikanlagen/9 --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/DataCubePreview.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubePreview
+          --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9
+          --env CUBE_LABEL=Photovoltaikanlagen/9 --env CHECK_TIMING=true --env
+          WORKSPACE=${{ github.workspace }} --quiet -
+          <k6/performance-tests/graphql/DataCubePreview.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 11)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubePreview --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3 --env CUBE_LABEL=NFI/2023-3 --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/DataCubePreview.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubePreview
+          --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3
+          --env CUBE_LABEL=NFI/2023-3 --env CHECK_TIMING=true --env
+          WORKSPACE=${{ github.workspace }} --quiet -
+          <k6/performance-tests/graphql/DataCubePreview.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 12)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubePreview --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env CUBE_LABEL=Elcom --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/DataCubePreview.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubePreview
+          --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env
+          CUBE_LABEL=Elcom --env CHECK_TIMING=true --env WORKSPACE=${{
+          github.workspace }} --quiet -
+          <k6/performance-tests/graphql/DataCubePreview.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 13)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=PossibleFilters --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9 --env CUBE_LABEL=Photovoltaikanlagen/9 --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/PossibleFilters.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=PossibleFilters
+          --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://energy.ld.admin.ch/sfoe/bfe_ogd84_einmalverguetung_fuer_photovoltaikanlagen/9
+          --env CUBE_LABEL=Photovoltaikanlagen/9 --env CHECK_TIMING=true --env
+          WORKSPACE=${{ github.workspace }} --quiet -
+          <k6/performance-tests/graphql/PossibleFilters.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 14)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=PossibleFilters --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3 --env CUBE_LABEL=NFI/2023-3 --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/PossibleFilters.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=PossibleFilters
+          --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://environment.ld.admin.ch/foen/nfi/nfi_C-20/cube/2023-3
+          --env CUBE_LABEL=NFI/2023-3 --env CHECK_TIMING=true --env
+          WORKSPACE=${{ github.workspace }} --quiet -
+          <k6/performance-tests/graphql/PossibleFilters.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 15)
-        run: echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=PossibleFilters --env ENV=PR --env ENDPOINT=${{ github.event.deployment_status.target_url }}/api/graphql --env CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env CUBE_LABEL=Elcom --env CHECK_TIMING=true --env WORKSPACE=${{ github.workspace }} --quiet - <k6/performance-tests/graphql/PossibleFilters.js)" >> $GITHUB_ENV
+        run:
+          echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=PossibleFilters
+          --env ENV=PR --env ENDPOINT=${{
+          github.event.deployment_status.target_url }}/api/graphql --env
+          CUBE_IRI=https://energy.ld.admin.ch/elcom/electricityprice --env
+          CUBE_LABEL=Elcom --env CHECK_TIMING=true --env WORKSPACE=${{
+          github.workspace }} --quiet -
+          <k6/performance-tests/graphql/PossibleFilters.js)" >> $GITHUB_ENV
       - name: GQL performance tests ❌
         if: ${{ env.SUMMARY != '' }}
         run: |

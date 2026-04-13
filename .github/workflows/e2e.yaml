@@ -20,15 +20,28 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
-          cache: "yarn"
-          cache-dependency-path: "**/yarn.lock"
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
-        run: yarn install --immutable --prefer-offline
+        run: pnpm install --frozen-lockfile
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run Playwright tests
         run:
-          yarn e2e -- --grep-invert @noci --shard=${{ matrix.shardIndex }}/${{
+          pnpm e2e -- --grep-invert @noci --shard=${{ matrix.shardIndex }}/${{
           matrix.shardTotal }}
         env:
           E2E_BASE_URL: ${{ github.event.deployment_status.target_url }}

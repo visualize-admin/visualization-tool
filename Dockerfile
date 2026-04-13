@@ -27,9 +27,10 @@ ARG NEXTAUTH_SECRET
 ARG NEXTAUTH_URL
 
 # Build app
-COPY package.json yarn.lock ./
+RUN corepack enable
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY app/package.json ./app/
-RUN yarn install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-http-header-size=65536 --max_old_space_size=2048"
@@ -49,11 +50,11 @@ ENV NEXTAUTH_URL=$NEXTAUTH_URL
 
 COPY ./ ./
 
-RUN yarn prisma generate
-RUN yarn build
+RUN pnpm prisma generate
+RUN pnpm build
 
 # Install only prod dependencies and start app
-RUN yarn install --frozen-lockfile --production && yarn cache clean
-CMD ["yarn", "start"]
+RUN pnpm install --frozen-lockfile --prod && pnpm store prune
+CMD ["pnpm", "start"]
 
 EXPOSE 3000
