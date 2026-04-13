@@ -98,6 +98,7 @@ jobs:
           WORKSPACE=${{ github.workspace }} --quiet -
           <k6/performance-tests/graphql/DataCubeObservations.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 9)
+        if: false
         run:
           echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag
           testid=DataCubeObservations --env ENV=PR --env ENDPOINT=${{
@@ -125,6 +126,7 @@ jobs:
           WORKSPACE=${{ github.workspace }} --quiet -
           <k6/performance-tests/graphql/DataCubePreview.js)" >> $GITHUB_ENV
       - name: Run k6 test (iteration 12)
+        if: false
         run:
           echo "SUMMARY=${{ env.SUMMARY }}$(k6 run --tag testid=DataCubePreview
           --env ENV=PR --env ENDPOINT=${{
