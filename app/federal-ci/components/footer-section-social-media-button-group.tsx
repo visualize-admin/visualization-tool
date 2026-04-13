@@ -1,11 +1,6 @@
 import { Box, styled } from "@mui/material";
-import { ComponentProps } from "react";
 
 import { b, s } from "@/federal-ci/theme";
-
-export type FooterSectionSocialMediaButtonGroupProps = ComponentProps<
-  typeof FooterSectionSocialMediaButtonGroup
->;
 
 export const FooterSectionSocialMediaButtonGroup = styled(Box)({
   display: "flex",

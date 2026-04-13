@@ -3,7 +3,7 @@ import { ComponentProps } from "react";
 
 import { BaseHeader } from "@/federal-ci/components/header";
 
-export type HeaderProps = Omit<ComponentProps<typeof BaseHeader>, "asPath">;
+type HeaderProps = Omit<ComponentProps<typeof BaseHeader>, "asPath">;
 
 export const Header = (props: HeaderProps) => {
   const router = useRouter();

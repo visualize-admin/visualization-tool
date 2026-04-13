@@ -3,7 +3,7 @@ import { Button } from "@/federal-ci/foundations";
 import { ArrowRightIcon, DownloadIcon, ExternalIcon } from "@/federal-ci/icons";
 import { c, s } from "@/federal-ci/theme";
 
-export type FooterSectionButtonProps = {
+type FooterSectionButtonProps = {
   label: string;
   disabled?: boolean;
   onClick?: () => void;

@@ -4,8 +4,6 @@ import { CSSProperties } from "react";
 import { breakpoints } from "@/federal-ci/theme/breakpoints";
 import { createTypographyVariant } from "@/federal-ci/theme/utils";
 
-export { breakpoints };
-
 /** Use for MUI theme augmentation. */
 export type FederalBreakpointOverrides = {
   xxs: true;

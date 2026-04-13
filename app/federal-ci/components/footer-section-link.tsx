@@ -3,7 +3,7 @@ import { PropsWithChildren } from "react";
 import { Link } from "@/federal-ci/foundations";
 import { c, s } from "@/federal-ci/theme";
 
-export type FooterSectionLinkProps = PropsWithChildren<{
+type FooterSectionLinkProps = PropsWithChildren<{
   href: string;
   external?: boolean;
 }>;

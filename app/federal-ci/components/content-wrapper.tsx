@@ -1,7 +1,6 @@
 import { Box, Breakpoint, SxProps } from "@mui/material";
 import { PropsWithChildren } from "react";
 
-
 import { makeStyles } from "@/federal-ci/utils/make-styles";
 
 const useStyles = makeStyles()(({ breakpoints: b, spacing: s }) => ({
@@ -44,7 +43,7 @@ const useStyles = makeStyles()(({ breakpoints: b, spacing: s }) => ({
   },
 }));
 
-export type ContentWrapperProps = PropsWithChildren<{
+type ContentWrapperProps = PropsWithChildren<{
   sx?: SxProps;
   className?: string;
 }>;

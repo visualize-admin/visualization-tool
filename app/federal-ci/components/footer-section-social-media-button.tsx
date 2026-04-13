@@ -11,7 +11,7 @@ import {
 } from "@/federal-ci/icons";
 import { t } from "@/federal-ci/theme";
 
-export type FooterSectionSocialMediaButtonProps = {
+type FooterSectionSocialMediaButtonProps = {
   type: "instagram" | "linkedin" | "facebook" | "twitter" | "youtube" | "news";
   href: string;
 };
