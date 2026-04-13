@@ -31,7 +31,7 @@ const useStyles = makeStyles()(
   })
 );
 
-export type TopBarProps = {
+type TopBarProps = {
   ContentWrapperProps?: {
     sx?: SxProps;
   };

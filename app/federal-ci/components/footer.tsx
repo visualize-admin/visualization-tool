@@ -1,7 +1,6 @@
 import { Box, Breakpoint, SxProps, Typography } from "@mui/material";
 import { Children, PropsWithChildren } from "react";
 
-
 import { ContentWrapper } from "@/federal-ci/components/content-wrapper";
 import { FooterSectionLink } from "@/federal-ci/components/footer-section-link";
 import { b, c, t } from "@/federal-ci/theme";
@@ -56,7 +55,7 @@ const useStyles = makeStyles<{ nCols: number | "auto" }>()(
   })
 );
 
-export type FooterProps = PropsWithChildren<{
+type FooterProps = PropsWithChildren<{
   bottomLinks?: {
     title: string;
     href: string;

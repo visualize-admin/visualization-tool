@@ -2,7 +2,7 @@ import { Box, Breakpoint } from "@mui/material";
 
 import { b } from "@/federal-ci/theme";
 
-export const LogoXXS = () => {
+const LogoXXS = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -27,7 +27,7 @@ export const LogoXXS = () => {
   );
 };
 
-export const LogoMD = () => {
+const LogoMD = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -52,7 +52,7 @@ export const LogoMD = () => {
   );
 };
 
-export const LogoXL = () => {
+const LogoXL = () => {
   return (
     <svg
       width={263}
@@ -453,7 +453,7 @@ export const LogoXL = () => {
   );
 };
 
-export const LogoXXXL = () => {
+const LogoXXXL = () => {
   return (
     <svg
       width={301}

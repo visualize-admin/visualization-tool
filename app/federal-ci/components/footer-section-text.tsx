@@ -2,7 +2,7 @@ import { Typography } from "@mui/material";
 
 import { b, t } from "@/federal-ci/theme";
 
-export type FooterSectionTextProps = {
+type FooterSectionTextProps = {
   text: string;
 };
 

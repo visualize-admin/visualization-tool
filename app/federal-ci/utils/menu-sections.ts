@@ -38,8 +38,4 @@ export const isNotMobileSection = (
   return !("mobileOnly" in s && s.mobileOnly === true);
 };
 
-export const isMobileSection = (s: Section): s is MobileOnlySection => {
-  return "mobileOnly" in s && s.mobileOnly === true;
-};
-
 export type Section = UniversalSection | MobileOnlySection | RecursiveSection;
