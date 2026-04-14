@@ -277,7 +277,7 @@
   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.28.6.tgz#103f466803fa0f059e82ccac271475470570d74c"
   integrity sha512-2lfu57JtzctfIrcGMz992hyLlByuzgIk58+hhGCxjKZ3rWI82NnVLjXcaTqkI2NvlcvOskZaiZ5kjUALo3Lpxg==
 
-"@babel/core@7.12.9", "@babel/core@^7.0.0", "@babel/core@^7.10.5", "@babel/core@^7.12.3", "@babel/core@^7.12.9", "@babel/core@^7.14.6", "@babel/core@^7.18.9", "@babel/core@^7.21.0", "@babel/core@^7.23.0", "@babel/core@^7.24.4", "@babel/core@^7.26.10", "@babel/core@^7.7.7":
+"@babel/core@7.12.9", "@babel/core@^7.0.0", "@babel/core@^7.10.5", "@babel/core@^7.12.3", "@babel/core@^7.18.9", "@babel/core@^7.21.0", "@babel/core@^7.23.0", "@babel/core@^7.24.4", "@babel/core@^7.26.0", "@babel/core@^7.26.10", "@babel/core@^7.7.7":
   version "7.29.0"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.29.0.tgz#5286ad785df7f79d656e88ce86e650d16ca5f322"
   integrity sha512-CGOfOJqWjg2qW/Mb6zNsDm+u5vFQ8DxXfbM09z69p5Z6+mE1ikP2jUXw+j42Pf1XTYED2Rni5f95npYeuwMDQA==
@@ -1011,7 +1011,7 @@
     js-tokens "^4.0.0"
     picocolors "^1.0.0"
 
-"@babel/parser@7.12.16", "@babel/parser@^7.0.0", "@babel/parser@^7.1.0", "@babel/parser@^7.12.13", "@babel/parser@^7.14.6", "@babel/parser@^7.15.4", "@babel/parser@^7.20.7", "@babel/parser@^7.22.0", "@babel/parser@^7.22.15", "@babel/parser@^7.23.0", "@babel/parser@^7.24.0", "@babel/parser@^7.24.4", "@babel/parser@^7.24.5", "@babel/parser@^7.25.4", "@babel/parser@^7.25.9", "@babel/parser@^7.26.2", "@babel/parser@^7.26.7", "@babel/parser@^7.27.0", "@babel/parser@^7.28.3", "@babel/parser@^7.28.6", "@babel/parser@^7.29.0", "@babel/parser@^7.29.2":
+"@babel/parser@7.12.16", "@babel/parser@^7.0.0", "@babel/parser@^7.1.0", "@babel/parser@^7.12.13", "@babel/parser@^7.15.4", "@babel/parser@^7.20.7", "@babel/parser@^7.22.0", "@babel/parser@^7.22.15", "@babel/parser@^7.23.0", "@babel/parser@^7.24.0", "@babel/parser@^7.24.4", "@babel/parser@^7.24.5", "@babel/parser@^7.25.4", "@babel/parser@^7.25.9", "@babel/parser@^7.26.0", "@babel/parser@^7.26.2", "@babel/parser@^7.26.7", "@babel/parser@^7.27.0", "@babel/parser@^7.28.3", "@babel/parser@^7.28.6", "@babel/parser@^7.29.0", "@babel/parser@^7.29.2":
   version "7.29.2"
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.29.2.tgz#58bd50b9a7951d134988a1ae177a35ef9a703ba1"
   integrity sha512-4GgRzy/+fsBa72/RZVJmGKPmZu9Byn8o4MoLpmNe1m8ZfYnz5emHLQz3U4gLud6Zwl0RZIcgiLD7Uq7ySFuDLA==
@@ -2155,13 +2155,6 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.11.2":
-  version "7.26.10"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.26.10.tgz#a07b4d8fa27af131a633d7b3524db803eb4764c2"
-  integrity sha512-2WJMeRQPHKSPemqk/awGrAiuFfzBmOIPXKizAsVhWH9YJqLZ0H+HS4c8loHGgW6utJ3E/ejXQUsiGaQy2NZ9Fw==
-  dependencies:
-    regenerator-runtime "^0.14.0"
-
 "@babel/runtime@^7.14.8":
   version "7.26.0"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.26.0.tgz#8600c2f595f277c60815256418b85356a65173c1"
@@ -2201,6 +2194,11 @@
   integrity sha512-VtPOkrdPHZsKc/clNqyi9WUA8TINkZ4cGk63UUE3u4pmB2k+ZMQRDuIOagv8UVd6j7k0T3+RRIb7beKTebNbcw==
   dependencies:
     regenerator-runtime "^0.14.0"
+
+"@babel/runtime@^7.26.0":
+  version "7.29.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.29.2.tgz#9a6e2d05f4b6692e1801cd4fb176ad823930ed5e"
+  integrity sha512-JiDShH45zKHWyGe4ZNVRrCjBz8Nh9TMmZG1kh4QTK8hCBTWBi8Da+i7s1fJw7/lYpM4ccepSNfqzZ/QvABBi5g==
 
 "@babel/standalone@^7.11.6":
   version "7.26.10"
