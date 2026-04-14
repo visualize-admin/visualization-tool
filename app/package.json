@@ -240,7 +240,6 @@
     "@vitejs/plugin-react": "^4.5.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-plugin-module-resolver": "^4.1.0",
-    "eslint-config-next": "^15.0.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "io-ts-to-json-schema": "^0.2.0",
     "jsdom": "^26.1.0",
