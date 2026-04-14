@@ -1,4 +1,4 @@
-import { Plural } from "@lingui/macro";
+import { Plural } from "@lingui/react/macro";
 import { Typography } from "@mui/material";
 
 import { SearchCubeResult } from "@/graphql/query-hooks";

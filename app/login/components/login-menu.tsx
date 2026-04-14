@@ -1,4 +1,5 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro";
 import { Button, Menu, Typography } from "@mui/material";
 import { signIn, signOut } from "next-auth/react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";

@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
 
 import { ConfiguratorAddButton } from "@/components/add-button";
 import { Annotation } from "@/config-types";

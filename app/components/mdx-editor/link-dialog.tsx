@@ -1,5 +1,5 @@
+import { t } from "@lingui/core/macro";
 import { $createLinkNode, $isLinkNode } from "@lexical/link";
-import { t } from "@lingui/macro";
 import {
   activeEditor$,
   addComposerChild$,

@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
 import { Box, Button, Popover, styled } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { color as d3Color } from "d3-color";
@@ -116,7 +116,7 @@ export const ColorPickerMenu = ({
   }, [selectedHexColor, colorId]);
 
   const handleColorChange = useCallback(
-    (color) => {
+    (color: { h: number; s: number; v: number; a: number }) => {
       const newHex = hsvaToHex(color);
       if (newHex !== selectedHexColor) {
         onChange?.(newHex);

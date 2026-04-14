@@ -1,4 +1,4 @@
-import { t } from "@lingui/macro";
+import { t } from "@lingui/core/macro";
 import { ascending, descending } from "d3-array";
 import { TimeLocaleObject } from "d3-time-format";
 import uniqBy from "lodash/uniqBy";

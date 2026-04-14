@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
 import MUITreeItem, {
   TreeItemContentClassKey,
   TreeItemProps,
@@ -127,6 +127,7 @@ const TreeItemContent = forwardRef<
     "data-multi"?: boolean;
     "data-item-click"?: (nodeId: string) => void;
     "data-is-selected"?: boolean;
+    children?: ReactNode;
   }
 >(function TreeItemContent(props, ref) {
   const {

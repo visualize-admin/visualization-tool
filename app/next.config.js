@@ -41,7 +41,7 @@ module.exports = withBundleAnalyzer(
     },
 
     experimental: {
-      instrumentationHook: true,
+      swcPlugins: [["@lingui/swc-plugin", {}]],
     },
 
     headers: async () => {

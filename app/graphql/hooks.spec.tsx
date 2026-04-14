@@ -44,7 +44,7 @@ describe("makeUseQuery", () => {
 
     return (
       <Provider value={client}>
-        <div data-testid="result">{result.data ?? "loading"}</div>
+        <div data-testid="result">{(result.data as string) ?? "loading"}</div>
       </Provider>
     );
   };

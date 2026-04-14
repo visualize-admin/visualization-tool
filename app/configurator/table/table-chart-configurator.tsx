@@ -1,4 +1,5 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro";
 import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { DragDropContext } from "react-beautiful-dnd";

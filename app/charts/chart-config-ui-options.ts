@@ -1,5 +1,5 @@
+import { defineMessage, t } from "@lingui/core/macro";
 import { i18n } from "@lingui/core";
-import { defineMessage, t } from "@lingui/macro";
 import { extent, group } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";

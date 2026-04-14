@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
 import { Button } from "@mui/material";
 import { Reorder } from "framer-motion";
 import orderBy from "lodash/orderBy";
