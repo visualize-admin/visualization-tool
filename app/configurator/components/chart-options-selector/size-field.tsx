@@ -1,4 +1,4 @@
-import { t } from "@lingui/macro";
+import { t } from "@lingui/core/macro";
 import { useCallback, useMemo } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";

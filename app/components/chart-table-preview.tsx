@@ -68,7 +68,7 @@ export const ChartTablePreviewProvider = ({
     containerHeight.current = height;
   };
   const setIsTable = useCallback(
-    (v) => {
+    (v: SetStateAction<boolean>) => {
       computeContainerHeight();
       return setIsTableRaw(v);
     },

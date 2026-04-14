@@ -9,16 +9,6 @@ import { vi } from "vitest";
 import { GRAPHQL_ENDPOINT } from "@/domain/env";
 import * as ns from "@/rdf/namespace";
 
-// Since it's a macro, it's not defined at runtime, maybe in the future
-// we should add a transformer so that test files are transformed the same
-// way as app files so that the macro is defined inside files that are ran by vitest.
-vi.mock("@lingui/macro", () => {
-  return {
-    defineMessage: (d: string) => d,
-    t: (d: string) => d,
-  };
-});
-
 vi.mock("@/graphql/client", () => {
   return {
     client: createClient({

@@ -1,4 +1,4 @@
-import { t } from "@lingui/macro";
+import { t } from "@lingui/core/macro";
 import { Link, SxProps } from "@mui/material";
 import NextLink from "next/link";
 

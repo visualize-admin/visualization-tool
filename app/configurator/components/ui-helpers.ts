@@ -1,4 +1,4 @@
-import { t } from "@lingui/macro";
+import { t } from "@lingui/core/macro";
 import { ascending } from "d3-array";
 import { scaleOrdinal } from "d3-scale";
 import { CountableTimeInterval } from "d3-time";

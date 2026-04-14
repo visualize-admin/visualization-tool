@@ -1,4 +1,5 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro";
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import FlexSearch from "flexsearch";
@@ -179,7 +180,7 @@ export const Table = () => {
 
   // Desktop row
   const renderDesktopRow = useCallback(
-    ({ index, style }) => {
+    ({ index, style }: { index: number; style: React.CSSProperties }) => {
       const row = rows[index];
       prepareRow(row);
       return (
@@ -220,7 +221,7 @@ export const Table = () => {
   );
 
   const renderMobileRow = useCallback(
-    ({ index, style }) => {
+    ({ index, style }: { index: number; style: React.CSSProperties }) => {
       const row = rows[index];
       prepareRow(row);
 
@@ -258,7 +259,7 @@ export const Table = () => {
                         whiteSpace: "nowrap",
                       }}
                     >
-                      {cell.column.Header}
+                      {cell.column.Header as React.ReactNode}
                     </Box>
                     <Flex
                       component="dd"
@@ -332,7 +333,6 @@ export const Table = () => {
           onChange={() => setCompactMobileView(!compactMobileViewEnabled)}
         />
       </Box>
-
       {showCompactMobileView && compactMobileViewEnabled ? (
         /* Compact Mobile View */
         <Box

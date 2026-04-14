@@ -1,5 +1,6 @@
+import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro";
 import { sanitizeUrl } from "@braintree/sanitize-url";
-import { t, Trans } from "@lingui/macro";
 import { SelectChangeEvent } from "@mui/material";
 import { KeyboardEvent, useEffect, useMemo, useState } from "react";
 

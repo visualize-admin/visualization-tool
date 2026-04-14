@@ -1,5 +1,5 @@
+import { defineMessage } from "@lingui/core/macro";
 import { i18n } from "@lingui/core";
-import { defineMessage } from "@lingui/macro";
 
 const fieldLabels = {
   "controls.axis.horizontal": defineMessage({

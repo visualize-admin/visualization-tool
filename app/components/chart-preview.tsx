@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import {
   DndContext,
   DragOverlay,
@@ -6,7 +7,6 @@ import {
   useDraggable,
   useDroppable,
 } from "@dnd-kit/core";
-import { Trans } from "@lingui/macro";
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
@@ -99,7 +99,7 @@ export const ChartPreview = ({ dataSource }: { dataSource: DataSource }) => {
         // Important to keep the key here to force re-rendering of the chart when
         // we switch tabs in the configurator, otherwise we end up with the wrong
         // data in the downstream hooks (useDataCubesMetadataQuery, etc.)
-        <>
+        (<>
           {!isConfiguring(state) ? (
             <DashboardInteractiveFilters
               key={state.chartConfigs.map((x) => x.key).join(",")}
@@ -115,7 +115,7 @@ export const ChartPreview = ({ dataSource }: { dataSource: DataSource }) => {
               <ChartPreviewInner dataSource={dataSource} />
             </ChartWrapper>
           </ChartTablePreviewProvider>
-        </>
+        </>)
       )}
     </MetadataPanelStoreContext.Provider>
   );
@@ -529,7 +529,7 @@ const ChartPreviewInner = ({
                   ) : (
                     // We need to have a span here to keep the space between the
                     // title and the chart (subgrid layout)
-                    <span style={{ height: 1 }} />
+                    (<span style={{ height: 1 }} />)
                   )}
                   <ActionElementsContainer>
                     <ChartMoreButton
@@ -562,7 +562,7 @@ const ChartPreviewInner = ({
                 ) : (
                   // We need to have a span here to keep the space between the
                   // title and the chart (subgrid layout)
-                  <span style={{ height: 1 }} />
+                  (<span style={{ height: 1 }} />)
                 )}
                 <Box sx={{ mt: 4 }}>
                   {metadata?.dataCubesMetadata.some(

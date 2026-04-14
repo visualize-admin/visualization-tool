@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
 import { Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useMemo } from "react";

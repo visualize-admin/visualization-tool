@@ -1,4 +1,5 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro";
 import { TreeItem, TreeView } from "@mui/lab";
 import {
   Box,
@@ -143,7 +144,7 @@ const LegendButton = ({
           </IconButton>
           {showLegend && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={layer?.legendUrl} style={{ maxWidth: "100%" }} alt="" />
+            (<img src={layer?.legendUrl} style={{ maxWidth: "100%" }} alt="" />)
           )}
         </Box>
       </Popover>
