@@ -12,14 +12,13 @@
   "license": "BSD-3-Clause",
   "private": true,
   "scripts": {
-    "dev": "preconstruct dev && NODE_OPTIONS=\"--inspect --openssl-legacy-provider \" next ./app",
-    "dev:ssl": "preconstruct dev && NODE_OPTIONS=\"--inspect --openssl-legacy-provider \" next dev --experimental-https ./app",
-    "dev:mitmproxy": "preconstruct dev && HTTP_PROXY=http://localhost:8080 NODE_EXTRA_CA_CERTS=~/.mitmproxy/mitmproxy-ca-cert.pem GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE='' NO_PROXY='localhost,127.0.0.1' next ./app",
+    "dev": "NODE_OPTIONS=\"--inspect --openssl-legacy-provider \" next ./app",
+    "dev:ssl": "NODE_OPTIONS=\"--inspect --openssl-legacy-provider \" next dev --experimental-https ./app",
+    "dev:mitmproxy": "HTTP_PROXY=http://localhost:8080 NODE_EXTRA_CA_CERTS=~/.mitmproxy/mitmproxy-ca-cert.pem GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE='' NO_PROXY='localhost,127.0.0.1' next ./app",
     "dev:rollup": "rollup -c rollup.config.js --watch",
     "db:migrate:dev": "DATABASE_URL=postgres://postgres:password@localhost:5432/visualization_tool prisma db push",
     "db:migrate": "[ -z \"$DATABASE_URL\" ] && echo 'Bypassing database migration, DATABASE_URL not set' || prisma db push",
     "build": "yarn graphql:codegen && lingui compile && rollup -c rollup.config.js && yarn storybook:build && yarn generate-json-schema && next build ./app",
-    "build:npm": "yarn graphql:codegen && lingui compile && BABEL_ENV=NPM_PACKAGE preconstruct build",
     "start": "yarn db:migrate && GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE='' NO_PROXY='localhost,127.0.0.1' next start ./app -p $PORT",
     "typecheck": "tsc --noEmit -p ./app && tsc --noEmit -p ./embed",
     "lint": "eslint app -c .eslintrc.json",
@@ -35,7 +34,6 @@
     "test:ui": "vitest --ui --root $(pwd)/app",
     "setup:dev": "yarn && yarn locales:compile && yarn db:migrate:dev",
     "postversion": "git push --follow-tags",
-    "release:npm": "yarn build:npm && yarn publish app",
     "e2e:dev": "E2E_BASE_URL=http://localhost:3000 yarn playwright test",
     "e2e:dev:ssl": "E2E_BASE_URL=https://localhost:3000 yarn playwright test",
     "e2e:ui": "E2E_BASE_URL=http://localhost:3000 yarn playwright test --ui",
@@ -62,7 +60,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
-    "@preconstruct/cli": "^2.8.12",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-replace": "^2.3.3",
@@ -109,11 +106,6 @@
     ".",
     "app"
   ],
-  "preconstruct": {
-    "packages": [
-      "app"
-    ]
-  },
   "cacheDirectories": [
     "node_modules",
     "app/.next/cache"
