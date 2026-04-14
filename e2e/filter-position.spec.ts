@@ -4,8 +4,8 @@ const { test, expect } = setup();
 
 test("Filters should be sorted by position", async ({ selectors, actions }) => {
   await actions.chart.createFrom({
-    iri: "https://environment.ld.admin.ch/foen/UBD003002/6",
-    dataSource: "Int",
+    iri: "https://environment.ld.admin.ch/foen/ubd003001/10", // "Red List" of species
+    dataSource: "Prod",
   });
 
   await selectors.edition.drawerLoaded();
@@ -18,7 +18,7 @@ test("Filters should be sorted by position", async ({ selectors, actions }) => {
     .getByLabelText("None");
   await selectorLocator.click();
 
-  await actions.mui.selectOption("Status");
+  await actions.mui.selectOption("Status IUCN");
 
   const panelLeft = await selectors.panels.drawer().within();
   await panelLeft.findByText("Selected filters", undefined, {
@@ -45,6 +45,5 @@ test("Filters should be sorted by position", async ({ selectors, actions }) => {
     "Endangered",
     "Critically endangered",
     "Regionally extinct",
-    "Extinct in the world",
   ]);
 });
