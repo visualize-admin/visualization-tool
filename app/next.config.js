@@ -4,7 +4,6 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
 const withMDX = require("@next/mdx")();
-const withPreconstruct = require("@preconstruct/next");
 const { IgnorePlugin } = require("webpack");
 
 const pkg = require("../package.json");
@@ -33,126 +32,124 @@ console.log("GitHub Repo", process.env.NEXT_PUBLIC_GITHUB_REPO);
 console.log("Extra Certs", process.env.NODE_EXTRA_CA_CERTS);
 console.log("Prevent search bots", process.env.PREVENT_SEARCH_BOTS);
 
-module.exports = withPreconstruct(
-  withBundleAnalyzer(
-    withMDX({
-      output: "standalone",
-      i18n: {
-        locales,
-        defaultLocale,
-      },
+module.exports = withBundleAnalyzer(
+  withMDX({
+    output: "standalone",
+    i18n: {
+      locales,
+      defaultLocale,
+    },
 
-      experimental: {
-        instrumentationHook: true,
-      },
+    experimental: {
+      instrumentationHook: true,
+    },
 
-      headers: async () => {
-        const headers = [];
+    headers: async () => {
+      const headers = [];
 
-        headers.push({
-          source: "/:path*",
-          headers: [
-            {
-              key: "X-Content-Type-Options",
-              value: "nosniff",
-            },
-          ],
+      headers.push({
+        source: "/:path*",
+        headers: [
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+        ],
+      });
+
+      // See https://content-security-policy.com/ & https://developers.google.com/tag-platform/security/guides/csp
+      if (!(process.env.DISABLE_CSP && process.env.DISABLE_CSP === "true")) {
+        headers[0].headers.push({
+          key: "Content-Security-Policy",
+          value: [
+            `default-src 'self' 'unsafe-inline'${
+              process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
+            } https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
+            `script-src 'self' 'unsafe-inline'${
+              process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
+            } https://vercel.live/ https://vercel.com https://*.googletagmanager.com https://api.mapbox.com https://api.maptiler.com`,
+            `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net`,
+            `font-src 'self'`,
+            `form-action 'self'`,
+
+            // * to allow WMS / WMTS endpoints
+            `connect-src 'self' *`,
+
+            // * to allow loading legend images from custom WMS / WMTS endpoints and data: to allow downloading images
+            `img-src 'self' * data: blob:`,
+            `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://visualize.admin.ch https://*.visualize.admin.ch https://vercel.live https://vercel.com https://*.vercel.app https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://api.mapbox.com https://cdn.jsdelivr.net`,
+            `worker-src 'self' blob: https://*.admin.ch https://*.vercel.app`,
+          ].join("; "),
         });
+      }
 
-        // See https://content-security-policy.com/ & https://developers.google.com/tag-platform/security/guides/csp
-        if (!(process.env.DISABLE_CSP && process.env.DISABLE_CSP === "true")) {
-          headers[0].headers.push({
-            key: "Content-Security-Policy",
-            value: [
-              `default-src 'self' 'unsafe-inline'${
-                process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
-              } https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
-              `script-src 'self' 'unsafe-inline'${
-                process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
-              } https://vercel.live/ https://vercel.com https://*.googletagmanager.com https://api.mapbox.com https://api.maptiler.com`,
-              `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net`,
-              `font-src 'self'`,
-              `form-action 'self'`,
+      if (process.env.PREVENT_SEARCH_BOTS === "true") {
+        headers[0].headers.push({
+          key: "X-Robots-Tag",
+          value: "noindex, nofollow",
+        });
+      }
 
-              // * to allow WMS / WMTS endpoints
-              `connect-src 'self' *`,
+      return headers;
+    },
 
-              // * to allow loading legend images from custom WMS / WMTS endpoints and data: to allow downloading images
-              `img-src 'self' * data: blob:`,
-              `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://visualize.admin.ch https://*.visualize.admin.ch https://vercel.live https://vercel.com https://*.vercel.app https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://api.mapbox.com https://cdn.jsdelivr.net`,
-              `worker-src 'self' blob: https://*.admin.ch https://*.vercel.app`,
-            ].join("; "),
-          });
+    pageExtensions: ["js", "ts", "tsx", "mdx"],
+
+    eslint: {
+      // Warning: Dangerously allow production builds to successfully complete even if
+      // your project has ESLint errors.
+      ignoreDuringBuilds: true,
+    },
+
+    webpack(config, { dev }) {
+      config.module.rules.push({
+        test: /\.(graphql|gql)$/,
+        exclude: /node_modules/,
+        loader: "graphql-tag/loader",
+      });
+
+      /* Enable source maps in production */
+      if (!dev) {
+        config.devtool = "source-map";
+
+        for (const plugin of config.plugins) {
+          if (plugin.constructor.name === "UglifyJsPlugin") {
+            plugin.options.sourceMap = true;
+            break;
+          }
         }
 
-        if (process.env.PREVENT_SEARCH_BOTS === "true") {
-          headers[0].headers.push({
-            key: "X-Robots-Tag",
-            value: "noindex, nofollow",
-          });
-        }
-
-        return headers;
-      },
-
-      pageExtensions: ["js", "ts", "tsx", "mdx"],
-
-      eslint: {
-        // Warning: Dangerously allow production builds to successfully complete even if
-        // your project has ESLint errors.
-        ignoreDuringBuilds: true,
-      },
-
-      webpack(config, { dev }) {
-        config.module.rules.push({
-          test: /\.(graphql|gql)$/,
-          exclude: /node_modules/,
-          loader: "graphql-tag/loader",
-        });
-
-        /* Enable source maps in production */
-        if (!dev) {
-          config.devtool = "source-map";
-
-          for (const plugin of config.plugins) {
-            if (plugin.constructor.name === "UglifyJsPlugin") {
+        if (config.optimization && config.optimization.minimizer) {
+          for (const plugin of config.optimization.minimizer) {
+            if (plugin.constructor.name === "TerserPlugin") {
               plugin.options.sourceMap = true;
               break;
             }
           }
-
-          if (config.optimization && config.optimization.minimizer) {
-            for (const plugin of config.optimization.minimizer) {
-              if (plugin.constructor.name === "TerserPlugin") {
-                plugin.options.sourceMap = true;
-                break;
-              }
-            }
-          }
         }
+      }
 
-        config.resolve.extensions.push(dev ? ".dev.ts" : ".prod.ts");
-        config.resolve.alias = {
-          ...config.resolve.alias,
-          "mapbox-gl": "maplibre-gl",
-        };
-        // For some reason these need to be ignored for serverless target
-        config.plugins.push(
-          new IgnorePlugin({ resourceRegExp: /^(pg-native|vue)$/ })
-        );
+      config.resolve.extensions.push(dev ? ".dev.ts" : ".prod.ts");
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        "mapbox-gl": "maplibre-gl",
+      };
+      // For some reason these need to be ignored for serverless target
+      config.plugins.push(
+        new IgnorePlugin({ resourceRegExp: /^(pg-native|vue)$/ })
+      );
 
-        return config;
-      },
+      return config;
+    },
 
-      async redirects() {
-        return [
-          {
-            source: "/storybook",
-            destination: "/storybook/index.html",
-            permanent: true,
-          },
-        ];
-      },
-    })
-  )
+    async redirects() {
+      return [
+        {
+          source: "/storybook",
+          destination: "/storybook/index.html",
+          permanent: true,
+        },
+      ];
+    },
+  })
 );

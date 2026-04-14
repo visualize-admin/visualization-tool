@@ -67,7 +67,6 @@ const config: KnipConfig = {
     // Used in load tests.
     "@types/k6",
     // Do we still need this?
-    "babel-core",
     "@babel/standalone",
     "@babel/runtime",
     "core-js",
