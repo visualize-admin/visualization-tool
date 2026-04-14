@@ -88,7 +88,7 @@ export const NavigationItem = ({
       >
         <Link
           className={classes.root}
-          variant="body3"
+          variant="body2"
           onClick={
             disableLink && !active
               ? (e) => {

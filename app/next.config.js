@@ -136,6 +136,10 @@ module.exports = withPreconstruct(
           ...config.resolve.alias,
           "mapbox-gl": "maplibre-gl",
         };
+
+        // Fix for pnpm symlinked modules
+        config.resolve.symlinks = true;
+
         // For some reason these need to be ignored for serverless target
         config.plugins.push(
           new IgnorePlugin({ resourceRegExp: /^(pg-native|vue)$/ })

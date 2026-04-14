@@ -16,9 +16,9 @@
     "dev:ssl": "preconstruct dev && NODE_OPTIONS=\"--inspect --openssl-legacy-provider \" next dev --experimental-https ./app",
     "dev:mitmproxy": "preconstruct dev && HTTP_PROXY=http://localhost:8080 NODE_EXTRA_CA_CERTS=~/.mitmproxy/mitmproxy-ca-cert.pem GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE='' NO_PROXY='localhost,127.0.0.1' next ./app",
     "dev:rollup": "rollup -c rollup.config.js --watch",
-    "db:migrate:dev": "DATABASE_URL=postgres://postgres:password@localhost:5432/visualization_tool prisma db push",
+    "db:migrate:dev": "DATABASE_URL=postgres://postgres:password@localhost:5432/visualization_tool prisma db push --schema=./app/prisma/schema.prisma",
     "db:migrate": "[ -z \"$DATABASE_URL\" ] && echo 'Bypassing database migration, DATABASE_URL not set' || prisma db push",
-    "build": "pnpm graphql:codegen && lingui compile && rollup -c rollup.config.js && pnpm storybook:build && pnpm generate-json-schema && next build ./app",
+    "build": "pnpm graphql:codegen && lingui compile && rollup -c rollup.config.js && pnpm generate-json-schema && pnpm prisma generate --schema=./app/prisma/schema.prisma && next build ./app",
     "build:npm": "pnpm graphql:codegen && lingui compile && BABEL_ENV=NPM_PACKAGE preconstruct build",
     "start": "pnpm db:migrate && GLOBAL_AGENT_ENVIRONMENT_VARIABLE_NAMESPACE='' NO_PROXY='localhost,127.0.0.1' next start ./app -p $PORT",
     "typecheck": "tsc --noEmit -p ./app && tsc --noEmit -p ./embed",
@@ -53,6 +53,7 @@
   "dependencies": {
     "@babel/runtime": "^7.11.2",
     "@cozy/cli-tree": "^0.3.0",
+    "@interactivethings/swiss-federal-ci": "^3.1.0",
     "core-js": "^3.15.1",
     "next": "14.2.35",
     "react": "^18.2.0",
@@ -116,6 +117,7 @@
   ],
   "pnpm": {
     "overrides": {
+      "next": "$next",
       "@babel/core": "^7.14.6",
       "@babel/parser": "^7.14.6"
     }

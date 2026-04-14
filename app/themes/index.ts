@@ -1,7 +1,6 @@
 import {
   FederalBreakpointOverrides,
   FederalColor,
-  FederalTypographyPropsVariantOverrides,
   FederalTypographyVariants,
   FederalTypographyVariantsOptions,
 } from "@interactivethings/swiss-federal-ci";
@@ -54,8 +53,11 @@ declare module "@mui/material/InputBase" {
 }
 
 declare module "@mui/material/Typography" {
-  interface TypographyPropsVariantOverrides
-    extends FederalTypographyPropsVariantOverrides {}
+  interface TypographyPropsVariantOverrides {
+    display1: true;
+    display2: true;
+    body3: true;
+  }
 }
 
 declare module "@mui/material/styles" {
