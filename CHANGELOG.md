@@ -13,6 +13,8 @@ You can also check the
 
 - Features
   - Add SPARQL endpoints in the OpenTelemetry traces
+- Refactoring
+  - Incorporate the Swiss-Federal-CI library into this repository.
 
 ### 6.4.0 – 2026-03-13
 
