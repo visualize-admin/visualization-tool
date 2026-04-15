@@ -12,20 +12,24 @@
   - 2.5. [Database migrations](#Databasemigrations)
 - 3. [Versioning](#Versioning)
 - 4. [Developing GitHub Actions](#DevelopingGitHubActions)
-- 5. [E2E tests](#E2Etests)
-- 6. [Visual regression tests](#Visualregressiontests)
-- 7. [GraphQL performance tests](#GraphQLperformancetests)
-  - 7.1. [Automation](#Automation)
-  - 7.2. [How to add or modify the tests](#Howtoaddormodifythetests)
-- 8. [Load tests](#Loadtests)
-  - 8.1. [Automation](#Automation-1)
-  - 8.2. [Local setup](#Localsetup)
-  - 8.3. [Running the tests locally](#Runningthetestslocally)
-  - 8.4.
+- 5. [Testing Strategy](#TestingStrategy)
+- 6. [E2E tests](#E2Etests)
+- 7. [Visual regression tests](#Visualregressiontests)
+- 8. [GraphQL performance tests](#GraphQLperformancetests)
+  - 8.1. [Automation](#Automation)
+  - 8.2. [How to add or modify the tests](#Howtoaddormodifythetests)
+- 9. [Load tests](#Loadtests)
+  - 9.1. [Automation](#Automation-1)
+  - 9.2. [Local setup](#Localsetup)
+  - 9.3. [Running the tests locally](#Runningthetestslocally)
+  - 9.4.
     [Recording the tests using Playwright](#RecordingthetestsusingPlaywright)
-- 9. [Authentication](#Authentication)
-  - 9.1. [Locally](#Locally)
-- 10. [Translations](#Translations)
+- 10. [Authentication](#Authentication)
+  - 10.1. [Locally](#Locally)
+- 11. [Translations](#Translations)
+- 12. [Data Flow](#DataFlow)
+- 13. [Chart Types Supported](#ChartTypesSupported)
+- 14. [Deployment](#Deployment)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -176,7 +180,15 @@ you can run a given action like e.g.
 `act deployment_status -W ".github/workflows/performance-tests-pr.yml" -e act/deployment_status.json`,
 modifying the event payload or adding a new one as needed.
 
-## 5. <a name='E2Etests'></a>E2E tests
+## 5. Testing Strategy
+
+- Unit tests with Vitest and React Testing Library
+- E2E tests with Playwright for critical user flows
+- Visual regression tests for chart rendering
+- Performance tests for GraphQL queries and data loading
+- Load testing for API endpoints
+
+## 6. <a name='E2Etests'></a>E2E tests
 
 Playwright is run on every successful deployment of a branch. Screenshots are
 made with Percy and sent directly to their cloud service for diffing.
@@ -184,7 +196,7 @@ made with Percy and sent directly to their cloud service for diffing.
 A special [test page](http://localhost:3000/en/__test) shows all the charts that
 are screenshotted. Those charts configurations are kept in the repository.
 
-## 6. <a name='Visualregressiontests'></a>Visual regression tests
+## 7. <a name='Visualregressiontests'></a>Visual regression tests
 
 It's sometimes useful to run visual regression tests, especially when modifying
 chart configurator or chart config schemas. To make sure that the changes don't
@@ -195,14 +207,14 @@ To run the tests, you should check out the instruction in
 [e2e/all-charts.spec.ts](https://github.com/visualize-admin/visualization-tool/blob/main/e2e/all-charts.spec.ts)
 file.
 
-## 7. <a name='GraphQLperformancetests'></a>GraphQL performance tests
+## 8. <a name='GraphQLperformancetests'></a>GraphQL performance tests
 
 The project uses a combination of [k6](https://k6.io) and
 [Grafana](https://grafana.com) with
 [Prometheus](https://k6.io/docs/results-output/real-time/prometheus-remote-write/)
 for GraphQL performance testing.
 
-### 7.1. <a name='Automation'></a>Automation
+### 8.1. <a name='Automation'></a>Automation
 
 To ensure constant monitoring of the performance of selected GraphQL queries,
 the performance tests are run
@@ -210,7 +222,7 @@ the performance tests are run
 against each environment of the application. The results are then sent to the
 governmental Grafana dashboards.
 
-### 7.2. <a name='Howtoaddormodifythetests'></a>How to add or modify the tests
+### 8.2. <a name='Howtoaddormodifythetests'></a>How to add or modify the tests
 
 To add or modify the performance tests, go to the
 [k6/performance-tests](https://github.com/visualize-admin/visualization-tool/tree/main/k6/performance-tests)
@@ -219,11 +231,11 @@ command; be sure to run it after modifying the
 [generate-github-actions.mjs](https://github.com/visualize-admin/visualization-tool/blob/main/k6/performance-tests/generate-github-actions.mjs)
 file.
 
-## 8. <a name='Loadtests'></a>Load tests
+## 9. <a name='Loadtests'></a>Load tests
 
 The project uses [k6](https://k6.io) for load testing.
 
-### 8.1. <a name='Automation-1'></a>Automation
+### 9.1. <a name='Automation-1'></a>Automation
 
 There is a
 [dedicated GitHub Action](https://github.com/visualize-admin/visualization-tool/actions/workflows/manual-load-test.yml)
@@ -231,13 +243,13 @@ that runs the API load tests against selected environment. You can investigate
 the results by going to Actions section in GitHub and checking the summary
 results.
 
-### 8.2. <a name='Localsetup'></a>Local setup
+### 9.2. <a name='Localsetup'></a>Local setup
 
 In order to run the tests locally, follow the
 [documentation](https://k6.io/docs/get-started/installation/) to install `k6` on
 your machine.
 
-### 8.3. <a name='Runningthetestslocally'></a>Running the tests locally
+### 9.3. <a name='Runningthetestslocally'></a>Running the tests locally
 
 To run a given load test, simply run
 
@@ -255,7 +267,7 @@ to point to the proper environment and
 `--env ENABLE_GQL_SERVER_SIDE_CACHE=(true | false)` to control whether to use
 GQL server-side caching.
 
-### 8.4. <a name='RecordingthetestsusingPlaywright'></a>Recording the tests using Playwright
+### 9.4. <a name='RecordingthetestsusingPlaywright'></a>Recording the tests using Playwright
 
 While some tests are written manually, other tests come from HAR recordings that
 span a broad set of actions. In order to record a HAR file and convert it into
@@ -278,14 +290,14 @@ parameters for the test.
 > ⚠️ You might want to remove requests to Google afterwards manually, to remove
 > false-positives of blocked requests.
 
-## 9. <a name='Authentication'></a>Authentication
+## 10. <a name='Authentication'></a>Authentication
 
 By default, authentication is provided by the Swiss federal government's eIAM
 through ADFS. We use Next-auth to integrate our application with it through a
 [custom Provider](app/auth-providers/adfs.ts). For testing locally and on Vercel
 previews we use a custom test user account using nextauth credentials provider.
 
-### 9.1. <a name='Locally'></a>Locally
+### 10.1. <a name='Locally'></a>Locally
 
 You can use the ref eIAM. ADFS environment variables should be configured in
 your `.env.local` file.
@@ -293,7 +305,7 @@ your `.env.local` file.
 Make sure to set the `NEXTAUTH_URL` environment variable to
 `https://localhost:3000` and run the dev server with `yarn dev:ssl`.
 
-## 10. <a name='Translations'></a>Translations
+## 11. <a name='Translations'></a>Translations
 
 Translations are managed via .po files. Right now, you need to manually pull and
 push the translations. The process goes:
@@ -302,3 +314,29 @@ push the translations. The process goes:
 2. Run `yarn locales:extract` to write the `en/messages.po`
 3. Edit .po files to add relevant translations for all languages.
 4. Run `yarn locales:compile` to see the changes reflected in local development.
+
+## 12. <a name='DataFlow'></a>Data Flow
+
+1. **Data Sources**: RDF/SPARQL endpoints provide cube data
+2. **GraphQL Layer**: Resolvers query RDF data and transform it
+3. **Chart Configurator**: UI for selecting datasets and configuring
+   visualizations
+4. **Chart Rendering**: D3.js-based components render interactive charts
+5. **Persistence**: Chart configurations stored in PostgreSQL via Prisma
+
+## 13. <a name='ChartTypesSupported'></a>Chart Types Supported
+
+- Area charts (single and stacked)
+- Bar charts (grouped and stacked, horizontal and vertical)
+- Line charts (single and multiple)
+- Combo charts (line+column, dual-axis, multi-line)
+- Maps (with symbols and areas)
+- Pie charts
+- Scatterplots
+- Tables
+
+## 14. <a name='Deployment'></a>Deployment
+
+- Designed for Vercel and Docker deployments
+- Database migrations run automatically on production builds
+- Environment-specific configuration through environment variables

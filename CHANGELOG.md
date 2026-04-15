@@ -15,6 +15,9 @@ You can also check the
   - Add SPARQL endpoints in the OpenTelemetry traces
 - Refactoring
   - Incorporate the Swiss-Federal-CI library into this repository.
+- Maintenance
+  - Use AGENTS.md instead of CLAUDE.md and adjust context according to recent
+    findings of studies about the impact of context files for coding AIs
 
 ### 6.4.0 – 2026-03-13
 
