@@ -1,4 +1,4 @@
-import { t } from "@lingui/macro";
+import { t } from "@lingui/core/macro";
 import { Stack } from "@mui/material";
 import get from "lodash/get";
 import { useMemo, useState } from "react";

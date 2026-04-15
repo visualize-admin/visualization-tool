@@ -1,4 +1,4 @@
-import { t } from "@lingui/macro";
+import { t } from "@lingui/core/macro";
 import groupBy from "lodash/groupBy";
 
 import { SelectOption, SelectOptionGroup } from "@/components/form";

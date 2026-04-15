@@ -1,4 +1,4 @@
-import { t } from "@lingui/macro";
+import { t } from "@lingui/core/macro";
 import { IconButton, useEventCallback } from "@mui/material";
 import { useState } from "react";
 

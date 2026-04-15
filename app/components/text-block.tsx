@@ -1,5 +1,5 @@
+import { t } from "@lingui/core/macro";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
-import { t } from "@lingui/macro";
 import { Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";

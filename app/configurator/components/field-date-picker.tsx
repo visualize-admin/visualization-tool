@@ -1,4 +1,4 @@
-import { t } from "@lingui/macro";
+import { t } from "@lingui/core/macro";
 import { DatePicker, DatePickerProps, PickersDay } from "@mui/lab";
 import { DatePickerView } from "@mui/lab/DatePicker/shared";
 import { Box, IconButton, TextField } from "@mui/material";

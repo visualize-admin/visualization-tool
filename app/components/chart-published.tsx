@@ -1,4 +1,5 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro";
 import { Box, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
@@ -444,7 +445,7 @@ const ChartPublishedInnerImpl = ({
               ) : (
                 // We need to have a span here to keep the space between the
                 // title and the chart (subgrid layout)
-                <span style={{ height: 1 }} />
+                (<span style={{ height: 1 }} />)
               )}
               {embedParams?.removeMoreOptionsButton ? null : (
                 <ActionElementsContainer>
@@ -463,7 +464,7 @@ const ChartPublishedInnerImpl = ({
             ) : (
               // We need to have a span here to keep the space between the
               // title and the chart (subgrid layout)
-              <span style={{ height: 1 }} />
+              (<span style={{ height: 1 }} />)
             )}
             <ChartControls
               dataSource={dataSource}
@@ -530,5 +531,5 @@ const ChartPublishedInnerImpl = ({
 const ChartPublishedInner = (props: ChartPublishInnerProps) => (
   // Enforce re-mounting of the component when the chart config changes
   // to ensure we do not use any out of date data.
-  <ChartPublishedInnerImpl {...props} key={props.chartConfig.key} />
+  (<ChartPublishedInnerImpl {...props} key={props.chartConfig.key} />)
 );

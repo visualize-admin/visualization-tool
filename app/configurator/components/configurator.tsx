@@ -1,4 +1,5 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro";
 import {
   Box,
   Grow,
@@ -472,10 +473,10 @@ const ConfigureChartStep = () => {
           ) : (
             // Need to use key to force re-render when switching between charts
             // or adding / removing cubes to fix stale data issues
-            <ChartConfigurator
+            (<ChartConfigurator
               key={`${chartConfig.key}_${chartConfig.cubes.length}`}
               state={state}
-            />
+            />)
           )}
         </PanelBodyWrapper>
         <PanelBodyWrapper

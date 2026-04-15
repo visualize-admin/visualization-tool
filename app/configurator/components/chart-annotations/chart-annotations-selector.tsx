@@ -1,4 +1,5 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro";
 import { Button, Typography } from "@mui/material";
 import isEqual from "lodash/isEqual";
 import omit from "lodash/omit";

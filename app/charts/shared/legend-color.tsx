@@ -1,4 +1,4 @@
-import { t } from "@lingui/macro";
+import { t } from "@lingui/core/macro";
 import { Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";

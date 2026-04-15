@@ -1,5 +1,6 @@
+import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro";
 import { useEvent } from "@dnd-kit/utilities";
-import { t, Trans } from "@lingui/macro";
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { forwardRef, useState } from "react";

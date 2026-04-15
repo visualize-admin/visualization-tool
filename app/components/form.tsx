@@ -1,5 +1,6 @@
+import { Trans } from "@lingui/react/macro";
+import { defineMessage } from "@lingui/core/macro";
 import { i18n } from "@lingui/core";
-import { defineMessage, Trans } from "@lingui/macro";
 import {
   headingsPlugin,
   linkPlugin,
@@ -747,12 +748,12 @@ export const SearchField = ({
   const { search, onSubmitSearch } = useBrowseContext();
   const onReset = InputProps?.onReset;
   const handleReset = useCallback(
-    (e) => {
+    (e: React.SyntheticEvent) => {
       if (inputRef?.current) {
         inputRef.current.value = "";
       }
 
-      onReset?.(e);
+      onReset?.(e as React.FormEvent<HTMLDivElement>);
     },
     [inputRef, onReset]
   );

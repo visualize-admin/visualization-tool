@@ -1,4 +1,5 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro";
 import { Box, Tooltip, Typography } from "@mui/material";
 
 import { Flex } from "@/components/flex";

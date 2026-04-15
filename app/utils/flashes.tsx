@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
 import { Link } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";

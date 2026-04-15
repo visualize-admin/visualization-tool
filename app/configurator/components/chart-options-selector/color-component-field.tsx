@@ -1,4 +1,5 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro";
 import { Box, Stack, Typography } from "@mui/material";
 import get from "lodash/get";
 import { useCallback, useMemo } from "react";

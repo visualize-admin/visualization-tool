@@ -63,7 +63,11 @@ export const TransitionPopper = ({
           onExit={() => setIsClosing(true)}
           style={{ transformOrigin: `var(--transform-origin)` }}
         >
-          <div>{isClosing ? childrenRef.current : children}</div>
+          <div>
+            {isClosing
+              ? (childrenRef.current as React.ReactNode)
+              : (children as React.ReactNode)}
+          </div>
         </Grow>
       )}
     </Popper>

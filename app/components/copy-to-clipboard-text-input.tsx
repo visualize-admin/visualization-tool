@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
 import { Button, Input, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import * as clipboard from "clipboard-polyfill/text";

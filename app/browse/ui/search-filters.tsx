@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
 import { Stack } from "@mui/material";
 import { AnimatePresence } from "framer-motion";
 import keyBy from "lodash/keyBy";

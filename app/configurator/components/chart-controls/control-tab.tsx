@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
 import { Box, Button, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ReactNode } from "react";

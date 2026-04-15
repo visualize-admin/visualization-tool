@@ -1,4 +1,5 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro";
 import { Box, CircularProgress, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { TimeLocaleObject } from "d3-time-format";

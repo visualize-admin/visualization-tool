@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
 
 import { RadioGroup } from "@/components/form";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
