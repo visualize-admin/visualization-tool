@@ -12,13 +12,24 @@ You can also check the
 ## Unreleased
 
 - Features
+
   - Add SPARQL endpoints in the OpenTelemetry traces
   - Add Sentry integration back
+
+- Dependency Upgrades
+
+  - Upgrade to Next.js 15
+  - Upgrade to Typescript 5.7
+  - Upgraded dependencies and package resolutions of transitive dependency to
+    address critical vulnerabilities
+
 - Refactoring
   - Incorporate the Swiss-Federal-CI library into this repository.
 - Fixes
+
   - Sanitize urls for links in tables
   - Improve CSP header configuration
+
 - Maintenance
   - Remove Google Analytics integration (it is no longer in use)
   - Set Maptiler API key from `MAPTILER_API_KEY` environment variable at
@@ -28,6 +39,8 @@ You can also check the
   - Remove LINDASOld endpoint configurations
 - Documentation
   - added publiccode.yml for discoverability
+  - Remove npm package publish workflow
+  - Replace rollup build to esbuild for the embed script
 
 ### 6.4.0 – 2026-03-13
 
