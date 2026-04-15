@@ -1,5 +1,6 @@
 // This file sets a custom webpack configuration to use your Next.js app.
 // https://nextjs.org/docs/api-reference/next.config.js/introduction
+const path = require("path");
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
@@ -40,8 +41,13 @@ module.exports = withBundleAnalyzer(
       defaultLocale,
     },
 
-    experimental: {
-      swcPlugins: [["@lingui/swc-plugin", {}]],
+    turbopack: {
+      resolveAlias: {
+        "@/graphql/devtools":
+          process.env.NODE_ENV === "development"
+            ? path.resolve(__dirname, "./graphql/devtools.dev.ts")
+            : path.resolve(__dirname, "./graphql/devtools.prod.ts"),
+      },
     },
 
     headers: async () => {
