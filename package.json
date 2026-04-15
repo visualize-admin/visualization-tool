@@ -59,7 +59,6 @@
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.0",
     "@storybook/addon-essentials": "8.6.12",
     "@storybook/addon-interactions": "8.6.12",
     "@storybook/addon-links": "8.6.12",
