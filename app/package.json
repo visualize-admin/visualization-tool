@@ -169,6 +169,7 @@
     "@graphql-codegen/typescript-urql": "^2.0.9",
     "@graphql-tools/schema": "^10.0.16",
     "@lingui/cli": "^5.9.5",
+    "@lingui/swc-plugin": "^5.11.0",
     "@lingui/vite-plugin": "^5.9.5",
     "@mdx-js/loader": "^1.6.22",
     "@playwright-testing-library/test": "^4.5.0",
