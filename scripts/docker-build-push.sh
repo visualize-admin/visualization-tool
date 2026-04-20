@@ -19,7 +19,6 @@ docker build \
     --label "COMMIT=$CI_COMMIT_SHA" \
     --label "TAGS=$DOCKER_IMAGE_TAGS" \
     --build-arg COMMIT=$CI_COMMIT_SHA \
-    --build-arg MAPTILER_STYLE_KEY=$MAPTILER_STYLE_KEY \
     --build-arg VECTOR_TILE_URL=$VECTOR_TILE_URL \
     --build-arg ADFS_ID=$ADFS_ID \
     --build-arg ADFS_ISSUER=$ADFS_ISSUER \

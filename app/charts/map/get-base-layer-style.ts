@@ -2,7 +2,7 @@ import merge from "lodash/merge";
 import { useMemo } from "react";
 import { MapboxStyle } from "react-map-gl";
 
-import { BASE_VECTOR_TILE_URL, MAPTILER_STYLE_KEY } from "@/domain/env";
+import { BASE_VECTOR_TILE_URL, MAPTILER_API_KEY } from "@/domain/env";
 
 import { Locale } from "../../locales/locales";
 
@@ -10,7 +10,7 @@ import greyStyleBase from "./grey.json";
 import { hasLayout, mapLayers, replaceStyleTokens } from "./style-helpers";
 
 const tokens = {
-  "{key}": MAPTILER_STYLE_KEY,
+  "{key}": MAPTILER_API_KEY,
   "<BASE_VECTOR_TILE>": BASE_VECTOR_TILE_URL,
 };
 

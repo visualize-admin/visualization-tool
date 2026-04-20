@@ -24,6 +24,7 @@ export default async function clientEnvApi(
           PUBLIC_URL: process.env.PUBLIC_URL,
           GRAPHQL_ENDPOINT: process.env.GRAPHQL_ENDPOINT,
           ADFS_PROFILE_URL: process.env.ADFS_PROFILE_URL,
+          MAPTILER_API_KEY: process.env.MAPTILER_API_KEY,
         })}`;
 
         if (result) {
