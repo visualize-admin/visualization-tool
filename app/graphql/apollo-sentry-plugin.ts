@@ -1,5 +1,9 @@
 import * as Sentry from "@sentry/nextjs";
-import { ApolloServerPlugin, GraphQLRequest } from "apollo-server-plugin-base";
+
+import type {
+  ApolloServerPlugin,
+  GraphQLRequest,
+} from "apollo-server-plugin-base";
 
 const getDataCubeIri = (req: GraphQLRequest) => {
   const { variables, operationName } = req;

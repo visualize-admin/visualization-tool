@@ -239,6 +239,7 @@
     "@types/use-sync-external-store": "^0.0.6",
     "@types/wellknown": "^0.5.1",
     "@vitejs/plugin-react": "^4.5.0",
+    "apollo-server-plugin-base": "3",
     "babel-core": "^7.0.0-bridge.0",
     "babel-plugin-module-resolver": "^4.1.0",
     "eslint-plugin-unused-imports": "^4.1.4",
