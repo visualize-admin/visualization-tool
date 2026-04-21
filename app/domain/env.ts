@@ -51,7 +51,6 @@ export const ADFS_PROFILE_URL =
 export const MAPTILER_API_KEY =
   clientEnv?.MAPTILER_API_KEY ?? process.env.MAPTILER_API_KEY ?? "";
 
-export const SENTRY_CSP = process.env.NEXT_PUBLIC_SENTRY_CSP ?? "";
 export const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN;
 export const SENTRY_ENV = process.env.NEXT_PUBLIC_SENTRY_ENV;
 
