@@ -1,10 +1,12 @@
-// This file sets a custom webpack configuration to use your Next.js app.
+// This file sets a custom webpack configuration to use your Next.js app with Sentry.
 // https://nextjs.org/docs/api-reference/next.config.js/introduction
+// https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
 const withMDX = require("@next/mdx")();
 const withPreconstruct = require("@preconstruct/next");
+const { withSentryConfig } = require("@sentry/nextjs");
 const { IgnorePlugin } = require("webpack");
 
 const pkg = require("../package.json");
@@ -33,7 +35,11 @@ console.log("GitHub Repo", process.env.NEXT_PUBLIC_GITHUB_REPO);
 console.log("Extra Certs", process.env.NODE_EXTRA_CA_CERTS);
 console.log("Prevent search bots", process.env.PREVENT_SEARCH_BOTS);
 
-module.exports = withPreconstruct(
+if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+  console.log("Sentry DSN:", process.env.NEXT_PUBLIC_SENTRY_DSN);
+}
+
+module.exports = withSentryConfig(withPreconstruct(
   withBundleAnalyzer(
     withMDX({
       output: "standalone",
@@ -61,15 +67,14 @@ module.exports = withPreconstruct(
 
         // See https://content-security-policy.com/ & https://developers.google.com/tag-platform/security/guides/csp
         if (!(process.env.DISABLE_CSP && process.env.DISABLE_CSP === "true")) {
+          const sentryCSP = process.env.NEXT_PUBLIC_SENTRY_CSP ? ` ${process.env.NEXT_PUBLIC_SENTRY_CSP}` : "";
           headers[0].headers.push({
             key: "Content-Security-Policy",
             value: [
-              `default-src 'self' 'unsafe-inline'${
-                process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
-              } https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
-              `script-src 'self' 'unsafe-inline'${
-                process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
-              } https://vercel.live/ https://vercel.com https://*.googletagmanager.com https://api.mapbox.com https://api.maptiler.com`,
+              `default-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
+              }${sentryCSP} https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
+              `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""
+              }${sentryCSP} https://vercel.live/ https://vercel.com https://*.googletagmanager.com https://api.mapbox.com https://api.maptiler.com`,
               `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net`,
               `font-src 'self'`,
               `form-action 'self'`,
@@ -103,7 +108,7 @@ module.exports = withPreconstruct(
         ignoreDuringBuilds: true,
       },
 
-      webpack(config, { dev }) {
+      webpack (config, { dev }) {
         config.module.rules.push({
           test: /\.(graphql|gql)$/,
           exclude: /node_modules/,
@@ -144,7 +149,7 @@ module.exports = withPreconstruct(
         return config;
       },
 
-      async redirects() {
+      async redirects () {
         return [
           {
             source: "/storybook",
@@ -154,5 +159,8 @@ module.exports = withPreconstruct(
         ];
       },
     })
-  )
-);
+  ),
+  { silent: true },
+  { hideSourcemaps: true }
+));
+
