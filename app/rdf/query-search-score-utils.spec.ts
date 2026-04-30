@@ -22,4 +22,12 @@ describe("highlighting search words in query", () => {
       expect(result).toEqual(t[2]);
     }
   });
+
+  it("should escape HTML in the text and regex-meta in the query", () => {
+    expect(highlight("<img src=x onerror=alert(1)>", "img")).toEqual(
+      "&lt;<b>img</b> src=x onerror=alert(1)&gt;"
+    );
+    expect(highlight("a.b", "a.b")).toEqual("<b>a.b</b>");
+    expect(highlight("hello", "")).toEqual("hello");
+  });
 });

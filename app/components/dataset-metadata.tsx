@@ -8,6 +8,7 @@ import {
   Typography,
   TypographyProps,
 } from "@mui/material";
+import DOMPurify from "isomorphic-dompurify";
 import sortBy from "lodash/sortBy";
 import NextLink from "next/link";
 import { ReactElement, ReactNode } from "react";
@@ -57,7 +58,7 @@ export const DatasetMetadata = ({
                 component="span"
                 sx={{ "> a": { color: "grey.900" } }}
                 dangerouslySetInnerHTML={{
-                  __html: cube.publisher,
+                  __html: DOMPurify.sanitize(cube.publisher),
                 }}
               />
             </DatasetMetadataBody>
@@ -104,7 +105,7 @@ export const DatasetMetadata = ({
           <DatasetMetadataBody sx={{ mt: "1px" }}>
             {cube.landingPage ? (
               <DatasetMetadataLink
-                href={cube.landingPage}
+                href={DOMPurify.sanitize(cube.landingPage)}
                 external
                 label={
                   <Trans id="dataset.metadata.learnmore">

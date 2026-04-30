@@ -1,4 +1,5 @@
 import { Box, Typography, useTheme } from "@mui/material";
+import DOMPurify from "isomorphic-dompurify";
 import uniq from "lodash/uniq";
 import NextImage from "next/image";
 
@@ -106,7 +107,9 @@ export const MapCustomLayersLegend = ({
                             fontSize: `${theme.typography.caption.fontSize} !important`,
                           },
                         }}
-                        dangerouslySetInnerHTML={{ __html: layer.description }}
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(layer.description),
+                        }}
                       />
                     }
                     sx={{ width: "fit-content" }}

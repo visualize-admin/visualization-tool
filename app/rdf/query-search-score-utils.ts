@@ -1,3 +1,6 @@
+import escapeHtml from "lodash/escape";
+import escapeRegExp from "lodash/escapeRegExp";
+
 import { SearchCube } from "@/domain/data";
 
 export const fields = {
@@ -85,6 +88,18 @@ export const computeScores = (
 };
 
 export const highlight = (text: string, query: string) => {
-  const re = new RegExp(query.toLowerCase().split(" ").join("|"), "gi");
-  return text.replace(re, (m) => `<b>${m}</b>`);
+  const escapedText = escapeHtml(text);
+  const pattern = query
+    .toLowerCase()
+    .split(" ")
+    .filter((part) => part.length > 0)
+    .map(escapeRegExp)
+    .join("|");
+
+  if (!pattern) {
+    return escapedText;
+  }
+
+  const re = new RegExp(pattern, "gi");
+  return escapedText.replace(re, (m) => `<b>${m}</b>`);
 };
