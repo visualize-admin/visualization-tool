@@ -20,10 +20,9 @@ import * as federalTheme from "@/themes/theme";
 import { AsyncLocalizationProvider } from "@/utils/async-localization-provider";
 import { EventEmitterProvider } from "@/utils/event-emitter";
 import { Flashes } from "@/utils/flashes";
-import { analyticsPageView } from "@/utils/google-analytics";
-import "@/utils/nprogress.css";
 import { useNProgress } from "@/utils/use-nprogress";
 
+import "@/utils/nprogress.css";
 import "@/configurator/components/color-picker.css";
 
 const GQLDebugPanel = dynamic(
@@ -45,12 +44,8 @@ export default function App({
     i18n.activate(locale);
   }
 
-  // Initialize analytics
+  // Activate the right locale on route change
   useEffect(() => {
-    const handleRouteChange = (url: string) => {
-      analyticsPageView(url);
-    };
-
     const handleRouteStart = (url: string) => {
       const locale = parseLocaleString(url.slice(1));
       if (i18n.locale !== locale) {
@@ -59,10 +54,8 @@ export default function App({
     };
 
     routerEvents.on("routeChangeStart", handleRouteStart);
-    routerEvents.on("routeChangeComplete", handleRouteChange);
     return () => {
       routerEvents.off("routeChangeStart", handleRouteStart);
-      routerEvents.off("routeChangeComplete", handleRouteChange);
     };
   }, [routerEvents]);
 

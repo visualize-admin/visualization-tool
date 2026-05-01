@@ -75,9 +75,9 @@ module.exports = withSentryConfig(
 
           const buildCSP = (frameAncestors) =>
             [
-              `default-src 'self' 'unsafe-inline'${unsafeEval}${sentryCSP}${vercelDefault} https://*.googletagmanager.com`,
-              `script-src 'self' 'unsafe-inline'${unsafeEval}${sentryCSP}${vercelScript} https://*.googletagmanager.com https://api.mapbox.com https://api.maptiler.com`,
-              `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://visualize.admin.ch https://*.visualize.admin.ch${vercelScriptElem} https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://api.mapbox.com`,
+              `default-src 'self' 'unsafe-inline'${unsafeEval}${sentryCSP}${vercelDefault}`,
+              `script-src 'self' 'unsafe-inline'${unsafeEval}${sentryCSP}${vercelScript} https://api.mapbox.com https://api.maptiler.com`,
+              `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://visualize.admin.ch https://*.visualize.admin.ch${vercelScriptElem} https://api.mapbox.com`,
               `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
               `font-src 'self'`,
 
