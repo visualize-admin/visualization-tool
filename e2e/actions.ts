@@ -4,11 +4,22 @@ import { TestContext } from "./types";
 type ActionTestContext = TestContext & { selectors: Selectors };
 
 const selectActiveEditorField =
-  ({ selectors, within }: ActionTestContext) =>
+  ({ selectors, within, page }: ActionTestContext) =>
   async (field: string) => {
     const chartOptions =
       selectors.edition.controlSectionByTitle("Chart Options");
+    await chartOptions.waitFor({ state: "visible", timeout: 10000 });
     await chartOptions.scrollIntoViewIfNeeded();
+    
+    const sectionTitle = chartOptions.locator('h6:text-is("Chart Options")');
+    const fieldText = chartOptions.getByText(field, { exact: false });
+    const isFieldVisible = await fieldText.isVisible().catch(() => false);
+    
+    if (!isFieldVisible) {
+      await sectionTitle.click();
+      await page.waitForTimeout(500);
+    }
+    
     const fieldLocator = await within(chartOptions).findByText(
       field,
       undefined,
