@@ -2,7 +2,6 @@ import { Config as PrismaConfig } from "@prisma/client";
 import "iframe-resizer/js/iframeResizer.contentWindow.js";
 import { GetServerSideProps } from "next";
 import ErrorPage from "next/error";
-import Head from "next/head";
 import "@open-iframe-resizer/core";
 
 import { ChartPublished } from "@/components/chart-published";
@@ -62,30 +61,12 @@ const EmbedPage = (props: PageProps) => {
   } = props;
 
   return (
-    <>
-      <Head>
-        <meta
-          httpEquiv="Content-Security-Policy"
-          content={[
-            `default-src 'self' 'unsafe-inline' data: https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
-            `script-src 'unsafe-inline' 'unsafe-eval' 'self' https://api.mapbox.com https://api.maptiler.com https://*.sentry.io https://vercel.live/ https://vercel.com https://*.googletagmanager.com`,
-            `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net`,
-            `font-src 'self'`,
-            `form-action 'self'`,
-            `connect-src 'self' *`,
-            `img-src 'self' * data: blob:`,
-            `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://visualize.admin.ch https://*.visualize.admin.ch https://vercel.live https://vercel.com https://*.vercel.app https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://api.mapbox.com https://cdn.jsdelivr.net`,
-            `worker-src 'self' blob: https://*.admin.ch https://*.vercel.app`,
-          ].join("; ")}
-        />
-      </Head>
-      <ConfiguratorStateProvider
-        chartId="published"
-        initialState={{ ...state, state: "PUBLISHED" }}
-      >
-        <ChartPublished configKey={key} embedParams={embedParams} />
-      </ConfiguratorStateProvider>
-    </>
+    <ConfiguratorStateProvider
+      chartId="published"
+      initialState={{ ...state, state: "PUBLISHED" }}
+    >
+      <ChartPublished configKey={key} embedParams={embedParams} />
+    </ConfiguratorStateProvider>
   );
 };
 
