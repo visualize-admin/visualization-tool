@@ -1,3 +1,4 @@
+import { sanitizeUrl } from "@braintree/sanitize-url";
 import { Link, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ReactNode } from "react";
@@ -39,7 +40,7 @@ const getLinkHref = (
     ? `${iriValue}`.split("/").pop() || iriValue
     : rawValue;
 
-  return `${baseUrl}${value}`;
+  return sanitizeUrl(`${baseUrl}${value}`);
 };
 
 export const LinkedCellWrapper = ({
