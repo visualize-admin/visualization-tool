@@ -1,5 +1,4 @@
 import { KnipConfig } from "knip";
-import mdx from "knip/dist/compilers/mdx";
 
 const config: KnipConfig = {
   paths: {
@@ -77,7 +76,7 @@ const config: KnipConfig = {
     unresolved: "warn",
   },
   compilers: {
-    mdx: mdx.compiler,
+    mdx: true,
   },
 };
 
