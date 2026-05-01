@@ -95,8 +95,16 @@ module.exports = withSentryConfig(
               `upgrade-insecure-requests`,
             ].join("; ");
 
-          const cspDisabled =
-            process.env.DISABLE_CSP && process.env.DISABLE_CSP === "true";
+          // When CSP_REPORT_ONLY=true, emit the report-only header so violations
+          // are surfaced to the browser console without being enforced. Useful
+          // for rolling out tighter policies. The header is otherwise always
+          // present — there is intentionally no kill-switch to fully disable CSP.
+          const reportOnly =
+            process.env.CSP_REPORT_ONLY &&
+            process.env.CSP_REPORT_ONLY === "true";
+          const cspKey = reportOnly
+            ? "Content-Security-Policy-Report-Only"
+            : "Content-Security-Policy";
 
           const baseHeaders = [
             { key: "X-Content-Type-Options", value: "nosniff" },
@@ -113,14 +121,13 @@ module.exports = withSentryConfig(
           // Catch-all — block iframing to prevent clickjacking on the editor / browser / login UI.
           // Must come first: when multiple Next.js header rules match the same path,
           // later rules override earlier ones for the same header key.
-          const defaultHeaders = [...baseHeaders];
-          if (!cspDisabled) {
-            defaultHeaders.push({
-              key: "Content-Security-Policy",
-              value: buildCSP("'self'"),
-            });
-          }
-          headers.push({ source: "/:path*", headers: defaultHeaders });
+          headers.push({
+            source: "/:path*",
+            headers: [
+              ...baseHeaders,
+              { key: cspKey, value: buildCSP("'self'") },
+            ],
+          });
 
           // Routes that are intended to be embedded in third-party iframes.
           // These override the catch-all CSP to allow `frame-ancestors *`.
@@ -132,14 +139,10 @@ module.exports = withSentryConfig(
             "/api/embed-aem-ext/:path*",
           ];
           for (const source of embeddableSources) {
-            const h = [...baseHeaders];
-            if (!cspDisabled) {
-              h.push({
-                key: "Content-Security-Policy",
-                value: buildCSP("*"),
-              });
-            }
-            headers.push({ source, headers: h });
+            headers.push({
+              source,
+              headers: [...baseHeaders, { key: cspKey, value: buildCSP("*") }],
+            });
           }
 
           return headers;
