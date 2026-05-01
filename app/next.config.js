@@ -47,10 +47,6 @@ module.exports = withSentryConfig(
           defaultLocale,
         },
 
-        experimental: {
-          instrumentationHook: true,
-        },
-
         headers: async () => {
           // See https://content-security-policy.com/ & https://developers.google.com/tag-platform/security/guides/csp
           const isDev = process.env.NODE_ENV === "development";
