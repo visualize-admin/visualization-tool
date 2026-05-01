@@ -1520,7 +1520,13 @@ export const chartConfigMigrations: Migration[] = [
       const newConfig = { ...config, version: "4.4.0" };
 
       if (newConfig.fields.segment) {
-        newConfig.fields.segment.showValuesMapping = {};
+        newConfig.fields = {
+          ...newConfig.fields,
+          segment: {
+            ...newConfig.fields.segment,
+            showValuesMapping: {},
+          },
+        };
       }
 
       return newConfig;
@@ -1529,7 +1535,11 @@ export const chartConfigMigrations: Migration[] = [
       const newConfig = { ...config, version: "4.3.0" };
 
       if (newConfig.fields.segment) {
-        delete newConfig.fields.segment.showValuesMapping;
+        const { showValuesMapping, ...segment } = newConfig.fields.segment;
+        newConfig.fields = {
+          ...newConfig.fields,
+          segment,
+        };
       }
 
       return newConfig;
