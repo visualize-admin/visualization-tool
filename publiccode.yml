@@ -1,0 +1,47 @@
+publiccodeYmlVersion: 0.5.0
+name: Visualize Swiss Open Government Data
+url: https://github.com/visualize-admin/visualization-tool
+landingURL: https://visualize.admin.ch
+softwareVersion: v6.4.0
+releaseDate: 2026-03-13
+platforms:
+  - web
+categories:
+  - data-visualization
+developmentStatus: stable
+softwareType: standalone/web
+organisation:
+  uri: https://ld.admin.ch/office/VII.1.7
+  name: Federal Office for the Environment (FOEN)
+description:
+  en:
+    localisedName: Visualize Swiss Open Government Data
+    shortDescription:
+      Visualize is an application that allows you to create and embed
+      visualisations from any dataset provided by the LINDAS Linked Data
+      Service.
+    longDescription: >-
+      Visualize is a Next.js-based web application for creating interactive data
+      visualizations from any dataset provided by the LINDAS Linked Data.
+
+      Users can configure and render various chart types (area, bar, line, maps,
+      pie, scatterplots, tables) through an intuitive interface, with support
+      for embedding, multilingual content, and persistent chart configurations.
+    features:
+      - linked-data
+      - charts
+      - lindas
+legal:
+  license: BSD-3-Clause
+maintenance:
+  type: internal
+  contacts:
+    - name: Bundesamt für Umwelt
+      email: visualize@bafu.admin.ch
+localisation:
+  localisationReady: true
+  availableLanguages:
+    - fr
+    - de
+    - it
+    - en

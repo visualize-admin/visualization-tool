@@ -23,6 +23,8 @@ You can also check the
     runtime, to avoid having to rebuild the application when the key is rotated
   - Use AGENTS.md instead of CLAUDE.md and adjust context according to recent
     findings of studies about the impact of context files for coding AIs
+- Documentation
+  - added publiccode.yml for discoverability
 
 ### 6.4.0 – 2026-03-13
 
@@ -1438,7 +1440,6 @@ visualize.admin.ch are now noticeable faster.
 #### Performance
 
 - Improved performance of cube data fetching
-
   - Added LRU cache to min max queries
   - Added query cache to bulk queries
   - Ordered filter so that non-discriminant filter are last
