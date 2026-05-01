@@ -18,6 +18,7 @@ You can also check the
   - Incorporate the Swiss-Federal-CI library into this repository.
 - Fixes
   - Sanitize urls for links in tables
+  - Improve CSP header configuration
 - Maintenance
   - Set Maptiler API key from `MAPTILER_API_KEY` environment variable at
     runtime, to avoid having to rebuild the application when the key is rotated
