@@ -21,12 +21,12 @@ description:
       visualisations from any dataset provided by the LINDAS Linked Data
       Service.
     longDescription: >-
-      Visualize is a Next.js-based web application for creating interactive data
-      visualizations from any dataset provided by the LINDAS Linked Data.
-
-      Users can configure and render various chart types (area, bar, line, maps,
-      pie, scatterplots, tables) through an intuitive interface, with support
-      for embedding, multilingual content, and persistent chart configurations.
+      Visualize is a web application for creating interactive data visualizations
+      from any dataset provided by the LINDAS Linked Data. The data must be modeled 
+      according to the https://cube.link schema. 
+      
+      Users can configure and render various chart types (area, bar, line, maps, pie, scatterplots, tables)
+      through an intuitive interface, with support for embedding, multilingual content, and persistent chart configurations.
     features:
       - linked-data
       - charts
