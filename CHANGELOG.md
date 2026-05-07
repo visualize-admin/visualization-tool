@@ -17,7 +17,7 @@ You can also check the
 - Refactoring
   - Incorporate the Swiss-Federal-CI library into this repository.
 - Fixes
-  - Sanitize urls for links in tables
+  - Sanitize URLs from external sources
   - Improve CSP header configuration
 - Maintenance
   - Remove Google Analytics integration (it is no longer in use)
