@@ -1,6 +1,5 @@
 import { bugReportTemplates } from "@/templates/email/bug-report";
 import { featureRequestTemplates } from "@/templates/email/feature-request";
-import { newsletterTemplates } from "@/templates/email/newsletter";
 import { Divider } from "@mui/material";
 import { createMailtoLink } from "../../../app/templates/email";
 import { OWNER_ORGANIZATION_EMAIL } from "../../../app/templates/email/config";
@@ -24,50 +23,4 @@ export const contentId = "home";
   example1Description="Choose from a wide range of chart types and configure them according to your needs."
   example2Headline="Use powerful customizations"
   example2Description="With the help of custom filters and data segmentation, even complex issues can be visualized."
-/>
-<Actions
-  contribute={{
-    headline: "Would you like to visualize your own data?",
-    description:
-      "Find out how you can integrate your data into the LINDAS Linked Data Service.",
-    buttonLabel: "Learn how",
-    buttonUrl: "https://lindas.admin.ch/?lang=en",
-  }}
-  newsletter={{
-    headline: "Subscribe to our Newsletter",
-    description: "Stay up to date and subscribe to our newsletter.",
-    buttonLabel: "Subscribe",
-    buttonUrl: createMailtoLink("en", {
-      recipients: {
-        to: OWNER_ORGANIZATION_EMAIL,
-      },
-      template: newsletterTemplates,
-      subject: "Visualize Newsletter Subscribe",
-    }),
-  }}
-  bugReport={{
-    headline: "Found a bug?",
-    description: "Please report the bug, so can fix it as soon as possible",
-    buttonLabel: "Report a bug",
-    buttonUrl: createMailtoLink("en", {
-      recipients: {
-        to: OWNER_ORGANIZATION_EMAIL,
-      },
-      template: bugReportTemplates,
-      subject: "Visualize Bug Report",
-    }),
-  }}
-  featureRequest={{
-    headline: "New feature request",
-    description:
-      "Submit your feature requests today and help shape the future of our platform!",
-    buttonLabel: "Submit",
-    buttonUrl: createMailtoLink("en", {
-      recipients: {
-        to: OWNER_ORGANIZATION_EMAIL,
-      },
-      template: featureRequestTemplates,
-      subject: "Visualize Feature Request",
-    }),
-  }}
 />

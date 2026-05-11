@@ -1,6 +1,5 @@
 import { bugReportTemplates } from "@/templates/email/bug-report";
 import { featureRequestTemplates } from "@/templates/email/feature-request";
-import { newsletterTemplates } from "@/templates/email/newsletter";
 import { Divider } from "@mui/material";
 import { createMailtoLink } from "../../../app/templates/email";
 import { OWNER_ORGANIZATION_EMAIL } from "../../../app/templates/email/config";
@@ -24,51 +23,4 @@ export const contentId = "home";
   example1Description="Choisissez un type de graphique et configurez-le selon vos besoins."
   example2Headline="Exploitez les nombreuses options disponibles"
   example2Description="Grâce aux filtres et aux options d'affichage, même des problèmes complexes peuvent être visualisés."
-/>
-<Actions
-  contribute={{
-    headline: "Voulez-vous visualiser vos propres données?",
-    description:
-      "Apprenez comment intégrer vos données au service LINDAS (Linked Data).",
-    buttonLabel: "En savoir plus",
-    buttonUrl: "https://lindas.admin.ch/?lang=fr",
-  }}
-  newsletter={{
-    headline: "S'abonner à notre newsletter",
-    description: "Restez informé et abonnez-vous à notre newsletter.",
-    buttonLabel: "S'abonner",
-    buttonUrl: createMailtoLink("fr", {
-      recipients: {
-        to: OWNER_ORGANIZATION_EMAIL,
-      },
-      template: newsletterTemplates,
-      subject: "Visualize Newsletter Abonnement",
-    }),
-  }}
-  bugReport={{
-    headline: "Un bug a été trouvé?",
-    description:
-      "Veuillez nous signaler le bug afin que nous puissions le corriger le plus rapidement possible.",
-    buttonLabel: "Signaler un bug",
-    buttonUrl: createMailtoLink("fr", {
-      recipients: {
-        to: OWNER_ORGANIZATION_EMAIL,
-      },
-      template: bugReportTemplates,
-      subject: "Visualize Bug Report",
-    }),
-  }}
-  featureRequest={{
-    headline: "Nouvelle demande de fonctionnalité",
-    description:
-      "Envoyez-nous vos demandes de fonctionnalités dès aujourd'hui et aidez à façonner l'avenir de notre plateforme!",
-    buttonLabel: "Soumettre",
-    buttonUrl: createMailtoLink("fr", {
-      recipients: {
-        to: OWNER_ORGANIZATION_EMAIL,
-      },
-      template: featureRequestTemplates,
-      subject: "Visualize Feature Request",
-    }),
-  }}
 />
