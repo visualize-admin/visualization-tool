@@ -13,7 +13,6 @@ export default async function clientEnvApi(
     case "GET":
       try {
         const result = `window.__clientEnv__=${JSON.stringify({
-          GA_TRACKING_ID: process.env.GA_TRACKING_ID,
           ENDPOINT: process.env.ENDPOINT,
           WHITELISTED_DATA_SOURCES:
             process.env.WHITELISTED_DATA_SOURCES !== undefined
