@@ -368,6 +368,37 @@ describe("config migrations", () => {
     expect(decodedMapConfig).toBeDefined();
   });
 
+  it("should migrate table links.baseUrl from string to per-locale object", async () => {
+    const tableConfigV5_2_0 = {
+      version: "5.2.0",
+      chartType: "table",
+      links: {
+        enabled: true,
+        baseUrl: "https://example.com/",
+        componentId: "",
+        targetComponentId: "",
+      },
+    };
+
+    const migrated = (await migrateChartConfig(tableConfigV5_2_0, {
+      toVersion: "5.3.0",
+      migrationProps: CONFIGURATOR_STATE,
+    })) as any;
+
+    expect(migrated.links.baseUrl).toEqual({
+      de: "https://example.com/",
+      fr: "https://example.com/",
+      it: "https://example.com/",
+      en: "https://example.com/",
+    });
+
+    const downgraded = (await migrateChartConfig(migrated, {
+      toVersion: "5.2.0",
+      migrationProps: CONFIGURATOR_STATE,
+    })) as any;
+    expect(downgraded.links.baseUrl).toBe("https://example.com/");
+  });
+
   it("should not migrate joinBy iris", async () => {
     const migratedConfig = await migrateChartConfig(configJoinedCubes.table, {
       toVersion: CHART_CONFIG_VERSION,

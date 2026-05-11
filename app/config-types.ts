@@ -825,9 +825,17 @@ const TableSettings = t.type({
 });
 export type TableSettings = t.TypeOf<typeof TableSettings>;
 
+const TableLinksBaseUrl = t.type({
+  de: t.string,
+  fr: t.string,
+  it: t.string,
+  en: t.string,
+});
+export type TableLinksBaseUrl = t.TypeOf<typeof TableLinksBaseUrl>;
+
 const TableLinks = t.type({
   enabled: t.boolean,
-  baseUrl: t.string,
+  baseUrl: TableLinksBaseUrl,
   componentId: t.string,
   targetComponentId: t.string,
 });

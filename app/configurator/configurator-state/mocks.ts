@@ -1305,7 +1305,12 @@ export const configJoinedCubes: Partial<
     },
     links: {
       enabled: false,
-      baseUrl: "",
+      baseUrl: {
+        de: "",
+        fr: "",
+        it: "",
+        en: "",
+      },
       componentId: "",
       targetComponentId: "",
     },
