@@ -620,7 +620,12 @@ export const getInitialConfig = (
         },
         links: {
           enabled: false,
-          baseUrl: "",
+          baseUrl: {
+            de: "",
+            fr: "",
+            it: "",
+            en: "",
+          },
           componentId: "",
           targetComponentId: "",
         },

@@ -1702,6 +1702,53 @@ export const chartConfigMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    from: "5.2.0",
+    to: "5.3.0",
+    description: `table chart {
+      links {
+        baseUrl: string -> { de, fr, it, en }
+      }
+    }`,
+    up: (config) => {
+      const newConfig = { ...config, version: "5.3.0" };
+
+      if (newConfig.chartType === "table") {
+        const previous: string =
+          typeof newConfig.links?.baseUrl === "string"
+            ? newConfig.links.baseUrl
+            : "";
+        newConfig.links = {
+          ...newConfig.links,
+          baseUrl: {
+            de: previous,
+            fr: previous,
+            it: previous,
+            en: previous,
+          },
+        };
+      }
+
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "5.2.0" };
+
+      if (newConfig.chartType === "table") {
+        const baseUrl = newConfig.links?.baseUrl;
+        const collapsed =
+          baseUrl && typeof baseUrl === "object"
+            ? (baseUrl.de ?? baseUrl.en ?? baseUrl.fr ?? baseUrl.it ?? "")
+            : (baseUrl ?? "");
+        newConfig.links = {
+          ...newConfig.links,
+          baseUrl: collapsed,
+        };
+      }
+
+      return newConfig;
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -2344,6 +2391,12 @@ export const configuratorStateMigrations: Migration[] = [
     toVersion: "5.2.0",
     fromChartConfigVersion: "5.1.0",
     toChartConfigVersion: "5.2.0",
+  }),
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "5.2.0",
+    toVersion: "5.3.0",
+    fromChartConfigVersion: "5.2.0",
+    toChartConfigVersion: "5.3.0",
   }),
 ];
 

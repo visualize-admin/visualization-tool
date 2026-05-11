@@ -15,6 +15,7 @@ You can also check the
   - Add SPARQL endpoints in the OpenTelemetry traces
   - Add Sentry integration back
   - Action tiles replaced with a link to the service desk
+  - Allow the definition of language-specific links in table diagrams
 - Refactoring
   - Incorporate the Swiss-Federal-CI library into this repository.
 - Fixes

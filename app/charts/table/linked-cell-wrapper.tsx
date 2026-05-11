@@ -9,6 +9,7 @@ import { ColumnMeta } from "@/charts/table/table-state";
 import { TableLinks } from "@/config-types";
 import { Observation } from "@/domain/data";
 import { Icon } from "@/icons";
+import { useLocale } from "@/locales/use-locale";
 
 const useStyles = makeStyles((theme: Theme) => ({
   link: {
@@ -55,13 +56,14 @@ export const LinkedCellWrapper = ({
   links: TableLinks;
 }) => {
   const classes = useStyles();
+  const locale = useLocale();
   const isLinkedColumn =
     links.enabled &&
-    links.baseUrl.trim() !== "" &&
+    links.baseUrl[locale].trim() !== "" &&
     links.componentId.trim() !== "" &&
     links.targetComponentId.trim() !== "" &&
     getSlugifiedId(links.targetComponentId) === columnMeta.slugifiedId;
-  const href = getLinkHref(cell, links.baseUrl, links.componentId);
+  const href = getLinkHref(cell, links.baseUrl[locale], links.componentId);
 
   if (!isLinkedColumn || !href) {
     return <>{children}</>;

@@ -1145,7 +1145,7 @@ export const tableConfig: TableConfig = {
   settings: { showSearch: true, showAllRows: true, limitColumnWidths: false },
   links: {
     enabled: false,
-    baseUrl: "",
+    baseUrl: { de: "", fr: "", it: "", en: "" },
     componentId: "",
     targetComponentId: "",
   },
