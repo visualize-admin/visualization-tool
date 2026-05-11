@@ -3,7 +3,7 @@
   "dataSet": "https://environment.ld.admin.ch/foen/fab_hierarchy_test12_switzerland_canton_municipality/5",
   "dataSource": {
     "type": "sparql",
-    "url": "https://lindas-cached.int.cluster.ldbar.ch/query"
+    "url": "https://int.cached.lindas.admin.ch/query"
   },
   "meta": {
     "title": { "de": "", "fr": "", "it": "", "en": "" },

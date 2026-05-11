@@ -35,10 +35,8 @@ test("@noci should be possible to de-select options from color component in maps
     })
   );
 
-  const filtersButton = await filterControlSection.findByRole("button", {
-    name: "Edit filters",
-  });
-  await filtersButton.click();
+  await page.getByRole("button", { name: "Edit filters" }).click();
+
   const filters = selectors.edition.filterDrawer().within();
   await (await filters.findByText("Canton of Zurich")).click();
   await (await filters.findByText("Apply filters")).click();

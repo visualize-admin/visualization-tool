@@ -198,7 +198,8 @@ test.skip("Map legend preview table sorting", async ({
   const cells = await selectors.datasetPreview.columnCells("Danger ratings");
 });
 
-test("Sorting with values with same label as other values in the tree", async ({
+// dataset currently not available after LINDASNext migration
+test.skip("Sorting with values with same label as other values in the tree", async ({
   selectors,
   page,
   replayFromHAR,
