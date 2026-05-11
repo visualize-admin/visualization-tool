@@ -83,14 +83,6 @@ export const SOURCE_OPTIONS: SourceOption[] = [
     supportsCachingPerCubeIri: true,
   },
   {
-    value: "sparql+https://lindas-cached.int.cluster.ldbar.ch/query",
-    key: "LINDASold-Int",
-    label: "LINDASold INT",
-    url: "https://lindas-cached.int.cluster.ldbar.ch/query",
-    isTrusted: false,
-    supportsCachingPerCubeIri: true,
-  },
-  {
     value: "sparql+https://old.int.ld.ldbar.ch/query",
     key: "LINDASold-Int-uncached",
     label: "LINDASold INT (uncached)",
