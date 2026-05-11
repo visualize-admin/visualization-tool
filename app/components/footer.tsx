@@ -105,6 +105,19 @@ export const Footer = ({ sx }: { sx?: SxProps }) => {
           />
         </Link>
         <Link
+          href={`https://cognizone.atlassian.net/servicedesk/customer/portal/1`}
+          target="_blank"
+          underline="none"
+        >
+          <FooterSectionButton
+            iconName="external"
+            label={t({
+              id: "footer.button.service-desk",
+              message: "Service Desk",
+            })}
+          />
+        </Link>
+        <Link
           href={`https://www.youtube.com/@visualizetutorials`}
           target="_blank"
           underline="none"
