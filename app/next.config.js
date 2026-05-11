@@ -108,6 +108,26 @@ module.exports = withSentryConfig(
 
           const baseHeaders = [
             { key: "X-Content-Type-Options", value: "nosniff" },
+            {
+              key: "Referrer-Policy",
+              value: "strict-origin-when-cross-origin",
+            },
+            { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
+            {
+              key: "Permissions-Policy",
+              value:
+                "bluetooth=(), camera=(), geolocation=(), microphone=(), payment=(), usb=()",
+            },
+            // COOP isolates this browsing context from cross-origin openers.
+            // Safe here: no popup-based auth (NextAuth ADFS uses redirect flow),
+            // and on iframed embed pages COOP is a no-op (only affects top-level
+            // windows). NOT setting `Cross-Origin-Embedder-Policy: require-corp`
+            // because it would block user-configured WMS/WMTS tile endpoints
+            // (most don't send CORP/CORS headers). NOT setting
+            // `Cross-Origin-Resource-Policy: same-origin` or `X-Frame-Options`
+            // because they would break iframe embedding of charts; CSP
+            // `frame-ancestors` already handles clickjacking protection.
+            { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
           ];
           if (process.env.PREVENT_SEARCH_BOTS === "true") {
             baseHeaders.push({
