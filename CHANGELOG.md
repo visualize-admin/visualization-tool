@@ -14,6 +14,7 @@ You can also check the
 - Features
   - Add SPARQL endpoints in the OpenTelemetry traces
   - Add Sentry integration back
+  - Action tiles replaced with a link to the service desk
 - Refactoring
   - Incorporate the Swiss-Federal-CI library into this repository.
 - Fixes
