@@ -5,7 +5,6 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
 const withMDX = require("@next/mdx")();
-const withPreconstruct = require("@preconstruct/next");
 const { withSentryConfig } = require("@sentry/nextjs");
 const { IgnorePlugin } = require("webpack");
 
@@ -40,17 +39,12 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 }
 
 module.exports = withSentryConfig(
-  withPreconstruct(
-    withBundleAnalyzer(
-      withMDX({
-        output: "standalone",
+  withBundleAnalyzer(
+    withMDX({
+      output: "standalone",
         i18n: {
           locales,
           defaultLocale,
-        },
-
-        experimental: {
-          instrumentationHook: true,
         },
 
         headers: async () => {
@@ -228,7 +222,6 @@ module.exports = withSentryConfig(
         },
       })
     ),
-    { silent: true },
-    { hideSourcemaps: true }
-  )
+  { silent: true },
+  { hideSourcemaps: true }
 );

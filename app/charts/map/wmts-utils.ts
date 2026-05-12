@@ -223,6 +223,8 @@ export const parseWMTSContent = (content: string, endpoint: string) => {
     ignoreAttributes: false,
     attributeNamePrefix: "",
     parseAttributeValue: true,
+    processEntities: false, // Disable entity processing for trusted sources
+    htmlEntities: true, // But still decode standard HTML entities like &​amp;
   });
   const parsed = parser.parse(content) as WMTSData;
   const attributes = {
