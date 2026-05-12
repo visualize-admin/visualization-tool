@@ -1132,6 +1132,10 @@ msgstr "Larghezze delle colonne reattive"
 msgid "footer.button.lindas"
 msgstr "Servizi di dati collegati LINDAS"
 
+#: app/components/footer.tsx
+msgid "footer.button.service-desk"
+msgstr "Sportello di assistenza"
+
 #: app/configurator/components/chart-options-selector/imputation-field.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.imputation.type.linear"

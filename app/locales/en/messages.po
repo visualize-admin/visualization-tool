@@ -1132,6 +1132,10 @@ msgstr "Responsive column widths"
 msgid "footer.button.lindas"
 msgstr "LINDAS Linked Data Services"
 
+#: app/components/footer.tsx
+msgid "footer.button.service-desk"
+msgstr "Service-Desk"
+
 #: app/configurator/components/chart-options-selector/imputation-field.tsx
 #: app/configurator/components/field-i18n.ts
 msgid "controls.imputation.type.linear"
