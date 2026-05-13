@@ -1,3 +1,4 @@
+import { sanitizeUrl } from "@braintree/sanitize-url";
 import { Trans } from "@lingui/macro";
 import {
   Box,
@@ -104,7 +105,7 @@ export const DatasetMetadata = ({
           <DatasetMetadataBody sx={{ mt: "1px" }}>
             {cube.landingPage ? (
               <DatasetMetadataLink
-                href={cube.landingPage}
+                href={sanitizeUrl(cube.landingPage)}
                 external
                 label={
                   <Trans id="dataset.metadata.learnmore">

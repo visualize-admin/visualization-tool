@@ -19,7 +19,7 @@ You can also check the
 - Refactoring
   - Incorporate the Swiss-Federal-CI library into this repository.
 - Fixes
-  - Sanitize urls for links in tables
+  - Sanitize URLs from external sources
   - Improve CSP header configuration
   - Normalize the polygon winding order of geometries to CCW ("right hand rule")
     after parsing and replace the CW-only d3-geo helpers `geoBounds`, `geoArea`
