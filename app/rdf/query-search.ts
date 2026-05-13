@@ -321,9 +321,12 @@ const mkScoresQuery = (
       ${creatorValues.length ? makeInFilter("creatorIri", creatorValues) : ""}
       OPTIONAL {
         ?iri dcterms:creator ?creatorIri .
-        GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
+        VALUES ?creatorGraph {
+          <https://lindas.admin.ch/fch/rvov>
+          <https://lindas.admin.ch/sfa/opendataswiss>
+        }
+        GRAPH ?creatorGraph {
           ?creatorIri a schema:Organization ;
-            schema:inDefinedTermSet <https://register.ld.admin.ch/opendataswiss/org> .
             ${buildLocalizedSubQuery(
               "creatorIri",
               "schema:name",
@@ -372,7 +375,7 @@ const mkScoresQuery = (
           "subthemeLabel",
           { locale }
         )}
-      } 
+      }
       `
           : ""
       }
@@ -396,31 +399,31 @@ const mkScoresQuery = (
         CONTAINS(LCASE(?title_it), LCASE(?keyword)) ||
         CONTAINS(LCASE(?title_en), LCASE(?keyword)) ||
         CONTAINS(LCASE(?title_),   LCASE(?keyword)) ||
-      
+
         CONTAINS(LCASE(?description_de), LCASE(?keyword)) ||
         CONTAINS(LCASE(?description_fr), LCASE(?keyword)) ||
         CONTAINS(LCASE(?description_it), LCASE(?keyword)) ||
         CONTAINS(LCASE(?description_en), LCASE(?keyword)) ||
         CONTAINS(LCASE(?description_),   LCASE(?keyword)) ||
-          
-        CONTAINS(LCASE(?creatorLabel_de), LCASE(?keyword)) || 
-        CONTAINS(LCASE(?creatorLabel_fr), LCASE(?keyword)) || 
-        CONTAINS(LCASE(?creatorLabel_it), LCASE(?keyword)) || 
-        CONTAINS(LCASE(?creatorLabel_en), LCASE(?keyword)) || 
-        CONTAINS(LCASE(?creatorLabel_),   LCASE(?keyword)) || 
-          
-        CONTAINS(LCASE(?themeLabel_de), LCASE(?keyword)) || 
-        CONTAINS(LCASE(?themeLabel_fr), LCASE(?keyword)) || 
-        CONTAINS(LCASE(?themeLabel_it), LCASE(?keyword)) || 
-        CONTAINS(LCASE(?themeLabel_en), LCASE(?keyword)) || 
-        CONTAINS(LCASE(?themeLabel_),   LCASE(?keyword)) || 
-          
-        CONTAINS(LCASE(?subthemeLabel_de), LCASE(?keyword)) || 
-        CONTAINS(LCASE(?subthemeLabel_fr), LCASE(?keyword)) || 
-        CONTAINS(LCASE(?subthemeLabel_it), LCASE(?keyword)) || 
-        CONTAINS(LCASE(?subthemeLabel_en), LCASE(?keyword)) || 
-        CONTAINS(LCASE(?subthemeLabel_),   LCASE(?keyword)) || 
-          
+
+        CONTAINS(LCASE(?creatorLabel_de), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?creatorLabel_fr), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?creatorLabel_it), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?creatorLabel_en), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?creatorLabel_),   LCASE(?keyword)) ||
+
+        CONTAINS(LCASE(?themeLabel_de), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?themeLabel_fr), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?themeLabel_it), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?themeLabel_en), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?themeLabel_),   LCASE(?keyword)) ||
+
+        CONTAINS(LCASE(?subthemeLabel_de), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?subthemeLabel_fr), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?subthemeLabel_it), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?subthemeLabel_en), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?subthemeLabel_),   LCASE(?keyword)) ||
+
         CONTAINS(LCASE(?publisher), LCASE(?keyword))
       )`
           : ""
