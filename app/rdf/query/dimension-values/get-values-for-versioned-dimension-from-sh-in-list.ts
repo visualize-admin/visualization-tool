@@ -14,8 +14,6 @@ export function getValuesForVersionedDimensionFromShInList(cubeIri: string, dime
 
     CONSTRUCT {
         ${CONSTRUCT_TEMPLATE}
-
-        ?dimensionIri app:versionedValuesFromShInList ?versionedValue .
     }
     WHERE {
         {

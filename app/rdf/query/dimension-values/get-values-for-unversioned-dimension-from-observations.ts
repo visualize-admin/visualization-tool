@@ -25,7 +25,6 @@ ${SPARQL_PREFIXES}
 
 CONSTRUCT {
 ${CONSTRUCT_TEMPLATE}
-?dimensionIri app:unversionedValuesFromObservations ?unversionedValue .
 }
 WHERE {
     {
@@ -48,7 +47,7 @@ WHERE {
     // here we have filters 
     const innerObservationSelector = `VALUES (?dimensionIri) { (<${dimensionIri}>) }
             <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-            ?dimension sh:path <${dimensionIri}> .
+            ?dimension sh:path  ?dimensionIri .
             FILTER NOT EXISTS { ?dimension schema:version ?version . }
             <${cubeIri}> cube:observationSet/cube:observation ?observation .`;
 

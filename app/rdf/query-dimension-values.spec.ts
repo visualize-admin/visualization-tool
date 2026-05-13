@@ -8,7 +8,7 @@ import * as ns from "@/rdf/namespace";
 import {
   getFiltersList,
   getQueryFilters,
-  loadDimensionValuesWithMetadata,
+  loadDimensionsValuesWithMetadata,
 } from "@/rdf/query-dimension-values";
 
 vi.mock("./extended-cube", () => ({}));
@@ -63,9 +63,9 @@ describe("getDimensionValuesWithMetadata", () => {
   } as any as ParsingClient;
 
   it("should return the values of a dimension", async () => {
-    const values = await loadDimensionValuesWithMetadata("", {
+    const values = await loadDimensionsValuesWithMetadata("", {
       cubeDimensions,
-      dimensionIri,
+      dimensionIris: [dimensionIri],
       sparqlClient,
       locale: "en",
       cache: undefined,

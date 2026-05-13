@@ -77,7 +77,6 @@ ${SPARQL_PREFIXES}
 
 CONSTRUCT {
     ${CONSTRUCT_TEMPLATE}
-    ?dimensionIri app:versionedValuesFromObservations ?versionedValue .
 }
 WHERE {
     {

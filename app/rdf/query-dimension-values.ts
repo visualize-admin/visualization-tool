@@ -18,7 +18,14 @@ import * as ns from "@/rdf/namespace";
 import { parseDimensionDatatype } from "@/rdf/parse";
 import { dimensionIsVersioned } from "@/rdf/queries";
 import { executeWithCache } from "@/rdf/query-cache";
-import { buildLocalizedSubQuery, iriToNode } from "@/rdf/query-utils";
+import { iriToNode } from "@/rdf/query-utils";
+
+import { getValuesForUnversionedDimensionFromObservations } from "./query/dimension-values/get-values-for-unversioned-dimension-from-observations";
+import { getValuesForUnversionedDimensionFromShInList } from "./query/dimension-values/get-values-for-unversioned-dimension-from-sh-in-list";
+import { getValuesForVersionedDimensionFromObservations } from "./query/dimension-values/get-values-for-versioned-dimension-from-observations";
+import { getValuesForVersionedDimensionFromShInList } from "./query/dimension-values/get-values-for-versioned-dimension-from-sh-in-list";
+import { createQueryFilter } from "./query/dimension-values/shared-query-parts";
+import { mergeConstructQueries } from "./query/merge-construct";
 
 /**
  * Formats a filter value into the right format, string literal
@@ -93,144 +100,61 @@ export async function loadDimensionsValuesWithMetadata(
     cache,
   } = props;
 
-  const dimensionQueries = dimensionIris.map((dimensionIri) => {
+  const newQueries: string[] = [];
+
+  dimensionIris.forEach((dimensionIri) => {
+    if (!cubeDimensions.find((d) => d.path?.value === dimensionIri)) {
+      throw Error(`Dimension not found: ${dimensionIri}`);
+    }
+
     const filterList = getFiltersList(filters, dimensionIri);
-    const queryFilters = getQueryFilters(
+
+    const queryFilter = createQueryFilter(
       filterList,
       cubeDimensions,
       dimensionIri
     );
 
-    if (!cubeDimensions.find((d) => d.path?.value === dimensionIri)) {
-      throw Error(`Dimension not found: ${dimensionIri}`);
+    if (queryFilter.length === 0) {
+      const queryForUnversionedDimensionShIn =
+        getValuesForUnversionedDimensionFromShInList(
+          cubeIri,
+          dimensionIri,
+          locale
+        );
+      const queryForVersionedDimensionShIn =
+        getValuesForVersionedDimensionFromShInList(
+          cubeIri,
+          dimensionIri,
+          locale
+        );
+      newQueries.push(
+        queryForUnversionedDimensionShIn,
+        queryForVersionedDimensionShIn
+      );
     }
-
-    return `${queryFilters
-        ? ""
-        : `{ #pragma evaluate on
-      SELECT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
-        VALUES ?dimensionIri { <${dimensionIri}> }
-        <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-        ?dimension sh:path ?dimensionIri .
-        ?dimension schema:version ?version .
-        ?dimension sh:in/rdf:rest*/rdf:first ?versionedValue .
-        ?versionedValue schema:sameAs ?unversionedValue .
-      }
-    } UNION { #pragma evaluate on
-      SELECT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
-        VALUES ?dimensionIri { <${dimensionIri}> }
-        <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-        ?dimension sh:path ?dimensionIri .
-        FILTER NOT EXISTS { ?dimension schema:version ?version . }
-        ?dimension sh:in/rdf:rest*/rdf:first ?versionedValue .
-        BIND(?versionedValue as ?unversionedValue)
-      }
-    } UNION`
-      } {
-      {
-        SELECT DISTINCT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
-        
-              ${queryFilters
-        ? `VALUES ?dimensionIri { <${dimensionIri}> }
-                  <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-                  ?dimension sh:path ?dimensionIri .
-                  ?dimension schema:version ?version .`
-        : `VALUES ?dimensionIri { <${dimensionIri}> }
-                  <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-                  ?dimension sh:path ?dimensionIri .
-                  ?dimension schema:version ?version .
-                  FILTER NOT EXISTS { ?dimension sh:in ?in . }`
-      }
-              <${cubeIri}> cube:observationSet/cube:observation ?observation .
-              ${queryFilters}
-          
-          ${queryFilters
-        ? `VALUES ?dimensionIri { <${dimensionIri}> }
-              <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-              ?dimension sh:path ?dimensionIri .`
-        : `VALUES ?dimensionIri { <${dimensionIri}> }`
-      }
-          ?observation ?dimensionIri ?versionedValue .
-          ?versionedValue schema:sameAs ?unversionedValue .
-        }
-      }
-    } UNION {
-      {
-        SELECT DISTINCT ?dimensionIri ?versionedValue ?unversionedValue WHERE {
-           #pragma evaluate on
-              ${queryFilters
-        ? `VALUES ?dimensionIri { <${dimensionIri}> }
-                  <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-                  ?dimension sh:path ?dimensionIri .
-                  FILTER NOT EXISTS { ?dimension schema:version ?version . }`
-        : `VALUES ?dimensionIri { <${dimensionIri}> }
-                  <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-                  ?dimension sh:path ?dimensionIri .
-                  FILTER NOT EXISTS { ?dimension schema:version ?version . }
-                  FILTER NOT EXISTS { ?dimension sh:in ?in . }`
-      }
-              <${cubeIri}> cube:observationSet/cube:observation ?observation .
-              ${queryFilters}
-           
-          ${queryFilters
-        ? `VALUES ?dimensionIri { <${dimensionIri}> }
-              <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-              ?dimension sh:path ?dimensionIri .`
-        : `VALUES ?dimensionIri { <${dimensionIri}> }`
-      }
-          ?observation ?dimensionIri ?versionedValue .
-          BIND(?versionedValue as ?unversionedValue)
-        }
-      }
-    }`;
+    const queryForUnversionedDimensionFromObservations =
+      getValuesForUnversionedDimensionFromObservations(
+        cubeIri,
+        dimensionIri,
+        queryFilter,
+        locale
+      );
+    const queryForVersionedDimensionFromObservations =
+      getValuesForVersionedDimensionFromObservations(
+        cubeIri,
+        dimensionIri,
+        queryFilter,
+        locale
+      );
+    newQueries.push(
+      queryForUnversionedDimensionFromObservations,
+      queryForVersionedDimensionFromObservations
+    );
+    // b end
   });
 
-  const query = `PREFIX cube: <https://cube.link/>
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX schema: <http://schema.org/>
-PREFIX sh: <http://www.w3.org/ns/shacl#>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-
-CONSTRUCT {
-  ?dimensionIri rdf:first ?unversionedValue .
-  ?unversionedValue
-    schema:name ?name ;
-    schema:alternateName ?alternateName ;
-    schema:description ?description ;
-    schema:identifier ?identifier ;
-    schema:position ?position ;
-    schema:color ?color ;
-    geo:hasGeometry ?geometry ;
-    schema:latitude ?latitude ;
-    schema:longitude ?longitude .
-} WHERE {
-  ${dimensionQueries.join("\nUNION ")}
-  ${buildLocalizedSubQuery("versionedValue", "schema:name", "name", {
-    locale,
-  })}
-  ${buildLocalizedSubQuery(
-    "versionedValue",
-    "schema:description",
-    "description",
-    {
-      locale,
-    }
-  )}
-  ${buildLocalizedSubQuery(
-    "versionedValue",
-    "schema:alternateName",
-    "alternateName",
-    {
-      locale,
-    }
-  )}
-  OPTIONAL { ?versionedValue schema:identifier ?identifier . }
-  OPTIONAL { ?versionedValue schema:position ?position . }
-  OPTIONAL { ?versionedValue schema:color ?color . }
-  OPTIONAL { ?versionedValue geo:hasGeometry ?geometry . }
-  OPTIONAL { ?versionedValue schema:latitude ?latitude . }
-  OPTIONAL { ?versionedValue schema:longitude ?longitude . }
-}`;
+  const query = mergeConstructQueries(newQueries);
 
   return await executeWithCache(
     sparqlClient,
@@ -262,118 +186,6 @@ type LoadDimensionValuesProps = {
   filters?: Filters;
   locale: string;
   cache: LRUCache | undefined;
-};
-
-/**
- * Load dimension values.
- *
- * Filters on other dimensions can be passed.
- *
- */
-export const loadDimensionValuesWithMetadata = async (
-  cubeIri: string,
-  props: LoadDimensionValuesProps
-): Promise<DimensionValue[]> => {
-  const { dimensionIri, cubeDimensions, sparqlClient, filters, locale, cache } =
-    props;
-  const filterList = getFiltersList(filters, dimensionIri);
-  const queryFilters = getQueryFilters(
-    filterList,
-    cubeDimensions,
-    dimensionIri
-  );
-
-  const cubeDimension = cubeDimensions.find(
-    (d) => d.path?.value === dimensionIri
-  );
-
-  if (!cubeDimension) {
-    throw Error(`Dimension not found: ${dimensionIri}`);
-  }
-
-  const isDimensionVersioned = dimensionIsVersioned(cubeDimension);
-  const query = `PREFIX cube: <https://cube.link/>
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX schema: <http://schema.org/>
-PREFIX sh: <http://www.w3.org/ns/shacl#>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-
-CONSTRUCT {
-  ?dimensionIri rdf:first ?maybe_unversioned_value .
-  ?maybe_unversioned_value
-    schema:name ?name ;
-    schema:alternateName ?alternateName ;
-    schema:description ?description ;
-    schema:identifier ?identifier ;
-    schema:position ?position ;
-    schema:color ?color ;
-    geo:hasGeometry ?geometry ;
-    schema:latitude ?latitude ;
-    schema:longitude ?longitude .
-} WHERE { 
-  ${queryFilters
-      ? ""
-      : `{ #pragma evaluate on
-    SELECT ?dimensionIri ?value WHERE {
-      VALUES ?dimensionIri { <${dimensionIri}> }
-      <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-      ?dimension sh:path ?dimensionIri .
-      ?dimension sh:in/rdf:rest*/rdf:first ?value .
-    }
-  } UNION`
-    } {
-    { #pragma evaluate on
-      SELECT DISTINCT ?dimensionIri ?value WHERE {
-        ${queryFilters
-      ? ""
-      : `
-        VALUES ?dimensionIri { <${dimensionIri}> }
-        <${cubeIri}> cube:observationConstraint/sh:property ?dimension .
-        ?dimension sh:path ?dimensionIri .
-        FILTER(NOT EXISTS{ ?dimension sh:in ?in . })`
-    }
-        ${queryFilters ? `VALUES ?dimensionIri { <${dimensionIri}> }` : ""}
-        <${cubeIri}> cube:observationSet/cube:observation ?observation .
-        ?observation ?dimensionIri ?value .
-        ${queryFilters}
-      }
-    }
-  }
-  # Metadata is only attached to versioned values
-  ${buildLocalizedSubQuery("value", "schema:name", "name", {
-      locale,
-    })}
-  ${buildLocalizedSubQuery("value", "schema:description", "description", {
-      locale,
-    })}
-  ${buildLocalizedSubQuery("value", "schema:alternateName", "alternateName", {
-      locale,
-    })}
-  OPTIONAL { ?value schema:identifier ?identifier . }
-  OPTIONAL { ?value schema:position ?position . }
-  OPTIONAL { ?value schema:color ?color . }
-  OPTIONAL { ?value geo:hasGeometry ?geometry . }
-  OPTIONAL { ?value schema:latitude ?latitude . }
-  OPTIONAL { ?value schema:longitude ?longitude . }
-  ${isDimensionVersioned
-      ? `OPTIONAL { ?value schema:sameAs ?unversioned_value . }`
-      : ""
-    }
-  BIND(COALESCE(?unversioned_value, ?value) AS ?maybe_unversioned_value)
-}`;
-
-  return await executeWithCache(
-    sparqlClient,
-    query,
-    () => sparqlClient.query.construct(query, { operation: "postUrlencoded" }),
-    (quads) => {
-      const arr = [...quads];
-      return arr
-        .filter((q) => q.predicate.equals(ns.rdf.first))
-        .map((qValue) => parseDimensionValue(qValue, arr));
-    },
-    cache
-  );
 };
 
 const parseDimensionValue = (
@@ -507,10 +319,11 @@ export const getQueryFilters = (
 
       const versioned = dimension ? dimensionIsVersioned(dimension) : false;
 
-      return `${versioned
+      return `${
+        versioned
           ? `?dimension${i} <${ns.schema.sameAs.value}> ?dimension_unversioned${i} .`
           : ""
-        }
+      }
 ?observation <${iri}> ?dimension${i} .
 ${formatFilterIntoSparqlFilter(value, dimension, versioned, i)}`;
     })

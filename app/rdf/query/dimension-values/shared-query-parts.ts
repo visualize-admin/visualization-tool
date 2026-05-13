@@ -1,6 +1,11 @@
+import { CubeDimension } from "rdf-cube-view-query";
+
+import { FIELD_VALUE_NONE } from "@/configurator/constants";
+import { isMostRecentValue } from "@/domain/most-recent-value";
+import { getFiltersList } from "@/rdf/query-dimension-values";
 import { buildLocalizedSubQuery } from "@/rdf/query-utils";
 
-import { CubeFilter } from "./model/cube-dimension-filter";
+import { CubeFilter, CubeMultiFilter, CubeSingleFilter } from "./model/cube-dimension-filter";
 
 export const SPARQL_PREFIXES = `
 PREFIX cube: <https://cube.link/>
@@ -26,18 +31,6 @@ export const CONSTRUCT_TEMPLATE = `
         schema:longitude ?longitude ;
     .
 
-    ?dimensionIri app:hasValues [
-    schema:name ?name ;
-        schema:alternateName ?alternateName ;
-        schema:description ?description ;
-        schema:identifier ?identifier ;
-        schema:position ?position ;
-        schema:color ?color ;
-        geo:hasGeometry ?geometry ;
-        schema:latitude ?latitude ;
-        schema:longitude ?longitude ;
-        app:value ?unversionedValue ;
-    ] .
 `;
 
 export function createWhereTemplate(locale: string) {
@@ -105,7 +98,7 @@ export class QueryTree {
 
         let innerSelector = formatBlock(this.trimInnerObservationSelector(), "  ");
         let filters0 = levels[0]
-            .map((f, index) => formatBlock(f.toSparqlFilter('dimension0_' + index), ""))
+            .map((f, index) => formatBlock(f.toSparqlFilter('observation', 'dimension0_' + index), ""))
             .filter(f => f.length > 0)
             .join("\n");
 
@@ -115,7 +108,7 @@ export class QueryTree {
             let indentedQuery = query.split("\n").map(l => "    " + l).join("\n");
             let nestedBlock = `  {\n${indentedQuery}\n  }`;
             let filtersI = levels[i]
-                .map((f, index) => formatBlock(f.toSparqlFilter('dimension' + i + '_' + index), "  "))
+                .map((f, index) => formatBlock(f.toSparqlFilter('observation', 'dimension' + i + '_' + index), "  "))
                 .filter(f => f.length > 0)
                 .join("\n");
             query = `SELECT ?observation WHERE {\n${nestedBlock}\n${filtersI}\n}`;
@@ -125,3 +118,54 @@ export class QueryTree {
     }
 
 }
+
+
+export function createQueryFilter(
+    filtersList: ReturnType<typeof getFiltersList>,
+    dimensions: CubeDimension[],
+    dimensionIri: string
+): CubeFilter[] {
+
+    if (filtersList.length === 0) {
+        return [];
+    }
+
+    return filtersList
+        .flatMap(([iri, value]): CubeFilter[] => {
+            const dimension = dimensions.find((d) => d.path?.value === iri);
+
+            if (!dimension) {
+                console.warn(`Could not find dimension for filter with iri ${iri}`);
+                return [];
+            }
+
+            // ignore the current dimension
+            if (dimensionIri === iri) {
+                return [];
+            }
+
+            // ignore filters with no value or with the special value
+            if (
+                value.type === "single" &&
+                (value.value === FIELD_VALUE_NONE || isMostRecentValue(value.value))
+            ) {
+                return [];
+            }
+
+            // ignore range filters for now
+            if (value.type === "range") {
+                return [];
+            }
+
+            if (value.type === "multi") {
+                const multiFilter = new CubeMultiFilter(dimension, value.values);
+                return [multiFilter];
+            }
+
+            if (value.type === "single") {
+                const singleFilter = new CubeSingleFilter(dimension, value.value);
+                return [singleFilter];
+            }
+            return [];
+        })
+};

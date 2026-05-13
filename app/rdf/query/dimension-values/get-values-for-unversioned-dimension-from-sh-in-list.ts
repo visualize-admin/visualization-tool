@@ -13,8 +13,6 @@ export function getValuesForUnversionedDimensionFromShInList(cubeIri: string, di
 
     CONSTRUCT {
         ${CONSTRUCT_TEMPLATE}
-        ?dimensionIri app:unversionedValuesFromShInList ?unversionedValue .
-
     }
     WHERE {
         {
