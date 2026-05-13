@@ -36,7 +36,8 @@ You can also check the
     findings of studies about the impact of context files for coding AIs
   - Remove LINDASOld endpoint configurations
 - Documentation
-  - added publiccode.yml for discoverability
+  - Add publiccode.yml for discoverability
+  - Reorganize & improve README
 
 ### 6.4.0 – 2026-03-13
 
