@@ -320,13 +320,18 @@ const mkScoresQuery = (
 
       ${creatorValues.length ? makeInFilter("creatorIri", creatorValues) : ""}
       OPTIONAL {
-        ?iri dcterms:creator ?creatorIri .
+        {
+          ?iri dcterms:creator ?creatorIri .
+        } UNION {
+          ?iri schema:creator ?creatorIri .
+        }
         VALUES ?creatorGraph {
           <https://lindas.admin.ch/fch/rvov>
           <https://lindas.admin.ch/sfa/opendataswiss>
         }
         GRAPH ?creatorGraph {
-          ?creatorIri a schema:Organization ;
+          ?creatorIri a ?creatorType .
+          FILTER (?creatorType IN (schema:Organization, schema:GovernmentOrganization))
             ${buildLocalizedSubQuery(
               "creatorIri",
               "schema:name",
