@@ -64,27 +64,23 @@ export class CubeSingleFilter extends CubeFilter {
 
 
         if (isLiteral && isVersioned) {
-            console.log('isLiteral && isVersioned');
             return `
             ?${valueVar} schema:sameAs ?${valueVar}_unversioned  .
             ?${observationVar} <${this.dimension.path?.value}> ?${valueVar} .
             FILTER( STR(?${valueVar}_unversioned ) = "${this._value}" )`;
         }
         if (isLiteral && !isVersioned) {
-            console.log('isLiteral && !isVersioned');
             return `
             ?${observationVar} <${this.dimension.path?.value}> ?${valueVar} .
             FILTER( STR(?${valueVar} ) = "${this._value}" )`;
         }
         if (!isLiteral && isVersioned) {
-            console.log('!isLiteral && isVersioned');
             return `
             ?${valueVar} schema:sameAs <${this._value}>  .
             ?${observationVar} <${this.dimension.path?.value}> ?${valueVar} .
             `;
         }
         if (!isLiteral && !isVersioned) {
-            console.log('!isLiteral && !isVersioned');
             return `
             ?${observationVar} <${this.dimension.path?.value}> <${this._value}> .
             `
@@ -100,9 +96,6 @@ export class CubeSingleFilter extends CubeFilter {
     get type() {
         return "single" as const;
     }
-
-
-
 }
 
 /**
@@ -130,20 +123,19 @@ export class CubeMultiFilter extends CubeFilter {
         const isVersioned = this.isVersionedDimension();
 
         if (isLiteral && isVersioned) {
-            console.log('***** literal multi isLiteral && isVersioned *****');
+            // dont think this case is actually possible, 
+            console.warn('Tell me if you see this: dimension:', this.dimension.ptr.value, 'filter:', this._multiFilter);
             return `
             ?${valueVar} schema:sameAs ?${valueVar}_unversioned  .
             ?${observationVar} <${this.dimension.path?.value}> ?${valueVar} .
             FILTER( STR(?${valueVar}_unversioned) IN (${Object.keys(this._multiFilter).map(value => `"${value}"`).join(", ")} ) )`;
         }
         if (isLiteral && !isVersioned) {
-            console.log('***** literal multi isLiteral && !isVersioned *****');
             return `
             ?${observationVar} <${this.dimension.path?.value}> ?${valueVar} .
             FILTER( STR(?${valueVar}) IN (${Object.keys(this._multiFilter).map(value => `"${value}"`).join(", ")} ) )`;
         }
         if (!isLiteral && isVersioned) {
-            console.log('***** literal multi !isLiteral && isVersioned *****');
             const valuesString = Object.keys(this._multiFilter).map(x => `<${x}>`).join("\n");
 
             return `
@@ -155,7 +147,6 @@ export class CubeMultiFilter extends CubeFilter {
             `;
         }
         if (!isLiteral && !isVersioned) {
-            console.log('***** multi !isLiteral && !isVersioned *****');
             const valuesString = Object.keys(this._multiFilter).map(x => `<${x}>`).join("\n");
 
             return `
@@ -165,7 +156,7 @@ export class CubeMultiFilter extends CubeFilter {
             ?${observationVar} <${this.dimension.path?.value}> ?${valueVar} .
             `;
         }
-        // fallback, should never happen
+        console.warn('Tell me if you see this: dimension:', this.dimension.ptr.value);
         return '';
     }
 

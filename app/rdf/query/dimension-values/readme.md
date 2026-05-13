@@ -12,3 +12,6 @@ test ok
 
 
 
+"Verkehrsleistung auf den Flugplätzen"
+shared dimension non literal
+ok
