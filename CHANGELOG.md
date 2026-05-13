@@ -38,7 +38,8 @@ You can also check the
   - Remove LINDASOld endpoint configurations
   - Remove dependencies which used old versions of `node-fetch`
 - Documentation
-  - added publiccode.yml for discoverability
+  - Add publiccode.yml for discoverability
+  - Reorganize & improve README
 
 ### 6.4.0 – 2026-03-13
 
