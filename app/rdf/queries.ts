@@ -1,5 +1,5 @@
+import { Maybe } from "@graphql-tools/utils";
 import { ascending, index } from "d3-array";
-import { Maybe } from "graphql-tools";
 import keyBy from "lodash/keyBy";
 import mapKeys from "lodash/mapKeys";
 import { CubeDimension, Filter, LookupSource, View } from "rdf-cube-view-query";

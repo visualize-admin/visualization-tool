@@ -123,7 +123,6 @@ export const queryHierarchies = async (
             ns.schema.position,
             ns.schema.alternateName,
           ],
-          // @ts-ignore
         }).execute(sparqlClientStream, rdf),
         hierarchyName: getName(ptr, locale),
       };

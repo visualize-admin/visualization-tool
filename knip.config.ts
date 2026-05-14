@@ -58,8 +58,6 @@ const config: KnipConfig = {
     // Used in Storybook.
     "storybook",
     "@storybook/nextjs",
-    // Used in e2e and scripts. Not sure why it's not detected.
-    "isomorphic-unfetch",
     // Used in scripts, which we ignore to not have a "not used files" error.
     "dotenv-cli",
     // Used to generate icons.

@@ -148,7 +148,7 @@ export const getCubeMetadata = async (
     .BY`?unversionedIri`.THEN.BY`?publisher`.THEN.BY`?landingPage`.THEN
     .BY`?expires`.prologue`${pragmas}`;
 
-  const results = (await query.execute(sparqlClient.query, {
+  const results = (await query.execute(sparqlClient, {
     operation: "postUrlencoded",
   })) as RawDataCubeMetadata[];
 

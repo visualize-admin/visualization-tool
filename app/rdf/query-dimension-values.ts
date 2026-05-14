@@ -544,7 +544,7 @@ FILTER ( (STRLEN(STR(?value)) > 0) && (STR(?value) != "NaN") )`;
       sparqlClient,
       query.build(),
       () =>
-        query.execute(sparqlClient.query, {
+        query.execute(sparqlClient, {
           operation: "postUrlencoded",
         }),
       parseMinMax,

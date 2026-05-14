@@ -9,7 +9,6 @@ import path from "path";
 
 import { build, completionHandler } from "@cozy/cli-tree";
 import fs from "fs-extra";
-import fetch from "isomorphic-unfetch";
 
 import intConfigs from "../app/test/__fixtures/config/int/configs";
 
