@@ -11,7 +11,7 @@ import {
   useFormatFullDateAuto,
   useTimeFormatLocale,
 } from "@/formatters";
-import { TimeUnit } from "@/graphql/query-hooks";
+import { TimeUnit } from "@/graphql/resolver-types";
 
 describe("useFormatFullDateAuto", () => {
   const setup = () => {

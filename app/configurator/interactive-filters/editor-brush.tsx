@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef } from "react";
 
 import { Flex } from "@/components/flex";
 import { useTimeFormatUnit } from "@/formatters";
-import { TimeUnit } from "@/graphql/query-hooks";
+import { TimeUnit } from "@/graphql/resolver-types";
 import { useTheme } from "@/themes";
 import { useResizeObserver } from "@/utils/use-resize-observer";
 

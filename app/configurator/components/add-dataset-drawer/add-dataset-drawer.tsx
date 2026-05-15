@@ -63,10 +63,13 @@ import {
 } from "@/graphql/hooks";
 import { ComponentId, parseComponentId } from "@/graphql/make-component-id";
 import {
+  useSearchCubesQuery,
+  SearchCubeResultOrder as TSearchCubeResultOrder,
+} from "@/graphql/query-hooks";
+import {
   SearchCubeFilterType,
   SearchCubeResultOrder,
-  useSearchCubesQuery,
-} from "@/graphql/query-hooks";
+} from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 import SvgIcClose from "@/icons/components/IcClose";
 import SvgIcInfoCircle from "@/icons/components/IcInfoCircle";
@@ -235,7 +238,7 @@ export const AddDatasetDrawer = ({
   const classes = useStyles();
 
   const [query, setQuery] = useState("");
-  const [order, setOrder] = useState<SearchCubeResultOrder>(
+  const [order, setOrder] = useState<TSearchCubeResultOrder>(
     SearchCubeResultOrder.Score
   );
   const [includeDrafts, setIncludeDrafts] = useState(false);

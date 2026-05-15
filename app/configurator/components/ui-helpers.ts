@@ -26,7 +26,7 @@ import {
   TemporalDimension,
   TemporalEntityDimension,
 } from "@/domain/data";
-import { RelatedDimensionType, TimeUnit } from "@/graphql/query-hooks";
+import { RelatedDimensionType, TimeUnit } from "@/graphql/resolver-types";
 import { IconName } from "@/icons";
 import { getTimeInterval } from "@/intervals";
 import { getPalette } from "@/palettes";

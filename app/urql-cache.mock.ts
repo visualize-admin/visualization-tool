@@ -1,5 +1,5 @@
 import { stringifyComponentId } from "@/graphql/make-component-id";
-import { ScaleType } from "@/graphql/query-hooks";
+import { ScaleType } from "@/graphql/resolver-types";
 import { getCachedComponents } from "@/urql-cache";
 
 export const getCachedComponentsMock = {

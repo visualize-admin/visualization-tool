@@ -7,7 +7,7 @@ import {
 } from "@/configurator/components/add-dataset-drawer/infer-join-by";
 import { SearchOptions } from "@/configurator/components/add-dataset-drawer/types";
 import { ComponentId, stringifyComponentId } from "@/graphql/make-component-id";
-import { DataCubePublicationStatus, TimeUnit } from "@/graphql/query-hooks";
+import { DataCubePublicationStatus, TimeUnit } from "@/graphql/resolver-types";
 
 const selectedSearchDimensions: SearchOptions[] = [
   {

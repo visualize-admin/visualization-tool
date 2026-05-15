@@ -9313,15 +9313,39 @@
                                       },
                                       "links": {
                                         "type": "object",
-                                        "description": "{ enabled: boolean, baseUrl: string, componentId: string, targetComponentId: string }",
+                                        "description": "{ enabled: boolean, baseUrl: { de: string, fr: string, it: string, en: string }, componentId: string, targetComponentId: string }",
                                         "properties": {
                                           "enabled": {
                                             "type": "boolean",
                                             "description": "boolean"
                                           },
                                           "baseUrl": {
-                                            "type": "string",
-                                            "description": "string"
+                                            "type": "object",
+                                            "description": "{ de: string, fr: string, it: string, en: string }",
+                                            "properties": {
+                                              "de": {
+                                                "type": "string",
+                                                "description": "string"
+                                              },
+                                              "fr": {
+                                                "type": "string",
+                                                "description": "string"
+                                              },
+                                              "it": {
+                                                "type": "string",
+                                                "description": "string"
+                                              },
+                                              "en": {
+                                                "type": "string",
+                                                "description": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "de",
+                                              "fr",
+                                              "it",
+                                              "en"
+                                            ]
                                           },
                                           "componentId": {
                                             "type": "string",
@@ -21219,15 +21243,39 @@
                                       },
                                       "links": {
                                         "type": "object",
-                                        "description": "{ enabled: boolean, baseUrl: string, componentId: string, targetComponentId: string }",
+                                        "description": "{ enabled: boolean, baseUrl: { de: string, fr: string, it: string, en: string }, componentId: string, targetComponentId: string }",
                                         "properties": {
                                           "enabled": {
                                             "type": "boolean",
                                             "description": "boolean"
                                           },
                                           "baseUrl": {
-                                            "type": "string",
-                                            "description": "string"
+                                            "type": "object",
+                                            "description": "{ de: string, fr: string, it: string, en: string }",
+                                            "properties": {
+                                              "de": {
+                                                "type": "string",
+                                                "description": "string"
+                                              },
+                                              "fr": {
+                                                "type": "string",
+                                                "description": "string"
+                                              },
+                                              "it": {
+                                                "type": "string",
+                                                "description": "string"
+                                              },
+                                              "en": {
+                                                "type": "string",
+                                                "description": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "de",
+                                              "fr",
+                                              "it",
+                                              "en"
+                                            ]
                                           },
                                           "componentId": {
                                             "type": "string",
@@ -33125,15 +33173,39 @@
                                       },
                                       "links": {
                                         "type": "object",
-                                        "description": "{ enabled: boolean, baseUrl: string, componentId: string, targetComponentId: string }",
+                                        "description": "{ enabled: boolean, baseUrl: { de: string, fr: string, it: string, en: string }, componentId: string, targetComponentId: string }",
                                         "properties": {
                                           "enabled": {
                                             "type": "boolean",
                                             "description": "boolean"
                                           },
                                           "baseUrl": {
-                                            "type": "string",
-                                            "description": "string"
+                                            "type": "object",
+                                            "description": "{ de: string, fr: string, it: string, en: string }",
+                                            "properties": {
+                                              "de": {
+                                                "type": "string",
+                                                "description": "string"
+                                              },
+                                              "fr": {
+                                                "type": "string",
+                                                "description": "string"
+                                              },
+                                              "it": {
+                                                "type": "string",
+                                                "description": "string"
+                                              },
+                                              "en": {
+                                                "type": "string",
+                                                "description": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "de",
+                                              "fr",
+                                              "it",
+                                              "en"
+                                            ]
                                           },
                                           "componentId": {
                                             "type": "string",
@@ -45031,15 +45103,39 @@
                                       },
                                       "links": {
                                         "type": "object",
-                                        "description": "{ enabled: boolean, baseUrl: string, componentId: string, targetComponentId: string }",
+                                        "description": "{ enabled: boolean, baseUrl: { de: string, fr: string, it: string, en: string }, componentId: string, targetComponentId: string }",
                                         "properties": {
                                           "enabled": {
                                             "type": "boolean",
                                             "description": "boolean"
                                           },
                                           "baseUrl": {
-                                            "type": "string",
-                                            "description": "string"
+                                            "type": "object",
+                                            "description": "{ de: string, fr: string, it: string, en: string }",
+                                            "properties": {
+                                              "de": {
+                                                "type": "string",
+                                                "description": "string"
+                                              },
+                                              "fr": {
+                                                "type": "string",
+                                                "description": "string"
+                                              },
+                                              "it": {
+                                                "type": "string",
+                                                "description": "string"
+                                              },
+                                              "en": {
+                                                "type": "string",
+                                                "description": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "de",
+                                              "fr",
+                                              "it",
+                                              "en"
+                                            ]
                                           },
                                           "componentId": {
                                             "type": "string",

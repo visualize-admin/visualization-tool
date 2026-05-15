@@ -4,12 +4,13 @@ documents: ["./app/graphql/queries/*.graphql"]
 generates:
   app/graphql/query-hooks.ts:
     plugins:
-      - "typescript"
       - "typescript-operations"
       - "typescript-urql"
     config:
+      onlyEnums: true
       nonOptionalTypename: true
       preResolveTypes: true
+      inlineEnums: true
       withComponent: false
       withHooks: true
       contextType: ./context#VisualizeGraphQLContext

@@ -70,7 +70,7 @@ import {
 } from "@/domain/data";
 import { Has } from "@/domain/types";
 import { useTimeFormatUnit } from "@/formatters";
-import { RelatedDimensionType } from "@/graphql/query-hooks";
+import { RelatedDimensionType } from "@/graphql/resolver-types";
 import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
 import { Limit } from "@/rdf/limits";
 import {

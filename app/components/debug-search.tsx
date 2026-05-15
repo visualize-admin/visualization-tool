@@ -12,10 +12,10 @@ import { KeyboardEventHandler, useEffect, useRef, useState } from "react";
 
 import {
   SearchCubeFilter,
-  SearchCubeFilterType,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
 import { RequestQueryMeta } from "@/graphql/query-meta";
+import { SearchCubeFilterType } from "@/graphql/resolver-types";
 
 const territoryTheme = {
   name: "Territory theme",

@@ -1,5 +1,5 @@
 import { PartialSearchCube } from "@/domain/data";
-import { DataCubePublicationStatus } from "@/graphql/query-hooks";
+import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 
 export const waldDatacubeResult: PartialSearchCube = {
   iri: "http://example.com/iri",

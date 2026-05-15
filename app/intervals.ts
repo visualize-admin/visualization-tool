@@ -9,7 +9,7 @@ import {
   timeYear,
 } from "d3-time";
 
-import { TimeUnit } from "@/graphql/query-hooks";
+import { TimeUnit } from "./graphql/resolver-types";
 
 const timeIntervals = new Map<TimeUnit, CountableTimeInterval>([
   [TimeUnit.Year, timeYear],

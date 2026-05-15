@@ -6,6 +6,7 @@ import { isDataSourceUrlAllowed } from "@/domain/data-source";
 import { setupFlamegraph } from "@/gql-flamegraph/resolvers";
 import {
   QueryResolvers,
+  Resolver,
   Resolvers,
   ScaleType,
   TimeUnit,
@@ -18,46 +19,83 @@ const getSource = (dataSourceType: string) => {
   return dataSourceType === "sparql" ? RDF : SQL;
 };
 
+const callResolver = <TResult, TParent, TContext, TArgs>(
+  resolver: Resolver<TResult, TParent, TContext, TArgs>,
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: any
+) => {
+  if (typeof resolver === "function") {
+    return resolver(parent, args, context, info);
+  }
+  return resolver.resolve(parent, args, context, info);
+};
+
 export const Query: QueryResolvers = {
   dataCubeLatestIri: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.dataCubeLatestIri(parent, args, context, info);
+    return callResolver(source.dataCubeLatestIri, parent, args, context, info);
   },
   dataCubeUnversionedIri: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.dataCubeUnversionedIri(parent, args, context, info);
+    return callResolver(
+      source.dataCubeUnversionedIri,
+      parent,
+      args,
+      context,
+      info
+    );
   },
   dataCubeComponents: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.dataCubeComponents(parent, args, context, info);
+    return callResolver(source.dataCubeComponents, parent, args, context, info);
   },
   dataCubeMetadata: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.dataCubeMetadata(parent, args, context, info);
+    return callResolver(source.dataCubeMetadata, parent, args, context, info);
   },
   dataCubeComponentTermsets: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.dataCubeComponentTermsets(parent, args, context, info);
+    return callResolver(
+      source.dataCubeComponentTermsets,
+      parent,
+      args,
+      context,
+      info
+    );
   },
   dataCubeObservations: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.dataCubeObservations(parent, args, context, info);
+    return callResolver(
+      source.dataCubeObservations,
+      parent,
+      args,
+      context,
+      info
+    );
   },
   dataCubePreview: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.dataCubePreview(parent, args, context, info);
+    return callResolver(source.dataCubePreview, parent, args, context, info);
   },
   possibleFilters: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.possibleFilters(parent, args, context, info);
+    return callResolver(source.possibleFilters, parent, args, context, info);
   },
   searchCubes: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.searchCubes(parent, args, context, info);
+    return callResolver(source.searchCubes, parent, args, context, info);
   },
   dataCubeDimensionGeoShapes: async (parent, args, context, info) => {
     const source = getSource(args.sourceType);
-    return await source.dataCubeDimensionGeoShapes(parent, args, context, info);
+    return callResolver(
+      source.dataCubeDimensionGeoShapes,
+      parent,
+      args,
+      context,
+      info
+    );
   },
 };
 

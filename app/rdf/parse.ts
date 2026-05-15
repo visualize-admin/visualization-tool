@@ -6,7 +6,7 @@ import {
   RelatedDimensionType,
   ScaleType,
   TimeUnit,
-} from "@/graphql/query-hooks";
+} from "@/graphql/resolver-types";
 import { ResolvedDimension } from "@/graphql/shared-types";
 import { ExtendedCube } from "@/rdf/extended-cube";
 import { Limit } from "@/rdf/limits";

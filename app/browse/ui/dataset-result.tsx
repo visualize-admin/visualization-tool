@@ -14,7 +14,7 @@ import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { MotionCard, smoothPresenceProps } from "@/components/presence";
 import { Tag } from "@/components/tag";
 import { PartialSearchCube } from "@/domain/data";
-import { DataCubePublicationStatus } from "@/graphql/query-hooks";
+import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { useEvent } from "@/utils/use-event";
 
 export type DatasetResultProps = ComponentProps<typeof DatasetResult>;

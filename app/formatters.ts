@@ -15,7 +15,7 @@ import {
   TemporalDimension,
   TemporalEntityDimension,
 } from "@/domain/data";
-import { TimeUnit } from "@/graphql/query-hooks";
+import { TimeUnit } from "@/graphql/resolver-types";
 import { getD3FormatLocale, getD3TimeFormatLocale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 

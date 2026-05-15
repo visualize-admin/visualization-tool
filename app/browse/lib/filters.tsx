@@ -1,10 +1,5 @@
 import { BrowseParams } from "@/browse/lib/params";
-import {
-  DataCubeOrganization,
-  DataCubeTermset,
-  DataCubeTheme,
-  SearchCubeFilterType,
-} from "@/graphql/query-hooks";
+import { DataCubeOrganization, DataCubeTermset, DataCubeTheme, SearchCubeFilterType, } from "@/graphql/resolver-types";
 
 export type DataCubeAbout = {
   __typename: "DataCubeAbout";
@@ -95,8 +90,7 @@ export const getParamsFromFilters = (filters: BrowseFilter[]) => {
         params[iriAttr] = filter.iri;
         break;
       default:
-        const _exhaustiveCheck: never = filter;
-        return _exhaustiveCheck;
+        return filter as never;
     }
 
     i++;
@@ -117,8 +111,7 @@ export const encodeFilter = ({ __typename, iri }: BrowseFilter) => {
       case "DataCubeTermset":
         return "termset";
       default:
-        const _exhaustiveCheck: never = __typename;
-        return _exhaustiveCheck;
+        return __typename as never;
     }
   })();
 

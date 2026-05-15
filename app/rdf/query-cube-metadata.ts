@@ -3,7 +3,7 @@ import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { DataCubeMetadata } from "@/domain/data";
-import { DataCubePublicationStatus } from "@/graphql/query-hooks";
+import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { pragmas } from "@/rdf/create-source";
 import * as ns from "@/rdf/namespace";
 import { buildLocalizedSubQuery, GROUP_SEPARATOR } from "@/rdf/query-utils";

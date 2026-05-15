@@ -5,7 +5,7 @@ import { SearchDatasetDraftsControl } from "@/browse/ui/search-dataset-drafts-co
 import { SearchDatasetResultsCount } from "@/browse/ui/search-dataset-results-count";
 import { SearchDatasetSortControl } from "@/browse/ui/search-dataset-sort-control";
 import { Flex } from "@/components/flex";
-import { SearchCubeResult, SearchCubeResultOrder } from "@/graphql/query-hooks";
+import { SearchCubeResult, SearchCubeResultOrder } from "@/graphql/resolver-types";
 import { sleep } from "@/utils/sleep";
 import { useEvent } from "@/utils/use-event";
 
@@ -16,7 +16,7 @@ export const SearchDatasetControls = ({
     onSubmitSearch,
     includeDrafts,
     setIncludeDrafts,
-    order = SearchCubeResultOrder.CreatedDesc,
+    order = SearchCubeResultOrder.CreatedDesc as SearchCubeResultOrder,
     onSetOrder,
   },
   cubes,
