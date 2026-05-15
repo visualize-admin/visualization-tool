@@ -16,6 +16,7 @@ You can also check the
   - Add Sentry integration back
   - Action tiles replaced with a link to the service desk
   - Allow the definition of language-specific links in table diagrams
+  - Get Cube Creators from https://lindas.admin.ch/fch/rvov too
 - Refactoring
   - Incorporate the Swiss-Federal-CI library into this repository.
 - Fixes
