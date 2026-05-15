@@ -240,9 +240,10 @@ CONSTRUCT {
       const result: { [dimensionIri: string]: DimensionValue[] } =
         Object.fromEntries(dimensionIris.map((iri) => [iri, []]));
 
-      for (const q of quads.filter((q) => q.predicate.equals(ns.rdf.first))) {
+      const arr = [...quads];
+      for (const q of arr.filter((q) => q.predicate.equals(ns.rdf.first))) {
         const dimensionIri = q.subject.value;
-        result[dimensionIri]?.push(parseDimensionValue(q, quads));
+        result[dimensionIri]?.push(parseDimensionValue(q, arr));
       }
 
       return Object.entries(result).map(([dimensionIri, values]) => ({
@@ -366,9 +367,10 @@ CONSTRUCT {
     query,
     () => sparqlClient.query.construct(query, { operation: "postUrlencoded" }),
     (quads) => {
-      return quads
+      const arr = [...quads];
+      return arr
         .filter((q) => q.predicate.equals(ns.rdf.first))
-        .map((qValue) => parseDimensionValue(qValue, quads));
+        .map((qValue) => parseDimensionValue(qValue, arr));
     },
     cache
   );

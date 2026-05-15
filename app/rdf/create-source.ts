@@ -1,6 +1,6 @@
 import { Source } from "rdf-cube-view-query";
 import rdf from "rdf-ext";
-import ParsingClient from "sparql-http-client/ParsingClient";
+import { ParsingClient } from "sparql-http-client/ParsingClient.js";
 
 export const pragmas = `#pragma describe.strategy cbd
 #pragma join.hash off

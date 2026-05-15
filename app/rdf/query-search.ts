@@ -127,7 +127,7 @@ export const searchCubes = async ({
 
   const parsedCubes = Object.values(
     scoreResults
-      .map((x) => buildSearchCubes(x))
+      .map((x) => buildSearchCubes([...x]))
       .flatMap((d) => d)
       .reduce(
         (acc, d) => {

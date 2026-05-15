@@ -35,19 +35,6 @@
     tslib "^2.3.0"
     zen-observable-ts "^1.2.5"
 
-"@apollo/client@~4.1.7":
-  version "4.1.9"
-  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-4.1.9.tgz#797186c27ad98f728e40a7e33b7539675d1509b7"
-  integrity sha512-qfpkQD51tdU/7iAR6aLb4w9o/L7I475DluWHRb61U/3Q0AH29nNOxOBHjBbWDdf16ncPOoQuxne1sEs2NjqBFw==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.1.1"
-    "@wry/caches" "^1.0.0"
-    "@wry/equality" "^0.5.6"
-    "@wry/trie" "^0.5.0"
-    graphql-tag "^2.12.6"
-    optimism "^0.18.0"
-    tslib "^2.3.0"
-
 "@apollo/protobufjs@1.2.6":
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/@apollo/protobufjs/-/protobufjs-1.2.6.tgz#d601e65211e06ae1432bf5993a1a0105f2862f27"
@@ -7756,14 +7743,7 @@
     "@rdfjs/term-map" "^2.0.0"
     "@rdfjs/term-set" "^2.0.1"
 
-"@rdfjs/types@*", "@rdfjs/types@>=1.0.1":
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/@rdfjs/types/-/types-1.0.1.tgz"
-  integrity sha512-YxVkH0XrCNG3MWeZxfg596GFe+oorTVusmNxRP6ZHTsGczZ8AGvG3UchRNkg3Fy4MyysI7vBAA5YZbESL+VmHQ==
-  dependencies:
-    "@types/node" "*"
-
-"@rdfjs/types@>=1.0.0", "@rdfjs/types@^1.0.1":
+"@rdfjs/types@*", "@rdfjs/types@>=1.0.0", "@rdfjs/types@>=1.0.1", "@rdfjs/types@^1.0.1":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@rdfjs/types/-/types-1.1.0.tgz#098f180b7cccb03bb416c7b4d03baaa9d480e36b"
   integrity sha512-5zm8bN2/CC634dTcn/0AhTRLaQRjXDZs3QfcAsQKNturHT7XVWcKy/8p3P5gXl+YkZTAmy7T5M/LyiT/jbkENw==
@@ -9106,18 +9086,6 @@
     "@tpluscode/rdf-ns-builders" ">=3"
     "@zazuko/prefixes" ">=1"
 
-"@tpluscode/sparql-builder@^2.0.3":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@tpluscode/sparql-builder/-/sparql-builder-2.0.4.tgz#417b335fde5a000450597149f4148ed6acd92250"
-  integrity sha512-Z6161k2dfpAoPvGVMbG1Mfm6tqHkAZI2vGKFerIXnBDVGYt54ytMMnuB+F1O9Wmvq4PEo4Bp25os5OFmSY1pdw==
-  dependencies:
-    "@rdfjs/data-model" "^2"
-    "@rdfjs/term-set" "^2"
-    "@rdfjs/types" "*"
-    "@tpluscode/rdf-string" "^1.3.0"
-    "@types/sparql-http-client" "^3.0.0"
-    anylogger "^1.1.0-beta.5"
-
 "@tpluscode/sparql-builder@^3":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@tpluscode/sparql-builder/-/sparql-builder-3.0.1.tgz#8bae7b56b2a4d541ce9253363c77e6f7df9b13b7"
@@ -9312,13 +9280,6 @@
   integrity sha512-cKYjgaS2DMdCKF7R0F5cgx1nfBYObN2ihIuPGQ4/dlIY6RpV7OWNwe9L8V4tTVKL2eZqOkNM9FM/rgTvLf4oXw==
   dependencies:
     "@types/node" "*"
-
-"@types/clownface@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@types/clownface/-/clownface-1.5.0.tgz#8da08cd66c2762b49aed111d9afcf6f06a9d7a9b"
-  integrity sha512-/TPkbDuGUn7PXyHi3UMGnM88XltVDkutc0cgYBjouQBZAu22jQ5v2xBtfyd+MYxIGtSTF/NWByyl94M3Uk9QHA==
-  dependencies:
-    rdf-js "^4.0.2"
 
 "@types/clownface@^2.0.0", "@types/clownface@^2.0.7":
   version "2.0.7"
@@ -9909,15 +9870,15 @@
   integrity sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==
 
 "@types/rdf-dataset-indexed@*":
-  version "0.4.6"
-  resolved "https://registry.npmjs.org/@types/rdf-dataset-indexed/-/rdf-dataset-indexed-0.4.6.tgz"
-  integrity sha512-DS1qLCwrWImac+DRTopSLLXqEcHF70vyZ2kh2d1pQwA/V/JN3WM+wXnSVk4f+Xt722VFlM3ij2uT4nB3PPXxjA==
+  version "0.4.11"
+  resolved "https://registry.yarnpkg.com/@types/rdf-dataset-indexed/-/rdf-dataset-indexed-0.4.11.tgz#e8b617e686acc61606ada163caac29d514c87986"
+  integrity sha512-q59w+46GHfXquNCRcL08sc6kciUs+jczfw22wPKjXmEFvbxzflPc2vGMgDBT61ypCD8veyV6VIOycgqoo/dfcA==
   dependencies:
-    rdf-js "^4.0.2"
+    "@rdfjs/types" ">=1.0.0"
 
 "@types/rdf-ext@^1.3.8":
   version "1.3.11"
-  resolved "https://registry.npmjs.org/@types/rdf-ext/-/rdf-ext-1.3.11.tgz"
+  resolved "https://registry.yarnpkg.com/@types/rdf-ext/-/rdf-ext-1.3.11.tgz#ddc9ae7b305b2fbef2f182c488abc036b0bd1260"
   integrity sha512-FBVBa+JZFa/zYxqbh09mF8D4fzxFaPLpz8IZeIyP8qSud1d6PhHIjCLS9NuoQTM5g/kVs6EPWFDCy7mxMqkKbA==
   dependencies:
     "@types/rdf-dataset-indexed" "*"
@@ -9938,14 +9899,7 @@
     "@rdfjs/types" "*"
     "@types/node" "*"
 
-"@types/rdfjs__namespace@*":
-  version "1.1.5"
-  resolved "https://registry.npmjs.org/@types/rdfjs__namespace/-/rdfjs__namespace-1.1.5.tgz"
-  integrity sha512-g6oZJzFNdR5W8yMrhLHtwguenwLEZuqHH8xbnybhMwYABZABCLhcY9tt9xZsVHrzLm3SujVR4OYvb8M0OfU3qw==
-  dependencies:
-    rdf-js "^4.0.2"
-
-"@types/rdfjs__namespace@^2.0.10":
+"@types/rdfjs__namespace@*", "@types/rdfjs__namespace@^2.0.10":
   version "2.0.10"
   resolved "https://registry.yarnpkg.com/@types/rdfjs__namespace/-/rdfjs__namespace-2.0.10.tgz#d55e8c60d2d02d5703d57f72e2787dc0b1c10367"
   integrity sha512-xoVzEIOxcpyteEmzaj94MSBbrBFs+vqv05joMhzLEiPRwsBBDnhkdBCaaDxR1Tf7wOW0kB2R1IYe4C3vEBFPgA==
@@ -10079,13 +10033,6 @@
     "@types/http-errors" "*"
     "@types/mime" "*"
     "@types/node" "*"
-
-"@types/sparql-http-client@^2.2.5":
-  version "2.2.7"
-  resolved "https://registry.npmjs.org/@types/sparql-http-client/-/sparql-http-client-2.2.7.tgz"
-  integrity sha512-XTGiM3M8fKuvsLP4Ykx28Oltya2Ztfc7XZxmAOJkRG/yFqU0GM7AVXtjF/q/Xtkrio8c/TuNsmQWmoA3I2eIZg==
-  dependencies:
-    rdf-js "^4.0.2"
 
 "@types/sparql-http-client@^3", "@types/sparql-http-client@^3.0.0":
   version "3.0.3"
@@ -11015,13 +10962,13 @@
     "@types/emscripten" "^1.39.6"
     tslib "^1.13.0"
 
-"@zazuko/cube-hierarchy-query@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@zazuko/cube-hierarchy-query/-/cube-hierarchy-query-3.0.0.tgz#75d943fa8f5a7c223845ddc5c23c4bfd35035017"
-  integrity sha512-DtMhLD6T7u0k7lNwLB4XKjUsJNy+j1lUTZRUXg9/Do2GKWbWc+gqBD+XHsdKDO3whM9vv0JMxtsv6UIHTDPq1w==
+"@zazuko/cube-hierarchy-query@^3.0.1":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@zazuko/cube-hierarchy-query/-/cube-hierarchy-query-3.0.2.tgz#8c862675c2546220afaf45e95f259fed2e0ce6ad"
+  integrity sha512-4C0dtHyH7qDVL8XN1rWKJ+qa5/mhUMHvN74c4WD+xGjLFEUCiuLezNEEaC/ZqGrLVVVK4/MibJOujY32mI4kYA==
   dependencies:
     "@hydrofoil/shape-to-query" "^0.13.1"
-    "@tpluscode/sparql-builder" "^2.0.3"
+    "@tpluscode/sparql-builder" "^3"
     "@types/sparql-http-client" "^3"
     "@zazuko/env" "^2.2.1"
     "@zazuko/vocabulary-extras-builders" "^1.1.3"
@@ -11029,14 +10976,7 @@
     is-graph-pointer "^2.1.0"
     rdf-dataset-ext "^1.1.0"
 
-"@zazuko/env-core@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@zazuko/env-core/-/env-core-1.0.1.tgz#d872ea43f59b81c0923d42c7ea0ad809809039ae"
-  integrity sha512-Q0O8UGdKx3BXkBB7IR8NN2h9k3kka47FMKEtMQQFLuRJXOjK3YFvcnuekjk3zKad0cy6XeXWQelHdiM5H+VT2g==
-  dependencies:
-    "@rdfjs/environment" "^1.0.0"
-
-"@zazuko/env-core@^1.1.2":
+"@zazuko/env-core@^1.0.0", "@zazuko/env-core@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@zazuko/env-core/-/env-core-1.1.2.tgz#7c9e9d426c556f33db05695b87bb936b07a37b1b"
   integrity sha512-mnLG40utuT7jPBPLs6fJ0puhfagnXSj+S8t9+zUGs3YlrOq/7b2zr64Hi3p3etwDdApaQ0VgQuNIY9doaruS1Q==
@@ -11317,11 +11257,6 @@ any-promise@^1.1.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/any-promise/-/any-promise-1.3.0.tgz#abc6afeedcea52e809cdc0376aed3ce39635d17f"
   integrity sha512-7UvmKalWRt1wgjL1RrGxoSJW/0QZFIegpeGvZG9kjp8vrRu55XTHbwnqq2GpXm9uLbcuhxm3IqX9OB4MZR1b2A==
-
-anylogger@^1.1.0-beta.5:
-  version "1.1.0-beta.5"
-  resolved "https://registry.yarnpkg.com/anylogger/-/anylogger-1.1.0-beta.5.tgz#9674b447a0985a0f988ad0d432ea4d03595f0c83"
-  integrity sha512-yqd502XssA9jZgF8OvEw9pCOI0yXBTebj9XP/CpddMcYizKfxnFOUVAQ8GB0XOuFTw3pPT3Jwz64A4UD26TZlA==
 
 anymatch@~3.1.1, anymatch@~3.1.2:
   version "3.1.2"
@@ -16486,16 +16421,6 @@ graphql-tag@^2.12.6:
   dependencies:
     tslib "^2.1.0"
 
-graphql-tools@^9:
-  version "9.0.28"
-  resolved "https://registry.yarnpkg.com/graphql-tools/-/graphql-tools-9.0.28.tgz#81cd441699f51ae063eabb1aa311afeed35e251c"
-  integrity sha512-QLRgoUXg7AciHYRWJ4TSfUbfBy/wCGSYG4fl8ccSFG3fXyAilekM1V+2ym+Fyv+DqbT1xM1CQ6BcSdCoOV3otA==
-  dependencies:
-    "@graphql-tools/schema" "^10.0.33"
-    tslib "^2.4.0"
-  optionalDependencies:
-    "@apollo/client" "~4.1.7"
-
 graphql-ws@^6.0.6:
   version "6.0.8"
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-6.0.8.tgz#6712bb9da8462937e92343e3146726f89424df68"
@@ -17624,14 +17549,7 @@ is-glob@~4.0.1:
   dependencies:
     is-extglob "^2.1.1"
 
-is-graph-pointer@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/is-graph-pointer/-/is-graph-pointer-2.0.0.tgz#2a85a2caf83372cdadf6752b2fe646655408021c"
-  integrity sha512-iLwR54h6W1Fv0xq8THEYUd4uGb3ea0hY8jAd17CUangc1Z6FXLPNYfwp5NNN7Hzr0+kIqAYsxgv12shPas/qaA==
-  dependencies:
-    "@types/clownface" "^1.5.0"
-
-is-graph-pointer@^2.1.0:
+is-graph-pointer@^2.0.0, is-graph-pointer@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/is-graph-pointer/-/is-graph-pointer-2.1.0.tgz#03926d721c96c7a73e8a8f051eed858870de2a75"
   integrity sha512-qc9R2PweF7eUoWJ/ggSB5NnJrJuCFInMV/8fvsb8yth7etAk2B5xwXyFnoc9QVrQSzBj2elQx3u9VStZzKM47w==
@@ -22073,7 +21991,7 @@ rdf-ext@^1.3.2:
 
 rdf-js@^4.0.2:
   version "4.0.2"
-  resolved "https://registry.npmjs.org/rdf-js/-/rdf-js-4.0.2.tgz"
+  resolved "https://registry.yarnpkg.com/rdf-js/-/rdf-js-4.0.2.tgz#f01510528bbfc6e004012b71a8a533896c4c4c10"
   integrity sha512-ApvlFa/WsQh8LpPK/6hctQwG06Z9ztQQGWVtrcrf9L6+sejHNXLPOqL+w7q3hF+iL0C4sv3AX1PUtGkLNzyZ0Q==
   dependencies:
     "@rdfjs/types" "*"
