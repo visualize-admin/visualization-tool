@@ -48,6 +48,7 @@ test("search results count coherence", async ({
   ];
 
   const themes = [
+    "Federal Chancellery",
     "Federal Office for the Environment FOEN",
     "Swiss Federal Archives SFA",
     "Swiss Federal Office of Energy SFOE",
