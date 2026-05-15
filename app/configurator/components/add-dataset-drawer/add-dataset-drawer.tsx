@@ -63,8 +63,8 @@ import {
 } from "@/graphql/hooks";
 import { ComponentId, parseComponentId } from "@/graphql/make-component-id";
 import {
-  useSearchCubesQuery,
   SearchCubeResultOrder as TSearchCubeResultOrder,
+  useSearchCubesQuery,
 } from "@/graphql/query-hooks";
 import {
   SearchCubeFilterType,
