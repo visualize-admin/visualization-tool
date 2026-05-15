@@ -330,8 +330,8 @@ const mkScoresQuery = (
           <https://lindas.admin.ch/sfa/opendataswiss>
         }
         GRAPH ?creatorGraph {
+          VALUES ?creatorType { schema:Organization schema:GovernmentOrganization }
           ?creatorIri a ?creatorType .
-          FILTER (?creatorType IN (schema:Organization, schema:GovernmentOrganization))
             ${buildLocalizedSubQuery(
               "creatorIri",
               "schema:name",
