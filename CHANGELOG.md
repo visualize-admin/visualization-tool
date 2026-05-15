@@ -35,6 +35,7 @@ You can also check the
   - Use AGENTS.md instead of CLAUDE.md and adjust context according to recent
     findings of studies about the impact of context files for coding AIs
   - Remove LINDASOld endpoint configurations
+  - Dependency updates
 - Documentation
   - added publiccode.yml for discoverability
 
