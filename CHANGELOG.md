@@ -29,6 +29,7 @@ You can also check the
     makes Visualize winding order agnostic and fixes a specific bug with newer
     CCW geometries from Swisstopo where map diagrams were zoomed to the world
     instead of Switzerland (older geometries all had CW winding order).
+  - Improve dimension values query performance. 
 - Maintenance
   - Remove Google Analytics integration (it is no longer in use)
   - Set Maptiler API key from `MAPTILER_API_KEY` environment variable at
