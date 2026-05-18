@@ -1,16 +1,16 @@
 {
-  "name": "@interactivethings/visualize-app",
+  "name": "@foen-admin-ch/visualize-app",
   "version": "3.4.9",
   "publishConfig": {
     "access": "public"
   },
-  "main": "dist/interactivethings-visualize-app.cjs.js",
-  "module": "dist/interactivethings-visualize-app.esm.js",
+  "main": "dist/visualize-app.cjs.js",
+  "module": "dist/visualize-app.esm.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "yarn workspace @visualize-admin/visualization-tool run build"
+    "build": "yarn workspace @foen-admin-ch/visualize-app run build"
   },
   "dependencies": {
     "@apollo/client": "^3.3.20",
