@@ -17,10 +17,13 @@ jobs:
         job: [lint, typecheck, test, knip]
     steps:
       - uses: actions/checkout@v6
-      - name: Setup node
+      - name: Read .nvmrc
+        run: echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_OUTPUT
+        id: nvm
+      - name: Use Node.js ${{ steps.nvm.outputs.NODE_VERSION }}
         uses: actions/setup-node@v6
         with:
-          node-version: "lts/*"
+          node-version: ${{ steps.nvm.outputs.NODE_VERSION }}
           cache: "yarn"
           cache-dependency-path: "**/yarn.lock"
       - run: yarn install --immutable --prefer-offline
