@@ -9140,6 +9140,42 @@
     "@traqula/chevrotain" "^1.1.0"
     "@traqula/core" "^1.1.1"
 
+"@traqula/chevrotain@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@traqula/chevrotain/-/chevrotain-1.1.0.tgz#1ebd234481e63091eeed3f2d5cca8de7f3990044"
+  integrity sha512-VpcoQKb2ZnsOQPlPO2mE9hfR0Aidp7drwTCtaXfpdRHGkXeQ5Nv4rnxmxwUoEDRzu6b/3z4n8oTd+sYhe4fAaA==
+
+"@traqula/core@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@traqula/core/-/core-1.1.1.tgz#d88e7c2c542fe1980922264ab4b3d50d116a9b63"
+  integrity sha512-v7EcEaBXv+3PtXac1SoeMQz0iq/xzwb3RxWAbrK/6oRAa8mrqYsf5fZesPNcKwnyALw0NVUeVPWFTQxOhawOSA==
+  dependencies:
+    "@traqula/chevrotain" "^1.1.0"
+
+"@traqula/generator-sparql-1-1@^1.1.0":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@traqula/generator-sparql-1-1/-/generator-sparql-1-1-1.1.1.tgz#40983c59f658e1fc7532c693b6bc7bfe10dfb5b4"
+  integrity sha512-tlHkh41maRuf2MpUq7jvAZCgwMaOjUwCyt/ku4afqFYiWwR5j7bjvS+fp5YIj848WNJ4Wf3GXN7ORibzKhfwVw==
+  dependencies:
+    "@traqula/core" "^1.1.1"
+    "@traqula/rules-sparql-1-1" "^1.1.1"
+
+"@traqula/parser-sparql-1-1@^1.1.0":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@traqula/parser-sparql-1-1/-/parser-sparql-1-1-1.1.1.tgz#1fecd6a165267370a7b1c17af89f3b7992d6b7a5"
+  integrity sha512-U2KJ/mHc14ktyc7QBL9OTrlF2Yzc5IdZv5nqshvgI8DyvI9Op7/vPvHZ9qxooOE9eFyDgB1gOvJDf06vbQzUMg==
+  dependencies:
+    "@traqula/core" "^1.1.1"
+    "@traqula/rules-sparql-1-1" "^1.1.1"
+
+"@traqula/rules-sparql-1-1@^1.1.0", "@traqula/rules-sparql-1-1@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@traqula/rules-sparql-1-1/-/rules-sparql-1-1-1.1.1.tgz#6bb675646fc58c8f12e4de3cbc0f75e68e189d9c"
+  integrity sha512-APMUzpU0+FqxMZT0WoJaZv0O4nGCJbaDbXC5gHuA/zl61jXORx3IdsKD2DgiMAl4MPkd4U1dVDlUO8ufWtHAWg==
+  dependencies:
+    "@traqula/chevrotain" "^1.1.0"
+    "@traqula/core" "^1.1.1"
+
 "@tsconfig/node10@^1.0.7":
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/@tsconfig/node10/-/node10-1.0.11.tgz#6ee46400685f130e278128c7b38b7e031ff5b2f2"
