@@ -41,7 +41,7 @@ import { isTemporalDimension } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useDataCubesComponentsQuery } from "@/graphql/hooks";
 import { getResolvedJoinById, isJoinById } from "@/graphql/join";
-import { TimeUnit } from "@/graphql/query-hooks";
+import { TimeUnit } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import {
   setDataFilter,

@@ -44,13 +44,15 @@ import { sourceToKey } from "@/domain/data-source";
 import { truthy } from "@/domain/types";
 import { ContentWrapper } from "@/federal-ci/components/content-wrapper";
 import {
+  useDataCubeMetadataQuery,
+  useSearchCubesQuery,
+} from "@/graphql/query-hooks";
+import {
   DataCubeOrganization,
   DataCubeTermset,
   DataCubeTheme,
   SearchCubeFilterType,
-  useDataCubeMetadataQuery,
-  useSearchCubesQuery,
-} from "@/graphql/query-hooks";
+} from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 import { useConfiguratorState, useLocale } from "@/src";
 import { softJSONParse } from "@/utils/soft-json-parse";
@@ -138,7 +140,7 @@ const SelectDatasetStepInner = ({
             d.__typename !== SearchCubeFilterType.DataCubeAbout
         )
         .map((d) => {
-          const type = SearchCubeFilterType[d.__typename];
+          const type = SearchCubeFilterType[d.__typename!];
           return {
             type,
             label: d.label,
@@ -246,7 +248,7 @@ const SelectDatasetStepInner = ({
             case SearchCubeFilterType.TemporalDimension:
               return [];
             default:
-              const _exhaustiveCheck: never = queryFilter.type;
+              const _exhaustiveCheck = queryFilter.type;
               return _exhaustiveCheck;
           }
         })();

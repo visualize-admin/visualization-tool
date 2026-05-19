@@ -102,7 +102,7 @@ export const searchCubes: NonNullable<QueryResolvers["searchCubes"]> = async (
   { setup },
   info
 ) => {
-  return await tracer.startActiveSpan("searchCubes", async (span) => {
+  return tracer.startActiveSpan("searchCubes", async (span) => {
     try {
       span.addEvent("search.input", {
         "app.search.query":

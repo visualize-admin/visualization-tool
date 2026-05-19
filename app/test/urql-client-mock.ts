@@ -2,7 +2,7 @@ import { Client } from "urql";
 import { vi } from "vitest";
 
 import { stringifyComponentId } from "@/graphql/make-component-id";
-import { PossibleFilterValue } from "@/graphql/query-hooks";
+import { PossibleFilterValue } from "@/graphql/resolver-types";
 import { getCachedComponentsMock } from "@/urql-cache.mock";
 
 const possibleFilters: PossibleFilterValue[] = [

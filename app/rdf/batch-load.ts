@@ -4,7 +4,7 @@ import {
 } from "@tpluscode/sparql-builder/lib";
 import { groups } from "d3-array";
 import { NamedNode, Term } from "rdf-js";
-import ParsingClient from "sparql-http-client/ParsingClient";
+import { ParsingClient } from "sparql-http-client/ParsingClient.js";
 import { LRUCache } from "typescript-lru-cache";
 
 import { executeWithCache } from "./query-cache";

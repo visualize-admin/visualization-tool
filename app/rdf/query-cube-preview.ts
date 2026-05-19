@@ -40,7 +40,7 @@ export const getCubePreview = async (
   }
 ): Promise<DataCubePreview> => {
   const { unversionedIri, sparqlClient, locale } = options;
-  const qs = await sparqlClient.query.construct(
+  const qs = [...await sparqlClient.query.construct(
     `PREFIX cube: <https://cube.link/>
 PREFIX meta: <https://cube.link/meta/>
 PREFIX qudt: <http://qudt.org/schema/qudt/>
@@ -145,7 +145,7 @@ CONSTRUCT {
   }
 }`,
     { operation: "postUrlencoded" }
-  );
+  )];
 
   if (qs.length === 0) {
     throw Error(`No cube found for ${iri}!`);

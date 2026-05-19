@@ -13,7 +13,7 @@ import {
   DataCubeOrganization,
   DataCubeTermset,
   DataCubeTheme,
-} from "@/graphql/query-hooks";
+} from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
 
 export const NavigationSection = ({

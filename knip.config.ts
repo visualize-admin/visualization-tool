@@ -32,6 +32,7 @@ const config: KnipConfig = {
     "./**/*.spec.ts",
   ],
   ignoreDependencies: [
+    "@graphql-tools/utils",
     // Needed by eslint.
     "@typescript-eslint/utils",
     // Used in eslint, without explicit import.
@@ -55,11 +56,9 @@ const config: KnipConfig = {
     // Used in a script.
     "fs-extra",
     "@types/fs-extra",
+    "dotenv",
     // Used in Storybook.
     "storybook",
-    "@storybook/nextjs",
-    // Used in e2e and scripts. Not sure why it's not detected.
-    "isomorphic-unfetch",
     // Used in scripts, which we ignore to not have a "not used files" error.
     "dotenv-cli",
     // Used to generate icons.
@@ -72,6 +71,14 @@ const config: KnipConfig = {
     "@babel/runtime",
     "core-js",
     "import-move-codemod",
+  ],
+  ignoreBinaries: [
+    "graphql-codegen",
+    "lingui",
+    "playwright",
+    "prisma",
+    "publish",
+    "svgr",
   ],
   rules: {
     binaries: "warn",

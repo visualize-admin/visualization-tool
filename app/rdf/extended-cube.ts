@@ -34,8 +34,8 @@ export class ExtendedCube extends Cube {
       this.shapeQuery(),
       { operation: "postUrlencoded" }
     );
-    this.dataset.addAll(shapeData);
-    this.shapeDataset.addAll(shapeData);
+    this.dataset.addAll([...shapeData]);
+    this.shapeDataset.addAll([...shapeData]);
     this.quads = [...this.quads, ...shapeData];
   }
 }

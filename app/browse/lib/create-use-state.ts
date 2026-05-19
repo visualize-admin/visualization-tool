@@ -7,7 +7,8 @@ import {
 } from "@/browse/lib/filters";
 import { BrowseParams } from "@/browse/lib/params";
 import { useUrlSyncState } from "@/browse/lib/use-url-sync-state";
-import { SearchCubeResultOrder } from "@/graphql/query-hooks";
+import type * as Hooks from "@/graphql/query-hooks";
+import { SearchCubeResultOrder } from "@/graphql/resolver-types";
 import { useEvent } from "@/utils/use-event";
 
 /**
@@ -35,7 +36,7 @@ export const createUseBrowseState = ({
       includeDrafts,
       dataset: paramDataset,
     } = browseParams;
-    const previousOrderRef = useRef(SearchCubeResultOrder.Score);
+    const previousOrderRef = useRef(SearchCubeResultOrder.Score as Hooks.SearchCubeResultOrder);
 
     // Support /browse?dataset=<iri> and legacy /browse/dataset/<iri>
     const dataset = type === "dataset" ? iri : paramDataset;
@@ -47,7 +48,7 @@ export const createUseBrowseState = ({
     const setIncludeDrafts = useEvent((v: boolean) =>
       setParams((prev) => ({ ...prev, includeDrafts: v }))
     );
-    const setOrder = useEvent((v: SearchCubeResultOrder) =>
+    const setOrder = useEvent((v: Hooks.SearchCubeResultOrder) =>
       setParams((prev) => ({ ...prev, order: v }))
     );
     const setDataset = useEvent((v: string) =>
@@ -78,7 +79,7 @@ export const createUseBrowseState = ({
         },
         search,
         order,
-        onSetOrder: (order: SearchCubeResultOrder) => {
+        onSetOrder: (order: Hooks.SearchCubeResultOrder) => {
           previousOrderRef.current = order;
           setOrder(order);
         },

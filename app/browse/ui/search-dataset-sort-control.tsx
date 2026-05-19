@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { Flex } from "@/components/flex";
 import { Select } from "@/components/form";
 import { SearchCubeResultOrder } from "@/graphql/query-hooks";
+import * as ResolverTypes from "@/graphql/resolver-types";
 
 export const SearchDatasetSortControl = ({
   value,
@@ -18,21 +19,23 @@ export const SearchDatasetSortControl = ({
   const options = useMemo(() => {
     const options = [
       {
-        value: SearchCubeResultOrder.Score,
+        value: ResolverTypes.SearchCubeResultOrder.Score,
         label: t({ id: "dataset.order.relevance", message: "Relevance" }),
       },
       {
-        value: SearchCubeResultOrder.TitleAsc,
+        value: ResolverTypes.SearchCubeResultOrder.TitleAsc,
         label: t({ id: "dataset.order.title", message: "Title" }),
       },
       {
-        value: SearchCubeResultOrder.CreatedDesc,
+        value: ResolverTypes.SearchCubeResultOrder.CreatedDesc,
         label: t({ id: "dataset.order.newest", message: "Newest" }),
       },
     ];
 
     if (disableScore) {
-      return options.filter((o) => o.value !== SearchCubeResultOrder.Score);
+      return options.filter(
+        (o) => o.value !== ResolverTypes.SearchCubeResultOrder.Score
+      );
     }
 
     return options;

@@ -24,10 +24,10 @@ import { ComponentTermsets } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import {
   DataCubeComponentTermsetsQueryVariables,
-  SearchCubeFilterType,
   useDataCubeComponentTermsetsQuery,
   useSearchCubesQuery,
 } from "@/graphql/query-hooks";
+import { SearchCubeFilterType } from "@/graphql/resolver-types";
 
 const options = [
   {

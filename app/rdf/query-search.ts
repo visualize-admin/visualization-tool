@@ -5,8 +5,7 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { SearchCube } from "@/domain/data";
 import { truthy } from "@/domain/types";
-import { SearchCubeFilterType, TimeUnit } from "@/graphql/query-hooks";
-import { SearchCubeFilter } from "@/graphql/resolver-types";
+import { SearchCubeFilter, SearchCubeFilterType, TimeUnit } from "@/graphql/resolver-types";
 import { defaultLocale } from "@/locales/locales";
 import { pragmas } from "@/rdf/create-source";
 import { unitsToNode } from "@/rdf/mappings";
@@ -127,7 +126,7 @@ export const searchCubes = async ({
 
   const parsedCubes = Object.values(
     scoreResults
-      .map((x) => buildSearchCubes(x))
+      .map((x) => buildSearchCubes([...x]))
       .flatMap((d) => d)
       .reduce(
         (acc, d) => {

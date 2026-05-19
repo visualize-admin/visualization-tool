@@ -19,7 +19,7 @@ import {
 import { useTimeFormatLocale } from "@/formatters";
 import { useConfigsCubeComponents } from "@/graphql/hooks";
 import { stringifyComponentId } from "@/graphql/make-component-id";
-import { TimeUnit } from "@/graphql/query-hooks";
+import { TimeUnit } from "@/graphql/resolver-types";
 import { useLocale } from "@/locales/use-locale";
 import { timeUnitFormats, timeUnitOrder } from "@/rdf/mappings";
 import { useDashboardInteractiveFilters } from "@/stores/interactive-filters";

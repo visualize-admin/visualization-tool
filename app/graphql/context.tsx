@@ -171,7 +171,7 @@ const setupSparqlClients = (
   ) {
     return tracer.startActiveSpan(
       "sparqlClientStream.query.select",
-      async (span) => {
+      (span) => {
         try {
           span.setAttribute("db.sparql.has_query_event", true);
           span.setAttribute("server.address", sourceUrlHostname);
@@ -180,7 +180,7 @@ const setupSparqlClients = (
             "db.system.name": "sparql",
             "url.full": sourceUrl,
           });
-          return await originalSparqlClientStreamQuerySelect.call(
+          return originalSparqlClientStreamQuerySelect.call(
             this,
             query,
             ...args
@@ -201,7 +201,7 @@ const setupSparqlClients = (
   ) {
     return tracer.startActiveSpan(
       "sparqlClientStream.query.construct",
-      async (span) => {
+      (span) => {
         try {
           span.setAttribute("db.sparql.has_query_event", true);
           span.setAttribute("server.address", sourceUrlHostname);
@@ -210,7 +210,7 @@ const setupSparqlClients = (
             "db.system.name": "sparql",
             "url.full": sourceUrl,
           });
-          return await originalSparqlClientStreamQueryConstruct.call(
+          return originalSparqlClientStreamQueryConstruct.call(
             this,
             query,
             ...args

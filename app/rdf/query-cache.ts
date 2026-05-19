@@ -11,7 +11,7 @@ export const executeWithCache = async <Executed, Parsed>(
   parse: (result: Executed) => Parsed,
   cache: LRUCache | undefined
 ) => {
-  const key = `${sparqlClient.query.endpoint.endpointUrl} - ${query}`;
+  const key = `${sparqlClient.endpointUrl} - ${query}`;
   const cached = cache?.get(key);
 
   if (cached) {

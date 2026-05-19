@@ -1,5 +1,4 @@
 import { ascending, index } from "d3-array";
-import { Maybe } from "graphql-tools";
 import keyBy from "lodash/keyBy";
 import mapKeys from "lodash/mapKeys";
 import { CubeDimension, Filter, LookupSource, View } from "rdf-cube-view-query";
@@ -40,6 +39,8 @@ import {
 } from "@/rdf/query-dimension-values";
 import { loadUnits } from "@/rdf/query-unit-labels";
 import { getQueryLocales } from "@/rdf/query-utils";
+
+import type { Maybe } from "@graphql-tools/utils";
 
 const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 

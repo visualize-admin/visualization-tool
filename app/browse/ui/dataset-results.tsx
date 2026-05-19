@@ -6,7 +6,7 @@ import { CombinedError } from "urql";
 import { DatasetResult, DatasetResultProps } from "@/browse/ui/dataset-result";
 import { Loading, LoadingDataError } from "@/components/hint";
 import { SearchCube } from "@/domain/data";
-import { SearchCubeResult } from "@/graphql/query-hooks";
+import { SearchCubeResult } from "@/graphql/resolver-types";
 
 export type DatasetResultsProps = ComponentProps<typeof DatasetResults>;
 

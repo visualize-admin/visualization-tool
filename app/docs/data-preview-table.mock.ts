@@ -1,6 +1,6 @@
 import { DataCubeObservations, Dimension, Measure } from "@/domain/data";
 import { stringifyComponentId } from "@/graphql/make-component-id";
-import { TimeUnit } from "@/graphql/query-hooks";
+import { TimeUnit } from "@/graphql/resolver-types";
 
 export const dimensions: Dimension[] = [
   {

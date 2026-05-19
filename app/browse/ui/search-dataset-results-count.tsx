@@ -1,7 +1,7 @@
 import { Plural } from "@lingui/macro";
 import { Typography } from "@mui/material";
 
-import { SearchCubeResult } from "@/graphql/query-hooks";
+import { SearchCubeResult } from "@/graphql/resolver-types";
 
 export const SearchDatasetResultsCount = ({
   cubes,

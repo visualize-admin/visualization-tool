@@ -4,9 +4,8 @@ import { AnimatePresence } from "framer-motion";
 import keyBy from "lodash/keyBy";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 
-import { BrowseFilter } from "@/browse/lib/filters";
 import { useBrowseContext } from "@/browse/model/context";
 import { NavigationSection } from "@/browse/ui/navigation-section";
 import { SubthemeFilters } from "@/browse/ui/subtheme-filters";
@@ -17,16 +16,16 @@ import {
   DataCubeOrganization,
   DataCubeTermset,
   DataCubeTheme,
-} from "@/graphql/query-hooks";
-import { SearchCubeResult } from "@/graphql/resolver-types";
+  SearchCubeResult
+} from "@/graphql/resolver-types";
 
-const navigationOrder: Record<BrowseFilter["__typename"], number> = {
+const navigationOrder = {
   DataCubeTheme: 1,
   DataCubeOrganization: 2,
   DataCubeTermset: 3,
   // Not used in the navigation
   DataCubeAbout: 4,
-};
+} as const;
 
 export const SearchFilters = ({
   cubes,
@@ -207,14 +206,11 @@ export const SearchFilters = ({
       />
     ) : null;
 
-  const baseNavigations: {
-    element: ReactNode;
-    __typename: BrowseFilter["__typename"];
-  }[] = [
+  const baseNavigations = [
     { element: themeNavigation, __typename: "DataCubeTheme" },
     { element: organizationNavigation, __typename: "DataCubeOrganization" },
     { element: termsetNavigation, __typename: "DataCubeTermset" },
-  ];
+  ] as const;
 
   const navigations = sortBy(baseNavigations, (nav) => {
     const i = filters.findIndex((f) => f.__typename === nav.__typename);

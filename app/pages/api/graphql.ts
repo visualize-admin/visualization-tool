@@ -24,11 +24,12 @@ export const cors = configureCors({
   origin: corsOrigin,
 });
 
-const schema = makeExecutableSchema({
-  typeDefs: [constraintDirectiveTypeDefs, typeDefs],
-  resolvers,
-  schemaTransforms: [constraintDirective()],
-});
+const schema = constraintDirective()(
+  makeExecutableSchema({
+    typeDefs: [constraintDirectiveTypeDefs, typeDefs],
+    resolvers,
+  })
+);
 
 const server = new ApolloServer({
   schema,

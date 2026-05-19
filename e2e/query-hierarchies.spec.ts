@@ -1,5 +1,4 @@
 import gql from "graphql-tag";
-import "isomorphic-unfetch";
 import { createClient } from "urql";
 
 import { setup } from "./common";

@@ -73,7 +73,7 @@ import {
   getOriginalIds,
   isJoinByCube,
 } from "@/graphql/join";
-import { PossibleFilterValue } from "@/graphql/query-hooks";
+import { PossibleFilterValue } from "@/graphql/resolver-types";
 import { DEFAULT_CATEGORICAL_PALETTE_ID } from "@/palettes";
 import { findInHierarchy } from "@/rdf/tree-utils";
 import { theme } from "@/themes/theme";
@@ -203,7 +203,8 @@ export const applyTableDimensionToFilters = (props: {
       type: "single",
       // TODO, possibly in case of join by dimensions, we could get a value that is not part
       // of the full range of values
-      value: possibleFilter?.value ?? dimension.values[0].value,
+      value:
+        (possibleFilter?.value as string | number) ?? dimension.values[0].value,
     };
   }
 };
@@ -269,7 +270,9 @@ export const applyNonTableDimensionToFilters = (props: {
       : undefined;
     const filterValue = hierarchyTopMost
       ? hierarchyTopMost.value
-      : (possibleFilter?.value ?? dimension.values[0]?.value);
+      : ((possibleFilter?.value ?? dimension.values[0]?.value) as
+          | string
+          | number);
 
     if (filterValue) {
       filters[dimension.id] = {

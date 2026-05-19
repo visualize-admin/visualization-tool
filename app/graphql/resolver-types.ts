@@ -16,84 +16,76 @@ import { Termset } from '../domain/data';
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { VisualizeGraphQLContext } from './context';
 export type Maybe<T> = T | null;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
+export type InputMaybe<T> = Maybe<T>;
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
-  ComponentTermsets: ComponentTermsets;
-  DataCubeComponents: DataCubeComponents;
-  DataCubeMetadata: DataCubeMetadata;
-  DataCubeObservations: DataCubeObservations;
-  DataCubePreview: DataCubePreview;
-  DataSourceUrl: DataSourceUrl;
-  DimensionValue: DimensionValue;
-  FilterValue: any;
-  Filters: Filters;
-  GeoShapes: GeoShapes;
-  HierarchyValue: HierarchyValue;
-  Observation: Observation;
-  RawObservation: RawObservation;
-  SearchCube: SearchCube;
-  SingleFilters: SingleFilters;
-  Termset: Termset;
-  ValueIdentifier: any;
-  ValuePosition: any;
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  ComponentTermsets: { input: ComponentTermsets; output: ComponentTermsets; }
+  DataCubeComponents: { input: DataCubeComponents; output: DataCubeComponents; }
+  DataCubeMetadata: { input: DataCubeMetadata; output: DataCubeMetadata; }
+  DataCubeObservations: { input: DataCubeObservations; output: DataCubeObservations; }
+  DataCubePreview: { input: DataCubePreview; output: DataCubePreview; }
+  DataSourceUrl: { input: DataSourceUrl; output: DataSourceUrl; }
+  DimensionValue: { input: DimensionValue; output: DimensionValue; }
+  FilterValue: { input: unknown; output: unknown; }
+  Filters: { input: Filters; output: Filters; }
+  GeoShapes: { input: GeoShapes; output: GeoShapes; }
+  HierarchyValue: { input: HierarchyValue; output: HierarchyValue; }
+  Observation: { input: Observation; output: Observation; }
+  RawObservation: { input: RawObservation; output: RawObservation; }
+  SearchCube: { input: SearchCube; output: SearchCube; }
+  SingleFilters: { input: SingleFilters; output: SingleFilters; }
+  Termset: { input: Termset; output: Termset; }
+  ValueIdentifier: { input: unknown; output: unknown; }
+  ValuePosition: { input: unknown; output: unknown; }
 };
-
-
 
 export type DataCubeComponentFilter = {
-  iri: Scalars['String'];
-  filters?: Maybe<Scalars['Filters']>;
-  componentIds?: Maybe<Array<Scalars['String']>>;
-  joinBy?: Maybe<Array<Scalars['String']>>;
-  loadValues?: Maybe<Scalars['Boolean']>;
+  componentIds?: InputMaybe<Array<Scalars['String']['input']>>;
+  filters?: InputMaybe<Scalars['Filters']['input']>;
+  iri: Scalars['String']['input'];
+  joinBy?: InputMaybe<Array<Scalars['String']['input']>>;
+  loadValues?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-
 export type DataCubeDimensionGeoShapesCubeFilter = {
-  iri: Scalars['String'];
-  dimensionId: Scalars['String'];
+  dimensionId: Scalars['String']['input'];
+  iri: Scalars['String']['input'];
 };
 
 export type DataCubeLatestIriFilter = {
-  iri: Scalars['String'];
+  iri: Scalars['String']['input'];
 };
 
-
 export type DataCubeMetadataFilter = {
-  iri: Scalars['String'];
+  iri: Scalars['String']['input'];
 };
 
 export type DataCubeObservationFilter = {
-  iri: Scalars['String'];
-  filters?: Maybe<Scalars['Filters']>;
-  componentIds?: Maybe<Array<Scalars['String']>>;
-  joinBy?: Maybe<Array<Scalars['String']>>;
+  componentIds?: InputMaybe<Array<Scalars['String']['input']>>;
+  filters?: InputMaybe<Scalars['Filters']['input']>;
+  iri: Scalars['String']['input'];
+  joinBy?: InputMaybe<Array<Scalars['String']['input']>>;
 };
-
 
 export type DataCubeOrganization = {
   __typename?: 'DataCubeOrganization';
-  iri: Scalars['String'];
-  label?: Maybe<Scalars['String']>;
+  iri: Scalars['String']['output'];
+  label?: Maybe<Scalars['String']['output']>;
 };
 
 export type DataCubePossibleFiltersCubeFilter = {
-  iri: Scalars['String'];
-  filters: Scalars['SingleFilters'];
+  filters: Scalars['SingleFilters']['input'];
+  iri: Scalars['String']['input'];
 };
 
-
 export type DataCubePreviewFilter = {
-  iri: Scalars['String'];
+  iri: Scalars['String']['input'];
 };
 
 export enum DataCubePublicationStatus {
@@ -103,202 +95,193 @@ export enum DataCubePublicationStatus {
 
 export type DataCubeTermset = {
   __typename?: 'DataCubeTermset';
-  iri: Scalars['String'];
-  label?: Maybe<Scalars['String']>;
+  iri: Scalars['String']['output'];
+  label?: Maybe<Scalars['String']['output']>;
 };
 
 export type DataCubeTermsetFilter = {
-  iri: Scalars['String'];
+  iri: Scalars['String']['input'];
 };
 
 export type DataCubeTheme = {
   __typename?: 'DataCubeTheme';
-  iri: Scalars['String'];
-  label?: Maybe<Scalars['String']>;
+  iri: Scalars['String']['output'];
+  label?: Maybe<Scalars['String']['output']>;
 };
 
 export type DataCubeUnversionedIriFilter = {
-  iri: Scalars['String'];
+  iri: Scalars['String']['input'];
 };
-
-
-
-
-
-
-
 
 export type PossibleFilterValue = {
   __typename?: 'PossibleFilterValue';
-  type: Scalars['String'];
-  id: Scalars['String'];
-  value?: Maybe<Scalars['FilterValue']>;
+  id: Scalars['String']['output'];
+  type: Scalars['String']['output'];
+  value?: Maybe<Scalars['FilterValue']['output']>;
 };
 
 export type Query = {
   __typename?: 'Query';
-  dataCubeLatestIri: Scalars['String'];
-  dataCubeUnversionedIri?: Maybe<Scalars['String']>;
-  dataCubeComponents: Scalars['DataCubeComponents'];
-  dataCubeComponentTermsets: Array<Scalars['ComponentTermsets']>;
-  dataCubeMetadata: Scalars['DataCubeMetadata'];
-  dataCubeObservations: Scalars['DataCubeObservations'];
-  dataCubePreview: Scalars['DataCubePreview'];
+  dataCubeComponentTermsets: Array<Scalars['ComponentTermsets']['output']>;
+  dataCubeComponents: Scalars['DataCubeComponents']['output'];
+  dataCubeDimensionGeoShapes?: Maybe<Scalars['GeoShapes']['output']>;
+  dataCubeLatestIri: Scalars['String']['output'];
+  dataCubeMetadata: Scalars['DataCubeMetadata']['output'];
+  dataCubeObservations: Scalars['DataCubeObservations']['output'];
+  dataCubePreview: Scalars['DataCubePreview']['output'];
+  dataCubeUnversionedIri?: Maybe<Scalars['String']['output']>;
   possibleFilters: Array<PossibleFilterValue>;
   searchCubes: Array<SearchCubeResult>;
-  dataCubeDimensionGeoShapes?: Maybe<Scalars['GeoShapes']>;
-};
-
-
-export type QueryDataCubeLatestIriArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['DataSourceUrl'];
-  cubeFilter: DataCubeLatestIriFilter;
-};
-
-
-export type QueryDataCubeUnversionedIriArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['DataSourceUrl'];
-  cubeFilter: DataCubeUnversionedIriFilter;
-};
-
-
-export type QueryDataCubeComponentsArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['DataSourceUrl'];
-  locale: Scalars['String'];
-  cubeFilter: DataCubeComponentFilter;
 };
 
 
 export type QueryDataCubeComponentTermsetsArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['DataSourceUrl'];
-  locale: Scalars['String'];
   cubeFilter: DataCubeTermsetFilter;
+  locale: Scalars['String']['input'];
+  sourceType: Scalars['String']['input'];
+  sourceUrl: Scalars['DataSourceUrl']['input'];
 };
 
 
-export type QueryDataCubeMetadataArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['DataSourceUrl'];
-  locale: Scalars['String'];
-  cubeFilter: DataCubeMetadataFilter;
-};
-
-
-export type QueryDataCubeObservationsArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['DataSourceUrl'];
-  locale: Scalars['String'];
-  cubeFilter: DataCubeObservationFilter;
-};
-
-
-export type QueryDataCubePreviewArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['DataSourceUrl'];
-  locale: Scalars['String'];
-  cubeFilter: DataCubePreviewFilter;
-};
-
-
-export type QueryPossibleFiltersArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['DataSourceUrl'];
-  cubeFilter: DataCubePossibleFiltersCubeFilter;
-};
-
-
-export type QuerySearchCubesArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['DataSourceUrl'];
-  locale?: Maybe<Scalars['String']>;
-  query?: Maybe<Scalars['String']>;
-  order?: Maybe<SearchCubeResultOrder>;
-  includeDrafts?: Maybe<Scalars['Boolean']>;
-  fetchDimensionTermsets?: Maybe<Scalars['Boolean']>;
-  filters?: Maybe<Array<SearchCubeFilter>>;
+export type QueryDataCubeComponentsArgs = {
+  cubeFilter: DataCubeComponentFilter;
+  locale: Scalars['String']['input'];
+  sourceType: Scalars['String']['input'];
+  sourceUrl: Scalars['DataSourceUrl']['input'];
 };
 
 
 export type QueryDataCubeDimensionGeoShapesArgs = {
-  sourceType: Scalars['String'];
-  sourceUrl: Scalars['DataSourceUrl'];
-  locale: Scalars['String'];
   cubeFilter: DataCubeDimensionGeoShapesCubeFilter;
+  locale: Scalars['String']['input'];
+  sourceType: Scalars['String']['input'];
+  sourceUrl: Scalars['DataSourceUrl']['input'];
 };
 
+
+export type QueryDataCubeLatestIriArgs = {
+  cubeFilter: DataCubeLatestIriFilter;
+  sourceType: Scalars['String']['input'];
+  sourceUrl: Scalars['DataSourceUrl']['input'];
+};
+
+
+export type QueryDataCubeMetadataArgs = {
+  cubeFilter: DataCubeMetadataFilter;
+  locale: Scalars['String']['input'];
+  sourceType: Scalars['String']['input'];
+  sourceUrl: Scalars['DataSourceUrl']['input'];
+};
+
+
+export type QueryDataCubeObservationsArgs = {
+  cubeFilter: DataCubeObservationFilter;
+  locale: Scalars['String']['input'];
+  sourceType: Scalars['String']['input'];
+  sourceUrl: Scalars['DataSourceUrl']['input'];
+};
+
+
+export type QueryDataCubePreviewArgs = {
+  cubeFilter: DataCubePreviewFilter;
+  locale: Scalars['String']['input'];
+  sourceType: Scalars['String']['input'];
+  sourceUrl: Scalars['DataSourceUrl']['input'];
+};
+
+
+export type QueryDataCubeUnversionedIriArgs = {
+  cubeFilter: DataCubeUnversionedIriFilter;
+  sourceType: Scalars['String']['input'];
+  sourceUrl: Scalars['DataSourceUrl']['input'];
+};
+
+
+export type QueryPossibleFiltersArgs = {
+  cubeFilter: DataCubePossibleFiltersCubeFilter;
+  sourceType: Scalars['String']['input'];
+  sourceUrl: Scalars['DataSourceUrl']['input'];
+};
+
+
+export type QuerySearchCubesArgs = {
+  fetchDimensionTermsets?: InputMaybe<Scalars['Boolean']['input']>;
+  filters?: InputMaybe<Array<SearchCubeFilter>>;
+  includeDrafts?: InputMaybe<Scalars['Boolean']['input']>;
+  locale?: InputMaybe<Scalars['String']['input']>;
+  order?: InputMaybe<SearchCubeResultOrder>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  sourceType: Scalars['String']['input'];
+  sourceUrl: Scalars['DataSourceUrl']['input'];
+};
 
 export type RelatedDimension = {
   __typename?: 'RelatedDimension';
+  id: Scalars['String']['output'];
   type: RelatedDimensionType;
-  id: Scalars['String'];
 };
 
 export enum RelatedDimensionType {
-  StandardError = 'StandardError',
+  ConfidenceLowerBound = 'ConfidenceLowerBound',
   ConfidenceUpperBound = 'ConfidenceUpperBound',
-  ConfidenceLowerBound = 'ConfidenceLowerBound'
+  StandardError = 'StandardError'
 }
 
 export enum ScaleType {
-  Ordinal = 'Ordinal',
-  Nominal = 'Nominal',
   Interval = 'Interval',
+  Nominal = 'Nominal',
+  Ordinal = 'Ordinal',
   Ratio = 'Ratio'
 }
 
-
 export type SearchCubeFilter = {
+  label?: InputMaybe<Scalars['String']['input']>;
   type: SearchCubeFilterType;
-  label?: Maybe<Scalars['String']>;
-  value: Scalars['String'];
+  value: Scalars['String']['input'];
 };
 
 export enum SearchCubeFilterType {
-  TemporalDimension = 'TemporalDimension',
-  DataCubeTheme = 'DataCubeTheme',
-  DataCubeOrganization = 'DataCubeOrganization',
   DataCubeAbout = 'DataCubeAbout',
-  DataCubeTermset = 'DataCubeTermset'
+  DataCubeOrganization = 'DataCubeOrganization',
+  DataCubeTermset = 'DataCubeTermset',
+  DataCubeTheme = 'DataCubeTheme',
+  TemporalDimension = 'TemporalDimension'
 }
 
 export type SearchCubeResult = {
   __typename?: 'SearchCubeResult';
-  score?: Maybe<Scalars['Float']>;
-  cube: Scalars['SearchCube'];
-  highlightedTitle?: Maybe<Scalars['String']>;
-  highlightedDescription?: Maybe<Scalars['String']>;
+  cube: Scalars['SearchCube']['output'];
+  highlightedDescription?: Maybe<Scalars['String']['output']>;
+  highlightedTitle?: Maybe<Scalars['String']['output']>;
+  score?: Maybe<Scalars['Float']['output']>;
 };
 
 export enum SearchCubeResultOrder {
+  CreatedDesc = 'CREATED_DESC',
   Score = 'SCORE',
-  TitleAsc = 'TITLE_ASC',
-  CreatedDesc = 'CREATED_DESC'
+  TitleAsc = 'TITLE_ASC'
 }
 
-
-
 export enum TimeUnit {
-  Year = 'Year',
-  Month = 'Month',
-  Week = 'Week',
   Day = 'Day',
   Hour = 'Hour',
   Minute = 'Minute',
-  Second = 'Second'
+  Month = 'Month',
+  Second = 'Second',
+  Week = 'Week',
+  Year = 'Year'
 }
-
-
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs>;
+
+export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
+  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
+};
+export type Resolver<TResult, TParent = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>, TArgs = Record<PropertyKey, never>> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -312,7 +295,7 @@ export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo
-) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
 
 export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -335,21 +318,21 @@ export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, 
   | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
   | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
 
-export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =
+export type SubscriptionResolver<TResult, TKey extends string, TParent = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>, TArgs = Record<PropertyKey, never>> =
   | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
   | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
 
-export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
+export type TypeResolveFn<TTypes, TParent = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>> = (
   parent: TParent,
   context: TContext,
   info: GraphQLResolveInfo
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
 
-export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
+export type IsTypeOfResolverFn<T = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
-export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (
+export type DirectiveResolverFn<TResult = Record<PropertyKey, never>, TParent = Record<PropertyKey, never>, TContext = Record<PropertyKey, never>, TArgs = Record<PropertyKey, never>> = (
   next: NextResolverFn<TResult>,
   parent: TParent,
   args: TArgs,
@@ -357,97 +340,103 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
+
+
+
+
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  ComponentTermsets: ResolverTypeWrapper<Scalars['ComponentTermsets']>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  ComponentTermsets: ResolverTypeWrapper<Scalars['ComponentTermsets']['output']>;
   DataCubeComponentFilter: DataCubeComponentFilter;
-  String: ResolverTypeWrapper<Scalars['String']>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  DataCubeComponents: ResolverTypeWrapper<Scalars['DataCubeComponents']>;
+  DataCubeComponents: ResolverTypeWrapper<Scalars['DataCubeComponents']['output']>;
   DataCubeDimensionGeoShapesCubeFilter: DataCubeDimensionGeoShapesCubeFilter;
   DataCubeLatestIriFilter: DataCubeLatestIriFilter;
-  DataCubeMetadata: ResolverTypeWrapper<Scalars['DataCubeMetadata']>;
+  DataCubeMetadata: ResolverTypeWrapper<Scalars['DataCubeMetadata']['output']>;
   DataCubeMetadataFilter: DataCubeMetadataFilter;
   DataCubeObservationFilter: DataCubeObservationFilter;
-  DataCubeObservations: ResolverTypeWrapper<Scalars['DataCubeObservations']>;
+  DataCubeObservations: ResolverTypeWrapper<Scalars['DataCubeObservations']['output']>;
   DataCubeOrganization: ResolverTypeWrapper<DataCubeOrganization>;
   DataCubePossibleFiltersCubeFilter: DataCubePossibleFiltersCubeFilter;
-  DataCubePreview: ResolverTypeWrapper<Scalars['DataCubePreview']>;
+  DataCubePreview: ResolverTypeWrapper<Scalars['DataCubePreview']['output']>;
   DataCubePreviewFilter: DataCubePreviewFilter;
   DataCubePublicationStatus: DataCubePublicationStatus;
   DataCubeTermset: ResolverTypeWrapper<DataCubeTermset>;
   DataCubeTermsetFilter: DataCubeTermsetFilter;
   DataCubeTheme: ResolverTypeWrapper<DataCubeTheme>;
   DataCubeUnversionedIriFilter: DataCubeUnversionedIriFilter;
-  DataSourceUrl: ResolverTypeWrapper<Scalars['DataSourceUrl']>;
-  DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']>;
-  FilterValue: ResolverTypeWrapper<Scalars['FilterValue']>;
-  Filters: ResolverTypeWrapper<Scalars['Filters']>;
-  GeoShapes: ResolverTypeWrapper<Scalars['GeoShapes']>;
-  HierarchyValue: ResolverTypeWrapper<Scalars['HierarchyValue']>;
-  Observation: ResolverTypeWrapper<Scalars['Observation']>;
+  DataSourceUrl: ResolverTypeWrapper<Scalars['DataSourceUrl']['output']>;
+  DimensionValue: ResolverTypeWrapper<Scalars['DimensionValue']['output']>;
+  FilterValue: ResolverTypeWrapper<Scalars['FilterValue']['output']>;
+  Filters: ResolverTypeWrapper<Scalars['Filters']['output']>;
+  Float: ResolverTypeWrapper<Scalars['Float']['output']>;
+  GeoShapes: ResolverTypeWrapper<Scalars['GeoShapes']['output']>;
+  HierarchyValue: ResolverTypeWrapper<Scalars['HierarchyValue']['output']>;
+  Observation: ResolverTypeWrapper<Scalars['Observation']['output']>;
   PossibleFilterValue: ResolverTypeWrapper<PossibleFilterValue>;
-  Query: ResolverTypeWrapper<{}>;
-  RawObservation: ResolverTypeWrapper<Scalars['RawObservation']>;
+  Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
+  RawObservation: ResolverTypeWrapper<Scalars['RawObservation']['output']>;
   RelatedDimension: ResolverTypeWrapper<RelatedDimension>;
   RelatedDimensionType: RelatedDimensionType;
   ScaleType: ScaleType;
-  SearchCube: ResolverTypeWrapper<Scalars['SearchCube']>;
+  SearchCube: ResolverTypeWrapper<Scalars['SearchCube']['output']>;
   SearchCubeFilter: SearchCubeFilter;
   SearchCubeFilterType: SearchCubeFilterType;
   SearchCubeResult: ResolverTypeWrapper<SearchCubeResult>;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
   SearchCubeResultOrder: SearchCubeResultOrder;
-  SingleFilters: ResolverTypeWrapper<Scalars['SingleFilters']>;
-  Termset: ResolverTypeWrapper<Scalars['Termset']>;
+  SingleFilters: ResolverTypeWrapper<Scalars['SingleFilters']['output']>;
+  String: ResolverTypeWrapper<Scalars['String']['output']>;
+  Termset: ResolverTypeWrapper<Scalars['Termset']['output']>;
   TimeUnit: TimeUnit;
-  ValueIdentifier: ResolverTypeWrapper<Scalars['ValueIdentifier']>;
-  ValuePosition: ResolverTypeWrapper<Scalars['ValuePosition']>;
+  ValueIdentifier: ResolverTypeWrapper<Scalars['ValueIdentifier']['output']>;
+  ValuePosition: ResolverTypeWrapper<Scalars['ValuePosition']['output']>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  ComponentTermsets: Scalars['ComponentTermsets'];
+  Boolean: Scalars['Boolean']['output'];
+  ComponentTermsets: Scalars['ComponentTermsets']['output'];
   DataCubeComponentFilter: DataCubeComponentFilter;
-  String: Scalars['String'];
-  Boolean: Scalars['Boolean'];
-  DataCubeComponents: Scalars['DataCubeComponents'];
+  DataCubeComponents: Scalars['DataCubeComponents']['output'];
   DataCubeDimensionGeoShapesCubeFilter: DataCubeDimensionGeoShapesCubeFilter;
   DataCubeLatestIriFilter: DataCubeLatestIriFilter;
-  DataCubeMetadata: Scalars['DataCubeMetadata'];
+  DataCubeMetadata: Scalars['DataCubeMetadata']['output'];
   DataCubeMetadataFilter: DataCubeMetadataFilter;
   DataCubeObservationFilter: DataCubeObservationFilter;
-  DataCubeObservations: Scalars['DataCubeObservations'];
+  DataCubeObservations: Scalars['DataCubeObservations']['output'];
   DataCubeOrganization: DataCubeOrganization;
   DataCubePossibleFiltersCubeFilter: DataCubePossibleFiltersCubeFilter;
-  DataCubePreview: Scalars['DataCubePreview'];
+  DataCubePreview: Scalars['DataCubePreview']['output'];
   DataCubePreviewFilter: DataCubePreviewFilter;
   DataCubeTermset: DataCubeTermset;
   DataCubeTermsetFilter: DataCubeTermsetFilter;
   DataCubeTheme: DataCubeTheme;
   DataCubeUnversionedIriFilter: DataCubeUnversionedIriFilter;
-  DataSourceUrl: Scalars['DataSourceUrl'];
-  DimensionValue: Scalars['DimensionValue'];
-  FilterValue: Scalars['FilterValue'];
-  Filters: Scalars['Filters'];
-  GeoShapes: Scalars['GeoShapes'];
-  HierarchyValue: Scalars['HierarchyValue'];
-  Observation: Scalars['Observation'];
+  DataSourceUrl: Scalars['DataSourceUrl']['output'];
+  DimensionValue: Scalars['DimensionValue']['output'];
+  FilterValue: Scalars['FilterValue']['output'];
+  Filters: Scalars['Filters']['output'];
+  Float: Scalars['Float']['output'];
+  GeoShapes: Scalars['GeoShapes']['output'];
+  HierarchyValue: Scalars['HierarchyValue']['output'];
+  Observation: Scalars['Observation']['output'];
   PossibleFilterValue: PossibleFilterValue;
-  Query: {};
-  RawObservation: Scalars['RawObservation'];
+  Query: Record<PropertyKey, never>;
+  RawObservation: Scalars['RawObservation']['output'];
   RelatedDimension: RelatedDimension;
-  SearchCube: Scalars['SearchCube'];
+  SearchCube: Scalars['SearchCube']['output'];
   SearchCubeFilter: SearchCubeFilter;
   SearchCubeResult: SearchCubeResult;
-  Float: Scalars['Float'];
-  SingleFilters: Scalars['SingleFilters'];
-  Termset: Scalars['Termset'];
-  ValueIdentifier: Scalars['ValueIdentifier'];
-  ValuePosition: Scalars['ValuePosition'];
+  SingleFilters: Scalars['SingleFilters']['output'];
+  String: Scalars['String']['output'];
+  Termset: Scalars['Termset']['output'];
+  ValueIdentifier: Scalars['ValueIdentifier']['output'];
+  ValuePosition: Scalars['ValuePosition']['output'];
 }>;
 
-export type SafeUrlDirectiveArgs = {   pattern?: Maybe<Scalars['String']>; };
+export type SafeUrlDirectiveArgs = {
+  pattern?: Maybe<Scalars['String']['input']>;
+};
 
 export type SafeUrlDirectiveResolver<Result, Parent, ContextType = VisualizeGraphQLContext, Args = SafeUrlDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
@@ -470,7 +459,6 @@ export interface DataCubeObservationsScalarConfig extends GraphQLScalarTypeConfi
 export type DataCubeOrganizationResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['DataCubeOrganization'] = ResolversParentTypes['DataCubeOrganization']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export interface DataCubePreviewScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DataCubePreview'], any> {
@@ -480,13 +468,11 @@ export interface DataCubePreviewScalarConfig extends GraphQLScalarTypeConfig<Res
 export type DataCubeTermsetResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['DataCubeTermset'] = ResolversParentTypes['DataCubeTermset']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type DataCubeThemeResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['DataCubeTheme'] = ResolversParentTypes['DataCubeTheme']> = ResolversObject<{
   iri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   label?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export interface DataSourceUrlScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DataSourceUrl'], any> {
@@ -518,23 +504,22 @@ export interface ObservationScalarConfig extends GraphQLScalarTypeConfig<Resolve
 }
 
 export type PossibleFilterValueResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['PossibleFilterValue'] = ResolversParentTypes['PossibleFilterValue']> = ResolversObject<{
-  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   value?: Resolver<Maybe<ResolversTypes['FilterValue']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  dataCubeLatestIri?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryDataCubeLatestIriArgs, 'sourceType' | 'sourceUrl' | 'cubeFilter'>>;
-  dataCubeUnversionedIri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryDataCubeUnversionedIriArgs, 'sourceType' | 'sourceUrl' | 'cubeFilter'>>;
-  dataCubeComponents?: Resolver<ResolversTypes['DataCubeComponents'], ParentType, ContextType, RequireFields<QueryDataCubeComponentsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
-  dataCubeComponentTermsets?: Resolver<Array<ResolversTypes['ComponentTermsets']>, ParentType, ContextType, RequireFields<QueryDataCubeComponentTermsetsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
-  dataCubeMetadata?: Resolver<ResolversTypes['DataCubeMetadata'], ParentType, ContextType, RequireFields<QueryDataCubeMetadataArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
-  dataCubeObservations?: Resolver<ResolversTypes['DataCubeObservations'], ParentType, ContextType, RequireFields<QueryDataCubeObservationsArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
-  dataCubePreview?: Resolver<ResolversTypes['DataCubePreview'], ParentType, ContextType, RequireFields<QueryDataCubePreviewArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
-  possibleFilters?: Resolver<Array<ResolversTypes['PossibleFilterValue']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'sourceType' | 'sourceUrl' | 'cubeFilter'>>;
+  dataCubeComponentTermsets?: Resolver<Array<ResolversTypes['ComponentTermsets']>, ParentType, ContextType, RequireFields<QueryDataCubeComponentTermsetsArgs, 'cubeFilter' | 'locale' | 'sourceType' | 'sourceUrl'>>;
+  dataCubeComponents?: Resolver<ResolversTypes['DataCubeComponents'], ParentType, ContextType, RequireFields<QueryDataCubeComponentsArgs, 'cubeFilter' | 'locale' | 'sourceType' | 'sourceUrl'>>;
+  dataCubeDimensionGeoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoShapesArgs, 'cubeFilter' | 'locale' | 'sourceType' | 'sourceUrl'>>;
+  dataCubeLatestIri?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryDataCubeLatestIriArgs, 'cubeFilter' | 'sourceType' | 'sourceUrl'>>;
+  dataCubeMetadata?: Resolver<ResolversTypes['DataCubeMetadata'], ParentType, ContextType, RequireFields<QueryDataCubeMetadataArgs, 'cubeFilter' | 'locale' | 'sourceType' | 'sourceUrl'>>;
+  dataCubeObservations?: Resolver<ResolversTypes['DataCubeObservations'], ParentType, ContextType, RequireFields<QueryDataCubeObservationsArgs, 'cubeFilter' | 'locale' | 'sourceType' | 'sourceUrl'>>;
+  dataCubePreview?: Resolver<ResolversTypes['DataCubePreview'], ParentType, ContextType, RequireFields<QueryDataCubePreviewArgs, 'cubeFilter' | 'locale' | 'sourceType' | 'sourceUrl'>>;
+  dataCubeUnversionedIri?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryDataCubeUnversionedIriArgs, 'cubeFilter' | 'sourceType' | 'sourceUrl'>>;
+  possibleFilters?: Resolver<Array<ResolversTypes['PossibleFilterValue']>, ParentType, ContextType, RequireFields<QueryPossibleFiltersArgs, 'cubeFilter' | 'sourceType' | 'sourceUrl'>>;
   searchCubes?: Resolver<Array<ResolversTypes['SearchCubeResult']>, ParentType, ContextType, RequireFields<QuerySearchCubesArgs, 'sourceType' | 'sourceUrl'>>;
-  dataCubeDimensionGeoShapes?: Resolver<Maybe<ResolversTypes['GeoShapes']>, ParentType, ContextType, RequireFields<QueryDataCubeDimensionGeoShapesArgs, 'sourceType' | 'sourceUrl' | 'locale' | 'cubeFilter'>>;
 }>;
 
 export interface RawObservationScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['RawObservation'], any> {
@@ -542,9 +527,8 @@ export interface RawObservationScalarConfig extends GraphQLScalarTypeConfig<Reso
 }
 
 export type RelatedDimensionResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['RelatedDimension'] = ResolversParentTypes['RelatedDimension']> = ResolversObject<{
-  type?: Resolver<ResolversTypes['RelatedDimensionType'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['RelatedDimensionType'], ParentType, ContextType>;
 }>;
 
 export interface SearchCubeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['SearchCube'], any> {
@@ -552,11 +536,10 @@ export interface SearchCubeScalarConfig extends GraphQLScalarTypeConfig<Resolver
 }
 
 export type SearchCubeResultResolvers<ContextType = VisualizeGraphQLContext, ParentType extends ResolversParentTypes['SearchCubeResult'] = ResolversParentTypes['SearchCubeResult']> = ResolversObject<{
-  score?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   cube?: Resolver<ResolversTypes['SearchCube'], ParentType, ContextType>;
-  highlightedTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   highlightedDescription?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+  highlightedTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  score?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
 }>;
 
 export interface SingleFiltersScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['SingleFilters'], any> {
@@ -603,19 +586,6 @@ export type Resolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   ValuePosition?: GraphQLScalarType;
 }>;
 
-
-/**
- * @deprecated
- * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
- */
-export type IResolvers<ContextType = VisualizeGraphQLContext> = Resolvers<ContextType>;
 export type DirectiveResolvers<ContextType = VisualizeGraphQLContext> = ResolversObject<{
   safeUrl?: SafeUrlDirectiveResolver<any, any, ContextType>;
 }>;
-
-
-/**
- * @deprecated
- * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
- */
-export type IDirectiveResolvers<ContextType = VisualizeGraphQLContext> = DirectiveResolvers<ContextType>;

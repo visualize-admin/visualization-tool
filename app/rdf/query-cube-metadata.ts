@@ -3,7 +3,7 @@ import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { DataCubeMetadata } from "@/domain/data";
-import { DataCubePublicationStatus } from "@/graphql/query-hooks";
+import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { pragmas } from "@/rdf/create-source";
 import * as ns from "@/rdf/namespace";
 import { buildLocalizedSubQuery, GROUP_SEPARATOR } from "@/rdf/query-utils";
@@ -148,7 +148,7 @@ export const getCubeMetadata = async (
     .BY`?unversionedIri`.THEN.BY`?publisher`.THEN.BY`?landingPage`.THEN
     .BY`?expires`.prologue`${pragmas}`;
 
-  const results = (await query.execute(sparqlClient.query, {
+  const results = (await query.execute(sparqlClient, {
     operation: "postUrlencoded",
   })) as RawDataCubeMetadata[];
 

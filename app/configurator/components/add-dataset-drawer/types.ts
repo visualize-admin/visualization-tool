@@ -1,6 +1,6 @@
 import { Termset } from "@/domain/data";
 import { ComponentId } from "@/graphql/make-component-id";
-import { TimeUnit } from "@/graphql/query-hooks";
+import { TimeUnit } from "@/graphql/resolver-types";
 
 type OriginalId = {
   /** Versioned cube IRI */
