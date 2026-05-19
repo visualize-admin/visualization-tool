@@ -198,7 +198,7 @@
     "@mdx-js/loader": "^1.6.22",
     "@playwright-testing-library/test": "^4.5.0",
     "@playwright/test": "^1.49.1",
-    "@svgr/cli": "^5.5.0",
+    "@svgr/cli": "^7",
     "@types/autosuggest-highlight": "^3.2.0",
     "@types/clownface": "^2.0.7",
     "@types/cors": "^2.8.8",

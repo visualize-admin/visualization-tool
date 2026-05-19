@@ -38,6 +38,7 @@ You can also check the
     findings of studies about the impact of context files for coding AIs
   - Remove LINDASOld endpoint configurations
   - Remove dependencies which used old versions of `node-fetch`
+  - Upgrade dependencies which used old versions of `nth-check`
 - Documentation
   - Add publiccode.yml for discoverability
   - Reorganize & improve README
