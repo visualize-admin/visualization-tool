@@ -54,10 +54,10 @@ test("changing of locale shouldn't make the chart disappear", async ({
   await page.locator("div[id='localeSwitcherSelect']").click();
   await sleep(1_000);
   await page.locator('li[data-value="it"]').click();
-  await selectors.chart.loaded();
-  // Make sure the chart had a chance to re-load.
-  await sleep(6_000);
-  const chart = page.locator("#chart-svg");
+
+  // Wait for chart to finish loading after locale change
+  await page.waitForSelector('[data-chart-loaded="true"]');
+  const chart = page.locator("[data-chart-loaded]");
   const chartPath = chart.locator("path[data-testid='chart-line']").first();
   const d = await chartPath.getAttribute("d");
   expect(d).not.toContain("NaN");
