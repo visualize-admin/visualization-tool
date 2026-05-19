@@ -67,6 +67,7 @@
     "@turf/bbox": "7.3.4",
     "@traqula/generator-sparql-1-1": "^1.1.0",
     "@traqula/parser-sparql-1-1": "^1.1.0",
+    "@traqula/rules-sparql-1-1": "^1.1.0",
     "@types/react-grid-layout": "^1.3.5",
     "@uiw/react-color": "^2.3.2",
     "@urql/devtools": "^2.0.3",
