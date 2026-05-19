@@ -6,7 +6,7 @@ import { dimensionIsVersioned } from "@/rdf/queries";
 
 export enum CubeDimensionFilterType {
     single = "single",
-    multi = "multi"
+    multi = "multi",
 }
 
 export abstract class CubeFilter {
@@ -20,7 +20,7 @@ export abstract class CubeFilter {
 
     /**
      * Converts the filter to a SPARQL filter string. Provide variable names without ? or $ for the variables in the filter.
-     * 
+     *
      * @param observationVar The SPARQL Variable name for the observation
      * @param valueVar The SPARQL Variable name for the value of the filter
      */
@@ -34,13 +34,11 @@ export abstract class CubeFilter {
     protected isVersionedDimension(): boolean {
         return this.dimension ? dimensionIsVersioned(this.dimension) : false;
     }
-
-
 }
 
 /**
  * Represents a single value filter on a cube dimension.
- * 
+ *
  */
 export class CubeSingleFilter extends CubeFilter {
     private _value: string | number;
@@ -53,7 +51,7 @@ export class CubeSingleFilter extends CubeFilter {
 
     /**
      * Converts the filter to a SPARQL filter string. Provide variable names without ? or $ for the variables in the filter.
-     * 
+     *
      * @param observationVar The SPARQL Variable name for the observation
      * @param valueVar The SPARQL Variable name for the value of the filter
      * @returns The SPARQL filter string
@@ -61,7 +59,6 @@ export class CubeSingleFilter extends CubeFilter {
     toSparqlFilter(observationVar: string, valueVar: string): string {
         const isLiteral = this.isLiteralFilter();
         const isVersioned = this.isVersionedDimension();
-
 
         if (isLiteral && isVersioned) {
             return `
@@ -83,10 +80,10 @@ export class CubeSingleFilter extends CubeFilter {
         if (!isLiteral && !isVersioned) {
             return `
             ?${observationVar} <${this.dimension.path?.value}> <${this._value}> .
-            `
+            `;
         }
         // fallback, should never happen
-        return '';
+        return "";
     }
 
     get value() {
@@ -100,7 +97,7 @@ export class CubeSingleFilter extends CubeFilter {
 
 /**
  * Represents a multi-value filter on a cube dimension.
- * 
+ *
  */
 export class CubeMultiFilter extends CubeFilter {
     private _multiFilter: FilterValueMultiValues;
@@ -112,31 +109,44 @@ export class CubeMultiFilter extends CubeFilter {
     }
 
     /**
-    * Converts the filter to a SPARQL filter string. Provide variable names without ? or $ for the variables in the filter.
-    * 
-    * @param observationVar The SPARQL Variable name for the observation
-    * @param valueVar The SPARQL Variable name for the value of the filter
-    * @returns The SPARQL filter string
-    */
+     * Converts the filter to a SPARQL filter string. Provide variable names without ? or $ for the variables in the filter.
+     *
+     * @param observationVar The SPARQL Variable name for the observation
+     * @param valueVar The SPARQL Variable name for the value of the filter
+     * @returns The SPARQL filter string
+     */
     toSparqlFilter(observationVar: string, valueVar: string): string {
         const isLiteral = this.isLiteralFilter();
         const isVersioned = this.isVersionedDimension();
 
         if (isLiteral && isVersioned) {
-            // dont think this case is actually possible, 
-            console.warn('Tell me if you see this: dimension:', this.dimension.ptr.value, 'filter:', this._multiFilter);
+            // dont think this case is actually possible,
+            console.warn(
+                "Tell me if you see this: dimension:",
+                this.dimension.ptr.value,
+                "filter:",
+                this._multiFilter
+            );
             return `
             ?${valueVar} schema:sameAs ?${valueVar}_unversioned  .
             ?${observationVar} <${this.dimension.path?.value}> ?${valueVar} .
-            FILTER( STR(?${valueVar}_unversioned) IN (${Object.keys(this._multiFilter).map(value => `"${value}"`).join(", ")} ) )`;
+            FILTER( STR(?${valueVar}_unversioned) IN (${Object.keys(
+                this._multiFilter
+            )
+                    .map((value) => `"${value}"`)
+                    .join(", ")} ) )`;
         }
         if (isLiteral && !isVersioned) {
             return `
             ?${observationVar} <${this.dimension.path?.value}> ?${valueVar} .
-            FILTER( STR(?${valueVar}) IN (${Object.keys(this._multiFilter).map(value => `"${value}"`).join(", ")} ) )`;
+            FILTER( STR(?${valueVar}) IN (${Object.keys(this._multiFilter)
+                    .map((value) => `"${value}"`)
+                    .join(", ")} ) )`;
         }
         if (!isLiteral && isVersioned) {
-            const valuesString = Object.keys(this._multiFilter).map(x => `<${x}>`).join("\n");
+            const valuesString = Object.keys(this._multiFilter)
+                .map((x) => `<${x}>`)
+                .join("\n");
 
             return `
             VALUES ?${valueVar}_unversioned {
@@ -147,7 +157,9 @@ export class CubeMultiFilter extends CubeFilter {
             `;
         }
         if (!isLiteral && !isVersioned) {
-            const valuesString = Object.keys(this._multiFilter).map(x => `<${x}>`).join("\n");
+            const valuesString = Object.keys(this._multiFilter)
+                .map((x) => `<${x}>`)
+                .join("\n");
 
             return `
             VALUES ?${valueVar} {
@@ -156,8 +168,10 @@ export class CubeMultiFilter extends CubeFilter {
             ?${observationVar} <${this.dimension.path?.value}> ?${valueVar} .
             `;
         }
-        console.warn('Tell me if you see this: dimension:', this.dimension.ptr.value);
-        return '';
+        console.warn(
+            "Tell me if you see this: dimension:",
+            this.dimension.ptr.value
+        );
+        return "";
     }
-
 }
