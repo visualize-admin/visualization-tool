@@ -151,7 +151,6 @@ export async function loadDimensionsValuesWithMetadata(
       queryForUnversionedDimensionFromObservations,
       queryForVersionedDimensionFromObservations
     );
-    // b end
   });
 
   const query = mergeConstructQueries(newQueries);
