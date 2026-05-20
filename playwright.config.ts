@@ -60,7 +60,11 @@ export default defineConfig({
         launchOptions: {
           args: ["--disable-web-security"],
         },
-        ...devices["Desktop Chrome"],
+        ...Object.fromEntries(
+          Object.entries(devices["Desktop Chrome"]).filter(
+            ([key]) => key !== "screen"
+          )
+        ),
       },
     },
 
