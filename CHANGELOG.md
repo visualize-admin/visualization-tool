@@ -42,6 +42,7 @@ You can also check the
 - Documentation
   - Add publiccode.yml for discoverability
   - Reorganize & improve README
+  - Updated storybook to the latest v8 version
 
 ### 6.4.0 – 2026-03-13
 
