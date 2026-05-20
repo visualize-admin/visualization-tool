@@ -39,6 +39,7 @@ You can also check the
   - Remove LINDASOld endpoint configurations
   - Remove dependencies which used old versions of `node-fetch`
   - Upgrade dependencies which used old versions of `nth-check`
+  - Updated `@deck.gl/*` packages and `fast-xml-parser`
 - Documentation
   - Add publiccode.yml for discoverability
   - Reorganize & improve README
