@@ -1134,7 +1134,7 @@ msgstr "Servizi di dati collegati LINDAS"
 
 #: app/components/footer.tsx
 msgid "footer.button.service-desk"
-msgstr "Sportello di assistenza"
+msgstr "Sportello di assistenza (supporto)"
 
 #: app/configurator/components/chart-options-selector/imputation-field.tsx
 #: app/configurator/components/field-i18n.ts
