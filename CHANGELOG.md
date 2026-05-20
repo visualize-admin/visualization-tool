@@ -29,7 +29,7 @@ You can also check the
     makes Visualize winding order agnostic and fixes a specific bug with newer
     CCW geometries from Swisstopo where map diagrams were zoomed to the world
     instead of Switzerland (older geometries all had CW winding order).
-  - Improve dimension values query performance. 
+  - Improve dimension values query performance.
 - Maintenance
   - Remove Google Analytics integration (it is no longer in use)
   - Set Maptiler API key from `MAPTILER_API_KEY` environment variable at
@@ -40,6 +40,7 @@ You can also check the
   - Remove dependencies which used old versions of `node-fetch`
   - Upgrade dependencies which used old versions of `nth-check`
   - Updated `@deck.gl/*` packages and `fast-xml-parser`
+  - Upgrade playwright to v1.60
   - Rename package
 - Documentation
   - Add publiccode.yml for discoverability
