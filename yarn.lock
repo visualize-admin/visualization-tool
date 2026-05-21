@@ -8029,23 +8029,6 @@
   dependencies:
     ts-dedent "^2.0.0"
 
-"@storybook/core@8.6.12":
-  version "8.6.12"
-  resolved "https://registry.yarnpkg.com/@storybook/core/-/core-8.6.12.tgz#ad6d7587f8a8b9f05764ba39f99c1e67e1ba341f"
-  integrity sha512-t+ZuDzAlsXKa6tLxNZT81gEAt4GNwsKP/Id2wluhmUWD/lwYW0uum1JiPUuanw8xD6TdakCW/7ULZc7aQUBLCQ==
-  dependencies:
-    "@storybook/theming" "8.6.12"
-    better-opn "^3.0.2"
-    browser-assert "^1.2.1"
-    esbuild "^0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0 || ^0.25.0"
-    esbuild-register "^3.5.0"
-    jsdoc-type-pratt-parser "^4.0.0"
-    process "^0.11.10"
-    recast "^0.23.5"
-    semver "^7.6.2"
-    util "^0.12.5"
-    ws "^8.2.3"
-
 "@storybook/core@8.6.18":
   version "8.6.18"
   resolved "https://registry.yarnpkg.com/@storybook/core/-/core-8.6.18.tgz#0ddbec8421715b372419ae5dfefef3df5848386c"
@@ -8209,11 +8192,6 @@
     "@testing-library/user-event" "14.5.2"
     "@vitest/expect" "2.0.5"
     "@vitest/spy" "2.0.5"
-
-"@storybook/theming@8.6.12":
-  version "8.6.12"
-  resolved "https://registry.yarnpkg.com/@storybook/theming/-/theming-8.6.12.tgz#2d521f422daf85e0b27179520ce1cfb520284447"
-  integrity sha512-6VjZg8HJ2Op7+KV7ihJpYrDnFtd9D1jrQnUS8LckcpuBXrIEbaut5+34ObY8ssQnSqkk2GwIZBBBQYQBCVvkOw==
 
 "@storybook/theming@8.6.18":
   version "8.6.18"
@@ -22147,14 +22125,7 @@ std-env@^3.9.0:
   resolved "https://registry.yarnpkg.com/std-env/-/std-env-3.9.0.tgz#1a6f7243b339dca4c9fd55e1c7504c77ef23e8f1"
   integrity sha512-UGvjygr6F6tpH7o2qyqR6QYpwraIjKSdtzyBdyytFOHmPZY917kwdwLG0RbOjWOnKmnm3PeHjaoLLMie7kPLQw==
 
-storybook@8.6.12:
-  version "8.6.12"
-  resolved "https://registry.yarnpkg.com/storybook/-/storybook-8.6.12.tgz#dddd11644f0344524577bb600a4dabda9a73af55"
-  integrity sha512-Z/nWYEHBTLK1ZBtAWdhxC0l5zf7ioJ7G4+zYqtTdYeb67gTnxNj80gehf8o8QY9L2zA2+eyMRGLC2V5fI7Z3Tw==
-  dependencies:
-    "@storybook/core" "8.6.12"
-
-storybook@^8.1.0:
+storybook@8.6.18, storybook@^8.1.0:
   version "8.6.18"
   resolved "https://registry.yarnpkg.com/storybook/-/storybook-8.6.18.tgz#2a635a4b0c99693f43ba21b8eb511c5cc513a807"
   integrity sha512-p8seiSI6FiVY6P3V0pG+5v7c8pDMehMAFRWEhG5XqIBSQszzOjDnW2rNvm3odoLKfo3V3P6Cs6Hv9ILzymULyQ==
