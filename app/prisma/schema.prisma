@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("NEW_DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 enum PUBLISHED_STATE {
@@ -14,39 +14,38 @@ enum PUBLISHED_STATE {
 }
 
 model Config {
-  id              Int      @id @default(autoincrement())
-  key             String   @unique @db.Char(12)
-  data            Json
-  created_at      DateTime @default(now()) @db.Timestamp(6)
-  updated_at      DateTime @default(now()) @db.Timestamp(6)
+  id         Int      @id @default(autoincrement())
+  key        String   @unique @db.Char(12)
+  data       Json
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
 
-  user            User? @relation(fields: [user_id], references: [id])
-  user_id         Int?
+  user    User? @relation(fields: [user_id], references: [id])
+  user_id Int?
 
-  views           ConfigView[]
+  views ConfigView[]
 
   published_state PUBLISHED_STATE @default(PUBLISHED)
 
-  @@map("config")
-
   @@index(fields: [data], type: Gin)
+  @@map("config")
 }
 
 model User {
-  id      Int        @id @default(autoincrement())
-  sub     String?    @unique @db.VarChar(64)
-  name    String?    @db.VarChar(100)
-  Config  Config[]   @relation()
-  Palette Palette[]  @relation()
+  id      Int       @id @default(autoincrement())
+  sub     String?   @unique @db.VarChar(64)
+  name    String?   @db.VarChar(100)
+  Config  Config[]  @relation()
+  Palette Palette[] @relation()
 
   @@map("users")
 }
 
 model ConfigView {
-  id         Int      @id @default(autoincrement())
-  viewed_at  DateTime @default(now()) @db.Timestamp(6)
+  id        Int      @id @default(autoincrement())
+  viewed_at DateTime @default(now()) @db.Timestamp(6)
 
-  config     Config?   @relation(fields: [config_key], references: [key])
+  config     Config? @relation(fields: [config_key], references: [key])
   config_key String?
 
   @@map("config_view")
@@ -75,8 +74,8 @@ model Palette {
   created_at DateTime     @default(now()) @db.Timestamp(6)
   updated_at DateTime     @default(now()) @db.Timestamp(6)
 
-  user       User?         @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id    Int?
+  user    User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id Int?
 
   @@map("palettes")
 }
