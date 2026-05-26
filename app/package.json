@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "yarn workspace @foen-admin-ch/visualize-app run build"
+    "build": "yarn workspace @foen-admin-ch/visualize run build"
   },
   "dependencies": {
     "@apollo/client": "^3.3.20",
