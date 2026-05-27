@@ -17,6 +17,11 @@ import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from '
 import { VisualizeGraphQLContext } from './context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -32,7 +37,7 @@ export type Scalars = {
   DataCubePreview: { input: DataCubePreview; output: DataCubePreview; }
   DataSourceUrl: { input: DataSourceUrl; output: DataSourceUrl; }
   DimensionValue: { input: DimensionValue; output: DimensionValue; }
-  FilterValue: { input: unknown; output: unknown; }
+  FilterValue: { input: any; output: any; }
   Filters: { input: Filters; output: Filters; }
   GeoShapes: { input: GeoShapes; output: GeoShapes; }
   HierarchyValue: { input: HierarchyValue; output: HierarchyValue; }
@@ -41,8 +46,8 @@ export type Scalars = {
   SearchCube: { input: SearchCube; output: SearchCube; }
   SingleFilters: { input: SingleFilters; output: SingleFilters; }
   Termset: { input: Termset; output: Termset; }
-  ValueIdentifier: { input: unknown; output: unknown; }
-  ValuePosition: { input: unknown; output: unknown; }
+  ValueIdentifier: { input: any; output: any; }
+  ValuePosition: { input: any; output: any; }
 };
 
 export type DataCubeComponentFilter = {

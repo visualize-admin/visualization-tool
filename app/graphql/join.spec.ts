@@ -15,9 +15,7 @@ import {
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
 } from "@/graphql/query-hooks";
-import { ScaleType, TimeUnit } from "@/graphql/resolver-types";
-
-type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+import { Exact, ScaleType, TimeUnit } from "@/graphql/resolver-types";
 
 type ObservationsQuery = OperationResult<
   DataCubeObservationsQuery,

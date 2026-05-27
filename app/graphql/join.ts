@@ -20,14 +20,13 @@ import {
   DataCubeObservationsQuery,
   DataCubeObservationsQueryVariables,
 } from "@/graphql/query-hooks";
+import { Exact } from "@/graphql/resolver-types";
 import { assert } from "@/utils/assert";
 
 const JOIN_BY_CUBE_IRI = "joinBy";
 
 const keyJoiner = "$/$/$/";
 const joinByPrefix = `joinBy__`;
-
-type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 
 export const mkJoinById = (index: number) => `${joinByPrefix}${index}`;
 export const isJoinById = (id: string) => id.startsWith(joinByPrefix);
