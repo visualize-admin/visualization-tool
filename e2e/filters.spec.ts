@@ -94,9 +94,7 @@ describe("Filters", () => {
 
     await selectors.edition.drawerLoaded();
 
-    await (
-      await selectors.panels.drawer().within().getByLabelText("None")
-    ).click();
+    await selectors.panels.drawer().getByRole("combobox", { name: "None" }).click();
 
     await actions.mui.selectOption("Kanton");
 
@@ -105,9 +103,7 @@ describe("Filters", () => {
     await legend.waitFor({ state: "hidden", timeout: 5000 });
     await expect(legend).toHaveCount(0);
 
-    await (
-      await selectors.panels.drawer().within().findByText("Show legend titles")
-    ).click();
+    await selectors.panels.drawer().getByText("Show legend titles").click();
 
     expect(legend).toHaveCount(1);
 

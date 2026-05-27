@@ -6,7 +6,6 @@ const { test, expect } = setup();
 test("should have correct tooltip content", async ({
   actions,
   selectors,
-  within,
   page,
   replayFromHAR,
 }) => {
@@ -20,15 +19,17 @@ test("should have correct tooltip content", async ({
 
   await selectors.edition.drawerLoaded();
 
-  const filterLocator = await within(
-    selectors.edition.controlSectionByTitle("Filters")
-  );
+  const filterLocator = selectors.edition.controlSectionByTitle("Filters");
 
-  await filterLocator.getByLabelText("All greenhouse gas").click();
+  await filterLocator
+    .getByRole("combobox", { name: "All greenhouse gas" })
+    .click();
 
   await selectors.mui
     .popover()
-    .findByText("Methane", undefined, { timeout: 10_000 });
+    .getByText("Methane")
+    .first()
+    .waitFor({ timeout: 10_000 });
 
   await actions.mui.selectOption("Methane");
 

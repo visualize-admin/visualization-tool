@@ -4,31 +4,27 @@ import { TestContext } from "./types";
 type ActionTestContext = TestContext & { selectors: Selectors };
 
 const selectActiveEditorField =
-  ({ selectors, within }: ActionTestContext) =>
+  ({ selectors }: ActionTestContext) =>
   async (field: string) => {
     const chartOptions =
       selectors.edition.controlSectionByTitle("Chart Options");
     await chartOptions.scrollIntoViewIfNeeded();
-    const fieldLocator = await within(chartOptions).findByText(
-      field,
-      undefined,
-      { timeout: 3000 }
-    );
+    const fieldLocator = chartOptions.getByText(field);
+    await fieldLocator.waitFor({ timeout: 3000 });
     await fieldLocator.click();
     await selectors.panels
       .drawer()
-      .within()
-      .findByText(field, undefined, { timeout: 3000 });
+      .getByText(field)
+      .first()
+      .waitFor({ timeout: 3000 });
   };
 
 export const createActions = ({
   page,
-  screen,
   selectors,
-  within,
 }: TestContext & { selectors: Selectors }) => ({
   search: {
-    clear: async () => await screen.getByTestId("clearSearch").click(),
+    clear: async () => await page.getByTestId("clearSearch").click(),
   },
   datasetPreview: {
     load: async ({
@@ -73,15 +69,15 @@ export const createActions = ({
       await selectors.chart.loaded();
     },
     switchToTableView: async () => {
-      await (await selectors.chart.tablePreviewSwitch()).click();
+      await selectors.chart.tablePreviewSwitch().click();
     },
   },
   /** Actions on MUI elements, options, selects, dialogs */
   mui: {
     selectOption: async (optionText: string) => {
-      const item = await selectors.mui.popover().findByText(optionText);
+      const item = selectors.mui.popover().getByText(optionText);
       await item.click();
-      const select = await item.locator("..").locator("text=Select");
+      const select = item.locator("..").locator("text=Select");
       const count = await select.count();
       if (count) {
         await select.click();
@@ -112,19 +108,16 @@ export const createActions = ({
     selectActiveField: selectActiveEditorField({
       selectors,
       page,
-      screen,
-      within,
     }),
   },
   metadataPanel: {
     toggle: async () => {
-      const toggleButton = await screen.findByTestId("panel-metadata-toggle");
-      await toggleButton.click();
+      await page.getByTestId("panel-metadata-toggle").click();
     },
   },
   drawer: {
     close: async () =>
-      await screen.locator('button[aria-label="Back to main"]').click(),
+      await page.locator('button[aria-label="Back to main"]').click(),
   },
   common: {
     switchLang: async (lang: "de" | "fr" | "en" | "it") => {

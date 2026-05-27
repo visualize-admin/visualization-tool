@@ -1,8 +1,4 @@
 import { Page, PlaywrightTestOptions, test as base } from "@playwright/test";
-import {
-  locatorFixtures as fixtures,
-  LocatorFixtures as TestingLibraryFixtures,
-} from "@playwright-testing-library/test/fixture";
 
 import { sleep } from "../app/utils/sleep";
 
@@ -13,7 +9,7 @@ import { slugify } from "./slugify";
 type RouteFromHAROptions = Parameters<Page["routeFromHAR"]>[1];
 
 const setup = (contextOptions?: PlaywrightTestOptions["contextOptions"]) => {
-  const test = base.extend<TestingLibraryFixtures>(fixtures).extend<{
+  const test = base.extend<{
     selectors: Selectors;
     actions: Actions;
     replayFromHAR: (routeFromHAROptions?: RouteFromHAROptions) => Promise<void>;
@@ -27,14 +23,12 @@ const setup = (contextOptions?: PlaywrightTestOptions["contextOptions"]) => {
       };
       await use(auth);
     },
-    selectors: async ({ page, screen, within }, use) => {
-      const ctx = { page, screen, within };
-      const selectors = createSelectors(ctx);
+    selectors: async ({ page }, use) => {
+      const selectors = createSelectors({ page });
       await use(selectors);
     },
-    actions: async ({ page, screen, selectors, within }, use) => {
-      const ctx = { page, screen, selectors, within };
-      const actions = createActions(ctx);
+    actions: async ({ page, selectors }, use) => {
+      const actions = createActions({ page, selectors });
       await use(actions);
     },
     replayFromHAR: async ({ page }, use, testInfo) => {

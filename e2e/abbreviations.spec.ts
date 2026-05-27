@@ -25,12 +25,10 @@ test("it should be possible to enable abbreviations for colors & x field (column
 
   expect(await checkbox.isDisabled()).toEqual(true);
 
-  await (
-    await selectors.panels
-      .drawer()
-      .within()
-      .getByLabelText("Jahr der Vergütung")
-  ).click();
+  await selectors.panels
+    .drawer()
+    .getByRole("combobox", { name: "Jahr der Vergütung" })
+    .click();
 
   await actions.mui.selectOption("Kanton");
 
@@ -43,12 +41,13 @@ test("it should be possible to enable abbreviations for colors & x field (column
 
   await sleep(3_000);
 
-  const xAxis = await selectors.chart.axisWidthBand();
+  const xAxis = selectors.chart.axisWidthBand();
   const ticks = (await xAxis.textContent()) as string;
 
-  await (
-    await selectors.panels.drawer().within().getByLabelText("Kanton")
-  ).click();
+  await selectors.panels
+    .drawer()
+    .getByRole("combobox", { name: "Kanton" })
+    .click();
 
   await actions.mui.selectOption("Jahr der Vergütung");
 
@@ -59,9 +58,10 @@ test("it should be possible to enable abbreviations for colors & x field (column
   await actions.editor.selectActiveField("Segmentation");
   await selectors.edition.drawerLoaded();
 
-  await (
-    await selectors.panels.drawer().within().getByLabelText("None")
-  ).click();
+  await selectors.panels
+    .drawer()
+    .getByRole("combobox", { name: "None" })
+    .click();
 
   await actions.mui.selectOption("Kanton");
 
@@ -71,7 +71,7 @@ test("it should be possible to enable abbreviations for colors & x field (column
   // Wait for the data to load.
   await selectors.chart.loaded();
   await selectors.edition.filtersLoaded();
-  await selectors.chart.colorLegend(undefined, { timeout: 3_000 });
+  await selectors.chart.colorLegend({ timeout: 3_000 });
 
   await sleep(3_000);
 
@@ -98,9 +98,10 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
   await selectors.edition.drawerLoaded();
   await actions.editor.selectActiveField("Segmentation");
 
-  await (
-    await selectors.panels.drawer().within().getByLabelText("None")
-  ).click();
+  await selectors.panels
+    .drawer()
+    .getByRole("combobox", { name: "None" })
+    .click();
 
   await actions.mui.selectOption("Greenhouse gas");
   await selectors.edition.drawerLoaded();
@@ -110,7 +111,7 @@ test("hierarchies: it should be possible to enable abbreviations for colors", as
 
   await selectors.chart.loaded();
   await selectors.edition.filtersLoaded();
-  await selectors.chart.colorLegend(undefined, { timeout: 3_000 });
+  await selectors.chart.colorLegend({ timeout: 3_000 });
 
   await sleep(3_000);
 
@@ -153,7 +154,7 @@ test("localized abbreviations", async ({
 
   await selectors.chart.loaded();
   await selectors.edition.filtersLoaded();
-  await selectors.chart.colorLegend(undefined, { timeout: 3_000 });
+  await selectors.chart.colorLegend({ timeout: 3_000 });
 
   await sleep(3_000);
 

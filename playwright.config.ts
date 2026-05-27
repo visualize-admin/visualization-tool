@@ -1,4 +1,4 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Read environment variables from file.
@@ -60,7 +60,7 @@ export default defineConfig({
         launchOptions: {
           args: ["--disable-web-security"],
         },
-        //...devices["Desktop Chrome"],
+        ...devices["Desktop Chrome"],
       },
     },
 

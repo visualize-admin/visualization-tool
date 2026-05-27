@@ -7,7 +7,6 @@ const { expect, test } = setup();
 // skipped due to probable issues with query for multiple cubes (see chart config)
 test.skip("should be possible to edit filters of a hierarchy", async ({
   page,
-  screen,
   selectors,
 }) => {
   const key = "WtHYbmsehQKo";
@@ -16,23 +15,19 @@ test.skip("should be possible to edit filters of a hierarchy", async ({
   await page.goto(`/en/create/${key}`);
   await selectors.chart.loaded();
 
-  (
-    await screen.findByText(
-      "Edit filters",
-      { selector: "button" },
-      { timeout: 5_000 }
-    )
-  ).click();
+  await page
+    .getByRole("button", { name: "Edit filters" })
+    .click({ timeout: 5_000 });
 
-  const filters = selectors.edition.filterDrawer().within();
+  const filters = selectors.edition.filterDrawer();
 
-  await (await filters.findByText("Economic affairs")).click();
-  await (await filters.findByText("Social protection")).click();
-  await (await filters.findByText("Health")).click();
-  await (await filters.findByText("Apply filters")).click();
+  await filters.getByText("Economic affairs").click();
+  await filters.getByText("Social protection").click();
+  await filters.getByText("Health").click();
+  await filters.getByText("Apply filters").click();
 
   await selectors.chart.loaded();
-  const middlePanel = await selectors.panels.middle();
+  const middlePanel = selectors.panels.middle();
   await middlePanel.evaluate((panel) => {
     panel.scrollTo(0, 200);
   });
