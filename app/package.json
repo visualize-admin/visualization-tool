@@ -4,8 +4,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "dist/visualize-app.cjs.js",
-  "module": "dist/visualize-app.esm.js",
+  "main": "dist/foen-admin-ch-visualize-app.cjs.js",
+  "module": "dist/foen-admin-ch-visualize-app.esm.js",
   "files": [
     "dist"
   ],
@@ -197,7 +197,7 @@
     "@lingui/macro": "^4.0.0",
     "@mdx-js/loader": "^1.6.22",
     "@playwright-testing-library/test": "^4.5.0",
-    "@playwright/test": "^1.49.1",
+    "@playwright/test": "^1.60.0",
     "@svgr/cli": "^7",
     "@types/autosuggest-highlight": "^3.2.0",
     "@types/clownface": "^2.0.7",
