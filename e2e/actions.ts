@@ -75,7 +75,9 @@ export const createActions = ({
   /** Actions on MUI elements, options, selects, dialogs */
   mui: {
     selectOption: async (optionText: string) => {
-      const item = selectors.mui.popover().getByText(optionText);
+      const item = selectors.mui
+        .popover()
+        .getByText(optionText, { exact: true });
       await item.click();
       const select = item.locator("..").locator("text=Select");
       const count = await select.count();

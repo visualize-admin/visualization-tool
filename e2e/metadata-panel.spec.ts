@@ -16,6 +16,7 @@ test("it should be possible to open a metadata panel by clicking on elements in 
       selectors.panels
         .metadata()
         .getByText("Kanton, in welchem die geförderten Anlagen stehen")
+        .first()
     ).toBeVisible();
   };
 
