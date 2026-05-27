@@ -4,8 +4,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "dist/visualize-app.cjs.js",
-  "module": "dist/visualize-app.esm.js",
+  "main": "dist/foen-admin-ch-visualize-app.cjs.js",
+  "module": "dist/foen-admin-ch-visualize-app.esm.js",
   "files": [
     "dist"
   ],
