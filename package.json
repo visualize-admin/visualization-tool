@@ -36,6 +36,7 @@
     "setup:dev": "yarn && yarn locales:compile && yarn db:migrate:dev",
     "postversion": "git push --follow-tags",
     "release:npm": "yarn build:npm && yarn publish app",
+    "e2e:har-update": "E2E_HAR=update E2E_BASE_URL=http://localhost:3000 yarn playwright test",
     "e2e:dev": "E2E_BASE_URL=http://localhost:3000 yarn playwright test",
     "e2e:dev:ssl": "E2E_BASE_URL=https://localhost:3000 yarn playwright test",
     "e2e:ui": "E2E_BASE_URL=http://localhost:3000 yarn playwright test --ui",

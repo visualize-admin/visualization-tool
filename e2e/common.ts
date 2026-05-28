@@ -33,14 +33,24 @@ const setup = (contextOptions?: PlaywrightTestOptions["contextOptions"]) => {
     },
     replayFromHAR: async ({ page }, use, testInfo) => {
       let index = 0;
+      const harPaths: string[] = [];
       const replay = async (routeFromHAROptions?: RouteFromHAROptions) => {
         const name = `${testInfo.titlePath
           .map((x) => x.replace(/\.spec\.ts$/, ""))
           .map((x) => x.replace(/@[^\s]+$/, ""))
           .map(slugify)
           .join(" > ")} ${index++}`;
-        if (process.env.E2E_HAR && process.env.E2E_HAR !== "false") {
-          await page.routeFromHAR(`./e2e/har/${name}.zip`, {
+        const harPath = `./e2e/har/${name}.zip`;
+        if (process.env.E2E_HAR === "update") {
+          harPaths.push(harPath);
+          await page.context().routeFromHAR(harPath, {
+            url: /api\/graphql/,
+            notFound: "fallback",
+            update: true,
+            ...routeFromHAROptions,
+          });
+        } else if (process.env.E2E_HAR && process.env.E2E_HAR !== "false") {
+          await page.routeFromHAR(harPath, {
             url: /api\/graphql/,
             notFound: "abort",
             ...routeFromHAROptions,
