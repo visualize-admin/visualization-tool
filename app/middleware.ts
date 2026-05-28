@@ -40,6 +40,9 @@ function buildCSP(frameAncestors: string): string {
 }
 
 export function middleware(request: NextRequest) {
+  // Static headers are set in next.config.js.
+  // This middleware is adding some dynamic headers that depends on environment variables and request path.
+
   const { pathname } = request.nextUrl;
   const isEmbeddable = EMBEDDABLE_PATH_PATTERNS.some((p) => p.test(pathname));
   const frameAncestors = isEmbeddable ? "*" : "'self'";
