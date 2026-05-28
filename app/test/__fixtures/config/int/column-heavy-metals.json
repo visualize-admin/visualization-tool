@@ -15,10 +15,10 @@
         "it": ""
       }
     },
-    "dataSet": "https://environment.ld.admin.ch/foen/ubd0066/15",
+    "dataSet": "https://environment.ld.admin.ch/foen/ubd006601/5",
     "dataSource": {
       "type": "sparql",
-      "url": "https://int.cached.lindas.admin.ch/query"
+      "url": "https://cached.lindas.admin.ch/query"
     },
     "chartConfig": {
       "version": "1.2.1",
@@ -28,20 +28,20 @@
             "sortingType": "byDimensionLabel",
             "sortingOrder": "asc"
           },
-          "componentIri": "https://environment.ld.admin.ch/foen/ubd0066/messparameter"
+          "componentIri": "https://environment.ld.admin.ch/foen/ubd006601/messparameter"
         },
         "y": {
-          "componentIri": "https://environment.ld.admin.ch/foen/ubd0066/wert"
+          "componentIri": "https://environment.ld.admin.ch/foen/ubd006601/wert"
         }
       },
       "filters": {
         "https://environment.ld.admin.ch/foen/ubd0066/station": {
           "type": "single",
-          "value": "https://environment.ld.admin.ch/foen/ubd0066/Station/100_1"
+          "value": "https://environment.ld.admin.ch/foen/ubd006601/Station/100_1"
         },
         "https://environment.ld.admin.ch/foen/ubd0066/samplingperiod": {
           "type": "single",
-          "value": "https://environment.ld.admin.ch/foen/ubd0066/samplingperiod/1"
+          "value": "https://environment.ld.admin.ch/foen/ubd006601/samplingperiod/1"
         }
       },
       "chartType": "column",

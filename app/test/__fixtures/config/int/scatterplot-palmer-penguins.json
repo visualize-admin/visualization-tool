@@ -1,66 +1,145 @@
 {
-  "key": "cfNkIaMvN_xL",
+  "key": "kHovM7MmR4uw",
   "data": {
-    "state": "DESCRIBING_CHART",
-    "dataSet": "https://environment.ld.admin.ch/foen/palmer-penguins/18",
+    "version": "5.3.0",
+    "state": "CONFIGURING_CHART",
     "dataSource": {
       "type": "sparql",
-      "url": "https://int.cached.lindas.admin.ch/query"
+      "url": "https://cached.lindas.admin.ch/query"
     },
-    "meta": {
-      "title": {
-        "de": "",
-        "fr": "",
-        "it": "",
-        "en": "Mean bill depth vs mean bill depth for Adelie Penguins"
-      },
-      "description": { "de": "", "fr": "", "it": "", "en": "" }
-    },
-    "chartConfig": {
-      "version": "1.2.1",
-      "chartType": "scatterplot",
-      "filters": {
-        "https://environment.ld.admin.ch/foen/palmer-penguins/species": {
-          "type": "single",
-          "value": "https://environment.ld.admin.ch/foen/palmer-penguins/species/Adelie"
+    "layout": {
+      "type": "tab",
+      "meta": {
+        "title": {
+          "de": "",
+          "en": "",
+          "fr": "",
+          "it": ""
         },
-        "https://environment.ld.admin.ch/foen/palmer-penguins/sex": {
-          "type": "single",
-          "value": "female"
+        "description": {
+          "de": "",
+          "en": "",
+          "fr": "",
+          "it": ""
         },
-        "https://environment.ld.admin.ch/foen/palmer-penguins/year": {
-          "type": "single",
-          "value": "2007"
+        "label": {
+          "de": "",
+          "en": "",
+          "fr": "",
+          "it": ""
         }
       },
-      "cubes": [],
-      "interactiveFiltersConfig": {
-        "legend": { "active": false, "componentIri": "" },
-        "timeRange": {
-          "active": false,
-          "componentIri": "",
-          "presets": { "type": "range", "from": "", "to": "" }
+      "blocks": [
+        {
+          "type": "chart",
+          "key": "kHovM7MmR4uw",
+          "initialized": false
+        }
+      ]
+    },
+    "chartConfigs": [
+      {
+        "key": "kHovM7MmR4uw",
+        "version": "5.3.0",
+        "meta": {
+          "title": {
+            "en": "",
+            "de": "",
+            "fr": "",
+            "it": ""
+          },
+          "description": {
+            "en": "",
+            "de": "",
+            "fr": "",
+            "it": ""
+          },
+          "label": {
+            "en": "",
+            "de": "",
+            "fr": "",
+            "it": ""
+          }
         },
-        "dataFilters": { "active": false, "componentIris": [] }
-      },
-      "fields": {
-        "x": {
-          "componentIri": "https://environment.ld.admin.ch/foen/palmer-penguins/billlengthmm"
+        "cubes": [
+          {
+            "iri": "https://environment.ld.admin.ch/foen/ubd000503/10",
+            "filters": {
+              "https://environment.ld.admin.ch/foen/ubd000503(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/ubd000503/jahr": {
+                "type": "single",
+                "value": "1990"
+              }
+            }
+          }
+        ],
+        "interactiveFiltersConfig": {
+          "legend": {
+            "active": false,
+            "componentId": ""
+          },
+          "timeRange": {
+            "active": false,
+            "componentId": "https://environment.ld.admin.ch/foen/ubd000503(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/ubd000503/jahr",
+            "presets": {
+              "type": "range",
+              "from": "",
+              "to": ""
+            }
+          },
+          "dataFilters": {
+            "active": false,
+            "componentIds": [],
+            "defaultValueOverrides": {},
+            "filterTypes": {},
+            "defaultOpen": true
+          },
+          "calculation": {
+            "active": false,
+            "type": "identity"
+          }
         },
-        "y": {
-          "componentIri": "https://environment.ld.admin.ch/foen/palmer-penguins/billdepthmm"
-        },
-        "segment": {
-          "componentIri": "https://environment.ld.admin.ch/foen/palmer-penguins/islands",
-          "palette": "category10",
-          "colorMapping": {
-            "https://environment.ld.admin.ch/foen/palmer-penguins/islands/Biscoe": "#1f77b4",
-            "https://environment.ld.admin.ch/foen/palmer-penguins/islands/Dream": "#ff7f0e",
-            "https://environment.ld.admin.ch/foen/palmer-penguins/islands/Torgersen": "#2ca02c"
+        "annotations": [],
+        "limits": {},
+        "conversionUnitsByComponentId": {},
+        "chartType": "scatterplot",
+        "fields": {
+          "x": {
+            "componentId": "https://environment.ld.admin.ch/foen/ubd000503(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/ubd000503/werte"
+          },
+          "y": {
+            "componentId": "https://environment.ld.admin.ch/foen/ubd000503(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/ubd000503/werteNichtGerundet"
+          },
+          "color": {
+            "type": "segment",
+            "paletteId": "category10",
+            "colorMapping": {
+              "https://environment.ld.admin.ch/foen/ubd000503/Treibstoffe/treib1": "#1f77b4",
+              "https://environment.ld.admin.ch/foen/ubd000503/Treibstoffe/treib2": "#ff7f0e",
+              "https://environment.ld.admin.ch/foen/ubd000503/Treibstoffe/treib3": "#2ca02c",
+              "https://environment.ld.admin.ch/foen/ubd000503/Treibstoffe/treib4": "#d62728"
+            }
+          },
+          "segment": {
+            "componentId": "https://environment.ld.admin.ch/foen/ubd000503(VISUALIZE.ADMIN_COMPONENT_ID_SEPARATOR)https://environment.ld.admin.ch/foen/ubd000503/treibstoffe",
+            "showValuesMapping": {}
           }
         }
       }
-    },
-    "activeField": "title"
+    ],
+    "activeChartKey": "kHovM7MmR4uw",
+    "dashboardFilters": {
+      "timeRange": {
+        "active": false,
+        "timeUnit": "",
+        "presets": {
+          "from": "",
+          "to": ""
+        }
+      },
+      "dataFilters": {
+        "componentIds": [],
+        "filters": {}
+      }
+    }
   }
 }

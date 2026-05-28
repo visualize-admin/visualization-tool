@@ -1,10 +1,10 @@
 {
   "key": "Z6Re21LHbOoP",
   "data": {
-    "dataSet": "https://environment.ld.admin.ch/foen/UBD003002/5",
+    "dataSet": "https://environment.ld.admin.ch/foen/ubd003001/10",
     "dataSource": {
       "type": "sparql",
-      "url": "https://int.cached.lindas.admin.ch/query"
+      "url": "https://cached.lindas.admin.ch/query"
     },
     "meta": {
       "title": {
@@ -21,7 +21,7 @@
       "filters": {
         "https://environment.ld.admin.ch/foen/UBD003002/artengruppe": {
           "type": "single",
-          "value": "https://environment.ld.admin.ch/foen/UBD003002/ArtenGruppe/AMPH"
+          "value": "https://environment.ld.admin.ch/foen/ubd003001/ArtenGruppe/AMPH"
         }
       },
       "interactiveFiltersConfig": {
@@ -35,21 +35,21 @@
       },
       "fields": {
         "y": {
-          "componentIri": "https://environment.ld.admin.ch/foen/UBD003002/value"
+          "componentIri": "https://environment.ld.admin.ch/foen/ubd003001/value"
         },
         "segment": {
-          "componentIri": "https://environment.ld.admin.ch/foen/UBD003002/status",
+          "componentIri": "https://environment.ld.admin.ch/foen/ubd003001/status",
           "palette": "category10",
           "sorting": { "sortingType": "byMeasure", "sortingOrder": "asc" },
           "colorMapping": {
-            "https://environment.ld.admin.ch/foen/UBD003002/Status/DD": "#1f77b4",
-            "https://environment.ld.admin.ch/foen/UBD003002/Status/LC": "#ff7f0e",
-            "https://environment.ld.admin.ch/foen/UBD003002/Status/NT": "#2ca02c",
-            "https://environment.ld.admin.ch/foen/UBD003002/Status/VU": "#d62728",
-            "https://environment.ld.admin.ch/foen/UBD003002/Status/EN": "#9467bd",
-            "https://environment.ld.admin.ch/foen/UBD003002/Status/CR": "#8c564b",
-            "https://environment.ld.admin.ch/foen/UBD003002/Status/RE": "#e377c2",
-            "https://environment.ld.admin.ch/foen/UBD003002/Status/EX": "#7f7f7f"
+            "https://environment.ld.admin.ch/foen/ubd003001/Status/DD": "#1f77b4",
+            "https://environment.ld.admin.ch/foen/ubd003001/Status/LC": "#ff7f0e",
+            "https://environment.ld.admin.ch/foen/ubd003001/Status/NT": "#2ca02c",
+            "https://environment.ld.admin.ch/foen/ubd003001/Status/VU": "#d62728",
+            "https://environment.ld.admin.ch/foen/ubd003001/Status/EN": "#9467bd",
+            "https://environment.ld.admin.ch/foen/ubd003001/Status/CR": "#8c564b",
+            "https://environment.ld.admin.ch/foen/ubd003001/Status/RE": "#e377c2",
+            "https://environment.ld.admin.ch/foen/ubd003001/Status/EX": "#7f7f7f"
           }
         }
       }
