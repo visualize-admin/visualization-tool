@@ -35,8 +35,8 @@ console.log("GitHub Repo", process.env.NEXT_PUBLIC_GITHUB_REPO);
 console.log("Extra Certs", process.env.NODE_EXTRA_CA_CERTS);
 console.log("Prevent search bots", process.env.PREVENT_SEARCH_BOTS);
 
-if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
-  console.log("Sentry DSN:", process.env.NEXT_PUBLIC_SENTRY_DSN);
+if (process.env.SENTRY_DSN) {
+  console.log("Sentry DSN:", process.env.SENTRY_DSN);
 }
 
 module.exports = withSentryConfig(
@@ -54,58 +54,9 @@ module.exports = withSentryConfig(
         },
 
         headers: async () => {
-          // See https://content-security-policy.com/ & https://developers.google.com/tag-platform/security/guides/csp
-          const isDev = process.env.NODE_ENV === "development";
-          const isVercel = !!process.env.VERCEL;
-          const sentryCSP = process.env.NEXT_PUBLIC_SENTRY_CSP
-            ? ` ${process.env.NEXT_PUBLIC_SENTRY_CSP}`
-            : "";
-          const unsafeEval = isDev ? " 'unsafe-eval'" : "";
-          // Vercel Toolbar / Live Comments hosts — only needed on Vercel deployments
-          const vercelDefault = isVercel
-            ? " https://vercel.live/ https://vercel.com"
-            : "";
-          const vercelScript = isVercel
-            ? " https://vercel.live/ https://vercel.com"
-            : "";
-          const vercelScriptElem = isVercel
-            ? " https://vercel.live https://vercel.com https://*.vercel.app"
-            : "";
-          const vercelWorker = isVercel ? " https://*.vercel.app" : "";
-
-          const buildCSP = (frameAncestors) =>
-            [
-              `default-src 'self' 'unsafe-inline'${unsafeEval}${sentryCSP}${vercelDefault}`,
-              `script-src 'self' 'unsafe-inline'${unsafeEval}${sentryCSP}${vercelScript} https://api.mapbox.com https://api.maptiler.com`,
-              `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://visualize.admin.ch https://*.visualize.admin.ch${vercelScriptElem} https://api.mapbox.com`,
-              `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
-              `font-src 'self'`,
-
-              // * to allow loading legend images from custom WMS / WMTS endpoints and data: to allow downloading images
-              `img-src 'self' * data: blob:`,
-
-              // * to allow WMS / WMTS endpoints
-              `connect-src 'self' *`,
-
-              `worker-src 'self' blob: https://*.admin.ch${vercelWorker}`,
-              `form-action 'self'`,
-              `frame-ancestors ${frameAncestors}`,
-              `object-src 'none'`,
-              `base-uri 'self'`,
-              `upgrade-insecure-requests`,
-            ].join("; ");
-
-          // When CSP_REPORT_ONLY=true, emit the report-only header so violations
-          // are surfaced to the browser console without being enforced. Useful
-          // for rolling out tighter policies. The header is otherwise always
-          // present — there is intentionally no kill-switch to fully disable CSP.
-          const reportOnly =
-            process.env.CSP_REPORT_ONLY &&
-            process.env.CSP_REPORT_ONLY === "true";
-          const cspKey = reportOnly
-            ? "Content-Security-Policy-Report-Only"
-            : "Content-Security-Policy";
-
+          // Static security headers that don't depend on runtime env vars.
+          // Dynamic headers (CSP, X-Robots-Tag) are set in middleware.ts so they
+          // can read runtime env vars injected into the container at startup.
           const baseHeaders = [
             { key: "X-Content-Type-Options", value: "nosniff" },
             {
@@ -129,43 +80,8 @@ module.exports = withSentryConfig(
             // `frame-ancestors` already handles clickjacking protection.
             { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
           ];
-          if (process.env.PREVENT_SEARCH_BOTS === "true") {
-            baseHeaders.push({
-              key: "X-Robots-Tag",
-              value: "noindex, nofollow",
-            });
-          }
 
-          const headers = [];
-
-          // Catch-all — block iframing to prevent clickjacking on the editor / browser / login UI.
-          // Must come first: when multiple Next.js header rules match the same path,
-          // later rules override earlier ones for the same header key.
-          headers.push({
-            source: "/:path*",
-            headers: [
-              ...baseHeaders,
-              { key: cspKey, value: buildCSP("'self'") },
-            ],
-          });
-
-          // Routes that are intended to be embedded in third-party iframes.
-          // These override the catch-all CSP to allow `frame-ancestors *`.
-          // `/api/embed-aem-ext/*` serves the AEM external-embed HTML wrapper,
-          // which partner sites may iframe directly.
-          const embeddableSources = [
-            "/embed/:path*",
-            "/preview",
-            "/api/embed-aem-ext/:path*",
-          ];
-          for (const source of embeddableSources) {
-            headers.push({
-              source,
-              headers: [...baseHeaders, { key: cspKey, value: buildCSP("*") }],
-            });
-          }
-
-          return headers;
+          return [{ source: "/:path*", headers: baseHeaders }];
         },
 
         pageExtensions: ["js", "ts", "tsx", "mdx"],

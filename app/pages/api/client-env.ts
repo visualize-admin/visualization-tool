@@ -24,6 +24,8 @@ export default async function clientEnvApi(
           GRAPHQL_ENDPOINT: process.env.GRAPHQL_ENDPOINT,
           ADFS_PROFILE_URL: process.env.ADFS_PROFILE_URL,
           MAPTILER_API_KEY: process.env.MAPTILER_API_KEY,
+          SENTRY_DSN: process.env.SENTRY_DSN,
+          SENTRY_ENV: process.env.SENTRY_ENV,
         })}`;
 
         if (result) {
