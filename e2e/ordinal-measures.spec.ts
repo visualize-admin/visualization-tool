@@ -46,10 +46,8 @@ describe("viewing a dataset with only ordinal measures", () => {
 
   test("should be possible to select ordinal measure as area color", async ({
     page,
-    screen,
     selectors,
     actions,
-    within,
     replayFromHAR,
   }) => {
     test.slow();
@@ -69,8 +67,9 @@ describe("viewing a dataset with only ordinal measures", () => {
 
     await selectors.chart.loaded();
 
-    await within(selectors.edition.controlSectionByTitle("Symbols"))
-      .getByLabelText("None")
+    await selectors.edition
+      .controlSectionByTitle("Symbols")
+      .getByRole("combobox", { name: "None" })
       .click();
 
     // Select options open in portal
@@ -82,8 +81,9 @@ describe("viewing a dataset with only ordinal measures", () => {
     // Chart needs to re-load when symbol layer is selected
     await selectors.chart.loaded();
 
-    await within(selectors.edition.controlSectionByTitle("Color"))
-      .getByLabelText("None")
+    await selectors.edition
+      .controlSectionByTitle("Color")
+      .getByRole("combobox", { name: "None" })
       .click();
 
     const options = await selectors.mui.options();

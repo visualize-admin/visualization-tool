@@ -7,7 +7,6 @@ const { test } = setup();
 
 test("@noci should be possible to de-select options from color component in maps", async ({
   page,
-  within,
   actions,
   selectors,
   replayFromHAR,
@@ -29,17 +28,11 @@ test("@noci should be possible to de-select options from color component in maps
 
   await selectors.chart.loaded();
 
-  const filterControlSection = within(
-    page.locator("[data-testid=chart-edition-multi-filters]", {
-      has: page.locator(`h5:text-is("Filter")`),
-    })
-  );
-
   await page.getByRole("button", { name: "Edit filters" }).click();
 
-  const filters = selectors.edition.filterDrawer().within();
-  await (await filters.findByText("Canton of Zurich")).click();
-  await (await filters.findByText("Apply filters")).click();
+  const filters = selectors.edition.filterDrawer();
+  await filters.getByText("Canton of Zurich").click();
+  await filters.getByText("Apply filters").click();
 
   await selectors.chart.loaded();
 });

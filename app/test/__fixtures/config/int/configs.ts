@@ -18,7 +18,7 @@ export const configs: TestConfig[] = [
   },
   {
     chartId: "cfNkIaMvN_xL",
-    name: "Scatterplot - Palmer Penguins",
-    slug: "scatterplot-palmer-penguins",
+    name: "Scatterplot - Greenhouse Gases",
+    slug: "scatterplot-greenhouse-gases",
   },
 ];

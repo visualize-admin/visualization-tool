@@ -14,9 +14,7 @@ describe("Color Picker Swatches", () => {
     await selectors.chart.loaded();
     await actions.editor.selectActiveField("Segmentation");
     await selectors.edition.drawerLoaded();
-    await (
-      await selectors.panels.drawer().within().getByLabelText("None")
-    ).click();
+    await selectors.panels.drawer().getByRole("combobox", { name: "None" }).click();
     await actions.mui.selectOption("Kanton");
 
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));

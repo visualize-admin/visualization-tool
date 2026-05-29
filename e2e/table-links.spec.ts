@@ -7,7 +7,6 @@ test("it updates per-locale table link base URLs and renders the correct href pe
   actions,
   selectors,
   page,
-  within,
   replayFromHAR,
 }) => {
   await replayFromHAR();
@@ -30,11 +29,7 @@ test("it updates per-locale table link base URLs and renders the correct href pe
   await linksSection.locator("h6:text-is('Links')").click();
 
   // Enable links
-  await (
-    await within(linksSection).findByText("Enable links", undefined, {
-      timeout: 5_000,
-    })
-  ).click();
+  await linksSection.getByText("Enable links").click({ timeout: 5_000 });
 
   // Fill the per-locale base URL inputs
   for (const loc of ["de", "fr", "it", "en"] as const) {

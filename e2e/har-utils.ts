@@ -49,8 +49,8 @@ export const testAndSaveHar = async (
   const { baseUrl } = getEnv(env);
   const { test } = setup({ recordHar: { path } });
   test.slow();
-  test(name, async ({ browser, page, screen, actions, selectors, within }) => {
-    await run({ browser, page, screen, selectors, actions, within, baseUrl });
+  test(name, async ({ browser, page, actions, selectors }) => {
+    await run({ browser, page, selectors, actions, baseUrl });
     cleanupHAR(path);
   });
 };

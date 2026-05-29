@@ -12,15 +12,15 @@ test("it should be possible to open a metadata panel by clicking on elements in 
   });
 
   const checkKantonDescription = async () => {
-    const kantonDimensionDescription = await selectors.panels
-      .metadata()
-      .within()
-      .findByText("Kanton, in welchem die geförderten Anlagen stehen");
-
-    expect(kantonDimensionDescription).toBeDefined();
+    await expect(
+      selectors.panels
+        .metadata()
+        .getByText("Kanton, in welchem die geförderten Anlagen stehen")
+        .first()
+    ).toBeVisible();
   };
 
-  const chartFilters = await selectors.edition.chartFilters();
+  const chartFilters = selectors.edition.chartFilters();
 
   await chartFilters.locator("button >> text='Kanton'").click();
 
