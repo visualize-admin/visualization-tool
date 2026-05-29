@@ -9,7 +9,6 @@ test.skip("Selecting SymbolLayer colors > should be possible to select geo dimen
   page,
   selectors,
   actions,
-  within,
 }) => {
   const key = "jky5IEw6poT3";
   await loadChartInLocalStorage(page, key, configuratorState);
@@ -18,8 +17,9 @@ test.skip("Selecting SymbolLayer colors > should be possible to select geo dimen
 
   await selectors.chart.loaded();
 
-  await within(selectors.edition.controlSectionByTitle("Color"))
-    .getByLabelText("None")
+  await selectors.edition
+    .controlSectionByTitle("Color")
+    .getByRole("combobox", { name: "None" })
     .click();
 
   await actions.mui.selectOption("Region");

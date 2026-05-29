@@ -1,7 +1,6 @@
 import { Page } from "@playwright/test";
 
 import { setup } from "./common";
-import { Selectors } from "./selectors";
 
 const { test } = setup();
 
@@ -12,17 +11,17 @@ type IframeDef = {
 
 const waitForIframe = async ({
   page,
-  selectors,
   elLocator,
   chartLocator,
 }: {
   page: Page;
-  selectors: Selectors;
 } & IframeDef) => {
   await page.waitForSelector(elLocator);
   const iframe = page.locator(elLocator);
   const contentFrame = iframe.contentFrame();
-  await selectors.chart.loaded();
+  await contentFrame
+    .locator('[data-chart-loaded="true"]')
+    .waitFor({ timeout: 30_000 });
   await contentFrame.locator(chartLocator).first().waitFor({ timeout: 10_000 });
 };
 
@@ -39,10 +38,7 @@ const iframeDefs: IframeDef[] = [
 
 test("should be possible to preview charts via API (iframe)", async ({
   page,
-  selectors,
 }) => {
   await page.goto("/en/_preview");
-  await Promise.all(
-    iframeDefs.map((def) => waitForIframe({ page, selectors, ...def }))
-  );
+  await Promise.all(iframeDefs.map((def) => waitForIframe({ page, ...def })));
 });

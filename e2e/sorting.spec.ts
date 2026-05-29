@@ -10,13 +10,7 @@ const { test, expect } = setup();
  * - For each type of chart, changes the sorting between Name and Automatic
  * - Checks that the legend item order is coherent.
  */
-test("Segment sorting", async ({
-  selectors,
-  actions,
-  within,
-  screen,
-  replayFromHAR,
-}) => {
+test("Segment sorting", async ({ selectors, actions, page, replayFromHAR }) => {
   test.setTimeout(60_000);
 
   await replayFromHAR();
@@ -34,8 +28,9 @@ test("Segment sorting", async ({
 
     // Switch color on the first chart
     if (chartType === "Columns") {
-      await within(selectors.edition.controlSectionByTitle("Segmentation"))
-        .getByLabelText("None")
+      await selectors.edition
+        .controlSectionByTitle("Segmentation")
+        .getByRole("combobox", { name: "None" })
         .click();
 
       await actions.mui.selectOption("Kanton");
@@ -43,14 +38,15 @@ test("Segment sorting", async ({
 
     await selectors.chart.loaded();
     await selectors.edition.filtersLoaded();
-    await selectors.chart.colorLegend(undefined, { timeout: 5_000 });
+    await selectors.chart.colorLegend({ timeout: 5_000 });
 
     const legendItems = await selectors.chart.colorLegendItems();
     const legendTexts = await legendItems.allInnerTexts();
     expect(legendTexts[0]).toEqual("Zurich");
 
-    await within(selectors.edition.controlSectionByTitle("Sort"))
-      .getByLabelText("Automatic")
+    await selectors.edition
+      .controlSectionByTitle("Sort")
+      .getByRole("combobox", { name: "Automatic" })
       .click();
 
     await actions.mui.selectOption("Name");
@@ -60,16 +56,17 @@ test("Segment sorting", async ({
 
     const legendTexts2 = await legendItems.allInnerTexts();
     expect(legendTexts2[0]).toBe("Aargau");
-    await screen.getByText("Z → A").click();
+    await page.getByText("Z → A").click();
 
     const legendTexts3 = await legendItems.allInnerTexts();
     expect(legendTexts3[0]).toEqual("Zurich");
 
     // Re-initialize for future tests
-    await screen.getByText("A → Z").click();
+    await page.getByText("A → Z").click();
 
-    await within(selectors.edition.controlSectionByTitle("Sort"))
-      .getByLabelText("Name")
+    await selectors.edition
+      .controlSectionByTitle("Sort")
+      .getByRole("combobox", { name: "Name" })
       .click();
 
     await actions.mui.selectOption("Automatic");
@@ -82,8 +79,7 @@ test("Segment sorting", async ({
 test("Segment sorting with hierarchy", async ({
   actions,
   selectors,
-  screen,
-  within,
+  page,
   replayFromHAR,
 }) => {
   await replayFromHAR();
@@ -100,19 +96,18 @@ test("Segment sorting with hierarchy", async ({
   await sleep(3_000);
 
   const colorSection = selectors.edition.controlSectionByTitle("Segmentation");
-  await within(colorSection).getByLabelText("None").click();
+  await colorSection.getByRole("combobox", { name: "None" }).click();
 
   await actions.mui.selectOption("Region");
   await selectors.chart.loaded();
 
   await selectors.edition.filtersLoaded();
-  await selectors.chart.colorLegend(undefined, { timeout: 30_000 });
+  await selectors.chart.colorLegend({ timeout: 30_000 });
 
-  await within(await selectors.chart.colorLegend()).findByText(
-    "Appenzell Innerrhoden",
-    undefined,
-    { timeout: 10_000 }
-  );
+  await (await selectors.chart.colorLegend())
+    .getByText("Appenzell Innerrhoden")
+    .first()
+    .waitFor({ timeout: 10_000 });
 
   const legendItems = await selectors.chart.colorLegendItems();
 
@@ -171,7 +166,7 @@ test("Segment sorting with hierarchy", async ({
 
   expect(await legendItems.allInnerTexts()).toEqual(expectedLegendItems);
 
-  await screen.getByText("Z → A").click();
+  await page.getByText("Z → A").click();
   expect(await legendItems.allInnerTexts()).toEqual(
     [...expectedLegendItems].reverse()
   );

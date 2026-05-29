@@ -1,6 +1,6 @@
 import { configs as intConfigs } from "../app/test/__fixtures/config/int/configs";
 
-import { setup, sleep } from "./common";
+import { setup } from "./common";
 import { harReplayGraphqlEndpointQueryParam } from "./har-utils";
 
 const { test } = setup();
@@ -29,11 +29,9 @@ for (let [viewportName, viewportSize] of Object.entries(viewports)) {
       await replayFromHAR();
       await page.setViewportSize(viewportSize);
       await page.goto(
-        `/en/__test/${env}/${slug}?dataSource=Int&${harReplayGraphqlEndpointQueryParam}`
+        `/en/__test/${env}/${slug}?dataSource=Prod&${harReplayGraphqlEndpointQueryParam}`
       );
       await selectors.chart.loaded();
-
-      await sleep(2_000);
     });
   }
 }

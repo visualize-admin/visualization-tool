@@ -6,7 +6,6 @@ const { test, expect } = setup();
 test("should have correct tooltip content", async ({
   actions,
   selectors,
-  within,
   page,
   replayFromHAR,
 }) => {
@@ -20,15 +19,17 @@ test("should have correct tooltip content", async ({
 
   await selectors.edition.drawerLoaded();
 
-  const filterLocator = await within(
-    selectors.edition.controlSectionByTitle("Filters")
-  );
+  const filterLocator = selectors.edition.controlSectionByTitle("Filters");
 
-  await filterLocator.getByLabelText("All greenhouse gas").click();
+  await filterLocator
+    .getByRole("combobox", { name: "All greenhouse gas" })
+    .click();
 
   await selectors.mui
     .popover()
-    .findByText("Methane", undefined, { timeout: 10_000 });
+    .getByText("Methane")
+    .first()
+    .waitFor({ timeout: 10_000 });
 
   await actions.mui.selectOption("Methane");
 
@@ -57,7 +58,7 @@ test("should keep correct position after scrolling", async ({
   actions,
 }) => {
   await actions.chart.createFrom({
-    iri: "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
+    iri: "https://environment.ld.admin.ch/foen/ubd000502/8",
     dataSource: "Prod",
   });
   await actions.editor.changeRegularChartType("Bars");
@@ -66,8 +67,8 @@ test("should keep correct position after scrolling", async ({
   const rect0 = chart.locator('[data-index="0"]');
   await rect0.hover({ force: true });
   await sleep(3_000);
-  const rect50 = chart.locator('[data-index="50"]');
-  await rect50.hover({ force: true });
+  const rect30 = chart.locator('[data-index="30"]');
+  await rect30.hover({ force: true });
   await sleep(3_000);
   const tooltip = page.locator('[data-testid="chart-tooltip"]');
   await tooltip.waitFor({ state: "attached", timeout: 1_000 });

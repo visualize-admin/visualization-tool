@@ -1,5 +1,4 @@
 import { Locator, Page } from "@playwright/test";
-import { within } from "@playwright-testing-library/test";
 
 import { setup } from "./common";
 import { harReplayGraphqlEndpointQueryParam } from "./har-utils";
@@ -61,13 +60,11 @@ test("search results count coherence", async ({
 
     await selectors.search.resultsCount();
 
-    const panelLeft = await selectors.panels.left();
+    const panelLeft = selectors.panels.left();
 
-    await (
-      await within(panelLeft).locator(`button:has-text("Show all")`).first()
-    ).click();
+    await panelLeft.locator(`button:has-text("Show all")`).first().click();
 
-    await within(panelLeft).findByText(t, undefined, { timeout: 10_000 });
+    await panelLeft.getByText(t).first().waitFor({ timeout: 10_000 });
 
     const countChip = panelLeft
       .locator(`:text("${t}")`)
@@ -82,13 +79,7 @@ test("search results count coherence", async ({
   }
 });
 
-test("sort order", async ({
-  page,
-  selectors,
-  screen,
-  actions,
-  replayFromHAR,
-}) => {
+test("sort order", async ({ page, selectors, actions, replayFromHAR }) => {
   test.slow();
 
   await replayFromHAR();
@@ -97,12 +88,12 @@ test("sort order", async ({
   );
   const resultCount = await selectors.search.resultsCount();
   const text = await resultCount.textContent();
-  const select = screen.locator("input[name='datasetSort']");
+  const select = page.locator("input[name='datasetSort']");
   expect(await getSelectValue(select)).toBe("CREATED_DESC");
 
-  const searchInput = screen.getAllByPlaceholderText(
-    "Name, organization, keyword..."
-  );
+  const searchInput = page
+    .getByPlaceholder("Name, organization, keyword...")
+    .first();
 
   // Search something, order should be score
   await searchInput.type("NFI");

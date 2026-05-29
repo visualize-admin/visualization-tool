@@ -18,7 +18,7 @@ test("it should be possible to duplicate a chart", async ({
   await selectors.chart.loaded();
   const chartMoreButton = await selectors.chart.moreButton();
   await chartMoreButton.click();
-  await (await selectors.mui.popover().findByText("Duplicate")).click();
+  await selectors.mui.popover().getByText("Duplicate").click();
   const chartTabs = await selectors.chart.tabs();
   expect(await chartTabs.count()).toBe(2);
   const layoutOptionsButton = page.locator(
@@ -28,7 +28,7 @@ test("it should be possible to duplicate a chart", async ({
   await selectors.chart.loaded();
   const chartMoreButtonLayout = await selectors.chart.moreButton();
   await chartMoreButtonLayout.click();
-  await (await selectors.mui.popover().findByText("Duplicate")).click();
+  await selectors.mui.popover().getByText("Duplicate").click();
   const chartTabsLayout = await selectors.chart.tabs();
   expect(await chartTabsLayout.count()).toBe(3);
 });
@@ -47,7 +47,7 @@ test.skip("it should be possible to make a screenshot of a chart", async ({
   const chartMoreButton = await selectors.chart.moreButton();
   await chartMoreButton.click();
   const downloadPromise = page.waitForEvent("download");
-  await (await selectors.mui.popover().findByText("Export PNG")).click();
+  await selectors.mui.popover().getByText("Export PNG").click();
   const download = await downloadPromise;
 
   const filePath = await download.path();

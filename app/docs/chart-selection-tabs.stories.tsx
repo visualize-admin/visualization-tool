@@ -2,7 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { ChartSelectionTabs } from "@/components/chart-selection-tabs";
 import { ConfiguratorState, ConfiguratorStateProvider } from "@/configurator";
-import palmerPenguinsFixture from "@/test/__fixtures/config/int/scatterplot-palmer-penguins.json";
+import scatterplotGreenhouseGasesFixture from "@/test/__fixtures/config/int/scatterplot-greenhouse-gases.json";
 
 type Story = StoryObj<typeof ChartSelectionTabs>;
 const meta: Meta<typeof ChartSelectionTabs> = {
@@ -12,7 +12,7 @@ const meta: Meta<typeof ChartSelectionTabs> = {
     (Story, ctx) => {
       return (
         <ConfiguratorStateProvider
-          chartId={palmerPenguinsFixture.key}
+          chartId={scatterplotGreenhouseGasesFixture.key}
           initialState={ctx.parameters.state as ConfiguratorState}
           allowDefaultRedirect={false}
         >
@@ -27,7 +27,7 @@ export const Editable: Story = {
   args: {},
   parameters: {
     state: {
-      ...palmerPenguinsFixture.data,
+      ...scatterplotGreenhouseGasesFixture.data,
       state: "CONFIGURING_CHART",
     },
   },
@@ -37,7 +37,7 @@ export const NonEditable: Story = {
   args: {},
   parameters: {
     state: {
-      ...palmerPenguinsFixture.data,
+      ...scatterplotGreenhouseGasesFixture.data,
       state: "PUBLISHING",
     },
   },

@@ -12,26 +12,19 @@ test("Filters should be sorted by position", async ({ selectors, actions }) => {
 
   await actions.editor.selectActiveField("Segmentation");
 
-  const selectorLocator = await selectors.panels
-    .drawer()
-    .within()
-    .getByLabelText("None");
+  const selectorLocator = selectors.panels.drawer().getByRole("combobox", { name: "None" });
   await selectorLocator.click();
 
   await actions.mui.selectOption("Status IUCN");
 
-  const panelLeft = await selectors.panels.drawer().within();
-  await panelLeft.findByText("Selected filters", undefined, {
-    timeout: 10_000,
-  });
+  const panelLeft = selectors.panels.drawer();
+  await panelLeft
+    .getByText("Selected filters")
+    .first()
+    .waitFor({ timeout: 10_000 });
 
-  const filtersValueLocator = await panelLeft.findAllByTestId(
-    "chart-filters-value",
-    undefined,
-    {
-      timeout: 3000,
-    }
-  );
+  const filtersValueLocator = panelLeft.getByTestId("chart-filters-value");
+  await filtersValueLocator.first().waitFor({ timeout: 3000 });
 
   const rawTexts = await filtersValueLocator.allTextContents();
   const texts = rawTexts.map((x) =>
