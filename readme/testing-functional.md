@@ -42,6 +42,15 @@ To launch the Playwright UI and run tests interactively:
 yarn e2e:ui
 ```
 
+Some e2e use har files to mock the backend. To update the har files, you can use
+the following command:
+
+```sh
+yarn e2e:har-update <test-file-name>
+```
+
+Commit the updated zip file(s) to the repository.
+
 ## Visual regression tests
 
 It's sometimes useful to run visual regression tests, especially when modifying
