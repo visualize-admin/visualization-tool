@@ -41,7 +41,7 @@ test("changing of locale shouldn't make the chart disappear", async ({
   selectors,
 }) => {
   await actions.chart.createFrom({
-    iri: "https://agriculture.ld.admin.ch/foag/cube/MilkDairyProducts/Consumption_Price_Month",
+    iri: "https://environment.ld.admin.ch/foen/ubd000502/8",
     dataSource: "Prod",
   });
   await selectors.chart.loaded();
