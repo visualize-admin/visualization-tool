@@ -11,10 +11,12 @@ You can also check the
 
 ## Unreleased
 
+## 6.5.0 – 2026-06-01
+
 - Features
   - Add SPARQL endpoints in the OpenTelemetry traces
   - Add Sentry integration back
-  - Action tiles replaced with a link to the service desk
+  - Replace action tiles with a link to the service desk
   - Allow the definition of language-specific links in table diagrams
   - Get Cube Creators from https://lindas.admin.ch/fch/rvov too
 - Refactoring
@@ -39,13 +41,13 @@ You can also check the
   - Remove LINDASOld endpoint configurations
   - Remove dependencies which used old versions of `node-fetch`
   - Upgrade dependencies which used old versions of `nth-check`
-  - Updated `@deck.gl/*` packages and `fast-xml-parser`
-  - Upgrade playwright to v1.60
-  - Rename package
+  - Upgrade `@deck.gl/*` packages and `fast-xml-parser`
+  - Upgrade `playwright` to v1.60
+  - Rename application package
 - Documentation
   - Add publiccode.yml for discoverability
   - Reorganize & improve README
-  - Updated storybook to the latest v8 version
+  - Update Storybook to the latest v8 version
 
 ### 6.4.0 – 2026-03-13
 
