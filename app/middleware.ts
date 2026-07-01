@@ -64,6 +64,12 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    // The negative-lookahead pattern below gets compiled by Next.js (when i18n
+    // is configured) into a regex that requires two path segments (locale +
+    // rest), which silently excludes bare locale-root paths like "/", "/de",
+    // "/en". Add those explicitly so they still go through the middleware.
+    "/",
+    "/(de|fr|it|en)",
     {
       source: "/((?!_next/static|_next/image|favicon\\.ico).*)",
       missing: [
