@@ -11,6 +11,9 @@ You can also check the
 
 ## Unreleased
 
+- Fixes
+  - Correctly set CSP headers for index pages
+
 ## 6.5.0 – 2026-06-01
 
 - Features
