@@ -10,7 +10,7 @@ services:
 
     volumes:
       - ../..:/workspaces:cached
-      - yarn-cache:/home/node/.cache/yarn
+      - yarn-cache:/home/node/.yarn-cache
 
     environment:
       YARN_CACHE_FOLDER: /home/node/.cache/yarn
