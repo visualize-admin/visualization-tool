@@ -6,11 +6,14 @@
 	"service": "app",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"features": {
-		"ghcr.io/devcontainers-community/npm-features/prettier:1": {}
+		"ghcr.io/devcontainers-community/npm-features/prettier:1": {},
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+			"moby": false
+		}
 	},
     "mounts": [
         "source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind,consistency=cached"
-	]
+    ]
 
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
