@@ -1,5 +1,6 @@
 volumes:
   postgres-data:
+  yarn-cache:
 
 services:
   app:
@@ -9,6 +10,10 @@ services:
 
     volumes:
       - ../..:/workspaces:cached
+      - yarn-cache:/home/node/.cache/yarn
+
+    environment:
+      YARN_CACHE_FOLDER: /home/node/.cache/yarn
       
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
