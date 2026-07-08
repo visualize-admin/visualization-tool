@@ -13,7 +13,11 @@
 	},
     "mounts": [
         "source=${localEnv:HOME}/.gitconfig,target=/home/node/.gitconfig,type=bind,consistency=cached"
-    ]
+    ],
+
+    "containerEnv": {
+        "DATABASE_URL": "postgres://postgres:password@db:5432/visualization_tool"
+    }
 
 
 	// Features to add to the dev container. More info: https://containers.dev/features.

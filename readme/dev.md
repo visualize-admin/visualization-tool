@@ -114,3 +114,12 @@ yarn db:migrate:dev
 > scoping the new environment variables to the preview branch you are working
 > on. After merging the branch, you can delete the environment variables scoped
 > to the branch.
+
+
+# Using dev-containers
+
+Rebuild the devcontainer:
+```bash
+npm install -g @devcontainers/cli
+devcontainer up --workspace-folder /workspaces/visualization-tool --remove-existing-container --build-no-cache
+```
