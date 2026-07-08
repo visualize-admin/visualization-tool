@@ -11,8 +11,13 @@ You can also check the
 
 ## Unreleased
 
+
 - Fixes
   - Correctly set CSP headers for index pages
+
+- Maintenance
+  - Add dev-container support
+
 
 ## 6.5.0 – 2026-06-01
 
