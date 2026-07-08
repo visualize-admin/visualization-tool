@@ -1,12 +1,45 @@
 import clsx from "clsx";
 import { ComponentProps } from "react";
 import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import rehypeSanitize from "rehype-sanitize";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 
 import classes from "@/components/markdown.module.css";
 import { palette } from "@/themes/palette";
+
+const sanitizeSchema = {
+  ...defaultSchema,
+  tagNames: [
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "p",
+    "strong",
+    "em",
+    "ins",
+    "del",
+    "s",
+    "ul",
+    "ol",
+    "li",
+    "blockquote",
+    "code",
+    "pre",
+    "br",
+    "hr",
+    "a",
+  ],
+  attributes: {
+    ...defaultSchema.attributes,
+    a: ["href", "title", "target"],
+    "*": (defaultSchema.attributes?.["*"] ?? []).filter(
+      (attr) => !(typeof attr === "string" && attr.startsWith("on"))
+    ),
+  },
+};
 
 const components: ComponentProps<typeof ReactMarkdown>["components"] = {
   h1: ({ children, className, ...props }) => (
@@ -47,6 +80,7 @@ const components: ComponentProps<typeof ReactMarkdown>["components"] = {
   a: ({ children, className, style, ...props }) => (
     <a
       target="_blank"
+      rel="noopener noreferrer"
       className={clsx(className, classes.common)}
       style={{ ...style, color: palette.primary.main }}
       {...props}
@@ -63,7 +97,7 @@ export const Markdown = (
     <ReactMarkdown
       components={components}
       remarkPlugins={[remarkGfm]}
-      rehypePlugins={[rehypeRaw, rehypeSanitize]}
+      rehypePlugins={[[rehypeSanitize, sanitizeSchema]]}
       {...props}
     />
   );
@@ -165,6 +199,7 @@ const componentsInheritFonts: ComponentProps<
     <a
       className={clsx(className, classes.common, classes.inheritFonts)}
       target="_blank"
+      rel="noopener noreferrer"
       style={{ ...style, color: palette.primary.main }}
       {...props}
     >
@@ -180,7 +215,7 @@ export const MarkdownInheritFonts = (
     <ReactMarkdown
       components={componentsInheritFonts}
       remarkPlugins={[remarkGfm]}
-      rehypePlugins={[rehypeRaw, rehypeSanitize]}
+      rehypePlugins={[[rehypeSanitize, sanitizeSchema]]}
       {...props}
     />
   );
