@@ -34,10 +34,8 @@ const sanitizeSchema = {
   ],
   attributes: {
     ...defaultSchema.attributes,
-    a: ["href", "title", "target"],
-    "*": (defaultSchema.attributes?.["*"] ?? []).filter(
-      (attr) => !(typeof attr === "string" && attr.startsWith("on"))
-    ),
+    a: ["href", "title"],
+    "*": defaultSchema.attributes?.["*"] ?? [],
   },
 };
 
@@ -79,11 +77,11 @@ const components: ComponentProps<typeof ReactMarkdown>["components"] = {
   ),
   a: ({ children, className, style, ...props }) => (
     <a
+      {...props}
       target="_blank"
       rel="noopener noreferrer"
       className={clsx(className, classes.common)}
       style={{ ...style, color: palette.primary.main }}
-      {...props}
     >
       {children}
     </a>
@@ -115,7 +113,11 @@ export const InlineMarkdown = ({
         p: ({ children }) => <>{children}</>,
         strong: ({ children }) => <strong>{children}</strong>,
         em: ({ children }) => <em>{children}</em>,
-        a: ({ children, href }) => <a href={href}>{children}</a>,
+        a: ({ children, href }) => {
+          const safeHref =
+            href && /^(https?|mailto|ircs?):/i.test(href) ? href : undefined;
+          return <a href={safeHref}>{children}</a>;
+        },
         h1: () => null,
         h2: () => null,
         h3: () => null,
@@ -197,11 +199,11 @@ const componentsInheritFonts: ComponentProps<
   ),
   a: ({ children, className, style, ...props }) => (
     <a
+      {...props}
       className={clsx(className, classes.common, classes.inheritFonts)}
       target="_blank"
       rel="noopener noreferrer"
       style={{ ...style, color: palette.primary.main }}
-      {...props}
     >
       {children}
     </a>
