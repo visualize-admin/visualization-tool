@@ -114,3 +114,20 @@ yarn db:migrate:dev
 > scoping the new environment variables to the preview branch you are working
 > on. After merging the branch, you can delete the environment variables scoped
 > to the branch.
+
+# Dev-containers
+
+You can use dev-containers for development if you want to have a consistent
+environment.
+
+Codeium based IDE do not support some convenience functionality like "Rebuild
+container" after changes to the devcontainer configuration. The devcontainer-cli
+is shipped with the devcontainer image and can be used to rebuild the
+devcontainer:
+
+```bash
+devcontainer up --workspace-folder /workspaces/visualization-tool --remove-existing-container --build-no-cache
+```
+
+⚠️ Supporting/ Using dev-containers is currently under development and not fully
+tested, please report if you run into issues.
