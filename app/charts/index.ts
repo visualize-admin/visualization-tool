@@ -59,7 +59,6 @@ import {
   TableFields,
 } from "@/config-types";
 import { mapValueIrisToColor } from "@/configurator/components/ui-helpers";
-import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import {
   Component,
   Dimension,
@@ -321,7 +320,7 @@ const getInitialSymbolLayer = ({
 }): MapSymbolLayer => {
   return {
     componentId: component.id,
-    measureId: measure?.id ?? FIELD_VALUE_NONE,
+    measureId: measure?.id,
     color: DEFAULT_FIXED_COLOR_FIELD,
   };
 };
