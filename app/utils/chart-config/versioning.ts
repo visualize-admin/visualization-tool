@@ -1749,6 +1749,34 @@ export const chartConfigMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    description: `MAP
+    symbolLayer {
+      + measureId (if missing)
+    }`,
+    from: "5.3.0",
+    to: "5.4.0",
+    up: (config) => {
+      const newConfig = { ...config, version: "5.4.0" };
+
+      if (
+        newConfig.chartType === "map" &&
+        newConfig.fields.symbolLayer &&
+        newConfig.fields.symbolLayer.measureId === undefined
+      ) {
+        newConfig.fields.symbolLayer = {
+          ...newConfig.fields.symbolLayer,
+          measureId: FIELD_VALUE_NONE,
+        };
+      }
+
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "5.3.0" };
+      return newConfig;
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -2397,6 +2425,12 @@ export const configuratorStateMigrations: Migration[] = [
     toVersion: "5.3.0",
     fromChartConfigVersion: "5.2.0",
     toChartConfigVersion: "5.3.0",
+  }),
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "5.3.0",
+    toVersion: "5.4.0",
+    fromChartConfigVersion: "5.3.0",
+    toChartConfigVersion: "5.4.0",
   }),
 ];
 

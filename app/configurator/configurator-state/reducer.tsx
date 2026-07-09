@@ -522,7 +522,11 @@ export const handleChartFieldUpdated = (
     }
 
     if (value === FIELD_VALUE_NONE) {
-      unset(chartConfig, updatePath);
+      if (field === "symbolLayer" && path === "measureId") {
+        setWith(chartConfig, updatePath, FIELD_VALUE_NONE, Object);
+      } else {
+        unset(chartConfig, updatePath);
+      }
     } else {
       setWith(chartConfig, updatePath, value, Object);
     }

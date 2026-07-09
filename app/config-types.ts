@@ -951,7 +951,7 @@ export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 const MapSymbolLayer = t.type({
   componentId: t.string,
   /** Symbol radius (size) */
-  measureId: t.string,
+  measureId: t.union([t.string, t.undefined]),
   // FIXME: convert to new color field type
   color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
 });

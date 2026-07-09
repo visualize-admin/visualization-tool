@@ -225,7 +225,7 @@ const getMapChartConfigAdditionalFieldIds = ({ fields }: MapConfig) => {
   }
 
   if (symbolLayer) {
-    if (symbolLayer.measureId !== FIELD_VALUE_NONE) {
+    if (symbolLayer.measureId && symbolLayer.measureId !== FIELD_VALUE_NONE) {
       additionalFields.push(symbolLayer.measureId);
     }
 
