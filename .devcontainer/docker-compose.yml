@@ -4,7 +4,7 @@ volumes:
 
 services:
   app:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
 
@@ -14,7 +14,7 @@ services:
 
     environment:
       YARN_CACHE_FOLDER: /home/node/.cache/yarn
-      
+
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
 
@@ -26,8 +26,8 @@ services:
     networks:
       - app-network
 
-    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
+    ports:
+      - "3000:3000"
 
   db:
     image: postgres:18-alpine
@@ -47,8 +47,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: visualization_tool
 
-    # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
+    ports:
+      - "5432:5432"
 
 networks:
   app-network:
