@@ -11,9 +11,9 @@ You can also check the
 
 ## Unreleased
 
-
 - Fixes
   - Correctly set CSP headers for index pages
+  - Harden markdown renderer sanitization
 
 - Maintenance
   - Add dev-container support

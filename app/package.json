@@ -153,7 +153,6 @@
     "react-transition-group": "^4.4.5",
     "react-virtualized-auto-sizer": "^1.0.25",
     "react-window": "^1.8.10",
-    "rehype-raw": "^7.0.0",
     "rehype-sanitize": "^6.0.0",
     "remark-gfm": "^4.0.0",
     "simple-statistics": "^7.6.0",

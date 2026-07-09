@@ -1,12 +1,43 @@
 import clsx from "clsx";
 import { ComponentProps } from "react";
 import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import rehypeSanitize from "rehype-sanitize";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 
 import classes from "@/components/markdown.module.css";
 import { palette } from "@/themes/palette";
+
+const sanitizeSchema = {
+  ...defaultSchema,
+  tagNames: [
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "p",
+    "strong",
+    "em",
+    "ins",
+    "del",
+    "s",
+    "ul",
+    "ol",
+    "li",
+    "blockquote",
+    "code",
+    "pre",
+    "br",
+    "hr",
+    "a",
+  ],
+  attributes: {
+    ...defaultSchema.attributes,
+    a: ["href", "title"],
+    "*": defaultSchema.attributes?.["*"] ?? [],
+  },
+};
 
 const components: ComponentProps<typeof ReactMarkdown>["components"] = {
   h1: ({ children, className, ...props }) => (
@@ -46,10 +77,11 @@ const components: ComponentProps<typeof ReactMarkdown>["components"] = {
   ),
   a: ({ children, className, style, ...props }) => (
     <a
+      {...props}
       target="_blank"
+      rel="noopener noreferrer"
       className={clsx(className, classes.common)}
       style={{ ...style, color: palette.primary.main }}
-      {...props}
     >
       {children}
     </a>
@@ -63,7 +95,7 @@ export const Markdown = (
     <ReactMarkdown
       components={components}
       remarkPlugins={[remarkGfm]}
-      rehypePlugins={[rehypeRaw, rehypeSanitize]}
+      rehypePlugins={[[rehypeSanitize, sanitizeSchema]]}
       {...props}
     />
   );
@@ -81,7 +113,11 @@ export const InlineMarkdown = ({
         p: ({ children }) => <>{children}</>,
         strong: ({ children }) => <strong>{children}</strong>,
         em: ({ children }) => <em>{children}</em>,
-        a: ({ children, href }) => <a href={href}>{children}</a>,
+        a: ({ children, href }) => {
+          const safeHref =
+            href && /^(https?|mailto|ircs?):/i.test(href) ? href : undefined;
+          return <a href={safeHref}>{children}</a>;
+        },
         h1: () => null,
         h2: () => null,
         h3: () => null,
@@ -163,10 +199,11 @@ const componentsInheritFonts: ComponentProps<
   ),
   a: ({ children, className, style, ...props }) => (
     <a
+      {...props}
       className={clsx(className, classes.common, classes.inheritFonts)}
       target="_blank"
+      rel="noopener noreferrer"
       style={{ ...style, color: palette.primary.main }}
-      {...props}
     >
       {children}
     </a>
@@ -180,7 +217,7 @@ export const MarkdownInheritFonts = (
     <ReactMarkdown
       components={componentsInheritFonts}
       remarkPlugins={[remarkGfm]}
-      rehypePlugins={[rehypeRaw, rehypeSanitize]}
+      rehypePlugins={[[rehypeSanitize, sanitizeSchema]]}
       {...props}
     />
   );
