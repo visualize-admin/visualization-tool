@@ -12,12 +12,15 @@ You can also check the
 ## Unreleased
 
 - Fixes
+
   - Correctly set CSP headers for index pages
   - Harden markdown renderer sanitization
+  - Make measure id optional for symbol layers in map charts. Fixes issues with
+    invalid view configuration that prevents that users could copy and edit an
+    existing visualization
 
 - Maintenance
   - Add dev-container support
-
 
 ## 6.5.0 – 2026-06-01
 

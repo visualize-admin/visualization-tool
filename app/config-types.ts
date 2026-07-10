@@ -948,13 +948,21 @@ const MapAreaLayer = t.type({
 });
 export type MapAreaLayer = t.TypeOf<typeof MapAreaLayer>;
 
-const MapSymbolLayer = t.type({
-  componentId: t.string,
-  /** Symbol radius (size) */
-  measureId: t.string,
-  // FIXME: convert to new color field type
-  color: t.union([FixedColorField, CategoricalColorField, NumericalColorField]),
-});
+const MapSymbolLayer = t.intersection([
+  t.type({
+    componentId: t.string,
+    // FIXME: convert to new color field type
+    color: t.union([
+      FixedColorField,
+      CategoricalColorField,
+      NumericalColorField,
+    ]),
+  }),
+  t.partial({
+    /** Symbol radius (size) */
+    measureId: t.string,
+  }),
+]);
 export type MapSymbolLayer = t.TypeOf<typeof MapSymbolLayer>;
 
 const BaseCustomLayer = t.type({
