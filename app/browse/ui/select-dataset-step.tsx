@@ -11,7 +11,7 @@ import { ComponentProps, type MouseEvent, useCallback, useMemo } from "react";
 import { useDebounce } from "use-debounce";
 
 import { BrowseFilter, DataCubeAbout } from "@/browse/lib/filters";
-import { buildURLFromBrowseParams, isOdsIframe } from "@/browse/lib/params";
+import { buildURLFromBrowseParams, useOdsIframe } from "@/browse/lib/params";
 import { useRedirectToLatestCube } from "@/browse/lib/use-redirect-to-latest-cube";
 import { BrowseStateProvider, useBrowseContext } from "@/browse/model/context";
 import { DatasetMetadataSingleCube } from "@/browse/ui/dataset-metadata-single-cube";
@@ -106,7 +106,7 @@ const SelectDatasetStepInner = ({
   } = browseState;
   const dataset = propsDataset ?? browseDataset;
   const router = useRouter();
-  const odsIframe = isOdsIframe(router.query);
+  const odsIframe = useOdsIframe(router.query, router.pathname);
   const classes = useStyles({ datasetPresent: !!dataset, odsIframe });
 
   const [debouncedQuery] = useDebounce(search, 500, { leading: true });
