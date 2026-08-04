@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const EMBEDDABLE_PATH_PATTERNS = [
-  /^\/embed\//,
-  /^\/preview$/,
-  /^\/api\/embed-aem-ext\//,
-];
+const ALLOWED_BROWSE_FRAME_ANCESTORS =
+  "'self' https://*.opendata.swiss https://opendata.swiss https://*.admin.ch https://admin.ch";
+
+const EMBEDDABLE_PATH_PATTERNS: { pattern: RegExp; frameAncestors: string }[] =
+  [
+    { pattern: /^\/embed\//, frameAncestors: "*" },
+    { pattern: /^\/preview$/, frameAncestors: "*" },
+    { pattern: /^\/api\/embed-aem-ext\//, frameAncestors: "*" },
+    {
+      pattern: /^(\/(de|fr|it|en))?\/browse(\/|$)/,
+      frameAncestors: ALLOWED_BROWSE_FRAME_ANCESTORS,
+    },
+  ];
 
 function buildCSP(frameAncestors: string): string {
   const isDev = process.env.NODE_ENV === "development";
@@ -44,8 +52,10 @@ export function middleware(request: NextRequest) {
   // This middleware is adding some dynamic headers that depends on environment variables and request path.
 
   const { pathname } = request.nextUrl;
-  const isEmbeddable = EMBEDDABLE_PATH_PATTERNS.some((p) => p.test(pathname));
-  const frameAncestors = isEmbeddable ? "*" : "'self'";
+  const matched = EMBEDDABLE_PATH_PATTERNS.find((p) =>
+    p.pattern.test(pathname)
+  );
+  const frameAncestors = matched?.frameAncestors ?? "'self'";
 
   const reportOnly = process.env.CSP_REPORT_ONLY === "true";
   const cspKey = reportOnly

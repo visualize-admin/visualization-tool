@@ -11,6 +11,10 @@ You can also check the
 
 ## Unreleased
 
+- Fixes
+  - Detect if the `/browse` page is embedded in an iframe and adjust the layout accordingly
+  - Allow '/browse' to be embedded in an iframe for opendata.swiss and admin.ch domains
+
 ## 6.5.1 – 2026-07-10
 
 - Fixes

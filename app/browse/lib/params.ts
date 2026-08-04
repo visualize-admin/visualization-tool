@@ -9,6 +9,7 @@ import { ComponentProps } from "react";
 
 import { truthy } from "@/domain/types";
 import { SearchCubeResultOrder } from "@/graphql/query-hooks";
+import { useIsEmbedded } from "@/hooks/useIsEmbedded";
 
 const params = [
   "type",
@@ -107,6 +108,19 @@ export const extractParamFromPath = (path: string, param: string) => {
   return path.match(new RegExp(`[&?]${param}=(.*?)(&|$)`));
 };
 
-export const isOdsIframe = (query: ParsedUrlQuery) => {
+const isOdsIframe = (query: ParsedUrlQuery) => {
   return query["odsiframe"] === "true";
+};
+
+/**
+ * Combines the explicit `odsiframe` query param with generic iframe-embed
+ * detection. The embed detection is only applied when `pathname` is within
+ * `/browse`, since `useOdsIframe` is also used by components (chart
+ * configurator, add-dataset drawer) that are not part of the ODS embed flow
+ * and must not be affected by generic iframe detection.
+ */
+export const useOdsIframe = (query: ParsedUrlQuery, pathname: string) => {
+  const isEmbedded = useIsEmbedded();
+  const isBrowseRoute = /^(\/(de|fr|it|en))?\/browse(\/|$)/.test(pathname);
+  return isOdsIframe(query) || (isEmbedded && isBrowseRoute);
 };
