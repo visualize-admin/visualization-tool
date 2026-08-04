@@ -9,11 +9,15 @@ and this project adheres to
 You can also check the
 [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
-## Unreleased
+## next release
+
+## 6.5.2 – 2026-08-04
 
 - Fixes
-  - Detect if the `/browse` page is embedded in an iframe and adjust the layout accordingly
-  - Allow '/browse' to be embedded in an iframe for opendata.swiss and admin.ch domains
+  - Detect if the `/browse` page is embedded in an iframe and adjust the layout
+    accordingly
+  - Allow '/browse' to be embedded in an iframe for opendata.swiss and admin.ch
+    domains
 
 ## 6.5.1 – 2026-07-10
 
