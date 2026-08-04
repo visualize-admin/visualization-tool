@@ -108,7 +108,7 @@ export const extractParamFromPath = (path: string, param: string) => {
   return path.match(new RegExp(`[&?]${param}=(.*?)(&|$)`));
 };
 
-export const isOdsIframe = (query: ParsedUrlQuery) => {
+const isOdsIframe = (query: ParsedUrlQuery) => {
   return query["odsiframe"] === "true";
 };
 
