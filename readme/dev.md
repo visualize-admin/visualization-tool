@@ -77,7 +77,7 @@ please add `E2E_ENV=true` to your environment.
 
 The embed script is not automatically built when the dev server starts.
 
-Run the following command after changes to the `embed/index.ts` file:
+Run the following command after changes to the `embed/index.tsx` file:
 
 ```sh
 yarn dev:rollup
