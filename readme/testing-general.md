@@ -20,5 +20,5 @@ with example mocked event payloads defined in [the act/ directory](../act).
 After
 [installing the act library](https://nektosact.com/installation/index.html), you
 can run a given action like e.g.
-`act deployment_status -W ".github/workflows/performance-tests-pr.yml" -e act/deployment_status.json`,
+`act deployment_status -W ".github/workflows/performance-tests-pr.yaml" -e act/deployment_status.json`,
 modifying the event payload or adding a new one as needed.
