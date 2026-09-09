@@ -32,7 +32,7 @@ function buildCSP(frameAncestors: string): string {
 
   return [
     `default-src 'self' 'unsafe-inline'${unsafeEval}${sentryCSP}${vercelDefault}`,
-    `script-src 'self' 'unsafe-inline'${unsafeEval}${sentryCSP}${vercelScript} https://api.mapbox.com https://api.maptiler.com`,
+    `script-src 'self'${unsafeEval}${sentryCSP}${vercelScript} https://api.mapbox.com https://api.maptiler.com`,
     `script-src-elem 'self' 'unsafe-inline' https://*.admin.ch https://visualize.admin.ch https://*.visualize.admin.ch${vercelScriptElem} https://api.mapbox.com`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
     `font-src 'self'`,
