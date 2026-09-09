@@ -10,10 +10,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { KeyboardEventHandler, useEffect, useRef, useState } from "react";
 
-import {
-  SearchCubeFilter,
-  useSearchCubesQuery,
-} from "@/graphql/query-hooks";
+import { SearchCubeFilter, useSearchCubesQuery } from "@/graphql/query-hooks";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import { SearchCubeFilterType } from "@/graphql/resolver-types";
 
@@ -133,7 +130,7 @@ const Search = ({
                 <Typography
                   variant="caption"
                   dangerouslySetInnerHTML={{
-                    __html: highlightedDescription?.slice(0, 100) ?? "" + "...",
+                    __html: `${highlightedDescription?.slice(0, 100) ?? ""}...`,
                   }}
                 />
                 <br />
