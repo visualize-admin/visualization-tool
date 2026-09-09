@@ -22,4 +22,29 @@ describe("highlighting search words in query", () => {
       expect(result).toEqual(t[2]);
     }
   });
+
+  it("should escape HTML contained in the text", () => {
+    expect(highlight('<img src=x onerror="alert(1)"> bad', "bad")).toEqual(
+      "&lt;img src=x onerror=&quot;alert(1)&quot;&gt; <b>bad</b>"
+    );
+  });
+
+  it("should escape HTML contained in the matched part", () => {
+    expect(highlight("<script>alert(1)</script>", "<script>")).toEqual(
+      "<b>&lt;script&gt;</b>alert(1)&lt;/script&gt;"
+    );
+  });
+
+  it("should treat regex special characters in the query literally", () => {
+    expect(highlight("Report about C++ usage", "C++")).toEqual(
+      "Report about <b>C++</b> usage"
+    );
+    expect(highlight("Pollution is bad", "(")).toEqual("Pollution is bad");
+  });
+
+  it("should not highlight empty matches for queries with extra spaces", () => {
+    expect(highlight("Pollution is bad", "is  bad")).toEqual(
+      "Pollution <b>is</b> <b>bad</b>"
+    );
+  });
 });

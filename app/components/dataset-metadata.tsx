@@ -1,7 +1,6 @@
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { Trans } from "@lingui/macro";
 import {
-  Box,
   Link,
   Link as MUILink,
   LinkProps,
@@ -54,13 +53,7 @@ export const DatasetMetadata = ({
               <Trans id="dataset.metadata.source">Source</Trans>
             </DatasetMetadataTitle>
             <DatasetMetadataBody>
-              <Box
-                component="span"
-                sx={{ "> a": { color: "grey.900" } }}
-                dangerouslySetInnerHTML={{
-                  __html: cube.publisher,
-                }}
-              />
+              <DatasetPublisher publisher={cube.publisher} />
             </DatasetMetadataBody>
           </div>
         )}
@@ -172,6 +165,67 @@ const DatasetMetadataBody = ({
     {children}
   </Typography>
 );
+
+export const DatasetPublisher = ({ publisher }: { publisher: string }) => {
+  const { text, href } = parsePublisher(publisher);
+
+  return href ? (
+    <Link
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      underline="hover"
+      sx={{ color: "grey.900" }}
+    >
+      {text}
+    </Link>
+  ) : (
+    <>{text}</>
+  );
+};
+
+const decodeHtmlEntities = (text: string) => {
+  const namedEntities: Record<string, string> = {
+    amp: "&",
+    apos: "'",
+    gt: ">",
+    lt: "<",
+    quot: '"',
+  };
+
+  return text.replace(/&(#(?:x[\da-f]+|\d+)|[a-z]+);/gi, (entity, code) => {
+    if (code[0] !== "#") {
+      return namedEntities[code.toLowerCase()] ?? entity;
+    }
+
+    const value =
+      code[1].toLowerCase() === "x"
+        ? parseInt(code.slice(2), 16)
+        : parseInt(code.slice(1), 10);
+    return Number.isSafeInteger(value) && value >= 0 && value <= 0x10ffff
+      ? String.fromCodePoint(value)
+      : entity;
+  });
+};
+
+const publisherText = (publisher: string) => {
+  return decodeHtmlEntities(publisher.replace(/<[^>]+>/g, ""));
+};
+
+const parsePublisher = (publisher: string): { text: string; href?: string } => {
+  const match = publisher.match(
+    /<a[^>]+href=["']([^"']+)["'][^>]*>(.*?)<\/a>/is
+  );
+
+  if (match) {
+    const href = sanitizeUrl(decodeHtmlEntities(match[1]));
+    const text = publisherText(match[2]);
+
+    return href !== "about:blank" ? { text, href } : { text };
+  }
+
+  return { text: publisherText(publisher) };
+};
 
 const DatasetMetadataLink = ({
   href,
