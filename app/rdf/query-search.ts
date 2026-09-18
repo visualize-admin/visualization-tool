@@ -147,11 +147,12 @@ export const searchCubes = async ({
     )
     .map((cube) => ({
       cube,
-      highlightedTitle: query ? highlight(cube.title, query) : cube.title,
-      highlightedDescription:
-        query && cube.description
-          ? highlight(cube.description, query)
-          : cube.description,
+      // Always go through highlight, so that the metadata is HTML-escaped even
+      // when there is nothing to highlight.
+      highlightedTitle: highlight(cube.title, query ?? ""),
+      highlightedDescription: cube.description
+        ? highlight(cube.description, query ?? "")
+        : cube.description,
     }));
 };
 

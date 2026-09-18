@@ -13,6 +13,8 @@ You can also check the
 
 - Fixes
   - Improve CSP header
+  - Sanitize HTML coming from cube metadata and from WMS / WMTS capabilities
+    documents instead of injecting it into the DOM.
 
 ## 6.5.2 – 2026-08-04
 

@@ -14,6 +14,8 @@ import {
 } from "@/charts/map/wmts-utils";
 import { Error, InlineLoading } from "@/components/hint";
 import { InfoIconTooltip } from "@/components/info-icon-tooltip";
+import { inlineTextSchema } from "@/components/sanitize-schema";
+import { SanitizedHtml } from "@/components/sanitized-html";
 import { BaseLayer, MapConfig } from "@/config-types";
 import { truthy } from "@/domain/types";
 import { useLocale } from "@/locales/use-locale";
@@ -47,7 +49,14 @@ export const CustomLayerDescription = ({
   description,
 }: {
   description: string;
-}) => <Box>{description}</Box>;
+}) => (
+  <SanitizedHtml
+    html={description}
+    schema={inlineTextSchema}
+    // We do not let the tooltip HTML override the font size
+    sx={{ typography: "caption" }}
+  />
+);
 
 export const MapCustomLayersLegend = ({
   chartConfig,
