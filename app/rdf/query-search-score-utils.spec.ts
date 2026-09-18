@@ -42,6 +42,12 @@ describe("highlighting search words in query", () => {
     expect(highlight("Pollution is bad", "(")).toEqual("Pollution is bad");
   });
 
+  it("should escape HTML when there is nothing to highlight", () => {
+    expect(highlight('<img src=x onerror="alert(1)">', "")).toEqual(
+      "&lt;img src=x onerror=&quot;alert(1)&quot;&gt;"
+    );
+  });
+
   it("should not highlight empty matches for queries with extra spaces", () => {
     expect(highlight("Pollution is bad", "is  bad")).toEqual(
       "Pollution <b>is</b> <b>bad</b>"

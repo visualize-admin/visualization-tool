@@ -10,6 +10,8 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { KeyboardEventHandler, useEffect, useRef, useState } from "react";
 
+import { boldOnlySchema } from "@/components/sanitize-schema";
+import { SanitizedHtml } from "@/components/sanitized-html";
 import { SearchCubeFilter, useSearchCubesQuery } from "@/graphql/query-hooks";
 import { RequestQueryMeta } from "@/graphql/query-meta";
 import { SearchCubeFilterType } from "@/graphql/resolver-types";
@@ -123,17 +125,20 @@ const Search = ({
           ({ cube, highlightedTitle, highlightedDescription }) => {
             return (
               <div key={cube.iri}>
-                <Typography
-                  variant="h6"
-                  dangerouslySetInnerHTML={{ __html: highlightedTitle! }}
-                />
-                <Typography
-                  variant="caption"
-                  dangerouslySetInnerHTML={{
-                    __html: `${highlightedDescription?.slice(0, 100) ?? ""}...`,
-                  }}
-                />
-                <br />
+                <Typography variant="h6">
+                  <SanitizedHtml
+                    component="span"
+                    html={highlightedTitle ?? ""}
+                    schema={boldOnlySchema}
+                  />
+                </Typography>
+                <Typography variant="caption" component="p" noWrap>
+                  <SanitizedHtml
+                    component="span"
+                    html={highlightedDescription ?? ""}
+                    schema={boldOnlySchema}
+                  />
+                </Typography>
                 <Typography variant="caption">{cube.iri}</Typography>
                 <Stack spacing={2} direction="row">
                   {cube.themes.map((t) => (

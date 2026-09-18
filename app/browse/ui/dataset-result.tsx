@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Box, CardProps, Stack, Theme, Typography } from "@mui/material";
+import { CardProps, Stack, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
 import sortBy from "lodash/sortBy";
@@ -12,6 +12,8 @@ import { DateFormat } from "@/browse/ui/date-format";
 import { Flex } from "@/components/flex";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { MotionCard, smoothPresenceProps } from "@/components/presence";
+import { boldOnlySchema } from "@/components/sanitize-schema";
+import { SanitizedHtml } from "@/components/sanitized-html";
 import { Tag } from "@/components/tag";
 import { PartialSearchCube } from "@/domain/data";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
@@ -97,11 +99,14 @@ export const DatasetResult = ({
           onClick={disableTitleLink ? undefined : handleTitleClick}
         >
           {highlightedTitle ? (
-            <Box
+            <SanitizedHtml
               className={classes.textWrapper}
               component="span"
-              fontWeight={highlightedTitle === title ? 700 : 400}
-              dangerouslySetInnerHTML={{ __html: highlightedTitle }}
+              // Matches are already emphasized through <b>, so the rest of the
+              // title is rendered with a regular weight.
+              fontWeight={highlightedTitle.includes("<b>") ? 400 : 700}
+              html={highlightedTitle}
+              schema={boldOnlySchema}
             />
           ) : (
             title
@@ -113,10 +118,11 @@ export const DatasetResult = ({
           title={description ?? ""}
         >
           {highlightedDescription ? (
-            <Box
+            <SanitizedHtml
               className={classes.textWrapper}
               component="span"
-              dangerouslySetInnerHTML={{ __html: highlightedDescription }}
+              html={highlightedDescription}
+              schema={boldOnlySchema}
             />
           ) : (
             description

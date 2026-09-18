@@ -14,6 +14,8 @@ import { ReactElement, ReactNode } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { DataDownloadMenu } from "@/components/data-download";
+import { inlineTextSchema } from "@/components/sanitize-schema";
+import { SanitizedHtml } from "@/components/sanitized-html";
 import { Tag } from "@/components/tag";
 import { DataSource } from "@/configurator";
 import { DataCubeMetadata } from "@/domain/data";
@@ -166,66 +168,14 @@ const DatasetMetadataBody = ({
   </Typography>
 );
 
-export const DatasetPublisher = ({ publisher }: { publisher: string }) => {
-  const { text, href } = parsePublisher(publisher);
-
-  return href ? (
-    <Link
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      underline="hover"
-      sx={{ color: "grey.900" }}
-    >
-      {text}
-    </Link>
-  ) : (
-    <>{text}</>
-  );
-};
-
-const decodeHtmlEntities = (text: string) => {
-  const namedEntities: Record<string, string> = {
-    amp: "&",
-    apos: "'",
-    gt: ">",
-    lt: "<",
-    quot: '"',
-  };
-
-  return text.replace(/&(#(?:x[\da-f]+|\d+)|[a-z]+);/gi, (entity, code) => {
-    if (code[0] !== "#") {
-      return namedEntities[code.toLowerCase()] ?? entity;
-    }
-
-    const value =
-      code[1].toLowerCase() === "x"
-        ? parseInt(code.slice(2), 16)
-        : parseInt(code.slice(1), 10);
-    return Number.isSafeInteger(value) && value >= 0 && value <= 0x10ffff
-      ? String.fromCodePoint(value)
-      : entity;
-  });
-};
-
-const publisherText = (publisher: string) => {
-  return decodeHtmlEntities(publisher.replace(/<[^>]+>/g, ""));
-};
-
-const parsePublisher = (publisher: string): { text: string; href?: string } => {
-  const match = publisher.match(
-    /<a[^>]+href=["']([^"']+)["'][^>]*>(.*?)<\/a>/is
-  );
-
-  if (match) {
-    const href = sanitizeUrl(decodeHtmlEntities(match[1]));
-    const text = publisherText(match[2]);
-
-    return href !== "about:blank" ? { text, href } : { text };
-  }
-
-  return { text: publisherText(publisher) };
-};
+export const DatasetPublisher = ({ publisher }: { publisher: string }) => (
+  <SanitizedHtml
+    component="span"
+    html={publisher}
+    schema={inlineTextSchema}
+    sx={{ "> a": { color: "grey.900" } }}
+  />
+);
 
 const DatasetMetadataLink = ({
   href,
