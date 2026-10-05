@@ -31,9 +31,15 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run Playwright tests
-        run:
-          yarn e2e -- --grep-invert @noci --shard=${{ matrix.shardIndex }}/${{
-          matrix.shardTotal }}
+        # The secret value itself is masked in the logs, so derive a yes/no
+        # using the same condition as e2e/common.ts.
+        run: |
+          if [ -z "$E2E_HAR" ] || [ "$E2E_HAR" = "false" ]; then
+            echo "Replaying traffic from HAR file: no (requests hit the live data source)"
+          else
+            echo "Replaying traffic from HAR file: yes"
+          fi
+          yarn e2e -- --grep-invert @noci --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         env:
           E2E_BASE_URL: ${{ github.event.deployment_status.target_url }}
           E2E_HAR: ${{ secrets.E2E_HAR }}
