@@ -1,3 +1,5 @@
+import { expect } from "@playwright/test";
+
 import { sleep } from "./common";
 import { TestContext as Ctx } from "./types";
 
@@ -19,7 +21,8 @@ export const createSelectors = ({ page }: Ctx) => {
       navChip: () => page.getByTestId("navChip"),
       resultsCount: async () => {
         const loc = page.getByTestId("search-results-count");
-        await loc.waitFor({ timeout: 10_000 });
+        // Wait for a count value
+        await expect(loc).toHaveText(/\d/, { timeout: 30_000 });
         return loc;
       },
     },
