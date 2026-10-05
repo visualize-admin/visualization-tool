@@ -183,7 +183,9 @@ test("sort language consistency", async ({
   selectors,
   replayFromHAR,
 }) => {
-  test.slow();
+  // This test performs 8 full page loads against a live data source, each of
+  // which may wait up to 30s for the results count.
+  test.setTimeout(240_000);
   await replayFromHAR();
   const count1 = await getResultCountForSearch("badegewässer", {
     locale: "en",

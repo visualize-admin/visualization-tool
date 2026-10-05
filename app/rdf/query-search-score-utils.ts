@@ -84,7 +84,44 @@ export const computeScores = (
   return infoPerCube;
 };
 
+const escapeHtml = (text: string) => {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+};
+
+const escapeRegExp = (text: string) => {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
+
+/**
+ * Wraps the parts of `text` matching `query` in `<b>` tags.
+ *
+ * The text comes from remote cube metadata and the query from user input, so both
+ * are escaped: the text as HTML, since the result is rendered as markup, and the
+ * query as a regular expression, so that special characters (e.g. "C++") are
+ * matched literally instead of throwing or matching unexpectedly.
+ */
 export const highlight = (text: string, query: string) => {
-  const re = new RegExp(query.toLowerCase().split(" ").join("|"), "gi");
-  return text.replace(re, (m) => `<b>${m}</b>`);
+  const tokens = query
+    .split(" ")
+    .filter((d) => d !== "")
+    .map((d) => escapeRegExp(d));
+
+  if (!tokens.length) {
+    return escapeHtml(text);
+  }
+
+  const re = new RegExp(`(${tokens.join("|")})`, "gi");
+
+  // Odd indices contain the captured matches.
+  return text
+    .split(re)
+    .map((part, i) =>
+      i % 2 === 1 ? `<b>${escapeHtml(part)}</b>` : escapeHtml(part)
+    )
+    .join("");
 };

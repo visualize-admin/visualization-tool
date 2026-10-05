@@ -1,7 +1,6 @@
 import { sanitizeUrl } from "@braintree/sanitize-url";
 import { Trans } from "@lingui/macro";
 import {
-  Box,
   Link,
   Link as MUILink,
   LinkProps,
@@ -15,6 +14,8 @@ import { ReactElement, ReactNode } from "react";
 
 import { useQueryFilters } from "@/charts/shared/chart-helpers";
 import { DataDownloadMenu } from "@/components/data-download";
+import { inlineTextSchema } from "@/components/sanitize-schema";
+import { SanitizedHtml } from "@/components/sanitized-html";
 import { Tag } from "@/components/tag";
 import { DataSource } from "@/configurator";
 import { DataCubeMetadata } from "@/domain/data";
@@ -54,13 +55,7 @@ export const DatasetMetadata = ({
               <Trans id="dataset.metadata.source">Source</Trans>
             </DatasetMetadataTitle>
             <DatasetMetadataBody>
-              <Box
-                component="span"
-                sx={{ "> a": { color: "grey.900" } }}
-                dangerouslySetInnerHTML={{
-                  __html: cube.publisher,
-                }}
-              />
+              <DatasetPublisher publisher={cube.publisher} />
             </DatasetMetadataBody>
           </div>
         )}
@@ -171,6 +166,15 @@ const DatasetMetadataBody = ({
   >
     {children}
   </Typography>
+);
+
+export const DatasetPublisher = ({ publisher }: { publisher: string }) => (
+  <SanitizedHtml
+    component="span"
+    html={publisher}
+    schema={inlineTextSchema}
+    sx={{ "> a": { color: "grey.900" } }}
+  />
 );
 
 const DatasetMetadataLink = ({
