@@ -11,6 +11,8 @@ You can also check the
 
 ## next release
 
+## 6.5.3 - 2026-10-06
+
 - Fixes
   - Improve CSP header
   - Sanitize HTML coming from cube metadata and from WMS / WMTS capabilities
