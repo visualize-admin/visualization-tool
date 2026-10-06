@@ -11,7 +11,7 @@ You can also check the
 
 ## next release
 
-## 6.5.3 - 2026-10-06
+## 6.5.4 - 2026-10-06
 
 - Fixes
   - Improve CSP header
