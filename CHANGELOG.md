@@ -11,6 +11,12 @@ You can also check the
 
 ## next release
 
+## 6.5.5 - 2026-10-26
+
+- Fixes
+  - Rebuild & deploy with latest Node.js version to fix
+    [CVE-2026-111497](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases)
+
 ## 6.5.4 - 2026-10-06
 
 - Fixes
