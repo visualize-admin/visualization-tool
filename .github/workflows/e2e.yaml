@@ -6,7 +6,7 @@ on:
 jobs:
   e2e:
     if: github.event.deployment_status.state == 'success'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
