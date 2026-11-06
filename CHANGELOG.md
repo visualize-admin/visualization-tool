@@ -17,6 +17,8 @@ You can also check the
   - Statistics page no longer fails when the database contains malformed chart
     configs; unsafe cube IRIs are filtered out and SPARQL metadata lookups
     tolerate endpoint failures
+  - Fix a prototype pollution vulnerability in the chart preview URL hash
+    parser that could be triggered by crafted preview links
 
 ## 6.5.5 - 2026-10-26
 

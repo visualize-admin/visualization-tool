@@ -117,17 +117,34 @@ const parseValue = (v: any) => {
   return v;
 };
 
+// Path segments that must never be traversed or written: they would allow an
+// attacker to escape the result object and pollute Object.prototype
+// (e.g. "__proto__" resolves to the prototype, "constructor"/"prototype"
+// reach it via Object.prototype.constructor.prototype).
+const BLOCKED_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+
+const hasOwn = (o: Object, k: string) =>
+  Object.prototype.hasOwnProperty.call(o, k);
+
 const unflattenObject = (o: Object) => {
   const result: Object = {};
 
   for (const rootKey in o) {
-    if (o.hasOwnProperty(rootKey)) {
+    if (hasOwn(o, rootKey)) {
       const keys = rootKey.split(KEY_SEPARATOR);
+
+      if (keys.some((k) => BLOCKED_KEYS.has(k))) {
+        continue;
+      }
+
       keys.reduce((acc, k, i) => {
         if (i === keys.length - 1) {
           acc[k] = o[rootKey];
         } else {
-          if (!(k in acc)) {
+          // Own-property check: `k in acc` would also match inherited
+          // properties (Object.prototype members, the shared `constructor`
+          // function, ...) and let the walk escape `result`.
+          if (!hasOwn(acc, k)) {
             acc[k] = {};
           }
 
@@ -145,7 +162,7 @@ const unflattenObject = (o: Object) => {
     }
 
     for (const k in obj) {
-      if (obj.hasOwnProperty(k)) {
+      if (hasOwn(obj, k)) {
         obj[k] = transformArraysAndScalars(obj[k]);
       }
     }

@@ -149,3 +149,40 @@ it("should persist chart configs as is", () => {
 
   expect(configuratorState).toEqual(configuratorStateFromHashString);
 });
+
+it("should not allow prototype pollution via __proto__ path segments", () => {
+  const hashString =
+    "#__proto____SEP__pollutedKey=pwned||__proto____SEP__dangerouslySetInnerHTML=%7B%7D||__proto____SEP____html=%3Cimg%20src=x%20onerror=alert(1)%3E";
+
+  hashStringToObject(hashString);
+
+  expect(({} as any).pollutedKey).toBeUndefined();
+  expect(({} as any).dangerouslySetInnerHTML).toBeUndefined();
+  expect(({} as any).__html).toBeUndefined();
+});
+
+it("should not allow prototype pollution via constructor/prototype path segments", () => {
+  const hashString =
+    "#constructor__SEP__prototype__SEP__pollutedKey=pwned||a__SEP__constructor__SEP__prototype__SEP__pollutedKey2=pwned2||b__SEP____proto____SEP__pollutedKey3=pwned3";
+
+  const result = hashStringToObject(hashString);
+
+  expect(({} as any).pollutedKey).toBeUndefined();
+  expect(({} as any).pollutedKey2).toBeUndefined();
+  expect(({} as any).pollutedKey3).toBeUndefined();
+  expect(result).toEqual({});
+});
+
+it("should not traverse inherited object properties when unflattening", () => {
+  const hashString =
+    "#hasOwnProperty__SEP__pollutedKey=pwned||valueOf__SEP__pollutedKey2=pwned2||toString__SEP__pollutedKey3=pwned3";
+
+  const result = hashStringToObject(hashString);
+
+  // The walk must create own properties instead of descending into the
+  // shared built-in functions found on Object.prototype.
+  expect(({} as any).pollutedKey).toBeUndefined();
+  expect(({} as any).pollutedKey2).toBeUndefined();
+  expect(({} as any).pollutedKey3).toBeUndefined();
+  expect(result.hasOwnProperty).toBeDefined();
+});
