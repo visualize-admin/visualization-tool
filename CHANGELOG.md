@@ -11,6 +11,9 @@ You can also check the
 
 ## next release
 
+- Features
+  - add link to https://status.lindas.admin.ch/ in footer 
+
 ## 6.5.5 - 2026-10-26
 
 - Fixes

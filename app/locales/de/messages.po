@@ -388,7 +388,7 @@ msgstr "Basis Farbe"
 msgid "chart.map.layers.base"
 msgstr "Basiskarte"
 
-#: app/configurator/table/configurator/links-section.tsx
+#: app/configurator/table/configurator/link-base-url-input.tsx
 msgid "controls.tableSettings.baseUrl"
 msgstr "Basis-URL"
 
@@ -1124,17 +1124,9 @@ msgstr "Messung der linken Achse"
 msgid "wmts.legend-title"
 msgstr "Legende"
 
-#: app/configurator/table/table-chart-configurator.tsx
-msgid "controls.tableSettings.limitColumnWidths"
-msgstr "Responsive Spaltenbreiten"
-
 #: app/components/footer.tsx
 msgid "footer.button.lindas"
 msgstr "LINDAS Linked Data Dienste"
-
-#: app/components/footer.tsx
-msgid "footer.button.service-desk"
-msgstr "Service-Desk (Support)"
 
 #: app/configurator/components/chart-options-selector/imputation-field.tsx
 #: app/configurator/components/field-i18n.ts
@@ -1420,7 +1412,7 @@ msgstr "Bitte geben Sie eine gültige Nummer ein"
 msgid "controls.adjust-scale-domain.invalid-number-error"
 msgstr "Bitte geben Sie eine gültige Nummer ein"
 
-#: app/configurator/table/configurator/links-section.tsx
+#: app/configurator/table/configurator/link-base-url-input.tsx
 msgid "controls.tableSettings.baseUrlInvalid"
 msgstr "Bitte geben Sie eine gültige URL ein"
 
@@ -1527,6 +1519,10 @@ msgstr "Farbpalette zurücksetzen"
 #: app/configurator/components/filters.tsx
 msgid "controls.filters.select.reset-colors"
 msgstr "Farben zurücksetzen"
+
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.tableSettings.limitColumnWidths"
+msgstr "Responsive Spaltenbreiten"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.responsive"
@@ -1697,6 +1693,10 @@ msgstr "Separate URLs"
 #: app/configurator/components/chart-controls/color-ramp.tsx
 msgid "controls.color.palette.sequential"
 msgstr "Sequentiell"
+
+#: app/components/footer.tsx
+msgid "footer.button.service-desk"
+msgstr "Service-Desk (Support)"
 
 #: app/components/chart-shared.tsx
 #: app/components/publish-actions.tsx
@@ -1892,6 +1892,10 @@ msgstr "Statisches Iframe"
 #: app/components/footer.tsx
 msgid "footer.statistics"
 msgstr "Statistiken"
+
+#: app/components/footer.tsx
+msgid "footer.status"
+msgstr "Status"
 
 #: app/components/footer.tsx
 msgid "footer.contact.title"

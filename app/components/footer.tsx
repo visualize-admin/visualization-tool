@@ -137,6 +137,16 @@ export const Footer = ({ sx }: { sx?: SxProps }) => {
             />
           </Link>
         </NextLink>
+        <Link
+          href="https://status.lindas.admin.ch/"
+          target="_blank"
+          underline="none"
+        >
+          <FooterSectionButton
+            iconName="external"
+            label={t({ id: "footer.status", message: "Status" })}
+          />
+        </Link>
       </FooterSection>
     </SwissFederalCiFooter>
   );
