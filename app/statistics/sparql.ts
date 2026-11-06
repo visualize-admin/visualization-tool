@@ -2,6 +2,11 @@ import ParsingClient from "sparql-http-client/ParsingClient";
 
 import { DEFAULT_DATA_SOURCE } from "@/domain/data-source";
 import { buildLocalizedSubQuery, iriToNode } from "@/rdf/query-utils";
+import {
+  chunk,
+  IRIS_CHUNK_SIZE,
+  isSafeIri,
+} from "@/statistics/iris";
 
 const sparqlClient = new ParsingClient({
   endpointUrl: DEFAULT_DATA_SOURCE.url,
@@ -46,21 +51,51 @@ export const queryCubesMetadata = async ({
   cubeIris: string[];
   locale: string;
 }): Promise<
-  { iri: string; unversionedIri: string; title: string; creator: string }[]
+  { iri: string; unversionedIri: string; title: string; creator?: string }[]
 > => {
-  const query = getCubeMetadataQuery({ cubeIris, locale });
-  const results = await sparqlClient.query.select(query, {
-    operation: "postUrlencoded",
+  const safeCubeIris = cubeIris.filter(isSafeIri);
+  const normalize = (
+    iri: string,
+    unversionedIri?: string,
+    title?: string,
+    creator?: string
+  ): { iri: string; unversionedIri: string; title: string; creator?: string } => ({
+    iri,
+    unversionedIri: unversionedIri ?? iri,
+    title: title ?? iri,
+    creator,
   });
 
-  return results.map((result) => {
-    const iri = result.iri.value;
+  const queryChunk = async (
+    iris: string[]
+  ): Promise<
+    { iri: string; unversionedIri: string; title: string; creator?: string }[]
+  > => {
+    const query = getCubeMetadataQuery({ cubeIris: iris, locale });
 
-    return {
-      iri,
-      unversionedIri: result.unversionedIri.value ?? iri,
-      title: result.title?.value ?? iri,
-      creator: result.creator?.value,
-    };
-  });
+    try {
+      const rows = await sparqlClient.query.select(query, {
+        operation: "postUrlencoded",
+      });
+
+      return rows.flatMap((result) => {
+        const iri = result.iri?.value;
+
+        return typeof iri === "string"
+          ? [
+              normalize(
+                iri,
+                result.unversionedIri?.value,
+                result.title?.value,
+                result.creator?.value
+              ),
+            ]
+          : [];
+      });
+    } catch {
+      return iris.map((iri) => normalize(iri));
+    }
+  };
+
+  return (await Promise.all(chunk(safeCubeIris, IRIS_CHUNK_SIZE).map(queryChunk))).flat();
 };
