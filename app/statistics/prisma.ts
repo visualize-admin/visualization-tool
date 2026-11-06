@@ -192,25 +192,16 @@ export const fetchChartsMetadata = async () => {
         jsonb_agg(
           COALESCE(
             data ->> 'dataSet',
-            chart_config_obj ->> 'dataSet',
-            CASE
-              WHEN jsonb_typeof(cubes_obj) = 'object' THEN cubes_obj ->> 'iri'
-            END
+            data -> 'chartConfig' ->> 'dataSet',
+            cubes_obj ->> 'iri'
           )
         ) AS iris,
         COALESCE(
-          jsonb_agg(
-            CASE
-              WHEN jsonb_typeof(chart_config_array) = 'object' THEN chart_config_array ->> 'chartType'
-            END
-          ) FILTER (
-            WHERE jsonb_typeof(chart_config_array) = 'object'
-              AND chart_config_array ->> 'chartType' IS NOT NULL
-          ),
-          jsonb_build_array(chart_config_obj ->> 'chartType')
+          jsonb_agg(chart_config_array ->> 'chartType') FILTER (WHERE chart_config_array ->> 'chartType' IS NOT NULL),
+          jsonb_build_array(data -> 'chartConfig' ->> 'chartType')
         ) AS chart_types,
-        layout -> 'type' AS layout_type,
-        layout -> 'layout' AS layout_subtype
+        data -> 'layout' -> 'type' AS layout_type,
+        data -> 'layout' -> 'layout' AS layout_subtype
       FROM config
       LEFT JOIN LATERAL jsonb_array_elements(
         CASE
@@ -220,28 +211,11 @@ export const fetchChartsMetadata = async () => {
       ) AS chart_config_array ON true
       LEFT JOIN LATERAL jsonb_array_elements(
         CASE
-          WHEN jsonb_typeof(chart_config_array) = 'object' THEN
-            CASE
-              WHEN jsonb_typeof(chart_config_array -> 'cubes') = 'array' THEN chart_config_array -> 'cubes'
-              ELSE '[]'::jsonb
-            END
+          WHEN jsonb_typeof(chart_config_array -> 'cubes') = 'array' THEN chart_config_array -> 'cubes'
           ELSE '[]'::jsonb
         END
       ) AS cubes_obj ON true
-      LEFT JOIN LATERAL (
-        SELECT
-          CASE
-            WHEN jsonb_typeof(data -> 'chartConfig') = 'object' THEN data -> 'chartConfig'
-          END AS chart_config_obj
-      ) AS single_config ON true
-      LEFT JOIN LATERAL (
-        SELECT
-          CASE
-            WHEN jsonb_typeof(data -> 'layout') = 'object' THEN data -> 'layout'
-          END AS layout
-      ) AS layout ON true
-      WHERE jsonb_typeof(data) = 'object'
-      GROUP BY day, data, chart_config_obj, layout, layout_subtype
+      GROUP BY config.id, day
     )
     SELECT day, iris, chart_types, layout_type, layout_subtype
     FROM filtered_data
