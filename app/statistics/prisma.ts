@@ -222,7 +222,7 @@ export const fetchChartsMetadata = async () => {
     WHERE NOT EXISTS (
       SELECT 1
       FROM jsonb_array_elements_text(iris) AS iri
-      WHERE iri IS NULL OR NOT (iri LIKE 'http://%' OR iri LIKE 'https://%')
+      WHERE iri IS NULL OR NOT (iri ~ '^https?://[^ <>"{}|\\^]+$')
     );
   `.then((rows) => {
     return rows.map((row) => ({
