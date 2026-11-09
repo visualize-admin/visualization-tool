@@ -6,6 +6,7 @@ import { Quad } from "rdf-js";
 import { describe, expect, it } from "vitest";
 
 import { SearchCube } from "@/domain/data";
+import * as ns from "@/rdf/namespace";
 import { mergeSearchCubes } from "@/rdf/query-search";
 
 import { buildSearchCubes } from "./parse-search-results";
@@ -340,6 +341,48 @@ describe("parse-search-results", () => {
         },
       ]
 `);
+  });
+
+  it("should merge creator alternateName into creator label", () => {
+    const cubeIri = "https://example.com/cube";
+    const creatorIri = "https://ld.admin.ch/FCh";
+    const q = (subject: string, predicate: string, object: string) =>
+      ({
+        subject: { value: subject },
+        predicate: { value: predicate },
+        object: { value: object },
+      }) as Quad;
+
+    const makeCubeQuads = (creatorQuads: Quad[]) => [
+      q(cubeIri, ns.rdf.type.value, ns.cube.Cube.value),
+      q(
+        cubeIri,
+        ns.schema.creativeWorkStatus.value,
+        ns.adminVocabulary("CreativeWorkStatus/Published").value
+      ),
+      q(cubeIri, ns.schema.creator.value, creatorIri),
+      ...creatorQuads,
+    ];
+
+    const withAlternateName = buildSearchCubes(
+      makeCubeQuads([
+        q(creatorIri, ns.schema.name.value, "Bundeskanzlei"),
+        q(creatorIri, ns.schema.alternateName.value, "BK"),
+        q(creatorIri, ns.schema.alternateName.value, "ChF"),
+      ])
+    );
+    expect(withAlternateName[0].creator).toEqual({
+      iri: creatorIri,
+      label: "Bundeskanzlei BK ChF",
+    });
+
+    const withoutAlternateName = buildSearchCubes(
+      makeCubeQuads([q(creatorIri, ns.schema.name.value, "Bundeskanzlei")])
+    );
+    expect(withoutAlternateName[0].creator).toEqual({
+      iri: creatorIri,
+      label: "Bundeskanzlei",
+    });
   });
 });
 

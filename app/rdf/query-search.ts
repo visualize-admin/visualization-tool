@@ -211,7 +211,9 @@ const mkScoresQuery = (
       meta:isUsedIn ?iri ;
       schema:name ?termsetLabel .
 
-    ?creatorIri schema:name ?creatorLabel .
+    ?creatorIri
+      schema:name ?creatorLabel ;
+      schema:alternateName ?creatorAlternateName .
 
     ?subthemeIri
       schema:inDefinedTermSet ?subthemeTermset ;
@@ -237,6 +239,7 @@ const mkScoresQuery = (
       ?termsetIri
       ?termsetLabel
       ?creatorLabel
+      ?creatorAlternateName
       ?subthemeIri
       ?subthemeTermset
       ?subthemeLabel
@@ -339,6 +342,16 @@ const mkScoresQuery = (
               { locale }
             )}
         }
+        OPTIONAL {
+          GRAPH <https://lindas.admin.ch/fch/rvov> {
+            ${buildLocalizedSubQuery(
+              "creatorIri",
+              "schema:alternateName",
+              "creatorAlternateName",
+              { locale }
+            )}
+          }
+        }
       }
 
       OPTIONAL {
@@ -417,6 +430,12 @@ const mkScoresQuery = (
         CONTAINS(LCASE(?creatorLabel_en), LCASE(?keyword)) ||
         CONTAINS(LCASE(?creatorLabel_),   LCASE(?keyword)) ||
 
+        CONTAINS(LCASE(?creatorAlternateName_de), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?creatorAlternateName_fr), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?creatorAlternateName_it), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?creatorAlternateName_en), LCASE(?keyword)) ||
+        CONTAINS(LCASE(?creatorAlternateName_),   LCASE(?keyword)) ||
+
         CONTAINS(LCASE(?themeLabel_de), LCASE(?keyword)) ||
         CONTAINS(LCASE(?themeLabel_fr), LCASE(?keyword)) ||
         CONTAINS(LCASE(?themeLabel_it), LCASE(?keyword)) ||
@@ -452,6 +471,7 @@ const mkScoresQuery = (
       ?termsetIri
       ?termsetLabel
       ?creatorLabel
+      ?creatorAlternateName
       ?subthemeIri
       ?subthemeTermset
       ?subthemeLabel
