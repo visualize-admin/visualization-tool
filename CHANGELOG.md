@@ -13,6 +13,9 @@ You can also check the
 
 - Features
   - add link to https://status.lindas.admin.ch/ in footer 
+  - Show the abbreviation (`schema:alternateName`) next to the name of cube
+    creators from https://lindas.admin.ch/fch/rvov, so that e.g. "Bundeskanzlei"
+    is displayed as "Bundeskanzlei BK" like the entries from the old termset
 - Fixes
   - Statistics page no longer fails when the database contains malformed chart
     configs; unsafe cube IRIs are filtered out and SPARQL metadata lookups

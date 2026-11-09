@@ -2,6 +2,7 @@ import { group } from "d3-array";
 import { Quad } from "rdf-js";
 
 import { SearchCube } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { stringifyComponentId } from "@/graphql/make-component-id";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import * as ns from "@/rdf/namespace";
@@ -49,6 +50,22 @@ function buildSearchCubes(
       const dimensions = cubeQuads.get(visualizePredicates.hasDimension);
       const creatorIri = cubeQuads.get(ns.schema.creator.value)?.[0]?.object
         .value;
+      const creatorSubjectQuads = creatorIri
+        ? bySubjectAndPredicate.get(creatorIri)
+        : undefined;
+      const creatorAlternateNames = [
+        ...new Set(
+          creatorSubjectQuads
+            ?.get(ns.schema.alternateName.value)
+            ?.map((x) => x.object.value) ?? []
+        ),
+      ].sort();
+      const creatorLabel = [
+        creatorSubjectQuads?.get(ns.schema.name.value)?.[0]?.object.value,
+        ...creatorAlternateNames,
+      ]
+        .filter(truthy)
+        .join(" ");
       const publicationStatus = cubeQuads.get(
         ns.schema.creativeWorkStatus.value
       )?.[0].object.value;
@@ -73,10 +90,7 @@ function buildSearchCubes(
         creator: creatorIri
           ? {
               iri: creatorIri,
-              label:
-                bySubjectAndPredicate
-                  .get(creatorIri)
-                  ?.get(ns.schema.name.value)?.[0].object.value ?? "",
+              label: creatorLabel,
             }
           : null,
         themes:
