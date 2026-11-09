@@ -3,6 +3,7 @@ import { Literal, NamedNode } from "rdf-js";
 import { ParsingClient } from "sparql-http-client/ParsingClient";
 
 import { DataCubeMetadata } from "@/domain/data";
+import { truthy } from "@/domain/types";
 import { DataCubePublicationStatus } from "@/graphql/resolver-types";
 import { pragmas } from "@/rdf/create-source";
 import * as ns from "@/rdf/namespace";
@@ -22,6 +23,7 @@ type RawDataCubeMetadata = {
   themeLabels: Literal;
   creatorIri: NamedNode;
   creatorLabel: Literal;
+  creatorAlternateNames: Literal;
   contactPointEmails: NamedNode;
   contactPointNames: NamedNode;
   publisher: NamedNode;
@@ -60,7 +62,17 @@ const parseRawMetadata = (cube: RawDataCubeMetadata): DataCubeMetadata => {
         : [],
     creator:
       cube.creatorIri && cube.creatorLabel
-        ? { iri: cube.creatorIri.value, label: cube.creatorLabel.value }
+        ? {
+            iri: cube.creatorIri.value,
+            label: [
+              cube.creatorLabel.value,
+              ...(cube.creatorAlternateNames?.value
+                .split(GROUP_SEPARATOR)
+                .sort() ?? []),
+            ]
+              .filter(truthy)
+              .join(" "),
+          }
         : undefined,
     contactPoints:
       contactPointEmails.length === contactPointNames.length
@@ -83,6 +95,7 @@ export const getCubeMetadata = async (
   const query = SELECT`
     ?iri ?identifier ?title ?description ?version ?datePublished ?dateModified ?status ?creatorIri ?creatorLabel ?unversionedIri ?publisher ?landingPage ?expires
     (GROUP_CONCAT(DISTINCT ?themeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeIris)
+    (GROUP_CONCAT(DISTINCT ?creatorAlternateName; SEPARATOR="${GROUP_SEPARATOR}") AS ?creatorAlternateNames)
     (GROUP_CONCAT(DISTINCT ?themeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?themeLabels)
     (GROUP_CONCAT(DISTINCT ?subthemeIri; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeIris)
     (GROUP_CONCAT(DISTINCT ?subthemeLabel; SEPARATOR="${GROUP_SEPARATOR}") AS ?subthemeLabels)
@@ -103,18 +116,31 @@ export const getCubeMetadata = async (
     OPTIONAL { ?iri ${ns.schema.dateModified} ?dateModified . }
     ?iri ${ns.schema.creativeWorkStatus} ?status .
     OPTIONAL {
-      ?iri ${ns.dcterms.creator} ?creatorIri .
-      GRAPH <https://lindas.admin.ch/sfa/opendataswiss> {
-        ?creatorIri a ${ns.schema.Organization} ;
-          ${
-            ns.schema.inDefinedTermSet
-          } <https://register.ld.admin.ch/opendataswiss/org> .
+      {
+        ?iri ${ns.dcterms.creator} ?creatorIri .
+      } UNION {
+        ?iri ${ns.schema.creator} ?creatorIri .
+      }
+      VALUES ?creatorGraph {
+        <https://lindas.admin.ch/fch/rvov>
+        <https://lindas.admin.ch/sfa/opendataswiss>
+      }
+      GRAPH ?creatorGraph {
+        VALUES ?creatorType { schema:Organization schema:GovernmentOrganization }
+        ?creatorIri a ?creatorType .
+        ${buildLocalizedSubQuery("creatorIri", "schema:name", "creatorLabel", {
+          locale,
+        })}
+      }
+      OPTIONAL {
+        GRAPH <https://lindas.admin.ch/fch/rvov> {
           ${buildLocalizedSubQuery(
             "creatorIri",
-            "schema:name",
-            "creatorLabel",
+            "schema:alternateName",
+            "creatorAlternateName",
             { locale }
           )}
+        }
       }
     }
     OPTIONAL {
