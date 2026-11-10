@@ -11,6 +11,8 @@ You can also check the
 
 ## Next Release
 
+## 6.5.7 - 2026-11-10
+
 - Fixes
    - Cube metadata no longer fails for datasets whose`dcterms:creator` and `schema:creator` point to different organizations; `schema:creator` is now only a fallback, fixing broken chart previews and dataset pages (e.g. the FOEN NFI datasets)
 
