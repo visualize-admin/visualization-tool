@@ -9,7 +9,9 @@ and this project adheres to
 You can also check the
 [release page](https://github.com/visualize-admin/visualization-tool/releases)
 
-## next release
+## Next Release
+
+## 6.5.6 - 2026-11-10
 
 - Features
   - add link to https://status.lindas.admin.ch/ in footer 
