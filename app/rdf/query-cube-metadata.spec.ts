@@ -119,4 +119,19 @@ describe("getCubeMetadata creator", () => {
     expect(query).toContain("schema:creator");
     expect(query).toContain("dcterms:creator");
   });
+
+  it("should only use schema:creator as fallback to avoid multiple creators", async () => {
+    let query = "";
+    await getCubeMetadata("https://example.com/cube", {
+      locale: "de",
+      sparqlClient: mockClient(buildRow(), (q) => (query = q)),
+    });
+
+    // Cubes may have different organizations as dcterms:creator and
+    // schema:creator. Without this guard the query returns one row per
+    // creator and getCubeMetadata fails with "Multiple cubes found".
+    expect(query).toContain(
+      "FILTER NOT EXISTS { ?iri dcterms:creator ?dctermsCreatorIri . }"
+    );
+  });
 });
