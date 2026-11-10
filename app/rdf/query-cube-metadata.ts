@@ -120,6 +120,7 @@ export const getCubeMetadata = async (
         ?iri ${ns.dcterms.creator} ?creatorIri .
       } UNION {
         ?iri ${ns.schema.creator} ?creatorIri .
+        FILTER NOT EXISTS { ?iri ${ns.dcterms.creator} ?dctermsCreatorIri . }
       }
       VALUES ?creatorGraph {
         <https://lindas.admin.ch/fch/rvov>
