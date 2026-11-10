@@ -17,8 +17,39 @@ import { migrateConfiguratorState } from "@/utils/chart-config/versioning";
 import { hashStringToObject } from "@/utils/hash-utils";
 import { maybeWindow } from "@/utils/maybe-window";
 
+// Top-level keys that a posted configurator state may contain. Used to
+// distinguish chart state messages from unrelated postMessage traffic
+// (browser extensions, React DevTools backend, ...).
+const CONFIG_STATE_KEYS = [
+  "version",
+  "state",
+  "dataSource",
+  "dataSet",
+  "chartConfig",
+  "chartConfigs",
+  "layout",
+  "dashboardFilters",
+  "activeChartKey",
+  "meta",
+] as const;
+
 const isValidMessage = (e: MessageEvent) => {
-  return e.data && !e.data.type;
+  const data = e.data;
+
+  // The documented API contract: the embedding parent window posts the
+  // configurator state object to this iframe.
+  if (
+    data === null ||
+    typeof data !== "object" ||
+    Array.isArray(data) ||
+    e.source !== window.parent
+  ) {
+    return false;
+  }
+
+  return CONFIG_STATE_KEYS.some((key) =>
+    Object.prototype.hasOwnProperty.call(data, key)
+  );
 };
 
 const chartStateStore = create<{
