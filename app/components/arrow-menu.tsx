@@ -1,4 +1,6 @@
-import { Menu, paperClasses, styled } from "@mui/material";
+import { paperClasses, Popover, styled } from "@mui/material";
+
+import { ActionMenu } from "@/components/action-menu";
 
 const commonBeforeStyles: Partial<CSSStyleDeclaration> = {
   content: '" "',
@@ -11,7 +13,7 @@ const commonBeforeStyles: Partial<CSSStyleDeclaration> = {
   transform: "rotate(45deg)",
 };
 
-export const ArrowMenuTopCenter = styled(Menu)({
+const topCenterStyles = {
   [`& .${paperClasses.root}`]: {
     overflow: "visible",
     "&:before": {
@@ -21,9 +23,13 @@ export const ArrowMenuTopCenter = styled(Menu)({
       right: 0,
     },
   },
-});
+};
 
-export const ArrowMenuBottomCenter = styled(Menu)({
+export const ArrowMenuTopCenter = styled(ActionMenu)(topCenterStyles);
+
+export const ArrowPopoverTopCenter = styled(Popover)(topCenterStyles);
+
+export const ArrowMenuBottomCenter = styled(ActionMenu)({
   [`& .${paperClasses.root}`]: {
     overflow: "visible",
     "&:before": {
@@ -35,7 +41,7 @@ export const ArrowMenuBottomCenter = styled(Menu)({
   },
 });
 
-export const ArrowMenuTopBottom = styled(Menu)({
+export const ArrowMenuTopBottom = styled(ActionMenu)({
   [`& .${paperClasses.root}`]: {
     overflow: "visible",
     "&:before": {
@@ -47,7 +53,7 @@ export const ArrowMenuTopBottom = styled(Menu)({
   },
 });
 
-export const ArrowMenuBottomTop = styled(Menu)({
+export const ArrowMenuBottomTop = styled(ActionMenu)({
   [`& .${paperClasses.root}`]: {
     overflow: "visible",
     "&:before": {

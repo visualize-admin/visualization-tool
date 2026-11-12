@@ -433,7 +433,7 @@ const ProfileVisualizationsRow = ({
         })}
       </TableCell>
       <TableCell align="right">
-        <RowActions actions={actions} />
+        <RowActions actions={actions} label={chartTitle} />
         <TriggeredPopover
           popoverProps={{
             anchorPosition: { ...getAdjustedPopoverPosition(embedEl) },
