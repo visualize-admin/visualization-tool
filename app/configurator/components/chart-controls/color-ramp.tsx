@@ -293,11 +293,8 @@ const PaletteSection = (props: PaletteSectionProps) => {
           handleAddColorPalette(e);
         }}
         variant="text"
-        sx={{
-          width: "100%",
-          paddingY: 3,
-          paddingX: 4,
-        }}
+        fullWidth
+        sx={{ paddingY: 3, paddingX: 4 }}
       >
         <Trans id="login.profile.my-color-palettes.add">
           Add color palette

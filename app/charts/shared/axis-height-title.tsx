@@ -3,6 +3,7 @@ import { AxisHeightLinearChartState } from "@/charts/shared/axis-height-linear";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import { INSET_FOCUS_OUTLINE_CLASS_NAME } from "@/themes/focus";
 
 // Axis title can be used in both "linear" and pie charts.
 type AxisHeightTitleChartState = AxisHeightLinearChartState | PieState;
@@ -28,6 +29,7 @@ export const AxisHeightTitle = () => {
         </text>
       ) : (
         <foreignObject
+          className={INSET_FOCUS_OUTLINE_CLASS_NAME}
           y={leftAxisLabelOffsetTop}
           width={leftAxisLabelSize.width}
           height={leftAxisLabelSize.height}

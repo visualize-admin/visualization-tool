@@ -25,6 +25,7 @@ import { Component, Measure } from "@/domain/data";
 import { useTimeFormatLocale } from "@/formatters";
 import { useDataCubesMetadataQuery } from "@/graphql/hooks";
 import { useLocale } from "@/locales/use-locale";
+import { UNCLIP_FOCUS_OUTLINE } from "@/themes/focus";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
@@ -39,6 +40,7 @@ export const useFootnotesStyles = makeStyles<Theme, { useMarginTop: boolean }>(
       alignItems: "center",
       flexWrap: "wrap",
       overflow: "hidden",
+      ...UNCLIP_FOCUS_OUTLINE,
       fontSize: theme.typography.caption.fontSize,
       "& > button": {
         minWidth: "auto",

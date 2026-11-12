@@ -25,6 +25,7 @@ import { useDisclosure } from "@/components/use-disclosure";
 import { isConfiguring, isLayouting } from "@/configurator/configurator-state";
 import { Icon, IconName } from "@/icons";
 import { useConfiguratorState } from "@/src";
+import { FOCUS_OUTLINE_INSET } from "@/themes/focus";
 
 const useControlSectionStyles = makeStyles<Theme, { hideTopBorder: boolean }>(
   (theme) => ({
@@ -84,6 +85,9 @@ export const useSectionTitleStyles = makeStyles<
     },
     WebkitUserSelect: "none",
     transition: "background-color 0.2s ease",
+
+    // The collapsible section clips an outside ring.
+    "&:focus-visible": FOCUS_OUTLINE_INSET,
 
     "&:hover": {
       cursor: ({ interactive }) => (interactive ? "pointer" : "initial"),

@@ -1,5 +1,5 @@
 import { ButtonBase, ButtonBaseProps, styled } from "@mui/material";
-import { forwardRef } from "react";
+import { forwardRef, HTMLAttributeAnchorTarget } from "react";
 
 const StyledButtonBase = styled(ButtonBase)({
   display: "flex",
@@ -9,7 +9,12 @@ const StyledButtonBase = styled(ButtonBase)({
   textTransform: "none",
 });
 
-export const Button = forwardRef<HTMLButtonElement, ButtonBaseProps>(
+export type ButtonProps = ButtonBaseProps<
+  "button",
+  { href?: string; target?: HTMLAttributeAnchorTarget }
+>;
+
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     return <StyledButtonBase ref={ref} disableRipple {...props} />;
   }
