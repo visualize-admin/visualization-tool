@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 
 import { RadioGroup } from "@/components/form";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
@@ -26,7 +26,12 @@ export const CalculationField = ({
         <Trans id="controls.select.calculation.mode">Chart mode</Trans>
       </SectionTitle>
       <ControlSectionContent>
-        <RadioGroup>
+        <RadioGroup
+          label={t({
+            id: "controls.select.calculation.mode",
+            message: "Chart mode",
+          })}
+        >
           <ChartOptionRadioField
             label={getFieldLabel("identity")}
             field={null}

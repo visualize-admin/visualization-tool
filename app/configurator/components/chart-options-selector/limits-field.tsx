@@ -7,6 +7,7 @@ import { useMemo } from "react";
 import { LegendItem } from "@/charts/shared/legend-color";
 import { Flex } from "@/components/flex";
 import { Radio, RadioGroup, Switch } from "@/components/form";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import { ChartConfig } from "@/config-types";
 import {
   getAxisDimension,
@@ -123,6 +124,11 @@ export const LimitsField = ({
         </Trans>
       </SectionTitle>
       <ControlSectionContent component="fieldset">
+        <VisuallyHidden component="legend">
+          <Trans id="controls.section.targets-and-limit-values">
+            Targets & limit values
+          </Trans>
+        </VisuallyHidden>
         {availableLimitOptions.map(
           (
             {
@@ -176,6 +182,7 @@ export const LimitsField = ({
                       symbol="square"
                     />
                     <ColorPickerMenu
+                      label={limit.name}
                       colors={colors}
                       selectedHexColor={color}
                       onChange={(color) => {
@@ -201,9 +208,14 @@ export const LimitsField = ({
                         Select symbol type
                       </Trans>
                     </Typography>
-                    <RadioGroup>
+                    <RadioGroup
+                      label={t({
+                        id: "controls.section.targets-and-limit-values.symbol-type",
+                        message: "Select symbol type",
+                      })}
+                    >
                       <Radio
-                        name={`limit-${i}-symbol-type-dot`}
+                        name={`limit-${i}-symbol-type`}
                         label={t({ id: "controls.symbol.dot", message: "Dot" })}
                         value="dot"
                         checked={symbolType === "circle"}
@@ -222,7 +234,7 @@ export const LimitsField = ({
                         disabled={!maybeLimit}
                       />
                       <Radio
-                        name={`limit-${i}-symbol-type-cross`}
+                        name={`limit-${i}-symbol-type`}
                         label={t({
                           id: "controls.symbol.cross",
                           message: "Cross",
@@ -244,7 +256,7 @@ export const LimitsField = ({
                         disabled={!maybeLimit}
                       />
                       <Radio
-                        name={`limit-${i}-symbol-type-triangle`}
+                        name={`limit-${i}-symbol-type`}
                         label={t({
                           id: "controls.symbol.triangle",
                           message: "Triangle",
@@ -277,9 +289,14 @@ export const LimitsField = ({
                         Select line type
                       </Trans>
                     </Typography>
-                    <RadioGroup>
+                    <RadioGroup
+                      label={t({
+                        id: "controls.section.targets-and-limit-values.line-type",
+                        message: "Select line type",
+                      })}
+                    >
                       <Radio
-                        name={`limit-${i}-line-type-solid`}
+                        name={`limit-${i}-line-type`}
                         label={t({
                           id: "controls.line.solid",
                           message: "Solid",
@@ -301,7 +318,7 @@ export const LimitsField = ({
                         disabled={!maybeLimit}
                       />
                       <Radio
-                        name={`limit-${i}-line-type-dashed`}
+                        name={`limit-${i}-line-type`}
                         label={t({
                           id: "controls.line.dashed",
                           message: "Dashed",

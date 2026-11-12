@@ -196,12 +196,18 @@ export const ChartAnnotationsSelector = () => {
             </Trans>
           </SectionTitle>
           <ControlSectionContent gap="xl">
-            <RadioGroup>
+            <RadioGroup
+              label={t({
+                id: "controls.annotations.highlight.section.style.title",
+                message: "Style",
+              })}
+            >
               <Radio
                 label={t({
                   id: "controls.text-only",
                   message: "Text box only",
                 })}
+                name={`annotation-${annotation.key}-style`}
                 value="none"
                 checked={annotation.highlightType === "none"}
                 disabled={!hasTargets}
@@ -212,6 +218,7 @@ export const ChartAnnotationsSelector = () => {
                   id: "controls.fill-and-text",
                   message: "Fill and text box",
                 })}
+                name={`annotation-${annotation.key}-style`}
                 value="filled"
                 checked={annotation.highlightType === "filled"}
                 disabled={!hasTargets}
@@ -344,7 +351,7 @@ const AnnotationDrawer = ({
   }
 
   return (
-    <ConfiguratorDrawer open={opened} hideBackdrop>
+    <ConfiguratorDrawer open={opened} hideBackdrop onClose={close}>
       <div
         role="tabpanel"
         id={`annotations-panel-${activeField}`}

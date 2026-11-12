@@ -117,7 +117,9 @@ export const SortingField = ({
             });
           }}
         />
-        <RadioGroup>
+        <RadioGroup
+          label={t({ id: "controls.sorting.order", message: "Sorting order" })}
+        >
           {sortingOrderOptions &&
             sortingOrderOptions.map((sortingOrder) => {
               const subType = get(

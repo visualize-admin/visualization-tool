@@ -464,6 +464,10 @@ const MultiFilterContent = ({
               >
                 <IconButton
                   size="small"
+                  aria-label={t({
+                    id: "controls.filters.select.reset-colors",
+                    message: "Reset colors",
+                  })}
                   onClick={handleResetColorMapping}
                   sx={{ ml: 1, my: -2 }}
                 >
@@ -553,7 +557,7 @@ const MultiFilterContent = ({
                         {label}
                       </Typography>
                       {enableSettingShowValuesBySegment ? (
-                        <ShowValuesMappingField value={value} />
+                        <ShowValuesMappingField value={value} label={label} />
                       ) : null}
                       <SvgIcCheckmark />
                     </>
@@ -564,7 +568,11 @@ const MultiFilterContent = ({
           </Box>
         );
       })}
-      <ConfiguratorDrawer open={!!anchorEl} hideBackdrop>
+      <ConfiguratorDrawer
+        open={!!anchorEl}
+        hideBackdrop
+        onClose={handleCloseAutocomplete}
+      >
         <ClickAwayListener onClickAway={handleCloseAutocomplete}>
           <DrawerContent
             pendingValuesRef={pendingValuesRef}
@@ -769,6 +777,11 @@ const TreeAccordion = ({
       >
         {renderExpandButton && (
           <IconButton
+            aria-label={t({
+              id: "controls.filters.tree.expand",
+              message: `Expand ${label}`,
+            })}
+            aria-expanded={expanded}
             onClick={(e) => {
               e.stopPropagation();
               setExpanded(!expanded);
@@ -1017,7 +1030,12 @@ const DrawerContent = forwardRef<
                 <Trans id="controls.set-filters">Edit filters</Trans>
               </Typography>
             </Flex>
-            <IconButton sx={{ mt: "-0.5rem" }} size="small" onClick={onClose}>
+            <IconButton
+              sx={{ mt: "-0.5rem" }}
+              size="small"
+              aria-label={t({ id: "button.close", message: "Close" })}
+              onClick={onClose}
+            >
               <SvgIcClose fontSize="inherit" />
             </IconButton>
           </Flex>

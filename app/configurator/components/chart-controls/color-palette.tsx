@@ -2,20 +2,21 @@ import { Trans } from "@lingui/macro";
 import {
   Box,
   Button,
-  Divider,
+  ListSubheader,
   MenuItem,
+  MenuItemProps,
   Select,
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { useId } from "@reach/auto-id";
 import get from "lodash/get";
-import { MouseEventHandler, useMemo, useState } from "react";
+import { MouseEventHandler, ReactNode, useMemo, useState } from "react";
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { hasDimensionColors } from "@/charts/shared/colors";
 import { Flex } from "@/components/flex";
-import { selectMenuProps } from "@/components/form";
-import { Label } from "@/components/form";
+import { Label, selectMenuProps } from "@/components/form";
 import { getChartConfig } from "@/config-utils";
 import {
   ConfiguratorStateConfiguringChart,
@@ -177,6 +178,7 @@ export const ColorPalette = ({
     }
   };
 
+  const labelId = `color-palette-label-${useId()}`;
   const [anchorEl, setAnchorEl] = useState<HTMLElement>();
   const handleOpenCreateColorPalette: MouseEventHandler<HTMLElement> = useEvent(
     (e) => {
@@ -224,10 +226,11 @@ export const ColorPalette = ({
       }}
     >
       <div>
-        <Label htmlFor="color-palette-toggle">
+        <Label id={labelId}>
           <Trans id="controls.color.palette">Color palette</Trans>
         </Label>
         <Select
+          labelId={labelId}
           size="sm"
           MenuProps={selectMenuProps}
           renderValue={(selected) => {
@@ -264,34 +267,19 @@ export const ColorPalette = ({
         >
           {user && (
             <MenuItem onClick={handleOpenCreateColorPalette}>
-              <Button
-                variant="text"
-                size="sm"
-                color="primary"
-                sx={{
-                  "&:hover": {
-                    color: "primary.main",
-                  },
-                }}
-              >
+              <Box component="span" sx={{ color: "primary.main" }}>
                 <Trans id="login.profile.my-color-palettes.add">
                   Add color palette
                 </Trans>
-              </Button>
+              </Box>
             </MenuItem>
           )}
           {customColorPalettes && customColorPalettes.length > 0 && (
-            <Flex sx={{ flexDirection: "column", gap: 2, pt: 3 }}>
-              <Typography
-                variant="caption"
-                sx={{ px: 4, color: "text.secondary", fontWeight: 700 }}
-              >
-                <Trans id="controls.custom-color-palettes">
-                  Custom color palettes
-                </Trans>
-              </Typography>
-              <Divider sx={{ width: "100%", height: 2 }} />
-            </Flex>
+            <PaletteGroupHeader>
+              <Trans id="controls.custom-color-palettes">
+                Custom color palettes
+              </Trans>
+            </PaletteGroupHeader>
           )}
           {customColorPalettes &&
             customColorPalettes?.length > 0 &&
@@ -307,17 +295,11 @@ export const ColorPalette = ({
                   onClick={() => handleChangePalette(palette.paletteId)}
                 />
               ))}
-          <Flex sx={{ flexDirection: "column", gap: 2, pt: 3 }}>
-            <Typography
-              variant="caption"
-              sx={{ px: 4, color: "text.secondary", fontWeight: 700 }}
-            >
-              <Trans id="controls.visualize-color-palette">
-                Visualize color palettes
-              </Trans>
-            </Typography>
-            <Divider sx={{ width: "100%", height: 2 }} />
-          </Flex>
+          <PaletteGroupHeader>
+            <Trans id="controls.visualize-color-palette">
+              Visualize color palettes
+            </Trans>
+          </PaletteGroupHeader>
           {palettes.map((palette) => (
             <ColorPaletteMenuItem
               key={palette.value}
@@ -339,7 +321,11 @@ export const ColorPalette = ({
           customColorPalettes={customColorPalettes}
         />
       )}
-      <ConfiguratorDrawer open={!!anchorEl} hideBackdrop>
+      <ConfiguratorDrawer
+        open={!!anchorEl}
+        hideBackdrop
+        onClose={() => handleCloseCreateColorPalette()}
+      >
         <ColorPaletteDrawerContent
           onClose={(palette) => handleCloseCreateColorPalette(palette)}
           type="categorical"
@@ -350,23 +336,41 @@ export const ColorPalette = ({
   );
 };
 
+const PaletteGroupHeader = ({ children }: { children: ReactNode }) => {
+  return (
+    <ListSubheader
+      role="presentation"
+      sx={{
+        pt: 3,
+        pb: 2,
+        borderBottom: 2,
+        borderColor: "divider",
+        typography: "caption",
+        color: "text.secondary",
+        fontWeight: 700,
+      }}
+    >
+      {children}
+    </ListSubheader>
+  );
+};
+
+PaletteGroupHeader.muiSkipListHighlight = true;
+
 const ColorPaletteMenuItem = ({
-  value,
   label,
   colors,
   selected,
-  onClick,
+  ...props
 }: {
-  value: string;
   label: string;
   colors: ReadonlyArray<string>;
   selected: boolean;
-  onClick: () => void;
-}) => {
+} & MenuItemProps) => {
   return (
     <MenuItem
-      value={value}
-      onClick={onClick}
+      {...props}
+      selected={selected}
       sx={{
         display: "flex",
         justifyContent: "space-between",
@@ -440,6 +444,7 @@ export const ColorSquare = ({
       data-testid="select-color-square"
       sx={{
         backgroundColor: disabled ? "grey.300" : color,
+        forcedColorAdjust: "none",
       }}
     />
   );

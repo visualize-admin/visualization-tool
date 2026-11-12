@@ -14,14 +14,17 @@ describe("Color Picker Swatches", () => {
     await selectors.chart.loaded();
     await actions.editor.selectActiveField("Segmentation");
     await selectors.edition.drawerLoaded();
-    await selectors.panels.drawer().getByRole("combobox", { name: "None" }).click();
+    await selectors.panels
+      .drawer()
+      .getByRole("combobox", { name: "None" })
+      .click();
     await actions.mui.selectOption("Kanton");
 
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await sleep(1_000);
 
     await page
-      .getByRole("button", { name: "Open Color Picker" })
+      .getByRole("button", { name: /^Open color picker:/ })
       .first()
       .click();
     await sleep(1_000);
@@ -53,7 +56,7 @@ describe("Color Picker Swatches", () => {
     await actions.editor.selectActiveField("Vertical Axis");
 
     await page
-      .getByRole("button", { name: "Open Color Picker" })
+      .getByRole("button", { name: /^Open color picker:/ })
       .first()
       .click();
     await sleep(1_000);
