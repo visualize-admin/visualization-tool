@@ -71,53 +71,49 @@ export const BlockMoreButton = ({ blockKey }: { blockKey: string }) => {
         sx={{ height: "fit-content" }}
         {...DISABLE_SCREENSHOT_ATTR}
         data-testid="block-more-button"
+        aria-label={t({ id: "menu.more-actions", message: "More actions" })}
+        aria-haspopup="menu"
+        aria-expanded={!!anchor}
       >
         <SvgIcMore />
       </IconButton>
       <ArrowMenuTopBottom
         open={!!anchor}
         anchorEl={anchor}
-        onClose={(e) => {
-          (e as Event).stopPropagation();
-          handleClose();
-        }}
+        onClose={handleClose}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         transformOrigin={{ horizontal: "right", vertical: "top" }}
       >
-        <div>
-          <MenuActionItem
-            type="button"
-            as="menuitem"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDuplicate();
-              handleClose();
-            }}
-            leadingIconName="duplicate"
-            label={t({ id: "block-controls.duplicate", message: "Duplicate" })}
-          />
-          <MenuActionItem
-            type="button"
-            as="menuitem"
-            color="red"
-            requireConfirmation
-            confirmationTitle={t({
-              id: "block-controls.delete.title",
-              message: "Delete block?",
-            })}
-            confirmationText={t({
-              id: "block-controls.delete.confirmation",
-              message: "Are you sure you want to delete this block?",
-            })}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleRemove();
-              handleClose();
-            }}
-            leadingIconName="trash"
-            label={t({ id: "block-controls.delete", message: "Delete" })}
-          />
-        </div>
+        <MenuActionItem
+          type="button"
+          as="menuitem"
+          onClick={() => {
+            handleDuplicate();
+            handleClose();
+          }}
+          leadingIconName="duplicate"
+          label={t({ id: "block-controls.duplicate", message: "Duplicate" })}
+        />
+        <MenuActionItem
+          type="button"
+          as="menuitem"
+          color="red"
+          requireConfirmation
+          confirmationTitle={t({
+            id: "block-controls.delete.title",
+            message: "Delete block?",
+          })}
+          confirmationText={t({
+            id: "block-controls.delete.confirmation",
+            message: "Are you sure you want to delete this block?",
+          })}
+          onClick={() => {
+            handleRemove();
+            handleClose();
+          }}
+          leadingIconName="trash"
+          label={t({ id: "block-controls.delete", message: "Delete" })}
+        />
       </ArrowMenuTopBottom>
     </>
   );
