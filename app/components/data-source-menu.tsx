@@ -22,11 +22,17 @@ export const DataSourceMenu = () => {
 
   return (
     <Flex alignItems="center" gap={1}>
-      <Typography variant="h5" component="p" sx={{ color: "white" }}>
+      <Typography
+        id="dataSourceSelect-label"
+        variant="h5"
+        component="p"
+        sx={{ color: "white" }}
+      >
         <Trans id="data.source">Data source</Trans>:{" "}
       </Typography>
       <Select
         id="dataSourceSelect"
+        labelId="dataSourceSelect-label"
         variant="standard"
         value={stringifyDataSource(dataSource)}
         onChange={(e) => {

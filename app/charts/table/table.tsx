@@ -311,6 +311,10 @@ export const Table = () => {
           <Input
             type="text"
             name="search-input"
+            aria-label={t({
+              id: "table.search.label",
+              message: "Search table",
+            })}
             placeholder={t({
               id: "table.search.placeholder",
               message: "Search...",

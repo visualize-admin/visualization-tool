@@ -76,11 +76,6 @@ msgstr "Divergierend"
 msgid "controls.custom-color-palettes.categorical"
 msgstr "Kategorisch"
 
-#: app/configurator/components/chart-options-selector/imputation-field.tsx
-#: app/configurator/components/field-i18n.ts
-msgid "controls.imputation.type.none"
-msgstr "-"
-
 #: app/configurator/components/annotators.tsx
 msgid "annotator.add.description"
 msgstr "[ Beschreibung hinzufügen ]"
@@ -105,6 +100,10 @@ msgstr "{0} weitere"
 #: app/configurator/components/filters.tsx
 msgid "controls.filter.nb-elements"
 msgstr "{0} von {1}"
+
+#: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.search-results"
+msgstr "{resultsCount} Ergebnisse"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.sorting.byMeasure.ascending"
@@ -132,6 +131,11 @@ msgstr "A → Z"
 msgid "footer.about_us.label"
 msgstr "Über dieses Portal"
 
+#: app/components/chart-selection-tabs.tsx
+#: app/components/row-actions.tsx
+msgid "menu.actions-for"
+msgstr "Aktionen für {label}"
+
 #: app/configurator/components/chart-annotations/add-annotation-button.tsx
 msgid "controls.annotations.add"
 msgstr "Hinzufügen"
@@ -140,6 +144,7 @@ msgstr "Hinzufügen"
 msgid "controls.add.chart"
 msgstr "Fügen Sie ein weiteres Diagramm hinzu."
 
+#: app/components/chart-selection-tabs.tsx
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-selection-tabs.add-chart"
 msgstr "Diagramm hinzufügen"
@@ -231,6 +236,7 @@ msgid "controls.animation"
 msgstr "Animation"
 
 #: app/configurator/components/chart-options-selector/animation-field.tsx
+#: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.duration"
 msgstr "Animation Dauer"
 
@@ -242,6 +248,7 @@ msgstr "Die Animation ist bei der Sortierung nach Gesamtgrösse deaktiviert."
 msgid "controls.section.animation.settings"
 msgstr "Animation Einstellungen"
 
+#: app/configurator/components/chart-options-selector/animation-field.tsx
 #: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.type"
 msgstr "Animation Typ"
@@ -358,6 +365,10 @@ msgstr "Zurück"
 msgid "controls.nav.back-to-configurator"
 msgstr "Zurück zum Editieren"
 
+#: app/configurator/components/chart-controls/section.tsx
+msgid "controls.section.back-to-main"
+msgstr "Zurück zur Übersicht"
+
 #: app/configurator/components/configurator.tsx
 msgid "controls.nav.back-to-preview"
 msgstr "Zurück zur Vorschau"
@@ -396,6 +407,10 @@ msgstr "Basis-URL"
 msgid "chart.map.layers.base.behind-area-layer"
 msgstr "Hinter der Flächenebene"
 
+#: app/components/mdx-editor/bold-italic-underline-toggles.tsx
+msgid "mdx-editor.toolbar.bold"
+msgstr "Fett"
+
 #: app/configurator/table/table-chart-options.tsx
 msgid "columnStyle.textStyle.bold"
 msgstr "Fett"
@@ -403,6 +418,10 @@ msgstr "Fett"
 #: app/login/components/profile-header.tsx
 msgid "browse.dataset.all"
 msgstr "Datensatz suchen"
+
+#: app/components/mdx-editor/list-toggles.tsx
+msgid "mdx-editor.toolbar.bullet-list"
+msgstr "Aufzählung"
 
 #: app/charts/map/wms-wmts-provider-info.tsx
 msgid "provider-info.can-display-layers"
@@ -415,6 +434,10 @@ msgstr "Kann auf der Geo Admin Karte angezeigt werden"
 #: app/charts/map/wms-wmts-provider-info.tsx
 msgid "provider-info.can-list-layers"
 msgstr "Kann die Layer auflisten"
+
+#: app/components/mdx-editor/link-dialog.tsx
+msgid "mdx-editor.link-dialog.cancel"
+msgstr "Abbrechen"
 
 #: app/components/chart-published.tsx
 msgid "dataset.publicationStatus.expires.warning"
@@ -443,6 +466,7 @@ msgid "button.download.data.visible"
 msgstr "Daten aus der Grafik"
 
 #: app/configurator/components/chart-options-selector/calculation-field.tsx
+#: app/configurator/components/chart-options-selector/calculation-field.tsx
 msgid "controls.select.calculation.mode"
 msgstr "Visualisierungsmodus"
 
@@ -456,6 +480,7 @@ msgstr "Diagramm-Einstellungen"
 msgid "controls.select.chart.type"
 msgstr "Diagrammtyp"
 
+#: app/components/publish-actions.tsx
 #: app/components/publish-actions.tsx
 msgid "publication.share.chart.url"
 msgstr "Diagramm-URL"
@@ -473,6 +498,7 @@ msgstr "Weitere Informationen finden Sie auf der Statusseite"
 msgid "controls.custom-color-palettes.caption-diverging"
 msgstr "Wählen Sie kontrastierende Farben für Start- und Endpunkt. Diese Farben unterstützen die visuelle Trennung von Extremwerten. Divergierende Paletten eignen sich besonders für Daten mit einem bedeutsamen Mittelpunkt wie Null oder einem Durchschnittswert."
 
+#: app/charts/map/wms-wmts-selector.tsx
 #: app/components/form.tsx
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "controls.search.clear"
@@ -488,9 +514,14 @@ msgid "controls.annotations.annotation.clear-text"
 msgstr "Text löschen"
 
 #: app/components/copy-to-clipboard-text-input.tsx
-#: app/components/copy-to-clipboard-text-input.tsx
 msgid "button.hint.click.to.copy"
 msgstr "Kopieren"
+
+#: app/charts/map/wms-wmts-selector.tsx
+#: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
+#: app/configurator/components/filters.tsx
+msgid "button.close"
+msgstr "Schliessen"
 
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
@@ -503,6 +534,10 @@ msgstr "Farbe"
 msgid "controls.color.palette"
 msgstr "Farbpalette"
 
+#: app/configurator/components/chart-controls/color-picker.tsx
+msgid "controls.colorpicker"
+msgstr "Farbauswahl"
+
 #: app/configurator/components/chart-controls/drag-and-drop-tab.tsx
 msgid "table.column.no"
 msgstr "Spalte {0}"
@@ -511,6 +546,7 @@ msgstr "Spalte {0}"
 msgid "controls.select.columnStyle.columnColor"
 msgstr "Spaltenfarbe"
 
+#: app/configurator/components/chart-options-selector/layout-field.tsx
 #: app/configurator/components/chart-options-selector/layout-field.tsx
 msgid "controls.select.column.layout"
 msgstr "Spaltenstil"
@@ -598,6 +634,10 @@ msgstr "Diese Visualisierung kopieren und editieren"
 #: app/configurator/components/configurator.tsx
 msgid "button.copy-preview-link"
 msgstr "Vorschau-Link kopieren"
+
+#: app/components/copy-to-clipboard-text-input.tsx
+msgid "button.copy"
+msgstr "Kopieren: {label}"
 
 #: app/utils/flashes.tsx
 msgid "flashes.couldnt-load-cube.title"
@@ -817,6 +857,11 @@ msgstr "Farbplatte editieren"
 msgid "controls.set-filters"
 msgstr "Filter bearbeiten"
 
+#: app/components/mdx-editor/link-dialog.tsx
+#: app/components/mdx-editor/link-dialog.tsx
+msgid "mdx-editor.link-dialog.edit"
+msgstr "Link bearbeiten"
+
 #: app/components/chart-selection-tabs.tsx
 msgid "chart-controls.edit-tab-label"
 msgstr "Tab-Titel editieren"
@@ -829,6 +874,7 @@ msgstr "Einbetten"
 msgid "login.chart.embed"
 msgstr "Einbetten"
 
+#: app/components/publish-actions.tsx
 #: app/components/publish-actions.tsx
 msgid "publication.embed.external-application"
 msgstr "Embed-Code für «Externe Applikation»"
@@ -857,6 +903,10 @@ msgstr "Englisch"
 #: app/login/components/color-palettes/color-palette-examples.tsx
 msgid "controls.custom-color-palettes.example"
 msgstr "Beispiel"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.tree.expand"
+msgstr "{label} aufklappen"
 
 #: app/browse/ui/select-dataset-banner.tsx
 msgid "browse.datasets.description"
@@ -920,6 +970,8 @@ msgstr "Freies Layout"
 msgid "controls.language.french"
 msgstr "Französisch"
 
+#: app/charts/shared/brush/index.tsx
+#: app/components/dashboard-interactive-filters.tsx
 #: app/configurator/components/filters.tsx
 #: app/configurator/components/layout-configurator.tsx
 #: app/configurator/components/layout-configurator.tsx
@@ -963,6 +1015,10 @@ msgstr "Gruppiert"
 msgid "controls.section.groups"
 msgstr "Gruppierungen"
 
+#: app/components/mdx-editor/block-type-menu.tsx
+msgid "mdx-editor.toolbar.heading"
+msgstr "Überschrift {n}"
+
 #: app/configurator/table/table-chart-options.tsx
 msgid "columnStyle.heatmap"
 msgstr "Heatmap"
@@ -970,6 +1026,10 @@ msgstr "Heatmap"
 #: app/components/publish-actions.tsx
 msgid "publication.share.mail.body"
 msgstr "Hier ist eine Visualisierung, die ich mit visualize.admin.ch erstellt habe"
+
+#: app/configurator/components/color-picker.tsx
+msgid "controls.colorpicker.hex"
+msgstr "Hex-Farbe"
 
 #: app/configurator/table/table-chart-options.tsx
 msgid "controls.table.column.hide"
@@ -1003,6 +1063,11 @@ msgstr "Horizontale Achse"
 msgid "time-units.Hour"
 msgstr "Stunde"
 
+#: app/configurator/components/color-picker.tsx
+msgid "controls.colorpicker.hue"
+msgstr "Farbton"
+
+#: app/components/publish-actions.tsx
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe"
 msgstr "Embed-Code"
@@ -1040,6 +1105,10 @@ msgstr "Ungültige URL"
 msgid "controls.language.italian"
 msgstr "Italienisch"
 
+#: app/components/mdx-editor/bold-italic-underline-toggles.tsx
+msgid "mdx-editor.toolbar.italic"
+msgstr "Kursiv"
+
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.discretization.jenks"
 msgstr "Jenks (Natural Breaks)"
@@ -1073,6 +1142,10 @@ msgstr "Label"
 #: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.label-placeholder"
 msgstr "Label..."
+
+#: app/components/header.tsx
+msgid "controls.language"
+msgstr "Sprache"
 
 #: app/configurator/components/chart-options-selector/show-dots-field.tsx
 msgid "controls.section.dots-size.large"
@@ -1124,6 +1197,10 @@ msgstr "Messung der linken Achse"
 msgid "wmts.legend-title"
 msgstr "Legende"
 
+#: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.legend-for"
+msgstr "Legende: {title}"
+
 #: app/components/footer.tsx
 msgid "footer.button.lindas"
 msgstr "LINDAS Linked Data Dienste"
@@ -1136,6 +1213,18 @@ msgstr "Lineare Interpolation"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.line"
 msgstr "Linien"
+
+#: app/components/mdx-editor/link-dialog-toggle.tsx
+msgid "mdx-editor.toolbar.link"
+msgstr "Link"
+
+#: app/components/mdx-editor/link-dialog.tsx
+msgid "mdx-editor.link-dialog.preview"
+msgstr "Link"
+
+#: app/components/mdx-editor/link-dialog.tsx
+msgid "mdx-editor.link-dialog.label"
+msgstr "Linktext"
 
 #: app/configurator/table/configurator/links-section.tsx
 msgid "controls.section.links"
@@ -1184,6 +1273,7 @@ msgid "time-units.Minute"
 msgstr "Minute"
 
 #: app/configurator/components/chart-options-selector/imputation-field.tsx
+#: app/configurator/components/chart-options-selector/imputation-field.tsx
 msgid "controls.section.imputation"
 msgstr "Fehlende Werte"
 
@@ -1194,6 +1284,16 @@ msgstr "Monat"
 #: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.learnmore"
 msgstr "Mehr zum Datensatz"
+
+#: app/components/chart-selection-tabs.tsx
+#: app/components/chart-shared.tsx
+#: app/components/dashboard-shared.tsx
+msgid "menu.more-actions"
+msgstr "Weitere Aktionen"
+
+#: app/components/info-icon-tooltip.tsx
+msgid "info.more-information"
+msgstr "Weitere Informationen"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.comboLineSingle"
@@ -1328,6 +1428,11 @@ msgstr "Mit dem ausgewählten Datensatz kann keine Visualisierung erstellt werde
 msgid "controls.none"
 msgstr "Keine"
 
+#: app/configurator/components/chart-options-selector/imputation-field.tsx
+#: app/configurator/components/field-i18n.ts
+msgid "controls.imputation.type.none"
+msgstr "Keine"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.calculation.identity"
 msgstr "Normal"
@@ -1344,6 +1449,10 @@ msgstr "Beachten Sie, dass Sie nur Messungen mit der gleichen Einheit kombiniere
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.number.of.classes"
 msgstr "Anzahl Klassen"
+
+#: app/components/mdx-editor/list-toggles.tsx
+msgid "mdx-editor.toolbar.number-list"
+msgstr "Nummerierte Liste"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.block-options"
@@ -1362,8 +1471,8 @@ msgid "controls.color.opacity"
 msgstr "Transparenz"
 
 #: app/configurator/components/chart-controls/color-picker.tsx
-msgid "controls.colorpicker.open"
-msgstr "Farbauswahl öffnen"
+msgid "controls.colorpicker.open-for"
+msgstr "Farbauswahl öffnen: {label}"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.optimize-space"
@@ -1381,9 +1490,21 @@ msgstr "Organisationen"
 msgid "controls.convert-unit.original"
 msgstr "Ursprüngliche Einheit: {0}"
 
+#: app/components/mdx-editor/block-type-menu.tsx
+msgid "mdx-editor.toolbar.paragraph"
+msgstr "Absatz"
+
+#: app/configurator/interactive-filters/time-slider.tsx
+msgid "controls.animation.pause"
+msgstr "Pause"
+
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.pie"
 msgstr "Kreis"
+
+#: app/configurator/interactive-filters/time-slider.tsx
+msgid "controls.animation.play"
+msgstr "Abspielen"
 
 #: app/configurator/components/annotators.tsx
 #: app/configurator/components/annotators.tsx
@@ -1485,8 +1606,20 @@ msgid "publication.embed.iframe.remove-border"
 msgstr "Rand entfernen"
 
 #: app/configurator/components/chart-controls/color-picker.tsx
-msgid "controls.colorpicker.remove"
-msgstr "Farbe entfernen"
+msgid "controls.colorpicker.remove-for"
+msgstr "Farbe entfernen: {label}"
+
+#: app/configurator/components/dataset-control-section.tsx
+msgid "controls.dataset.remove"
+msgstr "Datensatz entfernen: {title}"
+
+#: app/configurator/components/chart-configurator.tsx
+msgid "controls.filters.remove"
+msgstr "Filter entfernen: {label}"
+
+#: app/configurator/components/custom-layers-selector.tsx
+msgid "chart.map.layers.remove"
+msgstr "Ebene entfernen: {title}"
 
 #: app/components/publish-actions.tsx
 msgid "publication.embed.iframe.remove-more-options-button"
@@ -1504,6 +1637,10 @@ msgstr "Umbenennen"
 msgid "profile.chart.rename-dialog.title"
 msgstr "Benennen Sie die Visualisierung um"
 
+#: app/configurator/table/table-chart-sorting-options.tsx
+msgid "controls.table.sorting.reorder"
+msgstr "Neu anordnen: {label}"
+
 #: app/login/components/login-menu.tsx
 msgid "login.profile.bug-report"
 msgstr "Fehler melden"
@@ -1517,8 +1654,13 @@ msgid "controls.color.palette.reset"
 msgstr "Farbpalette zurücksetzen"
 
 #: app/configurator/components/filters.tsx
+#: app/configurator/components/filters.tsx
 msgid "controls.filters.select.reset-colors"
 msgstr "Farben zurücksetzen"
+
+#: app/charts/map/map.tsx
+msgid "chart.map.reset"
+msgstr "Kartenansicht zurücksetzen"
 
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.tableSettings.limitColumnWidths"
@@ -1544,6 +1686,18 @@ msgstr "Rechte Achse (Linie)"
 msgid "controls.chart.combo.y.right-axis-measure"
 msgstr "Messung der rechten Achse"
 
+#: app/configurator/components/color-picker.tsx
+msgid "controls.colorpicker.saturation.value"
+msgstr "Sättigung {saturation} %, Helligkeit {brightness} %"
+
+#: app/configurator/components/color-picker.tsx
+msgid "controls.colorpicker.saturation"
+msgstr "Sättigung und Helligkeit"
+
+#: app/components/mdx-editor/link-dialog.tsx
+msgid "mdx-editor.link-dialog.save"
+msgstr "Speichern"
+
 #: app/login/components/color-palettes/profile-color-palette-content.tsx
 msgid "login.profile.my-color-palettes.description"
 msgstr "Speichern Sie eine benutzerdefinierte Farbpalette, damit Sie Farben für Ihre Visualisierungen einfach auswählen können."
@@ -1556,6 +1710,7 @@ msgstr "Farbpalette speichern"
 msgid "button.save-draft"
 msgstr "Entwurf speichern"
 
+#: app/configurator/components/chart-options-selector/color-component-field.tsx
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.scale.type"
 msgstr "Skalierungstyp"
@@ -1572,8 +1727,16 @@ msgid "dataset.search.label"
 msgstr "Suchen"
 
 #: app/charts/map/wms-wmts-selector.tsx
+msgid "wmts.search-label"
+msgstr "In importierten Karten suchen"
+
+#: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.search-placeholder"
 msgstr "Suche in importierten Karten..."
+
+#: app/charts/table/table.tsx
+msgid "table.search.label"
+msgstr "Tabelle durchsuchen"
 
 #: app/charts/table/table.tsx
 msgid "table.search.placeholder"
@@ -1605,6 +1768,7 @@ msgid "controls.color.palette.select"
 msgstr "Wähle eine Farbpalette"
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
+#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.type"
 msgstr "Wählen Sie einen Farbpalettentyp."
 
@@ -1633,6 +1797,7 @@ msgstr "Wählen Sie eine Dimension aus..."
 msgid "controls.select.measure"
 msgstr "Messwert auswählen"
 
+#: app/configurator/components/chart-options-selector/show-dots-field.tsx
 #: app/configurator/components/chart-options-selector/show-dots-field.tsx
 msgid "controls.section.dots-size"
 msgstr "Wählen Sie eine Grösse"
@@ -1667,6 +1832,7 @@ msgid "controls.dimensionvalue.select"
 msgstr "Filter auswählen"
 
 #: app/configurator/components/chart-options-selector/limits-field.tsx
+#: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values.line-type"
 msgstr "Linientyp auswählen"
 
@@ -1674,6 +1840,7 @@ msgstr "Linientyp auswählen"
 msgid "controls.filter.select.none"
 msgstr "Alle abwählen"
 
+#: app/configurator/components/chart-options-selector/limits-field.tsx
 #: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values.symbol-type"
 msgstr "Symboltyp auswählen"
@@ -1822,6 +1989,10 @@ msgstr "Abmelden"
 msgid "controls.size"
 msgstr "Grösse"
 
+#: app/components/skip-link.tsx
+msgid "skip-link.main-content"
+msgstr "Zum Hauptinhalt springen"
+
 #: app/configurator/components/chart-options-selector/show-dots-field.tsx
 msgid "controls.section.dots-size.small"
 msgstr "Klein"
@@ -1854,6 +2025,11 @@ msgstr "Sortierung"
 #: app/charts/chart-config-ui-options.ts
 msgid "controls.sorting.byTotalSize.disabled-by-animation"
 msgstr "Die Sortierung nach Gesamtgrösse ist während der Animation deaktiviert."
+
+#: app/configurator/components/chart-options-selector/sorting-field.tsx
+#: app/configurator/table/table-chart-sorting-options.tsx
+msgid "controls.sorting.order"
+msgstr "Sortierreihenfolge"
 
 #: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.source"
@@ -1906,6 +2082,7 @@ msgid "controls.section.animation.type.stepped"
 msgstr "Abgestuft"
 
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
+#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.highlight.section.style.title"
 msgstr "Stil"
 
@@ -1954,6 +2131,7 @@ msgid "controls.tableSettings.targetComponentId"
 msgstr "Zielspalte"
 
 #: app/configurator/components/chart-options-selector/limits-field.tsx
+#: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values"
 msgstr "Zielvorgaben und Grenzwerte"
 
@@ -1974,6 +2152,10 @@ msgstr "Schriftfarbe"
 #: app/configurator/components/block-options-selector.tsx
 msgid "controls.section.block-options.block.text"
 msgstr "Text Objekt"
+
+#: app/components/mdx-editor/block-type-menu.tsx
+msgid "mdx-editor.toolbar.block-type"
+msgstr "Textstil"
 
 #: app/configurator/table/table-chart-options.tsx
 msgid "controls.select.columnStyle.textStyle"
@@ -2047,6 +2229,8 @@ msgstr "Titel hinzufügen"
 msgid "controls.section.description"
 msgstr "Titel & Beschreibung"
 
+#: app/charts/shared/brush/index.tsx
+#: app/components/dashboard-interactive-filters.tsx
 #: app/configurator/components/filters.tsx
 #: app/configurator/components/layout-configurator.tsx
 #: app/configurator/components/layout-configurator.tsx
@@ -2073,6 +2257,10 @@ msgstr "Tutorials"
 msgid "login.profile.my-visualizations.chart-type"
 msgstr "Typ"
 
+#: app/components/mdx-editor/bold-italic-underline-toggles.tsx
+msgid "mdx-editor.toolbar.underline"
+msgstr "Unterstrichen"
+
 #: app/configurator/components/add-dataset-drawer/caution-alert.tsx
 msgid "dataset.search.caution.acknowledge"
 msgstr "Verstanden, ich werde vorsichtig vorgehen."
@@ -2096,6 +2284,10 @@ msgstr "Farbpalette aktualisieren"
 #: app/configurator/components/configurator.tsx
 msgid "button.update"
 msgstr "Diese Visualisierung aktualisieren"
+
+#: app/components/mdx-editor/link-dialog.tsx
+msgid "mdx-editor.link-dialog.url"
+msgstr "URL"
 
 #: app/components/mdx-editor/link-dialog.tsx
 msgid "mdx-editor.link-dialog.url-placeholder"
@@ -2214,3 +2406,11 @@ msgstr "Z → A"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.imputation.type.zeros"
 msgstr "Nullen"
+
+#: app/charts/map/map.tsx
+msgid "chart.map.zoom-in"
+msgstr "Vergrössern"
+
+#: app/charts/map/map.tsx
+msgid "chart.map.zoom-out"
+msgstr "Verkleinern"

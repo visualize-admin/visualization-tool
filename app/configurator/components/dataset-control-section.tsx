@@ -86,6 +86,7 @@ const DatasetRow = ({
   const classes = useStyles();
   const [state, dispatch] = useConfiguratorState(isConfiguring);
   const [loading, setLoading] = useState(false);
+  const { title } = cube;
 
   return (
     <MaybeTooltip
@@ -125,12 +126,16 @@ const DatasetRow = ({
           >
             <Trans id="dataset.footnotes.dataset">Dataset</Trans>
           </Button>
-          <Typography variant="body3">{cube.title}</Typography>
+          <Typography variant="body3">{title}</Typography>
         </Flex>
         <div>
           {canRemove ? (
             <IconButton
               disabled={loading}
+              aria-label={t({
+                id: "controls.dataset.remove",
+                message: `Remove dataset: ${title}`,
+              })}
               onClick={async () => {
                 try {
                   const chartConfig = getChartConfig(state);
