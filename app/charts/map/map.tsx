@@ -3,6 +3,7 @@ import {
   ScatterplotLayer,
   ScatterplotLayerProps,
 } from "@deck.gl/layers";
+import { t } from "@lingui/macro";
 import { supported } from "@mapbox/mapbox-gl-supported";
 import { Button, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -566,9 +567,21 @@ export const MapComponent = ({
     <>
       {locked ? null : (
         <div className={classes.controlButtons} {...DISABLE_SCREENSHOT_ATTR}>
-          <ControlButton iconName="refresh" onClick={reset} />
-          <ControlButton iconName="plus" onClick={zoomIn} />
-          <ControlButton iconName="minus" onClick={zoomOut} />
+          <ControlButton
+            iconName="refresh"
+            label={t({ id: "chart.map.reset", message: "Reset map view" })}
+            onClick={reset}
+          />
+          <ControlButton
+            iconName="plus"
+            label={t({ id: "chart.map.zoom-in", message: "Zoom in" })}
+            onClick={zoomIn}
+          />
+          <ControlButton
+            iconName="minus"
+            label={t({ id: "chart.map.zoom-out", message: "Zoom out" })}
+            onClick={zoomOut}
+          />
         </div>
       )}
 
@@ -638,9 +651,11 @@ export const MapComponent = ({
 
 const ControlButton = ({
   iconName,
+  label,
   onClick,
 }: {
   iconName: IconName;
+  label: string;
   onClick: () => void;
 }) => {
   const classes = useStyles();
@@ -649,6 +664,7 @@ const ControlButton = ({
     <Button
       className={classes.controlButton}
       variant="contained"
+      aria-label={label}
       onClick={onClick}
       // The stacked buttons would cover an outside ring.
       sx={{ [FOCUS_VISIBLE]: FOCUS_OUTLINE_INSET }}

@@ -1,8 +1,12 @@
+import { BoxProps } from "@mui/material";
 import { ReactNode } from "react";
 
 import { Flex } from "@/components/flex";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { MAIN_CONTENT_ID, SkipLink } from "@/components/skip-link";
+
+const MAIN_PROPS = { id: MAIN_CONTENT_ID, tabIndex: -1 } satisfies BoxProps;
 
 export const AppLayout = ({
   children,
@@ -15,10 +19,16 @@ export const AppLayout = ({
 }) => {
   return (
     <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
-      {hideHeader ? null : <Header hideLogo={editing} extendTopBar={editing} />}
+      {hideHeader ? null : (
+        <>
+          <SkipLink />
+          <Header hideLogo={editing} extendTopBar={editing} />
+        </>
+      )}
       <Flex
         component="main"
         role="main"
+        {...MAIN_PROPS}
         sx={{ flex: 1, flexDirection: "column" }}
       >
         {children}
@@ -42,10 +52,12 @@ export const ContentLayout = ({
         backgroundColor: "monochrome.100",
       }}
     >
+      <SkipLink />
       <Header contentId={contentId} />
       <Flex
         component="main"
         role="main"
+        {...MAIN_PROPS}
         sx={{
           flexDirection: "column",
           flex: 1,
@@ -74,10 +86,12 @@ export const StaticContentLayout = ({
         backgroundColor: "monochrome.100",
       }}
     >
+      <SkipLink />
       <Header contentId={contentId} />
       <Flex
         component="main"
         role="main"
+        {...MAIN_PROPS}
         sx={{
           flexDirection: "column",
           flex: 1,

@@ -157,6 +157,7 @@ export const DataFilterSelectGeneric = ({
     data?.dataCubesComponents?.dimensions.find(
       (d) => d.cubeIri === rawDimension.cubeIri
     ) ?? rawDimension;
+  const { label } = dimension;
 
   const sharedProps = {
     dimension,
@@ -180,6 +181,10 @@ export const DataFilterSelectGeneric = ({
             <IconButton
               disabled={disabled}
               size="small"
+              aria-label={t({
+                id: "controls.filters.remove",
+                message: `Remove filter: ${label}`,
+              })}
               onClick={onRemove}
               sx={{ p: 0, transform: "translateY(-5%)" }}
             >

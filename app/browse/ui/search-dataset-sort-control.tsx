@@ -47,13 +47,14 @@ export const SearchDatasetSortControl = ({
 
   return (
     <Flex alignItems="center">
-      <label htmlFor="datasetSort">
+      <label id="datasetSort-label" htmlFor="datasetSort">
         <Typography variant="body3">
           <Trans id="dataset.sortby">Sort by</Trans>
         </Typography>
       </label>
       <Select
         id="datasetSort"
+        labelId="datasetSort-label"
         data-testId="datasetSort"
         variant="standard"
         size="sm"
