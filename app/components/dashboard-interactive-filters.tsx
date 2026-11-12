@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import {
   Box,
   BoxProps,
@@ -8,6 +9,7 @@ import {
 } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { makeStyles } from "@mui/styles";
+import { bisectLeft } from "d3-array";
 import uniq from "lodash/uniq";
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 
@@ -213,41 +215,55 @@ const DashboardTimeRangeSlider = ({
 
   const mountedForSomeTime = useTimeout(500, mounted);
   const combinedTemporalDimension = useCombinedTemporalDimension();
-  const sliderRange = useMemo(() => {
-    const { values } = combinedTemporalDimension;
-    const min = values[0]?.value;
-    const max = values[values.length - 1]?.value;
-
-    if (!min || !max) {
-      return;
-    }
-
-    return [
-      toUnixSeconds(parseDate(min as string)),
-      toUnixSeconds(parseDate(max as string)),
-    ];
+  const markValues = useMemo(() => {
+    return combinedTemporalDimension.values.map(({ value }) =>
+      toUnixSeconds(parseDate(value as string))
+    );
   }, [combinedTemporalDimension]);
+  const formatIndex = (index: number) => valueLabelFormat(markValues[index]);
 
-  if (!timeRange || !filter.active || !sliderRange) {
+  if (!timeRange || !filter.active || markValues.length === 0) {
     return null;
   }
 
   return (
     <Slider
       className={classes.slider}
-      onChange={(_ev, value) => handleChangeSlider(value)}
+      onChange={(_ev, value) => {
+        handleChangeSlider(
+          (Array.isArray(value) ? value : [value]).map((i) => markValues[i])
+        );
+      }}
       onChangeCommitted={() => setEnableTransition(true)}
-      valueLabelFormat={valueLabelFormat}
-      step={null}
-      min={sliderRange[0]}
-      max={sliderRange[1]}
+      getAriaLabel={(index) =>
+        index === 0
+          ? t({ id: "controls.filters.select.from", message: "From" })
+          : t({ id: "controls.filters.select.to", message: "To" })
+      }
+      getAriaValueText={formatIndex}
+      valueLabelFormat={formatIndex}
+      step={1}
+      min={0}
+      max={markValues.length - 1}
       valueLabelDisplay={mountedForSomeTime ? "on" : "off"}
-      value={timeRange}
-      marks={combinedTemporalDimension.values.map(({ value }) => ({
-        value: toUnixSeconds(parseDate(value as string)),
-      }))}
+      value={timeRange.map((value) => getClosestIndex(markValues, value))}
+      marks={markValues.map((_, i) => ({ value: i }))}
     />
   );
+};
+
+const getClosestIndex = (values: number[], value: number) => {
+  const i = bisectLeft(values, value);
+
+  if (i === 0) {
+    return 0;
+  }
+
+  if (i === values.length) {
+    return values.length - 1;
+  }
+
+  return value - values[i - 1] < values[i] - value ? i - 1 : i;
 };
 
 const useDataFilterStyles = makeStyles((theme: Theme) => ({
