@@ -11,6 +11,11 @@ You can also check the
 
 ## Next Release
 
+- Fixes
+  - Keyboard focus is now visible on buttons, links, tabs and menu items, the
+    switch has sufficient contrast, and switches and tabs stay visible in
+    forced colors (high contrast) mode
+
 ## 6.5.7 - 2026-11-10
 
 - Fixes

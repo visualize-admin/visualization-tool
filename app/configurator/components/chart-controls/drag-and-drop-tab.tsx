@@ -15,6 +15,7 @@ import {
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { useActiveChartField } from "@/configurator/config-form";
 import { Component, Dimension, Measure } from "@/domain/data";
+import { FOCUS_OUTLINE_INSET, UNCLIP_FOCUS_OUTLINE } from "@/themes/focus";
 
 const useStyles = makeStyles((theme: Theme) => ({
   filterRow: {
@@ -25,9 +26,26 @@ const useStyles = makeStyles((theme: Theme) => ({
     gridColumnGap: theme.spacing(2),
     gridTemplateRows: "min-content min-content",
     gridTemplateAreas: '"description drag-button" "select drag-button"',
+    position: "relative",
+    ...UNCLIP_FOCUS_OUTLINE,
+
+    // The row's children paint over an outline, so the ring is an overlay.
+    "&:focus-visible": {
+      outline: "none",
+
+      "&::after": {
+        content: '""',
+        position: "absolute",
+        inset: 0,
+        zIndex: 1,
+        pointerEvents: "none",
+        ...FOCUS_OUTLINE_INSET,
+      },
+    },
 
     "& > *": {
       overflow: "hidden",
+      ...UNCLIP_FOCUS_OUTLINE,
     },
   },
   dragButtons: {

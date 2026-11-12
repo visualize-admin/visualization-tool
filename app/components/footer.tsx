@@ -1,5 +1,5 @@
 import { t } from "@lingui/macro";
-import { Link, SxProps } from "@mui/material";
+import { SxProps } from "@mui/material";
 import NextLink from "next/link";
 
 import contentRoutes from "@/content-routes.json";
@@ -91,62 +91,44 @@ export const Footer = ({ sx }: { sx?: SxProps }) => {
             message: "Further information",
           })}
         />
-        <Link
+        <FooterSectionButton
           href={`https://lindas.admin.ch/?lang=${locale}`}
           target="_blank"
-          underline="none"
-        >
-          <FooterSectionButton
-            iconName="external"
-            label={t({
-              id: "footer.button.lindas",
-              message: "LINDAS Linked Data Services",
-            })}
-          />
-        </Link>
-        <Link
+          iconName="external"
+          label={t({
+            id: "footer.button.lindas",
+            message: "LINDAS Linked Data Services",
+          })}
+        />
+        <FooterSectionButton
           href={`https://cognizone.atlassian.net/servicedesk/customer/portal/1`}
           target="_blank"
-          underline="none"
-        >
-          <FooterSectionButton
-            iconName="external"
-            label={t({
-              id: "footer.button.service-desk",
-              message: "Service Desk",
-            })}
-          />
-        </Link>
-        <Link
+          iconName="external"
+          label={t({
+            id: "footer.button.service-desk",
+            message: "Service Desk",
+          })}
+        />
+        <FooterSectionButton
           href={`https://www.youtube.com/@visualizetutorials`}
           target="_blank"
-          underline="none"
-        >
-          <FooterSectionButton
-            iconName="external"
-            label={t({
-              id: "footer.tutorials",
-              message: "Tutorials",
-            })}
-          />
-        </Link>
-        <NextLink href="/statistics" passHref legacyBehavior>
-          <Link underline="none">
-            <FooterSectionButton
-              label={t({ id: "footer.statistics", message: "Statistics" })}
-            />
-          </Link>
-        </NextLink>
-        <Link
+          iconName="external"
+          label={t({
+            id: "footer.tutorials",
+            message: "Tutorials",
+          })}
+        />
+        <FooterSectionButton
+          href="/statistics"
+          LinkComponent={NextLink}
+          label={t({ id: "footer.statistics", message: "Statistics" })}
+        />
+        <FooterSectionButton
           href="https://status.lindas.admin.ch/"
           target="_blank"
-          underline="none"
-        >
-          <FooterSectionButton
-            iconName="external"
-            label={t({ id: "footer.status", message: "Status" })}
-          />
-        </Link>
+          iconName="external"
+          label={t({ id: "footer.status", message: "Status" })}
+        />
       </FooterSection>
     </SwissFederalCiFooter>
   );
