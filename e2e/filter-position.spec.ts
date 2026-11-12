@@ -12,7 +12,9 @@ test("Filters should be sorted by position", async ({ selectors, actions }) => {
 
   await actions.editor.selectActiveField("Segmentation");
 
-  const selectorLocator = selectors.panels.drawer().getByRole("combobox", { name: "None" });
+  const selectorLocator = selectors.panels
+    .drawer()
+    .getByRole("combobox", { name: "None" });
   await selectorLocator.click();
 
   await actions.mui.selectOption("Status IUCN");
@@ -28,7 +30,7 @@ test("Filters should be sorted by position", async ({ selectors, actions }) => {
 
   const rawTexts = await filtersValueLocator.allTextContents();
   const texts = rawTexts.map((x) =>
-    x.replace("Open Color Picker", "").replace("Show value", "")
+    x.replace(/(Show value|Open color picker):.*/, "")
   );
   expect(texts).toEqual([
     "Data deficient",

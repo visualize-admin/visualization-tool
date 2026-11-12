@@ -238,7 +238,11 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
         ]}
       </Select>
       {type && (
-        <ConfiguratorDrawer open={!!anchorEl} hideBackdrop>
+        <ConfiguratorDrawer
+          open={!!anchorEl}
+          hideBackdrop
+          onClose={() => handleCloseCreateColorPalette()}
+        >
           <ColorPaletteDrawerContent
             onClose={(palette) => handleCloseCreateColorPalette(palette)}
             type={type}

@@ -9,6 +9,7 @@ import {
   quotePlugin,
   thematicBreakPlugin,
   toolbarPlugin,
+  Translation,
 } from "@mdxeditor/editor";
 import {
   Box,
@@ -64,6 +65,8 @@ import { linkDialogPlugin } from "@/components/mdx-editor/link-dialog";
 import { LinkDialogToggle } from "@/components/mdx-editor/link-dialog-toggle";
 import { ListToggles } from "@/components/mdx-editor/list-toggles";
 import { maxLengthPlugin } from "@/components/mdx-editor/max-length-plugin";
+import { tabNavigationPlugin } from "@/components/mdx-editor/tab-navigation-plugin";
+import { ToolbarButtons } from "@/components/mdx-editor/toolbar-buttons";
 import { VisuallyHidden } from "@/components/visually-hidden";
 import {
   FieldProps,
@@ -105,23 +108,41 @@ export const FormControlLabel = (
 };
 
 export const Label = ({
+  id,
   htmlFor,
   children,
   sx,
 }: {
-  htmlFor: string;
+  id?: string;
+  htmlFor?: string;
   children: ReactNode;
   sx?: TypographyProps["sx"];
 }) => {
   return (
-    <Typography variant="caption" component="label" htmlFor={htmlFor} sx={sx}>
+    <Typography
+      variant="caption"
+      component="label"
+      id={id}
+      htmlFor={htmlFor}
+      sx={sx}
+    >
       {children}
     </Typography>
   );
 };
 
-export const RadioGroup = ({ children }: { children: ReactNode }) => {
-  return <Flex sx={{ gap: 6, wrap: "wrap" }}>{children}</Flex>;
+export const RadioGroup = ({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) => {
+  return (
+    <Flex role="radiogroup" aria-label={label} sx={{ gap: 6, wrap: "wrap" }}>
+      {children}
+    </Flex>
+  );
 };
 
 export const Radio = ({
@@ -299,6 +320,7 @@ export type SelectOptionGroup = [OptionGroupKey, SelectOption[]];
 export const Select = ({
   label,
   id,
+  labelId,
   variant,
   size = "md",
   value,
@@ -350,7 +372,7 @@ export const Select = ({
     <Box ref={ref} sx={{ width: "100%", ...sx }}>
       {label && (
         <Label
-          htmlFor={id}
+          id={`${id}-label`}
           sx={{ display: "flex", alignItems: "center", mb: 1 }}
         >
           {label}
@@ -368,6 +390,7 @@ export const Select = ({
           size={size}
           id={id}
           name={id}
+          labelId={labelId ?? (label ? `${id}-label` : undefined)}
           onChange={onChange}
           value={value}
           defaultValue={defaultValue}
@@ -527,6 +550,7 @@ export const DisabledMessageIcon = (props: DisabledMessageIconProps) => {
 export const Input = ({
   type,
   label,
+  "aria-label": ariaLabel,
   name,
   value,
   defaultValue,
@@ -541,6 +565,7 @@ export const Input = ({
   sx,
 }: {
   label?: string | ReactNode;
+  "aria-label"?: string;
   disabled?: boolean;
   defaultValue?: FieldProps["value"];
   endAdornment?: ReactNode;
@@ -550,47 +575,56 @@ export const Input = ({
   error?: boolean;
   errorMessage?: string;
   sx?: SxProps;
-} & FieldProps) => (
-  <Box sx={{ fontSize: "1rem", pb: 2 }}>
-    {label && name && <Label htmlFor={name}>{label}</Label>}
-    <MUIInput
-      type={type}
-      id={name}
-      size="sm"
-      color="secondary"
-      name={name}
-      value={value}
-      defaultValue={defaultValue}
-      disabled={disabled}
-      onBlur={onBlur}
-      onChange={onChange}
-      onKeyDown={onKeyDown}
-      placeholder={placeholder}
-      endAdornment={endAdornment}
-      sx={error ? { ...sx, borderColor: "error.main" } : sx}
-    />
-    {error && errorMessage ? (
+} & FieldProps) => {
+  const errorId = name ? `${name}-error` : undefined;
+  const showErrorMessage = !!(error && errorMessage);
+
+  return (
+    <Box sx={{ fontSize: "1rem", pb: 2 }}>
+      {label && name && <Label htmlFor={name}>{label}</Label>}
+      <MUIInput
+        type={type}
+        id={name}
+        size="sm"
+        color="secondary"
+        name={name}
+        value={value}
+        defaultValue={defaultValue}
+        disabled={disabled}
+        onBlur={onBlur}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        placeholder={placeholder}
+        endAdornment={endAdornment}
+        inputProps={{
+          "aria-label": ariaLabel,
+          "aria-invalid": error || undefined,
+          "aria-describedby": showErrorMessage ? errorId : undefined,
+        }}
+        sx={error ? { ...sx, borderColor: "error.main" } : sx}
+      />
       <Typography
+        id={errorId}
         variant="caption"
         color="error.main"
+        aria-live="polite"
         sx={{ lineHeight: "1 !important" }}
       >
-        {errorMessage}
+        {showErrorMessage ? errorMessage : null}
       </Typography>
-    ) : null}
-  </Box>
-);
+    </Box>
+  );
+};
 
 export const MarkdownInput = ({
   label,
-  name,
   value,
   onChange,
   disablePlugins,
   disableToolbar,
   characterLimit,
 }: {
-  label?: string | ReactNode;
+  label?: string;
   characterLimit?: number;
   disablePlugins?: {
     headings?: boolean;
@@ -605,6 +639,7 @@ export const MarkdownInput = ({
   const classes = useMarkdownInputStyles();
   const [characterLimitReached, setCharacterLimitReached] = useState(false);
   const { headings: disableHeadings } = disablePlugins ?? {};
+  const translation = useMemo(() => getEditorTranslation(label), [label]);
 
   const handleMaxLengthReached = useEvent(
     ({ reachedMaxLength }: { reachedMaxLength: boolean }) => {
@@ -620,12 +655,13 @@ export const MarkdownInput = ({
           disableHeadings && classes.withoutHeadings
         )}
         markdown={value ? `${value}` : ""}
+        translation={translation}
         plugins={[
           toolbarPlugin({
             toolbarClassName: classes.toolbar,
             toolbarContents: () => (
               <div>
-                <Flex gap={2}>
+                <ToolbarButtons>
                   {disableToolbar?.textStyles ? null : (
                     <BoldItalicUnderlineToggles />
                   )}
@@ -642,8 +678,8 @@ export const MarkdownInput = ({
                       <LinkDialogToggle />
                     </>
                   )}
-                </Flex>
-                {label && name ? <Label htmlFor={name}>{label}</Label> : null}
+                </ToolbarButtons>
+                {label ? <Label>{label}</Label> : null}
               </div>
             ),
           }),
@@ -651,6 +687,7 @@ export const MarkdownInput = ({
           listsPlugin(),
           linkPlugin(),
           linkDialogPlugin(),
+          tabNavigationPlugin(),
           quotePlugin(),
           markdownShortcutPlugin(),
           thematicBreakPlugin(),
@@ -687,6 +724,19 @@ export const MarkdownInput = ({
   );
 };
 
+const getEditorTranslation = (label?: string): Translation => {
+  return (key, defaultValue, interpolations = {}) => {
+    if (key === "contentArea.editableMarkdown" && label) {
+      return label;
+    }
+
+    return Object.entries(interpolations).reduce(
+      (value, [k, v]) => value.replaceAll(`{{${k}}}`, String(v)),
+      defaultValue
+    );
+  };
+};
+
 const useMarkdownInputStyles = makeStyles<Theme>((theme) => ({
   root: {
     "& [data-lexical-editor='true']": {
@@ -696,6 +746,11 @@ const useMarkdownInputStyles = makeStyles<Theme>((theme) => ({
 
       "&:focus": {
         border: `1px solid ${theme.palette.monochrome[500]}`,
+      },
+
+      "&:focus-visible": {
+        outline: `2px solid var(--focus-outline-color, ${theme.palette.primary.main})`,
+        outlineOffset: 2,
       },
 
       "& *": {

@@ -1,4 +1,5 @@
 import { $createHeadingNode } from "@lexical/rich-text";
+import { t } from "@lingui/macro";
 import {
   activePlugins$,
   allowedHeadingLevels$,
@@ -57,7 +58,7 @@ export const BlockTypeMenu = () => {
   type Item = { label: string | JSX.Element; value: BlockType };
   const items: Item[] = [
     {
-      label: "Paragraph",
+      label: t({ id: "mdx-editor.toolbar.paragraph", message: "Paragraph" }),
       value: "paragraph",
     },
   ];
@@ -69,7 +70,10 @@ export const BlockTypeMenu = () => {
       ...allowedHeadingLevels.map(
         (n) =>
           ({
-            label: `Heading ${n}`,
+            label: t({
+              id: "mdx-editor.toolbar.heading",
+              message: `Heading ${n}`,
+            }),
             value: `h${n}`,
           }) as const
       )
@@ -79,6 +83,12 @@ export const BlockTypeMenu = () => {
   return (
     <>
       <ToolbarIconButton
+        label={t({
+          id: "mdx-editor.toolbar.block-type",
+          message: "Text style",
+        })}
+        aria-haspopup="menu"
+        aria-expanded={!!anchor}
         onClick={(e) => {
           setAnchor(e.currentTarget);
         }}

@@ -306,6 +306,7 @@ const ColorSelectionRow = (props: ColorSelectionRowProps) => {
             <DisabledMessageIcon message={getContrastWarning()} />
           )}
           <ColorPickerMenu
+            label={color}
             colorId={id}
             colors={colorValues}
             selectedHexColor={color}
