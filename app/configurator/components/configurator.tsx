@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { enqueueSnackbar } from "notistack";
 import {
+  forwardRef,
   PropsWithChildren,
   ReactNode,
   useCallback,
@@ -96,14 +97,13 @@ import { replaceLinks } from "@/utils/ui-strings";
 import { useEvent } from "@/utils/use-event";
 import { useMutate } from "@/utils/use-fetch-data";
 
-export const BackButton = ({
-  size = "xs",
-  children,
-  onClick,
-  ...props
-}: { children: ReactNode } & ButtonProps) => {
+export const BackButton = forwardRef<
+  HTMLButtonElement,
+  { children: ReactNode } & ButtonProps
+>(({ size = "xs", children, onClick, ...props }, ref) => {
   return (
     <Button
+      ref={ref}
       variant="outlined"
       size={size}
       startIcon={<Icon name="arrowLeft" size={20} />}
@@ -113,7 +113,7 @@ export const BackButton = ({
       {children}
     </Button>
   );
-};
+});
 
 export const isAnnotatorField = (
   field: string | undefined
