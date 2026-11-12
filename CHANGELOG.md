@@ -19,6 +19,8 @@ You can also check the
     text editor work with the keyboard
   - Icon-only buttons and form controls have names, and every page has a "Skip
     to main content" link
+  - The metadata panel is an accessible "Details" dialog that works with the
+    keyboard
 
 ## 6.5.7 - 2026-11-10
 
