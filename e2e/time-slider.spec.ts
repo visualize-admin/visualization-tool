@@ -26,6 +26,30 @@ test("is should be possible to use time slider", async ({
   expect(thumbX1).toBeLessThan(thumbX0);
 });
 
+test("time slider steps through values with the keyboard", async ({
+  page,
+  selectors,
+}) => {
+  const key = "time-slider-keyboard";
+  await loadChartInLocalStorage(page, key, CONFIGURATOR_STATE);
+  await page.goto(`/en/create/${key}`);
+  await selectors.chart.loaded();
+
+  const slider = page.getByRole("slider", { name: "Jahr der Vergütung" });
+  await slider.focus();
+  await expect(slider).toHaveAttribute("aria-valuetext", "2023");
+
+  await page.keyboard.press("ArrowLeft");
+  await expect(slider).toHaveAttribute("aria-valuetext", "2022");
+
+  await page.keyboard.press("Home");
+  await expect(slider).toHaveAttribute("aria-valuetext", "2014");
+
+  await page.keyboard.press("End");
+  await expect(slider).toHaveAttribute("aria-valuetext", "2023");
+  await expect(page.getByRole("button", { name: "Play" })).toBeVisible();
+});
+
 const CONFIGURATOR_STATE = {
   version: "4.4.0",
   state: "CONFIGURING_CHART",
