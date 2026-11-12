@@ -1,6 +1,7 @@
 import { Box, Breakpoint, SxProps, Typography } from "@mui/material";
 import { Children, PropsWithChildren } from "react";
 
+import { FOCUS_OUTLINE_ON_DARK_SURFACE } from "@/federal-ci/components/common";
 import { ContentWrapper } from "@/federal-ci/components/content-wrapper";
 import { FooterSectionLink } from "@/federal-ci/components/footer-section-link";
 import { b, c, t } from "@/federal-ci/theme";
@@ -8,6 +9,8 @@ import { makeStyles } from "@/federal-ci/utils/make-styles";
 
 const useStyles = makeStyles<{ nCols: number | "auto" }>()(
   ({ breakpoints: b, spacing: s }, { nCols }) => ({
+    root: FOCUS_OUTLINE_ON_DARK_SURFACE,
+
     top: {
       paddingTop: s(10),
       paddingBottom: s(10),
@@ -73,7 +76,7 @@ export const Footer = (props: FooterProps) => {
   const { classes } = useStyles({ nCols });
 
   return (
-    <Box component="footer">
+    <Box component="footer" className={classes.root}>
       <Box className={classes.top}>
         <ContentWrapper sx={ContentWrapperProps?.sx}>
           <Box className={classes.topColumns}>{children}</Box>

@@ -42,7 +42,7 @@ export const SearchDatasetSortControl = ({
   }, [disableScore]);
 
   return (
-    <Flex alignItems="center">
+    <Flex alignItems="center" gap={2}>
       <label htmlFor="datasetSort">
         <Typography variant="body3">
           <Trans id="dataset.sortby">Sort by</Trans>

@@ -1,5 +1,5 @@
 import { FooterSectionText } from "@/federal-ci/components/footer-section-text";
-import { Button } from "@/federal-ci/foundations";
+import { Button, ButtonProps } from "@/federal-ci/foundations";
 import { ArrowRightIcon, DownloadIcon, ExternalIcon } from "@/federal-ci/icons";
 import { c, s } from "@/federal-ci/theme";
 
@@ -8,15 +8,26 @@ type FooterSectionButtonProps = {
   disabled?: boolean;
   onClick?: () => void;
   iconName?: "arrow-right" | "download" | "external";
-};
+} & Partial<Pick<ButtonProps, "href" | "target" | "LinkComponent">>;
 
 export const FooterSectionButton = (props: FooterSectionButtonProps) => {
-  const { label, disabled, onClick, iconName = "arrow-right" } = props;
+  const {
+    label,
+    disabled,
+    onClick,
+    iconName = "arrow-right",
+    href,
+    target,
+    LinkComponent,
+  } = props;
 
   return (
     <Button
       disabled={disabled}
       onClick={onClick}
+      href={href}
+      target={target}
+      LinkComponent={LinkComponent}
       sx={{
         justifyContent: "space-between",
         width: "100%",
@@ -32,6 +43,10 @@ export const FooterSectionButton = (props: FooterSectionButtonProps) => {
 
         "& *": {
           color: disabled ? c.cobalt[300] : c.monochrome[50],
+        },
+
+        "@media (forced-colors: active)": {
+          "& svg, & svg *": { color: "inherit" },
         },
       }}
     >

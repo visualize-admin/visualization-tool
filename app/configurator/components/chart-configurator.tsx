@@ -107,6 +107,7 @@ import {
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 import { InteractiveFiltersChartProvider } from "@/stores/interactive-filters";
+import { UNCLIP_FOCUS_OUTLINE } from "@/themes/focus";
 import { useEvent } from "@/utils/use-event";
 
 export const DataFilterSelectGeneric = ({
@@ -574,9 +575,11 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
     overflow: "hidden",
     width: "100%",
     marginBottom: theme.spacing(5),
+    ...UNCLIP_FOCUS_OUTLINE,
 
     "& > *": {
       overflow: "hidden",
+      ...UNCLIP_FOCUS_OUTLINE,
     },
 
     "&:last-child": {

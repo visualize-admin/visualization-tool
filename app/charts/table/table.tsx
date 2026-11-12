@@ -26,6 +26,10 @@ import { Flex } from "@/components/flex";
 import { Input, Switch } from "@/components/form";
 import { Observation } from "@/domain/data";
 import { Icon } from "@/icons";
+import {
+  FOCUS_OUTLINE_INSET,
+  FOCUS_VISIBLE_WITHIN_FIELD,
+} from "@/themes/focus";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
 
 const MOBILE_VIEW_THRESHOLD = 384;
@@ -312,6 +316,8 @@ export const Table = () => {
               message: "Search...",
             })}
             endAdornment={<Icon name="search" />}
+            // The chart container scrolls and would clip an outside ring.
+            sx={{ [FOCUS_VISIBLE_WITHIN_FIELD]: FOCUS_OUTLINE_INSET }}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.currentTarget.value)}
           />

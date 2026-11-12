@@ -671,7 +671,8 @@ const LayoutingStep = () => {
           top: centerLayout ? LAYOUT_HEADER_HEIGHT : 0,
           width: DRAWER_WIDTH,
           height: "100%",
-          transition: "left 0.3s",
+          visibility: centerLayout ? "hidden" : "visible",
+          transition: "left 0.3s, visibility 0.3s",
         }}
       >
         <LayoutConfigurator />

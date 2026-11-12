@@ -6,6 +6,7 @@ import {
   PopoverPosition,
   Skeleton,
   styled,
+  SxProps,
   Table,
   TableBody,
   TableCell,
@@ -14,6 +15,7 @@ import {
   tableHeadClasses,
   TableRow,
   tableRowClasses,
+  Theme,
   Typography,
 } from "@mui/material";
 import { PUBLISHED_STATE } from "@prisma/client";
@@ -47,6 +49,12 @@ import { useMutate } from "@/utils/use-fetch-data";
 
 const PREVIEW_LIMIT = 3;
 const POPOVER_PADDING = 8;
+
+const CELL_LINK_SX = {
+  display: "inline-block",
+  maxWidth: "100%",
+  verticalAlign: "top",
+} satisfies SxProps<Theme>;
 
 export const SectionContent = ({
   children,
@@ -368,7 +376,7 @@ const ProfileVisualizationsRow = ({
           passHref
           legacyBehavior
         >
-          <Link>
+          <Link sx={CELL_LINK_SX}>
             <OverflowTooltip
               arrow
               title={<Markdown>{chartTitle}</Markdown>}
@@ -392,7 +400,7 @@ const ProfileVisualizationsRow = ({
             passHref
             legacyBehavior
           >
-            <Link>
+            <Link sx={CELL_LINK_SX}>
               <OverflowTooltip
                 arrow
                 title={data?.dataCubesMetadata[0]?.title ?? ""}

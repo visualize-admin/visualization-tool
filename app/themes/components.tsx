@@ -9,9 +9,26 @@ import {
   RadioCheckedIcon,
   RadioIcon,
 } from "@/themes/custom-icons";
+import {
+  FOCUS_OUTLINE,
+  FOCUS_OUTLINE_INSET,
+  FOCUS_OUTLINE_ON_FILL_CLASS_NAME,
+  FOCUS_OUTLINE_ROOM,
+  FOCUS_VISIBLE,
+  FOCUS_VISIBLE_WITHIN_FIELD,
+  FORCED_COLORS_SELECTED,
+  INSET_FOCUS_OUTLINE_CLASS_NAME,
+  INSET_FOCUS_ROLE_SELECTOR,
+} from "@/themes/focus";
 import { palette } from "@/themes/palette";
 import { shadows } from "@/themes/shadows";
 import { typography } from "@/themes/typography";
+
+export const SWITCH_COLORS = {
+  unchecked: palette.monochrome[500],
+  checkedThumb: "#fff",
+  checkedTrack: palette.monochrome[800],
+};
 
 export const components: Components = {
   MuiAccordion: {
@@ -42,6 +59,8 @@ export const components: Components = {
       root: {
         alignItems: "center",
         padding: 0,
+
+        [FOCUS_VISIBLE]: FOCUS_OUTLINE_INSET,
       },
     },
   },
@@ -86,6 +105,7 @@ export const components: Components = {
       message: {
         width: "100%",
         padding: 0,
+        overflow: "visible",
         ...typography.body3,
       },
       icon: {
@@ -245,6 +265,12 @@ export const components: Components = {
       root: {
         textTransform: "none !important",
 
+        [FOCUS_VISIBLE]: FOCUS_OUTLINE,
+
+        [`&:is(${INSET_FOCUS_ROLE_SELECTOR})`]: {
+          [FOCUS_VISIBLE]: FOCUS_OUTLINE_INSET,
+        },
+
         "& .MuiButton-startIcon": {
           marginRight: 4,
         },
@@ -323,6 +349,10 @@ export const components: Components = {
                 backgroundColor: color[400],
                 color: "#fff",
 
+                "@media (forced-colors: active)": {
+                  border: "1px solid ButtonText",
+                },
+
                 "&:hover": {
                   backgroundColor: color[600],
                 },
@@ -341,6 +371,20 @@ export const components: Components = {
               return {
                 color: color[700],
                 padding: 0,
+
+                "& .MuiButton-startIcon": {
+                  marginLeft: 0,
+                },
+
+                "& .MuiButton-endIcon": {
+                  marginRight: 0,
+                },
+
+                ...(ownerState.startIcon && { marginLeft: -4 }),
+                ...(ownerState.endIcon && { marginRight: -4 }),
+                ...(ownerState.fullWidth && {
+                  [FOCUS_VISIBLE]: FOCUS_OUTLINE_INSET,
+                }),
 
                 "&:hover": {
                   backgroundColor: "transparent",
@@ -461,6 +505,8 @@ export const components: Components = {
         "&.Mui-focused": {
           border: `1px solid ${palette.monochrome[500]}`,
         },
+
+        [FOCUS_VISIBLE_WITHIN_FIELD]: FOCUS_OUTLINE,
 
         "& fieldset": {
           display: "none",
@@ -731,7 +777,7 @@ export const components: Components = {
               };
             case "standard": {
               return {
-                padding: "4px 24px 4px 4px !important",
+                padding: "4px 28px 4px 4px !important",
 
                 "&:hover, &[aria-expanded='true']": {
                   backgroundColor: palette.cobalt[50],
@@ -756,7 +802,7 @@ export const components: Components = {
 
         return {
           top: "calc(50% - 12px)",
-          right: variant === "standard" ? 0 : 14,
+          right: variant === "standard" ? FOCUS_OUTLINE_ROOM : 14,
           color: "inherit !important",
           transition: "color 0.2s ease, transform 0.2s ease !important",
         };
@@ -801,6 +847,8 @@ export const components: Components = {
           boxShadow: "none",
         },
 
+        [FOCUS_VISIBLE]: FOCUS_OUTLINE,
+
         "&::before": {
           display: "none",
         },
@@ -839,22 +887,82 @@ export const components: Components = {
         width: 32,
         height: 16,
         padding: 0,
+        borderRadius: 12,
 
         "&:hover": {
           "& .MuiSwitch-switchBase": {
             backgroundColor: "transparent",
           },
         },
+
+        "&:has(:focus-visible)": FOCUS_OUTLINE,
       },
       switchBase: {
         padding: 2,
 
+        [FOCUS_VISIBLE]: {
+          outline: "none",
+        },
+
         "&.Mui-checked": {
           transform: "translateX(16px)",
 
+          "& .MuiSwitch-thumb": {
+            backgroundColor: SWITCH_COLORS.checkedThumb,
+          },
+
           "& + .MuiSwitch-track": {
-            backgroundColor: palette.monochrome[800],
+            borderColor: SWITCH_COLORS.checkedTrack,
+            backgroundColor: SWITCH_COLORS.checkedTrack,
             opacity: 1,
+          },
+        },
+
+        "&.Mui-disabled": {
+          "& .MuiSwitch-thumb": {
+            opacity: 0.4,
+          },
+
+          "& + .MuiSwitch-track": {
+            opacity: 0.4,
+          },
+        },
+
+        // Declared last so it wins over the state rules above.
+        "@media (forced-colors: active)": {
+          "& .MuiSwitch-thumb": {
+            forcedColorAdjust: "none",
+            backgroundColor: "ButtonText",
+          },
+
+          "& + .MuiSwitch-track": {
+            borderColor: "ButtonText",
+          },
+
+          "&.Mui-checked .MuiSwitch-thumb": {
+            backgroundColor: "HighlightText",
+          },
+
+          "&.Mui-checked + .MuiSwitch-track": {
+            forcedColorAdjust: "none",
+            borderColor: "Highlight",
+            backgroundColor: "Highlight",
+          },
+
+          "&.Mui-disabled .MuiSwitch-thumb": {
+            backgroundColor: "GrayText",
+          },
+
+          "&.Mui-disabled + .MuiSwitch-track": {
+            borderColor: "GrayText",
+          },
+
+          "&.Mui-checked.Mui-disabled + .MuiSwitch-track": {
+            backgroundColor: "GrayText",
+          },
+
+          "&.Mui-checked.Mui-disabled .MuiSwitch-thumb": {
+            backgroundColor: "Canvas",
           },
         },
       },
@@ -862,12 +970,15 @@ export const components: Components = {
         width: 12,
         height: 12,
         padding: 0,
-        backgroundColor: "white",
-        boxShadow: shadows[2],
+        backgroundColor: SWITCH_COLORS.unchecked,
+        boxShadow: "none",
       },
       track: {
+        boxSizing: "border-box",
         borderRadius: 12,
-        backgroundColor: palette.monochrome[300],
+        border: `1px solid ${SWITCH_COLORS.unchecked}`,
+        backgroundColor: "transparent",
+        opacity: 1,
       },
     },
   },
@@ -875,6 +986,22 @@ export const components: Components = {
     styleOverrides: {
       indicator: {
         backgroundColor: palette.red[600],
+
+        "@media (forced-colors: active)": {
+          forcedColorAdjust: "none",
+          backgroundColor: "Highlight",
+        },
+      },
+    },
+  },
+  MuiToggleButton: {
+    styleOverrides: {
+      root: {
+        [FOCUS_VISIBLE]: FOCUS_OUTLINE_INSET,
+
+        "@media (forced-colors: active)": {
+          "&.Mui-selected, &.Mui-selected:hover": FORCED_COLORS_SELECTED,
+        },
       },
     },
   },
@@ -883,9 +1010,24 @@ export const components: Components = {
       root: {
         color: palette.text.primary,
 
+        [FOCUS_VISIBLE]: FOCUS_OUTLINE_INSET,
+
         "&.Mui-selected": {
           color: palette.text.primary,
         },
+      },
+    },
+  },
+  MuiTableSortLabel: {
+    defaultProps: {
+      onFocus: (e) =>
+        e.currentTarget.scrollIntoView({ block: "nearest", inline: "nearest" }),
+    },
+    styleOverrides: {
+      root: {
+        paddingLeft: FOCUS_OUTLINE_ROOM,
+        marginLeft: -FOCUS_OUTLINE_ROOM,
+        [FOCUS_VISIBLE]: FOCUS_OUTLINE_INSET,
       },
     },
   },
@@ -1006,6 +1148,12 @@ export const components: Components = {
         flexGrow: 1,
         padding: "4px 0",
         userSelect: "none",
+
+        "&:focus-visible": {
+          outline: "none",
+
+          "& .MuiTreeItem-content.Mui-focused": FOCUS_OUTLINE_INSET,
+        },
       },
     },
   },
@@ -1049,6 +1197,60 @@ export const components: Components = {
 
         fieldset {
           border: none;
+        }
+
+        /* :where() keeps specificity at zero so component styles win. */
+        :where(a, button, summary, [tabindex]:not([tabindex="-1"]), [contenteditable="true"], [role="region"]):focus-visible {
+          outline: ${FOCUS_OUTLINE.outline};
+          outline-offset: ${FOCUS_OUTLINE.outlineOffset}px;
+        }
+
+        :where(${INSET_FOCUS_ROLE_SELECTOR}, [contenteditable="true"]):focus-visible {
+          outline-offset: ${FOCUS_OUTLINE_INSET.outlineOffset}px;
+        }
+
+        svg:has(foreignObject :focus-visible),
+        foreignObject:has(:focus-visible) {
+          overflow: visible;
+        }
+
+        foreignObject.${INSET_FOCUS_OUTLINE_CLASS_NAME} :focus-visible {
+          outline-offset: -2px;
+        }
+
+        foreignObject.${FOCUS_OUTLINE_ON_FILL_CLASS_NAME} :focus-visible > span {
+          box-shadow: inset 0 0 0 4px #fff;
+        }
+
+        .PrivatePickersYear-yearButton:focus-visible,
+        .MuiPickersDay-root:focus-visible {
+          outline: ${FOCUS_OUTLINE.outline};
+          outline-offset: 1px;
+        }
+
+        @media (forced-colors: active) {
+          .PrivatePickersYear-yearButton.Mui-selected,
+          .MuiPickersDay-root.Mui-selected {
+            forced-color-adjust: none;
+            background-color: Highlight;
+            color: HighlightText;
+          }
+        }
+
+        /* Overrides the outline: none set by the rich text editor library. */
+        .mdxeditor [contenteditable="true"]:focus-visible {
+          outline: ${FOCUS_OUTLINE.outline};
+          outline-offset: ${FOCUS_OUTLINE_INSET.outlineOffset}px;
+        }
+
+        /* !important overrides the inline outline: none set by the map library. */
+        .maplibregl-canvas:focus-visible {
+          outline: ${FOCUS_OUTLINE.outline} !important;
+          outline-offset: -2px;
+        }
+
+        :focus-visible {
+          scroll-margin: 8px;
         }
   
         @font-face {

@@ -87,6 +87,7 @@ import { useTimeFormatLocale } from "@/formatters";
 import { Locale } from "@/locales/locales";
 import { useLocale } from "@/locales/use-locale";
 import { ColorItem, getPalette } from "@/palettes";
+import { UNCLIP_FOCUS_OUTLINE } from "@/themes/focus";
 import { assert } from "@/utils/assert";
 import { hierarchyToOptions } from "@/utils/hierarchy";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
@@ -110,6 +111,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
     WebkitBoxOrient: "vertical",
     WebkitLineClamp: 2,
     overflow: "hidden",
+    ...UNCLIP_FOCUS_OUTLINE,
   },
   loadingIndicator: {
     display: "inline-block",

@@ -84,7 +84,7 @@ const AnnotatorOptions = ({
       id={`annotator-panel-${activeField}`}
       aria-labelledby={`annotator-tab-${activeField}`}
       tabIndex={-1}
-      sx={{ overflowX: "hidden", overflowY: "auto" }}
+      sx={{ overflowX: "hidden", overflowY: "auto", outline: "none" }}
     >
       <ControlSection hideTopBorder>
         <SectionTitle closable>{getFieldLabel(activeField)}</SectionTitle>
