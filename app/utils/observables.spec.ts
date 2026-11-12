@@ -49,6 +49,22 @@ describe("Timeline", () => {
     expect(timeline.domain).toEqual(values.map((d) => (d - min) / (max - min)));
   });
 
+  it("should set the value by index", () => {
+    timeline.setIndex(3);
+
+    expect(timeline.value).toEqual(500);
+    expect(timeline.position).toEqual(3);
+    expect(timeline.formattedValue).toEqual("500ms");
+  });
+
+  it("should interpolate the position between values", () => {
+    timeline.setProgress(0.375);
+
+    expect(timeline.position).toBeGreaterThan(2);
+    expect(timeline.position).toBeLessThan(3);
+    expect(timeline.length).toEqual(values.length);
+  });
+
   it("should set formatted extent", () => {
     expect(timeline.formattedExtent).toEqual([
       formatValue(min),

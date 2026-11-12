@@ -1,5 +1,5 @@
+import { t } from "@lingui/macro";
 import { useEventCallback } from "@mui/material";
-import { bisector } from "d3-array";
 import { BrushSelection, brushX } from "d3-brush";
 import { pointer, pointers, select, Selection } from "d3-selection";
 import { Transition } from "d3-transition";
@@ -17,11 +17,7 @@ import type {
 import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { DashboardTimeRangeFilter } from "@/configurator";
-import {
-  Observation,
-  TemporalDimension,
-  TemporalEntityDimension,
-} from "@/domain/data";
+import { TemporalDimension, TemporalEntityDimension } from "@/domain/data";
 import { useTimeFormatUnit } from "@/formatters";
 import {
   useChartInteractiveFilters,
@@ -221,67 +217,36 @@ export const BrushTime = ({ yOffset }: { yOffset?: number }) => {
       }
     });
 
-  /** Keyboard support */
-  const moveBrushOnKeyPress = useCallback(
-    (event: $FixMe, handleDirection: "w" | "e") => {
-      if (from && to) {
-        updateBrushEndedStatus(false);
+  const dates = useMemo(() => {
+    return Array.from(new Set(fullData.map((d) => getDate(d).getTime())))
+      .sort((a, b) => a - b)
+      .map((d) => new Date(d));
+  }, [fullData, getDate]);
 
-        const bisectDateLeft = bisector(
-          (ds: Observation, date: Date) =>
-            getDate(ds).getTime() - date.getTime()
-        ).left;
-        const bisectDateRight = bisector(
-          (ds: Observation, date: Date) =>
-            getDate(ds).getTime() - date.getTime()
-        ).right;
+  const moveBrushOnKeyDown = useEventCallback(
+    (event: KeyboardEvent, handle: "w" | "e") => {
+      const fromIndex = getDateIndex(dates, closestFrom);
+      const toIndex = getDateIndex(dates, closestTo);
+      const [min, max, index] =
+        handle === "w"
+          ? [0, toIndex - 1, fromIndex]
+          : [fromIndex + 1, dates.length - 1, toIndex];
+      const newIndex = getKeyboardIndex({ key: event.key, index, min, max });
 
-        if (event.keyCode === 37 && handleDirection === "w") {
-          // west handle, moving left
-          const index = bisectDateLeft(fullData, from, 1);
-          const indexLeft = fullData[index - 1];
-
-          if (getDate(indexLeft).getTime() < to.getTime()) {
-            // new lower than "to"
-            setTimeRange(getDate(indexLeft), to);
-          } else {
-            // new too high, don't do anything
-            setTimeRange(from, to);
-          }
-        } else if (event.keyCode === 39 && handleDirection === "w") {
-          // west handle, moving right
-          const index = bisectDateRight(fullData, from, 1);
-          const indexRight = fullData[index];
-          if (getDate(indexRight).getTime() < to.getTime()) {
-            setTimeRange(getDate(indexRight), to);
-          } else {
-            setTimeRange(from, to);
-          }
-        } else if (event.keyCode === 37 && handleDirection === "e") {
-          // east handle, moving left
-          const index = bisectDateLeft(fullData, to, 1);
-          const indexLeft = fullData[index - 1];
-
-          if (getDate(indexLeft).getTime() > from.getTime()) {
-            setTimeRange(from, getDate(indexLeft));
-          } else {
-            setTimeRange(from, to);
-          }
-        } else if (event.keyCode === 39 && handleDirection === "e") {
-          // east handle, moving right
-          const index = bisectDateRight(fullData, to, 1);
-          const indexLeft = fullData[index];
-
-          if (indexLeft && getDate(indexLeft).getTime() > from.getTime()) {
-            setTimeRange(from, getDate(indexLeft));
-          } else {
-            setTimeRange(from, to);
-          }
-        }
-        updateBrushEndedStatus(true);
+      if (newIndex === undefined || !ref.current) {
+        return;
       }
-    },
-    [fullData, setTimeRange, from, getDate, to]
+
+      event.preventDefault();
+      const [newFrom, newTo] =
+        handle === "w"
+          ? [dates[newIndex], closestTo]
+          : [closestFrom, dates[newIndex]];
+      select(ref.current).call(brush.move, [
+        brushWidthScale(newFrom),
+        brushWidthScale(newTo),
+      ]);
+    }
   );
 
   useEffect(() => {
@@ -329,10 +294,12 @@ export const BrushTime = ({ yOffset }: { yOffset?: number }) => {
 
         g.select(".handle--w")
           .attr("tabindex", 0)
-          .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "w"));
+          .attr("role", "slider")
+          .on("keydown", (e: KeyboardEvent) => moveBrushOnKeyDown(e, "w"));
         g.select(".handle--e")
           .attr("tabindex", 0)
-          .on("keydown", (e: $FixMe) => moveBrushOnKeyPress(e, "e"));
+          .attr("role", "slider")
+          .on("keydown", (e: KeyboardEvent) => moveBrushOnKeyDown(e, "e"));
       };
 
       g.call(mkBrush);
@@ -344,9 +311,37 @@ export const BrushTime = ({ yOffset }: { yOffset?: number }) => {
     brushHandleStrokeColor,
     brushOverlayColor,
     brushSelectionColor,
-    moveBrushOnKeyPress,
+    moveBrushOnKeyDown,
     selectionExtent,
   ]);
+
+  useEffect(() => {
+    if (!ref.current || !closestFrom || !closestTo) {
+      return;
+    }
+
+    const g = select(ref.current);
+    const handles = [
+      {
+        selector: ".handle--w",
+        label: t({ id: "controls.filters.select.from", message: "From" }),
+        date: closestFrom,
+      },
+      {
+        selector: ".handle--e",
+        label: t({ id: "controls.filters.select.to", message: "To" }),
+        date: closestTo,
+      },
+    ];
+    handles.forEach(({ selector, label, date }) => {
+      g.select(selector)
+        .attr("aria-label", label)
+        .attr("aria-valuemin", 0)
+        .attr("aria-valuemax", dates.length - 1)
+        .attr("aria-valuenow", getDateIndex(dates, date))
+        .attr("aria-valuetext", formatDate(date));
+    });
+  });
 
   // This effect allows "snapping" to actual data points
   // after brush is ended and interactive-filters state is updated
@@ -431,6 +426,35 @@ export const BrushTime = ({ yOffset }: { yOffset?: number }) => {
       <g ref={ref} transform={`translate(${brushLabelsWidth}, 0)`} />
     </g>
   ) : null;
+};
+
+const getDateIndex = (dates: Date[], date: Date) => {
+  return dates.findIndex((d) => d.getTime() === date.getTime());
+};
+
+const getKeyboardIndex = ({
+  key,
+  index,
+  min,
+  max,
+}: {
+  key: string;
+  index: number;
+  min: number;
+  max: number;
+}) => {
+  switch (key) {
+    case "ArrowLeft":
+    case "ArrowDown":
+      return Math.max(min, index - 1);
+    case "ArrowRight":
+    case "ArrowUp":
+      return Math.min(max, index + 1);
+    case "Home":
+      return min;
+    case "End":
+      return max;
+  }
 };
 
 // Unused BrushOrdinal
