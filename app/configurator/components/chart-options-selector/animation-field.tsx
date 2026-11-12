@@ -40,7 +40,12 @@ export const AnimationField = ({ field }: { field: AnimationFieldType }) => {
                   Animation Duration
                 </Trans>
               </Typography>
-              <RadioGroup>
+              <RadioGroup
+                label={t({
+                  id: "controls.section.animation.duration",
+                  message: "Animation Duration",
+                })}
+              >
                 {[10, 30, 60].map((d) => (
                   <ChartOptionRadioField
                     key={d}
@@ -74,7 +79,12 @@ export const AnimationField = ({ field }: { field: AnimationFieldType }) => {
                   </Typography>
                 </Tooltip>
               </Flex>
-              <RadioGroup>
+              <RadioGroup
+                label={t({
+                  id: "controls.section.animation.type",
+                  message: "Animation Type",
+                })}
+              >
                 <ChartOptionRadioField
                   label={t({
                     id: "controls.section.animation.type.continuous",

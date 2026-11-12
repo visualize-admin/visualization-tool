@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
 
 import {
@@ -129,7 +129,12 @@ const ChartSubType = ({
       <Typography variant="caption">
         <Trans id="controls.select.column.layout">Column layout</Trans>
       </Typography>
-      <RadioGroup>
+      <RadioGroup
+        label={t({
+          id: "controls.select.column.layout",
+          message: "Column layout",
+        })}
+      >
         {values.map((d) => (
           <ChartOptionRadioField
             key={d.value}

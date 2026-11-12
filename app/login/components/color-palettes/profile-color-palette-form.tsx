@@ -203,19 +203,16 @@ export const ProfileColorPaletteForm = ({
           <Flex flexDirection="column">
             <Input
               error={isNotAvailable}
+              errorMessage={t({
+                id: "controls.custom-color-palettes.title-unavailable",
+                message:
+                  "This name is already in use. Please choose a unique name for your color palette.",
+              })}
               label={t({ id: "controls.custom-color-palettes.title" })}
               name="custom-color-palette-title"
               value={titleInput}
               onChange={(e) => setTitleInput(e.target.value)}
             />
-            {isNotAvailable && (
-              <Typography color="error.main" variant="caption">
-                <Trans id="controls.custom-color-palettes.title-unavailable">
-                  This name is already in use. Please choose a unique name for
-                  your color palette.
-                </Trans>
-              </Typography>
-            )}
           </Flex>
         </Box>
         <ColorPaletteCreator
@@ -287,7 +284,12 @@ const ColorPaletteTypeSelector = ({
           Select a color palette type
         </Trans>
       </Typography>
-      <RadioGroup>
+      <RadioGroup
+        label={t({
+          id: "controls.custom-color-palettes.type",
+          message: "Select a color palette type",
+        })}
+      >
         {types.map((type) => {
           return (
             <Flex

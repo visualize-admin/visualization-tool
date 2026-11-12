@@ -34,7 +34,6 @@ import {
   ControlSectionContent,
   ControlSectionSkeleton,
   SectionTitle,
-  useSectionTitleStyles,
 } from "@/configurator/components/chart-controls/section";
 import { ConfiguratorDrawer } from "@/configurator/components/drawers";
 import {
@@ -170,10 +169,6 @@ export const CustomLayersSelector = () => {
       return layersByKey[key];
     };
   }, [layersByKey]);
-  const sectionTitleClasses = useSectionTitleStyles({
-    sectionOpen: true,
-    interactive: true,
-  });
   const selectedLayers = useMemo(() => {
     return configLayers.map((layer) => {
       return makeKey(layer);
@@ -198,19 +193,9 @@ export const CustomLayersSelector = () => {
         <Trans id="chart.map.layers.custom-layers">Import map</Trans>
       </SectionTitle>
       <LeftDrawer open={addingLayer} onClose={() => setAddingLayer(false)}>
-        <div>
-          <div
-            className={sectionTitleClasses.root}
-            onClick={() => setAddingLayer(false)}
-          >
-            <Typography variant="h6" className={sectionTitleClasses.text}>
-              <Icon name="chevronLeft" />
-              <Trans id="wmts.custom-layer.section-title">
-                Add custom layer
-              </Trans>
-            </Typography>
-          </div>
-        </div>
+        <SectionTitle onClose={() => setAddingLayer(false)}>
+          <Trans id="wmts.custom-layer.section-title">Add custom layer</Trans>
+        </SectionTitle>
         <Box px={4}>
           {addingLayer ? (
             <WMTSSelector
@@ -276,6 +261,7 @@ const DraggableLayer = ({
 }) => {
   const [_, dispatch] = useConfiguratorState(isConfiguring);
   const value = configLayer.id;
+  const title = parsedLayer?.title ?? "Unknown layer";
 
   const enableTemporalFiltering = useMemo(() => {
     switch (configLayer.type) {
@@ -319,9 +305,15 @@ const DraggableLayer = ({
             }}
           >
             <Typography variant="body3" sx={{ flexGrow: 1 }}>
-              {parsedLayer?.title ?? "Unknown layer"}
+              {title}
             </Typography>
-            <IconButton onClick={handleRemoveClick}>
+            <IconButton
+              aria-label={t({
+                id: "chart.map.layers.remove",
+                message: `Remove layer: ${title}`,
+              })}
+              onClick={handleRemoveClick}
+            >
               <Icon name="trash" />
             </IconButton>
             <MoveDragButton />

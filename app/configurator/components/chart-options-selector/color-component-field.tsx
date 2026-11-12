@@ -202,7 +202,9 @@ export const ColorComponentField = ({
             <Typography variant="caption" component="p" sx={{ mb: 1 }}>
               <Trans id="controls.scale.type">Scale type</Trans>
             </Typography>
-            <RadioGroup>
+            <RadioGroup
+              label={t({ id: "controls.scale.type", message: "Scale type" })}
+            >
               <ChartOptionRadioField
                 label={t({
                   id: "controls.color.scale.type.continuous",

@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import { usePublisher } from "@mdxeditor/gurx";
 
 import { ToolbarIconButton } from "@/components/mdx-editor/common";
@@ -9,6 +10,7 @@ export const LinkDialogToggle = () => {
 
   return (
     <ToolbarIconButton
+      label={t({ id: "mdx-editor.toolbar.link", message: "Link" })}
       onClick={() => {
         openLinkEditDialog();
       }}

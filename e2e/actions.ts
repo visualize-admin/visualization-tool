@@ -119,7 +119,7 @@ export const createActions = ({
   },
   drawer: {
     close: async () =>
-      await page.locator('button[aria-label="Back to main"]').click(),
+      await page.getByRole("button", { name: /^Back to main:/ }).click(),
   },
   common: {
     switchLang: async (lang: "de" | "fr" | "en" | "it") => {

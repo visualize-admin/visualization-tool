@@ -1,7 +1,15 @@
+import { t } from "@lingui/macro";
 import { Input } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import clamp from "lodash/clamp";
 import dynamic from "next/dynamic";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
 import { Flex } from "@/components/flex";
 import { Swatch } from "@/configurator/components/chart-controls/color-picker";
@@ -25,6 +33,9 @@ const Saturation = dynamic(
 );
 
 const useColorPickerStyles = makeStyles({
+  forcedColors: {
+    forcedColorAdjust: "none",
+  },
   swatches: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(1rem, 1fr))",
@@ -53,6 +64,11 @@ export const CustomColorPicker = ({
   });
 
   const classes = useColorPickerStyles();
+  const saturation = Math.round(hsva.s);
+  const brightness = Math.round(hsva.v);
+  const setHsva = (newHsva: HsvaColor & Pick<ColorItem, "id">) => {
+    setColor({ hsva: newHsva, hex: hsvaToHex(newHsva) });
+  };
 
   useEffect(() => {
     onChange(hsva);
@@ -91,10 +107,34 @@ export const CustomColorPicker = ({
       <Flex sx={{ flexDirection: "column", width: "162px", gap: 1 }}>
         <Saturation
           data-testid="color-picker-saturation"
+          className={classes.forcedColors}
+          role="slider"
+          aria-label={t({
+            id: "controls.colorpicker.saturation",
+            message: "Saturation and brightness",
+          })}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={saturation}
+          aria-valuetext={t({
+            id: "controls.colorpicker.saturation.value",
+            message: `Saturation ${saturation}%, brightness ${brightness}%`,
+          })}
+          onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => {
+            const step = getKeyboardStep(e);
+
+            if (step) {
+              e.preventDefault();
+              setHsva({
+                ...hsva,
+                s: clamp(hsva.s + step.x, 0, 100),
+                v: clamp(hsva.v + step.y, 0, 100),
+              });
+            }
+          }}
           hsva={hsva}
           onChange={(color) => {
-            const newHsva = { ...hsva, ...color, a: hsva.a };
-            setColor({ hsva: newHsva, hex: hsvaToHex(newHsva) });
+            setHsva({ ...hsva, ...color, a: hsva.a });
           }}
           style={{ width: "100%", height: "90px" }}
         />
@@ -107,6 +147,7 @@ export const CustomColorPicker = ({
         >
           <div
             data-testid="color-square"
+            className={classes.forcedColors}
             style={{
               width: 8,
               height: 8,
@@ -116,10 +157,31 @@ export const CustomColorPicker = ({
           />
           <Hue
             data-testid="color-picker-hue"
+            className={classes.forcedColors}
+            innerProps={{
+              role: "slider",
+              "aria-label": t({
+                id: "controls.colorpicker.hue",
+                message: "Hue",
+              }),
+              "aria-valuemin": 0,
+              "aria-valuemax": 360,
+              "aria-valuenow": Math.round(hsva.h),
+              onKeyDown: (e: KeyboardEvent<HTMLDivElement>) => {
+                const step = getKeyboardStep(e);
+
+                if (step) {
+                  e.preventDefault();
+                  setHsva({
+                    ...hsva,
+                    h: clamp(hsva.h + step.x + step.y, 0, 360),
+                  });
+                }
+              },
+            }}
             hue={hsva.h}
             onChange={(newHue) => {
-              const newHsva = { ...hsva, ...newHue };
-              setColor({ hsva: newHsva, hex: hsvaToHex(newHsva) });
+              setHsva({ ...hsva, ...newHue });
             }}
             style={{ width: "100%", height: "8px" }}
           />
@@ -132,9 +194,8 @@ export const CustomColorPicker = ({
                 color={item.color}
                 selected={item.color === hex && item.id === hsva.id}
                 onClick={() => {
-                  const newHsva = hexToHsva(item.color);
                   setColor({
-                    hsva: { ...newHsva, id: item.id },
+                    hsva: { ...hexToHsva(item.color), id: item.id },
                     hex: item.color,
                   });
                 }}
@@ -145,6 +206,12 @@ export const CustomColorPicker = ({
         <Flex sx={{ alignItems: "center", gap: 2, mt: 2 }}>
           <Input
             name="color-picker-input"
+            inputProps={{
+              "aria-label": t({
+                id: "controls.colorpicker.hex",
+                message: "Hex color",
+              }),
+            }}
             value={hex}
             onChange={updateColorInput}
           />
@@ -163,4 +230,25 @@ export const CustomColorPicker = ({
       </Flex>
     </Flex>
   );
+};
+
+const KEYBOARD_STEPS: Record<string, { x: number; y: number }> = {
+  ArrowLeft: { x: -1, y: 0 },
+  ArrowRight: { x: 1, y: 0 },
+  ArrowDown: { x: 0, y: -1 },
+  ArrowUp: { x: 0, y: 1 },
+  Home: { x: -Infinity, y: 0 },
+  End: { x: Infinity, y: 0 },
+};
+
+const getKeyboardStep = (e: KeyboardEvent<HTMLElement>) => {
+  const step = KEYBOARD_STEPS[e.key];
+
+  if (!step) {
+    return;
+  }
+
+  const multiplier = e.shiftKey ? 10 : 1;
+
+  return { x: step.x * multiplier, y: step.y * multiplier };
 };
