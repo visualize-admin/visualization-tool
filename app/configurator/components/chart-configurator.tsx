@@ -118,6 +118,7 @@ export const DataFilterSelectGeneric = ({
   onRemove,
   sideControls,
   disableLabel,
+  labelId,
 }: {
   rawDimension: Dimension;
   filterDimensionIds: string[];
@@ -126,6 +127,7 @@ export const DataFilterSelectGeneric = ({
   onRemove?: () => void;
   sideControls?: ReactNode;
   disableLabel?: boolean;
+  labelId?: string;
 }) => {
   const locale = useLocale();
   const [state] = useConfiguratorState();
@@ -217,7 +219,7 @@ export const DataFilterSelectGeneric = ({
     return (
       <DataFilterSelect
         {...sharedProps}
-        labelId={`${id}-name`}
+        labelId={disableLabel ? labelId : `${id}-name`}
         hierarchy={dimension.hierarchy}
       />
     );

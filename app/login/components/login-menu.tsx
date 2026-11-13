@@ -27,6 +27,8 @@ export const LoginMenu = () => {
         <>
           <Button
             variant="text"
+            aria-haspopup="menu"
+            aria-expanded={!!anchorEl}
             onClick={(e) => setAnchorEl(e.currentTarget)}
             sx={{
               gap: 0.25,
@@ -78,6 +80,8 @@ export const LoginMenu = () => {
                 message: "Feedback",
               })}
               trailingIconName="arrowRight"
+              aria-haspopup="menu"
+              aria-expanded={feedbackMenuOpen}
               onClick={() => setFeedbackMenuOpen(true)}
             />
             <MenuActionItem
