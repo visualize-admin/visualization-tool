@@ -9,13 +9,16 @@ const { expect, test } = setup();
 const openEditor = async ({
   page,
   activeField,
+  description = "",
 }: {
   page: Page;
   activeField?: string;
+  description?: string;
 }) => {
   const key = `keyboard-${activeField ?? "main"}`;
   const config = structuredClone(columnTwoCharts);
   config.chartConfigs[0].activeField = activeField;
+  config.chartConfigs[0].meta.description.en = description;
   await loadChartInLocalStorage(page, key, config);
   await page.goto(`/en/create/${key}`);
   await page.waitForSelector('[data-chart-loaded="true"]', { timeout: 30_000 });
@@ -105,6 +108,42 @@ test.describe("Keyboard operability", () => {
     await expect(focused(page)).toHaveAttribute("aria-label", "Bold");
     await page.keyboard.press("ArrowRight");
     await expect(focused(page)).toHaveAttribute("aria-label", "Italic");
+  });
+
+  test("saving a link returns focus to the editor", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await openEditor({
+      page,
+      activeField: "description",
+      description: "See docs here",
+    });
+    const editor = page.getByRole("textbox", { name: "English" });
+    await editor.focus();
+    await page.keyboard.press("Home");
+    for (let i = 0; i < 4; i++) {
+      await page.keyboard.press("ArrowRight");
+    }
+    for (let i = 0; i < 4; i++) {
+      await page.keyboard.press("Shift+ArrowRight");
+    }
+    await page.waitForTimeout(300);
+    await page.keyboard.press("Shift+Tab");
+    await page.keyboard.press("End");
+    await expect(focused(page)).toHaveAttribute("aria-label", "Link");
+    await page.keyboard.press("Enter");
+
+    const dialog = page.getByRole("dialog", { name: "Edit link" });
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Tab");
+    await page.keyboard.type("https://example.com");
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    await expect(focused(page)).toHaveText("Save");
+    await page.keyboard.press("Enter");
+
+    await expect(editor.getByRole("link", { name: "docs" })).toBeVisible();
+    await page.waitForTimeout(1000);
+    await expect(editor).toBeFocused();
   });
 
   test("color palette select works with the keyboard", async ({ page }) => {

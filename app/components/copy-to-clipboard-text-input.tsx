@@ -2,11 +2,18 @@ import { t } from "@lingui/macro";
 import { Button, Input, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import * as clipboard from "clipboard-polyfill/text";
-import { MouseEvent as ReactMouseEvent, ReactNode, useState } from "react";
+import {
+  MouseEvent as ReactMouseEvent,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react";
 
 import { Flex } from "@/components/flex";
 import { LiveRegion } from "@/components/live-region";
 import { Icon } from "@/icons";
+
+const ANNOUNCEMENT_MS = 1000;
 
 const useActionTooltipStyles = makeStyles((theme: Theme) => ({
   actionTooltip: {
@@ -90,6 +97,16 @@ export const CopyToClipboardTextInput = ({
     setAnnouncement(copiedMessage);
   };
   const classes = useCopyToClipboardTextInputStyles();
+
+  useEffect(() => {
+    if (!announcement) {
+      return;
+    }
+
+    const timeout = setTimeout(() => setAnnouncement(""), ANNOUNCEMENT_MS);
+
+    return () => clearTimeout(timeout);
+  }, [announcement]);
 
   return (
     <Flex sx={{ gap: 1 }}>
