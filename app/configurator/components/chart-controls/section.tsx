@@ -5,23 +5,26 @@ import {
   Collapse,
   Skeleton,
   Theme,
+  Tooltip,
   Typography,
   TypographyProps,
   useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { useId } from "@reach/auto-id";
 import clsx from "clsx";
 import {
   ComponentProps,
   createContext,
+  FocusEvent,
   forwardRef,
   HTMLProps,
   ReactNode,
   useContext,
   useMemo,
+  useState,
 } from "react";
 
-import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { useDisclosure } from "@/components/use-disclosure";
 import { VisuallyHidden } from "@/components/visually-hidden";
 import { isConfiguring, isLayouting } from "@/configurator/configurator-state";
@@ -289,6 +292,8 @@ export const SectionTitle = ({
     }
   });
 
+  const warningId = `section-warning-${useId()}`;
+  const [warningOpen, setWarningOpen] = useState(false);
   const { setOpen, isOpen, collapse } = useControlSectionContext();
   const classes = useSectionTitleStyles({
     disabled,
@@ -298,12 +303,17 @@ export const SectionTitle = ({
   });
 
   return (
-    <MaybeTooltip title={warnMessage} tooltipProps={{ describeChild: true }}>
+    <>
       <Box
         component={closable || collapse ? "button" : "div"}
         aria-expanded={collapse ? isOpen : undefined}
+        aria-describedby={warnMessage ? warningId : undefined}
         className={classes.root}
         onClick={handleClick}
+        onFocus={(e: FocusEvent<HTMLElement>) => {
+          setWarningOpen(e.currentTarget.matches(":focus-visible"));
+        }}
+        onBlur={() => setWarningOpen(false)}
       >
         <Typography
           variant="h6"
@@ -328,15 +338,30 @@ export const SectionTitle = ({
           {children}
         </Typography>
         {warnMessage && (
-          <Typography sx={{ mr: 2, lineHeight: "0 !important" }}>
-            <Icon name="warningCircle" />
-          </Typography>
+          <Tooltip
+            arrow
+            disableInteractive
+            describeChild
+            title={warnMessage}
+            open={warningOpen}
+            onOpen={() => setWarningOpen(true)}
+            onClose={() => setWarningOpen(false)}
+          >
+            <Typography sx={{ mr: 2, lineHeight: "0 !important" }}>
+              <Icon name="warningCircle" />
+            </Typography>
+          </Tooltip>
         )}
         <span className={classes.icon}>
           {collapse ? <Icon name={isOpen ? "minus" : "plus"} /> : null}
         </span>
       </Box>
-    </MaybeTooltip>
+      {warnMessage && (
+        <VisuallyHidden component="span" id={warningId}>
+          {warnMessage}
+        </VisuallyHidden>
+      )}
+    </>
   );
 };
 
