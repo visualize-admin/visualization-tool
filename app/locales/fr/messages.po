@@ -103,7 +103,7 @@ msgstr "{0} sur {1}"
 
 #: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.search-results"
-msgstr "{resultsCount} résultats"
+msgstr "{resultsCount, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.sorting.byMeasure.ascending"

@@ -1,4 +1,4 @@
-import { t, Trans } from "@lingui/macro";
+import { plural, t, Trans } from "@lingui/macro";
 import { TreeItem, TreeView } from "@mui/lab";
 import {
   Box,
@@ -14,7 +14,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import createStore from "zustand";
 
 import { RemoteLayer } from "@/charts/map/types";
@@ -304,6 +304,7 @@ export const WMTSSelector = ({
     onChangeInputValue: setInputValue,
   });
 
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const resultsCount = useMemo(() => {
     let count = 0;
     visitHierarchy(unsortedFilteredOptions, () => {
@@ -398,6 +399,7 @@ export const WMTSSelector = ({
         <Input
           size="sm"
           value={inputValue}
+          inputRef={searchInputRef}
           autoFocus
           startAdornment={<Icon name="search" size={18} />}
           placeholder={t({
@@ -418,7 +420,10 @@ export const WMTSSelector = ({
                   id: "controls.search.clear",
                   message: "Clear search field",
                 })}
-                onClick={handleClickResetInput}
+                onClick={() => {
+                  handleClickResetInput();
+                  searchInputRef.current?.focus();
+                }}
               >
                 <Icon name="close" size={16} />
               </IconButton>
@@ -452,7 +457,11 @@ export const WMTSSelector = ({
           inputValue && status !== "fetching"
             ? t({
                 id: "wmts.search-results",
-                message: `${resultsCount} results`,
+                message: plural(resultsCount, {
+                  0: "No results",
+                  one: "# result",
+                  other: "# results",
+                }),
               })
             : ""
         }
