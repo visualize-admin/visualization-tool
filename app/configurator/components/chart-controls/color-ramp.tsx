@@ -2,12 +2,12 @@ import { Trans } from "@lingui/macro";
 import {
   Box,
   Button,
-  ListSubheader,
   MenuItem,
   Select,
   SelectProps,
   Typography,
 } from "@mui/material";
+import { useId } from "@reach/auto-id";
 import get from "lodash/get";
 import {
   Dispatch,
@@ -22,6 +22,7 @@ import {
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { Label } from "@/components/form";
+import { SelectGroupHeader } from "@/components/select-group-header";
 import { getChartConfig } from "@/config-utils";
 import {
   CustomPaletteType,
@@ -101,6 +102,7 @@ type ColorRampFieldProps = Omit<ColorRampProps, "colorInterpolator"> & {
 };
 
 export const ColorRampField = (props: ColorRampFieldProps) => {
+  const labelId = `color-ramp-label-${useId()}`;
   const { field, path, disabled, nSteps } = props;
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(isConfiguring);
@@ -186,10 +188,11 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
 
   return (
     <Box pb={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
-      <Label htmlFor="color-palette">
+      <Label id={labelId}>
         <Trans id="controls.color.palette">Color palette</Trans>
       </Label>
       <Select
+        labelId={labelId}
         size="sm"
         value={currentPaletteId}
         disabled={disabled}
@@ -282,13 +285,13 @@ const PaletteSection = (props: PaletteSectionProps) => {
 
   return [
     type === "diverging" ? (
-      <ListSubheader>
+      <SelectGroupHeader>
         <Trans id="controls.color.palette.diverging">Diverging</Trans>
-      </ListSubheader>
+      </SelectGroupHeader>
     ) : (
-      <ListSubheader>
+      <SelectGroupHeader>
         <Trans id="controls.color.palette.sequential">Sequential</Trans>
-      </ListSubheader>
+      </SelectGroupHeader>
     ),
     user && (
       <Button
@@ -306,7 +309,7 @@ const PaletteSection = (props: PaletteSectionProps) => {
       </Button>
     ),
     user && (
-      <ListSubheader>
+      <SelectGroupHeader>
         <Typography
           variant="subtitle2"
           fontWeight={700}
@@ -317,7 +320,7 @@ const PaletteSection = (props: PaletteSectionProps) => {
             Custom color palettes
           </Trans>
         </Typography>
-      </ListSubheader>
+      </SelectGroupHeader>
     ),
     user &&
       customColorPalettes
@@ -346,7 +349,7 @@ const PaletteSection = (props: PaletteSectionProps) => {
           );
         }),
     user && (
-      <ListSubheader>
+      <SelectGroupHeader>
         <Typography
           variant="subtitle2"
           fontWeight={700}
@@ -357,13 +360,14 @@ const PaletteSection = (props: PaletteSectionProps) => {
             Visualize color palettes
           </Trans>
         </Typography>
-      </ListSubheader>
+      </SelectGroupHeader>
     ),
     colorPalettes.map(({ value, interpolator }, i) => (
       <MenuItem
         sx={{ flexDirection: "column", alignItems: "flex-start" }}
         key={`${type}-${i}`}
         value={value}
+        aria-label={value}
       >
         <ColorRamp colorInterpolator={interpolator} nSteps={nSteps} />
       </MenuItem>
