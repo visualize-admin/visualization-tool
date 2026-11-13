@@ -58,6 +58,7 @@ import {
 import { GeoFeature, GeoPoint } from "@/domain/data";
 import { Icon, IconName } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
+import { FOCUS_OUTLINE_INSET, FOCUS_VISIBLE } from "@/themes/focus";
 import { hexToRgba } from "@/utils/color-utils";
 import { useEvent } from "@/utils/use-event";
 import { DISABLE_SCREENSHOT_ATTR } from "@/utils/use-screenshot";
@@ -649,6 +650,8 @@ const ControlButton = ({
       className={classes.controlButton}
       variant="contained"
       onClick={onClick}
+      // The stacked buttons would cover an outside ring.
+      sx={{ [FOCUS_VISIBLE]: FOCUS_OUTLINE_INSET }}
     >
       <Icon name={iconName} size={24} />
     </Button>

@@ -238,7 +238,7 @@ const DataDownloadInnerMenu = ({
           width: "fit-content",
           minHeight: 0,
           p: 0,
-          ml: "2.5px",
+          ml: 0,
           fontSize: "inherit",
         }}
       >

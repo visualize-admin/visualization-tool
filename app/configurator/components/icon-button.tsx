@@ -7,6 +7,7 @@ import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
 import { FieldProps } from "@/configurator/config-form";
 import { Icon } from "@/icons";
+import { FORCED_COLORS_SELECTED } from "@/themes/focus";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -41,6 +42,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     "& svg": {
       color: "white",
     },
+
+    "@media (forced-colors: active)": {
+      "&, &:hover": FORCED_COLORS_SELECTED,
+
+      "& svg": {
+        color: "HighlightText",
+      },
+    },
   },
   disabled: {
     cursor: "initial",
@@ -71,6 +80,7 @@ export const IconButton = ({
     <ButtonBase
       tabIndex={0}
       value={value}
+      aria-pressed={checked}
       onClick={onClick}
       disabled={disabled}
       className={clsx(
