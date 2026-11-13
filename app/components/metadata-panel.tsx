@@ -16,6 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { useId } from "@reach/auto-id";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
 import clsx from "clsx";
@@ -27,12 +28,13 @@ import orderBy from "lodash/orderBy";
 import sortBy from "lodash/sortBy";
 import { useRouter } from "next/router";
 import {
-  Fragment,
   type MouseEvent,
   ReactNode,
-  useCallback,
+  Ref,
+  RefObject,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -51,6 +53,7 @@ import {
   useMetadataPanelStoreActions,
 } from "@/components/metadata-panel-store";
 import { MotionBox } from "@/components/presence";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import { getChartConfig } from "@/config-utils";
 import {
   BackButton,
@@ -79,6 +82,7 @@ import {
   useDataCubesMetadataQuery,
   useDataCubesObservationsQuery,
 } from "@/graphql/hooks";
+import { isJoinByCube } from "@/graphql/join";
 import { Icon } from "@/icons";
 import SvgIcArrowRight from "@/icons/components/IcArrowRight";
 import SvgIcClose from "@/icons/components/IcClose";
@@ -88,6 +92,7 @@ import { assert } from "@/utils/assert";
 import { useEventEmitter } from "@/utils/event-emitter";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
 import { useEvent } from "@/utils/use-event";
+import { useFocusRequest } from "@/utils/use-focus-request";
 
 const useDrawerStyles = makeStyles<Theme, { top: number | string }>((theme) => {
   return {
@@ -145,21 +150,20 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
       flexDirection: "column",
       gap: theme.spacing(4),
     },
-    dimensionButton: {
-      textAlign: "left",
+    dimensionName: {
       lineHeight: 1,
-      minHeight: "auto",
-      padding: 0,
       fontWeight: "bold",
-
-      "& > svg": {
-        marginLeft: 0,
-      },
+      color: theme.palette.cobalt[700],
     },
     dimensionValues: {
       flexDirection: "column",
       gap: theme.spacing(2),
       marginTop: theme.spacing(3),
+    },
+    dimensionValuesList: {
+      margin: 0,
+      padding: 0,
+      listStyle: "none",
     },
     search: {
       marginBottom: "0.25rem",
@@ -205,6 +209,8 @@ const useOtherStyles = makeStyles<Theme>((theme) => {
     },
   };
 });
+
+const BACK_BUTTON_FOCUS_KEY = "back";
 
 const animationProps: Transition = {
   transition: {
@@ -285,6 +291,9 @@ export const MetadataPanel = ({
     open: state.open,
     activeSection: state.activeSection,
   }));
+  const panelId = useId();
+  const titleId = useId();
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const setEnableTransition = useTransitionStore((state) => state.setEnable);
   const { setOpen, toggle, setActiveSection, reset } =
     useMetadataPanelStoreActions();
@@ -313,33 +322,56 @@ export const MetadataPanel = ({
   }, [setOpen, reset, router.events]);
 
   const slideProps = useMemo(() => {
+    const focusCloseButton = () => closeButtonRef.current?.focus();
+
     if (container) {
       return {
         onEnter: () => setEnableTransition(false),
-        onEntered: () => setEnableTransition(true),
+        onEntered: () => {
+          setEnableTransition(true);
+          focusCloseButton();
+        },
         onExit: () => setEnableTransition(false),
         onExited: () => setEnableTransition(true),
       };
     }
+
+    return { onEntered: focusCloseButton };
   }, [setEnableTransition, container]);
 
   return (
     <>
       {renderToggle && (
-        <ToggleButton smaller={smallerToggle} onClick={handleToggle} />
+        <ToggleButton
+          smaller={smallerToggle}
+          open={open}
+          panelId={panelId}
+          onClick={handleToggle}
+        />
       )}
       <Drawer
         data-testid="panel-metadata"
         className={drawerClasses.root}
         open={open}
+        onClose={handleToggle}
         anchor="left"
         hideBackdrop
         disableEnforceFocus
         ModalProps={{ container }}
-        PaperProps={{ style: { position: "absolute" } }}
+        PaperProps={{
+          id: panelId,
+          role: "dialog",
+          "aria-modal": true,
+          "aria-labelledby": titleId,
+          style: { position: "absolute" },
+        }}
         SlideProps={slideProps}
       >
-        <Header onClose={handleToggle} />
+        <Header
+          titleId={titleId}
+          closeButtonRef={closeButtonRef}
+          onClose={handleToggle}
+        />
         <TabContext value={activeSection}>
           <TabList
             className={otherClasses.tabList}
@@ -350,7 +382,7 @@ export const MetadataPanel = ({
             <Tab
               value="general"
               label={
-                <Typography>
+                <Typography component="span">
                   <Trans id="controls.metadata-panel.section.general">
                     General
                   </Trans>
@@ -360,7 +392,7 @@ export const MetadataPanel = ({
             <Tab
               value="data"
               label={
-                <Typography>
+                <Typography component="span">
                   <Trans id="controls.metadata-panel.section.data">Data</Trans>
                 </Typography>
               }
@@ -389,9 +421,13 @@ export const MetadataPanel = ({
 
 const ToggleButton = ({
   smaller,
+  open,
+  panelId,
   onClick,
 }: {
   smaller?: boolean;
+  open: boolean;
+  panelId: string | undefined;
   onClick: () => void;
 }) => {
   const classes = useOtherStyles();
@@ -403,6 +439,8 @@ const ToggleButton = ({
       variant="text"
       color="primary"
       size={smaller ? "xs" : "sm"}
+      aria-expanded={open}
+      aria-controls={open ? panelId : undefined}
       onClick={onClick}
     >
       <Trans id="controls.metadata-panel.metadata">Details</Trans>
@@ -410,16 +448,37 @@ const ToggleButton = ({
   );
 };
 
-const Header = ({ onClose }: { onClose: () => void }) => {
+const Header = ({
+  titleId,
+  closeButtonRef,
+  onClose,
+}: {
+  titleId: string | undefined;
+  closeButtonRef: RefObject<HTMLButtonElement>;
+  onClose: () => void;
+}) => {
   const classes = useOtherStyles();
 
   return (
     <div className={classes.header}>
-      <Typography variant="h6" component="p" sx={{ fontWeight: "bold" }}>
+      <Typography
+        id={titleId}
+        variant="h6"
+        component="h2"
+        sx={{ fontWeight: "bold" }}
+      >
         <Trans id="controls.metadata-panel.metadata">Details</Trans>
       </Typography>
-      <IconButton size="small" onClick={onClose}>
-        <SvgIcClose />
+      <IconButton
+        ref={closeButtonRef}
+        size="small"
+        aria-label={t({
+          id: "controls.metadata-panel.close",
+          message: "Close",
+        })}
+        onClick={onClose}
+      >
+        <SvgIcClose aria-hidden />
       </IconButton>
     </div>
   );
@@ -516,6 +575,21 @@ const DataPanel = ({
   const { setSelectedComponent, clearSelectedComponent } =
     useMetadataPanelStoreActions();
   const [inputValue, setInputValue] = useState("");
+  const { requestFocus, getFocusRef } = useFocusRequest();
+  const handleSelectComponent = useEvent((component: Component) => {
+    requestFocus(BACK_BUTTON_FOCUS_KEY);
+    setSelectedComponent(component);
+  });
+  const handleBack = useEvent(() => {
+    if (selectedDimension) {
+      requestFocus(getListedComponentId(selectedDimension));
+    }
+    clearSelectedComponent();
+  });
+  const searchLabel = t({
+    id: "select.controls.metadata.search",
+    message: "Jump to...",
+  });
   const { options, groupedComponents } = useMemo(() => {
     const options = components.flatMap(
       (
@@ -589,7 +663,10 @@ const DataPanel = ({
       <AnimatePresence mode="wait">
         {selectedDimension ? (
           <MotionBox key="dimension-selected" {...animationProps}>
-            <BackButton onClick={clearSelectedComponent}>
+            <BackButton
+              ref={getFocusRef(BACK_BUTTON_FOCUS_KEY)}
+              onClick={handleBack}
+            >
               <Trans id="button.back">Back</Trans>
             </BackButton>
             <Box sx={{ mt: 4 }}>
@@ -609,7 +686,7 @@ const DataPanel = ({
             <Autocomplete
               className={classes.search}
               disablePortal
-              onChange={(_, v) => v && setSelectedComponent(v.value)}
+              onChange={(_, v) => v && handleSelectComponent(v.value)}
               inputValue={inputValue}
               onInputChange={(_, v) => setInputValue(v.toLowerCase())}
               options={sortedOptions}
@@ -619,10 +696,11 @@ const DataPanel = ({
                 <TextField
                   {...params}
                   className={classes.search}
-                  placeholder={t({
-                    id: "select.controls.metadata.search",
-                    message: "Jump to...",
-                  })}
+                  placeholder={searchLabel}
+                  inputProps={{
+                    ...params.inputProps,
+                    "aria-label": searchLabel,
+                  }}
                   InputProps={{
                     ...params.InputProps,
                     endAdornment: (
@@ -695,6 +773,8 @@ const DataPanel = ({
                             cubeIri={cubeIri}
                             expanded={false}
                             dataSource={dataSource}
+                            showMoreRef={getFocusRef(component.id)}
+                            onShowMore={() => handleSelectComponent(component)}
                           />
                         ))}
                       </Stack>
@@ -710,21 +790,31 @@ const DataPanel = ({
   );
 };
 
+const getListedComponentId = (component: Component) => {
+  return isJoinByComponent(component) && isJoinByCube(component.cubeIri)
+    ? component.originalIds[0].dimensionId
+    : component.id;
+};
+
 const ComponentTabPanel = ({
   component,
   dataSource,
   expanded,
   cubeIri,
+  showMoreRef,
+  onShowMore,
 }: {
   component: Component;
   dataSource: DataSource;
   expanded: boolean;
   cubeIri?: string;
+  showMoreRef?: Ref<HTMLButtonElement>;
+  onShowMore?: () => void;
 }) => {
   const [state] = useConfiguratorState();
   const chartConfig = getChartConfig(state);
   const classes = useOtherStyles();
-  const { setSelectedComponent } = useMetadataPanelStoreActions();
+  const valuesLabelId = useId();
   const label = useMemo(
     () => getComponentLabel(component, { cubeIri }),
     [cubeIri, component]
@@ -783,32 +873,18 @@ const ComponentTabPanel = ({
     component.id,
   ]);
 
-  const handleClick = useCallback(() => {
-    if (!expanded) {
-      setSelectedComponent(component);
-    }
-  }, [expanded, component, setSelectedComponent]);
-
   return (
     <div>
       <Flex sx={{ justifyContent: "space-between" }}>
         <div>
           <Box display="flex" alignItems="center" gap={2}>
-            <Button
-              className={classes.dimensionButton}
-              variant="text"
-              size="sm"
-              onClick={handleClick}
-              sx={{
-                cursor: !expanded ? "pointer" : "default",
-
-                "&:hover": {
-                  color: !expanded ? "primary.main" : "text.primary",
-                },
-              }}
+            <Typography
+              variant="h6"
+              component="h3"
+              className={classes.dimensionName}
             >
               {label}
-            </Button>
+            </Typography>
             {isJoinByComponent(component) ? (
               <>
                 <JoinByChip
@@ -841,8 +917,10 @@ const ComponentTabPanel = ({
           >
             {isJoinByComponent(component) ? (
               <div>
-                <Typography variant="h5" gutterBottom>
-                  Joined with
+                <Typography variant="h5" component="h4" gutterBottom>
+                  <Trans id="controls.metadata-panel.joined-with">
+                    Joined with
+                  </Trans>
                 </Typography>
                 {component.originalIds.map((x) =>
                   x.cubeIri === loadedComponent.cubeIri ? null : (
@@ -855,7 +933,11 @@ const ComponentTabPanel = ({
                 )}
               </div>
             ) : null}
-            <Typography variant="body3" sx={{ my: 2, fontWeight: 700 }}>
+            <Typography
+              id={valuesLabelId}
+              variant="body3"
+              sx={{ my: 2, fontWeight: 700 }}
+            >
               <Trans id="controls.metadata-panel.available-values">
                 Available values
               </Trans>
@@ -865,29 +947,39 @@ const ComponentTabPanel = ({
                 <Loading delayMs={0} />
               </Box>
             ) : (
-              <ComponentValues component={loadedComponent} />
+              <ComponentValues
+                component={loadedComponent}
+                labelId={valuesLabelId}
+              />
             )}
           </MotionBox>
         )}
       </AnimatePresence>
       {!expanded && (
         <Button
-          component="a"
+          ref={showMoreRef}
           variant="text"
           size="sm"
           color="primary"
-          onClick={handleClick}
+          onClick={onShowMore}
           endIcon={<SvgIcArrowRight />}
           sx={{ p: 0 }}
         >
           <Trans id="controls.metadata-panel.show-more">Show more</Trans>
+          <VisuallyHidden component="span">: {label}</VisuallyHidden>
         </Button>
       )}
     </div>
   );
 };
 
-const ComponentValues = ({ component }: { component: Component }) => {
+const ComponentValues = ({
+  component,
+  labelId,
+}: {
+  component: Component;
+  labelId: string | undefined;
+}) => {
   const sortedValues = useMemo(() => {
     const sorters = makeDimensionValueSorters(component);
     return orderBy(
@@ -912,7 +1004,7 @@ const ComponentValues = ({ component }: { component: Component }) => {
     case "OrdinalMeasure":
     case "GeoCoordinatesDimension":
     case "GeoShapesDimension":
-      return <DimensionValuesNominal values={sortedValues} />;
+      return <DimensionValuesNominal values={sortedValues} labelId={labelId} />;
     case "NumericalMeasure":
       return sortedValues.length > 0 ? (
         <MeasureValuesNumeric values={sortedValues} />
@@ -925,13 +1017,26 @@ const ComponentValues = ({ component }: { component: Component }) => {
   }
 };
 
-const DimensionValuesNominal = ({ values }: { values: DimensionValue[] }) => {
+const DimensionValuesNominal = ({
+  values,
+  labelId,
+}: {
+  values: DimensionValue[];
+  labelId: string | undefined;
+}) => {
+  const classes = useOtherStyles();
+
   return (
-    <>
+    // Safari drops the list semantics of lists with list-style: none.
+    <ul
+      role="list"
+      aria-labelledby={labelId}
+      className={classes.dimensionValuesList}
+    >
       {values.map((d) =>
         d.label ? (
-          <Fragment key={d.value}>
-            <Typography variant="body3" component="p" {...animationProps}>
+          <li key={d.value}>
+            <Typography variant="body3" component="p">
               {d.label}{" "}
               {d.alternateName ? (
                 <span style={{ fontStyle: "italic" }}>({d.alternateName})</span>
@@ -944,25 +1049,16 @@ const DimensionValuesNominal = ({ values }: { values: DimensionValue[] }) => {
                 {d.description}
               </Typography>
             ) : null}
-          </Fragment>
+          </li>
         ) : null
       )}
-    </>
+    </ul>
   );
 };
 
 const MeasureValuesNumeric = ({ values }: { values: DimensionValue[] }) => {
-  const [min, max] = [values[0].value, values[values.length - 1].value];
-
   return (
-    <>
-      <Typography variant="body3" component="p">
-        Min: {min}
-      </Typography>
-      <Typography variant="body3" component="p">
-        Max: {max}
-      </Typography>
-    </>
+    <MinMaxValues min={values[0].value} max={values[values.length - 1].value} />
   );
 };
 
@@ -975,15 +1071,29 @@ const DimensionValuesTemporal = ({
 }) => {
   const formatters = useDimensionFormatters([dim]);
   const format = formatters[dim.id];
-  const [min, max] = [values[0].value, values[values.length - 1].value];
 
+  return (
+    <MinMaxValues
+      min={format(values[0].value)}
+      max={format(values[values.length - 1].value)}
+    />
+  );
+};
+
+const MinMaxValues = ({
+  min,
+  max,
+}: {
+  min: DimensionValue["value"];
+  max: DimensionValue["value"];
+}) => {
   return (
     <>
       <Typography variant="body3" component="p">
-        Min: {format(min)}
+        <Trans id="controls.metadata-panel.min">Min: {min}</Trans>
       </Typography>
       <Typography variant="body3" component="p">
-        Max: {format(max)}
+        <Trans id="controls.metadata-panel.max">Max: {max}</Trans>
       </Typography>
     </>
   );

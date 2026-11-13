@@ -28,6 +28,11 @@ You can also check the
   - Accessible names for icon-only buttons, selects, radio groups, editors
     and color controls, linked error messages, and a "Skip to main content"
     link on every page
+  - Accessibility of the metadata panel: it is now announced as a "Details"
+    dialog, focuses its labelled close button when opened, closes with Escape
+    and returns focus to the "Details" button; available values are a list,
+    "Show more" buttons are named after their dimension, and focus is kept when
+    switching between the dimension list and a dimension's details
 
 ## 6.5.7 - 2026-11-10
 

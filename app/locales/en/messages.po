@@ -520,6 +520,10 @@ msgstr "Click to copy"
 msgid "button.close"
 msgstr "Close"
 
+#: app/components/metadata-panel.tsx
+msgid "controls.metadata-panel.close"
+msgstr "Close"
+
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 #: app/configurator/components/chart-options-selector/conversion-units-field.tsx
 #: app/configurator/components/field-i18n.ts
@@ -1124,6 +1128,10 @@ msgid "dimension.joined-info-icon"
 msgstr "Joined dimensions integrate data from multiple datasets"
 
 #: app/components/metadata-panel.tsx
+msgid "controls.metadata-panel.joined-with"
+msgstr "Joined with"
+
+#: app/components/metadata-panel.tsx
 msgid "select.controls.metadata.search"
 msgstr "Jump to..."
 
@@ -1248,6 +1256,10 @@ msgstr "Map"
 msgid "controls.adjust-scale-domain.max-error"
 msgstr "Max must be bigger than min"
 
+#: app/components/metadata-panel.tsx
+msgid "controls.metadata-panel.max"
+msgstr "Max: {max}"
+
 #: app/configurator/components/chart-options-selector/sorting-field.tsx
 msgid "controls.sorting.byMeasure"
 msgstr "Measure"
@@ -1267,6 +1279,10 @@ msgstr "Middle color"
 #: app/configurator/components/chart-options-selector/scale-domain.tsx
 msgid "controls.adjust-scale-domain.min-error"
 msgstr "Min must be smaller than max"
+
+#: app/components/metadata-panel.tsx
+msgid "controls.metadata-panel.min"
+msgstr "Min: {min}"
 
 #: app/configurator/components/ui-helpers.ts
 msgid "time-units.Minute"
