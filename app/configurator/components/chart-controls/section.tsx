@@ -19,6 +19,7 @@ import {
   FocusEvent,
   forwardRef,
   HTMLProps,
+  KeyboardEvent,
   ReactNode,
   useContext,
   useMemo,
@@ -314,6 +315,12 @@ export const SectionTitle = ({
           setWarningOpen(e.currentTarget.matches(":focus-visible"));
         }}
         onBlur={() => setWarningOpen(false)}
+        onKeyDown={(e: KeyboardEvent<HTMLElement>) => {
+          if (warningOpen && e.key === "Escape") {
+            e.stopPropagation();
+            setWarningOpen(false);
+          }
+        }}
       >
         <Typography
           variant="h6"

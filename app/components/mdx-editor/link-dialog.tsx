@@ -422,7 +422,10 @@ const LinkEditForm = ({
           })}
           inputProps={{
             pattern: "https?://.*|www\\..*",
-            title: "Enter a valid URL starting with https:// or www.",
+            title: t({
+              id: "mdx-editor.link-dialog.url-hint",
+              message: "Enter a valid URL starting with https:// or www.",
+            }),
           }}
           {...register("url")}
         />

@@ -154,7 +154,8 @@ test.describe("Keyboard operability", () => {
     await page.getByRole("option", { name: "Kanton" }).focus();
     await page.keyboard.press("Enter");
 
-    const palette = drawer.getByRole("combobox", { name: "Color palette" });
+    const palette = drawer.getByRole("combobox", { name: /^Color palette/ });
+    await expect(palette).toHaveAccessibleName("Color palette category10");
     await palette.focus();
     await page.keyboard.press("Enter");
     await expect(focused(page)).toHaveAttribute("role", "option");
@@ -166,6 +167,7 @@ test.describe("Keyboard operability", () => {
     await page.keyboard.press("Enter");
 
     await expect(palette).toBeFocused();
+    await expect(palette).toHaveAccessibleName(`Color palette ${next}`);
     await expect
       .poll(() =>
         page.evaluate(

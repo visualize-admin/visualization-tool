@@ -896,6 +896,10 @@ msgstr "Endfarbe"
 msgid "controls.language.english"
 msgstr "Englisch"
 
+#: app/components/mdx-editor/link-dialog.tsx
+msgid "mdx-editor.link-dialog.url-hint"
+msgstr "Geben Sie eine gültige URL ein, die mit https:// oder www. beginnt."
+
 #: app/login/components/color-palettes/color-palette-examples.tsx
 msgid "controls.custom-color-palettes.example"
 msgstr "Beispiel"
