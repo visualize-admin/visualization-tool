@@ -2,7 +2,6 @@ import { Trans } from "@lingui/macro";
 import {
   Box,
   Button,
-  ListSubheader,
   MenuItem,
   MenuItemProps,
   Select,
@@ -17,6 +16,7 @@ import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { hasDimensionColors } from "@/charts/shared/colors";
 import { Flex } from "@/components/flex";
 import { Label, selectMenuProps } from "@/components/form";
+import { SelectGroupHeader } from "@/components/select-group-header";
 import { getChartConfig } from "@/config-utils";
 import {
   ConfiguratorStateConfiguringChart,
@@ -338,8 +338,7 @@ export const ColorPalette = ({
 
 const PaletteGroupHeader = ({ children }: { children: ReactNode }) => {
   return (
-    <ListSubheader
-      role="presentation"
+    <SelectGroupHeader
       sx={{
         px: 4,
         pt: 3,
@@ -352,7 +351,7 @@ const PaletteGroupHeader = ({ children }: { children: ReactNode }) => {
       }}
     >
       {children}
-    </ListSubheader>
+    </SelectGroupHeader>
   );
 };
 
