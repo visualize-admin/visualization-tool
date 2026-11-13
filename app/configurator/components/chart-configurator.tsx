@@ -158,13 +158,14 @@ export const DataFilterSelectGeneric = ({
       (d) => d.cubeIri === rawDimension.cubeIri
     ) ?? rawDimension;
   const { label } = dimension;
+  const id = `select-single-filter-${index}`;
 
   const sharedProps = {
     dimension,
     label: disableLabel ? null : (
       <>
         <OpenMetadataPanelWrapper component={dimension}>
-          <Typography variant="caption">
+          <Typography id={`${id}-name`} variant="caption">
             {`${index + 1}. ${dimension.label}`}
           </Typography>
         </OpenMetadataPanelWrapper>
@@ -195,7 +196,7 @@ export const DataFilterSelectGeneric = ({
       </>
     ),
     sideControls,
-    id: `select-single-filter-${index}`,
+    id,
     disabled: fetching || disabled,
     optional: !dimension.isKeyDimension,
     loading: fetching,
@@ -214,7 +215,11 @@ export const DataFilterSelectGeneric = ({
     );
   } else {
     return (
-      <DataFilterSelect {...sharedProps} hierarchy={dimension.hierarchy} />
+      <DataFilterSelect
+        {...sharedProps}
+        labelId={`${id}-name`}
+        hierarchy={dimension.hierarchy}
+      />
     );
   }
 };

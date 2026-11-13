@@ -1,4 +1,4 @@
-import { t, Trans } from "@lingui/macro";
+import { Trans } from "@lingui/macro";
 import { Typography } from "@mui/material";
 
 import {
@@ -126,15 +126,10 @@ const ChartSubType = ({
 
   return (
     <Flex flexDirection="column" sx={{ gap: 1 }}>
-      <Typography variant="caption">
+      <Typography id="column-layout-label" variant="caption">
         <Trans id="controls.select.column.layout">Column layout</Trans>
       </Typography>
-      <RadioGroup
-        label={t({
-          id: "controls.select.column.layout",
-          message: "Column layout",
-        })}
-      >
+      <RadioGroup labelId="column-layout-label">
         {values.map((d) => (
           <ChartOptionRadioField
             key={d.value}

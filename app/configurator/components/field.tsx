@@ -180,6 +180,7 @@ export const OnOffControlTabField = ({
 export const DataFilterSelect = ({
   dimension,
   label,
+  labelId,
   id,
   disabled,
   optional,
@@ -190,6 +191,7 @@ export const DataFilterSelect = ({
 }: {
   dimension: Dimension;
   label: ReactNode;
+  labelId?: string;
   id: string;
   disabled?: boolean;
   optional?: boolean;
@@ -273,6 +275,7 @@ export const DataFilterSelect = ({
   return (
     <Select
       id={id}
+      labelId={labelId}
       size="sm"
       label={
         canUseMostRecentValue ? (

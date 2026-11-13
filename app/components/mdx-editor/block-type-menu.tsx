@@ -92,7 +92,6 @@ export const BlockTypeMenu = () => {
         onClick={(e) => {
           setAnchor(e.currentTarget);
         }}
-        sx={{ backgroundColor: anchor ? "grey.300" : "transparent" }}
       >
         <Icon name="fontSize" />
       </ToolbarIconButton>

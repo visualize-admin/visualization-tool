@@ -133,13 +133,21 @@ export const Label = ({
 
 export const RadioGroup = ({
   label,
+  labelId,
   children,
 }: {
-  label: string;
   children: ReactNode;
-}) => {
+} & (
+  | { label: string; labelId?: never }
+  | { labelId: string; label?: never }
+)) => {
   return (
-    <Flex role="radiogroup" aria-label={label} sx={{ gap: 6, wrap: "wrap" }}>
+    <Flex
+      role="radiogroup"
+      aria-label={label}
+      aria-labelledby={labelId}
+      sx={{ gap: 6, wrap: "wrap" }}
+    >
       {children}
     </Flex>
   );
@@ -746,11 +754,6 @@ const useMarkdownInputStyles = makeStyles<Theme>((theme) => ({
 
       "&:focus": {
         border: `1px solid ${theme.palette.monochrome[500]}`,
-      },
-
-      "&:focus-visible": {
-        outline: `2px solid var(--focus-outline-color, ${theme.palette.primary.main})`,
-        outlineOffset: 2,
       },
 
       "& *": {

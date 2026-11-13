@@ -1,5 +1,6 @@
 import { t } from "@lingui/macro";
 import { Link, styled } from "@mui/material";
+import { visuallyHidden } from "@mui/utils";
 
 export const MAIN_CONTENT_ID = "main";
 
@@ -12,16 +13,18 @@ export const SkipLink = () => {
 };
 
 const SkipLinkRoot = styled(Link)(({ theme }) => ({
-  position: "absolute",
-  top: theme.spacing(2),
-  left: theme.spacing(2),
-  zIndex: theme.zIndex.tooltip + 1,
-  padding: theme.spacing(2, 4),
-  backgroundColor: theme.palette.background.paper,
-  ...theme.typography.body2,
-  transform: "translateY(-200%)",
+  ...visuallyHidden,
 
   "&:focus": {
-    transform: "none",
+    position: "static",
+    alignSelf: "flex-start",
+    width: "auto",
+    height: "auto",
+    margin: theme.spacing(2),
+    padding: theme.spacing(1, 2),
+    overflow: "visible",
+    clip: "auto",
+    whiteSpace: "normal",
+    ...theme.typography.body2,
   },
 }));
