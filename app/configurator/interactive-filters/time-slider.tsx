@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import { Box, Button, sliderClasses, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import clsx from "clsx";
@@ -149,12 +150,18 @@ export const TimeSlider = (props: TimeSliderProps) => {
 
   return (
     <TimelineContext.Provider value={timeline}>
-      <Root showPlayButton={showPlayButton} />
+      <Root showPlayButton={showPlayButton} label={dimension.label} />
     </TimelineContext.Provider>
   );
 };
 
-const Root = ({ showPlayButton }: { showPlayButton: boolean }) => {
+const Root = ({
+  showPlayButton,
+  label,
+}: {
+  showPlayButton: boolean;
+  label: string;
+}) => {
   const timeline = useTimeline();
   const [min, max] = timeline.formattedExtent;
 
@@ -171,7 +178,7 @@ const Root = ({ showPlayButton }: { showPlayButton: boolean }) => {
     >
       {showPlayButton && <PlayButton />}
       <div style={{ position: "relative", width: "100%" }}>
-        <Slider />
+        <Slider label={label} />
         <Typography
           variant="caption"
           sx={{ position: "absolute", left: 0, mt: 2 }}
@@ -198,6 +205,11 @@ const PlayButton = () => {
 
   return (
     <Button
+      aria-label={
+        timeline.playing
+          ? t({ id: "controls.animation.pause", message: "Pause" })
+          : t({ id: "controls.animation.play", message: "Play" })
+      }
       onClick={onClick}
       variant="outlined"
       style={{
@@ -237,22 +249,19 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Slider = () => {
+const Slider = ({ label }: { label: string }) => {
   const timeline = useTimeline();
   const timeSlider = useChartInteractiveFilters((d) => d.timeSlider);
   const setTimeSlider = useChartInteractiveFilters((d) => d.setTimeSlider);
   const classes = useStyles();
 
   const marks = useMemo(() => {
-    return timeline.domain.map((d) => ({ value: d })) ?? [];
+    return timeline.domain.map((_, i) => ({ value: i }));
   }, [timeline.domain]);
 
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
-    timeline.setProgress(+e.target.value);
-  });
-
-  const onClick = useEvent(() => {
     timeline.stop();
+    timeline.setIndex(+e.target.value);
   });
 
   useEffect(() => {
@@ -295,16 +304,17 @@ const Slider = () => {
   return (
     <GenericSlider
       name="time-slider"
+      aria-label={label}
       renderTextInput={false}
       min={0}
-      max={1}
-      step={null}
+      max={timeline.length - 1}
+      step={1}
       marks={marks}
-      value={timeline.progress}
+      value={timeline.position}
       onChange={onChange}
-      onClick={onClick}
       valueLabelDisplay="on"
       valueLabelFormat={timeline.formattedValue}
+      getAriaValueText={() => timeline.formattedValue}
       className={clsx(classes.root, timeline.playing && classes.playing)}
     />
   );

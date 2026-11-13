@@ -1,11 +1,19 @@
-import { Trans } from "@lingui/macro";
+import { t } from "@lingui/macro";
 import { Button, Input, Theme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import * as clipboard from "clipboard-polyfill/text";
-import { MouseEvent as ReactMouseEvent, ReactNode, useState } from "react";
+import {
+  MouseEvent as ReactMouseEvent,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react";
 
 import { Flex } from "@/components/flex";
+import { LiveRegion } from "@/components/live-region";
 import { Icon } from "@/icons";
+
+const ANNOUNCEMENT_MS = 1000;
 
 const useActionTooltipStyles = makeStyles((theme: Theme) => ({
   actionTooltip: {
@@ -67,25 +75,38 @@ const ActionTooltip = ({ children }: { children: ReactNode }) => {
   return <div className={classes.actionTooltip}>{children}</div>;
 };
 
-export const CopyToClipboardTextInput = ({ content }: { content: string }) => {
-  const [showTooltip, toggleTooltip] = useState(false);
-  const [tooltipContent, updateTooltipContent] = useState(
-    <Trans id="button.hint.click.to.copy">click to copy</Trans>
-  );
-  const handleMouseLeave = () => {
-    toggleTooltip(false);
-    updateTooltipContent(
-      <Trans id="button.hint.click.to.copy">click to copy</Trans>
-    );
+export const CopyToClipboardTextInput = ({
+  content,
+  label,
+}: {
+  content: string;
+  label: string;
+}) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [announcement, setAnnouncement] = useState("");
+  const copiedMessage = t({ id: "button.hint.copied", message: "copied!" });
+  const hideTooltip = () => {
+    setShowTooltip(false);
+    setCopied(false);
   };
-  const handleClick = (
-    e: ReactMouseEvent<HTMLButtonElement, MouseEvent>,
-    content: string
-  ) => {
+  const handleClick = (e: ReactMouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     clipboard.writeText(content);
+    setCopied(true);
+    setAnnouncement(copiedMessage);
   };
   const classes = useCopyToClipboardTextInputStyles();
+
+  useEffect(() => {
+    if (!announcement) {
+      return;
+    }
+
+    const timeout = setTimeout(() => setAnnouncement(""), ANNOUNCEMENT_MS);
+
+    return () => clearTimeout(timeout);
+  }, [announcement]);
 
   return (
     <Flex sx={{ gap: 1 }}>
@@ -93,6 +114,7 @@ export const CopyToClipboardTextInput = ({ content }: { content: string }) => {
         size="sm"
         value={content}
         readOnly
+        inputProps={{ "aria-label": label }}
         sx={{
           "& .MuiInput-input": {
             pr: 0,
@@ -104,17 +126,27 @@ export const CopyToClipboardTextInput = ({ content }: { content: string }) => {
       />
       <Button
         variant="text"
-        onMouseOver={() => toggleTooltip(true)}
-        onMouseUp={() =>
-          updateTooltipContent(<Trans id="button.hint.copied">copied!</Trans>)
-        }
-        onMouseLeave={handleMouseLeave}
-        onClick={(e) => handleClick(e, content)}
+        aria-label={t({ id: "button.copy", message: `Copy: ${label}` })}
+        onMouseOver={() => setShowTooltip(true)}
+        onFocus={() => setShowTooltip(true)}
+        onMouseLeave={hideTooltip}
+        onBlur={hideTooltip}
+        onClick={handleClick}
         className={classes.button}
       >
         <Icon name="copy" size={20} />
-        {showTooltip && <ActionTooltip>{tooltipContent}</ActionTooltip>}
+        {showTooltip && (
+          <ActionTooltip>
+            {copied
+              ? copiedMessage
+              : t({
+                  id: "button.hint.click.to.copy",
+                  message: "click to copy",
+                })}
+          </ActionTooltip>
+        )}
       </Button>
+      <LiveRegion message={announcement} delay={0} />
     </Flex>
   );
 };

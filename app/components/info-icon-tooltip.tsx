@@ -1,4 +1,5 @@
-import { Tooltip, TooltipProps } from "@mui/material";
+import { t } from "@lingui/macro";
+import { IconButton, Tooltip, TooltipProps } from "@mui/material";
 import { ReactNode } from "react";
 
 import { Icon } from "@/icons";
@@ -23,11 +24,19 @@ export const InfoIconTooltip = (
       placement={placement}
       title={title}
       disableInteractive
+      describeChild
       {...rest}
     >
-      <div style={{ lineHeight: 0 }}>
+      <IconButton
+        color="inherit"
+        aria-label={t({
+          id: "info.more-information",
+          message: "More information",
+        })}
+        sx={{ p: 0, lineHeight: 0 }}
+      >
         <Icon name="infoCircle" size={size} />
-      </div>
+      </IconButton>
     </Tooltip>
   );
 };

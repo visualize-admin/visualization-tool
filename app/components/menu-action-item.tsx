@@ -2,13 +2,15 @@ import {
   Button,
   Divider,
   Link,
+  LinkProps,
   MenuItem,
   styled,
   Typography,
 } from "@mui/material";
 import NextLink from "next/link";
-import { MouseEvent, ReactNode } from "react";
+import { forwardRef, MouseEvent, ReactNode } from "react";
 
+import { useRequestConfirmation } from "@/components/action-menu";
 import { ConfirmationDialog } from "@/components/confirmation-dialog";
 import { useDisclosure } from "@/components/use-disclosure";
 import { Icon, IconName } from "@/icons";
@@ -21,6 +23,8 @@ const StyledMenuItem = styled(MenuItem)(({ theme, color }) => ({
   whiteSpace: "normal",
 })) as typeof MenuItem;
 
+const MENU_ITEM_SX = { display: "flex", alignItems: "center", minHeight: 0 };
+
 export type MenuActionProps = {
   disabled?: boolean;
   label: string | NonNullable<ReactNode>;
@@ -29,6 +33,8 @@ export type MenuActionProps = {
   priority?: number;
   stayOpen?: boolean;
   color?: "red";
+  "aria-haspopup"?: "menu";
+  "aria-expanded"?: boolean;
   onClick?: (e: MouseEvent<HTMLElement>) => Promise<unknown> | void;
 } & (
   | {
@@ -56,121 +62,147 @@ export type MenuActionProps = {
 export const MenuActionItem = (
   props: MenuActionProps & { as: "menuitem" | "button" }
 ) => {
-  const { disabled, label, trailingIconName, leadingIconName } = props;
+  const requestConfirmation = useRequestConfirmation();
   const {
     isOpen: isConfirmationOpen,
     open: openConfirmation,
     close: closeConfirmation,
   } = useDisclosure();
-
-  const Wrapper = ({
-    leadingIcon,
-    trailingIcon,
-    label,
-    color,
-    ...rest
-  }: {
-    leadingIcon?: IconName;
-    trailingIcon?: IconName;
-    label: string | NonNullable<ReactNode>;
-    color?: MenuActionProps["color"];
-    onClick?: (e: MouseEvent<HTMLElement>) => void;
-  }) => {
-    const handleClick = (e: MouseEvent<HTMLElement>) => {
-      if (props.onClick) {
-        if ("requireConfirmation" in props && props.requireConfirmation) {
-          openConfirmation();
-        } else {
-          return props.onClick(e);
+  const confirmation =
+    props.type === "button" && props.requireConfirmation
+      ? {
+          title: props.confirmationTitle,
+          text: props.confirmationText,
+          onClick: props.onClick,
+          onSuccess: props.onSuccess,
         }
-      }
-    };
+      : undefined;
 
-    const forwardedProps =
-      props.type === "button"
-        ? {
-            onClick: handleClick,
-            ...rest,
-          }
-        : {
-            href: props.href,
-            target: props.target,
-            rel: props.rel,
-            ...rest,
-          };
-
-    if (props.as === "button") {
-      return (
-        <Button
-          disabled={disabled}
-          variant="contained"
-          size="sm"
-          {...forwardedProps}
-          sx={{ minHeight: 0 }}
-        >
-          {label}
-        </Button>
-      );
+  const handleClick = (e: MouseEvent<HTMLElement>) => {
+    if (props.type !== "button") {
+      return;
     }
 
-    return (
-      <>
-        <StyledMenuItem
-          disabled={disabled}
-          component={props.type === "link" ? Link : "div"}
-          {...forwardedProps}
-          color={color}
-          sx={{ display: "flex", alignItems: "center", minHeight: 0 }}
-        >
-          {leadingIcon && <Icon name={leadingIcon} />}
-          <Typography variant="body3">{label}</Typography>
-          {trailingIcon && (
-            <Icon name={trailingIcon} style={{ marginLeft: "auto" }} />
-          )}
-        </StyledMenuItem>
-        <Divider
-          sx={{
-            mx: 4,
-            my: "0 !important",
+    if (!confirmation) {
+      return props.onClick(e);
+    }
 
-            "&:last-of-type": {
-              display: "none",
-            },
-          }}
-        />
-      </>
-    );
+    if (requestConfirmation) {
+      requestConfirmation(confirmation);
+    } else {
+      openConfirmation();
+    }
   };
+
+  const linkProps =
+    props.type === "link"
+      ? { href: props.href, target: props.target, rel: props.rel }
+      : undefined;
 
   return (
     <>
-      {props.type === "link" ? (
-        <NextLink href={props.href} passHref legacyBehavior>
-          <Wrapper
-            label={label}
-            leadingIcon={leadingIconName}
-            trailingIcon={trailingIconName}
-            color={props.color}
-          />
-        </NextLink>
-      ) : props.type === "button" ? (
-        <Wrapper
-          label={label}
-          leadingIcon={leadingIconName}
-          trailingIcon={trailingIconName}
-          color={props.color}
-        />
-      ) : null}
-      {props.type === "button" && props.requireConfirmation && (
-        <ConfirmationDialog
-          onClose={closeConfirmation}
-          open={isConfirmationOpen}
-          title={props.confirmationTitle}
-          text={props.confirmationText}
-          onClick={props.onClick}
-          onSuccess={props.onSuccess}
+      {props.as === "button" ? (
+        <Button
+          disabled={props.disabled}
+          variant="contained"
+          size="sm"
+          LinkComponent={NextLink}
+          onClick={linkProps ? undefined : handleClick}
+          {...linkProps}
+          sx={{ minHeight: 0 }}
+        >
+          {props.label}
+        </Button>
+      ) : (
+        <ActionMenuItem
+          {...props}
+          linkProps={linkProps}
+          onClick={handleClick}
         />
       )}
+      {confirmation && !requestConfirmation ? (
+        <ConfirmationDialog
+          {...confirmation}
+          open={isConfirmationOpen}
+          onClose={closeConfirmation}
+        />
+      ) : null}
     </>
   );
 };
+
+const ActionMenuItem = ({
+  label,
+  leadingIconName,
+  trailingIconName,
+  color,
+  disabled,
+  linkProps,
+  onClick,
+  "aria-haspopup": ariaHasPopup,
+  "aria-expanded": ariaExpanded,
+}: Pick<
+  MenuActionProps,
+  | "label"
+  | "leadingIconName"
+  | "trailingIconName"
+  | "color"
+  | "disabled"
+  | "aria-haspopup"
+  | "aria-expanded"
+> & {
+  linkProps?: { href: string; target?: string; rel?: string };
+  onClick: (e: MouseEvent<HTMLElement>) => void;
+}) => {
+  const content = (
+    <>
+      {leadingIconName && <Icon name={leadingIconName} />}
+      <Typography variant="body3">{label}</Typography>
+      {trailingIconName && (
+        <Icon name={trailingIconName} style={{ marginLeft: "auto" }} />
+      )}
+    </>
+  );
+
+  return (
+    <>
+      {linkProps ? (
+        <StyledMenuItem
+          component={MenuItemLink}
+          disabled={disabled}
+          color={color}
+          sx={MENU_ITEM_SX}
+          {...linkProps}
+        >
+          {content}
+        </StyledMenuItem>
+      ) : (
+        <StyledMenuItem
+          component="div"
+          disabled={disabled}
+          color={color}
+          aria-haspopup={ariaHasPopup}
+          aria-expanded={ariaExpanded}
+          onClick={onClick}
+          sx={MENU_ITEM_SX}
+        >
+          {content}
+        </StyledMenuItem>
+      )}
+      <Divider
+        sx={{
+          mx: 4,
+          my: "0 !important",
+
+          "&:last-of-type": {
+            display: "none",
+          },
+        }}
+      />
+    </>
+  );
+};
+
+const MenuItemLink = forwardRef<HTMLAnchorElement, LinkProps<typeof NextLink>>(
+  (props, ref) => <Link ref={ref} component={NextLink} {...props} />
+);

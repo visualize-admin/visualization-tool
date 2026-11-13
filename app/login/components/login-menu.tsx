@@ -1,8 +1,9 @@
 import { t, Trans } from "@lingui/macro";
-import { Button, Menu, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { signIn, signOut } from "next-auth/react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 
+import { ActionMenu } from "@/components/action-menu";
 import { MenuActionItem } from "@/components/menu-action-item";
 import { ADFS_PROFILE_URL } from "@/domain/env";
 import { isVercelPreviewHost } from "@/flags/flag";
@@ -26,6 +27,8 @@ export const LoginMenu = () => {
         <>
           <Button
             variant="text"
+            aria-haspopup="menu"
+            aria-expanded={!!anchorEl}
             onClick={(e) => setAnchorEl(e.currentTarget)}
             sx={{
               gap: 0.25,
@@ -43,7 +46,7 @@ export const LoginMenu = () => {
             {user.name}
             <Icon name="chevronDown" size={24} />
           </Button>
-          <Menu
+          <ActionMenu
             anchorEl={anchorEl}
             anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             transformOrigin={{ vertical: "top", horizontal: "center" }}
@@ -77,6 +80,8 @@ export const LoginMenu = () => {
                 message: "Feedback",
               })}
               trailingIconName="arrowRight"
+              aria-haspopup="menu"
+              aria-expanded={feedbackMenuOpen}
               onClick={() => setFeedbackMenuOpen(true)}
             />
             <MenuActionItem
@@ -90,7 +95,7 @@ export const LoginMenu = () => {
                 await signOut({ callbackUrl: "/api/auth/signout" })
               }
             />
-          </Menu>
+          </ActionMenu>
           <Feedback
             paperEl={paperEl.current}
             open={feedbackMenuOpen}
@@ -156,7 +161,7 @@ const Feedback = ({
   }, [open, paperEl]);
 
   return (
-    <Menu
+    <ActionMenu
       anchorPosition={position}
       open={open}
       onClose={handleClose}
@@ -197,6 +202,6 @@ const Feedback = ({
           subject: "Visualize Feature Request",
         })}
       />
-    </Menu>
+    </ActionMenu>
   );
 };

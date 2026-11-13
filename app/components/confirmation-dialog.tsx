@@ -13,27 +13,30 @@ import { MouseEvent, useState } from "react";
 
 import { sleep } from "@/utils/sleep";
 
+export type ConfirmationRequest = {
+  title?: string;
+  text?: string;
+  onSuccess?: () => Promise<unknown> | void;
+  onClick: (e: MouseEvent<HTMLElement>) => Promise<unknown> | void;
+};
+
 export const ConfirmationDialog = ({
   title,
   text,
   onClick,
   onSuccess,
-  onConfirm,
   ...props
-}: Omit<DialogProps, "onClose"> & {
-  title?: string;
-  text?: string;
-  onSuccess?: () => Promise<unknown> | void;
-  onConfirm?: () => Promise<unknown> | void;
-  onClick: (e: MouseEvent<HTMLElement>) => Promise<unknown> | void;
-  onClose: NonNullable<DialogProps["onClose"]>;
-}) => {
+}: Omit<DialogProps, "onClose" | "onClick"> &
+  ConfirmationRequest & {
+    onClose: NonNullable<DialogProps["onClose"]>;
+  }) => {
   const [loading, setLoading] = useState(false);
 
   return (
     <Dialog
       maxWidth="xs"
       PaperProps={{ sx: { gap: 4, width: "100%", p: 6 } }}
+      onClick={(e) => e.stopPropagation()}
       {...props}
     >
       <DialogTitle sx={{ p: 0, typography: "h4" }}>

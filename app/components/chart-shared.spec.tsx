@@ -41,6 +41,7 @@ vi.mock("@/utils/time-unit-to-formatter", () => ({
 vi.mock("@lingui/macro", () => ({
   Trans: ({ children }: { children: ReactNode }) => children,
   defineMessage: ({ message }: { message: string }) => message,
+  t: ({ message }: { message: string }) => message,
 }));
 
 describe("ChartMoreButton", () => {

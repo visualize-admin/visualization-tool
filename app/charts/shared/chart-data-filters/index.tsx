@@ -1,5 +1,6 @@
 import { t, Trans } from "@lingui/macro";
 import { Button, SelectChangeEvent, Typography } from "@mui/material";
+import { useId } from "@reach/auto-id";
 import isEmpty from "lodash/isEmpty";
 import isEqual from "lodash/isEqual";
 import mapValues from "lodash/mapValues";
@@ -310,6 +311,7 @@ export const DataFilterGenericDimension = ({
   options: _options,
   disabled,
 }: DataFilterGenericDimensionProps) => {
+  const id = `data-filter-${useId()}`;
   const { label, isKeyDimension } = dimension;
   const noneLabel = t({
     id: "controls.dimensionvalue.select",
@@ -371,7 +373,7 @@ export const DataFilterGenericDimension = ({
 
     return (
       <MultiSelect
-        id="dataFilterBaseDimension"
+        id={id}
         label={fieldLabel}
         options={allOptions}
         value={displayValues}
@@ -385,7 +387,7 @@ export const DataFilterGenericDimension = ({
 
   return (
     <Select
-      id="dataFilterBaseDimension"
+      id={id}
       size="sm"
       label={fieldLabel}
       options={allOptions}

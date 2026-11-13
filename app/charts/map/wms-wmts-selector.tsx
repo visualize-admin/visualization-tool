@@ -1,4 +1,4 @@
-import { t, Trans } from "@lingui/macro";
+import { plural, t, Trans } from "@lingui/macro";
 import { TreeItem, TreeView } from "@mui/lab";
 import {
   Box,
@@ -14,7 +14,7 @@ import {
 import { makeStyles } from "@mui/styles";
 import sortBy from "lodash/sortBy";
 import uniqBy from "lodash/uniqBy";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import createStore from "zustand";
 
 import { RemoteLayer } from "@/charts/map/types";
@@ -28,6 +28,7 @@ import { ProviderAutocomplete } from "@/charts/map/wms-wmts-providers-autocomple
 import { RemoteWMTSLayer } from "@/charts/map/wmts-utils";
 import { Flex } from "@/components/flex";
 import { HintError, Spinner } from "@/components/hint";
+import { LiveRegion } from "@/components/live-region";
 import { Tree, useSelectTree } from "@/components/select-tree";
 import { Icon } from "@/icons";
 import SvgIcChevronRight from "@/icons/components/IcChevronRight";
@@ -103,6 +104,7 @@ const LegendButton = ({
 }: {
   layer: RemoteWMTSLayer | RemoteWMSLayer;
 }) => {
+  const { title } = layer;
   const [showLegend, setShowLegend] = useState<
     | {
         value: string;
@@ -115,6 +117,10 @@ const LegendButton = ({
       <IconButton
         data-value={layer.path}
         size="small"
+        aria-label={t({
+          id: "wmts.legend-for",
+          message: `Legend: ${title}`,
+        })}
         onClick={(ev) => {
           return setShowLegend({
             value: layer.path,
@@ -137,6 +143,7 @@ const LegendButton = ({
           <IconButton
             sx={{ position: "absolute", top: "0.25rem", right: "0.25rem" }}
             size="small"
+            aria-label={t({ id: "button.close", message: "Close" })}
             onClick={() => setShowLegend(undefined)}
           >
             <SvgIcClose />
@@ -297,6 +304,16 @@ export const WMTSSelector = ({
     onChangeInputValue: setInputValue,
   });
 
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const resultsCount = useMemo(() => {
+    let count = 0;
+    visitHierarchy(unsortedFilteredOptions, () => {
+      count++;
+    });
+
+    return count;
+  }, [unsortedFilteredOptions]);
+
   const filteredOptions = useMemo(() => {
     return mapTree(
       sortBy(unsortedFilteredOptions, (x) => x.label),
@@ -382,15 +399,32 @@ export const WMTSSelector = ({
         <Input
           size="sm"
           value={inputValue}
+          inputRef={searchInputRef}
           autoFocus
           startAdornment={<Icon name="search" size={18} />}
           placeholder={t({
             id: "wmts.search-placeholder",
             message: "Search in imported maps...",
           })}
+          inputProps={{
+            "aria-label": t({
+              id: "wmts.search-label",
+              message: "Search in imported maps",
+            }),
+          }}
           endAdornment={
             inputValue.length > 0 ? (
-              <IconButton size="small" onClick={handleClickResetInput}>
+              <IconButton
+                size="small"
+                aria-label={t({
+                  id: "controls.search.clear",
+                  message: "Clear search field",
+                })}
+                onClick={() => {
+                  handleClickResetInput();
+                  searchInputRef.current?.focus();
+                }}
+              >
                 <Icon name="close" size={16} />
               </IconButton>
             ) : null
@@ -418,6 +452,20 @@ export const WMTSSelector = ({
       >
         {renderTreeContent(filteredOptions)}
       </TreeView>
+      <LiveRegion
+        message={
+          inputValue && status !== "fetching"
+            ? t({
+                id: "wmts.search-results",
+                message: plural(resultsCount, {
+                  0: "No results",
+                  one: "# result",
+                  other: "# results",
+                }),
+              })
+            : ""
+        }
+      />
     </Flex>
   );
 };

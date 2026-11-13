@@ -3,6 +3,11 @@ import { ReactNode } from "react";
 import { Flex } from "@/components/flex";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { MAIN_CONTENT_ID } from "@/components/skip-link";
+
+const MAIN_PROPS = { id: MAIN_CONTENT_ID, tabIndex: -1 };
+
+const MAIN_SX = { "&:focus": { outline: "none" } };
 
 export const AppLayout = ({
   children,
@@ -19,7 +24,8 @@ export const AppLayout = ({
       <Flex
         component="main"
         role="main"
-        sx={{ flex: 1, flexDirection: "column" }}
+        {...MAIN_PROPS}
+        sx={{ flex: 1, flexDirection: "column", ...MAIN_SX }}
       >
         {children}
       </Flex>
@@ -46,10 +52,12 @@ export const ContentLayout = ({
       <Flex
         component="main"
         role="main"
+        {...MAIN_PROPS}
         sx={{
           flexDirection: "column",
           flex: 1,
           width: "100%",
+          ...MAIN_SX,
         }}
       >
         {children}
@@ -78,7 +86,9 @@ export const StaticContentLayout = ({
       <Flex
         component="main"
         role="main"
+        {...MAIN_PROPS}
         sx={{
+          ...MAIN_SX,
           flexDirection: "column",
           flex: 1,
           width: "100%",

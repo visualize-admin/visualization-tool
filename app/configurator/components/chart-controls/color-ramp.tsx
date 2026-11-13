@@ -2,12 +2,12 @@ import { Trans } from "@lingui/macro";
 import {
   Box,
   Button,
-  ListSubheader,
   MenuItem,
   Select,
   SelectProps,
   Typography,
 } from "@mui/material";
+import { useId } from "@reach/auto-id";
 import get from "lodash/get";
 import {
   Dispatch,
@@ -22,6 +22,8 @@ import {
 
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { Label } from "@/components/form";
+import { SelectGroupHeader } from "@/components/select-group-header";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import { getChartConfig } from "@/config-utils";
 import {
   CustomPaletteType,
@@ -101,6 +103,7 @@ type ColorRampFieldProps = Omit<ColorRampProps, "colorInterpolator"> & {
 };
 
 export const ColorRampField = (props: ColorRampFieldProps) => {
+  const labelId = `color-ramp-label-${useId()}`;
   const { field, path, disabled, nSteps } = props;
   const locale = useLocale();
   const [state, dispatch] = useConfiguratorState(isConfiguring);
@@ -186,10 +189,12 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
 
   return (
     <Box pb={2} sx={{ pointerEvents: disabled ? "none" : "auto" }}>
-      <Label htmlFor="color-palette">
+      <Label id={labelId}>
         <Trans id="controls.color.palette">Color palette</Trans>
       </Label>
       <Select
+        id={`${labelId}-value`}
+        labelId={labelId}
         size="sm"
         value={currentPaletteId}
         disabled={disabled}
@@ -207,11 +212,16 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
           }
 
           return (
-            <ColorRamp
-              colorInterpolator={selectedColorInterpolator}
-              nSteps={nSteps}
-              disabled={disabled}
-            />
+            <>
+              <VisuallyHidden component="span">
+                {currentPalette?.label ?? currentCustomPalette?.name}
+              </VisuallyHidden>
+              <ColorRamp
+                colorInterpolator={selectedColorInterpolator}
+                nSteps={nSteps}
+                disabled={disabled}
+              />
+            </>
           );
         }}
         sx={{ mt: 1, lineHeight: 0 }}
@@ -238,7 +248,11 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
         ]}
       </Select>
       {type && (
-        <ConfiguratorDrawer open={!!anchorEl} hideBackdrop>
+        <ConfiguratorDrawer
+          open={!!anchorEl}
+          hideBackdrop
+          onClose={() => handleCloseCreateColorPalette()}
+        >
           <ColorPaletteDrawerContent
             onClose={(palette) => handleCloseCreateColorPalette(palette)}
             type={type}
@@ -253,7 +267,11 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
 type PaletteSectionProps = {
   nSteps?: number;
   customColorPalettes?: CustomPaletteType[];
-  colorPalettes: { value: string; interpolator: (t: number) => string }[];
+  colorPalettes: {
+    value: string;
+    label: string;
+    interpolator: (t: number) => string;
+  }[];
   handleAddColorPalette: (
     e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
   ) => void;
@@ -278,13 +296,13 @@ const PaletteSection = (props: PaletteSectionProps) => {
 
   return [
     type === "diverging" ? (
-      <ListSubheader>
+      <SelectGroupHeader>
         <Trans id="controls.color.palette.diverging">Diverging</Trans>
-      </ListSubheader>
+      </SelectGroupHeader>
     ) : (
-      <ListSubheader>
+      <SelectGroupHeader>
         <Trans id="controls.color.palette.sequential">Sequential</Trans>
-      </ListSubheader>
+      </SelectGroupHeader>
     ),
     user && (
       <Button
@@ -302,7 +320,7 @@ const PaletteSection = (props: PaletteSectionProps) => {
       </Button>
     ),
     user && (
-      <ListSubheader>
+      <SelectGroupHeader>
         <Typography
           variant="subtitle2"
           fontWeight={700}
@@ -313,7 +331,7 @@ const PaletteSection = (props: PaletteSectionProps) => {
             Custom color palettes
           </Trans>
         </Typography>
-      </ListSubheader>
+      </SelectGroupHeader>
     ),
     user &&
       customColorPalettes
@@ -342,7 +360,7 @@ const PaletteSection = (props: PaletteSectionProps) => {
           );
         }),
     user && (
-      <ListSubheader>
+      <SelectGroupHeader>
         <Typography
           variant="subtitle2"
           fontWeight={700}
@@ -353,13 +371,14 @@ const PaletteSection = (props: PaletteSectionProps) => {
             Visualize color palettes
           </Trans>
         </Typography>
-      </ListSubheader>
+      </SelectGroupHeader>
     ),
-    colorPalettes.map(({ value, interpolator }, i) => (
+    colorPalettes.map(({ value, label, interpolator }, i) => (
       <MenuItem
         sx={{ flexDirection: "column", alignItems: "flex-start" }}
         key={`${type}-${i}`}
         value={value}
+        aria-label={label}
       >
         <ColorRamp colorInterpolator={interpolator} nSteps={nSteps} />
       </MenuItem>

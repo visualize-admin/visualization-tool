@@ -118,6 +118,7 @@ export const DataFilterSelectGeneric = ({
   onRemove,
   sideControls,
   disableLabel,
+  labelId,
 }: {
   rawDimension: Dimension;
   filterDimensionIds: string[];
@@ -126,6 +127,7 @@ export const DataFilterSelectGeneric = ({
   onRemove?: () => void;
   sideControls?: ReactNode;
   disableLabel?: boolean;
+  labelId?: string;
 }) => {
   const locale = useLocale();
   const [state] = useConfiguratorState();
@@ -157,13 +159,15 @@ export const DataFilterSelectGeneric = ({
     data?.dataCubesComponents?.dimensions.find(
       (d) => d.cubeIri === rawDimension.cubeIri
     ) ?? rawDimension;
+  const { label } = dimension;
+  const id = `select-single-filter-${index}`;
 
   const sharedProps = {
     dimension,
     label: disableLabel ? null : (
       <>
         <OpenMetadataPanelWrapper component={dimension}>
-          <Typography variant="caption">
+          <Typography id={`${id}-name`} variant="caption">
             {`${index + 1}. ${dimension.label}`}
           </Typography>
         </OpenMetadataPanelWrapper>
@@ -180,6 +184,10 @@ export const DataFilterSelectGeneric = ({
             <IconButton
               disabled={disabled}
               size="small"
+              aria-label={t({
+                id: "controls.filters.remove",
+                message: `Remove filter: ${label}`,
+              })}
               onClick={onRemove}
               sx={{ p: 0, transform: "translateY(-5%)" }}
             >
@@ -190,7 +198,7 @@ export const DataFilterSelectGeneric = ({
       </>
     ),
     sideControls,
-    id: `select-single-filter-${index}`,
+    id,
     disabled: fetching || disabled,
     optional: !dimension.isKeyDimension,
     loading: fetching,
@@ -209,7 +217,11 @@ export const DataFilterSelectGeneric = ({
     );
   } else {
     return (
-      <DataFilterSelect {...sharedProps} hierarchy={dimension.hierarchy} />
+      <DataFilterSelect
+        {...sharedProps}
+        labelId={disableLabel ? labelId : `${id}-name`}
+        hierarchy={dimension.hierarchy}
+      />
     );
   }
 };

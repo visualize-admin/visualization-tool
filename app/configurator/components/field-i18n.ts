@@ -122,7 +122,7 @@ const fieldLabels = {
   }),
   "controls.imputation.type.none": defineMessage({
     id: "controls.imputation.type.none",
-    message: "-",
+    message: "None",
   }),
   "controls.imputation.type.zeros": defineMessage({
     id: "controls.imputation.type.zeros",

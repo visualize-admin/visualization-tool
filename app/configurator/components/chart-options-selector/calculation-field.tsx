@@ -22,11 +22,15 @@ export const CalculationField = ({
 }) => {
   return (
     <ControlSection collapse>
-      <SectionTitle iconName="normalize" warnMessage={warnMessage}>
+      <SectionTitle
+        id="calculation-mode-label"
+        iconName="normalize"
+        warnMessage={warnMessage}
+      >
         <Trans id="controls.select.calculation.mode">Chart mode</Trans>
       </SectionTitle>
       <ControlSectionContent>
-        <RadioGroup>
+        <RadioGroup labelId="calculation-mode-label">
           <ChartOptionRadioField
             label={getFieldLabel("identity")}
             field={null}

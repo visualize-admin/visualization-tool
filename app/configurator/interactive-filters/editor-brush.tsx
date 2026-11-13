@@ -116,7 +116,7 @@ export const EditorBrush = ({
     <Box sx={{ mt: 4 }}>
       <div ref={resizeRef} id="editor-brush">
         {width > 0 && (
-          <svg width={width} height={BRUSH_HEIGHT + MARGIN * 2}>
+          <svg aria-hidden width={width} height={BRUSH_HEIGHT + MARGIN * 2}>
             <g
               ref={brushRef}
               transform={`translate(${HANDLE_OFFSET * 2}, ${MARGIN})`}

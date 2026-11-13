@@ -32,6 +32,7 @@ import {
   Popper,
   Theme,
   Typography,
+  Unstable_TrapFocus as TrapFocus,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import {
@@ -48,6 +49,7 @@ import {
 import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 
+import { Label } from "@/components/form";
 import { ToolbarIconButton } from "@/components/mdx-editor/common";
 import { Icon } from "@/icons";
 import { useTimedPrevious } from "@/utils/use-timed-previous";
@@ -110,10 +112,11 @@ const state$ = Cell<InactiveLinkDialog | PreviewLinkDialog | EditLinkDialog>(
     r.pub(createActiveEditorSubscription$, (editor) => {
       return editor.registerCommand(
         KEY_ESCAPE_COMMAND,
-        () => {
+        (e) => {
           const state = r.getValue(state$);
 
           if (state.type === "preview") {
+            e.stopPropagation();
             r.pub(state$, { type: "inactive" });
 
             return true;
@@ -298,7 +301,7 @@ export const openLinkEditDialog$ = Action((r) => {
             const key = linkNode?.getKey() ?? "";
             const url = linkNode?.getURL() ?? "";
             const text =
-              selection?.getTextContent() ?? linkNode?.getTextContent() ?? "";
+              selection?.getTextContent() || linkNode?.getTextContent() || "";
             r.pub(state$, {
               type: "edit",
               initialUrl: url,
@@ -366,6 +369,13 @@ const LinkEditForm = ({
     >
       <form
         className={classes.form}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            e.preventDefault();
+            e.stopPropagation();
+            onCancel();
+          }
+        }}
         onSubmit={(e) => {
           void handleSubmit(({ url, text }) => {
             url = url.trim();
@@ -384,6 +394,9 @@ const LinkEditForm = ({
           onCancel();
         }}
       >
+        <Label htmlFor="link-text">
+          {t({ id: "mdx-editor.link-dialog.label", message: "Link text" })}
+        </Label>
         <Input
           id="link-text"
           className={classes.input}
@@ -395,6 +408,9 @@ const LinkEditForm = ({
           })}
           autoFocus
         />
+        <Label htmlFor="link-url">
+          {t({ id: "mdx-editor.link-dialog.url", message: "URL" })}
+        </Label>
         <Input
           id="link-url"
           className={classes.input}
@@ -406,16 +422,19 @@ const LinkEditForm = ({
           })}
           inputProps={{
             pattern: "https?://.*|www\\..*",
-            title: "Enter a valid URL starting with https:// or www.",
+            title: t({
+              id: "mdx-editor.link-dialog.url-hint",
+              message: "Enter a valid URL starting with https:// or www.",
+            }),
           }}
           {...register("url")}
         />
         <div className={classes.buttonGroup}>
           <Button type="reset" variant="outlined">
-            Cancel
+            {t({ id: "mdx-editor.link-dialog.cancel", message: "Cancel" })}
           </Button>
           <Button type="submit" variant="contained">
-            Save
+            {t({ id: "mdx-editor.link-dialog.save", message: "Save" })}
           </Button>
         </div>
       </form>
@@ -452,13 +471,26 @@ const LinkDialog = () => {
     state$
   );
   const delayedState = useTimedPrevious(state, TIMEOUT_MS);
-  const maybeDelayedState = state.type === "inactive" ? delayedState : state;
+  const maybeDelayedState =
+    state.type === "inactive" && delayedState.type === "preview"
+      ? delayedState
+      : state;
   const publishWindowChange = usePublisher(onWindowChange$);
   const updateLink = usePublisher(updateLink$);
   const cancelLinkEdit = usePublisher(cancelLinkEdit$);
   const switchFromPreviewToLinkEdit = usePublisher(
     switchFromPreviewToLinkEdit$
   );
+
+  const previousStateType = useRef(state.type);
+
+  useEffect(() => {
+    if (previousStateType.current === "edit" && state.type !== "edit") {
+      activeEditor?.focus();
+    }
+
+    previousStateType.current = state.type;
+  }, [state.type, activeEditor]);
 
   const urlIsExternal =
     maybeDelayedState.type === "preview" &&
@@ -495,6 +527,13 @@ const LinkDialog = () => {
       className={classes.popper}
       open={state.type !== "inactive"}
       anchorEl={editorRootElementRef?.current}
+      role="dialog"
+      aria-label={
+        maybeDelayedState.type === "edit"
+          ? t({ id: "mdx-editor.link-dialog.edit", message: "Edit link" })
+          : t({ id: "mdx-editor.link-dialog.preview", message: "Link" })
+      }
+      disablePortal
       transition
       sx={{
         top: `${(rectangle?.top ?? 0) + (rectangle?.height ?? 0) + 4}px !important`,
@@ -505,12 +544,16 @@ const LinkDialog = () => {
         <Fade {...TransitionProps} timeout={TIMEOUT_MS}>
           <Paper className={classes.popperContent}>
             {maybeDelayedState.type === "edit" && (
-              <LinkEditForm
-                url={maybeDelayedState.url}
-                text={maybeDelayedState.text}
-                onSubmit={updateLink}
-                onCancel={cancelLinkEdit.bind(null)}
-              />
+              <TrapFocus open={state.type === "edit"} disableRestoreFocus>
+                <div>
+                  <LinkEditForm
+                    url={maybeDelayedState.url}
+                    text={maybeDelayedState.text}
+                    onSubmit={updateLink}
+                    onCancel={cancelLinkEdit.bind(null)}
+                  />
+                </div>
+              </TrapFocus>
             )}
             {maybeDelayedState.type === "preview" && (
               <>
@@ -529,6 +572,10 @@ const LinkDialog = () => {
                   ) : null}
                 </Link>
                 <ToolbarIconButton
+                  label={t({
+                    id: "mdx-editor.link-dialog.edit",
+                    message: "Edit link",
+                  })}
                   onClick={() => {
                     switchFromPreviewToLinkEdit();
                   }}

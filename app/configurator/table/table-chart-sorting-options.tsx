@@ -129,6 +129,7 @@ const TableSortingOptionItem = ({
     });
   });
 
+  const column = component?.label;
   const sortingType = isNumericalMeasure(component)
     ? "byMeasure"
     : "byDimensionLabel";
@@ -144,7 +145,12 @@ const TableSortingOptionItem = ({
           sideControls={sideControls}
         />
       </Typography>
-      <RadioGroup>
+      <RadioGroup
+        label={t({
+          id: "controls.sorting.order-for",
+          message: `Sorting order: ${column}`,
+        })}
+      >
         <Radio
           name={`${componentId}-sortingOrder`}
           value="asc"
@@ -387,6 +393,10 @@ export const TableSortingOptions = ({
               <div>
                 <Box ref={innerRef}>
                   {sorting.map((option, i) => {
+                    const label = [...dimensions, ...measures].find(
+                      (c) => c.id === option.componentId
+                    )?.label;
+
                     return (
                       <Draggable
                         key={option.componentId}
@@ -428,6 +438,10 @@ export const TableSortingOptions = ({
                                       },
                                     }}
                                     {...dragHandleProps}
+                                    aria-label={t({
+                                      id: "controls.table.sorting.reorder",
+                                      message: `Reorder: ${label}`,
+                                    })}
                                   >
                                     <Icon name="dragndrop" />
                                   </Box>

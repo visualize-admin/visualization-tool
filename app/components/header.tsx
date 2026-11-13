@@ -1,9 +1,12 @@
+import { t } from "@lingui/macro";
 import { useRouter } from "next/router";
 
 import { DataSourceMenu } from "@/components/data-source-menu";
 import { Flex } from "@/components/flex";
 import { Select } from "@/components/form";
 import { __HEADER_HEIGHT_CSS_VAR } from "@/components/header-constants";
+import { SkipLink } from "@/components/skip-link";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import contentRoutes from "@/content-routes.json";
 import { SOURCE_OPTIONS } from "@/domain/data-source/constants";
 import { TopBar } from "@/federal-ci/components";
@@ -44,6 +47,7 @@ export const Header = ({
 
   return (
     <div ref={ref} style={{ zIndex: 1 }}>
+      <SkipLink />
       <TopBar
         ContentWrapperProps={{
           sx: {
@@ -57,8 +61,12 @@ export const Header = ({
         {SOURCE_OPTIONS.length > 1 && <DataSourceMenu />}
         <Flex alignItems="center" gap={3} marginLeft="auto">
           <LoginMenu />
+          <VisuallyHidden component="span" id="localeSwitcherSelect-label">
+            {t({ id: "controls.language", message: "Language" })}
+          </VisuallyHidden>
           <Select
             id="localeSwitcherSelect"
+            labelId="localeSwitcherSelect-label"
             variant="standard"
             value={currentLocale}
             onChange={(e) => {

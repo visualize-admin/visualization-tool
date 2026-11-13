@@ -15,6 +15,19 @@ You can also check the
   - Keyboard focus is now visible on buttons, links, tabs and menu items, the
     switch has sufficient contrast, and switches and tabs stay visible in
     forced colors (high contrast) mode
+  - Keyboard access to shared widgets: menus (chart and dashboard actions,
+    "Download data", user menu, profile rows) open on their first item and
+    work with the arrow keys; confirmation dialogs open outside the menu; the
+    "Add chart" popover, color palette select and color picker (saturation,
+    hue, swatches) are operable by keyboard; time sliders and time range
+    brushes move with arrow keys, Home and End and announce their value; Tab
+    no longer gets trapped in the rich text editor, whose toolbar uses arrow
+    keys and shows the active format, also in forced colors mode; Escape
+    closes the editor drawers, the link dialog and the date picker without
+    closing the options panel
+  - Accessible names for icon-only buttons, selects, radio groups, editors
+    and color controls, linked error messages, and a "Skip to main content"
+    link on every page
 
 ## 6.5.7 - 2026-11-10
 

@@ -14,7 +14,10 @@ test("Custom Color Picker", async ({ page, selectors }) => {
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await sleep(1_000);
 
-  await page.getByRole("button", { name: "Open Color Picker" }).first().click();
+  await page
+    .getByRole("button", { name: /^Open color picker:/ })
+    .first()
+    .click();
   await sleep(1_000);
 
   const colorSquare = page.getByTestId("color-square").first();

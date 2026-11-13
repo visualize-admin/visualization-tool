@@ -91,10 +91,10 @@ export default function App({
                   <SnackbarProvider>
                     <CssBaseline />
                     <Flashes />
-                    {shouldShowGQLDebug ? <GQLDebugPanel /> : null}
                     <AsyncLocalizationProvider locale={locale}>
                       <Component {...pageProps} />
                     </AsyncLocalizationProvider>
+                    {shouldShowGQLDebug ? <GQLDebugPanel /> : null}
                   </SnackbarProvider>
                 </EventEmitterProvider>
               </ThemeProvider>

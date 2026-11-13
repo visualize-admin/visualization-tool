@@ -3,6 +3,7 @@ import get from "lodash/get";
 import { useCallback } from "react";
 
 import { Select } from "@/components/form";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import { ChartConfig, IMPUTATION_TYPES, ImputationType } from "@/config-types";
 import {
   ControlSection,
@@ -26,7 +27,7 @@ export const ImputationField = ({
       case "none":
         return t({
           id: "controls.imputation.type.none",
-          message: "-",
+          message: "None",
         });
       case "zeros":
         return t({
@@ -78,6 +79,9 @@ export const ImputationField = ({
         <Trans id="controls.section.imputation">Missing values</Trans>
       </SectionTitle>
       <ControlSectionContent component="fieldset" gap="none">
+        <VisuallyHidden component="legend">
+          <Trans id="controls.section.imputation">Missing values</Trans>
+        </VisuallyHidden>
         <Select
           id="imputation-type"
           label={getFieldLabel("imputation")}

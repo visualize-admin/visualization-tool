@@ -7,6 +7,7 @@ import { useMemo } from "react";
 import { LegendItem } from "@/charts/shared/legend-color";
 import { Flex } from "@/components/flex";
 import { Radio, RadioGroup, Switch } from "@/components/form";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import { ChartConfig } from "@/config-types";
 import {
   getAxisDimension,
@@ -123,6 +124,11 @@ export const LimitsField = ({
         </Trans>
       </SectionTitle>
       <ControlSectionContent component="fieldset">
+        <VisuallyHidden component="legend">
+          <Trans id="controls.section.targets-and-limit-values">
+            Targets & limit values
+          </Trans>
+        </VisuallyHidden>
         {availableLimitOptions.map(
           (
             {
@@ -176,6 +182,7 @@ export const LimitsField = ({
                       symbol="square"
                     />
                     <ColorPickerMenu
+                      label={limit.name}
                       colors={colors}
                       selectedHexColor={color}
                       onChange={(color) => {
@@ -196,14 +203,19 @@ export const LimitsField = ({
                 </Flex>
                 {limit.type === "single" && supportsLimitSymbols ? (
                   <div>
-                    <Typography variant="h6" component="p" sx={{ mb: 2 }}>
+                    <Typography
+                      id={`limit-${i}-symbol-type-label`}
+                      variant="h6"
+                      component="p"
+                      sx={{ mb: 2 }}
+                    >
                       <Trans id="controls.section.targets-and-limit-values.symbol-type">
                         Select symbol type
                       </Trans>
                     </Typography>
-                    <RadioGroup>
+                    <RadioGroup labelId={`limit-${i}-symbol-type-label`}>
                       <Radio
-                        name={`limit-${i}-symbol-type-dot`}
+                        name={`limit-${i}-symbol-type`}
                         label={t({ id: "controls.symbol.dot", message: "Dot" })}
                         value="dot"
                         checked={symbolType === "circle"}
@@ -222,7 +234,7 @@ export const LimitsField = ({
                         disabled={!maybeLimit}
                       />
                       <Radio
-                        name={`limit-${i}-symbol-type-cross`}
+                        name={`limit-${i}-symbol-type`}
                         label={t({
                           id: "controls.symbol.cross",
                           message: "Cross",
@@ -244,7 +256,7 @@ export const LimitsField = ({
                         disabled={!maybeLimit}
                       />
                       <Radio
-                        name={`limit-${i}-symbol-type-triangle`}
+                        name={`limit-${i}-symbol-type`}
                         label={t({
                           id: "controls.symbol.triangle",
                           message: "Triangle",
@@ -272,14 +284,19 @@ export const LimitsField = ({
                 !supportsLimitSymbols ||
                 hasNoAxisDimension ? (
                   <div>
-                    <Typography variant="body3" component="p" sx={{ my: 2 }}>
+                    <Typography
+                      id={`limit-${i}-line-type-label`}
+                      variant="body3"
+                      component="p"
+                      sx={{ my: 2 }}
+                    >
                       <Trans id="controls.section.targets-and-limit-values.line-type">
                         Select line type
                       </Trans>
                     </Typography>
-                    <RadioGroup>
+                    <RadioGroup labelId={`limit-${i}-line-type-label`}>
                       <Radio
-                        name={`limit-${i}-line-type-solid`}
+                        name={`limit-${i}-line-type`}
                         label={t({
                           id: "controls.line.solid",
                           message: "Solid",
@@ -301,7 +318,7 @@ export const LimitsField = ({
                         disabled={!maybeLimit}
                       />
                       <Radio
-                        name={`limit-${i}-line-type-dashed`}
+                        name={`limit-${i}-line-type`}
                         label={t({
                           id: "controls.line.dashed",
                           message: "Dashed",

@@ -87,7 +87,7 @@ export const RenameDialog = ({
     : config.data.layout.meta;
 
   return (
-    <Dialog {...props} fullWidth>
+    <Dialog {...props} onClose={onClose} fullWidth>
       <form style={{ display: "contents" }} onSubmit={handleRename}>
         <DialogTitle>
           <Typography variant="h5" component="p" sx={{ fontWeight: 700 }}>
