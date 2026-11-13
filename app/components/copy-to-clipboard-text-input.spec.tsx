@@ -60,4 +60,29 @@ describe("CopyToClipboardTextInput", () => {
 
     expect(screen.getByRole("status").textContent).toBe("copied!");
   });
+
+  it("announces every copy", () => {
+    renderInput();
+    const button = screen.getByRole("button", { name: "Copy: Chart URL" });
+    const copy = () => {
+      fireEvent.click(button);
+      act(() => {
+        vi.advanceTimersByTime(0);
+      });
+    };
+
+    copy();
+    expect(screen.getByRole("status").textContent).toBe("copied!");
+
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+    act(() => {
+      vi.advanceTimersByTime(0);
+    });
+    expect(screen.getByRole("status").textContent).toBe("");
+
+    copy();
+    expect(screen.getByRole("status").textContent).toBe("copied!");
+  });
 });
