@@ -765,6 +765,7 @@ const TreeAccordion = ({
       slotProps={{ transition: { unmountOnExit: true } }}
     >
       <TreeAccordionSummary
+        aria-label={label}
         expandIcon={null}
         onClick={(e) => {
           e.stopPropagation();
