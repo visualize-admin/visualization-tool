@@ -17,6 +17,7 @@ import { hasDimensionColors } from "@/charts/shared/colors";
 import { Flex } from "@/components/flex";
 import { Label, selectMenuProps } from "@/components/form";
 import { SelectGroupHeader } from "@/components/select-group-header";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import { getChartConfig } from "@/config-utils";
 import {
   ConfiguratorStateConfiguringChart,
@@ -230,6 +231,7 @@ export const ColorPalette = ({
           <Trans id="controls.color.palette">Color palette</Trans>
         </Label>
         <Select
+          id={`${labelId}-value`}
           labelId={labelId}
           size="sm"
           MenuProps={selectMenuProps}
@@ -242,23 +244,20 @@ export const ColorPalette = ({
               );
             }
 
+            const currentCustomPalette = customColorPalettes?.find(
+              (palette) => palette.paletteId === currentPaletteName
+            );
+
             return (
               <Flex gap={0.5} flexWrap="wrap">
-                {currentPalette
-                  ? currentPalette.colors.map((color, i) => (
-                      <ColorSquare key={i} color={color} disabled={disabled} />
-                    ))
-                  : customColorPalettes
-                      ?.find(
-                        (palette) => palette.paletteId === currentPaletteName
-                      )
-                      ?.colors.map((color, i) => (
-                        <ColorSquare
-                          key={i}
-                          color={color}
-                          disabled={disabled}
-                        />
-                      ))}
+                <VisuallyHidden component="span">
+                  {currentPalette?.label ?? currentCustomPalette?.name}
+                </VisuallyHidden>
+                {(currentPalette?.colors ?? currentCustomPalette?.colors)?.map(
+                  (color, i) => (
+                    <ColorSquare key={i} color={color} disabled={disabled} />
+                  )
+                )}
               </Flex>
             );
           }}
