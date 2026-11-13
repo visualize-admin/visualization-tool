@@ -90,4 +90,22 @@ describe("Select", () => {
 
     expect(screen.getByRole("combobox", { name: /^Sort by/ })).toBeTruthy();
   });
+
+  it("keeps the names of buttons inside its label", () => {
+    render(
+      <Select
+        id="filter"
+        label={
+          <>
+            Region <button>Info</button>
+          </>
+        }
+        value="zh"
+        options={[{ value: "zh", label: "Zurich" }]}
+      />
+    );
+
+    expect(screen.getByRole("button", { name: "Info" })).toBeTruthy();
+    expect(screen.getByRole("combobox", { name: /^Region Info/ })).toBeTruthy();
+  });
 });

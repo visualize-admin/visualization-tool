@@ -121,7 +121,7 @@ export const Label = ({
   return (
     <Typography
       variant="caption"
-      component="label"
+      component={htmlFor ? "label" : "div"}
       id={id}
       htmlFor={htmlFor}
       sx={sx}

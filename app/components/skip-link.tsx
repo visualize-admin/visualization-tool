@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
     "&:focus": {
       position: "static",
-      alignSelf: "flex-start",
+      display: "inline-block",
       width: "auto",
       height: "auto",
       margin: theme.spacing(2),

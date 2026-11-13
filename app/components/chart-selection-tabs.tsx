@@ -168,6 +168,9 @@ const TabsEditable = (props: TabsEditableProps) => {
     <>
       <TabsInner
         data={data}
+        addPopoverOpen={
+          tabsState.popoverOpen && tabsState.popoverType === "add"
+        }
         menuChartKey={
           tabsState.popoverOpen && tabsState.popoverType === "edit"
             ? tabsState.activeChartKey
@@ -424,6 +427,7 @@ const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
 
 const TabsInner = ({
   data,
+  addPopoverOpen,
   menuChartKey,
   addable,
   editable,
@@ -433,6 +437,7 @@ const TabsInner = ({
   onChartSwitch,
 }: {
   data: TabDatum[];
+  addPopoverOpen?: boolean;
   menuChartKey?: string;
   addable: boolean;
   editable: boolean;
@@ -545,7 +550,11 @@ const TabsInner = ({
         </DragDropContext>
       </TabContext>
       {addable && (
-        <AddButton onClick={onChartAdd}>
+        <AddButton
+          aria-haspopup="dialog"
+          aria-expanded={!!addPopoverOpen}
+          onClick={onChartAdd}
+        >
           <Trans id="chart-selection-tabs.add-chart">Add chart</Trans>
         </AddButton>
       )}

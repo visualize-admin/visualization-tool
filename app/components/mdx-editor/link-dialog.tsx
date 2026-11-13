@@ -202,7 +202,6 @@ const state$ = Cell<InactiveLinkDialog | PreviewLinkDialog | EditLinkDialog>(
             },
             { discrete: true }
           );
-          editor?.focus();
 
           r.pub(state$, {
             type: "preview",
@@ -476,6 +475,16 @@ const LinkDialog = () => {
   const switchFromPreviewToLinkEdit = usePublisher(
     switchFromPreviewToLinkEdit$
   );
+
+  const previousStateType = useRef(state.type);
+
+  useEffect(() => {
+    if (previousStateType.current === "edit" && state.type !== "edit") {
+      activeEditor?.focus();
+    }
+
+    previousStateType.current = state.type;
+  }, [state.type, activeEditor]);
 
   const urlIsExternal =
     maybeDelayedState.type === "preview" &&

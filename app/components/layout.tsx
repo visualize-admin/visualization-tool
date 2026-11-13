@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import { Flex } from "@/components/flex";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
-import { MAIN_CONTENT_ID, SkipLink } from "@/components/skip-link";
+import { MAIN_CONTENT_ID } from "@/components/skip-link";
 
 const MAIN_PROPS = { id: MAIN_CONTENT_ID, tabIndex: -1 };
 
@@ -20,12 +20,7 @@ export const AppLayout = ({
 }) => {
   return (
     <Flex sx={{ minHeight: "100vh", flexDirection: "column" }}>
-      {hideHeader ? null : (
-        <>
-          <SkipLink />
-          <Header hideLogo={editing} extendTopBar={editing} />
-        </>
-      )}
+      {hideHeader ? null : <Header hideLogo={editing} extendTopBar={editing} />}
       <Flex
         component="main"
         role="main"
@@ -53,7 +48,6 @@ export const ContentLayout = ({
         backgroundColor: "monochrome.100",
       }}
     >
-      <SkipLink />
       <Header contentId={contentId} />
       <Flex
         component="main"
@@ -88,7 +82,6 @@ export const StaticContentLayout = ({
         backgroundColor: "monochrome.100",
       }}
     >
-      <SkipLink />
       <Header contentId={contentId} />
       <Flex
         component="main"

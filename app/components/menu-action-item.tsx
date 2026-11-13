@@ -33,6 +33,8 @@ export type MenuActionProps = {
   priority?: number;
   stayOpen?: boolean;
   color?: "red";
+  "aria-haspopup"?: "menu";
+  "aria-expanded"?: boolean;
   onClick?: (e: MouseEvent<HTMLElement>) => Promise<unknown> | void;
 } & (
   | {
@@ -137,9 +139,17 @@ const ActionMenuItem = ({
   disabled,
   linkProps,
   onClick,
+  "aria-haspopup": ariaHasPopup,
+  "aria-expanded": ariaExpanded,
 }: Pick<
   MenuActionProps,
-  "label" | "leadingIconName" | "trailingIconName" | "color" | "disabled"
+  | "label"
+  | "leadingIconName"
+  | "trailingIconName"
+  | "color"
+  | "disabled"
+  | "aria-haspopup"
+  | "aria-expanded"
 > & {
   linkProps?: { href: string; target?: string; rel?: string };
   onClick: (e: MouseEvent<HTMLElement>) => void;
@@ -171,6 +181,8 @@ const ActionMenuItem = ({
           component="div"
           disabled={disabled}
           color={color}
+          aria-haspopup={ariaHasPopup}
+          aria-expanded={ariaExpanded}
           onClick={onClick}
           sx={MENU_ITEM_SX}
         >
