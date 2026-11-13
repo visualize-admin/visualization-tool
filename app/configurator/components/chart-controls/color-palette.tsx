@@ -341,6 +341,7 @@ const PaletteGroupHeader = ({ children }: { children: ReactNode }) => {
     <ListSubheader
       role="presentation"
       sx={{
+        px: 4,
         pt: 3,
         pb: 2,
         borderBottom: 2,

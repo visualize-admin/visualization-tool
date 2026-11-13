@@ -168,6 +168,11 @@ const TabsEditable = (props: TabsEditableProps) => {
     <>
       <TabsInner
         data={data}
+        menuChartKey={
+          tabsState.popoverOpen && tabsState.popoverType === "edit"
+            ? tabsState.activeChartKey
+            : undefined
+        }
         addable={isConfiguringChart}
         editable={isConfiguringChart}
         draggable={state.chartConfigs.length > 1}
@@ -419,6 +424,7 @@ const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
 
 const TabsInner = ({
   data,
+  menuChartKey,
   addable,
   editable,
   draggable,
@@ -427,6 +433,7 @@ const TabsInner = ({
   onChartSwitch,
 }: {
   data: TabDatum[];
+  menuChartKey?: string;
   addable: boolean;
   editable: boolean;
   draggable: boolean;
@@ -512,6 +519,7 @@ const TabsInner = ({
                                 editable={editable}
                                 draggable={draggable}
                                 active={d.active}
+                                menuOpen={d.key === menuChartKey}
                                 label={d.label}
                                 dragging={snapshot.isDragging}
                                 onChevronDownClick={(e) => {
@@ -619,6 +627,7 @@ const TabContent = (props: {
   editable?: boolean;
   draggable?: boolean;
   active?: boolean;
+  menuOpen?: boolean;
   dragging?: boolean;
   label?: string;
   onChevronDownClick?: (
@@ -633,6 +642,7 @@ const TabContent = (props: {
     editable,
     draggable,
     active,
+    menuOpen,
     label,
     dragging,
     onChevronDownClick,
@@ -687,6 +697,7 @@ const TabContent = (props: {
               : t({ id: "menu.more-actions", message: "More actions" })
           }
           aria-haspopup="menu"
+          aria-expanded={!!menuOpen}
           onClick={(e) => onChevronDownClick?.(e, chartKey)}
           className={classes.editIconWrapper}
         >
