@@ -129,6 +129,7 @@ const TableSortingOptionItem = ({
     });
   });
 
+  const column = component?.label;
   const sortingType = isNumericalMeasure(component)
     ? "byMeasure"
     : "byDimensionLabel";
@@ -145,7 +146,10 @@ const TableSortingOptionItem = ({
         />
       </Typography>
       <RadioGroup
-        label={t({ id: "controls.sorting.order", message: "Sorting order" })}
+        label={t({
+          id: "controls.sorting.order-for",
+          message: `Sorting order: ${column}`,
+        })}
       >
         <Radio
           name={`${componentId}-sortingOrder`}

@@ -529,7 +529,7 @@ const LinkDialog = () => {
         <Fade {...TransitionProps} timeout={TIMEOUT_MS}>
           <Paper className={classes.popperContent}>
             {maybeDelayedState.type === "edit" && (
-              <TrapFocus open disableRestoreFocus>
+              <TrapFocus open={state.type === "edit"} disableRestoreFocus>
                 <div>
                   <LinkEditForm
                     url={maybeDelayedState.url}

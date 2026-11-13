@@ -1,18 +1,24 @@
-import { IconButton, IconButtonProps, SxProps, Theme } from "@mui/material";
+import { IconButton, IconButtonProps } from "@mui/material";
 import { forwardRef } from "react";
 
-const ACTIVE_SX: SxProps<Theme> = {
-  backgroundColor: "monochrome.800",
-  color: "white",
+const ACTIVE_SX = {
+  '&[aria-pressed="true"], &[aria-expanded="true"]': {
+    backgroundColor: "monochrome.800",
+    color: "white",
 
-  "&:hover": {
-    backgroundColor: "monochrome.700",
-  },
+    "&:hover": {
+      backgroundColor: "monochrome.700",
+    },
 
-  "@media (forced-colors: active)": {
-    forcedColorAdjust: "none",
-    backgroundColor: "Highlight",
-    color: "HighlightText",
+    "&& svg": {
+      color: "inherit",
+    },
+
+    "@media (forced-colors: active)": {
+      forcedColorAdjust: "none",
+      backgroundColor: "Highlight",
+      color: "HighlightText",
+    },
   },
 };
 
@@ -26,7 +32,7 @@ export const ToolbarIconButton = forwardRef<
       aria-label={label}
       aria-pressed={active}
       style={{ ...style, padding: "2px", borderRadius: 4 }}
-      sx={[!!active && ACTIVE_SX, ...(Array.isArray(sx) ? sx : [sx])]}
+      sx={[ACTIVE_SX, ...(Array.isArray(sx) ? sx : [sx])]}
       {...rest}
     />
   );

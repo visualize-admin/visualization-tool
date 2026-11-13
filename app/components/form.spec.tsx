@@ -30,6 +30,24 @@ describe("RadioGroup", () => {
   });
 });
 
+describe("RadioGroup with a visible caption", () => {
+  it("is labelled by the caption and shares one name", () => {
+    render(
+      <>
+        <p id="type-label">Palette type</p>
+        <RadioGroup labelId="type-label">
+          <Radio label="Categorical" name="type" value="categorical" checked />
+          <Radio label="Diverging" name="type" value="diverging" />
+        </RadioGroup>
+      </>
+    );
+
+    const group = screen.getByRole("radiogroup", { name: "Palette type" });
+    const names = [...group.querySelectorAll("input")].map((i) => i.name);
+    expect(new Set(names)).toEqual(new Set(["type"]));
+  });
+});
+
 describe("Input", () => {
   it("links the error message to the invalid input", () => {
     render(

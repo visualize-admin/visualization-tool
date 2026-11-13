@@ -219,12 +219,10 @@ export class Timeline extends Observable {
     return this.msRelativeValues;
   }
 
-  /** Number of timeline values. */
   get length() {
     return this.msValues.length;
   }
 
-  /** Index-based position of the current progress, fractional between values. */
   get position() {
     const progress = this.progress;
     const i = Math.max(0, bisect(this.msRelativeValues, progress) - 1);

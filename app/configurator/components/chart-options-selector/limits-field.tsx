@@ -203,17 +203,17 @@ export const LimitsField = ({
                 </Flex>
                 {limit.type === "single" && supportsLimitSymbols ? (
                   <div>
-                    <Typography variant="h6" component="p" sx={{ mb: 2 }}>
+                    <Typography
+                      id={`limit-${i}-symbol-type-label`}
+                      variant="h6"
+                      component="p"
+                      sx={{ mb: 2 }}
+                    >
                       <Trans id="controls.section.targets-and-limit-values.symbol-type">
                         Select symbol type
                       </Trans>
                     </Typography>
-                    <RadioGroup
-                      label={t({
-                        id: "controls.section.targets-and-limit-values.symbol-type",
-                        message: "Select symbol type",
-                      })}
-                    >
+                    <RadioGroup labelId={`limit-${i}-symbol-type-label`}>
                       <Radio
                         name={`limit-${i}-symbol-type`}
                         label={t({ id: "controls.symbol.dot", message: "Dot" })}
@@ -284,17 +284,17 @@ export const LimitsField = ({
                 !supportsLimitSymbols ||
                 hasNoAxisDimension ? (
                   <div>
-                    <Typography variant="body3" component="p" sx={{ my: 2 }}>
+                    <Typography
+                      id={`limit-${i}-line-type-label`}
+                      variant="body3"
+                      component="p"
+                      sx={{ my: 2 }}
+                    >
                       <Trans id="controls.section.targets-and-limit-values.line-type">
                         Select line type
                       </Trans>
                     </Typography>
-                    <RadioGroup
-                      label={t({
-                        id: "controls.section.targets-and-limit-values.line-type",
-                        message: "Select line type",
-                      })}
-                    >
+                    <RadioGroup labelId={`limit-${i}-line-type-label`}>
                       <Radio
                         name={`limit-${i}-line-type`}
                         label={t({

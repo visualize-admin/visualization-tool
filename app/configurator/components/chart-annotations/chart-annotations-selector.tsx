@@ -190,18 +190,13 @@ export const ChartAnnotationsSelector = () => {
       </ControlSection>
       {isSegmented ? null : (
         <ControlSection collapse>
-          <SectionTitle>
+          <SectionTitle id={`${annotation.key}-style-label`}>
             <Trans id="controls.annotations.highlight.section.style.title">
               Style
             </Trans>
           </SectionTitle>
           <ControlSectionContent gap="xl">
-            <RadioGroup
-              label={t({
-                id: "controls.annotations.highlight.section.style.title",
-                message: "Style",
-              })}
-            >
+            <RadioGroup labelId={`${annotation.key}-style-label`}>
               <Radio
                 label={t({
                   id: "controls.text-only",

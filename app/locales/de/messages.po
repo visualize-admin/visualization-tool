@@ -236,7 +236,6 @@ msgid "controls.animation"
 msgstr "Animation"
 
 #: app/configurator/components/chart-options-selector/animation-field.tsx
-#: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.duration"
 msgstr "Animation Dauer"
 
@@ -248,7 +247,6 @@ msgstr "Die Animation ist bei der Sortierung nach Gesamtgrösse deaktiviert."
 msgid "controls.section.animation.settings"
 msgstr "Animation Einstellungen"
 
-#: app/configurator/components/chart-options-selector/animation-field.tsx
 #: app/configurator/components/chart-options-selector/animation-field.tsx
 msgid "controls.section.animation.type"
 msgstr "Animation Typ"
@@ -466,7 +464,6 @@ msgid "button.download.data.visible"
 msgstr "Daten aus der Grafik"
 
 #: app/configurator/components/chart-options-selector/calculation-field.tsx
-#: app/configurator/components/chart-options-selector/calculation-field.tsx
 msgid "controls.select.calculation.mode"
 msgstr "Visualisierungsmodus"
 
@@ -546,7 +543,6 @@ msgstr "Spalte {0}"
 msgid "controls.select.columnStyle.columnColor"
 msgstr "Spaltenfarbe"
 
-#: app/configurator/components/chart-options-selector/layout-field.tsx
 #: app/configurator/components/chart-options-selector/layout-field.tsx
 msgid "controls.select.column.layout"
 msgstr "Spaltenstil"
@@ -1711,7 +1707,6 @@ msgid "button.save-draft"
 msgstr "Entwurf speichern"
 
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
-#: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.scale.type"
 msgstr "Skalierungstyp"
 
@@ -1768,7 +1763,6 @@ msgid "controls.color.palette.select"
 msgstr "Wähle eine Farbpalette"
 
 #: app/login/components/color-palettes/profile-color-palette-form.tsx
-#: app/login/components/color-palettes/profile-color-palette-form.tsx
 msgid "controls.custom-color-palettes.type"
 msgstr "Wählen Sie einen Farbpalettentyp."
 
@@ -1797,7 +1791,6 @@ msgstr "Wählen Sie eine Dimension aus..."
 msgid "controls.select.measure"
 msgstr "Messwert auswählen"
 
-#: app/configurator/components/chart-options-selector/show-dots-field.tsx
 #: app/configurator/components/chart-options-selector/show-dots-field.tsx
 msgid "controls.section.dots-size"
 msgstr "Wählen Sie eine Grösse"
@@ -1832,7 +1825,6 @@ msgid "controls.dimensionvalue.select"
 msgstr "Filter auswählen"
 
 #: app/configurator/components/chart-options-selector/limits-field.tsx
-#: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values.line-type"
 msgstr "Linientyp auswählen"
 
@@ -1840,7 +1832,6 @@ msgstr "Linientyp auswählen"
 msgid "controls.filter.select.none"
 msgstr "Alle abwählen"
 
-#: app/configurator/components/chart-options-selector/limits-field.tsx
 #: app/configurator/components/chart-options-selector/limits-field.tsx
 msgid "controls.section.targets-and-limit-values.symbol-type"
 msgstr "Symboltyp auswählen"
@@ -2027,9 +2018,12 @@ msgid "controls.sorting.byTotalSize.disabled-by-animation"
 msgstr "Die Sortierung nach Gesamtgrösse ist während der Animation deaktiviert."
 
 #: app/configurator/components/chart-options-selector/sorting-field.tsx
-#: app/configurator/table/table-chart-sorting-options.tsx
 msgid "controls.sorting.order"
 msgstr "Sortierreihenfolge"
+
+#: app/configurator/table/table-chart-sorting-options.tsx
+msgid "controls.sorting.order-for"
+msgstr "Sortierreihenfolge: {column}"
 
 #: app/components/dataset-metadata.tsx
 msgid "dataset.metadata.source"
@@ -2081,7 +2075,6 @@ msgstr "Informiert bleiben"
 msgid "controls.section.animation.type.stepped"
 msgstr "Abgestuft"
 
-#: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.highlight.section.style.title"
 msgstr "Stil"

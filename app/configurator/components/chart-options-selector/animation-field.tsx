@@ -35,17 +35,17 @@ export const AnimationField = ({ field }: { field: AnimationFieldType }) => {
         {field.showPlayButton && (
           <>
             <Box mt={4}>
-              <Typography variant="caption" component="p" sx={{ mb: 1 }}>
+              <Typography
+                id="animation-duration-label"
+                variant="caption"
+                component="p"
+                sx={{ mb: 1 }}
+              >
                 <Trans id="controls.section.animation.duration">
                   Animation Duration
                 </Trans>
               </Typography>
-              <RadioGroup
-                label={t({
-                  id: "controls.section.animation.duration",
-                  message: "Animation Duration",
-                })}
-              >
+              <RadioGroup labelId="animation-duration-label">
                 {[10, 30, 60].map((d) => (
                   <ChartOptionRadioField
                     key={d}
@@ -59,7 +59,11 @@ export const AnimationField = ({ field }: { field: AnimationFieldType }) => {
             </Box>
             <Box mt={4}>
               <Flex alignItems="center" sx={{ gap: 1, mb: 1 }}>
-                <Typography variant="caption" component="p">
+                <Typography
+                  id="animation-type-label"
+                  variant="caption"
+                  component="p"
+                >
                   <Trans id="controls.section.animation.type">
                     Animation Type
                   </Trans>
@@ -79,12 +83,7 @@ export const AnimationField = ({ field }: { field: AnimationFieldType }) => {
                   </Typography>
                 </Tooltip>
               </Flex>
-              <RadioGroup
-                label={t({
-                  id: "controls.section.animation.type",
-                  message: "Animation Type",
-                })}
-              >
+              <RadioGroup labelId="animation-type-label">
                 <ChartOptionRadioField
                   label={t({
                     id: "controls.section.animation.type.continuous",

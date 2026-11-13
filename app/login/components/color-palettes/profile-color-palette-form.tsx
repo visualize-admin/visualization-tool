@@ -279,17 +279,17 @@ const ColorPaletteTypeSelector = ({
 
   return (
     <Box sx={{ fontSize: "1rem", pb: 2 }}>
-      <Typography variant="caption" component="p" sx={{ mb: 2 }}>
+      <Typography
+        id="color-palette-type-label"
+        variant="caption"
+        component="p"
+        sx={{ mb: 2 }}
+      >
         <Trans id="controls.custom-color-palettes.type">
           Select a color palette type
         </Trans>
       </Typography>
-      <RadioGroup
-        label={t({
-          id: "controls.custom-color-palettes.type",
-          message: "Select a color palette type",
-        })}
-      >
+      <RadioGroup labelId="color-palette-type-label">
         {types.map((type) => {
           return (
             <Flex
@@ -298,6 +298,7 @@ const ColorPaletteTypeSelector = ({
               gap={2}
             >
               <Radio
+                name="color-palette-type"
                 label={colorTypes[type]}
                 value={type}
                 checked={type === selectedType}
