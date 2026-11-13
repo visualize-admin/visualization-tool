@@ -468,7 +468,10 @@ const LinkDialog = () => {
     state$
   );
   const delayedState = useTimedPrevious(state, TIMEOUT_MS);
-  const maybeDelayedState = state.type === "inactive" ? delayedState : state;
+  const maybeDelayedState =
+    state.type === "inactive" && delayedState.type === "preview"
+      ? delayedState
+      : state;
   const publishWindowChange = usePublisher(onWindowChange$);
   const updateLink = usePublisher(updateLink$);
   const cancelLinkEdit = usePublisher(cancelLinkEdit$);
