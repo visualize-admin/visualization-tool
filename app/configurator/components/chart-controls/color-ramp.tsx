@@ -23,6 +23,7 @@ import {
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { Label } from "@/components/form";
 import { SelectGroupHeader } from "@/components/select-group-header";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import { getChartConfig } from "@/config-utils";
 import {
   CustomPaletteType,
@@ -192,6 +193,7 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
         <Trans id="controls.color.palette">Color palette</Trans>
       </Label>
       <Select
+        id={`${labelId}-value`}
         labelId={labelId}
         size="sm"
         value={currentPaletteId}
@@ -210,11 +212,16 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
           }
 
           return (
-            <ColorRamp
-              colorInterpolator={selectedColorInterpolator}
-              nSteps={nSteps}
-              disabled={disabled}
-            />
+            <>
+              <VisuallyHidden component="span">
+                {currentPalette?.label ?? currentCustomPalette?.name}
+              </VisuallyHidden>
+              <ColorRamp
+                colorInterpolator={selectedColorInterpolator}
+                nSteps={nSteps}
+                disabled={disabled}
+              />
+            </>
           );
         }}
         sx={{ mt: 1, lineHeight: 0 }}
@@ -260,7 +267,11 @@ export const ColorRampField = (props: ColorRampFieldProps) => {
 type PaletteSectionProps = {
   nSteps?: number;
   customColorPalettes?: CustomPaletteType[];
-  colorPalettes: { value: string; interpolator: (t: number) => string }[];
+  colorPalettes: {
+    value: string;
+    label: string;
+    interpolator: (t: number) => string;
+  }[];
   handleAddColorPalette: (
     e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
   ) => void;
@@ -362,12 +373,12 @@ const PaletteSection = (props: PaletteSectionProps) => {
         </Typography>
       </SelectGroupHeader>
     ),
-    colorPalettes.map(({ value, interpolator }, i) => (
+    colorPalettes.map(({ value, label, interpolator }, i) => (
       <MenuItem
         sx={{ flexDirection: "column", alignItems: "flex-start" }}
         key={`${type}-${i}`}
         value={value}
-        aria-label={value}
+        aria-label={label}
       >
         <ColorRamp colorInterpolator={interpolator} nSteps={nSteps} />
       </MenuItem>
