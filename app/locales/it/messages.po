@@ -19,10 +19,6 @@ msgstr ""
 msgid "metadata.link.created.with"
 msgstr "Creato con"
 
-#: app/components/move-drag-button.tsx
-msgid "Drag filters to reorganize"
-msgstr "Trascina i filtri per riorganizzarli"
-
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.search-options.no-options-selected"
 msgstr "Nessuna opzione selezionata"
@@ -101,12 +97,12 @@ msgstr "altre {0}"
 msgid "controls.filter.nb-elements"
 msgstr "{0} di {1}"
 
-#: app/components/select-tree.tsx
-msgid "controls.select-tree.results"
-msgstr "{resultsCount, plural, =0 {Nessun risultato} one {# risultato} other {# risultati}}"
-
 #: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.search-results"
+msgstr "{resultsCount, plural, =0 {Nessun risultato} one {# risultato} other {# risultati}}"
+
+#: app/components/select-tree.tsx
+msgid "controls.select-tree.results"
 msgstr "{resultsCount, plural, =0 {Nessun risultato} one {# risultato} other {# risultati}}"
 
 #: app/configurator/components/field-i18n.ts
@@ -499,20 +495,18 @@ msgstr "Controlla la pagina di stato per ulteriori informazioni”"
 msgid "controls.custom-color-palettes.caption-diverging"
 msgstr "Scegli colori contrastanti per i punti iniziali e finali: questo aiuterà a distinguere visivamente gli estremi. Le palette divergenti sono particolarmente efficaci per i dati che hanno un punto medio significativo, come zero o un valore medio."
 
-#: app/components/select-tree.tsx
-msgid "controls.select-tree.clear-search"
-msgstr "Cancella ricerca"
-
 #: app/charts/map/wms-wmts-selector.tsx
 #: app/components/form.tsx
+#: app/components/select-tree.tsx
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "controls.search.clear"
 msgstr "Cancella la ricerca"
 
 #: app/charts/shared/chart-data-filters/index.tsx
 #: app/components/multi-select/option.tsx
+#: app/configurator/components/field-date-picker.tsx
 msgid "controls.clear-selection"
-msgstr "Selezione chiara"
+msgstr "Cancella selezione"
 
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.annotation.clear-text"
@@ -522,10 +516,6 @@ msgstr "Cancella il testo"
 msgid "button.hint.click.to.copy"
 msgstr "Clicca per copiare"
 
-#: app/components/multi-select/index.tsx
-msgid "controls.select.close"
-msgstr "Chiudi"
-
 #: app/charts/map/wms-wmts-selector.tsx
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/configurator/components/filters.tsx
@@ -534,6 +524,10 @@ msgstr "Chiudi"
 
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.close"
+msgstr "Chiudi"
+
+#: app/components/multi-select/index.tsx
+msgid "controls.select.close"
 msgstr "Chiudi"
 
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
@@ -1108,6 +1102,26 @@ msgstr "Includere le bozze"
 msgid "controls.filters.interactive.toggle"
 msgstr "Interattivo"
 
+#: app/configurator/components/chart-options-selector/calculation-field.tsx
+msgid "controls.filters.interactive.toggle-calculation"
+msgstr "Interattivo: modalità grafico"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.interactive.toggle-filter"
+msgstr "Interattivo: filtro"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.interactive.toggle-legend"
+msgstr "Interattivo: filtro della legenda"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.interactive.toggle-time-range"
+msgstr "Interattivo: intervallo di tempo"
+
+#: app/configurator/components/chart-configurator.tsx
+msgid "controls.filters.interactive.toggle-for"
+msgstr "Interattivo: {filterLabel}"
+
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.interpolation"
 msgstr "Interpolazione"
@@ -1677,6 +1691,10 @@ msgstr "Rinominare"
 msgid "profile.chart.rename-dialog.title"
 msgstr "Rinomina la visualizzazione"
 
+#: app/components/move-drag-button.tsx
+msgid "controls.drag-handle.reorder"
+msgstr "Riordina: {label}"
+
 #: app/configurator/table/table-chart-sorting-options.tsx
 msgid "controls.table.sorting.reorder"
 msgstr "Riordina: {label}"
@@ -1758,15 +1776,15 @@ msgstr "Tipo di scala"
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
-#: app/components/select-tree.tsx
-msgid "controls.select-tree.search"
-msgstr "Cerca"
-
 #: app/browse/ui/search-dataset-input.tsx
 #: app/components/form.tsx
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.label"
+msgstr "Cerca"
+
+#: app/components/select-tree.tsx
+msgid "controls.select-tree.search"
 msgstr "Cerca"
 
 #: app/charts/map/wms-wmts-selector.tsx
@@ -1928,6 +1946,10 @@ msgstr "Condividi su Twitter"
 #: app/components/publish-actions.tsx
 msgid "publication.share.linktitle.mail"
 msgstr "Condividi via Email"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.layout.shared-filter.toggle"
+msgstr "Filtro condiviso: {label}"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.shared-filters"

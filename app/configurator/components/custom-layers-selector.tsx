@@ -293,7 +293,6 @@ const DraggableLayer = ({
       {(provided) => (
         <Box
           ref={provided.innerRef}
-          {...provided.dragHandleProps}
           {...provided.draggableProps}
           sx={{ mb: 3 }}
         >
@@ -316,7 +315,10 @@ const DraggableLayer = ({
             >
               <Icon name="trash" />
             </IconButton>
-            <MoveDragButton />
+            <MoveDragButton
+              label={title}
+              dragHandleProps={provided.dragHandleProps}
+            />
           </Box>
           <Box display="flex" flexDirection="column" width="100%" gap={1}>
             <Switch

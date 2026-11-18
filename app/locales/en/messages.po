@@ -19,10 +19,6 @@ msgstr ""
 msgid "metadata.link.created.with"
 msgstr "Created with"
 
-#: app/components/move-drag-button.tsx
-msgid "Drag filters to reorganize"
-msgstr "Drag filters to reorganize"
-
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.search-options.no-options-selected"
 msgstr "dataset.search.search-options.no-options-selected"
@@ -101,12 +97,12 @@ msgstr "{0} more"
 msgid "controls.filter.nb-elements"
 msgstr "{0} of {1}"
 
-#: app/components/select-tree.tsx
-msgid "controls.select-tree.results"
-msgstr "{resultsCount, plural, =0 {No results} one {# result} other {# results}}"
-
 #: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.search-results"
+msgstr "{resultsCount, plural, =0 {No results} one {# result} other {# results}}"
+
+#: app/components/select-tree.tsx
+msgid "controls.select-tree.results"
 msgstr "{resultsCount, plural, =0 {No results} one {# result} other {# results}}"
 
 #: app/configurator/components/field-i18n.ts
@@ -499,18 +495,16 @@ msgstr "Check the status page for more information"
 msgid "controls.custom-color-palettes.caption-diverging"
 msgstr "Choose contrasting colors for the start and end points. These colors will help visually separate extreme values. Diverging palettes are ideal for data with a meaningful midpoint, such as zero or an average."
 
-#: app/components/select-tree.tsx
-msgid "controls.select-tree.clear-search"
-msgstr "Clear search"
-
 #: app/charts/map/wms-wmts-selector.tsx
 #: app/components/form.tsx
+#: app/components/select-tree.tsx
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "controls.search.clear"
 msgstr "Clear search field"
 
 #: app/charts/shared/chart-data-filters/index.tsx
 #: app/components/multi-select/option.tsx
+#: app/configurator/components/field-date-picker.tsx
 msgid "controls.clear-selection"
 msgstr "Clear selection"
 
@@ -522,10 +516,6 @@ msgstr "Clear text"
 msgid "button.hint.click.to.copy"
 msgstr "Click to copy"
 
-#: app/components/multi-select/index.tsx
-msgid "controls.select.close"
-msgstr "Close"
-
 #: app/charts/map/wms-wmts-selector.tsx
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
 #: app/configurator/components/filters.tsx
@@ -534,6 +524,10 @@ msgstr "Close"
 
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.close"
+msgstr "Close"
+
+#: app/components/multi-select/index.tsx
+msgid "controls.select.close"
 msgstr "Close"
 
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
@@ -1108,6 +1102,26 @@ msgstr "Include draft datasets"
 msgid "controls.filters.interactive.toggle"
 msgstr "Interactive"
 
+#: app/configurator/components/chart-options-selector/calculation-field.tsx
+msgid "controls.filters.interactive.toggle-calculation"
+msgstr "Interactive chart mode"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.interactive.toggle-filter"
+msgstr "Interactive filter"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.interactive.toggle-legend"
+msgstr "Interactive legend filter"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.interactive.toggle-time-range"
+msgstr "Interactive time range"
+
+#: app/configurator/components/chart-configurator.tsx
+msgid "controls.filters.interactive.toggle-for"
+msgstr "Interactive: {filterLabel}"
+
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.interpolation"
 msgstr "Interpolation"
@@ -1677,6 +1691,10 @@ msgstr "Rename"
 msgid "profile.chart.rename-dialog.title"
 msgstr "Rename the visualization"
 
+#: app/components/move-drag-button.tsx
+msgid "controls.drag-handle.reorder"
+msgstr "Reorder: {label}"
+
 #: app/configurator/table/table-chart-sorting-options.tsx
 msgid "controls.table.sorting.reorder"
 msgstr "Reorder: {label}"
@@ -1758,15 +1776,15 @@ msgstr "Scale type"
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
 
-#: app/components/select-tree.tsx
-msgid "controls.select-tree.search"
-msgstr "Search"
-
 #: app/browse/ui/search-dataset-input.tsx
 #: app/components/form.tsx
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.label"
+msgstr "Search"
+
+#: app/components/select-tree.tsx
+msgid "controls.select-tree.search"
 msgstr "Search"
 
 #: app/charts/map/wms-wmts-selector.tsx
@@ -1928,6 +1946,10 @@ msgstr "Share on Twitter"
 #: app/components/publish-actions.tsx
 msgid "publication.share.linktitle.mail"
 msgstr "Share via Email"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.layout.shared-filter.toggle"
+msgstr "Shared filter: {label}"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.shared-filters"

@@ -255,6 +255,11 @@ const LayoutSharedFiltersConfigurator = () => {
                     </Typography>
                     <Switch
                       data-testid="dashboard-time-range-filter-toggle"
+                      inputProps={{
+                        "aria-label": getSharedFilterToggleLabel(
+                          combinedTemporalDimension.label
+                        ),
+                      }}
                       checked={timeRange.active}
                       onChange={handleTimeRangeFilterToggle}
                     />
@@ -297,6 +302,11 @@ const LayoutSharedFiltersConfigurator = () => {
                             {dim.label}
                           </Typography>
                           <Switch
+                            inputProps={{
+                              "aria-label": getSharedFilterToggleLabel(
+                                dim.label
+                              ),
+                            }}
                             checked={checked}
                             onChange={(_, checked) => {
                               handleDataFiltersToggle(checked, dim.id);
@@ -309,7 +319,7 @@ const LayoutSharedFiltersConfigurator = () => {
                               rawDimension={dim}
                               filterDimensionIds={[]}
                               index={i}
-                              disabled={fetching}
+                              readOnly={fetching}
                               disableLabel
                               labelId={`shared-filter-${i}-label`}
                             />
@@ -773,4 +783,11 @@ const DashboardLayoutButton = ({
       onClick={handleClick}
     />
   );
+};
+
+const getSharedFilterToggleLabel = (label: string) => {
+  return t({
+    id: "controls.layout.shared-filter.toggle",
+    message: `Shared filter: ${label}`,
+  });
 };

@@ -180,6 +180,7 @@ export const useChartDataFiltersState = ({
   return {
     open,
     setOpen,
+    listId: `chart-data-filters-${chartConfig.key}`,
     defaultOpen,
     dataSource,
     chartConfig,
@@ -194,6 +195,7 @@ export const useChartDataFiltersState = ({
 export const ChartDataFiltersToggle = ({
   open,
   setOpen,
+  listId,
   defaultOpen,
   loading,
   error,
@@ -239,6 +241,8 @@ export const ChartDataFiltersToggle = ({
               px: 2,
               py: 1,
             }}
+            aria-expanded={open}
+            aria-controls={listId}
             onClick={() => setOpen((prev) => !prev)}
           >
             {loading && (
