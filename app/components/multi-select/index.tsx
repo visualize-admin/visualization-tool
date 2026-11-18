@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import {
   Autocomplete,
   Box,
@@ -33,6 +34,7 @@ export const MultiSelect = ({
   value,
   onChange,
   disabled,
+  readOnly,
   loading,
   hint,
   placeholder,
@@ -49,6 +51,7 @@ export const MultiSelect = ({
   onChange: (values: string[]) => void;
   label?: ReactNode;
   disabled?: boolean;
+  readOnly?: boolean;
   loading?: boolean;
   hint?: string;
   placeholder?: string;
@@ -75,6 +78,14 @@ export const MultiSelect = ({
     setWidth(rect.width);
     setAnchorX(rect.left + rect.width / 2);
     setAnchorY(rect.bottom);
+  });
+  const handleOpen = useEvent(() => {
+    if (readOnly) {
+      return;
+    }
+
+    setDimensions();
+    setOpen(true);
   });
 
   const normalizedOptions = useMemo<SelectOption[]>(() => {
@@ -131,7 +142,8 @@ export const MultiSelect = ({
           <Autocomplete
             id={id}
             open={open}
-            onOpen={setDimensions}
+            onOpen={handleOpen}
+            onClose={() => setOpen(false)}
             options={normalizedOptions}
             value={valueOptions}
             onChange={(_, newValue) => {
@@ -142,6 +154,17 @@ export const MultiSelect = ({
               }
             }}
             disabled={disabled}
+            readOnly={readOnly}
+            openText={t({ id: "controls.select.open", message: "Open" })}
+            closeText={t({ id: "controls.select.close", message: "Close" })}
+            noOptionsText={t({
+              id: "controls.select.no-options",
+              message: "No options",
+            })}
+            loadingText={t({
+              id: "controls.select.loading",
+              message: "Loading…",
+            })}
             multiple
             disableCloseOnSelect
             disableClearable
@@ -182,7 +205,19 @@ export const MultiSelect = ({
                   placeholder={placeholder}
                   variant={variant}
                   size={size}
-                  onClick={() => setOpen(!open)}
+                  readOnly={readOnly}
+                  onClick={(e) => {
+                    // Autocomplete already toggles on mousedown in the input.
+                    if (e.target instanceof HTMLInputElement) {
+                      return;
+                    }
+
+                    if (open) {
+                      setOpen(false);
+                    } else {
+                      handleOpen();
+                    }
+                  }}
                 />
               );
             }}

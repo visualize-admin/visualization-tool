@@ -1,6 +1,6 @@
 import { t } from "@lingui/macro";
 import { AutocompleteRenderInputParams, TextField } from "@mui/material";
-import { ComponentProps } from "react";
+import { ComponentProps, MouseEvent } from "react";
 
 import { MultiSelect } from "@/components/multi-select";
 
@@ -10,6 +10,7 @@ export const MultiSelectInput = ({
   placeholder,
   variant,
   size,
+  readOnly,
   onClick,
 }: {
   params: AutocompleteRenderInputParams;
@@ -17,7 +18,8 @@ export const MultiSelectInput = ({
   placeholder?: string;
   variant: ComponentProps<typeof MultiSelect>["variant"];
   size: ComponentProps<typeof MultiSelect>["size"];
-  onClick: () => void;
+  readOnly?: boolean;
+  onClick: (e: MouseEvent<HTMLDivElement>) => void;
 }) => {
   const noneLabel = t({ id: "controls.none", message: "None" });
 
@@ -31,6 +33,7 @@ export const MultiSelectInput = ({
         ...params.inputProps,
         onClick: undefined,
         readOnly: true,
+        "aria-disabled": readOnly || undefined,
         size,
         sx: {
           width: 0,

@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { plural, t, Trans } from "@lingui/macro";
 import MUITreeItem, {
   TreeItemContentClassKey,
   TreeItemProps,
@@ -22,11 +22,13 @@ import {
   useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { useId } from "@reach/auto-id";
 import clsx from "clsx";
+import isEqual from "lodash/isEqual";
 import {
   ForwardedRef,
   forwardRef,
-  HTMLAttributes,
+  type KeyboardEvent,
   type MouseEvent,
   MouseEventHandler,
   ReactNode,
@@ -39,6 +41,7 @@ import {
 
 import { Flex } from "@/components/flex";
 import { Label, selectSizeToTypography } from "@/components/form";
+import { LiveRegion } from "@/components/live-region";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { HierarchyValue } from "@/domain/data";
 import { Icon } from "@/icons";
@@ -84,14 +87,12 @@ const useCustomTreeItemStyles = makeStyles<Theme, { selectable?: boolean }>(
   (theme) => ({
     action: {
       marginLeft: theme.spacing(2),
-      color: theme.palette.text.primary,
+      color: theme.palette.text.secondary,
       lineHeight: 0,
       transform: "translateX(0)",
-      opacity: 0.5,
-      transition: "transform 0.3s ease, opacity 0.3s ease",
+      transition: "transform 0.3s ease, color 0.3s ease",
 
       "&:hover": {
-        opacity: 1,
         color: theme.palette.primary.main,
       },
     },
@@ -229,7 +230,7 @@ const TreeItemContent = forwardRef<
           {label}
         </Typography>
         {selectable && hasChildren ? (
-          <div className={ownClasses.action} onClick={handleSelect}>
+          <div aria-hidden className={ownClasses.action} onClick={handleSelect}>
             <Typography variant={selectSizeToTypography[size]} component="span">
               <Trans id="controls.tree.select-value">Select</Trans>
             </Typography>
@@ -278,14 +279,23 @@ export type SelectTreeProps = {
   onChange: (e: { target: { value: NodeId | NodeId[] } }) => void;
   sideControls?: ReactNode;
   disabled?: boolean;
+  readOnly?: boolean;
 
   // Controlled input value
   inputValue?: string;
   onChangeInputValue?: (value: string) => void;
 };
 
+const OPEN_KEYS = ["Enter", " ", "ArrowDown", "ArrowUp"];
+
+const getSearchRegExp = (value: string) => {
+  const escapedValue = value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  return new RegExp(`^${escapedValue}|\\s${escapedValue}`, "i");
+};
+
 const getFilteredOptions = (options: Tree, value: string) => {
-  const rx = new RegExp(`^${value}|\\s${value}`, "i");
+  const rx = getSearchRegExp(value);
 
   return value === ""
     ? options
@@ -411,6 +421,7 @@ export const SelectTree = ({
   value,
   onChange,
   disabled,
+  readOnly,
   sideControls,
   onOpen,
   onClose,
@@ -418,7 +429,12 @@ export const SelectTree = ({
   id,
   isMulti = false,
 }: SelectTreeProps) => {
+  const generatedId = useId();
+  const triggerId = id ?? `select-tree-${generatedId}`;
+  const labelId = label ? `${triggerId}-label` : undefined;
+  const dialogId = `${triggerId}-dialog`;
   const [openState, setOpenState] = useState(false);
+  const isOpen = open ?? openState;
   const [minMenuWidth, setMinMenuWidth] = useState<number>();
 
   const {
@@ -458,7 +474,30 @@ export const SelectTree = ({
     return res;
   }, [options, parentsRef]);
 
+  const nonSelectableValues = useMemo(() => {
+    return new Set(
+      flattenTree(options as HierarchyValue[])
+        .filter((node) => (node as TreeHierarchyValue).selectable === false)
+        .map((node) => node.value)
+    );
+  }, [options]);
+
+  const resultsCount = useMemo(() => {
+    const rx = getSearchRegExp(inputValue);
+
+    return flattenTree(filteredOptions as HierarchyValue[]).filter(
+      (node) => node.value !== FIELD_VALUE_NONE && rx.test(node.label)
+    ).length;
+  }, [filteredOptions, inputValue]);
+
   const handleOpen = useEventCallback(() => {
+    if (disabled || readOnly) {
+      return;
+    }
+
+    inputRef.current
+      ?.querySelector<HTMLElement>(`[aria-haspopup="dialog"]`)
+      ?.focus();
     setOpenState(true);
     setMinMenuWidth(inputRef.current?.clientLeft);
     onOpen?.();
@@ -472,11 +511,32 @@ export const SelectTree = ({
     onClose?.();
   });
 
-  const handleNodeSelect = useEventCallback((_, v: NodeId | NodeId[]) => {
-    onChange({ target: { value: v } });
+  const handleNodeSelect = useEventCallback((_, v: NodeId) => {
+    if (nonSelectableValues.has(v)) {
+      return;
+    }
 
-    if (!isMulti) {
-      handleClose();
+    onChange({ target: { value: v } });
+    handleClose();
+  });
+
+  const handleMultiNodeSelect = useEventCallback((_, ids: NodeId[]) => {
+    const currentValues = value as NodeId[];
+    const addedIds = ids.filter((id) => !currentValues.includes(id));
+
+    if (addedIds.length === 1 && addedIds[0] === FIELD_VALUE_NONE) {
+      onChange({ target: { value: [] } });
+      return;
+    }
+
+    const nextValues = ids.filter(
+      (id) =>
+        id !== FIELD_VALUE_NONE &&
+        (currentValues.includes(id) || !nonSelectableValues.has(id))
+    );
+
+    if (!isEqual(nextValues, currentValues)) {
+      onChange({ target: { value: nextValues } });
     }
   });
 
@@ -564,12 +624,16 @@ export const SelectTree = ({
 
   const paperProps = useMemo(
     () => ({
+      id: dialogId,
+      role: "dialog",
+      "aria-modal": true,
+      "aria-labelledby": labelId,
       sx: {
         minWidth: minMenuWidth ?? 0,
         boxShadow: 3,
       },
     }),
-    [minMenuWidth]
+    [minMenuWidth, dialogId, labelId]
   );
 
   const menuTransitionProps = useMemo(
@@ -589,14 +653,12 @@ export const SelectTree = ({
   );
 
   const treeRef = useRef();
-  const handleKeyDown: HTMLAttributes<HTMLInputElement>["onKeyDown"] = useEvent(
-    (e) => {
-      if (e.key === "Enter" || e.key == " ") {
-        handleOpen();
-        e.preventDefault();
-      }
+  const handleKeyDown = useEvent((e: KeyboardEvent<HTMLDivElement>) => {
+    if (OPEN_KEYS.includes(e.key)) {
+      e.preventDefault();
+      handleOpen();
     }
-  );
+  });
 
   useEffect(() => {
     const inputNode = inputRef.current;
@@ -609,7 +671,7 @@ export const SelectTree = ({
     <div>
       {label && (
         <Label
-          htmlFor={id!}
+          id={labelId}
           sx={{ display: "flex", alignItems: "center", mb: 1 }}
         >
           {label}
@@ -617,14 +679,22 @@ export const SelectTree = ({
       )}
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <Select
-          aria-expanded={open}
           ref={inputRef}
-          id={id}
-          name={id}
+          id={triggerId}
+          name={triggerId}
+          labelId={labelId}
           size={size}
           disabled={disabled}
           readOnly
           displayEmpty
+          SelectDisplayProps={{
+            role: "button",
+            "aria-haspopup": "dialog",
+            "aria-expanded": isOpen,
+            "aria-controls": isOpen ? dialogId : undefined,
+            "aria-disabled": disabled || readOnly || undefined,
+            onKeyDown: handleKeyDown,
+          }}
           value={
             isMulti
               ? (value as NodeId[]).length > 0
@@ -634,8 +704,7 @@ export const SelectTree = ({
                 ? labelsByValue[value as string]
                 : undefined
           }
-          onClick={disabled ? undefined : handleOpen}
-          onKeyDown={handleKeyDown}
+          onClick={handleOpen}
           renderValue={() => {
             if (isMulti && Array.isArray(value) && value.length > 0) {
               return (
@@ -664,6 +733,7 @@ export const SelectTree = ({
                         >
                           <Typography
                             variant={selectSizeToTypography[size]}
+                            component="span"
                             sx={{
                               lineHeight: 1,
                               overflow: "hidden",
@@ -677,9 +747,15 @@ export const SelectTree = ({
                         </Box>
                       }
                       size="small"
+                      tabIndex={-1}
                       deleteIcon={<Icon name="close" size={16} />}
                       onDelete={(e) => {
                         e.stopPropagation();
+
+                        if (readOnly) {
+                          return;
+                        }
+
                         const newValues = value.filter((v) => v !== nodeId);
                         onChange({ target: { value: newValues } });
                       }}
@@ -718,6 +794,7 @@ export const SelectTree = ({
             return (
               <Typography
                 variant={selectSizeToTypography[size]}
+                component="span"
                 sx={{
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -733,7 +810,7 @@ export const SelectTree = ({
             "& svg": {
               // Force icon rotation, as the Select is read only to keep the styling,
               // but allow of rendering custom tree menu.
-              transform: open ? "rotate(180deg)" : "rotate(0deg)",
+              transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
             },
             ...(isMulti && {
               "& .MuiSelect-select.MuiInputBase-input.MuiOutlinedInput-input": {
@@ -760,7 +837,7 @@ export const SelectTree = ({
           vertical: "bottom",
           horizontal: "left",
         }}
-        open={open !== undefined ? open : !!openState}
+        open={isOpen}
         onClose={handleClose}
         action={menuRef}
         slotProps={{ paper: paperProps }}
@@ -771,8 +848,21 @@ export const SelectTree = ({
           value={inputValue}
           autoFocus
           startAdornment={<Icon name="search" size={18} />}
+          inputProps={{
+            "aria-label": t({
+              id: "controls.select-tree.search",
+              message: "Search",
+            }),
+          }}
           endAdornment={
-            <IconButton size="small" onClick={handleClickResetInput}>
+            <IconButton
+              size="small"
+              aria-label={t({
+                id: "controls.search.clear",
+                message: "Clear search field",
+              })}
+              onClick={handleClickResetInput}
+            >
               <Icon name="close" size={16} />
             </IconButton>
           }
@@ -798,15 +888,30 @@ export const SelectTree = ({
           // @ts-ignore
           <TreeView
             ref={treeRef}
+            aria-labelledby={labelId}
             multiSelect={isMulti}
             selected={value}
             expanded={expanded}
             onNodeToggle={handleNodeToggle}
-            onNodeSelect={isMulti ? () => {} : handleNodeSelect}
+            onNodeSelect={isMulti ? handleMultiNodeSelect : handleNodeSelect}
           >
             {renderTreeContent(filteredOptions)}
           </TreeView>
         )}
+        <LiveRegion
+          message={
+            inputValue
+              ? t({
+                  id: "controls.select-tree.results",
+                  message: plural(resultsCount, {
+                    0: "No results",
+                    one: "# result",
+                    other: "# results",
+                  }),
+                })
+              : ""
+          }
+        />
       </Popover>
     </div>
   );

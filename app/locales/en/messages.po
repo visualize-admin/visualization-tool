@@ -101,6 +101,10 @@ msgstr "{0} more"
 msgid "controls.filter.nb-elements"
 msgstr "{0} of {1}"
 
+#: app/components/select-tree.tsx
+msgid "controls.select-tree.results"
+msgstr "{resultsCount, plural, =0 {No results} one {# result} other {# results}}"
+
 #: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.search-results"
 msgstr "{resultsCount, plural, =0 {No results} one {# result} other {# results}}"
@@ -495,6 +499,10 @@ msgstr "Check the status page for more information"
 msgid "controls.custom-color-palettes.caption-diverging"
 msgstr "Choose contrasting colors for the start and end points. These colors will help visually separate extreme values. Diverging palettes are ideal for data with a meaningful midpoint, such as zero or an average."
 
+#: app/components/select-tree.tsx
+msgid "controls.select-tree.clear-search"
+msgstr "Clear search"
+
 #: app/charts/map/wms-wmts-selector.tsx
 #: app/components/form.tsx
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
@@ -513,6 +521,10 @@ msgstr "Clear text"
 #: app/components/copy-to-clipboard-text-input.tsx
 msgid "button.hint.click.to.copy"
 msgstr "Click to copy"
+
+#: app/components/multi-select/index.tsx
+msgid "controls.select.close"
+msgstr "Close"
 
 #: app/charts/map/wms-wmts-selector.tsx
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
@@ -1244,6 +1256,10 @@ msgstr "Links"
 msgid "hint.loading.data"
 msgstr "Loading data..."
 
+#: app/components/multi-select/index.tsx
+msgid "controls.select.loading"
+msgstr "Loading…"
+
 #: app/configurator/components/chart-options-selector/base-layer-field.tsx
 msgid "chart.map.layers.base.view.locked"
 msgstr "Locked view"
@@ -1421,6 +1437,10 @@ msgstr "No imported maps"
 msgid "chart-selection-tabs.no-label"
 msgstr "No label"
 
+#: app/components/multi-select/index.tsx
+msgid "controls.select.no-options"
+msgstr "No options"
+
 #: app/browse/ui/dataset-results.tsx
 #: app/components/select-tree.tsx
 msgid "No results"
@@ -1485,6 +1505,10 @@ msgstr "On"
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.opacity"
 msgstr "Opacity"
+
+#: app/components/multi-select/index.tsx
+msgid "controls.select.open"
+msgstr "Open"
 
 #: app/configurator/components/chart-controls/color-picker.tsx
 msgid "controls.colorpicker.open-for"
@@ -1733,6 +1757,10 @@ msgstr "Scale type"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
+
+#: app/components/select-tree.tsx
+msgid "controls.select-tree.search"
+msgstr "Search"
 
 #: app/browse/ui/search-dataset-input.tsx
 #: app/components/form.tsx

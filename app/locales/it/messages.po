@@ -101,6 +101,10 @@ msgstr "altre {0}"
 msgid "controls.filter.nb-elements"
 msgstr "{0} di {1}"
 
+#: app/components/select-tree.tsx
+msgid "controls.select-tree.results"
+msgstr "{resultsCount, plural, =0 {Nessun risultato} one {# risultato} other {# risultati}}"
+
 #: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.search-results"
 msgstr "{resultsCount, plural, =0 {Nessun risultato} one {# risultato} other {# risultati}}"
@@ -495,6 +499,10 @@ msgstr "Controlla la pagina di stato per ulteriori informazioni”"
 msgid "controls.custom-color-palettes.caption-diverging"
 msgstr "Scegli colori contrastanti per i punti iniziali e finali: questo aiuterà a distinguere visivamente gli estremi. Le palette divergenti sono particolarmente efficaci per i dati che hanno un punto medio significativo, come zero o un valore medio."
 
+#: app/components/select-tree.tsx
+msgid "controls.select-tree.clear-search"
+msgstr "Cancella ricerca"
+
 #: app/charts/map/wms-wmts-selector.tsx
 #: app/components/form.tsx
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
@@ -513,6 +521,10 @@ msgstr "Cancella il testo"
 #: app/components/copy-to-clipboard-text-input.tsx
 msgid "button.hint.click.to.copy"
 msgstr "Clicca per copiare"
+
+#: app/components/multi-select/index.tsx
+msgid "controls.select.close"
+msgstr "Chiudi"
 
 #: app/charts/map/wms-wmts-selector.tsx
 #: app/configurator/components/chart-controls/drawer-color-palette-content.tsx
@@ -1244,6 +1256,10 @@ msgstr "Collegamenti"
 msgid "hint.loading.data"
 msgstr "Caricamento dei dati..."
 
+#: app/components/multi-select/index.tsx
+msgid "controls.select.loading"
+msgstr "Caricamento…"
+
 #: app/configurator/components/chart-options-selector/base-layer-field.tsx
 msgid "chart.map.layers.base.view.locked"
 msgstr "Vista bloccata"
@@ -1421,6 +1437,10 @@ msgstr "Nessuna mappa importata"
 msgid "chart-selection-tabs.no-label"
 msgstr "Senza etichetta"
 
+#: app/components/multi-select/index.tsx
+msgid "controls.select.no-options"
+msgstr "Nessuna opzione"
+
 #: app/browse/ui/dataset-results.tsx
 #: app/components/select-tree.tsx
 msgid "No results"
@@ -1485,6 +1505,10 @@ msgstr "Attivo"
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.opacity"
 msgstr "Trasparenza"
+
+#: app/components/multi-select/index.tsx
+msgid "controls.select.open"
+msgstr "Apri"
 
 #: app/configurator/components/chart-controls/color-picker.tsx
 msgid "controls.colorpicker.open-for"
@@ -1733,6 +1757,10 @@ msgstr "Tipo di scala"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.scatterplot"
 msgstr "Scatterplot"
+
+#: app/components/select-tree.tsx
+msgid "controls.select-tree.search"
+msgstr "Cerca"
 
 #: app/browse/ui/search-dataset-input.tsx
 #: app/components/form.tsx

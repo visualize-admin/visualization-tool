@@ -334,6 +334,7 @@ export const Select = ({
   value,
   defaultValue,
   disabled,
+  readOnly,
   options,
   optionGroups,
   onChange,
@@ -403,6 +404,8 @@ export const Select = ({
           value={value}
           defaultValue={defaultValue}
           disabled={disabled}
+          readOnly={readOnly}
+          SelectDisplayProps={readOnly ? { "aria-disabled": true } : undefined}
           open={open}
           onOpen={handleOpen}
           onClose={onClose}
