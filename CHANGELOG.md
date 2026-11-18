@@ -21,6 +21,8 @@ You can also check the
     to main content" link
   - The metadata panel is an accessible "Details" dialog that works with the
     keyboard
+  - Interactive filters open and select by keyboard, keep focus while the chart
+    reloads, and announce search results
 
 ## 6.5.7 - 2026-11-10
 

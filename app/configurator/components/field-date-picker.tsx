@@ -41,6 +41,7 @@ export const DatePickerField = ({
   dateFormat = timeFormat("%Y-%m-%d"),
   parseDate,
   showClearButton,
+  readOnly,
   ...rest
 }: DatePickerFieldProps) => {
   const { isOpen, open, close } = useDisclosure();
@@ -81,7 +82,7 @@ export const DatePickerField = ({
           {...rest}
           {...dateLimitProps}
           open={isOpen}
-          onOpen={open}
+          onOpen={readOnly ? undefined : open}
           onClose={close}
           PopperProps={{
             onKeyDown: (e) => {
@@ -123,6 +124,8 @@ export const DatePickerField = ({
               {...params}
               inputProps={{
                 ...params.inputProps,
+                readOnly: readOnly || params.inputProps?.readOnly,
+                "aria-disabled": readOnly || undefined,
                 value: value
                   ? dateFormat(value)
                   : t({
@@ -131,7 +134,9 @@ export const DatePickerField = ({
                     }),
               }}
               onChange={(e) => {
-                handleChange(parseDate(e.target.value));
+                if (!readOnly) {
+                  handleChange(parseDate(e.target.value));
+                }
               }}
               sx={{
                 ...params.sx,
@@ -162,7 +167,7 @@ export const DatePickerField = ({
                     {showClearButton && value && (
                       <IconButton
                         size="small"
-                        onClick={handleNoFilter}
+                        onClick={readOnly ? undefined : handleNoFilter}
                         sx={{
                           p: 1,
                           mr: -0.5,

@@ -32,7 +32,7 @@ export const ChartDataFiltersList = ({
           dataSource={dataSource}
           chartConfig={chartConfig}
           dataFilters={dataFilters}
-          disabled={loading}
+          loading={loading}
         />
       ))}
     </Box>
