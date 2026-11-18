@@ -24,7 +24,6 @@ test.describe("Interactive data filters by keyboard", () => {
 
     await expect(select).not.toHaveText("Zurich");
     await expect(select).toBeFocused();
-    await page.waitForLoadState("networkidle");
     await waitUntilEnabled(select);
     await expect(select).toBeFocused();
   });

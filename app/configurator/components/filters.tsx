@@ -415,7 +415,20 @@ const MultiFilterContent = ({
     <Box sx={{ position: "relative" }}>
       <Box mb={4}>
         <Flex sx={{ flexDirection: "column", gap: 3, mb: 3 }}>
-          <InteractiveToggle {...interactiveFilterProps} />
+          <InteractiveToggle
+            {...interactiveFilterProps}
+            aria-label={
+              isSegmentField
+                ? t({
+                    id: "controls.filters.interactive.toggle-legend",
+                    message: "Interactive legend filter",
+                  })
+                : t({
+                    id: "controls.filters.interactive.toggle-filter",
+                    message: "Interactive filter",
+                  })
+            }
+          />
           {isSegmentField ? (
             <Switch
               label={t({
@@ -592,14 +605,17 @@ const InteractiveToggle = ({
   name,
   checked,
   onChange,
+  "aria-label": ariaLabel,
 }: {
   name: string;
   checked: boolean;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  "aria-label": string;
 }) => {
   return (
     <Switch
       name={name}
+      aria-label={ariaLabel}
       label={
         <MaybeTooltip
           tooltipProps={{ enterDelay: 600 }}
@@ -1431,6 +1447,10 @@ const InteractiveTimeRangeToggle = () => {
       label={t({
         id: "controls.filters.interactive.toggle",
         message: "Interactive",
+      })}
+      aria-label={t({
+        id: "controls.filters.interactive.toggle-time-range",
+        message: "Interactive time range",
       })}
       size="sm"
       checked={checked}
