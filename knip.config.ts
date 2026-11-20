@@ -45,6 +45,7 @@ const config: KnipConfig = {
     "pngjs",
     "@types/pngjs",
     "@playwright/test",
+    "@axe-core/playwright",
     // Codegen packages are used through scripts.
     "@graphql-codegen/*",
     "@lingui/cli",
