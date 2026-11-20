@@ -1,6 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { MDXProvider } from "@mdx-js/react";
-import { CssBaseline } from "@mui/material";
+import { CssBaseline, GlobalStyles } from "@mui/material";
 import {
   AudioSpecimen,
   Catalog,
@@ -22,6 +22,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { c } from "@/federal-ci/theme";
 import { i18n, I18nProvider, parseLocaleString } from "@/src";
+import { FOCUS_OUTLINE_INSET } from "@/themes/focus";
 
 const pages: ConfigPageOrGroup[] = [
   {
@@ -182,6 +183,14 @@ export default () => {
     <MDXProvider components={mdxComponents}>
       <I18nProvider i18n={i18n}>
         <CssBaseline />
+        {/* The docs catalog renders third-party markup the theme can't style. */}
+        <GlobalStyles
+          styles={{
+            "li a[href]:focus-visible, div > a[href]:has(> svg):focus-visible":
+              FOCUS_OUTLINE_INSET,
+            "div:has(> a[href]:focus-visible)": { opacity: 1 },
+          }}
+        />
         <Catalog
           basePath="/docs"
           useBrowserHistory

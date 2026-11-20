@@ -301,7 +301,11 @@ const SelectDatasetStepInner = ({
               <MotionBox
                 key="navigation"
                 initial={{ opacity: 0, height: 0, overflow: "hidden" }}
-                animate={{ opacity: 1, height: "auto" }}
+                animate={{
+                  opacity: 1,
+                  height: "auto",
+                  transitionEnd: { overflow: "visible" },
+                }}
                 exit={{ opacity: 0, height: 0 }}
                 // To match mode="wait" enter / exit animation duration
                 transition={{ duration: odsIframe ? 0 : DURATION * 2 }}
@@ -574,6 +578,8 @@ const useStyles = makeStyles<
   },
   panelLeft: {
     marginBottom: theme.spacing(12),
+    paddingInline: theme.spacing(1),
+    marginInline: theme.spacing(-1),
     boxShadow: "none",
     outline: "none",
     transition: "padding-top 0.5s ease",
@@ -582,8 +588,11 @@ const useStyles = makeStyles<
       position: ({ datasetPresent }) => (datasetPresent ? "static" : "sticky"),
       top: ({ datasetPresent }) => (datasetPresent ? 0 : theme.spacing(8)),
       overflowY: "auto",
-      minHeight: "100vh",
-      maxHeight: ({ datasetPresent }) => (datasetPresent ? "none" : "100vh"),
+      boxSizing: "border-box",
+      minHeight: ({ datasetPresent }) =>
+        datasetPresent ? "100vh" : `calc(100vh - ${theme.spacing(8)})`,
+      maxHeight: ({ datasetPresent }) =>
+        datasetPresent ? "none" : `calc(100vh - ${theme.spacing(8)})`,
       marginBottom: "unset",
       paddingBottom: ({ datasetPresent }) =>
         datasetPresent ? 0 : theme.spacing(16),

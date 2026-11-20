@@ -40,6 +40,16 @@ export const VisualizeTab = styled(Tab)<TabProps>(({ theme }) => {
     "&.Mui-selected": {
       borderBottomColor: theme.palette.background.paper,
     },
+    "@media (forced-colors: active)": {
+      "&.Mui-selected": {
+        forcedColorAdjust: "none",
+        backgroundColor: "Canvas",
+        color: "CanvasText",
+        borderColor: "CanvasText",
+        borderBottomColor: "Canvas",
+        boxShadow: "inset 0 3px 0 Highlight",
+      },
+    },
     minWidth: "fit-content",
     padding: theme.spacing(0, 2),
   };

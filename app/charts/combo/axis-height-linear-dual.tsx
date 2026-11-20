@@ -15,6 +15,10 @@ import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { DISABLE_SCREENSHOT_COLOR_WIPE_ATTR } from "@/components/chart-shared";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
+import {
+  FOCUS_OUTLINE_ON_FILL_CLASS_NAME,
+  INSET_FOCUS_OUTLINE_CLASS_NAME,
+} from "@/themes/focus";
 import { theme } from "@/themes/theme";
 
 type AxisHeightLinearDualProps = {
@@ -56,6 +60,7 @@ export const AxisHeightLinearDual = (props: AxisHeightLinearDualProps) => {
   return (
     <>
       <foreignObject
+        className={`${INSET_FOCUS_OUTLINE_CLASS_NAME} ${FOCUS_OUTLINE_ON_FILL_CLASS_NAME}`}
         data-testid={`axis-title-${orientation}`}
         x={axisTitleX}
         width={axisTitleWidth}
