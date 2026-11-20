@@ -1,8 +1,12 @@
+import { BoxProps } from "@mui/material";
 import { ReactNode } from "react";
 
 import { Flex } from "@/components/flex";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { MAIN_CONTENT_ID } from "@/components/skip-link";
+
+const MAIN_PROPS = { id: MAIN_CONTENT_ID, tabIndex: -1 } satisfies BoxProps;
 
 export const AppLayout = ({
   children,
@@ -19,6 +23,7 @@ export const AppLayout = ({
       <Flex
         component="main"
         role="main"
+        {...MAIN_PROPS}
         sx={{ flex: 1, flexDirection: "column" }}
       >
         {children}
@@ -46,6 +51,7 @@ export const ContentLayout = ({
       <Flex
         component="main"
         role="main"
+        {...MAIN_PROPS}
         sx={{
           flexDirection: "column",
           flex: 1,
@@ -78,6 +84,7 @@ export const StaticContentLayout = ({
       <Flex
         component="main"
         role="main"
+        {...MAIN_PROPS}
         sx={{
           flexDirection: "column",
           flex: 1,

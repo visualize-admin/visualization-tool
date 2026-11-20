@@ -23,7 +23,10 @@ import {
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 import { AddButton } from "@/components/add-button";
-import { ArrowMenuTopCenter } from "@/components/arrow-menu";
+import {
+  ArrowMenuTopCenter,
+  ArrowPopoverTopCenter,
+} from "@/components/arrow-menu";
 import { DuplicateChartMenuActionItem } from "@/components/chart-shared";
 import { DragHandle } from "@/components/drag-handle";
 import { Flex } from "@/components/flex";
@@ -44,9 +47,11 @@ import {
 } from "@/configurator";
 import { useSearchDatasetPanelStore } from "@/configurator/components/add-new-dataset-panel";
 import { ChartTypeSelector } from "@/configurator/components/chart-type-selector";
+import { getFieldLabel } from "@/configurator/components/field-i18n";
 import { getIconName } from "@/configurator/components/ui-helpers";
-import { Icon, IconName } from "@/icons";
+import { Icon } from "@/icons";
 import { useLocale } from "@/locales";
+import { focusFirst } from "@/utils/focus-first";
 import { useEvent } from "@/utils/use-event";
 
 type TabsState = {
@@ -163,6 +168,14 @@ const TabsEditable = (props: TabsEditableProps) => {
     <>
       <TabsInner
         data={data}
+        addPopoverOpen={
+          tabsState.popoverOpen && tabsState.popoverType === "add"
+        }
+        menuChartKey={
+          tabsState.popoverOpen && tabsState.popoverType === "edit"
+            ? tabsState.activeChartKey
+            : undefined
+        }
         addable={isConfiguringChart}
         editable={isConfiguringChart}
         draggable={state.chartConfigs.length > 1}
@@ -186,7 +199,7 @@ const TabsEditable = (props: TabsEditableProps) => {
       />
 
       {tabsState.popoverType === "add" ? (
-        <ArrowMenuTopCenter
+        <ArrowPopoverTopCenter
           id="chart-selection-popover"
           open={tabsState.popoverOpen}
           anchorEl={popoverAnchorEl}
@@ -199,14 +212,20 @@ const TabsEditable = (props: TabsEditableProps) => {
             vertical: "top",
           }}
           onClose={handleClose}
+          TransitionProps={{
+            onEntering: (node) => focusFirst(node, "button:not(:disabled)"),
+          }}
           PaperProps={{
+            role: "dialog",
+            "aria-label": t({
+              id: "chart-selection-tabs.add-chart",
+              message: "Add chart",
+            }),
             sx: {
               width: "calc(320px + 2rem)",
               mt: 3,
               py: "1rem",
-              "& > .MuiList-root": {
-                py: 0,
-              },
+              boxShadow: 4,
             },
           }}
         >
@@ -250,7 +269,7 @@ const TabsEditable = (props: TabsEditableProps) => {
               </Button>
             </Stack>
           </Stack>
-        </ArrowMenuTopCenter>
+        </ArrowPopoverTopCenter>
       ) : null}
 
       {tabsState.popoverType === "edit" ? (
@@ -408,6 +427,8 @@ const useTabsInnerStyles = makeStyles<Theme>((theme) => ({
 
 const TabsInner = ({
   data,
+  addPopoverOpen,
+  menuChartKey,
   addable,
   editable,
   draggable,
@@ -416,6 +437,8 @@ const TabsInner = ({
   onChartSwitch,
 }: {
   data: TabDatum[];
+  addPopoverOpen?: boolean;
+  menuChartKey?: string;
   addable: boolean;
   editable: boolean;
   draggable: boolean;
@@ -496,11 +519,12 @@ const TabsInner = ({
                             }}
                             label={
                               <TabContent
-                                iconName={getIconName(d.chartType)}
+                                chartType={d.chartType}
                                 chartKey={d.key}
                                 editable={editable}
                                 draggable={draggable}
                                 active={d.active}
+                                menuOpen={d.key === menuChartKey}
                                 label={d.label}
                                 dragging={snapshot.isDragging}
                                 onChevronDownClick={(e) => {
@@ -526,7 +550,11 @@ const TabsInner = ({
         </DragDropContext>
       </TabContext>
       {addable && (
-        <AddButton onClick={onChartAdd}>
+        <AddButton
+          aria-haspopup="dialog"
+          aria-expanded={!!addPopoverOpen}
+          onClick={onChartAdd}
+        >
           <Trans id="chart-selection-tabs.add-chart">Add chart</Trans>
         </AddButton>
       )}
@@ -603,11 +631,12 @@ export const useIconStyles = makeStyles<
 }));
 
 const TabContent = (props: {
-  iconName: IconName;
+  chartType: ChartType;
   chartKey: string;
   editable?: boolean;
   draggable?: boolean;
   active?: boolean;
+  menuOpen?: boolean;
   dragging?: boolean;
   label?: string;
   onChevronDownClick?: (
@@ -617,11 +646,12 @@ const TabContent = (props: {
   onSwitchClick?: () => void;
 }) => {
   const {
-    iconName,
+    chartType,
     chartKey,
     editable,
     draggable,
     active,
+    menuOpen,
     label,
     dragging,
     onChevronDownClick,
@@ -639,6 +669,9 @@ const TabContent = (props: {
     <Flex sx={{ alignItems: "center", gap: 2, p: 2, pl: 4 }}>
       <Button
         variant="text"
+        aria-label={
+          label || showAddLabel ? undefined : getFieldLabel(chartType)
+        }
         onClick={() => {
           onSwitchClick?.();
 
@@ -651,7 +684,7 @@ const TabContent = (props: {
         }}
         sx={{ alignItems: "center", gap: 2 }}
       >
-        <Icon name={iconName} />
+        <Icon name={getIconName(chartType)} />
         <Typography
           variant="caption"
           sx={{
@@ -667,6 +700,13 @@ const TabContent = (props: {
       {editable && (
         <Button
           variant="text"
+          aria-label={
+            label
+              ? t({ id: "menu.actions-for", message: `Actions for ${label}` })
+              : t({ id: "menu.more-actions", message: "More actions" })
+          }
+          aria-haspopup="menu"
+          aria-expanded={!!menuOpen}
           onClick={(e) => onChevronDownClick?.(e, chartKey)}
           className={classes.editIconWrapper}
         >

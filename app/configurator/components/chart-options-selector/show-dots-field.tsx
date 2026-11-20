@@ -71,10 +71,10 @@ export const ShowDotsField = ({
             }}
             label={t({ id: "controls.section.show-dots" })}
           />
-          <Typography variant="caption" sx={{ mt: 2 }}>
+          <Typography id="dots-size-label" variant="caption" sx={{ mt: 2 }}>
             <Trans id="controls.section.dots-size">Select a Size</Trans>
           </Typography>
-          <RadioGroup>
+          <RadioGroup labelId="dots-size-label">
             <ChartShowDotRadio
               size="Small"
               label={t({

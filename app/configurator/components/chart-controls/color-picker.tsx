@@ -1,5 +1,5 @@
-import { Trans } from "@lingui/macro";
-import { Box, Button, Popover, styled } from "@mui/material";
+import { t } from "@lingui/macro";
+import { Box, Button, Popover, PopoverActions, styled } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { color as d3Color } from "d3-color";
 import dynamic from "next/dynamic";
@@ -11,6 +11,7 @@ import { Icon } from "@/icons";
 import { ColorItem } from "@/palettes";
 import { createColorId } from "@/utils/color-palette-utils";
 import { hexToHsva, hsvaToHex } from "@/utils/color-utils";
+import { focusFirst } from "@/utils/focus-first";
 
 const CustomColorPicker = dynamic(
   () =>
@@ -29,6 +30,7 @@ const useStyles = makeStyles(() => ({
     borderColor: "transparent",
     padding: 0,
     cursor: "pointer",
+    forcedColorAdjust: "none",
   },
 }));
 
@@ -39,13 +41,17 @@ export const Swatch = ({
 }: {
   color: string;
   selected: boolean;
-  onClick: MouseEventHandler<HTMLDivElement>;
+  onClick: MouseEventHandler<HTMLButtonElement>;
 }) => {
   const classes = useStyles();
   const borderColor = d3Color(color)?.darker().toString();
 
   return (
     <Box
+      component="button"
+      type="button"
+      aria-label={color}
+      aria-pressed={selected}
       className={classes.swatch}
       data-testid="color-picker-swatch"
       sx={{
@@ -57,7 +63,6 @@ export const Swatch = ({
           borderColor,
         },
       }}
-      role="button"
       onClick={onClick}
     />
   );
@@ -93,6 +98,7 @@ const ColorPickerBox = styled(Box)(({ theme }) => ({
 }));
 
 export const ColorPickerMenu = ({
+  label,
   selectedHexColor,
   colors,
   onChange,
@@ -100,6 +106,7 @@ export const ColorPickerMenu = ({
   colorId,
   onRemove,
 }: {
+  label: string;
   selectedHexColor: string;
   colors?: ColorItem[] | readonly string[];
   onChange?: (color: string) => void;
@@ -109,7 +116,13 @@ export const ColorPickerMenu = ({
 }) => {
   const { isOpen, open, close } = useDisclosure();
   const buttonRef = useRef(null);
-  const popoverRef = useRef<HTMLDivElement>(null);
+  const { actionRef, contentRef } = usePopoverContent();
+
+  const colorSwatches = useMemo(() => {
+    return colors?.map((color) =>
+      typeof color === "string" ? { color, id: createColorId() } : color
+    );
+  }, [colors]);
 
   const initialSelected = useMemo(() => {
     return { ...hexToHsva(selectedHexColor), id: colorId ?? createColorId() };
@@ -137,17 +150,25 @@ export const ColorPickerMenu = ({
           ref={buttonRef}
           variant="text"
           disabled={disabled}
+          aria-haspopup="dialog"
+          aria-expanded={isOpen}
           onClick={open}
         >
-          <VisuallyHidden>
-            <Trans id="controls.colorpicker.open">Open Color Picker</Trans>
+          <VisuallyHidden component="span">
+            {t({
+              id: "controls.colorpicker.open-for",
+              message: `Open color picker: ${label}`,
+            })}
           </VisuallyHidden>
           <Icon name="swatch" size={16} />
         </ColorPickerButton>
         {colorId && onRemove && (
           <ColorPickerButton variant="text" onClick={() => onRemove(colorId)}>
-            <VisuallyHidden>
-              <Trans id="controls.colorpicker.remove">Remove Color</Trans>
+            <VisuallyHidden component="span">
+              {t({
+                id: "controls.colorpicker.remove-for",
+                message: `Remove color: ${label}`,
+              })}
             </VisuallyHidden>
             <Icon name="close" size={16} />
           </ColorPickerButton>
@@ -161,20 +182,49 @@ export const ColorPickerMenu = ({
         }}
         open={isOpen}
         onClose={close}
-        slotProps={{ paper: { sx: { boxShadow: 4 } } }}
+        action={actionRef}
+        slotProps={{
+          paper: {
+            role: "dialog",
+            "aria-label": t({
+              id: "controls.colorpicker",
+              message: "Color picker",
+            }),
+            sx: { boxShadow: 4 },
+          },
+        }}
       >
-        <div ref={popoverRef}>
+        <div ref={contentRef}>
           <CustomColorPicker
             defaultSelection={initialSelected}
             onChange={handleColorChange}
-            colorSwatches={
-              (colors && typeof colors[0] === "string"
-                ? colors.map((color) => ({ color: color, id: createColorId() }))
-                : colors) as ColorItem[]
-            }
+            colorSwatches={colorSwatches}
           />
         </div>
       </Popover>
     </div>
   );
+};
+
+const usePopoverContent = () => {
+  const actionRef = useRef<PopoverActions>(null);
+  const observerRef = useRef<ResizeObserver>();
+  const contentRef = useCallback((node: HTMLDivElement | null) => {
+    observerRef.current?.disconnect();
+
+    if (!node) {
+      return;
+    }
+
+    observerRef.current = new ResizeObserver(() => {
+      actionRef.current?.updatePosition();
+
+      if (node.parentElement === document.activeElement) {
+        focusFirst(node, '[role="slider"]');
+      }
+    });
+    observerRef.current.observe(node);
+  }, []);
+
+  return { actionRef, contentRef };
 };

@@ -347,6 +347,9 @@ export const ChartMoreButton = ({
       <IconButton
         {...DISABLE_SCREENSHOT_ATTR}
         data-testid="chart-more-button"
+        aria-label={t({ id: "menu.more-actions", message: "More actions" })}
+        aria-haspopup="menu"
+        aria-expanded={!!anchor}
         onClick={(e) => setAnchor(e.currentTarget)}
         sx={{ height: "fit-content" }}
       >

@@ -203,6 +203,12 @@ export class Timeline extends Observable {
     this.notify();
   };
 
+  public setIndex = (index: number) => {
+    this.msValue = this.msValues[index];
+    this.animationProgress = this.msRelativeValues[index];
+    this.notify();
+  };
+
   private setValue = (progress: number) => {
     const ms = Math.round(this.msValueScale(progress));
     const i = bisect(this.msValues, ms) - 1;
@@ -211,6 +217,23 @@ export class Timeline extends Observable {
 
   get domain() {
     return this.msRelativeValues;
+  }
+
+  get length() {
+    return this.msValues.length;
+  }
+
+  get position() {
+    const progress = this.progress;
+    const i = Math.max(0, bisect(this.msRelativeValues, progress) - 1);
+    const current = this.msRelativeValues[i];
+    const next = this.msRelativeValues[i + 1];
+
+    if (next === undefined) {
+      return i;
+    }
+
+    return i + (progress - current) / (next - current);
   }
 
   get value() {

@@ -290,7 +290,12 @@ const LayoutSharedFiltersConfigurator = () => {
                             alignItems: "center",
                           }}
                         >
-                          <Typography variant="body3">{dim.label}</Typography>
+                          <Typography
+                            id={`shared-filter-${i}-label`}
+                            variant="body3"
+                          >
+                            {dim.label}
+                          </Typography>
                           <Switch
                             checked={checked}
                             onChange={(_, checked) => {
@@ -306,6 +311,7 @@ const LayoutSharedFiltersConfigurator = () => {
                               index={i}
                               disabled={fetching}
                               disableLabel
+                              labelId={`shared-filter-${i}-label`}
                             />
                           </Box>
                         ) : null}
