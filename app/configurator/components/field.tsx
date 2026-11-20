@@ -183,6 +183,7 @@ export const DataFilterSelect = ({
   labelId,
   id,
   disabled,
+  readOnly,
   optional,
   sideControls,
   hierarchy,
@@ -194,6 +195,7 @@ export const DataFilterSelect = ({
   labelId?: string;
   id: string;
   disabled?: boolean;
+  readOnly?: boolean;
   optional?: boolean;
   sideControls?: ReactNode;
   hierarchy?: HierarchyValue[] | null;
@@ -257,6 +259,7 @@ export const DataFilterSelect = ({
         onOpen={handleOpen}
         open={isOpen}
         disabled={disabled}
+        readOnly={readOnly}
         sideControls={sideControls}
         value={fieldProps.value}
         onChange={(e) => {
@@ -313,6 +316,7 @@ export const DataFilterSelect = ({
         )
       }
       disabled={disabled || usesMostRecentValue}
+      readOnly={readOnly}
       options={allValues}
       sort={false}
       sideControls={sideControls}
@@ -337,6 +341,7 @@ export const DataFilterTemporal = ({
   dimension,
   timeUnit,
   disabled,
+  readOnly,
   isOptional,
   sideControls,
 }: {
@@ -344,6 +349,7 @@ export const DataFilterTemporal = ({
   dimension: TemporalDimension;
   timeUnit: DatePickerTimeUnit;
   disabled?: boolean;
+  readOnly?: boolean;
   isOptional?: boolean;
   sideControls?: ReactNode;
 }) => {
@@ -408,6 +414,7 @@ export const DataFilterTemporal = ({
         minDate={minDate}
         maxDate={maxDate}
         disabled={disabled || usesMostRecentDate}
+        readOnly={readOnly}
         sideControls={sideControls}
         parseDate={parseDate}
       />

@@ -2,6 +2,7 @@ import { t } from "@lingui/macro";
 import { DatePicker, DatePickerProps, PickersDay } from "@mui/lab";
 import { DatePickerView } from "@mui/lab/DatePicker/shared";
 import { Box, IconButton, TextField } from "@mui/material";
+import { useId } from "@reach/auto-id";
 import { timeFormat } from "d3-time-format";
 import { ChangeEvent, ReactNode, useCallback } from "react";
 
@@ -41,9 +42,11 @@ export const DatePickerField = ({
   dateFormat = timeFormat("%Y-%m-%d"),
   parseDate,
   showClearButton,
+  readOnly,
   ...rest
 }: DatePickerFieldProps) => {
   const { isOpen, open, close } = useDisclosure();
+  const inputId = `date-picker-${useId()}`;
   const handleChange = useCallback(
     (date: Date | null) => {
       if (!date || isDateDisabled(date)) {
@@ -69,19 +72,20 @@ export const DatePickerField = ({
     } as ChangeEvent<HTMLSelectElement>;
 
     onChange(e);
-  }, [onChange]);
+    document.getElementById(inputId)?.focus();
+  }, [onChange, inputId]);
 
   const dateLimitProps = getDateRenderProps(timeUnit, isDateDisabled);
 
   return (
     <Flex sx={{ flexDirection: "column", gap: 1 }}>
-      {label && name && <Label htmlFor={name}>{label}</Label>}
+      {label && <Label htmlFor={inputId}>{label}</Label>}
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <DatePicker<Date>
           {...rest}
           {...dateLimitProps}
           open={isOpen}
-          onOpen={open}
+          onOpen={readOnly ? undefined : open}
           onClose={close}
           PopperProps={{
             onKeyDown: (e) => {
@@ -94,6 +98,9 @@ export const DatePickerField = ({
           components={{
             OpenPickerIcon: (props) => <Icon name="calendar" {...props} />,
           }}
+          OpenPickerButtonProps={
+            readOnly ? { "aria-disabled": true } : undefined
+          }
           PaperProps={{
             elevation: 4,
           }}
@@ -121,8 +128,12 @@ export const DatePickerField = ({
               hiddenLabel
               size="small"
               {...params}
+              id={inputId}
+              name={name}
               inputProps={{
                 ...params.inputProps,
+                readOnly: readOnly || params.inputProps?.readOnly,
+                "aria-disabled": readOnly || undefined,
                 value: value
                   ? dateFormat(value)
                   : t({
@@ -131,7 +142,9 @@ export const DatePickerField = ({
                     }),
               }}
               onChange={(e) => {
-                handleChange(parseDate(e.target.value));
+                if (!readOnly) {
+                  handleChange(parseDate(e.target.value));
+                }
               }}
               sx={{
                 ...params.sx,
@@ -162,7 +175,12 @@ export const DatePickerField = ({
                     {showClearButton && value && (
                       <IconButton
                         size="small"
-                        onClick={handleNoFilter}
+                        aria-label={t({
+                          id: "controls.clear-selection",
+                          message: "Clear selection",
+                        })}
+                        aria-disabled={readOnly || undefined}
+                        onClick={readOnly ? undefined : handleNoFilter}
                         sx={{
                           p: 1,
                           mr: -0.5,

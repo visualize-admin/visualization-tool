@@ -6,6 +6,7 @@ import { useChartInteractiveFilters } from "@/stores/interactive-filters";
 
 export const ChartDataFiltersList = ({
   open,
+  listId,
   dataSource,
   chartConfig,
   loading,
@@ -16,6 +17,7 @@ export const ChartDataFiltersList = ({
 
   return componentIds && componentIds.length > 0 ? (
     <Box
+      id={listId}
       data-testid="published-chart-interactive-filters"
       sx={{
         display: open ? "grid" : "none",
@@ -32,7 +34,7 @@ export const ChartDataFiltersList = ({
           dataSource={dataSource}
           chartConfig={chartConfig}
           dataFilters={dataFilters}
-          disabled={loading}
+          loading={loading}
         />
       ))}
     </Box>
