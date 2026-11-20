@@ -7,6 +7,7 @@ export const expectNoAxeViolations = async (container: Element) => {
   const { violations } = await axe.run(container, {
     runOnly: { type: "tag", values: WCAG_TAGS },
     rules: {
+      // axe can't measure contrast in jsdom (no canvas); the e2e scans in e2e/a11y.ts cover it.
       "color-contrast": { enabled: false },
     },
   });
