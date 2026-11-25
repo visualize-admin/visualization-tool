@@ -199,10 +199,15 @@ export const ColorComponentField = ({
         ) : colorType === "numerical" ? (
           <div>
             <ColorRampField field={field} path="color" nSteps={nbClass} />
-            <Typography variant="caption" component="p" sx={{ mb: 1 }}>
+            <Typography
+              id={`${field}-scale-type-label`}
+              variant="caption"
+              component="p"
+              sx={{ mb: 1 }}
+            >
               <Trans id="controls.scale.type">Scale type</Trans>
             </Typography>
-            <RadioGroup>
+            <RadioGroup labelId={`${field}-scale-type-label`}>
               <ChartOptionRadioField
                 label={t({
                   id: "controls.color.scale.type.continuous",

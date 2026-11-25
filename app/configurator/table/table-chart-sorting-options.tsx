@@ -8,7 +8,8 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { ascending } from "d3-array";
-import { ChangeEvent, ReactNode, useCallback } from "react";
+import keyBy from "lodash/keyBy";
+import { ChangeEvent, ReactNode, useCallback, useMemo } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -129,6 +130,7 @@ const TableSortingOptionItem = ({
     });
   });
 
+  const column = component?.label;
   const sortingType = isNumericalMeasure(component)
     ? "byMeasure"
     : "byDimensionLabel";
@@ -144,7 +146,12 @@ const TableSortingOptionItem = ({
           sideControls={sideControls}
         />
       </Typography>
-      <RadioGroup>
+      <RadioGroup
+        label={t({
+          id: "controls.sorting.order-for",
+          message: `Sorting order: ${column}`,
+        })}
+      >
         <Radio
           name={`${componentId}-sortingOrder`}
           value="asc"
@@ -345,6 +352,9 @@ export const TableSortingOptions = ({
   const chartConfig = getChartConfig(state);
   const { activeField } = chartConfig;
   const classes = useStyles();
+  const componentsById = useMemo(() => {
+    return keyBy([...dimensions, ...measures], (c) => c.id);
+  }, [dimensions, measures]);
 
   const onDragEnd = useCallback<OnDragEndResponder>(
     ({ source, destination }) => {
@@ -387,6 +397,8 @@ export const TableSortingOptions = ({
               <div>
                 <Box ref={innerRef}>
                   {sorting.map((option, i) => {
+                    const label = componentsById[option.componentId]?.label;
+
                     return (
                       <Draggable
                         key={option.componentId}
@@ -428,6 +440,10 @@ export const TableSortingOptions = ({
                                       },
                                     }}
                                     {...dragHandleProps}
+                                    aria-label={t({
+                                      id: "controls.table.sorting.reorder",
+                                      message: `Reorder: ${label}`,
+                                    })}
                                   >
                                     <Icon name="dragndrop" />
                                   </Box>

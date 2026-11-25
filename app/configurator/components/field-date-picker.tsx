@@ -7,6 +7,7 @@ import { ChangeEvent, ReactNode, useCallback } from "react";
 
 import { Flex } from "@/components/flex";
 import { Label } from "@/components/form";
+import { useDisclosure } from "@/components/use-disclosure";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
 import { TimeUnit } from "@/graphql/resolver-types";
 import { Icon } from "@/icons";
@@ -42,6 +43,7 @@ export const DatePickerField = ({
   showClearButton,
   ...rest
 }: DatePickerFieldProps) => {
+  const { isOpen, open, close } = useDisclosure();
   const handleChange = useCallback(
     (date: Date | null) => {
       if (!date || isDateDisabled(date)) {
@@ -78,6 +80,17 @@ export const DatePickerField = ({
         <DatePicker<Date>
           {...rest}
           {...dateLimitProps}
+          open={isOpen}
+          onOpen={open}
+          onClose={close}
+          PopperProps={{
+            onKeyDown: (e) => {
+              if (e.key === "Escape") {
+                e.stopPropagation();
+                close();
+              }
+            },
+          }}
           components={{
             OpenPickerIcon: (props) => <Icon name="calendar" {...props} />,
           }}

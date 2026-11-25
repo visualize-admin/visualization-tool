@@ -11,7 +11,6 @@ import {
   PopoverProps,
   Stack,
   Switch,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
@@ -25,6 +24,7 @@ import {
 } from "@/components/embed-params";
 import { Flex } from "@/components/flex";
 import { Radio } from "@/components/form";
+import { InfoIconTooltip } from "@/components/info-icon-tooltip";
 import { Icon } from "@/icons";
 import { useEvent } from "@/utils/use-event";
 import { useI18n } from "@/utils/use-i18n";
@@ -146,15 +146,11 @@ const EmbedRadio = ({
     <Flex sx={{ alignItems: "center", gap: 1 }}>
       <Radio {...rest} />
       {infoMessage && (
-        <Tooltip
-          arrow
+        <InfoIconTooltip
           title={infoMessage}
+          size={16}
           PopperProps={{ sx: { width: 190, p: 0 } }}
-        >
-          <div style={{ fontSize: 0 }}>
-            <Icon name="infoCircle" size={16} />
-          </div>
-        </Tooltip>
+        />
       )}
     </Flex>
   );
@@ -178,15 +174,11 @@ const EmbedToggleSwitch = ({
         sx={{ mr: 0 }}
       />
       {infoMessage && (
-        <Tooltip
-          arrow
+        <InfoIconTooltip
           title={infoMessage}
+          size={16}
           PopperProps={{ sx: { width: 190, p: 0 } }}
-        >
-          <div style={{ fontSize: 0 }}>
-            <Icon name="infoCircle" size={16} />
-          </div>
-        </Tooltip>
+        />
       )}
     </Flex>
   );
@@ -424,6 +416,10 @@ export const EmbedContent = ({
         </Accordion>
       </Flex>
       <CopyToClipboardTextInput
+        label={t({
+          id: "publication.embed.iframe",
+          message: "Iframe Embed Code",
+        })}
         content={`<iframe src="${embedUrl}" width="100%" style="${responsive ? "" : `height: ${iframeHeight || 640}px; `}border: 0px #ffffff none;"  name="visualize.admin.ch"></iframe>${responsive ? `<script type="text/javascript">!function(){window.addEventListener("message", function (e) { if (e.data.type === "${CHART_RESIZE_EVENT_TYPE}") { document.querySelectorAll("iframe").forEach((iframe) => { if (iframe.contentWindow === e.source) { iframe.style.height = e.data.height + "px"; } }); } })}();</script>` : ""}`}
       />
       <Flex sx={{ flexDirection: "column", gap: 2 }}>
@@ -437,7 +433,13 @@ export const EmbedContent = ({
             Use this link to embed the chart without iframe tags.
           </Trans>
         </Typography>
-        <CopyToClipboardTextInput content={embedAEMUrl} />
+        <CopyToClipboardTextInput
+          label={t({
+            id: "publication.embed.external-application",
+            message: 'Embed Code for "External Application"',
+          })}
+          content={embedAEMUrl}
+        />
       </Flex>
     </Flex>
   );
@@ -514,7 +516,10 @@ export const ShareContent = ({
         >
           <Trans id="publication.share.chart.url">Chart URL</Trans>
         </Typography>
-        <CopyToClipboardTextInput content={shareUrl} />
+        <CopyToClipboardTextInput
+          label={t({ id: "publication.share.chart.url", message: "Chart URL" })}
+          content={shareUrl}
+        />
       </div>
     </Flex>
   );

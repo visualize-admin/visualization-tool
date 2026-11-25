@@ -33,6 +33,7 @@ import {
 } from "@/components/form";
 import { SelectTree } from "@/components/select-tree";
 import { useDisclosure } from "@/components/use-disclosure";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import {
   ChartConfig,
   CustomPaletteType,
@@ -179,6 +180,7 @@ export const OnOffControlTabField = ({
 export const DataFilterSelect = ({
   dimension,
   label,
+  labelId,
   id,
   disabled,
   optional,
@@ -189,6 +191,7 @@ export const DataFilterSelect = ({
 }: {
   dimension: Dimension;
   label: ReactNode;
+  labelId?: string;
   id: string;
   disabled?: boolean;
   optional?: boolean;
@@ -272,6 +275,7 @@ export const DataFilterSelect = ({
   return (
     <Select
       id={id}
+      labelId={labelId}
       size="sm"
       label={
         canUseMostRecentValue ? (
@@ -554,7 +558,7 @@ export const MetaInputField = ({
 }: {
   type: "chart" | "layout";
   inputType: "text" | "markdown";
-  label: string | ReactNode;
+  label: string;
   metaKey: string;
   locale: string;
   value?: string;
@@ -721,8 +725,11 @@ export const MultiFilterField = ({
     >
       <LegendItem symbol={symbol} label={label} color={color} />
       <Flex sx={{ alignItems: "center", gap: 1 }}>
-        {enableShowValue ? <ShowValuesMappingField value={value} /> : null}
+        {enableShowValue ? (
+          <ShowValuesMappingField value={value} label={label} />
+        ) : null}
         <ColorPickerMenu
+          label={label}
           colors={palette}
           selectedHexColor={color}
           onChange={onChange}
@@ -732,10 +739,21 @@ export const MultiFilterField = ({
   ) : null;
 };
 
-export const ShowValuesMappingField = ({ value }: { value: string }) => {
+export const ShowValuesMappingField = ({
+  value,
+  label,
+}: {
+  value: string;
+  label: string;
+}) => {
   return (
     <ChartOptionCheckboxField
-      label={t({ id: "controls.filter.show-values", message: "Show value" })}
+      label={
+        <>
+          {t({ id: "controls.filter.show-values", message: "Show value" })}
+          <VisuallyHidden component="span">: {label}</VisuallyHidden>
+        </>
+      }
       size="sm"
       field="segment"
       path={`showValuesMapping["${value}"]`}
@@ -783,6 +801,7 @@ export const ColorPicker = ({
     >
       <LegendItem label={label} color={color} symbol={symbol} />
       <ColorPickerMenu
+        label={label}
         colors={colors}
         selectedHexColor={color}
         onChange={onChange}
@@ -1034,7 +1053,7 @@ export const ChartOptionCheckboxField = ({
   defaultValue = false,
   disabled = false,
 }: {
-  label: string;
+  label: CheckboxProps["label"];
   size?: CheckboxProps["size"];
   field: EncodingFieldType | null;
   path: string;

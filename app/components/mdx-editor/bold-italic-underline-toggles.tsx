@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import {
   applyFormat$,
   currentFormat$,
@@ -17,10 +18,12 @@ const FormatButton = ({
   format,
   iconName,
   formatName,
+  label,
 }: {
   format: FORMAT;
   iconName: IconName;
   formatName: TextFormatType;
+  label: string;
 }) => {
   const [currentFormat] = useCellValues(currentFormat$, iconComponentFor$);
   const applyFormat = usePublisher(applyFormat$);
@@ -28,14 +31,10 @@ const FormatButton = ({
 
   return (
     <ToolbarIconButton
+      label={label}
+      active={active}
       onClick={() => {
         applyFormat(formatName);
-      }}
-      sx={{
-        backgroundColor: active ? "grey.300" : "transparent",
-        "&:hover": {
-          backgroundColor: active ? "grey.300" : "grey.200",
-        },
       }}
     >
       <Icon name={iconName} />
@@ -49,12 +48,23 @@ const FormatButton = ({
 export const BoldItalicUnderlineToggles = () => {
   return (
     <>
-      <FormatButton format={IS_BOLD} iconName="bold" formatName="bold" />
-      <FormatButton format={IS_ITALIC} iconName="italic" formatName="italic" />
+      <FormatButton
+        format={IS_BOLD}
+        iconName="bold"
+        formatName="bold"
+        label={t({ id: "mdx-editor.toolbar.bold", message: "Bold" })}
+      />
+      <FormatButton
+        format={IS_ITALIC}
+        iconName="italic"
+        formatName="italic"
+        label={t({ id: "mdx-editor.toolbar.italic", message: "Italic" })}
+      />
       <FormatButton
         format={IS_UNDERLINE}
         iconName="underlined"
         formatName="underline"
+        label={t({ id: "mdx-editor.toolbar.underline", message: "Underline" })}
       />
     </>
   );

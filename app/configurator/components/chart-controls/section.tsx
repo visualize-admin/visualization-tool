@@ -1,27 +1,33 @@
+import { t } from "@lingui/macro";
 import {
   Box,
   BoxProps,
   Collapse,
   Skeleton,
   Theme,
+  Tooltip,
   Typography,
   TypographyProps,
   useEventCallback,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { useId } from "@reach/auto-id";
 import clsx from "clsx";
 import {
   ComponentProps,
   createContext,
+  FocusEvent,
   forwardRef,
   HTMLProps,
+  KeyboardEvent,
   ReactNode,
   useContext,
   useMemo,
+  useState,
 } from "react";
 
-import { MaybeTooltip } from "@/components/maybe-tooltip";
 import { useDisclosure } from "@/components/use-disclosure";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import { isConfiguring, isLayouting } from "@/configurator/configurator-state";
 import { Icon, IconName } from "@/icons";
 import { useConfiguratorState } from "@/src";
@@ -40,7 +46,7 @@ const useControlSectionStyles = makeStyles<Theme, { hideTopBorder: boolean }>(
   })
 );
 
-export const useSectionTitleStyles = makeStyles<
+const useSectionTitleStyles = makeStyles<
   Theme,
   {
     disabled?: boolean;
@@ -287,6 +293,8 @@ export const SectionTitle = ({
     }
   });
 
+  const warningId = `section-warning-${useId()}`;
+  const [warningOpen, setWarningOpen] = useState(false);
   const { setOpen, isOpen, collapse } = useControlSectionContext();
   const classes = useSectionTitleStyles({
     disabled,
@@ -296,30 +304,71 @@ export const SectionTitle = ({
   });
 
   return (
-    <Box
-      aria-label={closable ? "Back to main" : undefined}
-      component={closable || collapse ? "button" : "div"}
-      className={classes.root}
-      onClick={handleClick}
-    >
-      <Typography
-        variant="h6"
-        id={id}
-        className={clsx(classes.text, disabled && classes.textDisabled)}
-        sx={sx}
+    <>
+      <Box
+        component={closable || collapse ? "button" : "div"}
+        aria-expanded={collapse ? isOpen : undefined}
+        aria-describedby={warnMessage ? warningId : undefined}
+        className={classes.root}
+        onClick={handleClick}
+        onFocus={(e: FocusEvent<HTMLElement>) => {
+          setWarningOpen(e.currentTarget.matches(":focus-visible"));
+        }}
+        onBlur={() => setWarningOpen(false)}
+        onKeyDown={(e: KeyboardEvent<HTMLElement>) => {
+          if (warningOpen && e.key === "Escape") {
+            e.stopPropagation();
+            setWarningOpen(false);
+          }
+        }}
       >
-        {closable ? (
-          <Icon name="chevronLeft" />
-        ) : iconName ? (
-          <Icon name={iconName} />
-        ) : null}
-        {children}
-      </Typography>
-      {warnMessage && <Warning title={warnMessage} />}
-      <span className={classes.icon}>
-        {collapse ? <Icon name={isOpen ? "minus" : "plus"} /> : null}
-      </span>
-    </Box>
+        <Typography
+          variant="h6"
+          id={id}
+          className={clsx(classes.text, disabled && classes.textDisabled)}
+          sx={sx}
+        >
+          {closable ? (
+            <>
+              <Icon name="chevronLeft" />
+              <VisuallyHidden component="span">
+                {t({
+                  id: "controls.section.back-to-main",
+                  message: "Back to main",
+                })}
+                :{" "}
+              </VisuallyHidden>
+            </>
+          ) : iconName ? (
+            <Icon name={iconName} />
+          ) : null}
+          {children}
+        </Typography>
+        {warnMessage && (
+          <Tooltip
+            arrow
+            disableInteractive
+            describeChild
+            title={warnMessage}
+            open={warningOpen}
+            onOpen={() => setWarningOpen(true)}
+            onClose={() => setWarningOpen(false)}
+          >
+            <Typography sx={{ mr: 2, lineHeight: "0 !important" }}>
+              <Icon name="warningCircle" />
+            </Typography>
+          </Tooltip>
+        )}
+        <span className={classes.icon}>
+          {collapse ? <Icon name={isOpen ? "minus" : "plus"} /> : null}
+        </span>
+      </Box>
+      {warnMessage && (
+        <VisuallyHidden component="span" id={warningId}>
+          {warnMessage}
+        </VisuallyHidden>
+      )}
+    </>
   );
 };
 
@@ -349,13 +398,3 @@ export const ControlSectionSkeleton = ({
     </ControlSectionContent>
   </ControlSection>
 );
-
-const Warning = ({ title }: { title: string | ReactNode }) => {
-  return (
-    <MaybeTooltip title={title}>
-      <Typography sx={{ mr: 2, lineHeight: "0 !important" }}>
-        <Icon name="warningCircle" />
-      </Typography>
-    </MaybeTooltip>
-  );
-};

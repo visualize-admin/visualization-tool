@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import { IconButton } from "@mui/material";
 
 import { Flex } from "@/components/flex";
@@ -5,7 +6,13 @@ import { MenuActionItem, MenuActionProps } from "@/components/menu-action-item";
 import { useFlipMenu } from "@/components/use-flip-menu";
 import { Icon } from "@/icons";
 
-export const RowActions = ({ actions }: { actions: MenuActionProps[] }) => {
+export const RowActions = ({
+  actions,
+  label,
+}: {
+  actions: MenuActionProps[];
+  label: string;
+}) => {
   const [primaryAction, ...otherActions] = actions;
   const {
     buttonRef,
@@ -22,7 +29,16 @@ export const RowActions = ({ actions }: { actions: MenuActionProps[] }) => {
   return (
     <Flex gap="0.5rem" justifyContent="flex-end" alignItems="center">
       <MenuActionItem as="button" {...primaryAction} {...additionalProps} />
-      <IconButton ref={buttonRef} onClick={handleOpenElClick}>
+      <IconButton
+        ref={buttonRef}
+        aria-label={t({
+          id: "menu.actions-for",
+          message: `Actions for ${label}`,
+        })}
+        aria-haspopup="menu"
+        aria-expanded={!!anchorEl}
+        onClick={handleOpenElClick}
+      >
         <Icon name="more" size={16} />
       </IconButton>
       <Wrapper

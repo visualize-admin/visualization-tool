@@ -15,6 +15,10 @@ You can also check the
   - Keyboard focus is now visible on buttons, links, tabs and menu items, the
     switch has sufficient contrast, and switches and tabs stay visible in
     forced colors (high contrast) mode
+  - Menus, dialogs, color controls, sliders, the time range brush and the rich
+    text editor work with the keyboard
+  - Icon-only buttons and form controls have names, and every page has a "Skip
+    to main content" link
 
 ## 6.5.7 - 2026-11-10
 
