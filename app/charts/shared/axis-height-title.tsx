@@ -3,7 +3,10 @@ import { AxisHeightLinearChartState } from "@/charts/shared/axis-height-linear";
 import { useChartState } from "@/charts/shared/chart-state";
 import { useChartTheme } from "@/charts/shared/use-chart-theme";
 import { OpenMetadataPanelWrapper } from "@/components/metadata-panel";
-import { INSET_FOCUS_OUTLINE_CLASS_NAME } from "@/themes/focus";
+import {
+  FOCUS_OUTLINE_ROOM,
+  INSET_FOCUS_OUTLINE_CLASS_NAME,
+} from "@/themes/focus";
 
 // Axis title can be used in both "linear" and pie charts.
 type AxisHeightTitleChartState = AxisHeightLinearChartState | PieState;
@@ -31,12 +34,18 @@ export const AxisHeightTitle = () => {
         <foreignObject
           className={INSET_FOCUS_OUTLINE_CLASS_NAME}
           y={leftAxisLabelOffsetTop}
-          width={leftAxisLabelSize.width}
+          width={leftAxisLabelSize.width + 2 * FOCUS_OUTLINE_ROOM}
           height={leftAxisLabelSize.height}
           style={{ display: "flex" }}
         >
           <OpenMetadataPanelWrapper component={yMeasure}>
-            <span style={{ fontSize: axisLabelFontSize, lineHeight: 1.5 }}>
+            <span
+              style={{
+                fontSize: axisLabelFontSize,
+                lineHeight: 1.5,
+                paddingInline: FOCUS_OUTLINE_ROOM,
+              }}
+            >
               {yAxisLabel}
             </span>
           </OpenMetadataPanelWrapper>
