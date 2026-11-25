@@ -27,6 +27,8 @@ You can also check the
     switches and drag handles have specific names
   - Table charts work with screen readers and the keyboard: columns sort by
     keyboard, groups expand by keyboard, and search results are announced
+  - Small tables fit their rows, without needless scrollbars or a last row hidden
+    behind the horizontal scrollbar
 
 ## 6.5.7 - 2026-11-10
 
