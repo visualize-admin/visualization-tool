@@ -11,6 +11,9 @@ You can also check the
 
 ## Next Release
 
+- Features
+  - Table charts can open their first group on load ("Expand first group"
+    in the Groups section)
 - Fixes
   - Keyboard focus is now visible on buttons, links, tabs and menu items, the
     switch has sufficient contrast, and switches and tabs stay visible in

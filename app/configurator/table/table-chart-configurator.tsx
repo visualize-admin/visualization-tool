@@ -154,6 +154,18 @@ export const ChartConfiguratorTable = ({
           items={groupFields}
           isDropDisabled={isGroupsDropDisabled}
           emptyComponent={<EmptyGroups />}
+          options={
+            groupFields.length > 0 ? (
+              <ChartOptionCheckboxField
+                label={t({
+                  id: "controls.tableSettings.expandFirstGroup",
+                  message: "Expand first group",
+                })}
+                field={null}
+                path="settings.expandFirstGroup"
+              />
+            ) : null
+          }
         />
         <TabDropZone
           id="columns"
