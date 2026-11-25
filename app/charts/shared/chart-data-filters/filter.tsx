@@ -36,14 +36,14 @@ export const ChartDataFilter = ({
   chartConfig,
   dataFilters,
   filters,
-  disabled,
+  loading,
 }: {
   dimensionId: string;
   dataSource: DataSource;
   chartConfig: ChartConfig;
   dataFilters: DataFilters;
   filters: GroupedPreparedFilterEntry[];
-  disabled: boolean;
+  loading: boolean;
 }) => {
   const locale = useLocale();
   const chartLoadingState = useLoadingState();
@@ -246,7 +246,7 @@ export const ChartDataFilter = ({
           value={value as string}
           dimension={dimension}
           onChange={setDataFilter}
-          disabled={disabled}
+          readOnly={loading}
         />
       ) : hierarchy ? (
         <DataFilterHierarchyDimension
@@ -258,7 +258,7 @@ export const ChartDataFilter = ({
           value={value as string}
           values={multiValue}
           isMulti={isMultiFilter}
-          disabled={disabled}
+          readOnly={loading}
         />
       ) : (
         <DataFilterGenericDimension
@@ -269,7 +269,7 @@ export const ChartDataFilter = ({
           values={multiValue}
           isMulti={isMultiFilter}
           onMultiChange={handleMultiChange}
-          disabled={disabled}
+          readOnly={loading}
         />
       )}
     </Flex>

@@ -1,5 +1,3 @@
-import { HierarchyValue } from "@/domain/data";
-
 const IGNORE = {};
 
 /**
@@ -7,18 +5,21 @@ const IGNORE = {};
  * ⚠️ visitHierarchy is a depth-first-search while we have
  * a bread-first-search here.
  */
-export const bfs = function <T extends unknown>(
-  tree: HierarchyValue[],
+export const bfs = function <
+  TNode extends { children?: TNode[] | null },
+  T extends unknown,
+>(
+  tree: TNode[],
   visitor: (
-    node: HierarchyValue,
-    { depth, parents }: { depth: number; parents: HierarchyValue[] }
+    node: TNode,
+    { depth, parents }: { depth: number; parents: TNode[] }
   ) => T
 ) {
   const q = [
     ...tree.map((n) => ({
       node: n,
       depth: 0,
-      parents: [] as HierarchyValue[],
+      parents: [] as TNode[],
     })),
   ].reverse();
   const res = [];

@@ -180,6 +180,7 @@ export const useChartDataFiltersState = ({
   return {
     open,
     setOpen,
+    listId: `chart-data-filters-${chartConfig.key}`,
     defaultOpen,
     dataSource,
     chartConfig,
@@ -194,6 +195,7 @@ export const useChartDataFiltersState = ({
 export const ChartDataFiltersToggle = ({
   open,
   setOpen,
+  listId,
   defaultOpen,
   loading,
   error,
@@ -239,6 +241,8 @@ export const ChartDataFiltersToggle = ({
               px: 2,
               py: 1,
             }}
+            aria-expanded={open}
+            aria-controls={listId}
             onClick={() => setOpen((prev) => !prev)}
           >
             {loading && (
@@ -297,7 +301,8 @@ export type DataFilterGenericDimensionProps = {
   onChange: (e: SelectChangeEvent<unknown>) => void;
   onMultiChange?: (values: string[]) => void;
   options?: Array<{ label: string; value: string }>;
-  disabled: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
 };
 
 export const DataFilterGenericDimension = ({
@@ -310,6 +315,7 @@ export const DataFilterGenericDimension = ({
   onMultiChange,
   options: _options,
   disabled,
+  readOnly,
 }: DataFilterGenericDimensionProps) => {
   const id = `data-filter-${useId()}`;
   const { label, isKeyDimension } = dimension;
@@ -380,6 +386,7 @@ export const DataFilterGenericDimension = ({
         onChange={onMultiChange}
         size="sm"
         disabled={disabled}
+        readOnly={readOnly}
         placeholder={noneLabel}
       />
     );
@@ -394,6 +401,7 @@ export const DataFilterGenericDimension = ({
       value={value}
       onChange={onChange}
       disabled={disabled}
+      readOnly={readOnly}
     />
   );
 };
@@ -408,6 +416,7 @@ export const DataFilterHierarchyDimension = ({
   onMultiChange,
   hierarchy,
   disabled,
+  readOnly,
 }: {
   configFilter?: Filters[string];
   dimension: Dimension;
@@ -417,7 +426,8 @@ export const DataFilterHierarchyDimension = ({
   onChange: (e: { target: { value: string } }) => void;
   onMultiChange?: (values: string[]) => void;
   hierarchy?: HierarchyValue[];
-  disabled: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
 }) => {
   const { label, isKeyDimension, values: dimensionValues } = dimension;
   const noneLabel = t({
@@ -483,6 +493,7 @@ export const DataFilterHierarchyDimension = ({
       options={options}
       onChange={handleChange}
       isMulti={isMulti}
+      readOnly={readOnly}
       label={
         <FieldLabel
           label={
@@ -503,6 +514,7 @@ export const DataFilterTemporalDimension = ({
   value,
   onChange,
   disabled,
+  readOnly,
 }: {
   configFilter?: Filters[string];
   dimension: TemporalDimension;
@@ -510,7 +522,8 @@ export const DataFilterTemporalDimension = ({
   onChange: (
     e: SelectChangeEvent<unknown> | ChangeEvent<HTMLSelectElement>
   ) => void;
-  disabled: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
 }) => {
   const { label, timeUnit, timeFormat } = dimension;
   const formatLocale = useTimeFormatLocale();
@@ -544,6 +557,7 @@ export const DataFilterTemporalDimension = ({
       minDate={minDate}
       maxDate={maxDate}
       disabled={disabled}
+      readOnly={readOnly}
       parseDate={parseDate}
       showClearButton={configFilter?.type !== "single"}
     />
@@ -555,6 +569,7 @@ export const DataFilterTemporalDimension = ({
       value={value}
       onChange={onChange}
       disabled={disabled}
+      readOnly={readOnly}
     />
   );
 };

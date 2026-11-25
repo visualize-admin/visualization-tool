@@ -122,8 +122,8 @@ export const joinParents = (parents?: HierarchyValue[]) => {
   return parents?.map((x) => x.label).join(" > ") || "";
 };
 
-export const flattenTree = (tree: HierarchyValue[]) => {
-  const res: HierarchyValue[] = [];
+export const flattenTree = <T extends { children?: T[] | null }>(tree: T[]) => {
+  const res: T[] = [];
   bfs(tree, (x) => res.push(x));
   return res;
 };

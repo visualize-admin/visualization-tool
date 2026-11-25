@@ -78,6 +78,10 @@ import {
 } from "@/configurator/components/field";
 import { canRenderDatePickerField } from "@/configurator/components/field-date-picker";
 import {
+  getFilterCardProps,
+  useFocusFilter,
+} from "@/configurator/components/use-focus-filter";
+import {
   getFiltersByMappingStatus,
   isConfiguring,
   moveFilterField,
@@ -114,7 +118,7 @@ export const DataFilterSelectGeneric = ({
   rawDimension,
   filterDimensionIds,
   index,
-  disabled,
+  readOnly,
   onRemove,
   sideControls,
   disableLabel,
@@ -123,7 +127,7 @@ export const DataFilterSelectGeneric = ({
   rawDimension: Dimension;
   filterDimensionIds: string[];
   index: number;
-  disabled?: boolean;
+  readOnly?: boolean;
   onRemove?: () => void;
   sideControls?: ReactNode;
   disableLabel?: boolean;
@@ -179,10 +183,13 @@ export const DataFilterSelectGeneric = ({
             marginRight: sideControls && dimension.isKeyDimension ? 7 : 0,
           }}
         >
-          <InteractiveDataFilterToggle id={dimension.id} />
+          <InteractiveDataFilterToggle
+            id={dimension.id}
+            filterLabel={`${index + 1}. ${dimension.label}`}
+          />
           {dimension.isKeyDimension ? null : (
             <IconButton
-              disabled={disabled}
+              disabled={readOnly}
               size="small"
               aria-label={t({
                 id: "controls.filters.remove",
@@ -199,7 +206,7 @@ export const DataFilterSelectGeneric = ({
     ),
     sideControls,
     id,
-    disabled: fetching || disabled,
+    readOnly: fetching || readOnly,
     optional: !dimension.isKeyDimension,
     loading: fetching,
   };
@@ -607,7 +614,13 @@ const useStyles = makeStyles<Theme, { fetching: boolean }>((theme) => ({
   },
 }));
 
-const InteractiveDataFilterToggle = ({ id }: { id: string }) => {
+const InteractiveDataFilterToggle = ({
+  id,
+  filterLabel,
+}: {
+  id: string;
+  filterLabel: string;
+}) => {
   const { checked, onChange } = useInteractiveDataFilterToggle(id);
 
   return (
@@ -616,6 +629,10 @@ const InteractiveDataFilterToggle = ({ id }: { id: string }) => {
       label={t({
         id: "controls.filters.interactive.toggle",
         message: "Interactive",
+      })}
+      aria-label={t({
+        id: "controls.filters.interactive.toggle-for",
+        message: `Interactive: ${filterLabel}`,
       })}
       checked={checked}
       onChange={onChange}
@@ -668,6 +685,7 @@ export const ChartConfigurator = ({
   const components = useMemo(() => {
     return [...(dimensions ?? []), ...(measures ?? [])];
   }, [dimensions, measures]);
+  const focusFilter = useFocusFilter();
 
   if (components.length === 0) {
     return (
@@ -800,8 +818,8 @@ export const ChartConfigurator = ({
                                     <div
                                       ref={provided.innerRef}
                                       className={classes.filterRow}
-                                      {...provided.dragHandleProps}
                                       {...provided.draggableProps}
+                                      {...getFilterCardProps(dim.id)}
                                     >
                                       <DataFilterSelectGeneric
                                         key={dim.id}
@@ -811,11 +829,18 @@ export const ChartConfigurator = ({
                                           .slice(0, i)
                                           .map((d) => d.id)}
                                         index={i}
-                                        disabled={fetching}
+                                        readOnly={fetching}
                                         onRemove={() =>
                                           handleRemoveDimensionFilter(dim)
                                         }
-                                        sideControls={<MoveDragButton />}
+                                        sideControls={
+                                          <MoveDragButton
+                                            label={`${i + 1}. ${dim.label}`}
+                                            dragHandleProps={
+                                              provided.dragHandleProps
+                                            }
+                                          />
+                                        }
                                       />
                                     </div>
                                   )}
@@ -828,7 +853,10 @@ export const ChartConfigurator = ({
                       </DragDropContext>
                     </Box>
                     {cubeAddableDims && cubeAddableDims.length > 0 ? (
-                      <AddFilterButton dims={cubeAddableDims} />
+                      <AddFilterButton
+                        dims={cubeAddableDims}
+                        onAdd={(dim) => focusFilter(dim.id)}
+                      />
                     ) : null}
                   </Fragment>
                 ) : null;
@@ -853,7 +881,13 @@ export const ChartConfigurator = ({
   );
 };
 
-const AddFilterButton = ({ dims }: { dims: Dimension[] }) => {
+const AddFilterButton = ({
+  dims,
+  onAdd,
+}: {
+  dims: Dimension[];
+  onAdd: (dimension: Dimension) => void;
+}) => {
   const ref = useRef<HTMLButtonElement>(null);
   const {
     isOpen: isMenuOpen,
@@ -878,7 +912,13 @@ const AddFilterButton = ({ dims }: { dims: Dimension[] }) => {
       </Button>
       <Menu anchorEl={ref.current} open={isMenuOpen} onClose={closeMenu}>
         {dims.map((dim) => (
-          <MenuItem key={dim.id} onClick={() => handleAddDimensionFilter(dim)}>
+          <MenuItem
+            key={dim.id}
+            onClick={() => {
+              handleAddDimensionFilter(dim);
+              onAdd(dim);
+            }}
+          >
             {dim.label}
           </MenuItem>
         ))}

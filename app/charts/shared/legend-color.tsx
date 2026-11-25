@@ -275,7 +275,7 @@ export const MapLegendColor = memo(function LegendColor({
   );
 });
 
-const LegendColorContent = ({
+export const LegendColorContent = ({
   groups,
   limits,
   getColor,
@@ -357,14 +357,13 @@ const LegendColorContent = ({
                     )}
                   </Typography>
                 ) : null}
-                {colorValues.map((value, i) => {
-                  const key = `${value}-${i}`;
+                {colorValues.map((value) => {
                   const label = getLabel(value);
                   const active = !activeInteractiveFilters.has(label);
 
                   return (
                     <LegendItem
-                      key={key}
+                      key={value}
                       label={label}
                       color={getColor(value)}
                       dimension={getItemDimension?.(label)}

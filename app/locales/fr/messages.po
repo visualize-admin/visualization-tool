@@ -19,10 +19,6 @@ msgstr ""
 msgid "metadata.link.created.with"
 msgstr "Créé avec"
 
-#: app/components/move-drag-button.tsx
-msgid "Drag filters to reorganize"
-msgstr "Faites glisser les filtres pour les réorganiser"
-
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.search-options.no-options-selected"
 msgstr "Aucune option sélectionnée"
@@ -103,6 +99,10 @@ msgstr "{0} sur {1}"
 
 #: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.search-results"
+msgstr "{resultsCount, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}"
+
+#: app/components/select-tree.tsx
+msgid "controls.select-tree.results"
 msgstr "{resultsCount, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}"
 
 #: app/configurator/components/field-i18n.ts
@@ -497,14 +497,16 @@ msgstr "Choisissez des couleurs contrastées pour les points de départ et d'arr
 
 #: app/charts/map/wms-wmts-selector.tsx
 #: app/components/form.tsx
+#: app/components/select-tree.tsx
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "controls.search.clear"
 msgstr "Effacer la recherche"
 
 #: app/charts/shared/chart-data-filters/index.tsx
 #: app/components/multi-select/option.tsx
+#: app/configurator/components/field-date-picker.tsx
 msgid "controls.clear-selection"
-msgstr "Sélection claire"
+msgstr "Effacer la sélection"
 
 #: app/configurator/components/chart-annotations/chart-annotations-selector.tsx
 msgid "controls.annotations.annotation.clear-text"
@@ -522,6 +524,10 @@ msgstr "Fermer"
 
 #: app/components/metadata-panel.tsx
 msgid "controls.metadata-panel.close"
+msgstr "Fermer"
+
+#: app/components/multi-select/index.tsx
+msgid "controls.select.close"
 msgstr "Fermer"
 
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
@@ -1096,6 +1102,26 @@ msgstr "Inclure les brouillons"
 msgid "controls.filters.interactive.toggle"
 msgstr "Interactif"
 
+#: app/configurator/components/chart-options-selector/calculation-field.tsx
+msgid "controls.filters.interactive.toggle-calculation"
+msgstr "Interactif : mode de graphique"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.interactive.toggle-filter"
+msgstr "Interactif : filtre"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.interactive.toggle-legend"
+msgstr "Interactif : filtre de légende"
+
+#: app/configurator/components/filters.tsx
+msgid "controls.filters.interactive.toggle-time-range"
+msgstr "Interactif : période"
+
+#: app/configurator/components/chart-configurator.tsx
+msgid "controls.filters.interactive.toggle-for"
+msgstr "Interactif : {filterLabel}"
+
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.scale.interpolation"
 msgstr "Interpolation"
@@ -1243,6 +1269,10 @@ msgstr "Links"
 #: app/components/hint.tsx
 msgid "hint.loading.data"
 msgstr "Chargement des données..."
+
+#: app/components/multi-select/index.tsx
+msgid "controls.select.loading"
+msgstr "Chargement…"
 
 #: app/configurator/components/chart-options-selector/base-layer-field.tsx
 msgid "chart.map.layers.base.view.locked"
@@ -1421,6 +1451,10 @@ msgstr "Aucune carte importée"
 msgid "chart-selection-tabs.no-label"
 msgstr "Pas de Titre"
 
+#: app/components/multi-select/index.tsx
+msgid "controls.select.no-options"
+msgstr "Aucune option"
+
 #: app/browse/ui/dataset-results.tsx
 #: app/components/select-tree.tsx
 msgid "No results"
@@ -1485,6 +1519,10 @@ msgstr "Actif"
 #: app/configurator/components/chart-options-selector/color-component-field.tsx
 msgid "controls.color.opacity"
 msgstr "Transparence"
+
+#: app/components/multi-select/index.tsx
+msgid "controls.select.open"
+msgstr "Ouvrir"
 
 #: app/configurator/components/chart-controls/color-picker.tsx
 msgid "controls.colorpicker.open-for"
@@ -1653,6 +1691,10 @@ msgstr "Renommer"
 msgid "profile.chart.rename-dialog.title"
 msgstr "Renommer la visualisation"
 
+#: app/components/move-drag-button.tsx
+msgid "controls.drag-handle.reorder"
+msgstr "Réorganiser : {label}"
+
 #: app/configurator/table/table-chart-sorting-options.tsx
 msgid "controls.table.sorting.reorder"
 msgstr "Réorganiser : {label}"
@@ -1740,6 +1782,10 @@ msgstr "Nuage de points"
 #: app/configurator/components/add-dataset-drawer/add-dataset-drawer.tsx
 msgid "dataset.search.label"
 msgstr "Chercher"
+
+#: app/components/select-tree.tsx
+msgid "controls.select-tree.search"
+msgstr "Rechercher"
 
 #: app/charts/map/wms-wmts-selector.tsx
 msgid "wmts.search-label"
@@ -1900,6 +1946,10 @@ msgstr "Partager sur Twitter"
 #: app/components/publish-actions.tsx
 msgid "publication.share.linktitle.mail"
 msgstr "Partager par courriel"
+
+#: app/configurator/components/layout-configurator.tsx
+msgid "controls.layout.shared-filter.toggle"
+msgstr "Filtre partagé : {label}"
 
 #: app/configurator/components/layout-configurator.tsx
 msgid "controls.section.shared-filters"

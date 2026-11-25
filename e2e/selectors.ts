@@ -89,8 +89,6 @@ export const createSelectors = ({ page }: Ctx) => {
         page.locator("[data-testid=controlSection]", {
           has: page.locator(`h6:text-is("${title}")`),
         }),
-      dataFilterInput: (label: string) =>
-        page.locator(`div[role="button"]:has-text("${label}")`),
       useAbbreviationsCheckbox: async () => {
         const loc = page
           .getByTestId("panel-drawer")

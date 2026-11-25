@@ -267,10 +267,13 @@ test.describe("Keyboard operability", () => {
     await page.goto(`/en/create/${key}`);
     await page.getByRole("tab", { name: "Sorting" }).click({ timeout: 30_000 });
 
-    await expect(page.locator('[aria-label^="Reorder: "]')).toHaveAttribute(
-      "aria-label",
-      "Reorder: Warning region"
-    );
+    await expect(
+      page
+        .locator('[data-testid="controlSection"]', {
+          has: page.locator('h6:text-is("Table Sorting")'),
+        })
+        .locator('[aria-label^="Reorder: "]')
+    ).toHaveAttribute("aria-label", "Reorder: Warning region");
   });
 
   test("skip link moves focus to the main content", async ({ page }) => {

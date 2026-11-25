@@ -7,7 +7,7 @@ import { c } from "@/federal-ci/theme";
 export const FOCUS_VISIBLE = "&:focus-visible, &:has(> input:focus-visible)";
 
 export const FOCUS_VISIBLE_WITHIN_FIELD =
-  "&:has(input:focus-visible, textarea:focus-visible, [role=combobox]:focus-visible)";
+  "&:has(input:focus-visible, textarea:focus-visible, [role=combobox]:focus-visible, [role=button]:focus-visible)";
 
 type KnownAriaRole<Role = AriaRole> = Role extends string
   ? string extends Role

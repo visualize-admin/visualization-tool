@@ -1,4 +1,4 @@
-import { Trans } from "@lingui/macro";
+import { t, Trans } from "@lingui/macro";
 
 import { RadioGroup } from "@/components/form";
 import { MaybeTooltip } from "@/components/maybe-tooltip";
@@ -63,6 +63,10 @@ export const CalculationField = ({
               </div>
             </MaybeTooltip>
           }
+          aria-label={t({
+            id: "controls.filters.interactive.toggle-calculation",
+            message: "Interactive chart mode",
+          })}
           field={null}
           path="interactiveFiltersConfig.calculation.active"
           disabled={disabled}

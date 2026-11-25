@@ -27,29 +27,14 @@ describe("Filters", () => {
       });
     }
 
-    const labels = filters.locator("label[for^=select-single-filter]");
-
-    const texts = await labels.allTextContents();
-
-    // Hierarchical dimensions should come first.
-    expect(texts[0]).toContain("1. Region");
-    expect(texts[1]).toContain("2. tree condition");
-
-    const productionRegionFilter =
-      selectors.edition.dataFilterInput("1. Region");
-
-    const productionRegionFilterValue = await productionRegionFilter
-      .locator("input[name^=select-single-filter]")
-      .inputValue();
-    expect(productionRegionFilterValue).toEqual("Switzerland");
-
-    const treeStatusFilter =
-      selectors.edition.dataFilterInput("2. tree condition");
-    const treeStatusFilterValue = await treeStatusFilter
-      .locator("input[name^=select-single-filter]")
-      .inputValue();
-
-    expect(treeStatusFilterValue).toEqual("Total");
+    // Hierarchical dimensions come first, as tree filters with their topmost value selected.
+    const treeFilters = filters.locator('[aria-haspopup="dialog"]');
+    await expect(treeFilters.nth(0)).toHaveAccessibleName(/^1\. Region/);
+    await expect(treeFilters.nth(0)).toHaveText("Switzerland");
+    await expect(treeFilters.nth(1)).toHaveAccessibleName(
+      /^2\. tree condition/
+    );
+    await expect(treeFilters.nth(1)).toHaveText("Total");
   });
 
   test("Temporal filter should display values", async ({
@@ -94,7 +79,10 @@ describe("Filters", () => {
 
     await selectors.edition.drawerLoaded();
 
-    await selectors.panels.drawer().getByRole("combobox", { name: "None" }).click();
+    await selectors.panels
+      .drawer()
+      .getByRole("combobox", { name: "None" })
+      .click();
 
     await actions.mui.selectOption("Kanton");
 

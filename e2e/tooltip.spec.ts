@@ -22,7 +22,7 @@ test("should have correct tooltip content", async ({
   const filterLocator = selectors.edition.controlSectionByTitle("Filters");
 
   await filterLocator
-    .getByRole("combobox", { name: "All greenhouse gas" })
+    .getByRole("button", { name: /All greenhouse gas/ })
     .click();
 
   await selectors.mui

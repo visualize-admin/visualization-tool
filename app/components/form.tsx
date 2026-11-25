@@ -334,6 +334,7 @@ export const Select = ({
   value,
   defaultValue,
   disabled,
+  readOnly,
   options,
   optionGroups,
   onChange,
@@ -403,6 +404,8 @@ export const Select = ({
           value={value}
           defaultValue={defaultValue}
           disabled={disabled}
+          readOnly={readOnly}
+          SelectDisplayProps={readOnly ? { "aria-disabled": true } : undefined}
           open={open}
           onOpen={handleOpen}
           onClose={onClose}
@@ -868,6 +871,7 @@ export const Switch = ({
   id,
   size,
   label,
+  "aria-label": ariaLabel,
   name,
   checked,
   disabled,
@@ -876,6 +880,7 @@ export const Switch = ({
   id?: string;
   size?: ComponentProps<typeof FormControlLabel>["size"];
   label: ComponentProps<typeof FormControlLabel>["label"];
+  "aria-label"?: string;
   disabled?: boolean;
 } & FieldProps) => {
   const genId = `switch-${useId(id)}`;
@@ -892,6 +897,7 @@ export const Switch = ({
           checked={checked}
           disabled={disabled}
           onChange={onChange}
+          inputProps={ariaLabel ? { "aria-label": ariaLabel } : undefined}
         />
       }
     />
