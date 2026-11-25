@@ -1,5 +1,6 @@
 import { Box, Breakpoint, SxProps } from "@mui/material";
 
+import { FOCUS_OUTLINE_ON_DARK_SURFACE } from "@/federal-ci/components/common";
 import { ContentWrapper } from "@/federal-ci/components/content-wrapper";
 import { makeStyles } from "@/federal-ci/utils/make-styles";
 
@@ -11,6 +12,7 @@ const useStyles = makeStyles()(
       height: s(10),
       minHeight: s(10),
       backgroundColor: p.cobalt[600],
+      ...FOCUS_OUTLINE_ON_DARK_SURFACE,
       [b.between("xxs" as Breakpoint, "xs")]: {
         height: s(11),
         minHeight: s(11),

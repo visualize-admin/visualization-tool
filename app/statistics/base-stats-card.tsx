@@ -6,6 +6,10 @@ import { ReactNode } from "react";
 
 import { useFlag } from "@/flags/use-flag";
 import { formatInteger } from "@/statistics/formatters";
+import {
+  FOCUS_OUTLINE_ROOM,
+  UNCLIP_FOCUS_OUTLINE,
+} from "@/themes/focus";
 
 type Datum = [string, { count: number; label: ReactNode }];
 
@@ -33,7 +37,7 @@ export const BaseStatsCard = ({
   const maxCount = max(data, ([, { count }]) => count) ?? 1;
 
   return (
-    <Card className={classes.root}>
+    <Card className={classes.root} sx={UNCLIP_FOCUS_OUTLINE}>
       <Box sx={{ px: 5 }}>
         <Box sx={{ display: "grid", gridTemplateColumns: "1fr 24px", gap: 2 }}>
           <Typography variant="h2" sx={{ fontWeight: "normal" }}>
@@ -79,6 +83,8 @@ export const BaseStatsCard = ({
         </Typography>
       </Box>
       <div
+        role="region"
+        aria-label={title}
         className={classes.table}
         style={{
           gridTemplateColumns: showPercentage
@@ -144,7 +150,9 @@ const Bar = ({
           component="p"
           sx={{
             overflow: "hidden",
-            maxWidth: 200,
+            maxWidth: 200 + 2 * FOCUS_OUTLINE_ROOM,
+            padding: `${FOCUS_OUTLINE_ROOM}px`,
+            margin: `-${FOCUS_OUTLINE_ROOM}px`,
             cursor: "default",
             whiteSpace: "nowrap",
             textOverflow: "ellipsis",
@@ -222,12 +230,11 @@ const useStyles = makeStyles<Theme>((theme) => ({
     overflowY: "auto",
     marginTop: theme.spacing(3),
     padding: theme.spacing(1),
-    paddingTop: 0,
     backgroundColor: theme.palette.grey[200],
   },
   tableHeader: {
     position: "sticky",
-    top: 0,
+    top: theme.spacing(-1),
     width: "100%",
     padding: "0.3rem 0.6rem",
     borderBottom: `2px solid ${theme.palette.divider}`,
@@ -241,7 +248,7 @@ const useStyles = makeStyles<Theme>((theme) => ({
   divider: {
     zIndex: 1,
     position: "sticky",
-    top: 0,
+    top: theme.spacing(-1),
     width: "100%",
     height: "100%",
     padding: "0.3rem",

@@ -6,6 +6,10 @@ import { Flex } from "@/components/flex";
 import { Select } from "@/components/form";
 import { SearchCubeResultOrder } from "@/graphql/query-hooks";
 import * as ResolverTypes from "@/graphql/resolver-types";
+import {
+  FOCUS_OUTLINE_INSET,
+  FOCUS_VISIBLE_WITHIN_FIELD,
+} from "@/themes/focus";
 
 export const SearchDatasetSortControl = ({
   value,
@@ -59,7 +63,14 @@ export const SearchDatasetSortControl = ({
         value={value}
         options={options}
         sort={false}
-        sx={{ width: "fit-content" }}
+        sx={{
+          width: "fit-content",
+          "& .MuiSelect-select": { paddingRight: "24px !important" },
+          "& .MuiSelect-icon": { right: 0 },
+          "& .MuiInputBase-root": {
+            [FOCUS_VISIBLE_WITHIN_FIELD]: FOCUS_OUTLINE_INSET,
+          },
+        }}
       />
     </Flex>
   );
