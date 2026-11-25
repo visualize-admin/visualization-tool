@@ -30,6 +30,7 @@ import {
 } from "@/charts/table/table-content";
 import { TableMobile } from "@/charts/table/table-mobile";
 import { TableChartState } from "@/charts/table/table-state";
+import { useExpandFirstGroup } from "@/charts/table/use-expand-first-group";
 import {
   readHeight,
   readHorizontalScrollbarHeight,
@@ -111,6 +112,7 @@ export const Table = () => {
     rowHeight,
     chartData,
     showSearch,
+    expandFirstGroup,
     tableColumns,
     tableColumnsMeta,
     groupingIds,
@@ -206,6 +208,13 @@ export const Table = () => {
 
   // If the table has a custom sort, the tableState.sortBy has these items prepended.
   const customSortCount = tableState.sortBy.length - sortingIds.length;
+
+  useExpandFirstGroup({
+    rows,
+    prepareRow,
+    enabled: expandFirstGroup,
+    groupingIds,
+  });
 
   const rowHeaderColumnId = useMemo(() => {
     return visibleColumns.find(

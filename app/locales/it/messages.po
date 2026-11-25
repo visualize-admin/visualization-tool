@@ -922,6 +922,10 @@ msgstr "Esempio"
 msgid "controls.filters.tree.expand"
 msgstr "Espandi {label}"
 
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.tableSettings.expandFirstGroup"
+msgstr "Espandi il primo gruppo"
+
 #: app/browse/ui/select-dataset-banner.tsx
 msgid "browse.datasets.description"
 msgstr "Esplora i set di dati forniti dal LINDAS Linked Data Service filtrando per categorie o organizzazioni oppure cercando direttamente per parole chiave specifiche. Clicca su un set di dati per vedere informazioni più dettagliate e iniziare a creare le tue visualizzazioni."

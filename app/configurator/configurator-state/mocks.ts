@@ -1302,6 +1302,7 @@ export const configJoinedCubes: Partial<
       showSearch: true,
       showAllRows: false,
       limitColumnWidths: false,
+      expandFirstGroup: false,
     },
     links: {
       enabled: false,

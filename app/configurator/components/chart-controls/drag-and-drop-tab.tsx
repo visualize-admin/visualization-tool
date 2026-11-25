@@ -54,6 +54,7 @@ export const TabDropZone = ({
   measures,
   isDropDisabled,
   emptyComponent,
+  options,
 }: {
   id: string;
   title: ReactNode;
@@ -62,6 +63,7 @@ export const TabDropZone = ({
   measures: Measure[];
   isDropDisabled?: boolean;
   emptyComponent?: ReactNode;
+  options?: ReactNode;
 }) => {
   const classes = useStyles();
   const components = [...dimensions, ...measures];
@@ -72,6 +74,9 @@ export const TabDropZone = ({
         return (
           <ControlSection collapse>
             <SectionTitle>{title}</SectionTitle>
+            {options ? (
+              <ControlSectionContent>{options}</ControlSectionContent>
+            ) : null}
             <ControlSectionContent
               role="tablist"
               aria-labelledby={`controls-${id}`}

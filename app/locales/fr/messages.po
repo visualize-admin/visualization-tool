@@ -922,6 +922,10 @@ msgstr "Exemple"
 msgid "controls.filters.tree.expand"
 msgstr "Développer {label}"
 
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.tableSettings.expandFirstGroup"
+msgstr "Développer le premier groupe"
+
 #: app/browse/ui/select-dataset-banner.tsx
 msgid "browse.datasets.description"
 msgstr "Explorez les jeux de données liés fournis par LINDAS, en filtrant par catégories ou organisations, ou en recherchant par mots-clés. Cliquez sur un ensemble de données pour afficher des informations plus détaillées et commencer à créer vos propres visualisations. "

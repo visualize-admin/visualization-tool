@@ -121,6 +121,7 @@ export type TableChartState = CommonChartState &
     tableLabel: string;
     rowHeight: number;
     showSearch: boolean;
+    expandFirstGroup: boolean;
     tableColumns: Column<Observation>[];
     tableColumnsMeta: Record<string, ColumnMeta>;
     groupingIds: string[];
@@ -473,6 +474,7 @@ const useTableState = (
     bounds,
     rowHeight,
     showSearch: settings.showSearch,
+    expandFirstGroup: settings.expandFirstGroup,
     tableColumns,
     tableColumnsMeta,
     groupingIds,

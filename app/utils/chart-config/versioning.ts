@@ -1749,6 +1749,33 @@ export const chartConfigMigrations: Migration[] = [
       return newConfig;
     },
   },
+  {
+    from: "5.3.0",
+    to: "5.4.0",
+    description: `table chart {
+      settings {
+        + expandFirstGroup
+      }
+    }`,
+    up: (config) => {
+      const newConfig = { ...config, version: "5.4.0" };
+
+      if (newConfig.chartType === "table") {
+        newConfig.settings.expandFirstGroup = false;
+      }
+
+      return newConfig;
+    },
+    down: (config) => {
+      const newConfig = { ...config, version: "5.3.0" };
+
+      if (newConfig.chartType === "table") {
+        delete newConfig.settings.expandFirstGroup;
+      }
+
+      return newConfig;
+    },
+  },
 ];
 
 export const migrateChartConfig = makeMigrate<ChartConfig>(
@@ -2397,6 +2424,12 @@ export const configuratorStateMigrations: Migration[] = [
     toVersion: "5.3.0",
     fromChartConfigVersion: "5.2.0",
     toChartConfigVersion: "5.3.0",
+  }),
+  makeBumpChartConfigVersionMigration({
+    fromVersion: "5.3.0",
+    toVersion: "5.4.0",
+    fromChartConfigVersion: "5.3.0",
+    toChartConfigVersion: "5.4.0",
   }),
 ];
 

@@ -922,6 +922,10 @@ msgstr "Beispiel"
 msgid "controls.filters.tree.expand"
 msgstr "{label} aufklappen"
 
+#: app/configurator/table/table-chart-configurator.tsx
+msgid "controls.tableSettings.expandFirstGroup"
+msgstr "Erste Gruppe aufklappen"
+
 #: app/browse/ui/select-dataset-banner.tsx
 msgid "browse.datasets.description"
 msgstr "Erkunden Sie die vom LINDAS Linked Data Service bereitgestellten Datensätze, indem Sie entweder nach Kategorien oder Organisationen filtern oder direkt nach bestimmten Stichworten suchen. Klicken Sie auf einen Datensatz, um detailliertere Informationen zu erhalten und Ihre eigenen Visualisierungen zu erstellen."

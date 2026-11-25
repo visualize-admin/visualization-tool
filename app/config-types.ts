@@ -822,6 +822,7 @@ const TableSettings = t.type({
   showSearch: t.boolean,
   showAllRows: t.boolean,
   limitColumnWidths: t.boolean,
+  expandFirstGroup: t.boolean,
 });
 export type TableSettings = t.TypeOf<typeof TableSettings>;
 

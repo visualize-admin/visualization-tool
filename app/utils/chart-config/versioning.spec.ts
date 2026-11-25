@@ -399,6 +399,31 @@ describe("config migrations", () => {
     expect(downgraded.links.baseUrl).toBe("https://example.com/");
   });
 
+  it("should add expandFirstGroup to table settings and remove it again", async () => {
+    const tableConfigV5_3_0 = {
+      version: "5.3.0",
+      chartType: "table",
+      settings: {
+        showSearch: true,
+        showAllRows: false,
+        limitColumnWidths: false,
+      },
+    };
+
+    const migrated = (await migrateChartConfig(tableConfigV5_3_0, {
+      toVersion: "5.4.0",
+      migrationProps: CONFIGURATOR_STATE,
+    })) as TableConfig;
+
+    expect(migrated.settings.expandFirstGroup).toBe(false);
+
+    const downgraded = (await migrateChartConfig(migrated, {
+      toVersion: "5.3.0",
+      migrationProps: CONFIGURATOR_STATE,
+    })) as TableConfig;
+    expect(downgraded.settings).not.toHaveProperty("expandFirstGroup");
+  });
+
   it("should not migrate joinBy iris", async () => {
     const migratedConfig = await migrateChartConfig(configJoinedCubes.table, {
       toVersion: CHART_CONFIG_VERSION,
