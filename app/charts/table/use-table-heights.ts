@@ -3,6 +3,9 @@ import { useEffect, useRef, useState } from "react";
 
 export const readHeight = (element: HTMLElement) => element.offsetHeight;
 
+export const readHorizontalScrollbarHeight = (element: HTMLElement) =>
+  element.offsetHeight - element.clientHeight;
+
 /** Keeps a measured height up to date while the element resizes. `read` must be stable. */
 export const useObservedHeight = ({
   element,

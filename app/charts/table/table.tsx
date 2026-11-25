@@ -32,6 +32,7 @@ import { TableMobile } from "@/charts/table/table-mobile";
 import { TableChartState } from "@/charts/table/table-state";
 import {
   readHeight,
+  readHorizontalScrollbarHeight,
   useHeightWhileSearching,
   useObservedHeight,
 } from "@/charts/table/use-table-heights";
@@ -122,9 +123,15 @@ export const Table = () => {
   const [configuratorState] = useConfiguratorState(hasChartConfigs);
   const fillsTile = isLayoutingFreeCanvas(configuratorState);
   const [compactMobileViewEnabled, setCompactMobileView] = useState(false);
+  const [tableElement, setTableElement] = useState<HTMLDivElement | null>(null);
   const [headerElement, setHeaderElement] = useState<HTMLDivElement | null>(
     null
   );
+  const horizontalScrollbarHeight = useObservedHeight({
+    element: tableElement,
+    read: readHorizontalScrollbarHeight,
+    initial: 0,
+  });
   const headerHeight = useObservedHeight({
     element: headerElement,
     read: readHeight,
@@ -222,6 +229,7 @@ export const Table = () => {
   );
   const tableHeight = useHeightWhileSearching(
     Math.min(TABLE_HEIGHT, headerHeight + rows.length * rowHeight) +
+      horizontalScrollbarHeight +
       2 * FOCUS_RING_ROOM,
     searchTerm !== ""
   );
@@ -341,6 +349,7 @@ export const Table = () => {
                 {({ height }: { height: number }) => (
                   <FixedSizeList
                     outerElementType={TableContentWrapper}
+                    outerRef={setTableElement}
                     height={height - headerHeight}
                     itemCount={rows.length}
                     itemSize={rowHeight} // depends on whether a column has bars (40px or 56px)
