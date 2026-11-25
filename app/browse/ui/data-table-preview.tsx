@@ -1,4 +1,6 @@
+import { t } from "@lingui/macro";
 import {
+  Box,
   Table,
   TableBody,
   TableCell,
@@ -9,8 +11,10 @@ import {
 import { ascending, descending } from "d3-array";
 import { useCallback, useMemo, useRef, useState } from "react";
 
+import { getLabelWithUnit } from "@/charts/shared/chart-helpers";
 import { ComponentLabel } from "@/components/chart-data-table-preview/ui/component-label";
 import { Loading } from "@/components/hint";
+import { VisuallyHidden } from "@/components/visually-hidden";
 import {
   Component,
   Dimension,
@@ -84,37 +88,63 @@ export const DataTablePreview = ({
   return (
     <div ref={tooltipContainerRef} style={{ width: "100%" }}>
       <Table>
-        <caption style={{ display: "none" }}>{title}</caption>
+        <VisuallyHidden component="caption">{title}</VisuallyHidden>
         <TableHead sx={{ position: "sticky", top: 0 }}>
           <TableRow>
             {sortedComponents.map((component) => {
+              const isSorted = sortBy?.id === component.id;
+              const headerText = getLabelWithUnit(component);
+
               return (
                 <TableCell
                   key={component.id}
                   component="th"
                   role="columnheader"
+                  aria-label={headerText}
+                  aria-sort={
+                    isSorted
+                      ? sortDirection === "asc"
+                        ? "ascending"
+                        : "descending"
+                      : undefined
+                  }
                   onClick={() => handleSort(component)}
                   sx={{
                     textAlign: isNumericalMeasure(component) ? "right" : "left",
                     whiteSpace: "nowrap",
+                    cursor: "pointer",
                   }}
                 >
-                  <TableSortLabel
-                    active={!sortBy || sortBy.id === component.id}
-                    direction={!sortBy ? "desc" : sortDirection}
-                    IconComponent={SvgIcChevronDown}
-                    sx={{
-                      "&:hover > svg": {
-                        ...(!sortBy ? { transform: "translateY(-15%)" } : {}),
-                      },
-                    }}
-                  >
+                  <Box sx={{ display: "inline-flex", alignItems: "center" }}>
                     <ComponentLabel
                       component={component}
                       tooltipProps={tooltipProps}
                       linkToMetadataPanel={linkToMetadataPanel}
                     />
-                  </TableSortLabel>
+                    <TableSortLabel
+                      component="button"
+                      type="button"
+                      active={!sortBy || isSorted}
+                      direction={!sortBy ? "desc" : sortDirection}
+                      IconComponent={SvgIcChevronDown}
+                      aria-label={t({
+                        id: "table.sort.by",
+                        message: `Sort by ${headerText}`,
+                      })}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSort(component);
+                      }}
+                      sx={{
+                        margin: "0 0 0 2px",
+                        padding: "4px",
+                        "& .MuiTableSortLabel-icon": { margin: 0 },
+                        "&:hover > svg": {
+                          ...(!sortBy ? { transform: "translateY(-15%)" } : {}),
+                        },
+                      }}
+                    />
+                  </Box>
                 </TableCell>
               );
             })}
