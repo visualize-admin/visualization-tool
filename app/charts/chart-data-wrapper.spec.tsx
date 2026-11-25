@@ -1,9 +1,14 @@
-import { render } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, render } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ChartDataWrapper } from "@/charts/chart-data-wrapper";
 import { LoadingStateProvider } from "@/charts/shared/chart-loading-state";
 import { ChartConfig } from "@/config-types";
+import { useDataCubesObservationsQuery } from "@/graphql/hooks";
+
+vi.mock("@/locales/use-locale", () => ({
+  useLocale: () => "en",
+}));
 
 vi.mock("@/graphql/hooks", () => ({
   useDataCubesComponentsQuery: vi.fn().mockReturnValue([
@@ -74,5 +79,45 @@ describe("ChartDataWrapper", () => {
     expect(
       root.getByText("Loading overlay").innerHTML.includes("Loading overlay")
     ).toBeTruthy();
+  });
+
+  describe("the visually hidden data table for screen readers", () => {
+    const Chart = () => <div>My chart</div>;
+
+    const renderWithObservations = (chartType: ChartConfig["chartType"]) => {
+      vi.mocked(useDataCubesObservationsQuery).mockReturnValue([
+        {
+          data: { dataCubesObservations: { data: [{ x: "a" }] } },
+          error: undefined,
+          fetching: false,
+        },
+      ] as unknown as ReturnType<typeof useDataCubesObservationsQuery>);
+
+      return render(
+        <LoadingStateProvider>
+          <ChartDataWrapper
+            chartConfig={{ cubes: [], chartType } as unknown as ChartConfig}
+            LoadingOverlayComponent={() => null}
+            Component={Chart}
+            dataSource={{ type: "sparql", url: "url" }}
+            observationQueryFilters={[]}
+          />
+        </LoadingStateProvider>
+      );
+    };
+
+    afterEach(cleanup);
+
+    it("is rendered for charts drawn as graphics", () => {
+      const { container } = renderWithObservations("column");
+
+      expect(container.querySelector("table")).not.toBeNull();
+    });
+
+    it("is not rendered for table charts, which are accessible themselves", () => {
+      const { container } = renderWithObservations("table");
+
+      expect(container.querySelector("table")).toBeNull();
+    });
   });
 });

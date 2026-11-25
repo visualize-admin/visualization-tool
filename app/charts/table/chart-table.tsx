@@ -35,7 +35,7 @@ const ChartTable = memo(function ChartTable(props: ChartProps<TableConfig>) {
 
   return (
     <TableChart {...props}>
-      <ChartContainer>
+      <ChartContainer ariaHidden={false} fitContent>
         {showTimeBrush && (
           <svg
             style={{

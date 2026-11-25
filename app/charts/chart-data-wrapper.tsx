@@ -20,7 +20,7 @@ import {
   LoadingOverlay,
   NoDataHint,
 } from "@/components/hint";
-import { ChartConfig, DataSource } from "@/configurator";
+import { ChartConfig, DataSource, isTableConfig } from "@/configurator";
 import {
   useDataCubesComponentsQuery,
   useDataCubesMetadataQuery,
@@ -178,7 +178,7 @@ const ChartDataWrapperInner = <
         className={classes.dataWrapper}
         data-chart-loaded={!chartLoadingState.loading}
       >
-        {observations.length > 0 && (
+        {observations.length > 0 && !isTableConfig(chartConfig) && (
           <A11yTable
             title={title}
             observations={observations}

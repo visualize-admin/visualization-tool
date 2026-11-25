@@ -47,9 +47,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const CellDesktop = ({
   cell,
   columnMeta,
+  isRowHeader,
 }: {
   cell: Cell<Observation>;
   columnMeta: ColumnMeta;
+  isRowHeader: boolean;
 }) => {
   const {
     columnComponentType,
@@ -63,6 +65,10 @@ export const CellDesktop = ({
   } = columnMeta;
   const classes = useStyles();
   const { links, shouldApplyWidthLimits } = useChartState() as TableChartState;
+  const cellProps = {
+    ...cell.getCellProps(),
+    role: isRowHeader ? "rowheader" : "cell",
+  };
 
   switch (columnMeta.type) {
     case "text":
@@ -70,7 +76,7 @@ export const CellDesktop = ({
 
       return (
         <Flex
-          {...cell.getCellProps()}
+          {...cellProps}
           sx={{
             alignItems: "center",
             justifyContent:
@@ -107,7 +113,7 @@ export const CellDesktop = ({
       const { colorScale: cColorScale } = columnMeta;
       return (
         <Flex
-          {...cell.getCellProps()}
+          {...cellProps}
           sx={{ alignItems: "center", fontWeight: textStyle, pl: 1, pr: 3 }}
         >
           <LinkedCellWrapper cell={cell} columnMeta={columnMeta} links={links}>
@@ -132,7 +138,7 @@ export const CellDesktop = ({
             backgroundColor: isNull ? "grey.100" : hColorScale(cell.value),
             fontWeight: textStyle,
           }}
-          {...cell.getCellProps()}
+          {...cellProps}
         >
           <LinkedCellWrapper cell={cell} columnMeta={columnMeta} links={links}>
             {columnMeta.formatter(cell)}
@@ -151,7 +157,7 @@ export const CellDesktop = ({
             // widthScale domain (see table state).
             px: `${BAR_CELL_PADDING}px`,
           }}
-          {...cell.getCellProps()}
+          {...cellProps}
         >
           <LinkedCellWrapper cell={cell} columnMeta={columnMeta} links={links}>
             <Box>{columnMeta.formatter(cell)}</Box>
@@ -205,7 +211,7 @@ export const CellDesktop = ({
             backgroundColor: columnColor,
             fontWeight: textStyle,
           }}
-          {...cell.getCellProps()}
+          {...cellProps}
         >
           <LinkedCellWrapper cell={cell} columnMeta={columnMeta} links={links}>
             {columnMeta.formatter(cell)}

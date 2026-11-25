@@ -85,6 +85,10 @@ msgstr "[ Add text ]"
 msgid "annotator.add.title"
 msgstr "[ Add Title ]"
 
+#: app/charts/table/table.tsx
+msgid "table.search.results"
+msgstr "{0, plural, =0 {No matching rows} one {# matching row} other {# matching rows}}"
+
 #: app/browse/ui/search-dataset-results-count.tsx
 msgid "dataset.results"
 msgstr "{0, plural, zero {No datasets} one {# dataset} other {# datasets}}"
@@ -2079,6 +2083,11 @@ msgstr "Sort by"
 msgid "controls.sorting.sortBy"
 msgstr "Sort by"
 
+#: app/browse/ui/data-table-preview.tsx
+#: app/charts/table/table-content.tsx
+msgid "table.sort.by"
+msgstr "Sort by {headerText}"
+
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.table.sorting"
 msgstr "Sorting"
@@ -2168,6 +2177,10 @@ msgstr "Tab label"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tab"
 msgstr "Tab Layout"
+
+#: app/charts/table/table-state.tsx
+msgid "chart.table.label"
+msgstr "Table"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.table"

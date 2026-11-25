@@ -85,6 +85,10 @@ msgstr "[ Ajouter du texte ]"
 msgid "annotator.add.title"
 msgstr "[ Ajouter de titre ]"
 
+#: app/charts/table/table.tsx
+msgid "table.search.results"
+msgstr "{0, plural, =0 {Aucune ligne correspondante} one {# ligne correspondante} other {# lignes correspondantes}}"
+
 #: app/browse/ui/search-dataset-results-count.tsx
 msgid "dataset.results"
 msgstr "{0, plural, zero {Aucun jeu de données} one {# jeu de données} other {# jeux de données}}"
@@ -2079,6 +2083,11 @@ msgstr "Trier par"
 msgid "controls.sorting.sortBy"
 msgstr "Trier par"
 
+#: app/browse/ui/data-table-preview.tsx
+#: app/charts/table/table-content.tsx
+msgid "table.sort.by"
+msgstr "Trier par {headerText}"
+
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.table.sorting"
 msgstr "Tri"
@@ -2168,6 +2177,10 @@ msgstr "Nom de l'onglet"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tab"
 msgstr "Tab Layout"
+
+#: app/charts/table/table-state.tsx
+msgid "chart.table.label"
+msgstr "Tableau"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.table"

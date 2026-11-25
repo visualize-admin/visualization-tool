@@ -51,8 +51,12 @@ test.describe("keyboard focus", () => {
       `/en/browse?dataset=${encodeURIComponent(RED_LIST_CUBE)}&dataSource=Prod`
     );
     await page.getByRole("table").waitFor();
+    // Wait for expanding sections; visually hidden text also clips its overflow.
     await page.waitForFunction(
-      () => !document.querySelector("main [style*='overflow: hidden']")
+      () =>
+        !document.querySelector(
+          "main [style*='overflow: hidden']:not([style*='clip'])"
+        )
     );
     await expectVisibleFocusRings({ page });
   });

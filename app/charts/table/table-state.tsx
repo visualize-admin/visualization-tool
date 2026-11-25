@@ -1,3 +1,4 @@
+import { t } from "@lingui/macro";
 import { ascending, extent, max, min } from "d3-array";
 import {
   ScaleDiverging,
@@ -31,7 +32,6 @@ import {
   LIMITED_COLUMN_WIDTH,
   TABLE_HEIGHT,
 } from "@/charts/table/constants";
-import { getTableUIElementsOffset } from "@/charts/table/table";
 import {
   TableStateVariables,
   useTableStateData,
@@ -56,6 +56,7 @@ import {
   TemporalEntityDimension,
 } from "@/domain/data";
 import { useDimensionFormatters, useFormatNumber } from "@/formatters";
+import { useLocale } from "@/locales/use-locale";
 import { getColorInterpolator } from "@/palettes";
 import { getTextWidth } from "@/utils/get-text-width";
 import { makeDimensionValueSorters } from "@/utils/sorting-values";
@@ -116,6 +117,8 @@ type TableInteractiveTimeRangeState = {
 export type TableChartState = CommonChartState &
   TableInteractiveTimeRangeState & {
     chartType: "table";
+    /** The chart title, or a generic name when the chart has none. */
+    tableLabel: string;
     rowHeight: number;
     showSearch: boolean;
     tableColumns: Column<Observation>[];
@@ -137,6 +140,7 @@ const useTableState = (
   const { chartData, allData, timeRangeData } = data;
   const { fields, settings, links, sorting } = chartConfig;
   const formatNumber = useFormatNumber();
+  const locale = useLocale();
 
   const hasBar = Object.values(fields).some(
     (fValue) => fValue.columnStyle.type === "bar"
@@ -151,21 +155,10 @@ const useTableState = (
     left: 10,
   };
   const chartWidth = width - margins.left - margins.right;
-  const chartHeight = Math.min(
-    TABLE_HEIGHT,
-    // + 1 for the header row
-    (chartData.length + 1) * rowHeight
-  );
+  // The table sizes itself to its rows, see `Table`.
+  const chartHeight = TABLE_HEIGHT;
 
-  const height =
-    chartHeight +
-    margins.top +
-    margins.bottom +
-    getTableUIElementsOffset({
-      showSearch: settings.showSearch,
-      width,
-      showTimeRange: chartConfig.interactiveFiltersConfig.timeRange.active,
-    });
+  const height = chartHeight + margins.top + margins.bottom;
   const bounds = {
     width,
     height,
@@ -472,6 +465,9 @@ const useTableState = (
 
   return {
     chartType: "table",
+    tableLabel:
+      chartConfig.meta.title[locale] ||
+      t({ id: "chart.table.label", message: "Table" }),
     chartData: memoizedData,
     allData,
     bounds,

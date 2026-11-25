@@ -1,7 +1,4 @@
-import { Box } from "@mui/material";
-import { hcl } from "d3-color";
-import * as React from "react";
-import { Fragment } from "react";
+import { Box, ButtonBase, getContrastRatio, useTheme } from "@mui/material";
 import { Row } from "react-table";
 
 import { useChartState } from "@/charts/shared/chart-state";
@@ -9,88 +6,106 @@ import { TableChartState } from "@/charts/table/table-state";
 import { Tag } from "@/charts/table/tag";
 import { Flex } from "@/components/flex";
 import { Observation } from "@/domain/data";
+import { FOCUS_OUTLINE_COLOR_VAR } from "@/federal-ci/components/common";
 import { Icon } from "@/icons";
+import { FOCUS_OUTLINE_COLOR, FOCUS_OUTLINE_INSET } from "@/themes/focus";
 
 export const GroupHeader = ({
   row,
   groupingLevels,
+  colSpan,
 }: {
   row: Row<Observation>;
   groupingLevels: number;
+  colSpan?: number;
 }) => {
   const { tableColumnsMeta } = useChartState() as TableChartState;
+  const theme = useTheme();
   const { depth } = row;
+  // `allCells` so that group headers are shown even if the column is hidden.
+  const groupedCell = row.allCells.find((cell) => cell.isGrouped);
+
+  if (!groupedCell) {
+    return null;
+  }
+
+  const colMeta = tableColumnsMeta[groupedCell.column.id];
+  const { formatter } = colMeta;
+  const bg = theme.palette.grey[getGroupLevelShade(groupingLevels - depth)];
+  const textColor = theme.palette.getContrastText(bg);
+  const ringColor =
+    getContrastRatio(FOCUS_OUTLINE_COLOR, bg) < 3 ? textColor : undefined;
+  const iconColor =
+    getContrastRatio(theme.palette.grey[600], bg) < 3
+      ? textColor
+      : theme.palette.grey[600];
+  const toggleRow = () => row.toggleRowExpanded();
+  const toggle = (
+    <ButtonBase
+      aria-expanded={!!row.isExpanded}
+      onClick={(e) => {
+        e.stopPropagation();
+        toggleRow();
+      }}
+      sx={{
+        height: "100%",
+        pr: 2,
+        justifyContent: "flex-start",
+        textAlign: "left",
+        "&:focus-visible": FOCUS_OUTLINE_INSET,
+        ...(ringColor && { [FOCUS_OUTLINE_COLOR_VAR]: ringColor }),
+      }}
+    >
+      <Box
+        component="span"
+        aria-hidden
+        sx={{ display: "flex", width: 24, mr: 0, color: iconColor }}
+      >
+        <Icon name={row.isExpanded ? "chevronDown" : "chevronRight"} />
+      </Box>
+      {colMeta.type === "category" ? (
+        <Tag tagColor={colMeta.colorScale(groupedCell.value)}>
+          {formatter(groupedCell)}
+        </Tag>
+      ) : (
+        <Box
+          component="span"
+          sx={{
+            color: textColor,
+            fontWeight: "bold",
+          }}
+        >
+          {formatter(groupedCell)}
+        </Box>
+      )}
+    </ButtonBase>
+  );
 
   return (
-    <>
-      {/* Here we use `allCells` so that group headers are shown even if the column is hidden */}
-      {row.allCells.map((cell, i) => {
-        const colMeta = tableColumnsMeta[cell.column.id];
-        const { formatter } = colMeta;
-        const bg = getGroupLevelBackgroundColor(groupingLevels - depth);
-
-        return (
-          <Fragment key={i}>
-            {cell.isGrouped && (
-              <Flex
-                {...row.getToggleRowExpandedProps()}
-                sx={{
-                  minWidth: "100%",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  bg,
-                }}
-              >
-                <Box
-                  component="span"
-                  sx={{ width: 24, mr: 0, color: "grey.600" }}
-                >
-                  <Icon
-                    name={row.isExpanded ? "chevronDown" : "chevronRight"}
-                  />
-                </Box>
-                {colMeta.type === "category" ? (
-                  <Tag tagColor={colMeta.colorScale(cell.value)}>
-                    {formatter(cell)}
-                  </Tag>
-                ) : (
-                  <Box
-                    component="span"
-                    sx={{
-                      color: hcl(bg).l < 55 ? "grey.100" : "grey.900",
-                      fontWeight: "bold",
-                      textAlign: "left",
-                    }}
-                  >
-                    {formatter(cell)}
-                  </Box>
-                )}
-              </Flex>
-            )}
-          </Fragment>
-        );
-      })}
-    </>
+    <Flex
+      role={colSpan ? "cell" : undefined}
+      aria-colspan={colSpan}
+      onClick={toggleRow}
+      sx={{ minWidth: "100%", cursor: "pointer", backgroundColor: bg }}
+    >
+      {toggle}
+    </Flex>
   );
 };
 
-const getGroupLevelBackgroundColor = (x: number) => {
-  switch (x) {
-    case 0:
-      return "grey.100";
-    case 1:
-      return "grey.100";
+const getGroupLevelShade = (level: number) => {
+  switch (level) {
     case 2:
-      return "grey.200";
+      return 200;
     case 3:
-      return "grey.300";
+      return 300;
     case 4:
-      return "grey.400";
+      return 400;
     case 5:
-      return "grey.500";
+      return 500;
     case 6:
-      return "grey.600";
+      return 600;
     default:
-      return "grey.100";
+      return 100;
   }
 };
