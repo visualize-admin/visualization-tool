@@ -25,6 +25,8 @@ You can also check the
     reloads, and announce search results
   - Editor filters, legend filters and drag handles keep focus, and filter
     switches and drag handles have specific names
+  - Table charts work with screen readers and the keyboard: columns sort by
+    keyboard, groups expand by keyboard, and search results are announced
 
 ## 6.5.7 - 2026-11-10
 

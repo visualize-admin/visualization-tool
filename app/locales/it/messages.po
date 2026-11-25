@@ -85,6 +85,10 @@ msgstr "[ Aggiungi testo ]"
 msgid "annotator.add.title"
 msgstr "[ Aggiungi titolo ]"
 
+#: app/charts/table/table.tsx
+msgid "table.search.results"
+msgstr "{0, plural, =0 {Nessuna riga corrispondente} one {# riga corrispondente} other {# righe corrispondenti}}"
+
 #: app/browse/ui/search-dataset-results-count.tsx
 msgid "dataset.results"
 msgstr "{0, plural, zero {Nessun set di dati} one {# set di dati} other {# set di dati}}"
@@ -2079,6 +2083,11 @@ msgstr "Ordina per"
 msgid "controls.sorting.sortBy"
 msgstr "Ordina per"
 
+#: app/browse/ui/data-table-preview.tsx
+#: app/charts/table/table-content.tsx
+msgid "table.sort.by"
+msgstr "Ordina per {headerText}"
+
 #: app/configurator/table/table-chart-configurator.tsx
 msgid "controls.table.sorting"
 msgstr "Ordinamento"
@@ -2168,6 +2177,10 @@ msgstr "Etichetta della scheda"
 #: app/configurator/components/field-i18n.ts
 msgid "controls.layout.tab"
 msgstr "Tab Layout"
+
+#: app/charts/table/table-state.tsx
+msgid "chart.table.label"
+msgstr "Tabella"
 
 #: app/configurator/components/field-i18n.ts
 msgid "controls.chart.type.table"

@@ -27,7 +27,15 @@ export const useStyles = makeStyles<{}, {}, "chartContainer">(() => ({
   },
 }));
 
-export const ChartContainer = ({ children }: { children: ReactNode }) => {
+export const ChartContainer = ({
+  children,
+  ariaHidden = true,
+  fitContent,
+}: {
+  children: ReactNode;
+  ariaHidden?: boolean;
+  fitContent?: boolean;
+}) => {
   const [state] = useConfiguratorState(hasChartConfigs);
   const chartConfig = getChartConfig(state);
   const isFreeCanvas = isLayoutingFreeCanvas(state);
@@ -41,10 +49,14 @@ export const ChartContainer = ({ children }: { children: ReactNode }) => {
       // chart types (that might have different sizes).
       key={chartConfig.chartType}
       ref={ref}
-      aria-hidden="true"
+      aria-hidden={ariaHidden || undefined}
       className={classes.chartContainer}
       style={{
-        height: isFreeCanvas ? "initial" : bounds.height,
+        height: isFreeCanvas
+          ? "initial"
+          : fitContent
+            ? undefined
+            : bounds.height,
         overflow: "auto",
       }}
     >
