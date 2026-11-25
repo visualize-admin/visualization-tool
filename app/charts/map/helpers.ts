@@ -11,6 +11,7 @@ import {
   AreaLayer,
   GeoCoordinates,
   GeoShapes,
+  getObservationIri,
   Observation,
   SymbolLayer,
 } from "@/domain/data";
@@ -219,7 +220,7 @@ export const prepareFeatureCollection = ({
 
   featureCollection.features.forEach((f) => {
     const observation = observations.find((o) => {
-      const iri = o[`${dimensionId}/__iri__`];
+      const iri = getObservationIri(o, dimensionId);
       const label = o[dimensionId];
 
       return iri ? iri === f.properties.iri : label === f.properties.label;

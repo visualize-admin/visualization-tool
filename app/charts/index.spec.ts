@@ -1,4 +1,5 @@
 import { schemeCategory10 } from "d3-scale-chromatic";
+import produce from "immer";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -11,6 +12,7 @@ import {
   ComboLineDualConfig,
   ScatterPlotConfig,
   SegmentColorField,
+  TableConfig,
   TableFields,
 } from "@/configurator";
 import { Dimension, Measure } from "@/domain/data";
@@ -599,6 +601,50 @@ describe("chart type switch", () => {
     ).toEqual(
       (oldChartConfig.fields.color as SegmentColorField).colorMapping["A"]
     );
+  });
+
+  it("should keep a grouped column's abbreviations when switching from a table and back", () => {
+    const dimensions = forestAreaData.data.dataCubeByIri
+      .dimensions as unknown as Dimension[];
+    const measures = forestAreaData.data.dataCubeByIri
+      .measures as unknown as Measure[];
+    const prodreg = "https://environment.ld.admin.ch/foen/nfi/prodreg";
+    const table = produce(
+      getInitialConfig({
+        chartType: "table",
+        iris: [{ iri: "https://environment.ld.admin.ch/foen/nfi" }],
+        dimensions,
+        measures,
+      }) as TableConfig,
+      (draft) => {
+        draft.fields[prodreg].isGroup = true;
+        draft.fields[prodreg].useAbbreviations = true;
+      }
+    );
+
+    const column = getChartConfigAdjustedToChartType({
+      chartConfig: table,
+      newChartType: "column",
+      dimensions,
+      measures,
+    }) as ColumnConfig;
+
+    expect(column.fields.segment).toMatchObject({
+      componentId: prodreg,
+      useAbbreviations: true,
+    });
+
+    const backToTable = getChartConfigAdjustedToChartType({
+      chartConfig: column,
+      newChartType: "table",
+      dimensions,
+      measures,
+    }) as TableConfig;
+
+    expect(backToTable.fields[prodreg]).toMatchObject({
+      isGroup: true,
+      useAbbreviations: true,
+    });
   });
 
   it("should prefer to use components from different cubes if merging cubes, otherwise not", () => {

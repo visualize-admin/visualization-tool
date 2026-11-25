@@ -116,6 +116,7 @@ type ComponentRenderingConfig = {
   enableCustomSort: boolean;
   enableMultiFilter: boolean;
   enableSegment: boolean;
+  enableAbbreviations: boolean;
 };
 
 const ComponentsRenderingConfig: {
@@ -126,18 +127,21 @@ const ComponentsRenderingConfig: {
     enableCustomSort: true,
     enableMultiFilter: true,
     enableSegment: true,
+    enableAbbreviations: true,
   },
   OrdinalDimension: {
     enableAnimation: false,
     enableCustomSort: false,
     enableMultiFilter: true,
     enableSegment: true,
+    enableAbbreviations: true,
   },
   TemporalDimension: {
     enableAnimation: true,
     enableCustomSort: false,
     enableMultiFilter: false,
     enableSegment: true,
+    enableAbbreviations: false,
   },
   TemporalEntityDimension: {
     enableAnimation: true,
@@ -145,54 +149,63 @@ const ComponentsRenderingConfig: {
     // FIXME: should behave like TemporalDimension
     enableMultiFilter: true,
     enableSegment: true,
+    enableAbbreviations: false,
   },
   TemporalOrdinalDimension: {
     enableAnimation: true,
     enableCustomSort: false,
     enableMultiFilter: true,
     enableSegment: true,
+    enableAbbreviations: false,
   },
   GeoCoordinatesDimension: {
     enableAnimation: false,
     enableCustomSort: true,
     enableMultiFilter: true,
     enableSegment: true,
+    enableAbbreviations: true,
   },
   GeoShapesDimension: {
     enableAnimation: false,
     enableCustomSort: true,
     enableMultiFilter: true,
     enableSegment: true,
+    enableAbbreviations: true,
   },
   NumericalMeasure: {
     enableAnimation: false,
     enableCustomSort: false,
     enableMultiFilter: false,
     enableSegment: false,
+    enableAbbreviations: false,
   },
   OrdinalMeasure: {
     enableAnimation: false,
     enableCustomSort: false,
     enableMultiFilter: false,
     enableSegment: false,
+    enableAbbreviations: true,
   },
   StandardErrorDimension: {
     enableAnimation: false,
     enableCustomSort: false,
     enableMultiFilter: false,
     enableSegment: false,
+    enableAbbreviations: false,
   },
   ConfidenceUpperBoundDimension: {
     enableAnimation: false,
     enableCustomSort: false,
     enableMultiFilter: false,
     enableSegment: false,
+    enableAbbreviations: false,
   },
   ConfidenceLowerBoundDimension: {
     enableAnimation: false,
     enableCustomSort: false,
     enableMultiFilter: false,
     enableSegment: false,
+    enableAbbreviations: false,
   },
 };
 
@@ -212,6 +225,12 @@ export const MULTI_FILTER_ENABLED_COMPONENTS = Object.entries(
   ComponentsRenderingConfig
 )
   .filter(([, config]) => config.enableMultiFilter)
+  .map(([type]) => type as ComponentType);
+
+export const ABBREVIATIONS_ENABLED_COMPONENTS = Object.entries(
+  ComponentsRenderingConfig
+)
+  .filter(([, config]) => config.enableAbbreviations)
   .map(([type]) => type as ComponentType);
 
 export const SEGMENT_ENABLED_COMPONENTS = Object.entries(
@@ -537,6 +556,39 @@ export const parseObservationValue = ({
 
   // Return the IRI of named nodes
   return value.value;
+};
+
+export const getObservationIriKey = (componentId: string) => {
+  return `${componentId}/__iri__`;
+};
+
+export const getObservationIri = (
+  observation: Observation | undefined,
+  componentId: string
+) => {
+  const iri = observation?.[getObservationIriKey(componentId)];
+
+  return typeof iri === "string" ? iri : undefined;
+};
+
+export const getDimensionValueLabel = ({
+  dimensionValue,
+  useAbbreviations,
+}: {
+  dimensionValue: DimensionValue;
+  useAbbreviations: boolean | undefined;
+}) => {
+  return (
+    (useAbbreviations && dimensionValue.alternateName) || dimensionValue.label
+  );
+};
+
+export const canUseAbbreviations = (component?: Component | null) => {
+  return (
+    !!component &&
+    ABBREVIATIONS_ENABLED_COMPONENTS.includes(component.__typename) &&
+    component.values.some((value) => value.alternateName)
+  );
 };
 
 export const isDimension = (

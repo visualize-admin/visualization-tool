@@ -1,6 +1,17 @@
 import { useCallback, useMemo } from "react";
 
-import { DimensionValue, Observation, ObservationValue } from "@/domain/data";
+import {
+  DimensionValue,
+  getDimensionValueLabel,
+  getObservationIri,
+  Observation,
+  ObservationValue,
+} from "@/domain/data";
+
+type DimensionValueLookups = {
+  valueLookup: Map<NonNullable<ObservationValue>, DimensionValue>;
+  labelLookup: Map<string, DimensionValue>;
+};
 
 export const useMaybeAbbreviations = ({
   useAbbreviations,
@@ -13,23 +24,14 @@ export const useMaybeAbbreviations = ({
 }) => {
   const { valueLookup, labelLookup, abbreviationOrLabelLookup } =
     useMemo(() => {
-      const values = dimensionValues ?? [];
-
-      const valueLookup = new Map<
-        NonNullable<ObservationValue>,
-        DimensionValue
-      >();
-      const labelLookup = new Map<string, DimensionValue>();
-
-      for (const d of values) {
-        valueLookup.set(d.value, d);
-        labelLookup.set(d.label, d);
-      }
+      const { valueLookup, labelLookup } = makeDimensionValueLookups(
+        dimensionValues ?? []
+      );
 
       const abbreviationOrLabelLookup = new Map(
-        Array.from(labelLookup, ([k, v]) => [
-          useAbbreviations ? v.alternateName ?? k : k,
-          v,
+        Array.from(labelLookup.values(), (dimensionValue) => [
+          getDimensionValueLabel({ dimensionValue, useAbbreviations }),
+          dimensionValue,
         ])
       );
 
@@ -46,22 +48,15 @@ export const useMaybeAbbreviations = ({
         return "";
       }
 
-      const value = d[`${dimensionId}/__iri__`] as string | undefined;
-      const label = d[dimensionId] as string | undefined;
-
-      if (value === undefined && label === undefined) {
-        return "";
-      }
-
-      const lookedUpObservation =
-        (value ? valueLookup.get(value) : null) ??
-        (label ? labelLookup.get(label) : null);
-
-      const lookedUpLabel = lookedUpObservation?.label ?? "";
-
-      return useAbbreviations
-        ? lookedUpObservation?.alternateName ?? lookedUpLabel
-        : lookedUpLabel;
+      const dimensionValue = findDimensionValue({
+        observation: d,
+        dimensionId,
+        valueLookup,
+        labelLookup,
+      });
+      return dimensionValue
+        ? getDimensionValueLabel({ dimensionValue, useAbbreviations })
+        : "";
     },
     [dimensionId, valueLookup, labelLookup, useAbbreviations]
   );
@@ -70,4 +65,36 @@ export const useMaybeAbbreviations = ({
     abbreviationOrLabelLookup,
     getAbbreviationOrLabelByValue,
   };
+};
+
+export const makeDimensionValueLookups = (
+  values: DimensionValue[]
+): DimensionValueLookups => {
+  const valueLookup: DimensionValueLookups["valueLookup"] = new Map();
+  const labelLookup: DimensionValueLookups["labelLookup"] = new Map();
+
+  for (const d of values) {
+    valueLookup.set(d.value, d);
+    labelLookup.set(d.label, d);
+  }
+
+  return { valueLookup, labelLookup };
+};
+
+export const findDimensionValue = ({
+  observation,
+  dimensionId,
+  valueLookup,
+  labelLookup,
+}: DimensionValueLookups & {
+  observation: Observation;
+  dimensionId: string;
+}) => {
+  const value = getObservationIri(observation, dimensionId);
+  const label = observation[dimensionId] as string | undefined;
+
+  return (
+    (value ? valueLookup.get(value) : undefined) ??
+    (label ? labelLookup.get(label) : undefined)
+  );
 };

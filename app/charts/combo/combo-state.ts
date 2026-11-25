@@ -16,7 +16,7 @@ import {
 } from "@/charts/combo/shared";
 import { TICK_PADDING } from "@/charts/shared/axis-height-linear";
 import { useSize } from "@/charts/shared/use-size";
-import { Observation } from "@/domain/data";
+import { getObservationIriKey, Observation } from "@/domain/data";
 import { useFormatNumber, useTimeFormatUnit } from "@/formatters";
 
 type UseCommonComboStateOptions = {
@@ -63,7 +63,8 @@ export const useCommonComboState = (options: UseCommonComboStateOptions) => {
       const observation = Object.assign(
         {
           [xKey]: date,
-          [`${xKey}/__iri__`]: observations[0][`${xKey}/__iri__`],
+          [getObservationIriKey(xKey)]:
+            observations[0][getObservationIriKey(xKey)],
           total,
         },
         ...observations.flatMap((o) =>

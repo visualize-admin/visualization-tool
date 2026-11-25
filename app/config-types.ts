@@ -808,14 +808,17 @@ export type ColumnStyleCategory = t.TypeOf<typeof ColumnStyleCategory>;
 export type ColumnStyleHeatmap = t.TypeOf<typeof ColumnStyleHeatmap>;
 export type ColumnStyleBar = t.TypeOf<typeof ColumnStyleBar>;
 
-const TableColumn = t.type({
-  componentId: t.string,
-  componentType: ComponentType,
-  index: t.number,
-  isGroup: t.boolean,
-  isHidden: t.boolean,
-  columnStyle: ColumnStyle,
-});
+const TableColumn = t.intersection([
+  t.type({
+    componentId: t.string,
+    componentType: ComponentType,
+    index: t.number,
+    isGroup: t.boolean,
+    isHidden: t.boolean,
+    columnStyle: ColumnStyle,
+  }),
+  t.partial({ useAbbreviations: t.boolean }),
+]);
 export type TableColumn = t.TypeOf<typeof TableColumn>;
 
 const TableSettings = t.type({

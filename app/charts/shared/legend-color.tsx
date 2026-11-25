@@ -28,6 +28,7 @@ import {
 } from "@/configurator";
 import {
   Component,
+  getDimensionValueLabel,
   isOrdinalDimension,
   isOrdinalMeasure,
   Measure,
@@ -236,12 +237,11 @@ export const MapLegendColor = memo(function LegendColor({
   }, [component, dimensionFilter]);
   const getLabel = useCallback(
     (d: string) => {
-      if (useAbbreviations) {
-        const v = component.values.find((v) => v.value === d);
-        return (v?.alternateName || v?.label) as string;
-      } else {
-        return component.values.find((v) => v.value === d)?.label as string;
-      }
+      const dimensionValue = component.values.find((v) => v.value === d);
+
+      return dimensionValue
+        ? getDimensionValueLabel({ dimensionValue, useAbbreviations })
+        : "";
     },
     [component, useAbbreviations]
   );

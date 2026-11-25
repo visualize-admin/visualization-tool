@@ -1,8 +1,7 @@
 import { EncodingFieldType } from "@/charts/chart-config-ui-options";
 import { ChartOptionCheckboxField } from "@/configurator/components/field";
 import { getFieldLabel } from "@/configurator/components/field-i18n";
-import { canUseAbbreviations } from "@/configurator/components/ui-helpers";
-import { Component } from "@/domain/data";
+import { canUseAbbreviations, Component } from "@/domain/data";
 
 export const Abbreviations = ({
   field,

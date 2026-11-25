@@ -322,25 +322,6 @@ export const useOrderedTableColumns = (fields: TableFields): TableColumn[] => {
   }, [fields]);
 };
 
-export const canUseAbbreviations = (d?: Component): boolean => {
-  if (!d) {
-    return false;
-  }
-
-  switch (d.__typename) {
-    case "GeoCoordinatesDimension":
-    case "GeoShapesDimension":
-    case "NominalDimension":
-    case "OrdinalDimension":
-    case "OrdinalMeasure":
-      break;
-    default:
-      return false;
-  }
-
-  return !!d.values.find((d) => d.alternateName);
-};
-
 /**
  * Returns label a dimension or a measure
  * - Handles join by dimension

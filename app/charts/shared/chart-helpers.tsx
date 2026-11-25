@@ -36,6 +36,7 @@ import {
   Component,
   Dimension,
   DimensionValue,
+  getObservationIriKey,
   getTemporalEntityValue,
   Observation,
   ObservationValue,
@@ -597,7 +598,7 @@ const getBaseWideData = ({
     const observation: Observation = Object.assign(
       {
         [key]: k,
-        [`${key}/__iri__`]: v[0][`${key}/__iri__`],
+        [getObservationIriKey(key)]: v[0][getObservationIriKey(key)],
         total: sum(v, getAxisValue),
       },
       ...getOptionalObservationProps(i),
