@@ -7,7 +7,7 @@ import { Cell } from "react-table";
 import { getSlugifiedId } from "@/charts/shared/chart-helpers";
 import { ColumnMeta } from "@/charts/table/table-state";
 import { TableLinks } from "@/config-types";
-import { Observation } from "@/domain/data";
+import { getObservationIriKey, Observation } from "@/domain/data";
 import { Icon } from "@/icons";
 import { useLocale } from "@/locales/use-locale";
 
@@ -35,7 +35,7 @@ const getLinkHref = (
 ): string => {
   const slugifiedId = getSlugifiedId(componentId);
   const { original } = cell.row;
-  const iriValue = original[getSlugifiedId(`${componentId}/__iri__`)];
+  const iriValue = original[getSlugifiedId(getObservationIriKey(componentId))];
   const rawValue = original[slugifiedId];
   const value = iriValue
     ? `${iriValue}`.split("/").pop() || iriValue

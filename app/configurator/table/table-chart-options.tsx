@@ -19,6 +19,7 @@ import {
   ControlSectionContent,
   SectionTitle,
 } from "@/configurator/components/chart-controls/section";
+import { Abbreviations } from "@/configurator/components/chart-options-selector/abbreviations";
 import {
   ChartOptionCheckboxField,
   ChartOptionSelectField,
@@ -41,6 +42,7 @@ import {
   updateIsHidden,
 } from "@/configurator/table/table-config-state";
 import {
+  ABBREVIATIONS_ENABLED_COMPONENTS,
   Component,
   Dimension,
   isDimension,
@@ -249,6 +251,9 @@ export const TableColumnOptions = ({
             dimensions={dimensions}
             measures={measures}
           />
+          {ABBREVIATIONS_ENABLED_COMPONENTS.includes(component.__typename) && (
+            <Abbreviations field={activeField} component={component} />
+          )}
         </ControlSectionContent>
       </ControlSection>
       {(isGroup || !isHidden) && (

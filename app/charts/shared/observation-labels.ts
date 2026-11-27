@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 
-import { Observation } from "@/domain/data";
+import { getObservationIri, Observation } from "@/domain/data";
 
 /** Use this hook to be able to retrieve observation values and labels,
  * where the value is the id if present, otherwise the label.
@@ -16,8 +16,7 @@ export const useObservationLabels = (
 ) => {
   const getId = useCallback(
     (d: Observation) => {
-      const id = d[`${componentId}/__iri__`] as string | undefined;
-      return id;
+      return componentId ? getObservationIri(d, componentId) : undefined;
     },
     [componentId]
   );

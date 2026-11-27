@@ -15,7 +15,7 @@ import {
   useConfiguratorState,
 } from "@/configurator/configurator-state";
 import { FIELD_VALUE_NONE } from "@/configurator/constants";
-import { Observation } from "@/domain/data";
+import { getObservationIri, Observation } from "@/domain/data";
 
 export const useIsEditingAnnotation = () => {
   const [state] = useConfiguratorState();
@@ -63,7 +63,7 @@ export const useGetAnnotationRenderState = () => {
       const interactionMatches =
         currentInteraction.type === "annotation" &&
         currentInteraction.visible &&
-        currentInteraction.observation?.[`${axisComponentId}/__iri__`] ===
+        getObservationIri(currentInteraction.observation, axisComponentId) ===
           axisValue;
 
       const targetsOtherAnnotations = chartConfig.annotations.some(
@@ -120,17 +120,15 @@ export const getAnnotationTargetsFromObservation = (
       if (xComponentId) {
         targets.push({
           componentId: xComponentId,
-          value: `${observation[`${xComponentId}/__iri__`]}`,
+          value: `${getObservationIri(observation, xComponentId)}`,
         });
       }
 
       const segmentComponentId = chartConfig.fields.segment?.componentId;
       if (segmentComponentId && segment) {
-        const value =
-          segment ?? observation[`${segmentComponentId}/__iri__`] ?? "";
         targets.push({
           componentId: segmentComponentId,
-          value,
+          value: segment,
         });
       }
 
@@ -141,17 +139,15 @@ export const getAnnotationTargetsFromObservation = (
       if (yComponentId) {
         targets.push({
           componentId: yComponentId,
-          value: `${observation[`${yComponentId}/__iri__`]}`,
+          value: `${getObservationIri(observation, yComponentId)}`,
         });
       }
 
       const segmentComponentId = chartConfig.fields.segment?.componentId;
       if (segmentComponentId && segment) {
-        const value =
-          segment ?? observation[`${segmentComponentId}/__iri__`] ?? "";
         targets.push({
           componentId: segmentComponentId,
-          value,
+          value: segment,
         });
       }
 
@@ -160,11 +156,9 @@ export const getAnnotationTargetsFromObservation = (
     case "scatterplot": {
       const segmentComponentId = chartConfig.fields.segment?.componentId;
       if (segmentComponentId && segment) {
-        const value =
-          segment ?? observation[`${segmentComponentId}/__iri__`] ?? "";
         targets.push({
           componentId: segmentComponentId,
-          value,
+          value: segment,
         });
       }
 
@@ -173,11 +167,9 @@ export const getAnnotationTargetsFromObservation = (
     case "pie": {
       const segmentComponentId = chartConfig.fields.segment?.componentId;
       if (segmentComponentId && segment) {
-        const value =
-          segment ?? observation[`${segmentComponentId}/__iri__`] ?? "";
         targets.push({
           componentId: segmentComponentId,
-          value,
+          value: segment,
         });
       }
 
@@ -206,7 +198,7 @@ export const matchesAnnotationTarget = (
   }
 
   for (const target of targets) {
-    const observationValue = observation[`${target.componentId}/__iri__`];
+    const observationValue = getObservationIri(observation, target.componentId);
 
     if (observationValue !== target.value) {
       return false;

@@ -54,6 +54,7 @@ import {
   Component,
   Dimension,
   GeoData,
+  getDimensionValueLabel,
   isGeoShapesDimension,
   Measure,
   Observation,
@@ -361,9 +362,11 @@ const useCategoricalColors = (
     const valuesByLabel = keyBy(component.values, (d) => d.label);
     const valuesByAbbreviationOrLabel = keyBy(
       component.values,
-      colorSpec.useAbbreviations
-        ? (d) => d.alternateName ?? d.label
-        : (d) => d.label
+      (dimensionValue) =>
+        getDimensionValueLabel({
+          dimensionValue,
+          useAbbreviations: colorSpec.useAbbreviations,
+        })
     );
     const domain = component.values.map((d) => `${d.value}`) ?? [];
     const rgbColorMapping = mapValues(colorSpec.colorMapping, (c) =>
@@ -383,14 +386,12 @@ const useCategoricalColors = (
       paletteId: colorSpec.paletteId,
       component,
       domain,
-      getValue: colorSpec.useAbbreviations
-        ? (d: Observation) => {
-            const v = getDimensionValue(d);
-            return v.alternateName || v.label;
-          }
-        : (d: Observation) => {
-            return getDimensionValue(d).label;
-          },
+      getValue: (d: Observation) => {
+        return getDimensionValueLabel({
+          dimensionValue: getDimensionValue(d),
+          useAbbreviations: colorSpec.useAbbreviations,
+        });
+      },
       getColor: (d: Observation) => {
         const value = getDimensionValue(d);
         return rgbColorMapping[value.value];

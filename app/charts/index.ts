@@ -1880,6 +1880,10 @@ const chartConfigsAdjusters: ChartConfigsAdjusters = {
         if (componentId === oldValue.componentId) {
           return produce(newChartConfig, (draft) => {
             draft.fields[componentId].isGroup = true;
+
+            if (oldValue.useAbbreviations) {
+              draft.fields[componentId].useAbbreviations = true;
+            }
           });
         }
       }
@@ -3061,6 +3065,7 @@ const convertTableFieldsToSegmentAndColorFields = ({
     segment: {
       componentId,
       showValuesMapping: {},
+      ...(component.useAbbreviations && { useAbbreviations: true }),
     },
     color: {
       type: "segment",

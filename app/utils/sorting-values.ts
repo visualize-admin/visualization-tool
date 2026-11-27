@@ -2,6 +2,7 @@ import { FilterValue, SortingField } from "@/configurator";
 import {
   Component,
   DimensionValue,
+  getDimensionValueLabel,
   isMeasure,
   isNumericalMeasure,
   isTemporalDimension,
@@ -71,9 +72,9 @@ export const makeDimensionValueSorters = (
   } = options;
   const sortingType = sorting?.sortingType;
 
-  const addAlternateName = (d: DimensionValue) => ({
-    ...d,
-    label: d.alternateName ?? d.label,
+  const addAlternateName = (dimensionValue: DimensionValue) => ({
+    ...dimensionValue,
+    label: getDimensionValueLabel({ dimensionValue, useAbbreviations: true }),
   });
 
   let values = useAbbreviations

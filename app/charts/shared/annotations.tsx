@@ -19,7 +19,7 @@ import { Annotation } from "@/config-types";
 import { getChartConfig } from "@/config-utils";
 import { isAnnotationField } from "@/configurator/components/chart-annotations/utils";
 import { useConfiguratorState } from "@/configurator/configurator-state";
-import { Observation } from "@/domain/data";
+import { getObservationIri, Observation } from "@/domain/data";
 import { truthy } from "@/domain/types";
 import { useLocale } from "@/locales/use-locale";
 import { useChartInteractiveFilters } from "@/stores/interactive-filters";
@@ -97,8 +97,8 @@ export const Annotations = () => {
       return chartData.find((observation) => {
         return annotation.targets.some(
           (target) =>
-            observation[`${target.componentId}/__iri__`] === target.value &&
-            target.componentId !== segmentDimension?.id
+            getObservationIri(observation, target.componentId) ===
+              target.value && target.componentId !== segmentDimension?.id
         );
       });
     },

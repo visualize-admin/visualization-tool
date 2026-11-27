@@ -9,6 +9,7 @@ import { LRUCache } from "typescript-lru-cache";
 
 import { Filters, FilterValueMulti } from "@/config-types";
 import {
+  getObservationIriKey,
   Observation,
   ObservationValue,
   parseObservationValue,
@@ -46,7 +47,6 @@ const DIMENSION_VALUE_UNDEFINED = ns.cube.Undefined.value;
 
 /** Adds a suffix to an iri to mark its label */
 const labelDimensionIri = (iri: string) => `${iri}/__label__`;
-const iriDimensionIri = (iri: string) => `${iri}/__iri__`;
 const unversionedDimensionIri = (iri: string) => `${iri}/__unversioned__`;
 
 const getDimensionUnits = (d: CubeDimension) => {
@@ -796,7 +796,7 @@ function parseObservation(
         : undefined;
       const finalValue = unversionedValue ?? obs[d.data.iri]?.value ?? null;
 
-      res[iriDimensionIri(d.data.iri)] = finalValue;
+      res[getObservationIriKey(d.data.iri)] = finalValue;
       res[d.data.iri] = raw
         ? rawValue
         : (label ?? unversionedValue ?? value ?? null);

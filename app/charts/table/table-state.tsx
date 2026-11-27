@@ -1,21 +1,19 @@
 import { t } from "@lingui/macro";
-import { ascending, extent, max, min } from "d3-array";
+import { extent, max, min } from "d3-array";
 import {
   ScaleDiverging,
   scaleDiverging,
   ScaleLinear,
   scaleLinear,
   ScaleOrdinal,
-  scaleOrdinal,
   ScaleSequential,
   scaleTime,
   ScaleTime,
 } from "d3-scale";
-import { schemeCategory10 } from "d3-scale-chromatic";
 import mapKeys from "lodash/mapKeys";
 import mapValues from "lodash/mapValues";
 import { PropsWithChildren, useMemo } from "react";
-import { Cell, Column, Row } from "react-table";
+import { Cell, Column } from "react-table";
 
 import {
   getLabelWithUnit,
@@ -27,6 +25,14 @@ import {
   CommonChartState,
 } from "@/charts/shared/chart-state";
 import { useSize } from "@/charts/shared/use-size";
+import {
+  abbreviateObservations,
+  usesAbbreviations,
+} from "@/charts/table/abbreviate-observations";
+import {
+  makeCategoryColorScale,
+  makeColumnSortType,
+} from "@/charts/table/column-helpers";
 import {
   BAR_CELL_PADDING,
   LIMITED_COLUMN_WIDTH,
@@ -59,7 +65,6 @@ import { useDimensionFormatters, useFormatNumber } from "@/formatters";
 import { useLocale } from "@/locales/use-locale";
 import { getColorInterpolator } from "@/palettes";
 import { getTextWidth } from "@/utils/get-text-width";
-import { makeDimensionValueSorters } from "@/utils/sorting-values";
 
 import { ChartProps } from "../shared/chart-props";
 
@@ -138,8 +143,21 @@ const useTableState = (
 ): TableChartState => {
   const { chartConfig, dimensions, measures } = chartProps;
   const { getX } = variables;
-  const { chartData, allData, timeRangeData } = data;
+  const { allData, timeRangeData } = data;
   const { fields, settings, links, sorting } = chartConfig;
+  const allComponents = useMemo(
+    () => [...dimensions, ...measures],
+    [dimensions, measures]
+  );
+  const chartData = useMemo(
+    () =>
+      abbreviateObservations({
+        observations: data.chartData,
+        fields,
+        components: allComponents,
+      }),
+    [data.chartData, fields, allComponents]
+  );
   const formatNumber = useFormatNumber();
   const locale = useLocale();
 
@@ -177,7 +195,7 @@ const useTableState = (
    * is used to manage its internal state from the editor.
    */
 
-  const types = [...dimensions, ...measures].reduce(
+  const types = allComponents.reduce(
     (obj, c) => ({ ...obj, [getSlugifiedId(c.id)]: c.__typename }),
     {} as { [x: string]: ComponentType }
   );
@@ -211,8 +229,6 @@ const useTableState = (
   );
 
   const tableColumnsData = useMemo(() => {
-    const allComponents = [...dimensions, ...measures];
-
     const columnData = orderedTableColumns.map((c) => {
       const headerComponent = allComponents.find((d) => d.id === c.componentId);
 
@@ -220,8 +236,12 @@ const useTableState = (
         throw Error(`No dimension <${c.componentId}> in cube!`);
       }
 
-      const sorters = makeDimensionValueSorters(headerComponent, {
-        sorting: { sortingType: "byTableSortingType", sortingOrder: "asc" },
+      const sortType = makeColumnSortType({
+        component: headerComponent,
+        useAbbreviations: usesAbbreviations({
+          column: c,
+          component: headerComponent,
+        }),
       });
 
       const headerLabel = getLabelWithUnit(headerComponent);
@@ -250,7 +270,7 @@ const useTableState = (
         c,
         headerComponent,
         headerLabel,
-        sorters,
+        sortType,
         naturalWidth,
         canBeWidthLimited: columnCanBeWidthLimited(
           fields[c.componentId].columnStyle.type
@@ -267,7 +287,7 @@ const useTableState = (
       settings.limitColumnWidths && totalNaturalWidth > chartWidth;
 
     const columns = columnData.map(
-      ({ c, headerLabel, sorters, naturalWidth, canBeWidthLimited }) => {
+      ({ c, headerLabel, sortType, naturalWidth, canBeWidthLimited }) => {
         const width =
           shouldApplyLimits && canBeWidthLimited
             ? Math.min(naturalWidth, LIMITED_COLUMN_WIDTH)
@@ -278,32 +298,14 @@ const useTableState = (
           // Slugify accessor to avoid id's "." to be parsed as JS object notation.
           accessor: getSlugifiedId(c.componentId),
           width,
-          sortType: (
-            rowA: Row<Observation>,
-            rowB: Row<Observation>,
-            colId: string
-          ) => {
-            for (const d of sorters) {
-              const result = ascending(
-                d(rowA.values[colId]),
-                d(rowB.values[colId])
-              );
-
-              if (result) {
-                return result;
-              }
-            }
-
-            return 0;
-          },
+          sortType,
         };
       }
     );
 
     return { columns, shouldApplyLimits };
   }, [
-    dimensions,
-    measures,
+    allComponents,
     orderedTableColumns,
     chartData,
     formatNumber,
@@ -342,7 +344,7 @@ const useTableState = (
     ];
   }, [sorting, orderedTableColumns]);
 
-  const formatters = useDimensionFormatters([...dimensions, ...measures]);
+  const formatters = useDimensionFormatters(allComponents);
 
   const hiddenIds = useMemo(
     () =>
@@ -359,7 +361,7 @@ const useTableState = (
    */
   const tableColumnsMeta = useMemo<TableChartState["tableColumnsMeta"]>(() => {
     const allColumnsById = Object.fromEntries(
-      [...dimensions, ...measures].map((x) => [x.id, x])
+      allComponents.map((x) => [x.id, x])
     );
     const meta: Record<string, ColumnMeta> = mapKeys(
       mapValues(fields, (columnMeta, id) => {
@@ -382,25 +384,14 @@ const useTableState = (
           return common as TextColumnMeta;
         } else if (columnStyleType === "category") {
           const { colorMapping } = columnStyle as ColumnStyleCategory;
-          const dimension = allColumnsById[id];
-          const colorScale = scaleOrdinal<string>();
-          const labelsAndColor = Object.keys(colorMapping).map(
-            (colorMappingIri) => {
-              const dvLabel = (
-                dimension.values.find((s) => {
-                  return s.value === colorMappingIri;
-                }) ?? { label: "unknown" }
-              ).label;
-
-              return {
-                label: dvLabel,
-                color: colorMapping![colorMappingIri] ?? schemeCategory10[0],
-              };
-            }
-          );
-
-          colorScale.domain(labelsAndColor.map((s) => s.label));
-          colorScale.range(labelsAndColor.map((s) => s.color));
+          const colorScale = makeCategoryColorScale({
+            dimension: allColumnsById[id],
+            colorMapping,
+            useAbbreviations: usesAbbreviations({
+              column: columnMeta,
+              component: allColumnsById[id],
+            }),
+          });
 
           return {
             ...common,
@@ -452,7 +443,7 @@ const useTableState = (
     );
 
     return meta;
-  }, [dimensions, measures, fields, formatters, chartData]);
+  }, [allComponents, fields, formatters, chartData]);
 
   const xScaleTimeRange = useMemo(() => {
     const xScaleTimeRangeDomain = extent(timeRangeData, (d) => getX(d)) as [
