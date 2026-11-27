@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import {
   findDimensionValue,
   makeDimensionValueLookups,
@@ -9,33 +11,60 @@ import {
   getDimensionValueLabel,
   Observation,
 } from "@/domain/data";
+import { useStableIds } from "@/utils/use-stable-ids";
 
-export const abbreviateObservations = ({
-  observations,
+export const useAbbreviatedComponents = ({
   fields,
   components,
 }: {
-  observations: Observation[];
   fields: TableFields;
   components: Component[];
 }) => {
-  const abbreviatedColumns = components
-    .filter((component) =>
-      usesAbbreviations({ column: fields[component.id], component })
+  const ids = useStableIds(
+    getAbbreviatedComponents({ fields, components }).map(
+      (component) => component.id
     )
-    .map((component) => ({
-      dimensionId: component.id,
-      ...makeDimensionValueLookups(component.values),
-    }));
+  );
 
-  if (abbreviatedColumns.length === 0) {
+  return useMemo(() => {
+    const abbreviatedIds = new Set(ids);
+
+    return components.filter((component) => abbreviatedIds.has(component.id));
+  }, [components, ids]);
+};
+
+export const getAbbreviatedComponents = ({
+  fields,
+  components,
+}: {
+  fields: TableFields;
+  components: Component[];
+}) => {
+  return components.filter((component) =>
+    usesAbbreviations({ column: fields[component.id], component })
+  );
+};
+
+export const abbreviateObservations = ({
+  observations,
+  components,
+}: {
+  observations: Observation[];
+  components: Component[];
+}) => {
+  if (components.length === 0) {
     return observations;
   }
+
+  const columns = components.map((component) => ({
+    dimensionId: component.id,
+    ...makeDimensionValueLookups(component.values),
+  }));
 
   return observations.map((observation) => {
     const abbreviated = { ...observation };
 
-    for (const column of abbreviatedColumns) {
+    for (const column of columns) {
       const dimensionValue = findDimensionValue({ observation, ...column });
       abbreviated[column.dimensionId] = dimensionValue
         ? getDimensionValueLabel({ dimensionValue, useAbbreviations: true })

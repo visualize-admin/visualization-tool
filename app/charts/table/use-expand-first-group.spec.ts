@@ -75,6 +75,35 @@ describe("useExpandFirstGroup", () => {
     ]);
   });
 
+  it("reopens the first group path when the grouping changes", () => {
+    const rows = makeRows();
+    const { rerender } = renderHook(
+      ({ groupingIds }) =>
+        useExpandFirstGroup({
+          rows,
+          prepareRow: vi.fn(),
+          enabled: true,
+          groupingIds,
+        }),
+      { initialProps: { groupingIds: ["canton", "region"] } }
+    );
+
+    rerender({ groupingIds: ["canton", "region"] });
+
+    expect(expandCalls(rows)).toHaveLength(2);
+
+    rerender({ groupingIds: ["region", "canton"] });
+
+    expect(expandCalls(rows)).toEqual([
+      ["canton:Zurich", true],
+      ["canton:Zurich>region:Zurich", true],
+      ["canton:Zurich", false],
+      ["canton:Zurich>region:Zurich", false],
+      ["canton:Zurich", true],
+      ["canton:Zurich>region:Zurich", true],
+    ]);
+  });
+
   it("does nothing while the setting is off", () => {
     const rows = makeRows();
     renderHook(() =>

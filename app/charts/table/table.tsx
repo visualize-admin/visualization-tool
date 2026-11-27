@@ -2,7 +2,6 @@ import { plural, t, Trans } from "@lingui/macro";
 import { Box, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useId } from "@reach/auto-id";
-import FlexSearch from "flexsearch";
 import { FocusEvent, forwardRef, useMemo, useState } from "react";
 import {
   Row,
@@ -37,6 +36,7 @@ import {
   useHeightWhileSearching,
   useObservedHeight,
 } from "@/charts/table/use-table-heights";
+import { useTableSearch } from "@/charts/table/use-table-search";
 import { Input, Switch } from "@/components/form";
 import { LiveRegion } from "@/components/live-region";
 import {
@@ -144,33 +144,11 @@ export const Table = () => {
 
   // Search & filter data
   const [searchTerm, setSearchTerm] = useState("");
-  const searchIndex = useMemo(() => {
-    // Don't index measure columns
-    const searchFields = Object.values(tableColumnsMeta).flatMap((m) =>
-      m.columnComponentType === "NumericalMeasure" ? [] : [m.slugifiedId]
-    );
-
-    const index = FlexSearch.create({
-      tokenize: "full",
-      doc: {
-        id: "id",
-        field: searchFields,
-      },
-    });
-
-    index.add(chartData);
-
-    return index;
-  }, [tableColumnsMeta, chartData]);
-
-  const filteredData = useMemo(() => {
-    const result =
-      searchTerm === ""
-        ? chartData
-        : searchIndex.search({ query: `${searchTerm}` });
-
-    return result as Observation[];
-  }, [chartData, searchTerm, searchIndex]);
+  const filteredData = useTableSearch({
+    observations: chartData,
+    tableColumnsMeta,
+    searchTerm,
+  });
 
   const {
     headerGroups,
