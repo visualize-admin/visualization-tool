@@ -1,7 +1,6 @@
 import { max, min } from "d3-array";
 import { ScaleTime } from "d3-scale";
 import get from "lodash/get";
-import overEvery from "lodash/overEvery";
 import uniq from "lodash/uniq";
 import uniqBy from "lodash/uniqBy";
 import { createContext, useCallback, useContext, useMemo } from "react";
@@ -29,6 +28,7 @@ import {
   useTemporalVariable,
 } from "@/charts/shared/chart-helpers";
 import { DimensionsById, MeasuresById } from "@/charts/shared/chart-props";
+import { filterObservations } from "@/charts/shared/filter-observations";
 import { Bounds } from "@/charts/shared/use-size";
 import { TableChartState } from "@/charts/table/table-state";
 import { useLimits } from "@/config-utils";
@@ -1031,13 +1031,11 @@ export const useChartData = (
   ]);
 
   const chartData = useMemo(() => {
-    return allData.filter(
-      overEvery([
-        ...interactiveLegendFilters,
-        ...interactiveTimeRangeFilters,
-        ...interactiveTimeSliderFilters,
-      ])
-    );
+    return filterObservations(allData, [
+      ...interactiveLegendFilters,
+      ...interactiveTimeRangeFilters,
+      ...interactiveTimeSliderFilters,
+    ]);
   }, [
     allData,
     interactiveLegendFilters,
@@ -1049,9 +1047,10 @@ export const useChartData = (
     if (dynamicScales) {
       return chartData;
     } else {
-      return allData.filter(
-        overEvery([...interactiveLegendFilters, ...interactiveTimeRangeFilters])
-      );
+      return filterObservations(allData, [
+        ...interactiveLegendFilters,
+        ...interactiveTimeRangeFilters,
+      ]);
     }
   }, [
     dynamicScales,
@@ -1062,18 +1061,18 @@ export const useChartData = (
   ]);
 
   const segmentData = useMemo(() => {
-    return allData.filter(overEvery(interactiveTimeRangeFilters));
+    return filterObservations(allData, interactiveTimeRangeFilters);
   }, [allData, interactiveTimeRangeFilters]);
 
   const timeRangeData = useMemo(() => {
-    return allData.filter(overEvery(timeRangeFilters));
+    return filterObservations(allData, timeRangeFilters);
   }, [allData, timeRangeFilters]);
 
   const paddingData = useMemo(() => {
     if (dynamicScales) {
       return chartData;
     } else {
-      return allData.filter(overEvery(interactiveLegendFilters));
+      return filterObservations(allData, interactiveLegendFilters);
     }
   }, [dynamicScales, chartData, allData, interactiveLegendFilters]);
 

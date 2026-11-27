@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Row } from "react-table";
 
 import { Observation } from "@/domain/data";
+import { useStableIds } from "@/utils/use-stable-ids";
 
 export const useExpandFirstGroup = ({
   rows,
@@ -14,16 +15,19 @@ export const useExpandFirstGroup = ({
   enabled: boolean;
   groupingIds: string[];
 }) => {
-  const appliedKey = useRef<string>();
+  const ids = useStableIds(groupingIds);
+  const applied = useRef<{ enabled: boolean; ids: string[] }>();
   const openedRows = useRef<Row<Observation>[]>([]);
-  const key = `${enabled}:${groupingIds.join(",")}`;
 
   useEffect(() => {
-    if (appliedKey.current === key || rows.length === 0) {
+    if (
+      (applied.current?.enabled === enabled && applied.current.ids === ids) ||
+      rows.length === 0
+    ) {
       return;
     }
 
-    appliedKey.current = key;
+    applied.current = { enabled, ids };
 
     for (const row of openedRows.current) {
       row.toggleRowExpanded(false);
@@ -36,7 +40,7 @@ export const useExpandFirstGroup = ({
       prepareRow(row);
       row.toggleRowExpanded(true);
     }
-  }, [key, enabled, rows, prepareRow]);
+  }, [enabled, ids, rows, prepareRow]);
 };
 
 export const getFirstGroupPath = (rows: Row<Observation>[]) => {

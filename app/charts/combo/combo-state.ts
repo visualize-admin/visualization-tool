@@ -45,12 +45,7 @@ export const useCommonComboState = (options: UseCommonComboStateOptions) => {
   const timeFormatUnit = useTimeFormatUnit();
 
   const chartDataByX = useMemo(() => {
-    return groups(
-      chartData.sort(
-        (a, b) => getXAsDate(a).getTime() - getXAsDate(b).getTime()
-      ),
-      getXAsString
-    );
+    return groupByX({ chartData, getXAsDate, getXAsString });
   }, [chartData, getXAsDate, getXAsString]);
 
   const chartWideData = useMemo(() => {
@@ -208,4 +203,21 @@ export const adjustScales = (
   const { chartWidth, chartHeight } = options;
   xScales.forEach((scale) => scale.range([0, chartWidth]));
   yScales.forEach((scale) => scale.range([chartHeight, 0]));
+};
+
+export const groupByX = ({
+  chartData,
+  getXAsDate,
+  getXAsString,
+}: {
+  chartData: readonly Observation[];
+  getXAsDate: (d: Observation) => Date;
+  getXAsString: (d: Observation) => string;
+}) => {
+  return groups(
+    [...chartData].sort(
+      (a, b) => getXAsDate(a).getTime() - getXAsDate(b).getTime()
+    ),
+    getXAsString
+  );
 };

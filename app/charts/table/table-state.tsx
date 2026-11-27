@@ -1,10 +1,9 @@
 import { t } from "@lingui/macro";
-import { extent, max, min } from "d3-array";
+import { extent } from "d3-array";
 import {
   ScaleDiverging,
   scaleDiverging,
   ScaleLinear,
-  scaleLinear,
   ScaleOrdinal,
   ScaleSequential,
   scaleTime,
@@ -27,17 +26,16 @@ import {
 import { useSize } from "@/charts/shared/use-size";
 import {
   abbreviateObservations,
+  useAbbreviatedComponents,
   usesAbbreviations,
 } from "@/charts/table/abbreviate-observations";
 import {
   makeCategoryColorScale,
   makeColumnSortType,
 } from "@/charts/table/column-helpers";
-import {
-  BAR_CELL_PADDING,
-  LIMITED_COLUMN_WIDTH,
-  TABLE_HEIGHT,
-} from "@/charts/table/constants";
+import { useColumnStats } from "@/charts/table/column-stats";
+import { LIMITED_COLUMN_WIDTH, TABLE_HEIGHT } from "@/charts/table/constants";
+import { getNaturalColumnWidth } from "@/charts/table/natural-column-width";
 import {
   TableStateVariables,
   useTableStateData,
@@ -51,10 +49,7 @@ import {
   TableConfig,
   TableLinks,
 } from "@/configurator";
-import {
-  mkNumber,
-  useOrderedTableColumns,
-} from "@/configurator/components/ui-helpers";
+import { useOrderedTableColumns } from "@/configurator/components/ui-helpers";
 import {
   Component,
   Observation,
@@ -64,7 +59,6 @@ import {
 import { useDimensionFormatters, useFormatNumber } from "@/formatters";
 import { useLocale } from "@/locales/use-locale";
 import { getColorInterpolator } from "@/palettes";
-import { getTextWidth } from "@/utils/get-text-width";
 
 import { ChartProps } from "../shared/chart-props";
 
@@ -149,14 +143,17 @@ const useTableState = (
     () => [...dimensions, ...measures],
     [dimensions, measures]
   );
+  const abbreviatedComponents = useAbbreviatedComponents({
+    fields,
+    components: allComponents,
+  });
   const chartData = useMemo(
     () =>
       abbreviateObservations({
         observations: data.chartData,
-        fields,
-        components: allComponents,
+        components: abbreviatedComponents,
       }),
-    [data.chartData, fields, allComponents]
+    [data.chartData, abbreviatedComponents]
   );
   const formatNumber = useFormatNumber();
   const locale = useLocale();
@@ -195,10 +192,11 @@ const useTableState = (
    * is used to manage its internal state from the editor.
    */
 
-  const types = allComponents.reduce(
-    (obj, c) => ({ ...obj, [getSlugifiedId(c.id)]: c.__typename }),
-    {} as { [x: string]: ComponentType }
-  );
+  const types = useMemo(() => {
+    return Object.fromEntries(
+      allComponents.map((c) => [getSlugifiedId(c.id), c.__typename])
+    ) as Record<string, ComponentType>;
+  }, [allComponents]);
   // Data used by react-table
   const memoizedData = useMemo(
     function replaceKeys() {
@@ -228,6 +226,19 @@ const useTableState = (
     [chartData, types]
   );
 
+  const naturalColumnWidths = useMemo(() => {
+    return Object.fromEntries(
+      allComponents.map((component) => [
+        component.id,
+        getNaturalColumnWidth({
+          component,
+          observations: chartData,
+          formatNumber,
+        }),
+      ])
+    );
+  }, [allComponents, chartData, formatNumber]);
+
   const tableColumnsData = useMemo(() => {
     const columnData = orderedTableColumns.map((c) => {
       const headerComponent = allComponents.find((d) => d.id === c.componentId);
@@ -244,34 +255,12 @@ const useTableState = (
         }),
       });
 
-      const headerLabel = getLabelWithUnit(headerComponent);
-
-      // The column width depends on the estimated width of the
-      // longest value in the column, with a minimum of 50px.
-      const columnItems = [...new Set(chartData.map((d) => d[c.componentId]))];
-      const columnItemSizes = [
-        ...columnItems.map((item) => {
-          const itemAsString =
-            c.componentType === "NumericalMeasure"
-              ? formatNumber(item as number)
-              : item;
-
-          return getTextWidth(`${itemAsString}`, { fontSize: 16 }) + 20;
-        }),
-      ];
-
-      const naturalWidth = Math.max(
-        50,
-        getTextWidth(headerLabel, { fontSize: 16 }) + 44,
-        ...columnItemSizes
-      );
-
       return {
         c,
         headerComponent,
-        headerLabel,
+        headerLabel: getLabelWithUnit(headerComponent),
         sortType,
-        naturalWidth,
+        naturalWidth: naturalColumnWidths[c.componentId],
         canBeWidthLimited: columnCanBeWidthLimited(
           fields[c.componentId].columnStyle.type
         ),
@@ -307,8 +296,7 @@ const useTableState = (
   }, [
     allComponents,
     orderedTableColumns,
-    chartData,
-    formatNumber,
+    naturalColumnWidths,
     fields,
     chartWidth,
     settings.limitColumnWidths,
@@ -345,6 +333,11 @@ const useTableState = (
   }, [sorting, orderedTableColumns]);
 
   const formatters = useDimensionFormatters(allComponents);
+  const { barWidthScales, heatmapMaxAbsoluteValues } = useColumnStats({
+    fields,
+    observations: chartData,
+    formatters,
+  });
 
   const hiddenIds = useMemo(
     () =>
@@ -398,15 +391,7 @@ const useTableState = (
             colorScale,
           } as CategoryColumnMeta;
         } else if (columnStyleType === "heatmap") {
-          const absMinValue =
-            min(chartData, (d) =>
-              d[id] !== null ? Math.abs(d[id] as number) : 0
-            ) || 0;
-          const absMaxValue =
-            max(chartData, (d) =>
-              d[id] !== null ? Math.abs(d[id] as number) : 1
-            ) || 1;
-          const maxAbsoluteValue = Math.max(absMinValue, absMaxValue);
+          const maxAbsoluteValue = heatmapMaxAbsoluteValues[id];
           const colorScale = scaleDiverging(
             getColorInterpolator((columnStyle as ColumnStyleHeatmap).paletteId)
           ).domain([-maxAbsoluteValue, 0, maxAbsoluteValue]);
@@ -415,24 +400,7 @@ const useTableState = (
             colorScale,
           } as HeatmapColumnMeta;
         } else if (columnStyleType === "bar") {
-          // The column width depends on the estimated width of the
-          // longest value in the column, with a minimum of 150px.
-          const columnItems = [
-            ...new Set(
-              chartData.map((d) =>
-                d !== null && d[id] !== null ? mkNumber(d[id]) : NaN
-              )
-            ),
-          ];
-          const columnItemSizes = columnItems.map((item) => {
-            const itemAsString = formatter(item);
-            return getTextWidth(`${itemAsString}`, { fontSize: 16 }) + 80;
-          });
-          const width =
-            Math.max(max(columnItemSizes, (d) => d) || 150, 150) -
-            BAR_CELL_PADDING * 2;
-          const domain = extent(columnItems, (d) => d) as [number, number];
-          const widthScale = scaleLinear().domain(domain).range([0, width]);
+          const widthScale = barWidthScales[id];
 
           return { ...common, widthScale } as BarColumnMeta;
         } else {
@@ -443,7 +411,13 @@ const useTableState = (
     );
 
     return meta;
-  }, [allComponents, fields, formatters, chartData]);
+  }, [
+    allComponents,
+    fields,
+    formatters,
+    barWidthScales,
+    heatmapMaxAbsoluteValues,
+  ]);
 
   const xScaleTimeRange = useMemo(() => {
     const xScaleTimeRangeDomain = extent(timeRangeData, (d) => getX(d)) as [

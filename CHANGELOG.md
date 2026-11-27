@@ -34,6 +34,8 @@ You can also check the
     keyboard, groups expand by keyboard, and search results are announced
   - Small tables fit their rows, without needless scrollbars or a last row hidden
     behind the horizontal scrollbar
+  - Large tables no longer freeze the editor for about a second after every
+    change, and the table search index is only built once someone searches
 
 ## 6.5.7 - 2026-11-10
 
